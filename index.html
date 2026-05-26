@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>NoSpoil — Résumés cyclisme</title>
+  <style>
+    :root {
+      --bg:        #0d0d12;
+      --surface:   #16161f;
+      --surface2:  #1e1e2b;
+      --border:    #2a2a3a;
+      --accent:    #e8453c;
+      --accent-lo: rgba(232, 69, 60, 0.12);
+      --text:      #eeeef5;
+      --muted:     #64647e;
+      --radius:    8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* ── Header ── */
+    header {
+      width: 100%;
+      padding: 2.5rem 1.5rem 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+    .logo span { color: var(--accent); }
+
+    .tagline {
+      color: var(--muted);
+      font-size: 0.875rem;
+      margin-top: 0.4rem;
+      line-height: 1.5;
+    }
+
+    /* ── Main ── */
+    main {
+      width: 100%;
+      max-width: 680px;
+      padding: 2rem 1.25rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.75rem;
+    }
+
+    .field-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--muted);
+      margin-bottom: 0.6rem;
+      font-weight: 600;
+    }
+
+    /* ── Sport selector ── */
+    .sport-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+    .sport-btn {
+      padding: 0.55rem 1.1rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      font-family: inherit;
+    }
+
+    .sport-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-lo);
+    }
+
+    .sport-btn.soon { opacity: 0.3; cursor: default; font-style: italic; }
+
+    .soon-tag {
+      font-size: 0.65rem;
+      vertical-align: middle;
+      margin-left: 0.3rem;
+      background: var(--border);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-style: normal;
+    }
+
+    /* ── Stage + Language row ── */
+    .controls-row { display: flex; gap: 1rem; align-items: flex-end; }
+    .control-group { flex: 1; }
+    .control-group.lang { flex: 0 0 auto; }
+
+    .select-wrapper { position: relative; }
+
+    .select-wrapper::after {
+      content: "▾";
+      position: absolute;
+      right: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      font-size: 0.85rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 0.65rem 2.2rem 0.65rem 0.9rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-family: inherit;
+      appearance: none;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    select:focus { outline: none; border-color: var(--accent); }
+
+    .lang-btns { display: flex; gap: 0.4rem; }
+
+    .lang-btn {
+      padding: 0.65rem 0.9rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+      letter-spacing: 0.5px;
+    }
+
+    .lang-btn.active {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-lo);
+    }
+
+    /* ── Launch button ── */
+    .launch-btn {
+      width: 100%;
+      padding: 1rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius);
+      font-size: 1.05rem;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+
+    .launch-btn:hover  { background: #d03c34; }
+    .launch-btn:active { transform: scale(0.99); }
+
+    .launch-btn:disabled {
+      background: var(--surface2);
+      color: var(--muted);
+      cursor: not-allowed;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Conteneur player (vidéo + barre) ── */
+    .player-container {
+      display: flex;
+      flex-direction: column;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    /* ── Zone vidéo ── */
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .video-placeholder {
+      text-align: center;
+      color: var(--muted);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.5rem;
+    }
+
+    .video-placeholder .play-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      opacity: 0.35;
+    }
+
+    .video-placeholder p { font-size: 0.875rem; }
+
+    /* L'iframe déborde en haut et en bas — les barres YouTube tombent dans le letterbox */
+    #yt-iframe {
+      position: absolute;
+      top: -18%;
+      left: 0;
+      width: 100%;
+      height: 136%;
+      border: none;
+      display: block;
+    }
+
+    /* Vitre transparente devant l'iframe — bloque les interactions YouTube */
+    .video-glass {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      cursor: default;
+    }
+
+    /* ── Overlay générique (chargement + pause) ── */
+    .video-overlay {
+      position: absolute;
+      inset: 0;
+      background: #000;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      opacity: 1;
+      transition: opacity 0.4s ease;
+    }
+
+    .video-overlay.hiding {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .video-overlay.clickable { cursor: pointer; }
+
+    .overlay-icon {
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .overlay-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .overlay-sub {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .overlay-play-btn {
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      color: #fff;
+      transition: transform 0.15s;
+      margin-bottom: 0.2rem;
+    }
+
+    .video-overlay.clickable:hover .overlay-play-btn { transform: scale(1.08); }
+
+    /* ── Barre de contrôles sous la vidéo ── */
+    .player-bar {
+      display: none;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--surface2);
+      border-top: 1px solid var(--border);
+    }
+
+    .player-bar.active { display: flex; }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      padding: 0.2rem;
+      font-size: 1rem;
+      line-height: 1;
+      flex-shrink: 0;
+      transition: color 0.15s;
+    }
+
+    .ctrl-btn:hover { color: var(--text); }
+
+    /* Barre de progression */
+    .progress-wrap {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 2px;
+      width: 0%;
+      pointer-events: none;
+      transition: width 0.25s linear;
+    }
+
+    .progress-wrap:hover .progress-fill { background: #fff; }
+
+    /* Temps */
+    .time-display {
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: auto;
+      padding: 1.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 480px) {
+      .controls-row { flex-direction: column; }
+      .control-group.lang { width: 100%; }
+      .lang-btns { width: 100%; }
+      .lang-btn { flex: 1; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">No<span>Spoil</span></div>
+    <p class="tagline">
+      Le chemin le plus court et le plus propre vers le résumé officiel<br>
+      Zéro clickbait, zéro grille de spoilers.
+    </p>
+  </header>
+
+  <main>
+
+    <!-- Sport -->
+    <div>
+      <p class="field-label">Sport</p>
+      <div class="sport-row">
+        <button class="sport-btn active">🚴 Cyclisme</button>
+        <button class="sport-btn soon" disabled>⚽ Football<span class="soon-tag">bientôt</span></button>
+        <button class="sport-btn soon" disabled>🎾 Tennis<span class="soon-tag">bientôt</span></button>
+      </div>
+    </div>
+
+    <!-- Stage + Language -->
+    <div class="controls-row">
+      <div class="control-group">
+        <p class="field-label">Étape</p>
+        <div class="select-wrapper">
+          <select id="stage-select" aria-label="Choisir une étape"></select>
+        </div>
+      </div>
+      <div class="control-group lang">
+        <p class="field-label">Langue</p>
+        <div class="lang-btns">
+          <button class="lang-btn active" data-lang="fr" aria-pressed="true">FR</button>
+          <button class="lang-btn"        data-lang="en" aria-pressed="false">EN</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Launch -->
+    <button class="launch-btn" id="launch-btn">▶&nbsp;&nbsp;Lancer le résumé</button>
+
+    <!-- Player -->
+    <div class="player-container">
+      <div class="video-wrap" id="video-area">
+        <div class="video-placeholder">
+          <div class="play-icon">▶</div>
+          <p>Sélectionne une étape, puis lance le résumé</p>
+        </div>
+      </div>
+      <div class="player-bar" id="player-bar">
+        <button class="ctrl-btn" id="ctrl-play" title="Pause">⏸</button>
+        <div class="progress-wrap" id="ctrl-progress">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span class="time-display" id="time-display">0:00 / 0:00</span>
+        <button class="ctrl-btn" id="ctrl-mute" title="Muet">🔊</button>
+        <button class="ctrl-btn" id="ctrl-fullscreen" title="Plein écran">⛶</button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer>
+    Contenu diffusé via les chaînes YouTube officielles · NoSpoil n'héberge aucune vidéo
+  </footer>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="data.js"></script>
+  <script>
+    const stageSelect   = document.getElementById('stage-select');
+    const videoArea     = document.getElementById('video-area');
+    const playerBar     = document.getElementById('player-bar');
+    const launchBtn     = document.getElementById('launch-btn');
+    const langBtns      = document.querySelectorAll('.lang-btn');
+    const ctrlPlay      = document.getElementById('ctrl-play');
+    const ctrlProgress  = document.getElementById('ctrl-progress');
+    const progressFill  = document.getElementById('progress-fill');
+    const timeDisplay   = document.getElementById('time-display');
+    const ctrlMute      = document.getElementById('ctrl-mute');
+    const ctrlFullscreen= document.getElementById('ctrl-fullscreen');
+
+    let selectedLang     = 'fr';
+    let ytPlayer         = null;
+    let progressInterval = null;
+    let isMuted          = false;
+    let isPaused         = false;
+
+    // ── Populate dropdown ──────────────────────
+    STAGES.forEach(s => {
+      const opt = document.createElement('option');
+      opt.value       = s.etape;
+      opt.textContent = s.label;
+      stageSelect.appendChild(opt);
+    });
+
+    // ── Helpers ───────────────────────────────
+    function getSelectedStage() {
+      return STAGES.find(s => s.etape === parseInt(stageSelect.value));
+    }
+
+    function isAvailable(stage, lang) {
+      const id = stage?.videos?.[lang];
+      return id && !id.startsWith('REMPLIR');
+    }
+
+    function updateLaunchBtn() {
+      const stage = getSelectedStage();
+      const avail = isAvailable(stage, selectedLang);
+      launchBtn.disabled    = !avail;
+      launchBtn.textContent = avail ? '▶  Lancer le résumé' : '▶  Vidéo non disponible';
+    }
+
+    function formatTime(sec) {
+      if (!isFinite(sec) || sec < 0) return '0:00';
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    function updateProgress() {
+      if (!ytPlayer?.getCurrentTime) return;
+      const cur = ytPlayer.getCurrentTime() || 0;
+      const dur = ytPlayer.getDuration()    || 0;
+      progressFill.style.width = dur > 0 ? (cur / dur * 100) + '%' : '0%';
+      timeDisplay.textContent  = `${formatTime(cur)} / ${formatTime(dur)}`;
+    }
+
+    function showLoadingOverlay() {
+      const overlay = document.createElement('div');
+      overlay.className = 'video-overlay';
+      overlay.id = 'loading-overlay';
+      overlay.innerHTML = `
+        <div class="overlay-icon">🛡️</div>
+        <div class="overlay-title">Chargement en cours…</div>
+        <div class="overlay-sub">On cache le titre pour toi</div>
+      `;
+      videoArea.appendChild(overlay);
+    }
+
+    function hideLoadingOverlay() {
+      const overlay = document.getElementById('loading-overlay');
+      if (!overlay) return;
+      overlay.classList.add('hiding');
+      setTimeout(() => overlay.remove(), 400);
+    }
+
+    function showPauseOverlay() {
+      if (videoArea.querySelector('.pause-overlay')) return;
+      const overlay = document.createElement('div');
+      overlay.className = 'video-overlay clickable pause-overlay';
+      overlay.innerHTML = `
+        <div class="overlay-play-btn">▶</div>
+        <div class="overlay-title">Reprendre</div>
+        <div class="overlay-sub">Ton résumé t'attend — sans spoil 🤫</div>
+      `;
+      overlay.addEventListener('click', () => ytPlayer?.playVideo());
+      videoArea.appendChild(overlay);
+    }
+
+    function hidePauseOverlay() {
+      const overlay = videoArea.querySelector('.pause-overlay');
+      if (!overlay) return;
+      overlay.classList.add('hiding');
+      setTimeout(() => overlay.remove(), 400);
+    }
+
+    function resetPlayer() {
+      if (ytPlayer) { try { ytPlayer.destroy(); } catch (_) {} ytPlayer = null; }
+      clearInterval(progressInterval);
+      progressInterval = null;
+      isMuted  = false;
+      isPaused = false;
+      playerBar.classList.remove('active');
+      ctrlPlay.textContent = '⏸';
+      ctrlMute.textContent = '🔊';
+      progressFill.style.width = '0%';
+      timeDisplay.textContent  = '0:00 / 0:00';
+      videoArea.innerHTML = `
+        <div class="video-placeholder">
+          <div class="play-icon">▶</div>
+          <p>Sélectionne une étape, puis lance le résumé</p>
+        </div>`;
+    }
+
+    // ── Contrôles ─────────────────────────────
+    ctrlPlay.addEventListener('click', () => {
+      if (!ytPlayer) return;
+      isPaused ? ytPlayer.playVideo() : ytPlayer.pauseVideo();
+    });
+
+    ctrlProgress.addEventListener('click', (e) => {
+      if (!ytPlayer) return;
+      const rect  = ctrlProgress.getBoundingClientRect();
+      const ratio = (e.clientX - rect.left) / rect.width;
+      ytPlayer.seekTo(ytPlayer.getDuration() * ratio, true);
+    });
+
+    ctrlMute.addEventListener('click', () => {
+      if (!ytPlayer) return;
+      if (isMuted) {
+        ytPlayer.unMute();
+        isMuted = false;
+        ctrlMute.textContent = '🔊';
+      } else {
+        ytPlayer.mute();
+        isMuted = true;
+        ctrlMute.textContent = '🔇';
+      }
+    });
+
+    ctrlFullscreen.addEventListener('click', () => {
+      const container = document.querySelector('.player-container');
+      document.fullscreenElement
+        ? document.exitFullscreen()
+        : container.requestFullscreen().catch(() => {});
+    });
+
+    // ── YouTube IFrame API ─────────────────────
+    function launchPlayer(videoId) {
+      videoArea.innerHTML = `
+        <div id="yt-iframe"></div>
+        <div class="video-glass"></div>
+      `;
+      showLoadingOverlay();
+
+      ytPlayer = new YT.Player('yt-iframe', {
+        videoId,
+        playerVars: {
+          autoplay:       1,
+          controls:       0,
+          disablekb:      1,
+          rel:            0,
+          modestbranding: 1,
+          playsinline:    1,
+          fs:             0,
+          iv_load_policy: 3,
+          cc_load_policy: 0,
+        },
+        events: {
+          onReady(e) {
+            e.target.playVideo();
+            playerBar.classList.add('active');
+            progressInterval = setInterval(updateProgress, 500);
+          },
+          onStateChange(e) {
+            if (e.data === YT.PlayerState.PLAYING) {
+              isPaused = false;
+              ctrlPlay.textContent = '⏸';
+              // Cache le loading overlay au premier PLAYING, et le pause overlay ensuite
+              setTimeout(hideLoadingOverlay, 300);
+              hidePauseOverlay();
+            } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+              isPaused = true;
+              showPauseOverlay();
+              ctrlPlay.textContent = '▶';
+            }
+          },
+        },
+      });
+    }
+
+    // ── Launch ─────────────────────────────────
+    launchBtn.addEventListener('click', () => {
+      const stage = getSelectedStage();
+      if (!isAvailable(stage, selectedLang)) return;
+      const videoId = stage.videos[selectedLang];
+      if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
+        window.onYouTubeIframeAPIReady = () => launchPlayer(videoId);
+      } else {
+        launchPlayer(videoId);
+      }
+    });
+
+    stageSelect.addEventListener('change', () => { resetPlayer(); updateLaunchBtn(); });
+
+    langBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        langBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+        selectedLang = btn.dataset.lang;
+        resetPlayer();
+        updateLaunchBtn();
+      });
+    });
+
+    // ── Init ──────────────────────────────────
+    updateLaunchBtn();
+  </script>
+</body>
+</html>
