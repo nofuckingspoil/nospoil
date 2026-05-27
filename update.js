@@ -37,6 +37,125 @@ function fetchText(url) {
   });
 }
 
+function fetchAPI(url, options = {}) {
+  return new Promise((resolve, reject) => {
+    const parsed  = new URL(url);
+    const payload = options.body ? Buffer.from(options.body, 'utf8') : null;
+    const reqOptions = {
+      hostname: parsed.hostname,
+      path:     parsed.pathname + parsed.search,
+      method:   options.method || 'GET',
+      headers:  Object.assign(
+        payload ? { 'Content-Length': payload.length } : {},
+        options.headers || {}
+      ),
+    };
+
+    const req = https.request(reqOptions, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end',  () => resolve({ status: res.statusCode, body: data }));
+    });
+
+    req.on('error', reject);
+    if (payload) req.write(payload);
+    req.end();
+  });
+}
+
+async function sendNotifications(newStages) {
+  const supabaseUrl    = process.env.SUPABASE_URL;
+  const serviceKey     = process.env.SUPABASE_SERVICE_KEY;
+  const brevoKey       = process.env.BREVO_API_KEY;
+  const senderEmail    = process.env.BREVO_SENDER_EMAIL || 'alerte@nospoil.app';
+  const siteUrl        = process.env.SITE_URL || 'https://nospoil.vercel.app';
+
+  if (!supabaseUrl || !serviceKey || !brevoKey) {
+    console.log('  ℹ️  Variables email non définies (SUPABASE_URL/SERVICE_KEY/BREVO_API_KEY) — notifications ignorées.');
+    return;
+  }
+
+  // Récupérer les abonnés actifs depuis Supabase
+  let subscribers = [];
+  try {
+    const res = await fetchAPI(
+      `${supabaseUrl}/rest/v1/subscribers?unsubscribed=eq.false&select=email`,
+      {
+        method:  'GET',
+        headers: {
+          'apikey':        serviceKey,
+          'Authorization': `Bearer ${serviceKey}`,
+        },
+      }
+    );
+    if (res.status !== 200) throw new Error(`HTTP ${res.status}`);
+    subscribers = JSON.parse(res.body) || [];
+  } catch (err) {
+    console.warn(`  ⚠️  Impossible de récupérer les abonnés : ${err.message}`);
+    return;
+  }
+
+  if (subscribers.length === 0) {
+    console.log('  ℹ️  Aucun abonné — aucune notification envoyée.');
+    return;
+  }
+
+  // Corps HTML de l'email
+  const stagesList = newStages.map(s => {
+    const route = s.from ? ` · ${s.from} → ${s.to} · ${s.km} km` : '';
+    return `<li><strong>${s.label}</strong>${route}</li>`;
+  }).join('\n');
+
+  const htmlTemplate = `
+    <div style="font-family:sans-serif;max-width:560px;margin:auto;color:#1a1714;padding:2rem">
+      <h2 style="color:#e8453c;margin-bottom:0.5rem">🎬 Nouveau(x) résumé(s) sur NoSpoil</h2>
+      <p style="color:#6e6860;margin-bottom:1rem">Sans spoiler, comme toujours.</p>
+      <ul style="line-height:2;padding-left:1.2rem">${stagesList}</ul>
+      <p style="margin-top:1.5rem">
+        <a href="${siteUrl}" style="background:#e8453c;color:#fff;padding:10px 22px;border-radius:8px;text-decoration:none;font-weight:600;display:inline-block">
+          Regarder sur NoSpoil →
+        </a>
+      </p>
+      <hr style="margin:2rem 0;border:none;border-top:1px solid #e4dfd7">
+      <p style="font-size:0.72rem;color:#9e9890">
+        Tu reçois cet email car tu t'es inscrit sur NoSpoil.<br>
+        <a href="${siteUrl}?unsubscribe=EMAIL" style="color:#9e9890">Se désabonner</a>
+      </p>
+    </div>
+  `;
+
+  // Envoyer via Brevo
+  let sent = 0;
+  for (const sub of subscribers) {
+    const emailAddr = sub.email;
+    const html      = htmlTemplate.replace('EMAIL', encodeURIComponent(emailAddr));
+    try {
+      const res = await fetchAPI('https://api.brevo.com/v3/smtp/email', {
+        method:  'POST',
+        headers: {
+          'api-key':      brevoKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          sender:      { name: 'NoSpoil', email: senderEmail },
+          to:          [{ email: emailAddr }],
+          subject:     '🎬 Nouveau(x) résumé(s) disponible(s) sur NoSpoil',
+          htmlContent: html,
+        }),
+      });
+      if (res.status === 201) {
+        sent++;
+      } else {
+        console.warn(`  ⚠️  Email non envoyé à ${emailAddr} : HTTP ${res.status} — ${res.body}`);
+      }
+    } catch (err) {
+      console.warn(`  ⚠️  Erreur envoi à ${emailAddr} : ${err.message}`);
+    }
+  }
+
+  console.log(`  📧  ${sent}/${subscribers.length} notification(s) envoyée(s).`);
+}
+
 function parseRSS(xml) {
   const entries = xml.match(/<entry>([\s\S]*?)<\/entry>/g) || [];
   return entries.map(entry => {
@@ -93,8 +212,9 @@ function findCompetition(data, compId) {
 async function main() {
   console.log('🔍  Recherche de nouvelles vidéos...\n');
 
-  const data  = loadData();
-  let changed = false;
+  const data      = loadData();
+  let changed     = false;
+  const newStages = [];
 
   for (const [compId, config] of Object.entries(COMPETITIONS_CONFIG)) {
     const comp = findCompetition(data, compId);
@@ -122,6 +242,7 @@ async function main() {
         byNum[n] = { id: n, label: `Étape ${n}`, date: v.date, published: v.published, video: v.id };
         console.log(`  [${compId}] Étape ${String(n).padStart(2)} → ${v.id} (${v.date})`);
         console.log(`           "${v.title}"`);
+        newStages.push(byNum[n]);
         changed = true;
       } else if (byNum[n].video !== v.id) {
         byNum[n].video = v.id;
@@ -146,6 +267,11 @@ async function main() {
 
   fs.writeFileSync('data.js', output, 'utf8');
   console.log('\n✅  data.js mis à jour.');
+
+  // Envoyer les notifications uniquement pour les nouvelles étapes
+  if (newStages.length > 0) {
+    await sendNotifications(newStages);
+  }
 }
 
 main().catch(err => {

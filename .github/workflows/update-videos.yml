@@ -25,6 +25,12 @@ jobs:
 
       - name: Chercher de nouvelles vidéos
         run: node update.js
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
+          SITE_URL: ${{ secrets.SITE_URL }}
 
       - name: Commit si data.js a changé
         run: |
