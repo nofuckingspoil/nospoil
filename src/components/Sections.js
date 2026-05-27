@@ -121,7 +121,6 @@ export function FAQ() {
       <div className="container faq-inner">
         <div className="section-head">
           <div>
-            <p className="eyebrow">04 — FAQ</p>
             <h2 className="h2">Les questions qu&apos;on me pose.</h2>
           </div>
         </div>
@@ -174,7 +173,6 @@ export function Feedback() {
       <div className="container">
         <div className="feedback-card">
           <div className="feedback-left">
-            <p className="eyebrow">05 — On parle ?</p>
             <h2 className="h2">T&apos;as une idée. Un bug. Un sport à ajouter. Dis-moi.</h2>
             <p className="feedback-lede">
               no.spoil est fait par <strong>une personne</strong>. Pas de support de niveau 3, pas de bot. Tu m&apos;écris, je te réponds (souvent le jour même).
