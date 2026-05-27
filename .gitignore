@@ -1,7 +1,6 @@
 .DS_Store
 .env
 .env.local
-.github/workflows/
 .vercel
 .next/
 node_modules/
