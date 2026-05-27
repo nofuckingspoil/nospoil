@@ -230,6 +230,31 @@
       border-left: 3px solid var(--accent);
     }
 
+    .stage-row.today {
+      background: #fffbeb;
+      border-left: 3px solid #f59e0b;
+    }
+
+    .stage-row.isnew {
+      background: #f0fdf4;
+      border-left: 3px solid #22c55e;
+    }
+
+    .stage-badge {
+      display: inline-block;
+      font-size: 0.6rem;
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      font-weight: 700;
+      vertical-align: middle;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.45rem;
+    }
+
+    .badge-today { background: #f59e0b; color: #fff; }
+    .badge-new   { background: #22c55e; color: #fff; }
+
     .stage-info { flex: 1; min-width: 0; }
 
     .stage-name {
@@ -613,12 +638,28 @@
         return;
       }
 
-      available.forEach(stage => {
+      const today     = new Date().toISOString().slice(0, 10);
+      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+      const sorted    = [...available].reverse();
+
+      sorted.forEach((stage, i) => {
+        const isToday = stage.date === today;
+        const isNew   = i === 0 && !isToday && (stage.date === yesterday || stage.date === today);
+
+        let rowClass = 'stage-row';
+        if (stage === selectedStage) rowClass += ' active';
+        else if (isToday) rowClass += ' today';
+        else if (isNew)   rowClass += ' isnew';
+
+        const badge = isToday
+          ? '<span class="stage-badge badge-today">Aujourd\'hui</span>'
+          : isNew ? '<span class="stage-badge badge-new">Nouveau</span>' : '';
+
         const row = document.createElement('div');
-        row.className = 'stage-row' + (stage === selectedStage ? ' active' : '');
+        row.className = rowClass;
         row.innerHTML = `
           <div class="stage-info">
-            <div class="stage-name">${stage.label}</div>
+            <div class="stage-name">${stage.label}${badge}</div>
             ${stage.date ? `<div class="stage-date">${formatDate(stage.date)}</div>` : ''}
           </div>
           <div class="stage-play">▶</div>
