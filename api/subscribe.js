@@ -1,5 +1,5 @@
 // api/subscribe.js — Vercel serverless function
-// Enregistre un email dans la table Supabase `subscribers`
+// Enregistre un email + topic dans la table Supabase `subscribers`
 
 const https = require('https');
 
@@ -38,17 +38,17 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { email } = req.body || {};
+  const { email, topic = 'all' } = req.body || {};
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return res.status(400).json({ error: 'Adresse email invalide.' });
   }
 
   const supabaseUrl = process.env.SUPABASE_URL;
-  const anonKey     = process.env.SUPABASE_ANON_KEY;
+  const serviceKey  = process.env.SUPABASE_SERVICE_KEY;
 
-  if (!supabaseUrl || !anonKey) {
-    console.error('Missing SUPABASE_URL or SUPABASE_ANON_KEY');
+  if (!supabaseUrl || !serviceKey) {
+    console.error('Missing SUPABASE_URL or SUPABASE_SERVICE_KEY');
     return res.status(500).json({ error: 'Configuration serveur manquante.' });
   }
 
@@ -56,12 +56,11 @@ module.exports = async function handler(req, res) {
     const result = await supabaseRequest(
       '/rest/v1/subscribers',
       'POST',
-      { email },
-      anonKey,
+      { email, topic },
+      serviceKey,
       supabaseUrl
     );
 
-    // 201 = inscrit, 200 avec ignore-duplicates = déjà inscrit, les deux sont OK
     if (result.status === 200 || result.status === 201) {
       return res.status(200).json({ success: true });
     }
