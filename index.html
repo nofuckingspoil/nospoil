@@ -230,12 +230,7 @@
       border-left: 3px solid var(--accent);
     }
 
-    .stage-row.today {
-      background: #fffbeb;
-      border-left: 3px solid #f59e0b;
-    }
-
-    .stage-row.isnew {
+    .stage-row.latest {
       background: #f0fdf4;
       border-left: 3px solid #22c55e;
     }
@@ -247,13 +242,11 @@
       border-radius: 999px;
       font-weight: 700;
       vertical-align: middle;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
       margin-left: 0.45rem;
+      background: #22c55e;
+      color: #fff;
     }
-
-    .badge-today { background: #f59e0b; color: #fff; }
-    .badge-new   { background: #22c55e; color: #fff; }
 
     .stage-info { flex: 1; min-width: 0; }
 
@@ -638,22 +631,17 @@
         return;
       }
 
-      const today     = new Date().toISOString().slice(0, 10);
-      const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
-      const sorted    = [...available].reverse();
+      const sorted = [...available].reverse();
 
       sorted.forEach((stage, i) => {
-        const isToday = stage.date === today;
-        const isNew   = i === 0 && !isToday && (stage.date === yesterday || stage.date === today);
+        const isLatest = i === 0;
 
         let rowClass = 'stage-row';
         if (stage === selectedStage) rowClass += ' active';
-        else if (isToday) rowClass += ' today';
-        else if (isNew)   rowClass += ' isnew';
+        else if (isLatest) rowClass += ' latest';
 
-        const badge = isToday
-          ? '<span class="stage-badge badge-today">Aujourd\'hui</span>'
-          : isNew ? '<span class="stage-badge badge-new">Nouveau</span>' : '';
+        const badge = isLatest
+          ? '<span class="stage-badge">Dernier résumé</span>' : '';
 
         const row = document.createElement('div');
         row.className = rowClass;

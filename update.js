@@ -50,7 +50,7 @@ function parseRSS(xml) {
       .replace(/&quot;/g, '"')
       .replace(/&#39;/g,  "'");
     const date  = pub ? pub.substring(0, 10) : '';
-    return { id, title, date };
+    return { id, title, date, published: pub };
   }).filter(v => v.id);
 }
 
@@ -119,13 +119,14 @@ async function main() {
       if (!n) continue;
 
       if (!byNum[n]) {
-        byNum[n] = { id: n, label: `Étape ${n}`, date: v.date, video: v.id };
+        byNum[n] = { id: n, label: `Étape ${n}`, date: v.date, published: v.published, video: v.id };
         console.log(`  [${compId}] Étape ${String(n).padStart(2)} → ${v.id} (${v.date})`);
         console.log(`           "${v.title}"`);
         changed = true;
       } else if (byNum[n].video !== v.id) {
         byNum[n].video = v.id;
-        if (!byNum[n].date) byNum[n].date = v.date;
+        if (!byNum[n].date)      byNum[n].date      = v.date;
+        if (!byNum[n].published) byNum[n].published = v.published;
         changed = true;
       }
     }
