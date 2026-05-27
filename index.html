@@ -256,11 +256,39 @@
       color: var(--text);
     }
 
+    .stage-route {
+      font-size: 0.78rem;
+      color: var(--text);
+      opacity: 0.7;
+      margin-top: 0.2rem;
+    }
+
     .stage-date {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       color: var(--muted);
       margin-top: 0.15rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      flex-wrap: wrap;
     }
+
+    .type-pill {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.58rem;
+      padding: 0.08rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    .type-sprint      { background: #dbeafe; color: #1d4ed8; }
+    .type-mi-montagne { background: #ffedd5; color: #c2410c; }
+    .type-montagne    { background: #fce7f3; color: #be185d; }
+    .type-clm         { background: #ede9fe; color: #7c3aed; }
 
     .stage-play {
       width: 32px;
@@ -545,6 +573,14 @@
     let isMuted  = false;
     let isPaused = false;
 
+    // ── Type d'étape ──────────────────────────────────────────────
+    const TYPE_MAP = {
+      'sprint':       { label: 'Sprint',            cls: 'type-sprint' },
+      'mi-montagne':  { label: 'Mi-montagne',       cls: 'type-mi-montagne' },
+      'montagne':     { label: 'Montagne',           cls: 'type-montagne' },
+      'clm':          { label: 'Contre-la-montre',  cls: 'type-clm' },
+    };
+
     // ── Formatage ─────────────────────────────────────────────────
     function formatDate(str) {
       if (!str) return '';
@@ -643,12 +679,21 @@
         const badge = isLatest
           ? '<span class="stage-badge">Dernier résumé</span>' : '';
 
+        const ti = stage.type ? TYPE_MAP[stage.type] : null;
+        const typePill  = ti ? `<span class="type-pill ${ti.cls}">${ti.label}</span>` : '';
+        const routeHtml = stage.from
+          ? `<div class="stage-route">${stage.from} → ${stage.to} · ${stage.km} km</div>` : '';
+        const dateHtml  = stage.date
+          ? `<div class="stage-date">${typePill}${formatDate(stage.date)}</div>`
+          : (typePill ? `<div class="stage-date">${typePill}</div>` : '');
+
         const row = document.createElement('div');
         row.className = rowClass;
         row.innerHTML = `
           <div class="stage-info">
             <div class="stage-name">${stage.label}${badge}</div>
-            ${stage.date ? `<div class="stage-date">${formatDate(stage.date)}</div>` : ''}
+            ${routeHtml}
+            ${dateHtml}
           </div>
           <div class="stage-play">▶</div>
         `;
