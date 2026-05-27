@@ -191,9 +191,14 @@ async function sendNotifications(newStages, compId, sportId, compName) {
     : `${name} — ${newStages.length} nouvelles étapes sur NoSpoil`;
 
   const stagesLinks = newStages.map(s => {
-    const stageUrl = `${siteUrl}?sport=${sportId}&comp=${compId}&stage=${s.id}`;
+    const stageUrl = `${siteUrl}/cyclisme/${compId}?stage=${s.id}`;
     return `<p style="margin:0.6rem 0">Sans spoiler, comme toujours, voici <strong>${s.label}</strong> :<br>
-     <a href="${stageUrl}" style="color:#00E27A;font-weight:600">Regarder sur NoSpoil →</a></p>`;
+     <a href="${stageUrl}" style="color:#00E27A;font-weight:600">Regarder sur no-spoil.fr →</a></p>`;
+  }).join('\n');
+
+  const stagesText = newStages.map(s => {
+    const stageUrl = `${siteUrl}/cyclisme/${compId}?stage=${s.id}`;
+    return `${s.label} dispo — ${stageUrl}`;
   }).join('\n');
 
   const html = `
@@ -204,24 +209,28 @@ async function sendNotifications(newStages, compId, sportId, compName) {
       ${stagesLinks}
       <hr style="margin:2rem 0;border:none;border-top:1px solid #1e2e20">
       <p style="font-size:0.72rem;color:#6b7e6e;margin:0">
-        Tu reçois cet email car tu t'es inscrit sur NoSpoil.<br>
+        Tu reçois cet email car tu t'es inscrit sur no-spoil.fr.<br>
         <a href="${siteUrl}/api/unsubscribe?email=EMAIL" style="color:#6b7e6e">Se désabonner</a>
       </p>
     </div>`;
 
+  const replyEmail = process.env.REPLY_TO_EMAIL || 'contact@no-spoil.fr';
+
   let sent = 0;
   for (const sub of subscribers) {
     const emailHtml = html.replace('EMAIL', encodeURIComponent(sub.email));
+    const emailText = `NO.SPOIL\n\n${stagesText}\n\nTu reçois cet email car tu t'es inscrit sur no-spoil.fr.\nSe désabonner : ${siteUrl}/api/unsubscribe?email=${encodeURIComponent(sub.email)}`;
     try {
       const res = await fetchAPI('https://api.brevo.com/v3/smtp/email', {
         method:  'POST',
         headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sender:      { name: 'NoSpoil', email: senderEmail },
-          replyTo:     { email: 'nofuckingspoil@proton.me' },
+          sender:      { name: 'no-spoil.fr', email: senderEmail },
+          replyTo:     { email: replyEmail },
           to:          [{ email: sub.email }],
           subject,
           htmlContent: emailHtml,
+          textContent: emailText,
         }),
       });
       if (res.status === 201) sent++;

@@ -10,10 +10,8 @@ export default function SportsSection({ sports, onSubscribe, videoMap }) {
       <div className="container">
         <div className="section-head">
           <div>
-            <p className="eyebrow">01 — Choisis ton terrain</p>
-            <h2 className="h2">Quel sport, ce soir ?</h2>
+            <h2 className="h2">Vivez les temps forts de vos compétitions préférées sans spoilers</h2>
           </div>
-          <p className="section-note">On commence par le cyclisme. Le reste arrive.</p>
         </div>
         <div className="sports-grid">
           {sports.map(s => (

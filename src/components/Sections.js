@@ -6,16 +6,15 @@ import { Wordmark } from './Brand'
 // ───────────────────────────────────────── HOW IT WORKS
 export function HowItWorks() {
   const steps = [
-    { n: '01', t: 'Tu choisis ton sport.', d: 'Cyclisme pour le moment. Roland Garros & Coupe du Monde arrivent.', icon: '🏁' },
-    { n: '02', t: "Tu cliques l'étape.", d: "Pas de titre, pas de miniature, pas de \"vous avez aimé… vous adorerez\". Juste le résumé.", icon: '👀' },
-    { n: '03', t: 'Tu regardes, peinard.', d: 'Le résultat se découvre au fil de la course. Comme avant les notifs push.', icon: '☕' },
+    { n: '01', t: 'Tu choisis ton sport.', d: "Cyclisme, tennis, foot, il y en a pour tous les goûts.", icon: '🏁' },
+    { n: '02', t: "Tu sélectionnes ton étape/match.", d: "Pas de titre, pas de miniature, pas de \"vous avez aimé… vous adorerez\". Juste le nom de l'événement.", icon: '👀' },
+    { n: '03', t: 'Tu regardes, peinard.', d: "Pas de spoil, juste des émotions et du suspens, comme si tu y étais !", icon: '☕' },
   ];
   return (
     <section className="section section-tinted" id="how">
       <div className="container">
         <div className="section-head">
           <div>
-            <p className="eyebrow">02 — Comment ça marche</p>
             <h2 className="h2">Trois clics. Zéro spoil.</h2>
           </div>
         </div>
@@ -36,7 +35,7 @@ export function HowItWorks() {
           <div className="bot-icon">🤖</div>
           <div>
             <div className="bot-title">Et derrière, un petit robot.</div>
-            <div className="bot-text">Toutes les 5 minutes, on scanne la chaîne d&apos;Eurosport France. Dès qu&apos;un résumé sort, il apparaît ici — et un mail part aux abonnés. Tu n&apos;as littéralement rien à faire.</div>
+            <div className="bot-text">Toutes les 5 minutes, on scanne les meilleures chaînes de sport. Dès qu&apos;un résumé sort, il apparaît ici — et un mail part aux abonnés. Tu n&apos;as littéralement rien à faire.</div>
           </div>
         </div>
       </div>
@@ -60,7 +59,6 @@ export function EmailBand({ onSubscribe }) {
     <section className="section email-band" id="email">
       <div className="container email-inner">
         <div className="email-left">
-          <p className="eyebrow eyebrow-light">03 — Inscris-toi</p>
           <h2 className="h2 h2-light">Reçois un mail dès qu&apos;un résumé est dispo.</h2>
           <p className="email-lede">
             Le mail dit juste « <strong>Étape X dispo, lien ici</strong> ». Pas d&apos;objet qui spoile.<br />
@@ -158,7 +156,7 @@ export function StatsStrip() {
         </div>
         <div className="stat-block">
           <div className="stat-big">100 %</div>
-          <div className="stat-lbl">indépendant — pas de pub, pas de VC</div>
+          <div className="stat-lbl">indépendant — pas de pub</div>
         </div>
         <div className="stat-block">
           <div className="stat-big">5 min</div>

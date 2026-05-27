@@ -22,9 +22,6 @@ export default function Hero({ onSubscribe }) {
       <div className="hero-grain" />
       <div className="container hero-inner">
         <div className="hero-left">
-          <div className="hero-eyebrow">
-            <span className="pill-live"><span className="dot-live" /> Giro d&apos;Italia · Étape 17 en ligne</span>
-          </div>
           <h1 className="hero-title">
             Ne sachez rien<br />
             avant d&apos;appuyer<br />
