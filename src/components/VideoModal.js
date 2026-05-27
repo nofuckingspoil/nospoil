@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Wordmark, NoEye } from './Brand'
 
 export default function VideoModal({ stage, comp, onClose }) {
-  const [started, setStarted] = useState(true);
+  const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
