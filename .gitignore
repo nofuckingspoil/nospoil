@@ -3,3 +3,5 @@
 .env.local
 .github/workflows/
 .vercel
+.next/
+node_modules/

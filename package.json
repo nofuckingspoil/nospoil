@@ -1,0 +1,17 @@
+{
+  "name": "nospoil",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "scraper": "node scraper.js",
+    "update": "node update.js"
+  },
+  "dependencies": {
+    "next": "^16.2.6",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

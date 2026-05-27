@@ -1,8 +1,8 @@
-// Brand bits — wordmark, certified badge, small icons
-const { useState, useEffect, useMemo, useRef } = React;
+'use client'
+import { useMemo } from 'react'
 
 // "no.spoil" wordmark — variable. The dot is colored as a checkmark dot.
-function Wordmark({ size = 28, white = false }) {
+export function Wordmark({ size = 28, white = false }) {
   const color = white ? '#F6F4EE' : 'var(--ink)';
   const dot = 'var(--accent)';
   return (
@@ -15,7 +15,7 @@ function Wordmark({ size = 28, white = false }) {
 }
 
 // Certified seal — circular sticker, "NO SPOIL · CERTIFIED" curved, checkmark center
-function CertifiedBadge({ size = 140, rotate = -8, dark = false }) {
+export function CertifiedBadge({ size = 140, rotate = -8, dark = false }) {
   const id = useMemo(() => 'curve-' + Math.random().toString(36).slice(2, 8), []);
   const bg = dark ? '#0E0E10' : '#F6F4EE';
   const fg = dark ? '#F6F4EE' : '#0E0E10';
@@ -53,7 +53,7 @@ function CertifiedBadge({ size = 140, rotate = -8, dark = false }) {
 }
 
 // Cycling pictogram (sketchy)
-function CycleGlyph({ size = 60, color = 'currentColor' }) {
+export function CycleGlyph({ size = 60, color = 'currentColor' }) {
   return (
     <svg viewBox="0 0 100 60" width={size} height={(size * 60) / 100} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="22" cy="44" r="14" />
@@ -65,7 +65,7 @@ function CycleGlyph({ size = 60, color = 'currentColor' }) {
 }
 
 // "Eye crossed" icon — anti-spoiler emblem
-function NoEye({ size = 22, color = 'currentColor' }) {
+export function NoEye({ size = 22, color = 'currentColor' }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
@@ -74,5 +74,3 @@ function NoEye({ size = 22, color = 'currentColor' }) {
     </svg>
   );
 }
-
-Object.assign(window, { Wordmark, CertifiedBadge, CycleGlyph, NoEye });

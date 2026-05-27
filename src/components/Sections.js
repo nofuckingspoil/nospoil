@@ -1,8 +1,10 @@
-// Lower-page sections: how it works, FAQ, stats, feedback, footer
-const { useState: useStateS } = React;
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { Wordmark } from './Brand'
 
 // ───────────────────────────────────────── HOW IT WORKS
-function HowItWorks() {
+export function HowItWorks() {
   const steps = [
     { n: '01', t: 'Tu choisis ton sport.', d: 'Cyclisme pour le moment. Roland Garros & Coupe du Monde arrivent.', icon: '🏁' },
     { n: '02', t: "Tu cliques l'étape.", d: "Pas de titre, pas de miniature, pas de \"vous avez aimé… vous adorerez\". Juste le résumé.", icon: '👀' },
@@ -34,7 +36,7 @@ function HowItWorks() {
           <div className="bot-icon">🤖</div>
           <div>
             <div className="bot-title">Et derrière, un petit robot.</div>
-            <div className="bot-text">Toutes les 5 minutes, on scanne la chaîne d'Eurosport France. Dès qu'un résumé sort, il apparaît ici — et un mail part aux abonnés. Tu n'as littéralement rien à faire.</div>
+            <div className="bot-text">Toutes les 5 minutes, on scanne la chaîne d&apos;Eurosport France. Dès qu&apos;un résumé sort, il apparaît ici — et un mail part aux abonnés. Tu n&apos;as littéralement rien à faire.</div>
           </div>
         </div>
       </div>
@@ -43,9 +45,9 @@ function HowItWorks() {
 }
 
 // ───────────────────────────────────────── EMAIL CTA BAND
-function EmailBand({ onSubscribe }) {
-  const [email, setEmail] = useStateS('');
-  const [done, setDone] = useStateS(false);
+export function EmailBand({ onSubscribe }) {
+  const [email, setEmail] = useState('');
+  const [done, setDone] = useState(false);
   const submit = (e) => {
     e.preventDefault();
     if (!email.includes('@')) return;
@@ -59,9 +61,9 @@ function EmailBand({ onSubscribe }) {
       <div className="container email-inner">
         <div className="email-left">
           <p className="eyebrow eyebrow-light">03 — Inscris-toi</p>
-          <h2 className="h2 h2-light">Reçois un mail dès qu'un résumé est dispo.</h2>
+          <h2 className="h2 h2-light">Reçois un mail dès qu&apos;un résumé est dispo.</h2>
           <p className="email-lede">
-            Le mail dit juste « <strong>Étape X dispo, lien ici</strong> ». Pas d'objet qui spoile.<br />
+            Le mail dit juste « <strong>Étape X dispo, lien ici</strong> ». Pas d&apos;objet qui spoile.<br />
             Pas de pub. Pas de tracking. Désinscription en un clic.
           </p>
         </div>
@@ -84,7 +86,7 @@ function EmailBand({ onSubscribe }) {
 }
 
 // ───────────────────────────────────────── FAQ
-function FAQ() {
+export function FAQ() {
   const items = [
     {
       q: "C'est vraiment gratuit ?",
@@ -115,14 +117,14 @@ function FAQ() {
       a: "En bas de page, Twitter ou nofuckingspoil@proton.me. Plus la demande est précise (chaîne YouTube source, format des résumés), plus vite ça arrive.",
     },
   ];
-  const [open, setOpen] = useStateS(0);
+  const [open, setOpen] = useState(0);
   return (
     <section className="section" id="faq">
       <div className="container faq-inner">
         <div className="section-head">
           <div>
             <p className="eyebrow">04 — FAQ</p>
-            <h2 className="h2">Les questions qu'on me pose.</h2>
+            <h2 className="h2">Les questions qu&apos;on me pose.</h2>
           </div>
         </div>
         <div className="faq-list">
@@ -142,7 +144,7 @@ function FAQ() {
 }
 
 // ───────────────────────────────────────── STATS
-function StatsStrip() {
+export function StatsStrip() {
   return (
     <section className="stats-strip">
       <div className="container stats-inner">
@@ -168,16 +170,16 @@ function StatsStrip() {
 }
 
 // ───────────────────────────────────────── FEEDBACK
-function Feedback() {
+export function Feedback() {
   return (
     <section className="section feedback-section" id="feedback">
       <div className="container">
         <div className="feedback-card">
           <div className="feedback-left">
             <p className="eyebrow">05 — On parle ?</p>
-            <h2 className="h2">T'as une idée. Un bug. Un sport à ajouter. Dis-moi.</h2>
+            <h2 className="h2">T&apos;as une idée. Un bug. Un sport à ajouter. Dis-moi.</h2>
             <p className="feedback-lede">
-              no.spoil est fait par <strong>une personne</strong>. Pas de support de niveau 3, pas de bot. Tu m'écris, je te réponds (souvent le jour même).
+              no.spoil est fait par <strong>une personne</strong>. Pas de support de niveau 3, pas de bot. Tu m&apos;écris, je te réponds (souvent le jour même).
             </p>
             <div className="feedback-channels">
               <a className="ch-card ch-mail" href="mailto:nofuckingspoil@proton.me?subject=no.spoil%20—%20feedback">
@@ -198,14 +200,14 @@ function Feedback() {
               </a>
             </div>
             <p className="feedback-tiny">
-              Réponses moyennes en moins de 4 h les jours d'étape. Promesse de fan, pas de SLA.
+              Réponses moyennes en moins de 4 h les jours d&apos;étape. Promesse de fan, pas de SLA.
             </p>
           </div>
           <div className="feedback-right">
             <div className="quote-card">
-              <div className="quote-mark">"</div>
+              <div className="quote-mark">&quot;</div>
               <div className="quote-text">
-                « J'ai créé ce site parce que je suis arrivé chez moi, fatigué, j'ai ouvert YouTube pour le résumé de l'étape, et la première vignette m'a balancé qui avait gagné. Plus jamais. »
+                « J&apos;ai créé ce site parce que je suis arrivé chez moi, fatigué, j&apos;ai ouvert YouTube pour le résumé de l&apos;étape, et la première vignette m&apos;a balancé qui avait gagné. Plus jamais. »
               </div>
               <div className="quote-sig">— le mec derrière no.spoil</div>
             </div>
@@ -217,7 +219,7 @@ function Feedback() {
 }
 
 // ───────────────────────────────────────── FOOTER
-function Footer() {
+export function Footer() {
   return (
     <footer className="site-footer">
       <div className="container footer-inner">
@@ -255,7 +257,7 @@ function Footer() {
             <span className="footer-meta-sep">·</span>
             <span>RGPD</span>
             <span className="footer-meta-sep">·</span>
-            <span>Pas affilié à Eurosport, l'UCI, le Giro, l'ATP ou la FIFA.</span>
+            <span>Pas affilié à Eurosport, l&apos;UCI, le Giro, l&apos;ATP ou la FIFA.</span>
           </div>
         </div>
       </div>
@@ -264,13 +266,12 @@ function Footer() {
 }
 
 // Floating feedback button
-function FloatingFeedback({ onClick }) {
+export function FloatingFeedback() {
+  const router = useRouter()
   return (
-    <button className="float-feedback" onClick={onClick} aria-label="Feedback">
+    <button className="float-feedback" onClick={() => router.push('/#feedback')} aria-label="Feedback">
       <span className="float-icon">💬</span>
       <span className="float-label">Feedback</span>
     </button>
   );
 }
-
-Object.assign(window, { HowItWorks, EmailBand, FAQ, StatsStrip, Feedback, Footer, FloatingFeedback });
