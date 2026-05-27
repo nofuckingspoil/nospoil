@@ -476,7 +476,11 @@ function VideoModal({ stage, comp, onClose }) {
   const [duration, setDuration] = useStateV(0);
   const [muted, setMuted] = useStateV(false);
   const [revealed, setRevealed] = useStateV(false);
+  const [speed, setSpeed] = useStateV(1);
+  const [speedOpen, setSpeedOpen] = useStateV(false);
   const playerRef = useRefV(null);
+  const speedWrapRef = useRefV(null);
+  const SPEEDS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
   const timerRef = useRefV(null);
 
   useEffectV(() => {
@@ -490,6 +494,15 @@ function VideoModal({ stage, comp, onClose }) {
       if (playerRef.current) try { playerRef.current.destroy(); } catch (_) {}
     };
   }, []);
+
+  useEffectV(() => {
+    if (!speedOpen) return;
+    const close = (e) => {
+      if (speedWrapRef.current && !speedWrapRef.current.contains(e.target)) setSpeedOpen(false);
+    };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, [speedOpen]);
 
   // Init YT player once the div is in the DOM (after started = true)
   useEffectV(() => {
@@ -602,6 +615,24 @@ function VideoModal({ stage, comp, onClose }) {
           }} aria-label={muted ? 'Activer le son' : 'Couper le son'}>
             {muted ? '🔇' : '🔊'}
           </button>
+          <div className="video-speed-wrap" ref={speedWrapRef}>
+            {speedOpen && (
+              <div className="video-speed-menu">
+                {SPEEDS.map(s => (
+                  <button key={s} className={`video-speed-option${s === speed ? ' video-speed-option--active' : ''}`} onClick={() => {
+                    setSpeed(s);
+                    setSpeedOpen(false);
+                    if (playerRef.current) playerRef.current.setPlaybackRate(s);
+                  }}>
+                    {s === 1 ? 'Normal' : `${s}×`}
+                  </button>
+                ))}
+              </div>
+            )}
+            <button className="video-ctrl video-ctrl--speed" onClick={() => setSpeedOpen(o => !o)} aria-label="Vitesse de lecture" style={{ color: speed !== 1 ? 'var(--accent)' : undefined }}>
+              {speed}×
+            </button>
+          </div>
           <button className="video-ctrl" onClick={() => {
             const el = document.querySelector('.video-shell');
             document.fullscreenElement ? document.exitFullscreen() : el?.requestFullscreen().catch(() => {});
