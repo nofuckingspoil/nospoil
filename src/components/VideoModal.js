@@ -23,8 +23,6 @@ export default function VideoModal({ stage, comp, onClose }) {
     return () => {
       document.removeEventListener('keydown', onKey);
       document.body.style.overflow = '';
-      clearInterval(timerRef.current);
-      if (playerRef.current) try { playerRef.current.destroy(); } catch (_) {}
     };
   }, [onClose]);
 
@@ -73,6 +71,14 @@ export default function VideoModal({ stage, comp, onClose }) {
       const prev = window.onYouTubeIframeAPIReady;
       window.onYouTubeIframeAPIReady = () => { if (prev) prev(); init(); };
     }
+
+    return () => {
+      clearInterval(timerRef.current);
+      if (playerRef.current) {
+        try { playerRef.current.destroy(); } catch (_) {}
+        playerRef.current = null;
+      }
+    };
   }, [started, stage.videoId]);
 
   const fmt = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
