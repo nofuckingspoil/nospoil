@@ -4,18 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>NoSpoil — Résumés cyclisme</title>
+  <title>NoSpoil — Résumés sans spoilers</title>
   <style>
     :root {
-      --bg:        #0d0d12;
-      --surface:   #16161f;
-      --surface2:  #1e1e2b;
-      --border:    #2a2a3a;
+      --bg:        #f8f6f1;
+      --surface:   #ffffff;
+      --surface2:  #f0ede7;
+      --border:    #e4dfd7;
       --accent:    #e8453c;
-      --accent-lo: rgba(232, 69, 60, 0.12);
-      --text:      #eeeef5;
-      --muted:     #64647e;
-      --radius:    8px;
+      --accent-lo: rgba(232, 69, 60, 0.09);
+      --text:      #1a1714;
+      --muted:     #6e6860;
+      --radius:    12px;
+      --shadow:    0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,171 +35,245 @@
     /* ── Header ── */
     header {
       width: 100%;
-      padding: 2.5rem 1.5rem 1.5rem;
+      padding: 2.5rem 1.5rem 2rem;
       text-align: center;
+      background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
 
-    .logo { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.5px; }
+    .logo {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text);
+    }
+
     .logo span { color: var(--accent); }
 
     .tagline {
       color: var(--muted);
-      font-size: 0.875rem;
-      margin-top: 0.4rem;
-      line-height: 1.5;
+      font-size: 0.9rem;
+      margin-top: 0.35rem;
     }
 
     /* ── Main ── */
     main {
       width: 100%;
-      max-width: 680px;
-      padding: 2rem 1.25rem 3rem;
+      max-width: 700px;
+      padding: 2rem 1.25rem 4rem;
       display: flex;
       flex-direction: column;
-      gap: 1.75rem;
+      gap: 2rem;
     }
 
-    .field-label {
+    /* ── Section label ── */
+    .section-label {
       font-size: 0.7rem;
       text-transform: uppercase;
       letter-spacing: 1.2px;
       color: var(--muted);
-      margin-bottom: 0.6rem;
       font-weight: 600;
+      margin-bottom: 0.75rem;
     }
+
+    /* ── Breadcrumb ── */
+    .breadcrumb {
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb.visible { display: flex; }
+
+    .breadcrumb-item { cursor: pointer; }
+    .breadcrumb-item:hover { color: var(--text); text-decoration: underline; }
+    .breadcrumb-sep { opacity: 0.4; }
+    .breadcrumb-current { color: var(--text); font-weight: 500; }
 
     /* ── Sport selector ── */
-    .sport-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .sport-row {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+    }
 
     .sport-btn {
-      padding: 0.55rem 1.1rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.1rem;
+      border-radius: 999px;
+      border: 1.5px solid var(--border);
       background: var(--surface);
-      color: var(--text);
-      font-size: 0.9rem;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 500;
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
       font-family: inherit;
+      transition: all 0.15s;
+      box-shadow: var(--shadow);
     }
+
+    .sport-btn:hover { border-color: #c8c3bb; color: var(--text); }
 
     .sport-btn.active {
       border-color: var(--accent);
       color: var(--accent);
       background: var(--accent-lo);
+      font-weight: 600;
     }
 
-    .sport-btn.soon { opacity: 0.3; cursor: default; font-style: italic; }
+    .sport-btn.soon {
+      opacity: 0.5;
+      cursor: default;
+    }
 
-    .soon-tag {
+    .soon-badge {
       font-size: 0.65rem;
-      vertical-align: middle;
-      margin-left: 0.3rem;
-      background: var(--border);
-      padding: 0.1rem 0.4rem;
-      border-radius: 4px;
-      font-style: normal;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: 0.1rem 0.45rem;
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight: 500;
     }
 
-    /* ── Stage + Language row ── */
-    .controls-row { display: flex; gap: 1rem; align-items: flex-end; }
-    .control-group { flex: 1; }
-    .control-group.lang { flex: 0 0 auto; }
+    /* ── Competitions ── */
+    .comp-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
 
-    .select-wrapper { position: relative; }
+    .comp-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.1rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
 
-    .select-wrapper::after {
-      content: "▾";
+    .comp-card::before {
+      content: '';
       position: absolute;
-      right: 0.9rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--muted);
-      pointer-events: none;
-      font-size: 0.85rem;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--comp-color, var(--border));
+      border-radius: var(--radius) var(--radius) 0 0;
     }
 
-    select {
-      width: 100%;
-      padding: 0.65rem 2.2rem 0.65rem 0.9rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+    .comp-card:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+
+    .comp-card.active {
+      border-color: var(--comp-color, var(--accent));
+      background: color-mix(in srgb, var(--comp-color, var(--accent)) 6%, white);
+    }
+
+    .comp-card.upcoming {
+      opacity: 0.55;
+      cursor: default;
+    }
+
+    .comp-card.upcoming:hover { box-shadow: var(--shadow); transform: none; }
+
+    .comp-name {
+      font-size: 0.92rem;
+      font-weight: 600;
       color: var(--text);
-      font-size: 0.95rem;
-      font-family: inherit;
-      appearance: none;
-      cursor: pointer;
-      transition: border-color 0.15s;
+      line-height: 1.3;
     }
 
-    select:focus { outline: none; border-color: var(--accent); }
-
-    .lang-btns { display: flex; gap: 0.4rem; }
-
-    .lang-btn {
-      padding: 0.65rem 0.9rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      background: var(--surface);
+    .comp-meta {
+      font-size: 0.75rem;
       color: var(--muted);
-      font-size: 0.85rem;
-      font-weight: 700;
-      font-family: inherit;
+      margin-top: 0.3rem;
+    }
+
+    /* ── Stage list ── */
+    .stage-list {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .stage-empty {
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.875rem;
+    }
+
+    .stage-row {
+      display: flex;
+      align-items: center;
+      padding: 0.85rem 1.1rem;
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
-      transition: border-color 0.15s, color 0.15s, background 0.15s;
-      letter-spacing: 0.5px;
+      transition: background 0.12s;
+      gap: 1rem;
     }
 
-    .lang-btn.active {
-      border-color: var(--accent);
-      color: var(--accent);
+    .stage-row:last-child { border-bottom: none; }
+    .stage-row:hover { background: var(--surface2); }
+
+    .stage-row.active {
       background: var(--accent-lo);
+      border-left: 3px solid var(--accent);
     }
 
-    /* ── Launch button ── */
-    .launch-btn {
-      width: 100%;
-      padding: 1rem;
+    .stage-info { flex: 1; min-width: 0; }
+
+    .stage-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .stage-date {
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    .stage-play {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
       background: var(--accent);
       color: #fff;
-      border: none;
-      border-radius: var(--radius);
-      font-size: 1.05rem;
-      font-weight: 700;
-      font-family: inherit;
-      cursor: pointer;
-      transition: background 0.15s, transform 0.1s;
-      letter-spacing: 0.2px;
-    }
-
-    .launch-btn:hover  { background: #d03c34; }
-    .launch-btn:active { transform: scale(0.99); }
-
-    .launch-btn:disabled {
-      background: var(--surface2);
-      color: var(--muted);
-      cursor: not-allowed;
-      border: 1px solid var(--border);
-    }
-
-    /* ── Conteneur player (vidéo + barre) ── */
-    .player-container {
       display: flex;
-      flex-direction: column;
-      border-radius: 10px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      background: var(--surface);
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      flex-shrink: 0;
+      transition: transform 0.15s;
     }
 
-    /* ── Zone vidéo ── */
-    .video-wrap {
+    .stage-row:hover .stage-play { transform: scale(1.1); }
+
+    /* ── Player ── */
+    .player-wrap {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1.5px solid var(--border);
+      box-shadow: var(--shadow-md);
+      background: #000;
+    }
+
+    .video-area {
       position: relative;
       width: 100%;
       aspect-ratio: 16 / 9;
-      background: #000;
+      background: #111;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -205,30 +281,31 @@
     }
 
     .video-placeholder {
-      text-align: center;
-      color: var(--muted);
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.75rem;
-      padding: 1.5rem;
+      padding: 2rem;
+      text-align: center;
     }
 
-    .video-placeholder .play-icon {
+    .video-placeholder .play-ring {
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      border: 2px solid var(--border);
+      border: 2px solid rgba(255,255,255,0.15);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
-      opacity: 0.35;
+      font-size: 1.3rem;
+      color: rgba(255,255,255,0.3);
     }
 
-    .video-placeholder p { font-size: 0.875rem; }
+    .video-placeholder p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.3);
+    }
 
-    /* L'iframe déborde en haut et en bas — les barres YouTube tombent dans le letterbox */
     #yt-iframe {
       position: absolute;
       top: -18%;
@@ -236,18 +313,15 @@
       width: 100%;
       height: 136%;
       border: none;
-      display: block;
     }
 
-    /* Vitre transparente devant l'iframe — bloque les interactions YouTube */
     .video-glass {
       position: absolute;
       inset: 0;
       z-index: 5;
-      cursor: default;
     }
 
-    /* ── Overlay générique (chargement + pause) ── */
+    /* ── Overlay générique ── */
     .video-overlay {
       position: absolute;
       inset: 0;
@@ -262,53 +336,37 @@
       transition: opacity 0.4s ease;
     }
 
-    .video-overlay.hiding {
-      opacity: 0;
-      pointer-events: none;
-    }
-
+    .video-overlay.hiding { opacity: 0; pointer-events: none; }
     .video-overlay.clickable { cursor: pointer; }
 
-    .overlay-icon {
-      font-size: 2rem;
-      line-height: 1;
-    }
-
-    .overlay-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .overlay-sub {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.45);
-    }
+    .overlay-icon { font-size: 1.8rem; }
+    .overlay-title { font-size: 0.9rem; font-weight: 600; color: #fff; }
+    .overlay-sub { font-size: 0.72rem; color: rgba(255,255,255,0.45); }
 
     .overlay-play-btn {
-      width: 68px;
-      height: 68px;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: var(--accent);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.7rem;
+      font-size: 1.6rem;
       color: #fff;
-      transition: transform 0.15s;
       margin-bottom: 0.2rem;
+      transition: transform 0.15s;
     }
 
     .video-overlay.clickable:hover .overlay-play-btn { transform: scale(1.08); }
 
-    /* ── Barre de contrôles sous la vidéo ── */
+    /* ── Player bar ── */
     .player-bar {
       display: none;
       align-items: center;
       gap: 0.65rem;
-      padding: 0.6rem 0.9rem;
-      background: var(--surface2);
-      border-top: 1px solid var(--border);
+      padding: 0.65rem 1rem;
+      background: #1a1714;
+      border-top: 1px solid #2a2520;
     }
 
     .player-bar.active { display: flex; }
@@ -316,25 +374,23 @@
     .ctrl-btn {
       background: none;
       border: none;
-      color: var(--muted);
+      color: rgba(255,255,255,0.5);
       cursor: pointer;
       padding: 0.2rem;
-      font-size: 1rem;
+      font-size: 0.95rem;
       line-height: 1;
       flex-shrink: 0;
       transition: color 0.15s;
     }
 
-    .ctrl-btn:hover { color: var(--text); }
+    .ctrl-btn:hover { color: #fff; }
 
-    /* Barre de progression */
     .progress-wrap {
       flex: 1;
-      height: 4px;
-      background: var(--border);
+      height: 3px;
+      background: rgba(255,255,255,0.15);
       border-radius: 2px;
       cursor: pointer;
-      position: relative;
     }
 
     .progress-fill {
@@ -348,13 +404,22 @@
 
     .progress-wrap:hover .progress-fill { background: #fff; }
 
-    /* Temps */
     .time-display {
-      font-size: 0.72rem;
-      color: var(--muted);
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.45);
       white-space: nowrap;
       flex-shrink: 0;
       font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Sections animées ── */
+    .step {
+      animation: fadeUp 0.2s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     /* ── Footer ── */
@@ -362,17 +427,15 @@
       margin-top: auto;
       padding: 1.5rem;
       color: var(--muted);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       text-align: center;
-      line-height: 1.6;
+      border-top: 1px solid var(--border);
+      width: 100%;
     }
 
     /* ── Responsive ── */
     @media (max-width: 480px) {
-      .controls-row { flex-direction: column; }
-      .control-group.lang { width: 100%; }
-      .lang-btns { width: 100%; }
-      .lang-btn { flex: 1; text-align: center; }
+      .comp-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -380,60 +443,54 @@
 
   <header>
     <div class="logo">No<span>Spoil</span></div>
-    <p class="tagline">
-      Le chemin le plus court et le plus propre vers le résumé officiel<br>
-      Zéro clickbait, zéro grille de spoilers.
-    </p>
+    <p class="tagline">Regarde le résumé. Pas le résultat.</p>
   </header>
 
   <main>
 
+    <!-- Fil d'ariane -->
+    <nav class="breadcrumb" id="breadcrumb" aria-label="Navigation"></nav>
+
     <!-- Sport -->
-    <div>
-      <p class="field-label">Sport</p>
+    <div class="step">
+      <p class="section-label">Sport</p>
       <div class="sport-row">
-        <button class="sport-btn active">🚴 Cyclisme</button>
-        <button class="sport-btn soon" disabled>⚽ Football<span class="soon-tag">bientôt</span></button>
-        <button class="sport-btn soon" disabled>🎾 Tennis<span class="soon-tag">bientôt</span></button>
+        <button class="sport-btn active" data-sport="cyclisme">🚴 Cyclisme</button>
+        <button class="sport-btn soon" disabled>🎾 Roland Garros <span class="soon-badge">Juin 2026</span></button>
+        <button class="sport-btn soon" disabled>⚽ Coupe du Monde <span class="soon-badge">Été 2026</span></button>
       </div>
     </div>
 
-    <!-- Stage + Language -->
-    <div class="controls-row">
-      <div class="control-group">
-        <p class="field-label">Étape</p>
-        <div class="select-wrapper">
-          <select id="stage-select" aria-label="Choisir une étape"></select>
-        </div>
-      </div>
-      <div class="control-group lang">
-        <p class="field-label">Langue</p>
-        <div class="lang-btns">
-          <button class="lang-btn active" data-lang="fr" aria-pressed="true">FR</button>
-          <button class="lang-btn"        data-lang="en" aria-pressed="false">EN</button>
-        </div>
-      </div>
+    <!-- Compétitions -->
+    <div class="step" id="comp-section">
+      <p class="section-label">Compétition</p>
+      <div class="comp-grid" id="comp-grid"></div>
     </div>
 
-    <!-- Launch -->
-    <button class="launch-btn" id="launch-btn">▶&nbsp;&nbsp;Lancer le résumé</button>
+    <!-- Étapes -->
+    <div class="step" id="stages-section" style="display:none">
+      <p class="section-label">Étapes disponibles</p>
+      <div class="stage-list" id="stage-list"></div>
+    </div>
 
     <!-- Player -->
-    <div class="player-container">
-      <div class="video-wrap" id="video-area">
-        <div class="video-placeholder">
-          <div class="play-icon">▶</div>
-          <p>Sélectionne une étape, puis lance le résumé</p>
+    <div class="step" id="player-section" style="display:none">
+      <div class="player-wrap">
+        <div class="video-area" id="video-area">
+          <div class="video-placeholder">
+            <div class="play-ring">▶</div>
+            <p>Sélectionne une étape pour lancer le résumé</p>
+          </div>
         </div>
-      </div>
-      <div class="player-bar" id="player-bar">
-        <button class="ctrl-btn" id="ctrl-play" title="Pause">⏸</button>
-        <div class="progress-wrap" id="ctrl-progress">
-          <div class="progress-fill" id="progress-fill"></div>
+        <div class="player-bar" id="player-bar">
+          <button class="ctrl-btn" id="ctrl-play">⏸</button>
+          <div class="progress-wrap" id="ctrl-progress">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <span class="time-display" id="time-display">0:00 / 0:00</span>
+          <button class="ctrl-btn" id="ctrl-mute">🔊</button>
+          <button class="ctrl-btn" id="ctrl-fullscreen">⛶</button>
         </div>
-        <span class="time-display" id="time-display">0:00 / 0:00</span>
-        <button class="ctrl-btn" id="ctrl-mute" title="Muet">🔊</button>
-        <button class="ctrl-btn" id="ctrl-fullscreen" title="Plein écran">⛶</button>
       </div>
     </div>
 
@@ -446,11 +503,14 @@
   <script src="https://www.youtube.com/iframe_api"></script>
   <script src="data.js"></script>
   <script>
-    const stageSelect   = document.getElementById('stage-select');
+    // ── Références DOM ────────────────────────────────────────────
+    const breadcrumb    = document.getElementById('breadcrumb');
+    const compGrid      = document.getElementById('comp-grid');
+    const stagesSection = document.getElementById('stages-section');
+    const stageList     = document.getElementById('stage-list');
+    const playerSection = document.getElementById('player-section');
     const videoArea     = document.getElementById('video-area');
     const playerBar     = document.getElementById('player-bar');
-    const launchBtn     = document.getElementById('launch-btn');
-    const langBtns      = document.querySelectorAll('.lang-btn');
     const ctrlPlay      = document.getElementById('ctrl-play');
     const ctrlProgress  = document.getElementById('ctrl-progress');
     const progressFill  = document.getElementById('progress-fill');
@@ -458,35 +518,21 @@
     const ctrlMute      = document.getElementById('ctrl-mute');
     const ctrlFullscreen= document.getElementById('ctrl-fullscreen');
 
-    let selectedLang     = 'fr';
-    let ytPlayer         = null;
+    // ── État ──────────────────────────────────────────────────────
+    let selectedSport = DATA.sports[0];
+    let selectedComp  = null;
+    let selectedStage = null;
+    let ytPlayer      = null;
     let progressInterval = null;
-    let isMuted          = false;
-    let isPaused         = false;
+    let isMuted  = false;
+    let isPaused = false;
 
-    // ── Populate dropdown ──────────────────────
-    STAGES.forEach(s => {
-      const opt = document.createElement('option');
-      opt.value       = s.etape;
-      opt.textContent = s.label;
-      stageSelect.appendChild(opt);
-    });
-
-    // ── Helpers ───────────────────────────────
-    function getSelectedStage() {
-      return STAGES.find(s => s.etape === parseInt(stageSelect.value));
-    }
-
-    function isAvailable(stage, lang) {
-      const id = stage?.videos?.[lang];
-      return id && !id.startsWith('REMPLIR');
-    }
-
-    function updateLaunchBtn() {
-      const stage = getSelectedStage();
-      const avail = isAvailable(stage, selectedLang);
-      launchBtn.disabled    = !avail;
-      launchBtn.textContent = avail ? '▶  Lancer le résumé' : '▶  Vidéo non disponible';
+    // ── Formatage ─────────────────────────────────────────────────
+    function formatDate(str) {
+      if (!str) return '';
+      const [y, m, d] = str.split('-');
+      const mois = ['jan.','fév.','mars','avr.','mai','juin','juil.','août','sep.','oct.','nov.','déc.'];
+      return `${parseInt(d)} ${mois[parseInt(m) - 1]} ${y}`;
     }
 
     function formatTime(sec) {
@@ -494,6 +540,147 @@
       const m = Math.floor(sec / 60);
       const s = Math.floor(sec % 60);
       return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    // ── Breadcrumb ────────────────────────────────────────────────
+    function updateBreadcrumb() {
+      const parts = [];
+      if (selectedComp) {
+        parts.push({ label: selectedSport.label, action: () => { selectedComp = null; selectedStage = null; renderComps(); stagesSection.style.display = 'none'; playerSection.style.display = 'none'; resetPlayer(); updateBreadcrumb(); } });
+        if (selectedStage) {
+          parts.push({ label: selectedComp.label, action: () => { selectedStage = null; renderStages(selectedComp); playerSection.style.display = 'none'; resetPlayer(); updateBreadcrumb(); } });
+          parts.push({ label: selectedStage.label, action: null });
+        } else {
+          parts.push({ label: selectedComp.label, action: null });
+        }
+      }
+
+      if (parts.length === 0) {
+        breadcrumb.classList.remove('visible');
+        return;
+      }
+
+      breadcrumb.classList.add('visible');
+      breadcrumb.innerHTML = parts.map((p, i) => {
+        if (i === parts.length - 1) return `<span class="breadcrumb-current">${p.label}</span>`;
+        return `<span class="breadcrumb-item" onclick="(${p.action})()">${p.label}</span><span class="breadcrumb-sep">›</span>`;
+      }).join('');
+    }
+
+    // ── Compétitions ──────────────────────────────────────────────
+    function renderComps() {
+      compGrid.innerHTML = '';
+      selectedSport.competitions.forEach(comp => {
+        const card = document.createElement('div');
+        card.className = 'comp-card' + (comp.status === 'upcoming' ? ' upcoming' : '') + (comp === selectedComp ? ' active' : '');
+        card.style.setProperty('--comp-color', comp.color);
+
+        const count = comp.stages.filter(s => s.video).length;
+        const meta  = comp.status === 'upcoming'
+          ? comp.upcomingLabel
+          : count === 0 ? 'Aucun résumé disponible' : `${count} résumé${count > 1 ? 's' : ''} disponible${count > 1 ? 's' : ''}`;
+
+        card.innerHTML = `
+          <div class="comp-name">${comp.label}</div>
+          <div class="comp-meta">${meta}</div>
+        `;
+
+        if (comp.status !== 'upcoming') {
+          card.addEventListener('click', () => {
+            selectedComp  = comp;
+            selectedStage = null;
+            renderComps();
+            renderStages(comp);
+            stagesSection.style.display = 'block';
+            playerSection.style.display = 'none';
+            resetPlayer();
+            updateBreadcrumb();
+            stagesSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+        }
+
+        compGrid.appendChild(card);
+      });
+    }
+
+    // ── Étapes ───────────────────────────────────────────────────
+    function renderStages(comp) {
+      const available = comp.stages.filter(s => s.video);
+      stageList.innerHTML = '';
+
+      if (available.length === 0) {
+        stageList.innerHTML = '<div class="stage-empty">Aucun résumé disponible pour le moment.</div>';
+        return;
+      }
+
+      available.forEach(stage => {
+        const row = document.createElement('div');
+        row.className = 'stage-row' + (stage === selectedStage ? ' active' : '');
+        row.innerHTML = `
+          <div class="stage-info">
+            <div class="stage-name">${stage.label}</div>
+            ${stage.date ? `<div class="stage-date">${formatDate(stage.date)}</div>` : ''}
+          </div>
+          <div class="stage-play">▶</div>
+        `;
+        row.addEventListener('click', () => {
+          selectedStage = stage;
+          renderStages(comp);
+          playerSection.style.display = 'block';
+          launchPlayer(stage.video);
+          updateBreadcrumb();
+          playerSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+        stageList.appendChild(row);
+      });
+    }
+
+    // ── Overlays player ──────────────────────────────────────────
+    function showLoadingOverlay() {
+      const o = document.createElement('div');
+      o.className = 'video-overlay'; o.id = 'loading-overlay';
+      o.innerHTML = `<div class="overlay-icon">🛡️</div><div class="overlay-title">Chargement…</div><div class="overlay-sub">On cache le titre pour toi</div>`;
+      videoArea.appendChild(o);
+    }
+
+    function hideLoadingOverlay() {
+      const o = document.getElementById('loading-overlay');
+      if (!o) return;
+      o.classList.add('hiding');
+      setTimeout(() => o.remove(), 400);
+    }
+
+    function showPauseOverlay() {
+      if (videoArea.querySelector('.pause-overlay')) return;
+      const o = document.createElement('div');
+      o.className = 'video-overlay clickable pause-overlay';
+      o.innerHTML = `<div class="overlay-play-btn">▶</div><div class="overlay-title">Reprendre</div><div class="overlay-sub">Ton résumé t'attend — sans spoil 🤫</div>`;
+      o.addEventListener('click', () => ytPlayer?.playVideo());
+      videoArea.appendChild(o);
+    }
+
+    function hidePauseOverlay() {
+      const o = videoArea.querySelector('.pause-overlay');
+      if (!o) return;
+      o.classList.add('hiding');
+      setTimeout(() => o.remove(), 400);
+    }
+
+    // ── Player ───────────────────────────────────────────────────
+    function resetPlayer() {
+      if (ytPlayer) { try { ytPlayer.destroy(); } catch (_) {} ytPlayer = null; }
+      clearInterval(progressInterval); progressInterval = null;
+      isMuted = false; isPaused = false;
+      playerBar.classList.remove('active');
+      ctrlPlay.textContent = '⏸';
+      ctrlMute.textContent = '🔊';
+      progressFill.style.width = '0%';
+      timeDisplay.textContent = '0:00 / 0:00';
+      videoArea.innerHTML = `
+        <div class="video-placeholder">
+          <div class="play-ring">▶</div>
+          <p>Sélectionne une étape pour lancer le résumé</p>
+        </div>`;
     }
 
     function updateProgress() {
@@ -504,117 +691,13 @@
       timeDisplay.textContent  = `${formatTime(cur)} / ${formatTime(dur)}`;
     }
 
-    function showLoadingOverlay() {
-      const overlay = document.createElement('div');
-      overlay.className = 'video-overlay';
-      overlay.id = 'loading-overlay';
-      overlay.innerHTML = `
-        <div class="overlay-icon">🛡️</div>
-        <div class="overlay-title">Chargement en cours…</div>
-        <div class="overlay-sub">On cache le titre pour toi</div>
-      `;
-      videoArea.appendChild(overlay);
-    }
-
-    function hideLoadingOverlay() {
-      const overlay = document.getElementById('loading-overlay');
-      if (!overlay) return;
-      overlay.classList.add('hiding');
-      setTimeout(() => overlay.remove(), 400);
-    }
-
-    function showPauseOverlay() {
-      if (videoArea.querySelector('.pause-overlay')) return;
-      const overlay = document.createElement('div');
-      overlay.className = 'video-overlay clickable pause-overlay';
-      overlay.innerHTML = `
-        <div class="overlay-play-btn">▶</div>
-        <div class="overlay-title">Reprendre</div>
-        <div class="overlay-sub">Ton résumé t'attend — sans spoil 🤫</div>
-      `;
-      overlay.addEventListener('click', () => ytPlayer?.playVideo());
-      videoArea.appendChild(overlay);
-    }
-
-    function hidePauseOverlay() {
-      const overlay = videoArea.querySelector('.pause-overlay');
-      if (!overlay) return;
-      overlay.classList.add('hiding');
-      setTimeout(() => overlay.remove(), 400);
-    }
-
-    function resetPlayer() {
-      if (ytPlayer) { try { ytPlayer.destroy(); } catch (_) {} ytPlayer = null; }
-      clearInterval(progressInterval);
-      progressInterval = null;
-      isMuted  = false;
-      isPaused = false;
-      playerBar.classList.remove('active');
-      ctrlPlay.textContent = '⏸';
-      ctrlMute.textContent = '🔊';
-      progressFill.style.width = '0%';
-      timeDisplay.textContent  = '0:00 / 0:00';
-      videoArea.innerHTML = `
-        <div class="video-placeholder">
-          <div class="play-icon">▶</div>
-          <p>Sélectionne une étape, puis lance le résumé</p>
-        </div>`;
-    }
-
-    // ── Contrôles ─────────────────────────────
-    ctrlPlay.addEventListener('click', () => {
-      if (!ytPlayer) return;
-      isPaused ? ytPlayer.playVideo() : ytPlayer.pauseVideo();
-    });
-
-    ctrlProgress.addEventListener('click', (e) => {
-      if (!ytPlayer) return;
-      const rect  = ctrlProgress.getBoundingClientRect();
-      const ratio = (e.clientX - rect.left) / rect.width;
-      ytPlayer.seekTo(ytPlayer.getDuration() * ratio, true);
-    });
-
-    ctrlMute.addEventListener('click', () => {
-      if (!ytPlayer) return;
-      if (isMuted) {
-        ytPlayer.unMute();
-        isMuted = false;
-        ctrlMute.textContent = '🔊';
-      } else {
-        ytPlayer.mute();
-        isMuted = true;
-        ctrlMute.textContent = '🔇';
-      }
-    });
-
-    ctrlFullscreen.addEventListener('click', () => {
-      const container = document.querySelector('.player-container');
-      document.fullscreenElement
-        ? document.exitFullscreen()
-        : container.requestFullscreen().catch(() => {});
-    });
-
-    // ── YouTube IFrame API ─────────────────────
     function launchPlayer(videoId) {
-      videoArea.innerHTML = `
-        <div id="yt-iframe"></div>
-        <div class="video-glass"></div>
-      `;
+      videoArea.innerHTML = `<div id="yt-iframe"></div><div class="video-glass"></div>`;
       showLoadingOverlay();
 
       ytPlayer = new YT.Player('yt-iframe', {
         videoId,
-        playerVars: {
-          autoplay:       1,
-          controls:       0,
-          disablekb:      1,
-          rel:            0,
-          modestbranding: 1,
-          playsinline:    1,
-          fs:             0,
-          iv_load_policy: 3,
-          cc_load_policy: 0,
-        },
+        playerVars: { autoplay: 1, controls: 0, disablekb: 1, rel: 0, modestbranding: 1, playsinline: 1, fs: 0, iv_load_policy: 3, cc_load_policy: 0 },
         events: {
           onReady(e) {
             e.target.playVideo();
@@ -625,46 +708,41 @@
             if (e.data === YT.PlayerState.PLAYING) {
               isPaused = false;
               ctrlPlay.textContent = '⏸';
-              // Cache le loading overlay au premier PLAYING, et le pause overlay ensuite
               setTimeout(hideLoadingOverlay, 300);
               hidePauseOverlay();
             } else if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
               isPaused = true;
-              showPauseOverlay();
               ctrlPlay.textContent = '▶';
+              showPauseOverlay();
             }
           },
         },
       });
     }
 
-    // ── Launch ─────────────────────────────────
-    launchBtn.addEventListener('click', () => {
-      const stage = getSelectedStage();
-      if (!isAvailable(stage, selectedLang)) return;
-      const videoId = stage.videos[selectedLang];
-      if (typeof YT === 'undefined' || typeof YT.Player === 'undefined') {
-        window.onYouTubeIframeAPIReady = () => launchPlayer(videoId);
-      } else {
-        launchPlayer(videoId);
-      }
+    // ── Contrôles ────────────────────────────────────────────────
+    ctrlPlay.addEventListener('click', () => { if (!ytPlayer) return; isPaused ? ytPlayer.playVideo() : ytPlayer.pauseVideo(); });
+
+    ctrlProgress.addEventListener('click', e => {
+      if (!ytPlayer) return;
+      const r = (e.clientX - ctrlProgress.getBoundingClientRect().left) / ctrlProgress.offsetWidth;
+      ytPlayer.seekTo(ytPlayer.getDuration() * r, true);
     });
 
-    stageSelect.addEventListener('change', () => { resetPlayer(); updateLaunchBtn(); });
-
-    langBtns.forEach(btn => {
-      btn.addEventListener('click', () => {
-        langBtns.forEach(b => { b.classList.remove('active'); b.setAttribute('aria-pressed', 'false'); });
-        btn.classList.add('active');
-        btn.setAttribute('aria-pressed', 'true');
-        selectedLang = btn.dataset.lang;
-        resetPlayer();
-        updateLaunchBtn();
-      });
+    ctrlMute.addEventListener('click', () => {
+      if (!ytPlayer) return;
+      isMuted ? (ytPlayer.unMute(), isMuted = false, ctrlMute.textContent = '🔊')
+              : (ytPlayer.mute(),   isMuted = true,  ctrlMute.textContent = '🔇');
     });
 
-    // ── Init ──────────────────────────────────
-    updateLaunchBtn();
+    ctrlFullscreen.addEventListener('click', () => {
+      const el = document.querySelector('.player-wrap');
+      document.fullscreenElement ? document.exitFullscreen() : el.requestFullscreen().catch(() => {});
+    });
+
+    // ── Init ─────────────────────────────────────────────────────
+    renderComps();
+    updateBreadcrumb();
   </script>
 </body>
 </html>
