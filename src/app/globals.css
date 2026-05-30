@@ -1632,6 +1632,7 @@ input { font: inherit; }
 
 /* Panel commun (étapes communauté + done) */
 .sf-panel { padding: 6px 0; color: #F6F4EE; }
+.alert-flow-community { padding: 6px 0; color: #F6F4EE; }
 .sf-ok {
   font-weight: 700;
   font-size: 15px;

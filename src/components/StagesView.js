@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { NS_DATA } from '@/lib/nsData'
 import { NoEye } from './Brand'
+import AlertFlow from './AlertFlow'
 
 export default function StagesView({ sportId, compId, onPlay, onSubscribe, videoMap }) {
   const router = useRouter()
@@ -26,29 +27,9 @@ export default function StagesView({ sportId, compId, onPlay, onSubscribe, video
   }));
 
   const [filter, setFilter] = useState('all');
-  const [alertEmail, setAlertEmail] = useState('');
-  const [alertDone, setAlertDone] = useState(false);
-  const [bottomEmail, setBottomEmail] = useState('');
-  const [bottomDone, setBottomDone] = useState(false);
   const filtered = filter === 'all'
     ? stages
     : stages.filter(s => s.type === filter || (filter === 'mountain' && (s.type === 'montagne' || s.type === 'haute-montagne')));
-
-  const submitAlert = (e) => {
-    e.preventDefault();
-    if (!alertEmail.includes('@')) return;
-    onSubscribe(alertEmail, comp.id);
-    setAlertDone(true);
-    setAlertEmail('');
-  };
-
-  const submitBottom = (e) => {
-    e.preventDefault();
-    if (!bottomEmail.includes('@')) return;
-    onSubscribe(bottomEmail, comp.id);
-    setBottomDone(true);
-    setBottomEmail('');
-  };
 
   return (
     <section className="section view-section">
@@ -64,14 +45,7 @@ export default function StagesView({ sportId, compId, onPlay, onSubscribe, video
             <div className="comp-hero-flag">{comp.country}</div>
             <h1 className="view-title comp-hero-title">{comp.name}</h1>
             <div className="comp-hero-sub">{comp.edition} · {comp.dates}</div>
-            {alertDone ? (
-              <div className="hero-alert-ok">✓ Inscrit — on t&apos;écrit dès que la prochaine étape sort.</div>
-            ) : (
-              <form className="hero-alert-form" onSubmit={submitAlert}>
-                <input type="email" placeholder="ton@email.fr" value={alertEmail} onChange={e => setAlertEmail(e.target.value)} />
-                <button type="submit" className="hero-alert-btn">🔔 M&apos;alerter des derniers résumés →</button>
-              </form>
-            )}
+            <AlertFlow onSubscribe={onSubscribe} topic={comp.id} variant="hero" />
           </div>
           <div className="comp-hero-right">
             <div className="comp-hero-stat">
@@ -104,16 +78,7 @@ export default function StagesView({ sportId, compId, onPlay, onSubscribe, video
           <div className="stages-end-text">
             <NoEye size={16} /> &nbsp; Tu es à jour. Prochaine étape dès qu&apos;elle sort.
           </div>
-          {bottomDone ? (
-            <div className="card-alert-ok">✓ Inscrit — on t&apos;écrit dès que la prochaine étape sort.</div>
-          ) : (
-            <form className="stages-end-form" onSubmit={submitBottom}>
-              <input id="stages-bottom-email" type="email" placeholder="ton@email.fr" value={bottomEmail} onChange={e => setBottomEmail(e.target.value)} />
-              <button type="submit" className="btn btn-primary" style={{ padding: '10px 22px', fontSize: '14px' }}>
-                🔔 M&apos;alerter des prochains résumés
-              </button>
-            </form>
-          )}
+          <AlertFlow onSubscribe={onSubscribe} topic={comp.id} variant="bottom" inputId="stages-bottom-email" />
         </div>
       </div>
     </section>
