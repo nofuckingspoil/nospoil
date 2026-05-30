@@ -75,7 +75,7 @@ export default function CompetitionPage() {
   };
 
   const handlePlay = (stage, comp) => {
-    setVideo({ stage, comp });
+    setVideo({ stage, comp, autoStart: true });
     // Mettre à jour l'URL avec ?stage=X sans recharger la page
     const url = new URL(window.location.href);
     url.searchParams.set('stage', stage.num);
@@ -115,7 +115,7 @@ export default function CompetitionPage() {
         <Footer />
       </main>
       <FloatingFeedback />
-      {video && <VideoModal stage={video.stage} comp={video.comp} onClose={handleClose} />}
+      {video && <VideoModal stage={video.stage} comp={video.comp} onClose={handleClose} autoStart={video.autoStart ?? false} />}
     </div>
   );
 }
