@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useSearchParams, useRouter } from 'next/navigation'
 import Header from '@/components/Header'
 import StagesView from '@/components/StagesView'
+import MatchesView from '@/components/MatchesView'
 import VideoModal from '@/components/VideoModal'
 import { Footer, FloatingFeedback } from '@/components/Sections'
 import { NS_DATA } from '@/lib/nsData'
@@ -89,17 +90,28 @@ export default function CompetitionPage() {
     window.history.pushState({}, '', url.toString());
   };
 
+  const isTennis = sportId === 'tennis';
+
   return (
     <div className="app">
       <Header />
       <main>
-        <StagesView
-          sportId={sportId}
-          compId={compId}
-          onPlay={handlePlay}
-          onSubscribe={subscribe}
-          videoMap={videoMap}
-        />
+        {isTennis ? (
+          <MatchesView
+            sportId={sportId}
+            compId={compId}
+            onPlay={handlePlay}
+            onSubscribe={subscribe}
+          />
+        ) : (
+          <StagesView
+            sportId={sportId}
+            compId={compId}
+            onPlay={handlePlay}
+            onSubscribe={subscribe}
+            videoMap={videoMap}
+          />
+        )}
         <Footer />
       </main>
       <FloatingFeedback />

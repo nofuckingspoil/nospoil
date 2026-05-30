@@ -60,6 +60,29 @@ const DATA = {
           stages: []
         }
       ]
+    },
+    {
+      id: "tennis",
+      label: "Tennis",
+      icon: "🎾",
+      competitions: [
+        {
+          id: "rg2026-h",
+          label: "Roland Garros 2026 — Simple Hommes",
+          color: "#C8102E",
+          status: "active",
+          matchesTotal: 127,
+          stages: []
+        },
+        {
+          id: "rg2026-f",
+          label: "Roland Garros 2026 — Simple Dames",
+          color: "#E8B94F",
+          status: "active",
+          matchesTotal: 127,
+          stages: []
+        }
+      ]
     }
   ]
 };

@@ -932,6 +932,16 @@ input { font: inherit; }
 .filter-pill.on { background: var(--ink); color: #fff; border-color: var(--ink); }
 
 /* ───── stage rows ───── */
+.round-group { margin-bottom: 24px; }
+.round-group-head {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--mute);
+  padding: 0 4px 10px;
+}
+
 .stages-list {
   background: var(--surface);
   border-radius: 18px;

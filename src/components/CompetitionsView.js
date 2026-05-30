@@ -25,7 +25,7 @@ export default function CompetitionsView({ sportId, onSubscribe, videoMap }) {
           { label: sport.name },
         ]} />
         <h1 className="view-title">{sport.emoji} {sport.name}</h1>
-        <p className="view-lede">Choisis ta course. Les résumés se chargent au clic — sans rien révéler avant.</p>
+        <p className="view-lede">{sportId === 'tennis' ? 'Choisis ton tableau. Les résumés se chargent au clic — sans rien révéler avant.' : 'Choisis ta course. Les résumés se chargent au clic — sans rien révéler avant.'}</p>
 
         {live.length > 0 && (
           <div className="comp-group">
@@ -101,7 +101,7 @@ function CompetitionCard({ c, onClick, disabled, onSubscribe }) {
         <div className="comp-progress-bar">
           <div className="comp-progress-fill" style={{ width: `${(c.stagesDone / c.stagesTotal) * 100}%`, background: c.accent }} />
         </div>
-        <div className="comp-progress-label">{c.stagesDone} / {c.stagesTotal} étapes</div>
+        <div className="comp-progress-label">{c.stagesDone} / {c.stagesTotal} {c.sport === 'tennis' ? 'matchs' : 'étapes'}</div>
       </div>
       {!disabled && <div className="comp-arrow">→</div>}
     </>

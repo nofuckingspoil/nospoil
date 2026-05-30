@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Wordmark, NoEye } from './Brand'
 
 export default function VideoModal({ stage, comp, onClose }) {
+  const isTennis = comp?.sport === 'tennis';
   const [started, setStarted] = useState(false);
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -90,11 +91,13 @@ export default function VideoModal({ stage, comp, onClose }) {
           <div className="video-meta">
             <Wordmark size={18} white />
             <span className="video-sep">·</span>
-            <span className="video-stage-id">Étape {stage.num}</span>
+            <span className="video-stage-id">{isTennis ? stage.round : `Étape ${stage.num}`}</span>
             {revealed && (
               <>
                 <span className="video-sep">·</span>
-                <span className="video-stage-route">{stage.from} → {stage.to}</span>
+                <span className="video-stage-route">
+                  {isTennis ? `${stage.player1} vs ${stage.player2}` : `${stage.from} → ${stage.to}`}
+                </span>
               </>
             )}
           </div>
@@ -124,7 +127,10 @@ export default function VideoModal({ stage, comp, onClose }) {
                 <span className="poster-play-tri" />
               </button>
               <div className="poster-foot">
-                Tu vas regarder le résumé de l&apos;<strong>Étape {stage.num}</strong>.<br />
+                {isTennis
+                  ? <>Tu vas regarder <strong>{stage.player1} vs {stage.player2}</strong>.<br /></>
+                  : <>Tu vas regarder le résumé de l&apos;<strong>Étape {stage.num}</strong>.<br /></>
+                }
                 <span className="poster-foot-tiny">Rien n&apos;est révélé tant que tu n&apos;as pas appuyé.</span>
               </div>
             </div>
@@ -179,7 +185,7 @@ export default function VideoModal({ stage, comp, onClose }) {
         </div>
 
         <div className="video-foot">
-          Source : Eurosport France · YouTube · Lecture isolée — aucune recommandation, aucun titre, aucune miniature.
+          Source : {isTennis ? 'France TV Sport' : 'Eurosport France'} · YouTube · Lecture isolée — aucune recommandation, aucun titre, aucune miniature.
         </div>
       </div>
     </div>

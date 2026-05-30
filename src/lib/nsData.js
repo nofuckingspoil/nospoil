@@ -18,15 +18,17 @@ const COMP_META = {
   'classiques-2026':    { edition: '2026',           dates: 'Printemps 2026',             country: '🇪🇺 Europe'  },
   'paris-nice-2026':    { edition: '84ᵉ édition',   dates: '8 → 15 mars 2026',           country: '🇫🇷 France'  },
   'milan-sanremo-2026': { edition: '117ᵉ édition',  dates: '21 mars 2026',               country: '🇮🇹 Italie'  },
+  'rg2026-h':           { edition: '130ᵉ édition',  dates: '25 mai → 7 juin 2026',       country: '🇫🇷 France'  },
+  'rg2026-f':           { edition: '130ᵉ édition',  dates: '25 mai → 6 juin 2026',       country: '🇫🇷 France'  },
 };
 
 const SPORT_META = {
   'cyclisme': { tagline: 'Grands Tours, Classiques' },
+  'tennis':   { tagline: 'Roland Garros 2026' },
 };
 
 const UPCOMING_SPORTS = [
-  { id: 'roland-garros', name: 'Roland Garros', emoji: '🎾', status: 'soon', tagline: 'Prochainement — Roland Garros' },
-  { id: 'coupe-monde',   name: 'Coupe du Monde', emoji: '⚽', status: 'soon', tagline: 'Prochainement — 11 juin → 19 juil.' },
+  { id: 'coupe-monde', name: 'Coupe du Monde', emoji: '⚽', status: 'soon', tagline: 'Prochainement — 11 juin → 19 juil.' },
 ];
 
 const JOURS = ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'];
@@ -75,8 +77,9 @@ DATA.sports.forEach(sport => {
       country:     meta.country || '',
       status:      mapStatus(comp.status),
       accent:      comp.color,
+      sport:       sport.id,
       stagesDone:  0, // overridden at runtime from Supabase
-      stagesTotal: comp.stages.length,
+      stagesTotal: comp.stages.length || comp.matchesTotal || 0,
     };
   });
 

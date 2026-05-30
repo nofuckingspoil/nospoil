@@ -26,3 +26,4 @@ jobs:
           BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
           BREVO_SENDER_EMAIL: ${{ secrets.BREVO_SENDER_EMAIL }}
           SITE_URL: ${{ secrets.SITE_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
