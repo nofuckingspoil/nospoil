@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Wordmark } from './Brand'
+import SubscribeFlow from './SubscribeFlow'
 
 // ───────────────────────────────────────── HOW IT WORKS
 export function HowItWorks() {
@@ -44,17 +45,7 @@ export function HowItWorks() {
 }
 
 // ───────────────────────────────────────── EMAIL CTA BAND
-export function EmailBand({ onSubscribe }) {
-  const [email, setEmail] = useState('');
-  const [done, setDone] = useState(false);
-  const submit = (e) => {
-    e.preventDefault();
-    if (!email.includes('@')) return;
-    onSubscribe(email);
-    setDone(true);
-    setEmail('');
-    setTimeout(() => setDone(false), 5000);
-  };
+export function EmailBand() {
   return (
     <section className="section email-band" id="email">
       <div className="container email-inner">
@@ -65,19 +56,10 @@ export function EmailBand({ onSubscribe }) {
             Pas de pub. Pas de tracking. Désinscription en un clic.
           </p>
         </div>
-        <form className="email-form" onSubmit={submit}>
-          <input
-            type="email"
-            placeholder="ton@email.fr"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-          <button type="submit" className="btn btn-accent btn-lg">
-            {done ? '✓ Inscrit, merci' : "M'inscrire →"}
-          </button>
+        <div className="email-form-wrap">
+          <SubscribeFlow variant="band" />
           <div className="email-tiny">Hébergé en 🇫🇷. RGPD. Tes infos restent ici.</div>
-        </form>
+        </div>
       </div>
     </section>
   );
@@ -234,6 +216,7 @@ export function Footer() {
             <div className="footer-col">
               <div className="footer-col-t">Le projet</div>
               <a href="#how">Comment ça marche</a>
+              <a href="/communaute">Classement</a>
               <a href="#faq">FAQ</a>
               <a href="#feedback">Feedback</a>
             </div>

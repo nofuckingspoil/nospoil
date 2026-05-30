@@ -3,8 +3,10 @@ import { useState, useEffect } from 'react'
 import Header from '@/components/Header'
 import Hero from '@/components/Hero'
 import SportsSection from '@/components/SportsSection'
+import CommunityStrip from '@/components/CommunityStrip'
 import { HowItWorks, EmailBand, FAQ, StatsStrip, Feedback, Footer, FloatingFeedback } from '@/components/Sections'
 import { getNsData } from '@/lib/nsData'
+import { captureRefFromUrl } from '@/lib/referral'
 
 const SUPABASE_URL  = 'https://qdxthnlummnbtzdfkyby.supabase.co';
 const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFkeHRobmx1bW1uYnR6ZGZreWJ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk4NDI3MDEsImV4cCI6MjA5NTQxODcwMX0.PIYyqnBsiWIQWfxcX23C7aEpE04urfXNvzqAoS3ed08';
@@ -14,6 +16,9 @@ export default function HomePage() {
   const nsData = getNsData();
 
   useEffect(() => {
+    // Capturer le code de parrainage depuis l'URL dès le chargement
+    captureRefFromUrl();
+
     // Apply brand accent
     document.documentElement.style.setProperty('--accent',     '#00E27A');
     document.documentElement.style.setProperty('--accent-ink', '#001A0E');
@@ -36,7 +41,8 @@ export default function HomePage() {
       .catch(() => setVideoMap({}));
   }, []);
 
-  const subscribe = (email, topic = 'all') => {
+  // Utilisé uniquement pour les formulaires rapides des sport-cards
+  const quickSubscribe = (email, topic = 'all') => {
     fetch('/api/subscribe', {
       method:  'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -48,11 +54,12 @@ export default function HomePage() {
     <div className="app">
       <Header />
       <main>
-        <Hero onSubscribe={subscribe} />
-        <SportsSection sports={nsData.sports} onSubscribe={subscribe} videoMap={videoMap} />
+        <Hero />
+        <SportsSection sports={nsData.sports} onSubscribe={quickSubscribe} videoMap={videoMap} />
         <HowItWorks />
         <StatsStrip />
-        <EmailBand onSubscribe={subscribe} />
+        <CommunityStrip />
+        <EmailBand />
         <FAQ />
         <Feedback />
         <Footer />

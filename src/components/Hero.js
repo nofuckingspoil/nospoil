@@ -1,21 +1,10 @@
 'use client'
-import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { CertifiedBadge } from './Brand'
+import SubscribeFlow from './SubscribeFlow'
 
-export default function Hero({ onSubscribe }) {
-  const [email, setEmail] = useState('');
-  const [done, setDone] = useState(false);
+export default function Hero() {
   const router = useRouter()
-
-  const submit = (e) => {
-    e.preventDefault();
-    if (!email.includes('@')) return;
-    onSubscribe(email);
-    setDone(true);
-    setTimeout(() => setDone(false), 4500);
-    setEmail('');
-  };
 
   return (
     <section className="hero">
@@ -35,19 +24,8 @@ export default function Hero({ onSubscribe }) {
             <button className="btn btn-primary btn-lg" onClick={() => router.push('/#sports')}>
               Voir les résumés <span className="btn-arrow">→</span>
             </button>
-            <form className="hero-mail" onSubmit={submit}>
-              <input
-                type="email"
-                placeholder="ton@email.fr"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                aria-label="Email pour être alerté"
-              />
-              <button type="submit" className="btn btn-ghost">
-                {done ? '✓ Inscrit' : "M'alerter"}
-              </button>
-            </form>
           </div>
+          <SubscribeFlow variant="hero" />
           <p className="hero-tiny">
             Email anti-spoil aussi — juste « Étape X dispo ». Pas de pub. Désinscription en 1 clic.
           </p>
