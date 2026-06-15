@@ -3,6 +3,7 @@
 import { use, useEffect, useState } from 'react'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
+import { getDeviceToken } from '../../../lib/device'
 
 const TEASER_GRADS = [
   'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)',
@@ -105,7 +106,7 @@ export default function Gallery({ params }) {
   }
 
   function load() {
-    fetch(`/api/gallery/${id}`)
+    fetch(`/api/gallery/${id}`, { headers: { 'x-owner-token': getDeviceToken() } })
       .then((r) => r.json())
       .then((d) => (d.error ? setError(d.error) : setData(d)))
       .catch(() => setError('Connexion impossible.'))
@@ -114,12 +115,18 @@ export default function Gallery({ params }) {
 
   if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
   if (!data) return <main className="center-screen"><p className="muted">Chargement…</p></main>
-  if (!data.revealed) return <PreReveal data={data} onDone={load} />
+  // Galerie cachée tant que non révélée — sauf aperçu organisateur
+  if (!data.revealed && !data.ownerPreview) return <PreReveal data={data} onDone={load} />
 
   const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
 
   return (
     <main className="screen screen-cream wide">
+      {data.ownerPreview && (
+        <div className="notice" style={{ marginBottom: 14, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
+          👁️ <strong>Aperçu organisateur</strong> — vous voyez les photos en avant-première. Vos invités ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt)}.
+        </div>
+      )}
       <div className="gal-head">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
           <div className="eyebrow" style={{ fontSize: 10.5 }}>Révélé · {data.photos.length} souvenirs</div>

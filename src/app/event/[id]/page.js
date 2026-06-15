@@ -98,7 +98,7 @@ export default function EventManage({ params }) {
       {ev.isOwner ? (
         <>
           <Link href={`/g/${id}`} className="btn btn-ghost" style={{ marginTop: 16 }}>
-            {ev.revealed ? 'Voir la galerie →' : 'Aperçu de la galerie (verrouillée)'}
+            {ev.revealed ? 'Voir la galerie →' : 'Aperçu des photos (avant révélation) →'}
           </Link>
           <div className="notice" style={{ marginTop: 16 }}>
             💡 Gardez ce lien : c'est votre tableau de bord privé. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.

@@ -37,6 +37,7 @@ export default function GuestCamera({ params }) {
   const videoRef = useRef(null)
   const streamRef = useRef(null)
   const fileInputRef = useRef(null)
+  const galleryInputRef = useRef(null)
 
   useEffect(() => {
     fetch(`/api/events/${id}`)
@@ -149,6 +150,16 @@ export default function GuestCamera({ params }) {
     if (!file) return
     setBusy(true); setError('')
     fireShutterFeedback()
+    try { const img = await fileToImage(file); await capture(await compressToBlob(img)) }
+    catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
+  }
+
+  // Import depuis la galerie (compte dans le solde, comme une photo prise)
+  async function onGalleryPicked(e) {
+    const file = e.target.files?.[0]; e.target.value = ''
+    if (!file) return
+    if (full) { setError('Pellicule pleine — supprime une photo pour en importer une.'); return }
+    setBusy(true); setError('')
     try { const img = await fileToImage(file); await capture(await compressToBlob(img)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
@@ -286,6 +297,11 @@ export default function GuestCamera({ params }) {
           </div>
         </div>
       </div>
+
+      <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
+      <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full}>
+        🖼️ Importer une photo de ma galerie
+      </button>
 
       {full && <div className="cam-full-hint">Pellicule pleine — touche une photo pour la supprimer et en reprendre une.</div>}
 

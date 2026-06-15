@@ -1,11 +1,11 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
 
-export async function GET(_request, { params }) {
+export async function GET(request, { params }) {
   const { id } = await params
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,owner_token`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -13,7 +13,12 @@ export async function GET(_request, { params }) {
   const ev = data[0]
   const revealed = new Date(ev.reveal_at).getTime() <= Date.now()
 
-  if (!revealed) {
+  // L'organisateur (appareil créateur) peut voir les photos avant la révélation.
+  const ownerToken = request.headers.get('x-owner-token')
+  const isOwner = !!ownerToken && ownerToken === ev.owner_token
+  const canView = revealed || isOwner
+
+  if (!canView) {
     return Response.json({
       revealed: false,
       name: ev.name,
@@ -46,7 +51,9 @@ export async function GET(_request, { params }) {
   const guests = Object.entries(guestMap).map(([id, name]) => ({ id, name }))
 
   return Response.json({
-    revealed: true,
+    revealed,
+    isOwner,
+    ownerPreview: isOwner && !revealed, // aperçu organisateur avant révélation
     name: ev.name,
     hostNames: ev.host_names,
     revealAt: ev.reveal_at,
