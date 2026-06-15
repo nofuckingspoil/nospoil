@@ -4,6 +4,7 @@ import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import { BRAND } from '../../../lib/brand'
+import { getDeviceToken } from '../../../lib/device'
 
 function formatDate(iso) {
   try {
@@ -23,7 +24,7 @@ export default function EventManage({ params }) {
 
   useEffect(() => {
     setJoinUrl(`${window.location.origin}/j/${id}`)
-    fetch(`/api/events/${id}`)
+    fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getDeviceToken() } })
       .then((r) => r.json())
       .then((d) => (d.error ? setError(d.error) : setEv(d)))
       .catch(() => setError('Impossible de charger l\'événement.'))
@@ -84,30 +85,40 @@ export default function EventManage({ params }) {
         </button>
       </div>
 
-      <div className="card" style={{ marginTop: 16 }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div className="cd-num" style={{ fontSize: 26 }}>{ev.guestCount}</div>
-            <div className="cd-lbl">invités</div>
+      {ev.isOwner ? (
+        <>
+          <div className="card" style={{ marginTop: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div>
+                <div className="cd-num" style={{ fontSize: 26 }}>{ev.guestCount}</div>
+                <div className="cd-lbl">invités</div>
+              </div>
+              <div>
+                <div className="cd-num" style={{ fontSize: 26 }}>{ev.photoCount}</div>
+                <div className="cd-lbl">photos prises</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div className="cd-lbl" style={{ marginBottom: 6 }}>{ev.revealed ? 'Révélé' : 'En attente'}</div>
+                <span className="brand-dot" style={{ background: ev.revealed ? 'var(--ok)' : 'var(--amber)' }} />
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="cd-num" style={{ fontSize: 26 }}>{ev.photoCount}</div>
-            <div className="cd-lbl">photos prises</div>
+
+          <Link href={`/g/${id}`} className="btn btn-ghost" style={{ marginTop: 16 }}>
+            {ev.revealed ? 'Voir la galerie →' : 'Aperçu de la galerie (verrouillée)'}
+          </Link>
+
+          <div className="notice" style={{ marginTop: 16 }}>
+            💡 Gardez ce lien : c'est votre tableau de bord privé. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div className="cd-lbl" style={{ marginBottom: 6 }}>{ev.revealed ? 'Révélé' : 'En attente'}</div>
-            <span className="brand-dot" style={{ background: ev.revealed ? 'var(--ok)' : 'var(--amber)' }} />
-          </div>
+        </>
+      ) : (
+        <div className="notice" style={{ marginTop: 16 }}>
+          📷 Vous voulez prendre des photos ? <a href={`/j/${id}`} style={{ color: 'var(--amber-dk)', fontWeight: 700 }}>Rejoignez l'événement ici</a>.
+          <br /><br />
+          Le tableau de bord (statistiques, galerie) est réservé à l'organisateur, sur l'appareil qui a créé l'événement.
         </div>
-      </div>
-
-      <Link href={`/g/${id}`} className="btn btn-ghost" style={{ marginTop: 16 }}>
-        {ev.revealed ? 'Voir la galerie →' : 'Aperçu de la galerie (verrouillée)'}
-      </Link>
-
-      <div className="notice" style={{ marginTop: 16 }}>
-        💡 Gardez ce lien : c'est votre tableau de bord. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.
-      </div>
+      )}
     </main>
   )
 }
