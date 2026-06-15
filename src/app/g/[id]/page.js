@@ -3,47 +3,70 @@
 import { use, useEffect, useState } from 'react'
 import { BRAND } from '../../../lib/brand'
 
+const TEASER_GRADS = [
+  'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)',
+  'linear-gradient(160deg,#2B2540,#6E466C,#D08193)',
+  'linear-gradient(150deg,#86C0C9,#D58FA6,#F4C152)',
+  'linear-gradient(140deg,#3D5A6C,#86C0C9,#F7C26B)',
+  'linear-gradient(160deg,#9B5A6E,#C25540,#E89A4B)',
+  'linear-gradient(150deg,#6E466C,#A23D5C,#EE7A45)',
+]
+
 function formatReveal(iso) {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
-    })
-  } catch { return iso }
+  try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
+  catch { return iso }
+}
+function formatTime(iso) {
+  try { return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) }
+  catch { return '' }
 }
 
 function useCountdown(target) {
   const [now, setNow] = useState(() => Date.now())
-  useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 1000)
-    return () => clearInterval(t)
-  }, [])
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t) }, [])
   const diff = Math.max(0, new Date(target).getTime() - now)
-  const d = Math.floor(diff / 86400000)
-  const h = Math.floor((diff % 86400000) / 3600000)
-  const m = Math.floor((diff % 3600000) / 60000)
-  const s = Math.floor((diff % 60000) / 1000)
-  return { d, h, m, s, done: diff === 0 }
+  return {
+    d: Math.floor(diff / 86400000),
+    h: Math.floor((diff % 86400000) / 3600000),
+    m: Math.floor((diff % 3600000) / 60000),
+    s: Math.floor((diff % 60000) / 1000),
+    done: diff === 0,
+  }
 }
 
-function Countdown({ revealAt, name, hostNames, onDone }) {
-  const { d, h, m, s, done } = useCountdown(revealAt)
-  useEffect(() => { if (done) onDone?.() }, [done, onDone])
-  const cell = (n, l) => (
-    <div className="cd-cell"><div className="cd-num">{String(n).padStart(2, '0')}</div><div className="cd-lbl">{l}</div></div>
-  )
+function PreReveal({ data, onDone }) {
+  const cd = useCountdown(data.revealAt)
+  useEffect(() => { if (cd.done) onDone?.() }, [cd.done, onDone])
   return (
-    <main className="wrap center">
-      <div className="brand"><span className="brand-dot" />{BRAND.name}</div>
+    <main className="screen screen-dark">
+      <div className="eyebrow-mute" style={{ color: 'rgba(255,255,255,.55)', marginBottom: 6 }}>Événement · {data.hostNames || data.name}</div>
+      <h3 className="h3" style={{ marginBottom: 22 }}>Développement en cours…</h3>
+
+      <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 24px' }}>
+        <div style={{ position: 'relative', width: 120, height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(255,255,255,.12)' }} />
+          <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid transparent', borderTopColor: 'var(--accent)', animation: 'dc-spin 1.4s linear infinite' }} />
+          <div style={{ width: 74, height: 74, borderRadius: 18, background: '#0d0f16', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid var(--accent)', background: 'radial-gradient(circle at 35% 30%,#3a3f52,#14161F)' }} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 7, marginBottom: 22, opacity: .55 }}>
+        {TEASER_GRADS.map((g, i) => (
+          <div key={i} style={{ aspectRatio: '1/1', borderRadius: 8, background: g, filter: 'blur(6px) brightness(.7)' }} />
+        ))}
+      </div>
+
       <div className="spacer" />
-      <div style={{ fontSize: 54 }}>🎞️</div>
-      <div className="eyebrow" style={{ marginTop: 14 }}>{hostNames || name}</div>
-      <h1 style={{ fontSize: 28, marginTop: 8 }}>La pellicule se développe…</h1>
-      <p className="lead" style={{ marginTop: 12 }}>
-        Les photos restent cachées jusqu'à la révélation. Patience, ça en vaut la peine.
-      </p>
-      <div className="countdown">{cell(d, 'jours')}{cell(h, 'h')}{cell(m, 'min')}{cell(s, 'sec')}</div>
-      <p className="muted small">Révélation le {formatReveal(revealAt)}</p>
-      <div className="spacer" />
+      <div style={{ textAlign: 'center' }}>
+        <div className="mono" style={{ fontSize: 13, color: 'rgba(255,255,255,.7)', marginBottom: 16 }}>
+          {cd.d}j {cd.h}h {cd.m}m {cd.s}s · le {formatReveal(data.revealAt)}
+        </div>
+        <div className="notice" style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: 'rgba(255,255,255,.7)' }}>
+          🎞️ Les souvenirs s'ouvriront pour tout le monde d'un coup, à l'heure dite.
+        </div>
+      </div>
     </main>
   )
 }
@@ -53,6 +76,7 @@ export default function Gallery({ params }) {
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
+  const [retro, setRetro] = useState(true)
 
   function load() {
     fetch(`/api/gallery/${id}`)
@@ -62,48 +86,57 @@ export default function Gallery({ params }) {
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (error) return <main className="wrap center"><div className="card">{error}</div></main>
+  if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
   if (!data) return <main className="center-screen"><p className="muted">Chargement…</p></main>
-
-  if (!data.revealed) {
-    return <Countdown revealAt={data.revealAt} name={data.name} hostNames={data.hostNames} onDone={load} />
-  }
+  if (!data.revealed) return <PreReveal data={data} onDone={load} />
 
   const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
 
   return (
-    <main className="wrap wrap-wide">
-      <div className="brand"><span className="brand-dot" />{BRAND.name}</div>
-
-      <div style={{ marginTop: 22 }}>
-        <div className="eyebrow">{data.hostNames || 'Galerie'}</div>
-        <h1 style={{ fontSize: 30, marginTop: 8 }}>{data.name}</h1>
-        <p className="muted small" style={{ marginTop: 8 }}>{data.photos.length} photos · {data.guests.length} invités</p>
+    <main className="screen screen-cream wide">
+      <div className="gal-head">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+          <div className="eyebrow" style={{ fontSize: 10.5 }}>Révélé · {data.photos.length} souvenirs</div>
+          <button className={`retro-btn ${retro ? 'on' : ''}`} onClick={() => setRetro((v) => !v)}>
+            RÉTRO {retro ? 'ON' : 'OFF'}
+          </button>
+        </div>
+        <h3 className="h3" style={{ margin: '2px 0 12px' }}>Les souvenirs de {data.hostNames || data.name}</h3>
+        {data.guests.length > 1 && (
+          <div className="chips">
+            <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Tous · {data.photos.length}</button>
+            {data.guests.map((g) => {
+              const n = data.photos.filter((p) => p.guestId === g.id).length
+              return <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>{g.name} · {n}</button>
+            })}
+          </div>
+        )}
       </div>
 
-      {data.guests.length > 1 && (
-        <div className="chips" style={{ marginTop: 20 }}>
-          <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Tout le monde</button>
-          {data.guests.map((g) => (
-            <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>{g.name}</button>
-          ))}
-        </div>
-      )}
-
       {photos.length === 0 ? (
-        <div className="notice" style={{ marginTop: 20 }}>Aucune photo pour ce filtre.</div>
+        <div className="notice" style={{ marginTop: 16 }}>Aucune photo pour ce filtre.</div>
       ) : (
-        <div className="grid" style={{ marginTop: 8 }}>
-          {photos.map((p, i) => (
-            <a key={i} className="photo" href={p.url} target="_blank" rel="noreferrer">
-              <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" />
-              <div className="who">{p.who}</div>
-            </a>
-          ))}
+        <div className="masonry" style={{ marginTop: 8 }}>
+          {photos.map((p, i) => {
+            const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
+            return (
+              <a key={i} className={`polaroid ${retro ? 'retro' : ''}`} href={p.url} target="_blank" rel="noreferrer"
+                style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms` }}>
+                <div className="media">
+                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" />
+                  {retro && <div className="tint" />}
+                </div>
+                <div className="cap">
+                  <span className="who">{p.who}</span>
+                  <span className="time">{formatTime(p.takenAt)}</span>
+                </div>
+              </a>
+            )
+          })}
         </div>
       )}
 
-      <p className="footer-note">Appuie longuement sur une photo pour l'enregistrer.</p>
+      <div className="footer-note">Appuyez longuement sur une photo pour l'enregistrer.</div>
     </main>
   )
 }

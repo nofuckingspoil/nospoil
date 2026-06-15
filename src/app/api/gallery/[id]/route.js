@@ -36,6 +36,7 @@ export async function GET(_request, { params }) {
       url: signed[r.storage_path],
       who: r.guests?.display_name || 'Invité',
       guestId: r.guest_id,
+      takenAt: r.taken_at,
     }))
     .filter((p) => p.url)
 
