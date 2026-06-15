@@ -4,7 +4,7 @@ const DAY = 24 * 60 * 60 * 1000
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
-  const { ownerToken, name, hostNames, revealAt, shotsPerGuest } = body
+  const { ownerToken, name, hostNames, revealAt, shotsPerGuest, maxGuests } = body
 
   if (!ownerToken) {
     return Response.json({ error: 'Appareil non identifié.' }, { status: 400 })
@@ -22,6 +22,7 @@ export async function POST(request) {
   }
 
   const shots = Math.min(50, Math.max(1, parseInt(shotsPerGuest, 10) || 10))
+  const guests = Math.min(500, Math.max(5, parseInt(maxGuests, 10) || 5)) // palier choisi
   const expires = new Date(reveal.getTime() + 60 * DAY) // rétention : 60 jours après la révélation
 
   const { ok, data } = await insertRow('events', {
@@ -29,6 +30,7 @@ export async function POST(request) {
     name: name.trim().slice(0, 80),
     host_names: hostNames ? hostNames.trim().slice(0, 80) : null,
     shots_per_guest: shots,
+    max_guests: guests,
     reveal_at: reveal.toISOString(),
     expires_at: expires.toISOString(),
     status: 'active',

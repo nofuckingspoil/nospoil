@@ -1,118 +1,137 @@
-'use client'
-
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { BRAND } from '../lib/brand'
 import Logo from '../components/Logo'
-import { getDeviceToken, rememberMyEvent } from '../lib/device'
+import { TIERS, formatPrice } from '../lib/pricing'
 
-function defaultReveal() {
-  const d = new Date()
-  d.setDate(d.getDate() + 1)
-  d.setHours(20, 0, 0, 0)
-  const pad = (n) => String(n).padStart(2, '0')
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+export const metadata = {
+  title: `${BRAND.name} — ${BRAND.tagline}`,
+  description: BRAND.pitch,
 }
 
 const STEPS = [
-  { n: '01', title: 'Scannez le QR', sub: "Vos invités ouvrent l'appareil dans leur navigateur. Aucune appli." },
-  { n: '02', title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte.' },
-  { n: '03', title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde.' },
+  { ic: '🔳', title: 'Scannez le QR', sub: "Vos invités ouvrent l'appareil dans leur navigateur. Aucune appli à installer." },
+  { ic: '📸', title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte vraiment.' },
+  { ic: '🎞️', title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde d\'un coup.' },
 ]
 
-export default function Home() {
-  const router = useRouter()
-  const [name, setName] = useState('')
-  const [hostNames, setHostNames] = useState('')
-  const [revealAt, setRevealAt] = useState(defaultReveal())
-  const [shots, setShots] = useState(10)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+const REASSURE = [
+  { ic: '🇪🇺', title: 'Hébergé en Europe', sub: 'Vos photos restent sur des serveurs européens.' },
+  { ic: '🔒', title: 'Privé & sécurisé', sub: 'Galerie accessible uniquement via votre lien. Photos protégées.' },
+  { ic: '📱', title: 'Aucune appli', sub: 'Tout se passe dans le navigateur, même pour vos invités.' },
+  { ic: '🗓️', title: 'Suppression auto', sub: 'Les photos sont effacées après l\'événement (RGPD).' },
+]
 
-  async function handleSubmit(e) {
-    e.preventDefault()
-    setError('')
-    if (!name.trim()) { setError('Donnez un nom à votre événement.'); return }
-    setLoading(true)
-    try {
-      const res = await fetch('/api/events', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ownerToken: getDeviceToken(), name, hostNames,
-          revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots,
-        }),
-      })
-      const data = await res.json()
-      if (!res.ok) throw new Error(data.error || 'Erreur.')
-      rememberMyEvent(data.id)
-      router.push(`/event/${data.id}`)
-    } catch (err) { setError(err.message); setLoading(false) }
-  }
+const FAQ = [
+  { q: 'Mes invités doivent-ils installer une application ?', a: 'Non. Ils scannent le QR code et la caméra s\'ouvre directement dans leur navigateur. Aucun compte, aucune installation.' },
+  { q: 'Quand les photos sont-elles visibles ?', a: 'Elles restent cachées jusqu\'à la date de révélation que vous choisissez — comme une pellicule qu\'on développe. Ensuite, la galerie s\'ouvre pour tout le monde.' },
+  { q: 'C\'est un abonnement ?', a: 'Non. Vous payez une seule fois pour votre événement, selon le nombre d\'invités. Sans renouvellement.' },
+  { q: 'Combien de photos chacun peut-il prendre ?', a: 'Vous fixez la limite par invité (par exemple 10). C\'est la contrainte « argentique » qui rend chaque cliché précieux.' },
+]
 
+function PriceCard({ tier }) {
+  const isFree = tier.priceCents === 0
   return (
-    <main className="screen screen-cream">
-      <Logo />
+    <div className={`price-card ${tier.popular ? 'popular' : ''}`}>
+      {tier.popular && <span className="price-pop">LE PLUS CHOISI</span>}
+      <div className="price-guests">{isFree ? 'Pour tester' : 'Jusqu\'à'}</div>
+      <div className="price-amount">{tier.maxGuests}<span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text3)' }}> invités</span></div>
+      <div className="price-unit">{isFree ? 'Gratuit · sans carte' : `${formatPrice(tier.priceCents)} · paiement unique`}</div>
+      <Link href={`/create?tier=${tier.maxGuests}`} className={`btn ${tier.popular ? 'btn-accent' : 'btn-ghost'}`}>
+        {isFree ? 'Essayer gratuitement' : 'Choisir cette formule'}
+      </Link>
+    </div>
+  )
+}
 
-      <div style={{ marginTop: 38 }}>
-        <div className="eyebrow">Appareil photo jetable · événements</div>
-        <h1 className="display" style={{ marginTop: 14 }}>
-          L'appareil photo<br />jetable de vos<br />événements.
-        </h1>
-        <p className="lead" style={{ marginTop: 18 }}>{BRAND.pitch}</p>
-      </div>
+export default function Home() {
+  return (
+    <div className="site">
+      <nav className="vnav">
+        <Logo nameSize={22} size={36} />
+        <Link href="/create?tier=5" className="btn btn-dark">Créer un événement</Link>
+      </nav>
 
-      <form className="card" style={{ marginTop: 28 }} onSubmit={handleSubmit}>
-        <h2 className="h3" style={{ marginBottom: 18 }}>Créer un événement</h2>
-
-        <div className="field">
-          <label>Nom de l'événement</label>
-          <input type="text" placeholder="Ex : Mariage de Marie & Paul" value={name}
-            onChange={(e) => setName(e.target.value)} maxLength={80} />
-        </div>
-        <div className="field">
-          <label>Vos prénoms <span className="muted">(facultatif)</span></label>
-          <input type="text" placeholder="Ex : Marie & Paul" value={hostNames}
-            onChange={(e) => setHostNames(e.target.value)} maxLength={80} />
-        </div>
-        <div className="field">
-          <label>Révélation des photos le</label>
-          <input type="datetime-local" value={revealAt} onChange={(e) => setRevealAt(e.target.value)} />
-          <div className="hint">Les photos restent cachées jusqu'à cette date — comme une pellicule qu'on développe.</div>
-        </div>
-        <div className="field">
-          <label>Clichés par invité</label>
-          <div className="stepper">
-            <button type="button" onClick={() => setShots((s) => Math.max(1, s - 1))} aria-label="Moins">−</button>
-            <span className="val">{shots}</span>
-            <button type="button" onClick={() => setShots((s) => Math.min(50, s + 1))} aria-label="Plus">+</button>
+      <div className="site-inner">
+        {/* HERO */}
+        <section className="hero">
+          <div className="eyebrow">Appareil photo jetable · événements</div>
+          <h1>L'appareil photo<br />jetable de vos<br />événements.</h1>
+          <p>{BRAND.pitch}</p>
+          <div className="hero-cta">
+            <Link href="#tarifs" className="btn btn-accent">Voir les formules →</Link>
+            <span className="mono small muted">Gratuit jusqu'à 5 invités</span>
           </div>
-          <div className="hint">La contrainte argentique : moins de poses = chaque cliché compte davantage.</div>
-        </div>
+        </section>
 
-        {error && <div className="err">{error}</div>}
-        <button className="btn btn-accent" type="submit" disabled={loading} style={{ marginTop: 8 }}>
-          {loading ? 'Création…' : 'Créer mon appareil →'}
-        </button>
-      </form>
-
-      <div style={{ marginTop: 40 }}>
-        <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 20 }}>Comment ça marche</div>
-        <div className="stack">
-          {STEPS.map((s) => (
-            <div key={s.n} className="card" style={{ display: 'flex', gap: 14, alignItems: 'flex-start', padding: 16 }}>
-              <span className="mono" style={{ color: 'var(--accent)', fontSize: 13, fontWeight: 700 }}>{s.n}</span>
-              <div>
-                <h4 style={{ fontSize: 16, marginBottom: 4 }}>{s.title}</h4>
-                <p className="muted small" style={{ lineHeight: 1.5 }}>{s.sub}</p>
+        {/* COMMENT ÇA MARCHE */}
+        <section className="section">
+          <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>Comment ça marche</div>
+          <h2 className="section-title">Trois étapes, zéro friction</h2>
+          <div className="section-sub">Vous créez l'événement, vos invités scannent, et la magie opère après la fête.</div>
+          <div className="steps-grid">
+            {STEPS.map((s, i) => (
+              <div key={i} className="step-card">
+                <div className="step-ic">{s.ic}</div>
+                <h4>{s.title}</h4>
+                <p>{s.sub}</p>
               </div>
+            ))}
+          </div>
+        </section>
+
+        {/* TARIFS */}
+        <section className="section" id="tarifs">
+          <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>Tarifs</div>
+          <h2 className="section-title">Un prix unique par événement</h2>
+          <div className="section-sub">Pas d'abonnement. Vous choisissez selon le nombre d'invités, vous payez une fois.</div>
+          <div className="price-grid">
+            {TIERS.map((t) => <PriceCard key={t.maxGuests} tier={t} />)}
+          </div>
+          <p className="mono small muted" style={{ textAlign: 'center', marginTop: 18 }}>
+            Plus de 150 invités ? Écrivez-nous.
+          </p>
+        </section>
+
+        {/* RÉASSURANCE */}
+        <section className="section">
+          <h2 className="section-title">Pensé pour vos souvenirs</h2>
+          <div className="section-sub">La confiance avant tout : vos photos vous appartiennent.</div>
+          <div className="reassure">
+            {REASSURE.map((r, i) => (
+              <div key={i} className="reassure-item">
+                <span className="ic">{r.ic}</span>
+                <div><h4>{r.title}</h4><p>{r.sub}</p></div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section className="section">
+          <h2 className="section-title">Questions fréquentes</h2>
+          <div className="section-sub" />
+          {FAQ.map((f, i) => (
+            <div key={i} className="faq-item">
+              <h4>{f.q}</h4>
+              <p>{f.a}</p>
             </div>
           ))}
-        </div>
+        </section>
+
+        {/* CTA FINAL */}
+        <section className="cta-band">
+          <h3>Un événement à immortaliser ?</h3>
+          <p>Créez votre appareil jetable en 2 minutes.</p>
+          <Link href="/create?tier=5" className="btn btn-accent">Créer mon événement →</Link>
+        </section>
       </div>
 
-      <div className="footer-note" style={{ marginTop: 28 }}>
-        GRATUIT POUR TESTER · PAIEMENT UNIQUE · SANS ABONNEMENT
-      </div>
-    </main>
+      <footer className="vfooter">
+        <div className="vfooter-inner">
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff', fontSize: 15 }}>{BRAND.name}</span>
+          <span className="mono">© 2026 · Hébergé en UE · RGPD</span>
+        </div>
+      </footer>
+    </div>
   )
 }
