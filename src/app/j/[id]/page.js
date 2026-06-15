@@ -293,6 +293,8 @@ export default function GuestCamera({ params }) {
         🎞️ Révélation le {meta && formatReveal(meta.revealAt)} · voir
       </a>
 
+      <InstallPrompt label="Garde l'appareil à portée de main" />
+
       {/* Visionneuse photo */}
       {viewer && (
         <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setViewer(null) }}>
