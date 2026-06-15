@@ -343,3 +343,11 @@ a.admin-row:hover { background: rgba(236,91,51,.05); }
 .a2hs-sub { font-size: 12.5px; color: var(--text2); line-height: 1.45; margin-top: 3px; }
 .a2hs-btn { margin-top: 8px; background: var(--accent); color: #fff; border: none; border-radius: 999px; padding: 8px 14px; font-family: var(--font-body); font-weight: 700; font-size: 12.5px; cursor: pointer; }
 .a2hs-close { position: absolute; top: 8px; right: 10px; background: none; border: none; font-size: 20px; color: var(--text3); cursor: pointer; line-height: 1; }
+
+/* iOS : étapes illustrées */
+.a2hs-ios { flex-direction: column; align-items: stretch; gap: 0; }
+.a2hs-steps { display: flex; flex-direction: column; gap: 9px; margin-top: 12px; }
+.a2hs-step { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text2); line-height: 1.4; }
+.a2hs-num { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+.a2hs-share { display: inline-flex; align-items: center; gap: 4px; background: #0a7aff; color: #fff; border-radius: 6px; padding: 2px 7px 2px 5px; font-weight: 700; font-size: 12px; vertical-align: middle; }
+.a2hs-plus { color: var(--accent); font-weight: 700; }

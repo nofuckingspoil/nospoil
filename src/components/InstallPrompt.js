@@ -2,10 +2,19 @@
 
 import { useEffect, useState } from 'react'
 
+// Icône "Partager" d'iOS (carré avec flèche vers le haut)
+function ShareIcon({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+      <path d="M12 15V3M12 3L8.5 6.5M12 3l3.5 3.5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M7 10H6a1 1 0 00-1 1v9a1 1 0 001 1h12a1 1 0 001-1v-9a1 1 0 00-1-1h-1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  )
+}
+
 // Invite à épingler la page sur l'écran d'accueil.
 // Android : vrai bouton d'installation (beforeinstallprompt).
-// iOS : instructions "Partager → Sur l'écran d'accueil".
-// Discret, fermable, et ne réapparaît pas après fermeture (localStorage).
+// iOS : instructions visuelles "Partager → Sur l'écran d'accueil".
 export default function InstallPrompt({ label = "Ajoute Déclic à ton écran d'accueil" }) {
   const [deferred, setDeferred] = useState(null)
   const [isIOS, setIsIOS] = useState(false)
@@ -13,8 +22,6 @@ export default function InstallPrompt({ label = "Ajoute Déclic à ton écran d'
 
   useEffect(() => {
     try { if (localStorage.getItem('declic_a2hs_dismissed')) return } catch {}
-
-    // Déjà installée (mode standalone) → ne rien afficher
     const standalone = window.matchMedia?.('(display-mode: standalone)')?.matches || window.navigator.standalone
     if (standalone) return
 
@@ -40,15 +47,32 @@ export default function InstallPrompt({ label = "Ajoute Déclic à ton écran d'
 
   if (!show) return null
 
+  // ---- iOS : instructions visuelles ----
+  if (isIOS) return (
+    <div className="a2hs a2hs-ios">
+      <button className="a2hs-close" onClick={dismiss} aria-label="Fermer">×</button>
+      <div className="a2hs-title" style={{ paddingRight: 20 }}>📲 {label}</div>
+      <div className="a2hs-steps">
+        <div className="a2hs-step">
+          <span className="a2hs-num">1</span>
+          <span>Touche <span className="a2hs-share"><ShareIcon size={15} /> Partager</span> en bas de Safari</span>
+        </div>
+        <div className="a2hs-step">
+          <span className="a2hs-num">2</span>
+          <span>Choisis <strong>« Sur l'écran d'accueil »</strong> <span className="a2hs-plus">⊕</span></span>
+        </div>
+      </div>
+    </div>
+  )
+
+  // ---- Android : bouton d'installation ----
   return (
     <div className="a2hs">
       <button className="a2hs-close" onClick={dismiss} aria-label="Fermer">×</button>
       <div className="a2hs-ic">📲</div>
       <div className="a2hs-body">
         <div className="a2hs-title">{label}</div>
-        {isIOS
-          ? <div className="a2hs-sub">Touche <strong>Partager</strong> puis <strong>« Sur l'écran d'accueil »</strong> pour la retrouver en un geste.</div>
-          : <button className="a2hs-btn" onClick={install}>Ajouter à l'écran d'accueil</button>}
+        <button className="a2hs-btn" onClick={install}>Ajouter à l'écran d'accueil</button>
       </div>
     </div>
   )
