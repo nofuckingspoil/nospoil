@@ -1,9 +1,16 @@
 import './globals.css'
-import Script from 'next/script'
+import { BRAND } from '../lib/brand'
 
 export const metadata = {
-  title: 'no.spoil — Le sport, sans savoir.',
-  description: 'Regarde les résumés des courses sans titre, sans miniature, sans recos YouTube qui balancent le résultat. Juste le sport, comme si tu l\'avais vu en direct.',
+  title: `${BRAND.name} — ${BRAND.tagline}`,
+  description: BRAND.pitch,
+}
+
+export const viewport = {
+  themeColor: '#1a1714',
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 }
 
 export default function RootLayout({ children }) {
@@ -17,10 +24,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
-      <body>
-        {children}
-        <Script src="https://www.youtube.com/iframe_api" strategy="afterInteractive" />
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
