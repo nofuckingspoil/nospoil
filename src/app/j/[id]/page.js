@@ -3,51 +3,40 @@
 import { use, useEffect, useRef, useState } from 'react'
 import { BRAND } from '../../../lib/brand'
 import { getDeviceToken, saveGuest, getGuest } from '../../../lib/device'
-import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage } from '../../../lib/camera'
+import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
 function formatReveal(iso) {
-  try {
-    return new Date(iso).toLocaleString('fr-FR', {
-      weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
-    })
-  } catch { return iso }
+  try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
+  catch { return iso }
 }
 
-function useCountdown(target) {
-  const [now, setNow] = useState(() => Date.now())
-  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t) }, [])
-  const diff = Math.max(0, new Date(target).getTime() - now)
-  const pad = (n) => String(n).padStart(2, '0')
-  return {
-    d: Math.floor(diff / 86400000),
-    h: pad(Math.floor((diff % 86400000) / 3600000)),
-    m: pad(Math.floor((diff % 3600000) / 60000)),
-    s: pad(Math.floor((diff % 60000) / 1000)),
-  }
-}
+let _tmp = 0
 
 export default function GuestCamera({ params }) {
   const { id } = use(params)
 
-  const [phase, setPhase] = useState('loading') // loading | cover | name | camera | waiting | error
+  const [phase, setPhase] = useState('loading') // loading | cover | name | camera | error
   const [meta, setMeta] = useState(null)
   const [name, setName] = useState('')
   const [guest, setGuest] = useState(null)       // { guestId, shotsTaken, shotsPerGuest }
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
-  const [flash, setFlash] = useState(false)
+  const [flashFx, setFlashFx] = useState(false)
+  const [shutterFx, setShutterFx] = useState(false)
   const [flashOn, setFlashOn] = useState(false)
   const [liveCam, setLiveCam] = useState(false)
   const [facingMode, setFacingMode] = useState('environment')
-  const [myPhotos, setMyPhotos] = useState([])
+  const [myPhotos, setMyPhotos] = useState([])   // [{id, url}] confirmées (serveur)
+  const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
+  const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
+  const [deleting, setDeleting] = useState(false)
 
   const videoRef = useRef(null)
   const streamRef = useRef(null)
   const fileInputRef = useRef(null)
 
-  // 1) Chargement : infos événement + reprise éventuelle de l'invité
   useEffect(() => {
     fetch(`/api/events/${id}`)
       .then((r) => r.json())
@@ -62,13 +51,13 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
 
-  // 2) Caméra live selon la phase + le sens choisi
   useEffect(() => {
     if (phase === 'camera' && liveCam) startCamera()
     return stopCamera
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, liveCam, facingMode])
 
+  // Charge mes photos confirmées + synchronise le compteur depuis le serveur
   async function loadMyPhotos() {
     try {
       const res = await fetch('/api/my-photos', {
@@ -77,6 +66,7 @@ export default function GuestCamera({ params }) {
       })
       const d = await res.json()
       if (Array.isArray(d.photos)) setMyPhotos(d.photos)
+      if (typeof d.shotsTaken === 'number') setGuest((g) => (g ? { ...g, shotsTaken: d.shotsTaken } : g))
     } catch {}
   }
 
@@ -93,7 +83,7 @@ export default function GuestCamera({ params }) {
       setGuest({ guestId: d.guestId, shotsTaken: d.shotsTaken, shotsPerGuest: d.shotsPerGuest })
       setLiveCam(supportsLiveCamera())
       loadMyPhotos()
-      setPhase(d.shotsTaken >= d.shotsPerGuest ? 'waiting' : 'camera')
+      setPhase('camera')
     } catch (err) {
       setError(err.message); setPhase('name')
     } finally { setBusy(false) }
@@ -114,24 +104,42 @@ export default function GuestCamera({ params }) {
   }
   function flipCamera() { setFacingMode((m) => (m === 'environment' ? 'user' : 'environment')) }
 
-  async function uploadBlob(blob) {
-    const fd = new FormData()
-    fd.append('file', blob, 'photo.jpg')
-    fd.append('eventId', id); fd.append('guestId', guest.guestId); fd.append('deviceToken', getDeviceToken())
-    const res = await fetch('/api/photo', { method: 'POST', body: fd })
-    const d = await res.json()
-    if (res.status === 409) { setGuest((g) => ({ ...g, shotsTaken: g.shotsPerGuest })); stopCamera(); setPhase('waiting'); return }
-    if (!res.ok) throw new Error(d.error || "Échec de l'envoi.")
-    setGuest((g) => ({ ...g, shotsTaken: d.shotsTaken }))
-    loadMyPhotos()
-    if (d.shotsTaken >= guest.shotsPerGuest) { stopCamera(); setTimeout(() => setPhase('waiting'), 700) }
+  // Capture optimiste : on affiche tout de suite, on envoie en arrière-plan.
+  async function capture(blob) {
+    const tempId = `tmp-${++_tmp}`
+    const url = URL.createObjectURL(blob)
+    setPending((p) => [{ tempId, url }, ...p])
+    setGuest((g) => (g ? { ...g, shotsTaken: Math.min(g.shotsPerGuest, g.shotsTaken + 1) } : g))
+    try {
+      const fd = new FormData()
+      fd.append('file', blob, 'photo.jpg')
+      fd.append('eventId', id); fd.append('guestId', guest.guestId); fd.append('deviceToken', getDeviceToken())
+      const res = await fetch('/api/photo', { method: 'POST', body: fd })
+      const d = await res.json()
+      if (res.status === 409) { setError('Pellicule pleine — supprime une photo pour en reprendre une.') }
+      else if (!res.ok) { throw new Error(d.error || "Échec de l'envoi.") }
+    } catch (err) {
+      setError(err.message || 'Erreur.')
+    } finally {
+      setPending((p) => p.filter((x) => x.tempId !== tempId))
+      URL.revokeObjectURL(url)
+      loadMyPhotos() // synchronise compteur + photos depuis le serveur
+    }
+  }
+
+  function fireShutterFeedback() {
+    playShutter()
+    setShutterFx(true); setTimeout(() => setShutterFx(false), 240)
+    if (flashOn) { setFlashFx(true); setTimeout(() => setFlashFx(false), 420) }
   }
 
   async function snap() {
     if (busy || !videoRef.current) return
+    const remaining = guest.shotsPerGuest - guest.shotsTaken
+    if (remaining <= 0) { setError('Pellicule pleine — supprime une photo pour en reprendre une.'); return }
     setBusy(true); setError('')
-    if (flashOn) { setFlash(true); setTimeout(() => setFlash(false), 420) }
-    try { await uploadBlob(await compressToBlob(videoRef.current)) }
+    fireShutterFeedback()
+    try { await capture(await compressToBlob(videoRef.current)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
 
@@ -139,19 +147,34 @@ export default function GuestCamera({ params }) {
     const file = e.target.files?.[0]; e.target.value = ''
     if (!file) return
     setBusy(true); setError('')
-    try { const img = await fileToImage(file); await uploadBlob(await compressToBlob(img)) }
+    fireShutterFeedback()
+    try { const img = await fileToImage(file); await capture(await compressToBlob(img)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
 
+  async function removePhoto() {
+    if (!viewer || deleting) return
+    setDeleting(true); setError('')
+    try {
+      const res = await fetch('/api/photo/delete', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ photoId: viewer.id, deviceToken: getDeviceToken() }),
+      })
+      const d = await res.json()
+      if (!res.ok) throw new Error(d.error || 'Suppression impossible.')
+      setViewer(null)
+      await loadMyPhotos()
+    } catch (err) { setError(err.message) } finally { setDeleting(false) }
+  }
+
   const remaining = guest ? guest.shotsPerGuest - guest.shotsTaken : 0
+  const full = remaining <= 0
   const coupleLabel = meta?.hostNames || meta?.name || ''
-  const cd = useCountdown(meta?.revealAt || Date.now())
 
   // ---------- Écrans ----------
   if (phase === 'loading') return <main className="center-screen"><p className="muted">Chargement…</p></main>
   if (phase === 'error') return <main className="screen screen-cream center"><div className="card">{error || 'Événement introuvable.'}</div></main>
 
-  // COVER
   if (phase === 'cover') return (
     <main className="screen screen-cream">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
@@ -160,32 +183,24 @@ export default function GuestCamera({ params }) {
         </span>
         <span className="eyebrow-mute">{meta?.shotsPerGuest} poses</span>
       </div>
-
       <div className="cover" style={{ background: COVER_GRAD }}>
         <div className="gloss" />
         <div className="top">ÉVÉNEMENT PRIVÉ</div>
         <div className="name">{coupleLabel}</div>
       </div>
-
       <h3 className="h3" style={{ margin: '22px 0 8px' }}>{coupleLabel} vous invite{coupleLabel.includes('&') ? 'nt' : ''} dans l'objectif.</h3>
       <p className="lead small" style={{ marginBottom: 16 }}>
         Prenez <strong>{meta?.shotsPerGuest} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{meta && formatReveal(meta.revealAt)}</strong>.
       </p>
-
       <div className="spacer" />
-      <button className="btn btn-accent" onClick={() => setPhase('name')}>
-        Rejoindre l'appareil →
-      </button>
+      <button className="btn btn-accent" onClick={() => setPhase('name')}>Rejoindre l'appareil →</button>
       <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
     </main>
   )
 
-  // NAME
   if (phase === 'name') return (
     <main className="screen screen-cream">
-      <button onClick={() => setPhase('cover')} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text3)', fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 30, padding: 0 }}>
-        ‹ retour
-      </button>
+      <button onClick={() => setPhase('cover')} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text3)', fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 30, padding: 0 }}>‹ retour</button>
       <div className="eyebrow" style={{ marginBottom: 12 }}>Étape 1 / 1</div>
       <h3 className="h3" style={{ marginBottom: 10 }}>Comment vous<br />appelez-vous ?</h3>
       <p className="lead small" style={{ marginBottom: 26 }}>Pour qu'on sache qui a pris quelle photo dans la galerie finale.</p>
@@ -199,56 +214,10 @@ export default function GuestCamera({ params }) {
     </main>
   )
 
-  // WAITING
-  if (phase === 'waiting') return (
-    <main className="screen screen-cream center">
-      <div className="spacer" />
-      <div style={{ position: 'relative', width: 96, height: 96, margin: '18px 0 6px' }}>
-        <div className="develop-icon"><div /></div>
-        <div style={{ position: 'absolute', top: -6, right: -6, width: 30, height: 30, borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 10px rgba(236,91,51,.4)' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </div>
-      </div>
-      <h3 className="h3" style={{ margin: '14px 0 8px' }}>C'est dans la boîte.</h3>
-      <p className="lead small" style={{ marginBottom: 24, maxWidth: 290 }}>
-        Vos <strong>{guest?.shotsTaken} clichés</strong> partent au développement avec ceux de tous les invités.
-      </p>
-
-      <div className="card-dark" style={{ width: '100%' }}>
-        <div className="eyebrow-mute" style={{ color: 'rgba(255,255,255,.55)', marginBottom: 14 }}>Révélation dans</div>
-        <div className="countdown">
-          <div className="cd-cell"><span className="num" style={{ color: 'var(--amber)' }}>{cd.d}</span><span className="lbl">JOURS</span></div>
-          <span className="cd-sep">:</span>
-          <div className="cd-cell"><span className="num">{cd.h}</span><span className="lbl">HEURES</span></div>
-          <span className="cd-sep">:</span>
-          <div className="cd-cell"><span className="num">{cd.m}</span><span className="lbl">MIN</span></div>
-          <span className="cd-sep">:</span>
-          <div className="cd-cell"><span className="num" style={{ color: 'var(--accent)' }}>{cd.s}</span><span className="lbl">SEC</span></div>
-        </div>
-        <div style={{ marginTop: 16, fontSize: 12, color: 'rgba(255,255,255,.6)', textAlign: 'center' }}>le {meta && formatReveal(meta.revealAt)}</div>
-      </div>
-
-      {myPhotos.length > 0 && (
-        <div style={{ width: '100%', marginTop: 18 }}>
-          <div className="eyebrow-mute" style={{ marginBottom: 10, textAlign: 'left' }}>Tes photos ({myPhotos.length})</div>
-          <div className="cam-roll" style={{ minHeight: 60 }}>
-            {myPhotos.map((url, i) => (
-              <a key={i} href={url} target="_blank" rel="noreferrer" className="roll-frame" style={{ width: 48, height: 60 }}>
-                <img src={url} alt={`Ta photo ${i + 1}`} loading="lazy" />
-              </a>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <a className="btn btn-ghost" style={{ marginTop: 18 }} href={`/g/${id}`}>Voir la galerie</a>
-      <div className="spacer" />
-      <div className="footer-note">ON VOUS PRÉVIENDRA DÈS L'OUVERTURE</div>
-    </main>
-  )
-
   // CAMERA
-  const frameNo = String(Math.min((guest?.shotsTaken || 0) + 1, guest?.shotsPerGuest || 0)).padStart(2, '0')
+  const roll = [...pending.map((p) => ({ ...p, pending: true })), ...myPhotos]
+  const frameNo = String(Math.min((guest?.shotsTaken || 0) + (full ? 0 : 1), guest?.shotsPerGuest || 0)).padStart(2, '0')
+
   return (
     <main className="screen screen-dark">
       <div className="cam-top">
@@ -276,10 +245,11 @@ export default function GuestCamera({ params }) {
         <div className="vf-corner tl" /><div className="vf-corner tr" /><div className="vf-corner bl" /><div className="vf-corner br" />
         <div className="vf-reticle"><div /></div>
         <div className="vf-counter">
-          <span className="n">{String(remaining).padStart(2, '0')}</span>
+          <span className="n">{String(Math.max(0, remaining)).padStart(2, '0')}</span>
           <span className="t">/ {guest?.shotsPerGuest} restants</span>
         </div>
-        {flash && <div className="cam-flash" />}
+        {shutterFx && <div className="cam-shutter-fx" />}
+        {flashFx && <div className="cam-flash" />}
       </div>
 
       {isInAppBrowser() && (
@@ -291,22 +261,48 @@ export default function GuestCamera({ params }) {
 
       <div className="cam-bottom">
         <div className="cam-roll">
-          {myPhotos.length === 0
+          {roll.length === 0
             ? <span className="roll-empty">pellicule vide…</span>
-            : myPhotos.map((url, i) => (
-                <div key={i} className="roll-frame"><img src={url} alt="" loading="lazy" /></div>
+            : roll.map((p, i) => (
+                <button key={p.tempId || p.id || i} className={`roll-frame ${p.pending ? 'pending' : ''}`}
+                  onClick={() => !p.pending && p.id && setViewer({ id: p.id, url: p.url })} aria-label="Voir la photo">
+                  <img src={p.url} alt="" loading="lazy" />
+                </button>
               ))}
         </div>
         {liveCam ? (
-          <button className="shutter" onClick={snap} disabled={busy} aria-label="Déclencher"><span /></button>
+          <button className="shutter" onClick={snap} disabled={busy || full} aria-label="Déclencher"><span /></button>
         ) : (
           <>
             <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFilePicked} style={{ display: 'none' }} />
-            <button className="shutter" disabled={busy} onClick={() => fileInputRef.current?.click()} aria-label="Prendre une photo"><span /></button>
+            <button className="shutter" disabled={busy || full} onClick={() => fileInputRef.current?.click()} aria-label="Prendre une photo"><span /></button>
           </>
         )}
-        <button className="cam-finish" onClick={() => { stopCamera(); setPhase('waiting') }}>TER&shy;MINER</button>
+        <div style={{ flex: '0 0 auto', width: 54, textAlign: 'center' }}>
+          <div className="mono" style={{ fontSize: 10, color: 'rgba(255,255,255,.5)', lineHeight: 1.3 }}>
+            {guest?.shotsTaken || 0}<br />prises
+          </div>
+        </div>
       </div>
+
+      {full && <div className="cam-full-hint">Pellicule pleine — touche une photo pour la supprimer et en reprendre une.</div>}
+
+      <a className="cam-reveal-link" href={`/g/${id}`}>
+        🎞️ Révélation le {meta && formatReveal(meta.revealAt)} · voir
+      </a>
+
+      {/* Visionneuse photo */}
+      {viewer && (
+        <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setViewer(null) }}>
+          <button className="viewer-close" onClick={() => setViewer(null)} aria-label="Fermer">×</button>
+          <img src={viewer.url} alt="Ta photo" />
+          {error && <div className="err" style={{ marginTop: 14, maxWidth: 360, width: '100%' }}>{error}</div>}
+          <div className="viewer-actions">
+            <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }} onClick={() => setViewer(null)}>Garder</button>
+            <button className="btn btn-danger" onClick={removePhoto} disabled={deleting}>{deleting ? 'Suppression…' : 'Supprimer'}</button>
+          </div>
+        </div>
+      )}
     </main>
   )
 }

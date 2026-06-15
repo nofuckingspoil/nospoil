@@ -54,3 +54,30 @@ export function fileToImage(file) {
     img.src = URL.createObjectURL(file)
   })
 }
+
+// Son d'obturateur synthétisé (deux clics mécaniques), sans fichier audio.
+let _audioCtx = null
+export function playShutter() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext
+    if (!AC) return
+    _audioCtx = _audioCtx || new AC()
+    if (_audioCtx.state === 'suspended') _audioCtx.resume()
+    const ctx = _audioCtx
+
+    const click = (at, gain, freq, dur) => {
+      const n = Math.floor(ctx.sampleRate * dur)
+      const buf = ctx.createBuffer(1, n, ctx.sampleRate)
+      const data = buf.getChannelData(0)
+      for (let i = 0; i < n; i++) data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 2.4)
+      const src = ctx.createBufferSource(); src.buffer = buf
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = freq
+      const g = ctx.createGain(); g.gain.value = gain
+      src.connect(hp); hp.connect(g); g.connect(ctx.destination)
+      src.start(ctx.currentTime + at)
+    }
+    // clic sec (ouverture) puis clic plus doux (fermeture) ~70ms après
+    click(0, 0.55, 1700, 0.05)
+    click(0.07, 0.3, 1200, 0.06)
+  } catch {}
+}
