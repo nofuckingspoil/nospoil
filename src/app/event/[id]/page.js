@@ -53,7 +53,10 @@ export default function EventManage({ params }) {
 
   return (
     <main className="screen screen-cream">
-      <Logo nameSize={22} size={36} />
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
+        <Link href="/mes-evenements" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Mes événements</Link>
+      </div>
 
       <header style={{ marginTop: 26 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>

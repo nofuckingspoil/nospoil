@@ -321,3 +321,17 @@ input:focus, select:focus { border-color: var(--accent); }
 .cta-band h3 { font-size: clamp(26px, 4vw, 32px); margin-bottom: 10px; }
 .cta-band p { color: var(--text2); font-size: 15.5px; margin-bottom: 22px; }
 .cta-band .btn { width: auto; display: inline-flex; margin: 0 auto; }
+
+/* Table admin */
+.admin-table { border: 1px solid var(--line-soft); border-radius: 14px; overflow-x: auto; background: var(--card); }
+.admin-row { display: grid; grid-template-columns: minmax(180px,2.2fr) 1.2fr .7fr .7fr .9fr 1fr 1fr; gap: 12px; align-items: center; padding: 13px 18px; border-top: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); font-size: 14px; min-width: 760px; }
+.admin-row:first-child { border-top: none; }
+.admin-head { background: rgba(34,26,18,.04); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+a.admin-row:hover { background: rgba(236,91,51,.05); }
+
+/* Liste "Mes événements" */
+.ev-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; padding: 18px; text-decoration: none; color: var(--ink); margin-bottom: 12px; transition: border-color .15s; }
+.ev-card:hover { border-color: var(--accent); }
+.ev-card .ev-meta { font-family: var(--font-mono); font-size: 12px; color: var(--text3); margin-top: 5px; }
+.ev-card .ev-counts { text-align: right; flex: 0 0 auto; }
+.ev-card .ev-counts .n { font-family: var(--font-display); font-weight: 800; font-size: 20px; }
