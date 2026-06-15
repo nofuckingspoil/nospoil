@@ -5,6 +5,7 @@ import Link from 'next/link'
 import QRCode from 'qrcode'
 import { BRAND } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
+import InstallPrompt from '../../../components/InstallPrompt'
 import { getDeviceToken } from '../../../lib/device'
 
 function formatDate(iso) {
@@ -102,6 +103,7 @@ export default function EventManage({ params }) {
           <div className="notice" style={{ marginTop: 16 }}>
             💡 Gardez ce lien : c'est votre tableau de bord privé. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.
           </div>
+          <InstallPrompt label="Épinglez votre tableau de bord" />
         </>
       ) : (
         <div className="notice" style={{ marginTop: 16 }}>

@@ -4,6 +4,11 @@ import { BRAND } from '../lib/brand'
 export const metadata = {
   title: `${BRAND.name} — ${BRAND.tagline}`,
   description: BRAND.pitch,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: BRAND.name,
+  },
 }
 
 export const viewport = {

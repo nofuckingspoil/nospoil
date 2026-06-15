@@ -2,6 +2,7 @@
 
 import { use, useEffect, useRef, useState } from 'react'
 import { BRAND } from '../../../lib/brand'
+import InstallPrompt from '../../../components/InstallPrompt'
 import { getDeviceToken, saveGuest, getGuest } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
 
@@ -194,6 +195,7 @@ export default function GuestCamera({ params }) {
       </p>
       <div className="spacer" />
       <button className="btn btn-accent" onClick={() => setPhase('name')}>Rejoindre l'appareil →</button>
+      <InstallPrompt label="Garde l'appareil à portée de main" />
       <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
     </main>
   )

@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
+import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 
 const TEASER_GRADS = [
@@ -77,6 +78,31 @@ export default function Gallery({ params }) {
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
   const [retro, setRetro] = useState(true)
+  const [zip, setZip] = useState(null) // null | {done, total}
+
+  async function downloadAll(photos) {
+    if (zip) return
+    setZip({ done: 0, total: photos.length })
+    try {
+      const z = new JSZip()
+      let i = 0
+      for (const p of photos) {
+        try {
+          const blob = await fetch(p.url).then((r) => r.blob())
+          const safe = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
+          z.file(`declic-${String(++i).padStart(3, '0')}-${safe}.jpg`, blob)
+        } catch { i++ }
+        setZip({ done: i, total: photos.length })
+      }
+      const out = await z.generateAsync({ type: 'blob' })
+      const url = URL.createObjectURL(out)
+      const a = document.createElement('a')
+      a.href = url; a.download = 'declic-photos.zip'; a.click()
+      URL.revokeObjectURL(url)
+    } catch (e) {
+      setError('Téléchargement impossible.')
+    } finally { setZip(null) }
+  }
 
   function load() {
     fetch(`/api/gallery/${id}`)
@@ -136,7 +162,21 @@ export default function Gallery({ params }) {
         </div>
       )}
 
-      <div className="footer-note">Appuyez longuement sur une photo pour l'enregistrer.</div>
+      {data.photos.length > 0 && (
+        <button className="btn btn-dark" style={{ marginTop: 20 }} disabled={!!zip}
+          onClick={() => downloadAll(data.photos)}>
+          {zip
+            ? `Préparation… ${zip.done}/${zip.total}`
+            : (
+              <>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                Tout télécharger ({data.photos.length})
+              </>
+            )}
+        </button>
+      )}
+
+      <div className="footer-note">Appuyez longuement sur une photo pour l'enregistrer une à une.</div>
     </main>
   )
 }
