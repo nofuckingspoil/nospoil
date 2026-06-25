@@ -67,6 +67,17 @@ export async function selectRows(table, query = '') {
   return { ok: res.status < 300, status: res.status, data }
 }
 
+// --- Suppression de ligne(s) filtrée(s) (DELETE) ---
+export async function deleteRows(table, query) {
+  assertConfig()
+  const res = await fetch(`${URL}/rest/v1/${table}?${query}`, {
+    method: 'DELETE',
+    headers: { ...authHeaders() },
+    cache: 'no-store',
+  })
+  return { ok: res.status < 300, status: res.status }
+}
+
 // --- Upload d'un fichier dans le Storage privé ---
 export async function uploadPhoto(path, bytes, contentType = 'image/jpeg') {
   assertConfig()
@@ -85,6 +96,18 @@ export async function deletePhoto(path) {
     method: 'DELETE',
     headers: { ...authHeaders() },
   }).catch(() => {})
+}
+
+// --- Suppression groupée de fichiers du Storage ---
+export async function deletePhotos(paths) {
+  assertConfig()
+  if (!paths.length) return { ok: true }
+  const res = await fetch(`${URL}/storage/v1/object/${BUCKET}`, {
+    method: 'DELETE',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prefixes: paths }),
+  }).catch(() => ({ status: 500 }))
+  return { ok: res.status < 300 }
 }
 
 // --- Génère des URLs signées temporaires pour afficher les photos ---

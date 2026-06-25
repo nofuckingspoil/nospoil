@@ -135,13 +135,35 @@ input:focus, select:focus { border-color: var(--accent); }
 .cover .name { position: absolute; left: 18px; right: 18px; bottom: 18px; z-index: 2; font-family: var(--font-display); font-weight: 800; font-size: 34px; line-height: 1; letter-spacing: -.02em; color: #fff; text-shadow: 0 2px 16px rgba(0,0,0,.35); }
 
 /* ---------- Caméra ---------- */
-.cam-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cam-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
 .cam-chip {
   display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08);
   border: 1px solid rgba(255,255,255,.1); border-radius: 999px; padding: 7px 13px;
   font-family: var(--font-mono); font-size: 11px; color: #fff;
 }
 .cam-chip .live { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.cam-iconbtn {
+  flex: 0 0 auto; width: 42px; height: 42px; border-radius: 14px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); color: #fff;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform .08s, background .15s;
+}
+.cam-iconbtn:hover { background: rgba(255,255,255,.14); }
+.cam-iconbtn:active { transform: scale(.92); }
+.cam-titlebar { flex: 1; min-width: 0; text-align: center; padding: 0 6px; }
+.cam-titlebar .nm { font-family: var(--font-display); font-weight: 700; font-size: 16px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cam-titlebar .sub { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .03em; color: rgba(255,255,255,.55); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cam-controls { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; min-height: 36px; }
+.cam-pile { flex: 0 0 70px; width: 70px; height: 60px; position: relative; display: block; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .08s; }
+a.cam-pile:active { transform: scale(.94); }
+.cam-pile .pf { position: absolute; bottom: 0; left: 8px; width: 40px; height: 50px; border-radius: 6px; background: var(--card); padding: 3px 3px 7px; box-shadow: 0 3px 10px rgba(0,0,0,.45); animation: dc-develop .9s ease both; }
+.cam-pile .pf img { width: 100%; height: 100%; object-fit: cover; border-radius: 3px; display: block; }
+.cam-pile .pf-empty { position: absolute; bottom: 0; left: 8px; width: 40px; height: 50px; border-radius: 6px; border: 1px dashed rgba(255,255,255,.18); }
+.cam-pile .pf-count {
+  position: absolute; top: -6px; right: -2px; z-index: 10;
+  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
+  background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,.4);
+}
 .cam-flipchip, .cam-flashchip {
   background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 999px;
   padding: 8px 12px; cursor: pointer; display: flex; align-items: center; gap: 6px;
@@ -152,6 +174,20 @@ input:focus, select:focus { border-color: var(--accent); }
 .viewfinder {
   position: relative; flex: 1; min-height: 380px; border-radius: 24px; overflow: hidden;
   border: 1px solid rgba(255,255,255,.12); background: #000;
+}
+
+/* Verrouillage visuel en portrait : si le téléphone est tourné en paysage,
+   on fait pivoter l'écran caméra à l'inverse pour qu'il reste droit. */
+@media screen and (orientation: landscape) and (max-width: 1000px) {
+  .force-portrait {
+    position: fixed;
+    top: 100vh; left: 0;
+    width: 100vh; height: 100vw;
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
 }
 .viewfinder video, .viewfinder .vf-fallback { width: 100%; height: 100%; object-fit: cover; display: block; }
 .viewfinder .vf-anim {
@@ -354,3 +390,38 @@ a.admin-row:hover { background: rgba(236,91,51,.05); }
 .a2hs-num { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%; background: var(--accent); color: #fff; font-family: var(--font-mono); font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
 .a2hs-share { display: inline-flex; align-items: center; gap: 4px; background: #0a7aff; color: #fff; border-radius: 6px; padding: 2px 7px 2px 5px; font-weight: 700; font-size: 12px; vertical-align: middle; }
 .a2hs-plus { color: var(--accent); font-weight: 700; }
+
+/* ===== Badge QR « Essayer Déclic » (flottant, type Once) ===== */
+.tryqr {
+  position: fixed; left: 20px; bottom: 20px; z-index: 40;
+  width: 264px; padding: 22px 22px 18px;
+  background: var(--dark); color: #fff; text-decoration: none;
+  border-radius: 20px; border: 1px solid rgba(255,255,255,.08);
+  box-shadow: 0 18px 44px rgba(0,0,0,.34);
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.tryqr:hover { transform: translateY(-3px); box-shadow: 0 24px 56px rgba(0,0,0,.42); }
+.tryqr-head {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.82); margin-bottom: 12px;
+}
+.tryqr-star { color: var(--accent); margin-right: 4px; }
+.tryqr-frame {
+  width: 220px; height: 220px; background: #fff; border-radius: 14px;
+  padding: 10px; display: flex; align-items: center; justify-content: center;
+}
+.tryqr-frame img { width: 100%; height: 100%; display: block; }
+.tryqr-skeleton { width: 100%; height: 100%; background: #efefef; border-radius: 6px; }
+.tryqr-sub {
+  font-family: var(--font-mono); font-size: 10.5px; line-height: 1.45;
+  color: rgba(255,255,255,.62); margin-top: 12px;
+}
+
+/* Sur mobile : scanner son propre écran n'a pas de sens → pastille tappable */
+@media (max-width: 720px) {
+  .tryqr { width: auto; flex-direction: row; gap: 8px; padding: 12px 16px; border-radius: 999px; align-items: center; }
+  .tryqr-frame, .tryqr-sub { display: none; }
+  .tryqr-head { margin-bottom: 0; font-size: 12px; }
+  .tryqr-head::after { content: ' →'; color: var(--accent); }
+}

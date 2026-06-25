@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useEffect, useRef, useState } from 'react'
+import QRCode from 'qrcode'
 import InstallPrompt from '../../../components/InstallPrompt'
 import { getDeviceToken, saveGuest, getGuest } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
@@ -10,6 +11,20 @@ const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 function formatReveal(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
   catch { return iso }
+}
+
+// Compte à rebours court avant la révélation : « dans 1 j 23 h », « dans 2 h 05 min »…
+function countdownToReveal(iso, now) {
+  const diff = new Date(iso).getTime() - now
+  if (isNaN(diff)) return ''
+  if (diff <= 0) return 'révélé ✨'
+  const mins = Math.floor(diff / 60000)
+  const d = Math.floor(mins / 1440)
+  const h = Math.floor((mins % 1440) / 60)
+  const m = mins % 60
+  if (d > 0) return `révélation dans ${d} j ${h} h`
+  if (h > 0) return `révélation dans ${h} h ${String(m).padStart(2, '0')} min`
+  return `révélation dans ${m} min`
 }
 
 let _tmp = 0
@@ -33,6 +48,10 @@ export default function GuestCamera({ params }) {
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [deleting, setDeleting] = useState(false)
+  const [showQR, setShowQR] = useState(false)    // pop-up "inviter un proche"
+  const [qrUrl, setQrUrl] = useState('')
+  const [qrCopied, setQrCopied] = useState(false)
+  const [now, setNow] = useState(() => Date.now())  // pour le compte à rebours
 
   const videoRef = useRef(null)
   const streamRef = useRef(null)
@@ -58,6 +77,24 @@ export default function GuestCamera({ params }) {
     return stopCamera
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, liveCam, facingMode])
+
+  // Génère le QR code d'invitation à l'ouverture de la pop-up
+  const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/j/${id}` : ''
+  useEffect(() => {
+    if (!showQR || qrUrl || !joinUrl) return
+    QRCode.toDataURL(joinUrl, { width: 440, margin: 1, color: { dark: '#221A12', light: '#FCF8F0' } })
+      .then(setQrUrl).catch(() => {})
+  }, [showQR, qrUrl, joinUrl])
+
+  function copyJoinLink() {
+    navigator.clipboard?.writeText(joinUrl).then(() => { setQrCopied(true); setTimeout(() => setQrCopied(false), 1800) })
+  }
+
+  // Rafraîchit le compte à rebours toutes les 30 s
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 30000)
+    return () => clearInterval(t)
+  }, [])
 
   // Charge mes photos confirmées + synchronise le compteur depuis le serveur
   async function loadMyPhotos() {
@@ -244,18 +281,19 @@ export default function GuestCamera({ params }) {
   return (
     <main className="screen screen-dark force-portrait">
       <div className="cam-top">
-        <div className="cam-chip"><span className="live" />{coupleLabel}</div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {liveCam && (
-            <button className="cam-flipchip" onClick={flipCamera} disabled={busy} aria-label="Retourner la caméra">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-          )}
-          <button className={`cam-flashchip ${flashOn ? 'on' : ''}`} onClick={() => setFlashOn((v) => !v)}>
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor" /></svg>
-            {flashOn ? 'FLASH' : 'OFF'}
-          </button>
+        <button className="cam-iconbtn" onClick={() => setPhase('cover')} aria-label="Retour">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        </button>
+        <div className="cam-titlebar">
+          <div className="nm">{coupleLabel}</div>
+          <div className="sub">{countdownToReveal(meta?.revealAt, now)}</div>
         </div>
+        <button className="cam-iconbtn" onClick={() => setShowQR(true)} aria-label="Inviter un proche (QR code)">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
+            <path d="M14 14h3v3h-3zM21 14v7M14 21h7" />
+          </svg>
+        </button>
       </div>
 
       <div className="viewfinder">
@@ -273,6 +311,18 @@ export default function GuestCamera({ params }) {
         </div>
         {shutterFx && <div className="cam-shutter-fx" />}
         {flashFx && <div className="cam-flash" />}
+
+        {camBlocked && (
+          <div style={{ position: 'absolute', inset: 0, zIndex: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 14, padding: 24, background: 'rgba(10,8,6,.8)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}>
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 1l22 22" /><path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m4-3h4l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56" />
+            </svg>
+            <p style={{ color: '#fff', fontWeight: 700, fontSize: 15, margin: 0, maxWidth: 250, lineHeight: 1.4 }}>Vous n'avez pas autorisé votre caméra</p>
+            <button onClick={retryCamera} style={{ background: '#fff', color: '#1a1410', border: 'none', borderRadius: 999, padding: '11px 22px', fontWeight: 700, fontSize: 14.5, cursor: 'pointer' }}>
+              Autoriser ma caméra
+            </button>
+          </div>
+        )}
       </div>
 
       {isInAppBrowser() && (
@@ -282,50 +332,56 @@ export default function GuestCamera({ params }) {
       )}
 
       {camBlocked && (
-        <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.14)', textAlign: 'left' }}>
-          <strong>📷 Caméra en direct bloquée</strong>
-          <p style={{ margin: '6px 0 0', lineHeight: 1.5 }}>
-            Pas de panique : tu peux quand même prendre tes photos avec le gros bouton — il ouvre l'appareil photo de ton téléphone. 🙂
-          </p>
-          <p style={{ margin: '10px 0 0', lineHeight: 1.5, fontSize: '.92em', opacity: .85 }}>
-            Pour réactiver l'aperçu en direct :<br />
-            • <strong>iPhone (Safari)</strong> : touche « <strong>aA</strong> » à gauche de l'adresse → <strong>Réglages du site</strong> → <strong>Caméra</strong> → <strong>Autoriser</strong>.<br />
-            • <strong>Android (Chrome)</strong> : touche le <strong>cadenas 🔒</strong> près de l'adresse → <strong>Autorisations</strong> → <strong>Caméra</strong>.
-          </p>
-          <button
-            onClick={retryCamera}
-            style={{ marginTop: 12, background: '#fff', color: '#1a1410', border: 'none', borderRadius: 999, padding: '9px 18px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
-          >
-            Réessayer la caméra →
-          </button>
-        </div>
+        <details style={{ marginTop: 10, color: 'rgba(255,255,255,.6)', fontSize: 12.5 }}>
+          <summary style={{ cursor: 'pointer' }}>Toujours bloquée après avoir cliqué ?</summary>
+          <div style={{ marginTop: 8, lineHeight: 1.6 }}>
+            • <strong>iPhone (Safari)</strong> : touche « aA » à gauche de l'adresse → Réglages du site → Caméra → Autoriser.<br />
+            • <strong>Android (Chrome)</strong> : touche le cadenas 🔒 → Autorisations → Caméra.<br />
+            <span style={{ opacity: .8 }}>En attendant, le gros bouton ouvre l'appareil photo de ton téléphone.</span>
+          </div>
+        </details>
       )}
       {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
 
-      <div className="cam-bottom">
-        <div className="cam-roll">
-          {roll.length === 0
-            ? <span className="roll-empty">pellicule vide…</span>
-            : roll.map((p, i) => (
-                <button key={p.tempId || p.id || i} className={`roll-frame ${p.pending ? 'pending' : ''}`}
-                  onClick={() => !p.pending && p.id && setViewer({ id: p.id, url: p.url })} aria-label="Voir la photo">
-                  <img src={p.url} alt="" loading="lazy" />
-                </button>
-              ))}
-        </div>
-        {liveCam ? (
-          <button className="shutter" onClick={snap} disabled={busy || full} aria-label="Déclencher"><span /></button>
-        ) : (
-          <>
-            <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFilePicked} style={{ display: 'none' }} />
-            <button className="shutter" disabled={busy || full} onClick={() => fileInputRef.current?.click()} aria-label="Prendre une photo"><span /></button>
-          </>
+      {/* Rangée de contrôles : flash (gauche) · retourner caméra (droite) */}
+      <div className="cam-controls">
+        <button className={`cam-flashchip ${flashOn ? 'on' : ''}`} onClick={() => setFlashOn((v) => !v)}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="currentColor" /></svg>
+          {flashOn ? 'FLASH' : 'OFF'}
+        </button>
+        {liveCam && (
+          <button className="cam-flipchip" onClick={flipCamera} disabled={busy} aria-label="Retourner la caméra">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            Retourner
+          </button>
         )}
-        <div style={{ flex: '0 0 auto', width: 54, textAlign: 'center' }}>
-          <div className="mono" style={{ fontSize: 10, color: 'rgba(255,255,255,.5)', lineHeight: 1.3 }}>
-            {guest?.shotsTaken || 0}<br />prises
-          </div>
+      </div>
+
+      {/* Bas : pile de photos cliquable (gauche) · déclencheur (centre) */}
+      <div className="cam-bottom">
+        {roll.length === 0 ? (
+          <div className="cam-pile"><span className="pf-empty" /></div>
+        ) : (
+          <a className="cam-pile" href={`/g/${id}`} aria-label="Voir mes photos">
+            {roll.slice(0, 3).map((p, i) => (
+              <span key={p.tempId || p.id || i} className="pf" style={{ zIndex: 3 - i, transform: `rotate(${[-6, 7, 14][i] || 0}deg)` }}>
+                <img src={p.url} alt="" loading="lazy" />
+              </span>
+            ))}
+            {roll.length > 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
+          </a>
+        )}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
+          {liveCam ? (
+            <button className="shutter" onClick={snap} disabled={busy || full} aria-label="Déclencher"><span /></button>
+          ) : (
+            <>
+              <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFilePicked} style={{ display: 'none' }} />
+              <button className="shutter" disabled={busy || full} onClick={() => fileInputRef.current?.click()} aria-label="Prendre une photo"><span /></button>
+            </>
+          )}
         </div>
+        <div style={{ flex: '0 0 64px' }} />
       </div>
 
       <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
@@ -333,13 +389,31 @@ export default function GuestCamera({ params }) {
         🖼️ Importer une photo de ma galerie
       </button>
 
-      {full && <div className="cam-full-hint">Pellicule pleine — touche une photo pour la supprimer et en reprendre une.</div>}
+      {full && <div className="cam-full-hint">Pellicule pleine — tu as utilisé toutes tes poses.</div>}
 
-      <a className="cam-reveal-link" href={`/g/${id}`}>
-        🎞️ Révélation le {meta && formatReveal(meta.revealAt)} · voir
-      </a>
+      <a className="cam-reveal-link" href={`/g/${id}`}>🎞️ Voir l'album partagé</a>
 
       <InstallPrompt label="Garde l'appareil à portée de main" />
+
+      {/* Pop-up "Inviter un proche" */}
+      {showQR && (
+        <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setShowQR(false) }} style={{ background: 'rgba(10,8,6,.7)' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: 340, background: '#F4EDDD', borderRadius: 22, padding: '26px 22px', boxShadow: '0 24px 60px rgba(0,0,0,.4)' }}>
+            <button onClick={() => setShowQR(false)} aria-label="Fermer"
+              style={{ position: 'absolute', top: 14, right: 14, width: 34, height: 34, borderRadius: '50%', background: 'rgba(34,26,18,.08)', border: 'none', color: 'var(--ink)', fontSize: 19, cursor: 'pointer', lineHeight: 1 }}>×</button>
+            <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 4 }}>Inviter un proche</div>
+            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 18px' }}>Scannez pour rejoindre</h3>
+            <div style={{ background: '#FCF8F0', borderRadius: 16, padding: 16, display: 'flex', justifyContent: 'center' }}>
+              {qrUrl ? <img src={qrUrl} alt="QR code de l'événement" style={{ display: 'block', width: '100%', maxWidth: 210, height: 'auto' }} />
+                     : <div style={{ width: 210, height: 210 }} />}
+            </div>
+            <div style={{ background: 'rgba(34,26,18,.05)', borderRadius: 12, padding: '11px 13px', margin: '14px 0 12px', fontFamily: 'var(--font-mono)', fontSize: 12.5, color: 'var(--text2)', wordBreak: 'break-all', textAlign: 'center' }}>{joinUrl}</div>
+            <button className="btn btn-accent" style={{ width: '100%' }} onClick={copyJoinLink}>
+              {qrCopied ? '✓ Lien copié' : 'Copier le lien'}
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Visionneuse photo */}
       {viewer && (

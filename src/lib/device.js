@@ -39,6 +39,16 @@ export function getMyEvents() {
   try { return JSON.parse(localStorage.getItem('pellicule_my_events') || '[]') } catch { return [] }
 }
 
+// Retire un événement de la liste locale (après suppression)
+export function forgetMyEvent(id) {
+  if (typeof window === 'undefined') return
+  try {
+    const list = JSON.parse(localStorage.getItem('pellicule_my_events') || '[]').filter((x) => x !== id)
+    localStorage.setItem('pellicule_my_events', JSON.stringify(list))
+    localStorage.removeItem(`pellicule_guest_${id}`)
+  } catch {}
+}
+
 // Mémorise l'identité d'invité par événement (id + prénom)
 export function saveGuest(eventId, guestId, name) {
   if (typeof window === 'undefined') return

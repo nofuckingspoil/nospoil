@@ -1,12 +1,13 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import { BRAND } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
-import { getDeviceToken } from '../../../lib/device'
+import { getDeviceToken, forgetMyEvent } from '../../../lib/device'
 
 function formatDate(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
@@ -20,11 +21,14 @@ function daysUntil(iso) {
 
 export default function EventManage({ params }) {
   const { id } = use(params)
+  const router = useRouter()
   const [ev, setEv] = useState(null)
   const [error, setError] = useState('')
   const [joinUrl, setJoinUrl] = useState('')
   const [qrUrl, setQrUrl] = useState('')
   const [copied, setCopied] = useState(false)
+  const [confirmDel, setConfirmDel] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     setJoinUrl(`${window.location.origin}/j/${id}`)
@@ -47,6 +51,16 @@ export default function EventManage({ params }) {
     if (navigator.share) {
       try { await navigator.share({ title: ev?.name || BRAND.name, text: 'Prenez des photos pour notre appareil jetable 📸', url: joinUrl }) } catch {}
     } else copyLink()
+  }
+  async function deleteEvent() {
+    setDeleting(true); setError('')
+    try {
+      const res = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'x-owner-token': getDeviceToken() } })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Suppression impossible.')
+      forgetMyEvent(id)
+      router.push('/mes-evenements')
+    } catch (err) { setError(err.message); setDeleting(false) }
   }
 
   if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
@@ -104,6 +118,32 @@ export default function EventManage({ params }) {
             💡 Gardez ce lien : c'est votre tableau de bord privé. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.
           </div>
           <InstallPrompt label="Épinglez votre tableau de bord" />
+
+          {/* Zone de suppression */}
+          <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
+            {error && <div className="err" style={{ marginBottom: 12 }}>{error}</div>}
+            {!confirmDel ? (
+              <button
+                onClick={() => { setError(''); setConfirmDel(true) }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b23b2e', fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '.04em', padding: 0, textDecoration: 'underline' }}
+              >
+                Supprimer cet événement
+              </button>
+            ) : (
+              <div className="card" style={{ borderColor: 'rgba(178,59,46,.35)' }}>
+                <h3 className="h3" style={{ marginBottom: 8 }}>Supprimer « {ev.name} » ?</h3>
+                <p className="muted small" style={{ marginBottom: 16 }}>
+                  Toutes les photos de l'événement et le lien d'invitation seront <strong>définitivement effacés</strong>. Cette action est irréversible.
+                </p>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setConfirmDel(false)} disabled={deleting}>Annuler</button>
+                  <button className="btn btn-danger" style={{ flex: 1 }} onClick={deleteEvent} disabled={deleting}>
+                    {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </>
       ) : (
         <div className="notice" style={{ marginTop: 16 }}>
