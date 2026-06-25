@@ -351,13 +351,12 @@ export default function GuestCamera({ params }) {
         </button>
         {liveCam && (
           <button className="cam-flipchip" onClick={flipCamera} disabled={busy} aria-label="Retourner la caméra">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            Retourner
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M3 12a9 9 0 0115-6.7L21 8M21 3v5h-5M21 12a9 9 0 01-15 6.7L3 16M3 21v-5h5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         )}
       </div>
 
-      {/* Bas : pile de photos cliquable (gauche) · déclencheur (centre) */}
+      {/* Bas : pile de photos (gauche) · déclencheur (centre) · import galerie (droite) */}
       <div className="cam-bottom">
         {roll.length === 0 ? (
           <div className="cam-pile"><span className="pf-empty" /></div>
@@ -381,19 +380,18 @@ export default function GuestCamera({ params }) {
             </>
           )}
         </div>
-        <div style={{ flex: '0 0 64px' }} />
+        <div className="cam-side">
+          <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
+          <button className="cam-gallerybtn" onClick={() => galleryInputRef.current?.click()} disabled={busy || full} aria-label="Importer une photo de ma galerie">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8.5" cy="8.5" r="1.6" /><path d="M21 15l-5-5L5 21" />
+            </svg>
+          </button>
+          <span className="cam-side-label">Galerie</span>
+        </div>
       </div>
 
-      <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
-      <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full}>
-        🖼️ Importer une photo de ma galerie
-      </button>
-
       {full && <div className="cam-full-hint">Pellicule pleine — tu as utilisé toutes tes poses.</div>}
-
-      <a className="cam-reveal-link" href={`/g/${id}`}>🎞️ Voir l'album partagé</a>
-
-      <InstallPrompt label="Garde l'appareil à portée de main" />
 
       {/* Pop-up "Inviter un proche" */}
       {showQR && (
