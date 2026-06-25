@@ -565,7 +565,7 @@ export default function GuestCamera({ params }) {
           })()}
 
           <div className="album-bigstats">
-            <div className="album-bstat"><div className="v">{meta?.photoCount ?? roll.length}</div><div className="l">Photos</div></div>
+            <div className="album-bstat"><div className="v">{meta?.photoCount ?? roll.length}</div><div className="l">Photos du groupe</div></div>
             <div className="album-bstat"><div className="v">{meta?.guestCount ?? 1}</div><div className="l">Participant{(meta?.guestCount || 0) > 1 ? 's' : ''}</div></div>
           </div>
 
