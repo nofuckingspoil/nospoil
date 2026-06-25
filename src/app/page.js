@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { BRAND } from '../lib/brand'
 import Logo from '../components/Logo'
+import TryQR from '../components/TryQR'
 import { TIERS, formatPrice } from '../lib/pricing'
 
 export const metadata = {
@@ -46,6 +47,7 @@ function PriceCard({ tier }) {
 export default function Home() {
   return (
     <div className="site">
+      <TryQR />
       <nav className="vnav">
         <Logo nameSize={22} size={36} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>

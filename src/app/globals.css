@@ -100,12 +100,25 @@ a { color: inherit; }
 .field label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 7px; }
 .field .hint { color: var(--text4); font-size: 12.5px; margin-top: 7px; line-height: 1.45; }
 
-input[type=text], input[type=date], input[type=datetime-local], input[type=number], select {
+input[type=text], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], input[type=number], select {
   width: 100%; font-family: var(--font-body); font-size: 17px; font-weight: 600;
   padding: 16px 17px; border: 2px solid var(--line); border-radius: 16px;
   background: var(--card); color: var(--ink); outline: none; transition: border-color .15s;
 }
 input:focus, select:focus { border-color: var(--accent); }
+
+/* Champ avec icône à l'intérieur (prénom, téléphone…) */
+.input-icon { position: relative; }
+.input-icon > svg {
+  position: absolute; left: 16px; top: 50%; transform: translateY(-50%);
+  color: var(--text4); pointer-events: none;
+}
+.input-icon > input { padding-left: 46px; }
+.input-icon:focus-within > svg { color: var(--accent); }
+.field-tag {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text4); background: var(--line-soft); padding: 3px 8px; border-radius: 999px;
+}
 
 /* ---------- Stepper ---------- */
 .stepper { display: flex; align-items: center; gap: 14px; }

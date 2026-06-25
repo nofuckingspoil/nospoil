@@ -2,7 +2,6 @@
 
 import { use, useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import InstallPrompt from '../../../components/InstallPrompt'
 import { getDeviceToken, saveGuest, getGuest } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
 
@@ -131,6 +130,28 @@ export default function GuestCamera({ params }) {
     const t = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(t)
   }, [])
+
+  // Met à jour les compteurs (photos / participants) en temps réel
+  // tant que l'écran album est ouvert : un appel immédiat, puis toutes les 4 s.
+  useEffect(() => {
+    if (!showAlbum) return
+    let alive = true
+    const refresh = async () => {
+      try {
+        const d = await fetch(`/api/events/${id}/stats`).then((r) => r.json())
+        if (!alive || !d) return
+        setMeta((m) => (m ? {
+          ...m,
+          guestCount: typeof d.guestCount === 'number' ? d.guestCount : m.guestCount,
+          photoCount: typeof d.photoCount === 'number' ? d.photoCount : m.photoCount,
+        } : m))
+      } catch {}
+    }
+    refresh()
+    const t = setInterval(refresh, 4000)
+    return () => { alive = false; clearInterval(t) }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showAlbum, id])
 
   // Charge mes photos confirmées + synchronise le compteur depuis le serveur
   async function loadMyPhotos() {
@@ -340,7 +361,6 @@ export default function GuestCamera({ params }) {
       </p>
       <div className="spacer" />
       <button className="btn btn-accent" onClick={() => setPhase('name')}>Participer à l'album collectif →</button>
-      <InstallPrompt label="Garde l'appareil à portée de main" />
       <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
     </main>
   )
@@ -352,14 +372,25 @@ export default function GuestCamera({ params }) {
       <h3 className="h3" style={{ marginBottom: 10 }}>Comment vous<br />appelez-vous ?</h3>
       <p className="lead small" style={{ marginBottom: 26 }}>Pour qu'on sache qui a pris quelle photo dans la galerie finale.</p>
       <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) join(name.trim()) }}>
-        <input type="text" placeholder="Votre prénom" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} autoFocus />
-        <input type="tel" inputMode="tel" placeholder="Votre téléphone (facultatif)" value={phone}
-          onChange={(e) => setPhone(e.target.value)} maxLength={30} style={{ marginTop: 12 }} />
+        <div className="input-icon">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
+          <input type="text" placeholder="Votre prénom" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} autoFocus />
+        </div>
+
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 2px 8px' }}>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>Votre téléphone</span>
+          <span className="field-tag">facultatif</span>
+        </div>
+        <div className="input-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" /></svg>
+          <input type="tel" inputMode="tel" placeholder="06 12 34 56 78" value={phone}
+            onChange={(e) => setPhone(e.target.value)} maxLength={30} />
+        </div>
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
           📲 Pour recevoir le lien de l'album final avec toutes les photos.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
-        <button className="btn btn-dark" type="submit" disabled={busy || !name.trim()} style={{ marginTop: 16 }}>
+        <button className="btn btn-dark" type="submit" disabled={busy || !name.trim()} style={{ marginTop: 20 }}>
           {busy ? 'Un instant…' : "Ouvrir l'appareil →"}
         </button>
       </form>
@@ -425,7 +456,7 @@ export default function GuestCamera({ params }) {
                 ? `Tes ${guest?.shotsPerGuest} photos sont en cours de développement. Rendez-vous à la révélation 🎉`
                 : `Tes ${guest?.shotsPerGuest} photos sont en cours de développement.`}
             </p>
-            {!bonusUsed && <button className="vf-full-btn" onClick={grantBonus}>+5 photos gratuites →</button>}
+            {!bonusUsed && <button className="vf-full-btn" onClick={grantBonus}>Recharger ma pellicule (+5) →</button>}
           </div>
         )}
       </div>
