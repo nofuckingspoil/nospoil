@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent } from '../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED } from '../../lib/pricing'
+import { fileToImage, compressToBlob } from '../../lib/camera'
 
 function defaultReveal() {
   const d = new Date()
@@ -25,8 +26,17 @@ function CreateForm() {
   const [hostNames, setHostNames] = useState('')
   const [revealAt, setRevealAt] = useState(defaultReveal())
   const [shots, setShots] = useState(10)
+  const [coverFile, setCoverFile] = useState(null)
+  const [coverPreview, setCoverPreview] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  function onCoverPick(e) {
+    const f = e.target.files?.[0]
+    if (!f) return
+    setCoverFile(f)
+    setCoverPreview(URL.createObjectURL(f))
+  }
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -46,6 +56,19 @@ function CreateForm() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erreur.')
       rememberMyEvent(data.id)
+
+      // Upload de la photo de couverture (facultative), compressée côté navigateur
+      if (coverFile) {
+        try {
+          const img = await fileToImage(coverFile)
+          const blob = await compressToBlob(img, { maxSize: 1400, quality: 0.85 })
+          const fd = new FormData()
+          fd.append('file', blob, 'cover.jpg')
+          fd.append('ownerToken', getDeviceToken())
+          await fetch(`/api/events/${data.id}/cover`, { method: 'POST', body: fd })
+        } catch {}
+      }
+
       router.push(`/event/${data.id}`)
     } catch (err) { setError(err.message); setLoading(false) }
   }
@@ -91,6 +114,15 @@ function CreateForm() {
           <label>Vos prénoms <span className="muted">(facultatif)</span></label>
           <input type="text" placeholder="Ex : Marie & Paul" value={hostNames}
             onChange={(e) => setHostNames(e.target.value)} maxLength={80} />
+        </div>
+        <div className="field">
+          <label>Photo de couverture <span className="muted">(facultatif)</span></label>
+          <input type="file" accept="image/*" onChange={onCoverPick} />
+          {coverPreview && (
+            <img src={coverPreview} alt="Aperçu de la couverture"
+              style={{ marginTop: 12, width: '100%', borderRadius: 16, aspectRatio: '1 / 1.12', objectFit: 'cover', display: 'block' }} />
+          )}
+          <div className="hint">Elle s'affiche en grand sur l'écran d'accueil que voient vos invités.</div>
         </div>
         <div className="field">
           <label>Révélation des photos le</label>

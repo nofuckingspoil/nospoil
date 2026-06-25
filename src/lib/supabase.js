@@ -43,6 +43,19 @@ export async function insertRow(table, row) {
   return { ok: res.status < 300, status: res.status, data: Array.isArray(data) ? data[0] : data }
 }
 
+// --- Mise à jour de ligne(s) filtrée(s) (PATCH) ---
+export async function updateRow(table, query, patch) {
+  assertConfig()
+  const res = await fetch(`${URL}/rest/v1/${table}?${query}`, {
+    method: 'PATCH',
+    headers: { ...authHeaders(), 'Content-Type': 'application/json', Prefer: 'return=representation' },
+    body: JSON.stringify(patch),
+    cache: 'no-store',
+  })
+  const data = await res.json().catch(() => null)
+  return { ok: res.status < 300, status: res.status, data: Array.isArray(data) ? data[0] : data }
+}
+
 // --- Lecture filtrée d'une table (PostgREST) ---
 export async function selectRows(table, query = '') {
   assertConfig()

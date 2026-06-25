@@ -1,11 +1,11 @@
-import { selectRows } from '../../../../lib/supabase'
+import { selectRows, signPhotos } from '../../../../lib/supabase'
 
 export async function GET(request, { params }) {
   const { id } = await params
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,shots_per_guest,reveal_at,status,owner_token`
+    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -16,11 +16,19 @@ export async function GET(request, { params }) {
   const ownerToken = request.headers.get('x-owner-token')
   const isOwner = !!ownerToken && ownerToken === ev.owner_token
 
+  // URL signée temporaire pour la photo de couverture (si présente)
+  let coverUrl = null
+  if (ev.cover_url) {
+    const map = await signPhotos([ev.cover_url], 6 * 3600)
+    coverUrl = map[ev.cover_url] || null
+  }
+
   // Infos publiques : nécessaires aux invités (nom, date, nb de clichés)
   const payload = {
     id: ev.id,
     name: ev.name,
     hostNames: ev.host_names,
+    coverUrl,
     shotsPerGuest: ev.shots_per_guest,
     revealAt: ev.reveal_at,
     status: ev.status,

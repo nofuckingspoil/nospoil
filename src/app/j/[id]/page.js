@@ -1,7 +1,6 @@
 'use client'
 
 import { use, useEffect, useRef, useState } from 'react'
-import { BRAND } from '../../../lib/brand'
 import InstallPrompt from '../../../components/InstallPrompt'
 import { getDeviceToken, saveGuest, getGuest } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
@@ -28,6 +27,7 @@ export default function GuestCamera({ params }) {
   const [shutterFx, setShutterFx] = useState(false)
   const [flashOn, setFlashOn] = useState(false)
   const [liveCam, setLiveCam] = useState(false)
+  const [camBlocked, setCamBlocked] = useState(false)
   const [facingMode, setFacingMode] = useState('environment')
   const [myPhotos, setMyPhotos] = useState([])   // [{id, url}] confirmées (serveur)
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
@@ -98,13 +98,24 @@ export default function GuestCamera({ params }) {
         video: { facingMode, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false,
       })
       streamRef.current = stream
+      setCamBlocked(false)
       if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play().catch(() => {}) }
-    } catch { setLiveCam(false) }
+    } catch (err) {
+      setLiveCam(false)
+      // Accès refusé (par réflexe ?) : on le signale pour proposer de réautoriser
+      if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) setCamBlocked(true)
+    }
   }
   function stopCamera() {
     if (streamRef.current) { streamRef.current.getTracks().forEach((t) => t.stop()); streamRef.current = null }
   }
   function flipCamera() { setFacingMode((m) => (m === 'environment' ? 'user' : 'environment')) }
+  // Nouvelle tentative d'accès caméra (après que l'invité a réautorisé dans son navigateur)
+  function retryCamera() {
+    setCamBlocked(false)
+    if (liveCam) startCamera()
+    else setLiveCam(true)
+  }
 
   // Capture optimiste : on affiche tout de suite, on envoie en arrière-plan.
   async function capture(blob) {
@@ -189,23 +200,22 @@ export default function GuestCamera({ params }) {
 
   if (phase === 'cover') return (
     <main className="screen screen-cream">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 18 }}>
-        <span className="eyebrow-mute" style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-          <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent)' }} />{BRAND.name} · jetable
-        </span>
-        <span className="eyebrow-mute">{meta?.shotsPerGuest} poses</span>
-      </div>
-      <div className="cover" style={{ background: COVER_GRAD }}>
-        <div className="gloss" />
-        <div className="top">ÉVÉNEMENT PRIVÉ</div>
-        <div className="name">{coupleLabel}</div>
+      <div className="cover" style={meta?.coverUrl ? undefined : { background: COVER_GRAD }}>
+        {meta?.coverUrl ? (
+          <img src={meta.coverUrl} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+        ) : (
+          <>
+            <div className="gloss" />
+            <div className="top">ÉVÉNEMENT PRIVÉ</div>
+          </>
+        )}
       </div>
       <h3 className="h3" style={{ margin: '22px 0 8px' }}>{coupleLabel} vous invite{coupleLabel.includes('&') ? 'nt' : ''} dans l'objectif.</h3>
       <p className="lead small" style={{ marginBottom: 16 }}>
         Prenez <strong>{meta?.shotsPerGuest} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{meta && formatReveal(meta.revealAt)}</strong>.
       </p>
       <div className="spacer" />
-      <button className="btn btn-accent" onClick={() => setPhase('name')}>Rejoindre l'appareil →</button>
+      <button className="btn btn-accent" onClick={() => setPhase('name')}>Participer à l'album collectif →</button>
       <InstallPrompt label="Garde l'appareil à portée de main" />
       <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
     </main>
@@ -232,7 +242,7 @@ export default function GuestCamera({ params }) {
   const frameNo = String(Math.min((guest?.shotsTaken || 0) + (full ? 0 : 1), guest?.shotsPerGuest || 0)).padStart(2, '0')
 
   return (
-    <main className="screen screen-dark">
+    <main className="screen screen-dark force-portrait">
       <div className="cam-top">
         <div className="cam-chip"><span className="live" />{coupleLabel}</div>
         <div style={{ display: 'flex', gap: 8 }}>
@@ -268,6 +278,26 @@ export default function GuestCamera({ params }) {
       {isInAppBrowser() && (
         <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.12)' }}>
           ⚠️ Pour la caméra en direct, ouvrez ce lien dans <strong>Safari</strong> ou <strong>Chrome</strong>.
+        </div>
+      )}
+
+      {camBlocked && (
+        <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.14)', textAlign: 'left' }}>
+          <strong>📷 Caméra en direct bloquée</strong>
+          <p style={{ margin: '6px 0 0', lineHeight: 1.5 }}>
+            Pas de panique : tu peux quand même prendre tes photos avec le gros bouton — il ouvre l'appareil photo de ton téléphone. 🙂
+          </p>
+          <p style={{ margin: '10px 0 0', lineHeight: 1.5, fontSize: '.92em', opacity: .85 }}>
+            Pour réactiver l'aperçu en direct :<br />
+            • <strong>iPhone (Safari)</strong> : touche « <strong>aA</strong> » à gauche de l'adresse → <strong>Réglages du site</strong> → <strong>Caméra</strong> → <strong>Autoriser</strong>.<br />
+            • <strong>Android (Chrome)</strong> : touche le <strong>cadenas 🔒</strong> près de l'adresse → <strong>Autorisations</strong> → <strong>Caméra</strong>.
+          </p>
+          <button
+            onClick={retryCamera}
+            style={{ marginTop: 12, background: '#fff', color: '#1a1410', border: 'none', borderRadius: 999, padding: '9px 18px', fontWeight: 700, fontSize: 14, cursor: 'pointer' }}
+          >
+            Réessayer la caméra →
+          </button>
         </div>
       )}
       {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
