@@ -11,10 +11,13 @@ export async function POST(request) {
 
   const guestRes = await selectRows(
     'guests',
-    `event_id=eq.${eventId}&device_token=eq.${deviceToken}&select=id,shots_taken`
+    `event_id=eq.${eventId}&device_token=eq.${deviceToken}&select=id,shots_taken,bonus_shots,events(shots_per_guest)`
   )
   const guest = Array.isArray(guestRes.data) ? guestRes.data[0] : null
   if (!guest) return Response.json({ photos: [], shotsTaken: 0 })
+
+  const base = guest.events?.shots_per_guest ?? 0
+  const bonus = guest.bonus_shots || 0
 
   const photosRes = await selectRows(
     'photos',
@@ -27,5 +30,5 @@ export async function POST(request) {
     .map((r) => ({ id: r.id, url: signed[r.storage_path] }))
     .filter((p) => p.url)
 
-  return Response.json({ photos, shotsTaken: guest.shots_taken })
+  return Response.json({ photos, shotsTaken: guest.shots_taken, shotsPerGuest: base + bonus, bonusUsed: bonus > 0 })
 }

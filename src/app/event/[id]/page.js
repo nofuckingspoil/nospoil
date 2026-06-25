@@ -114,6 +114,24 @@ export default function EventManage({ params }) {
           <Link href={`/g/${id}`} className="btn btn-ghost" style={{ marginTop: 16 }}>
             {ev.revealed ? 'Voir la galerie →' : 'Aperçu des photos (avant révélation) →'}
           </Link>
+
+          {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
+            <div className="card" style={{ marginTop: 16 }}>
+              <div className="eyebrow-mute" style={{ marginBottom: 4 }}>Numéros collectés</div>
+              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, marginBottom: 12 }}>
+                {ev.contacts.length} invité{ev.contacts.length > 1 ? 's ont' : ' a'} laissé son numéro
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {ev.contacts.map((c, i) => (
+                  <a key={i} href={`tel:${c.phone}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderRadius: 12, background: 'var(--screen)', textDecoration: 'none', color: 'var(--ink)' }}>
+                    <span style={{ fontWeight: 600 }}>{c.name}</span>
+                    <span className="mono" style={{ color: 'var(--text2)' }}>{c.phone}</span>
+                  </a>
+                ))}
+              </div>
+              <div className="hint" style={{ marginTop: 10 }}>Pour partager le lien de l'album final avec eux.</div>
+            </div>
+          )}
           <div className="notice" style={{ marginTop: 16 }}>
             💡 Gardez ce lien : c'est votre tableau de bord privé. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.
           </div>

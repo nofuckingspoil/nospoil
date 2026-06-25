@@ -36,14 +36,18 @@ export async function GET(request, { params }) {
     isOwner,
   }
 
-  // Données du tableau de bord : réservées à l'organisateur
+  // Compteurs publics (participants + photos) — affichés sur l'écran d'album des invités
+  const [guests, photos] = await Promise.all([
+    selectRows('guests', `event_id=eq.${id}&select=id`),
+    selectRows('photos', `event_id=eq.${id}&select=id`),
+  ])
+  payload.guestCount = Array.isArray(guests.data) ? guests.data.length : 0
+  payload.photoCount = Array.isArray(photos.data) ? photos.data.length : 0
+
+  // Numéros collectés : réservés à l'organisateur
   if (isOwner) {
-    const [guests, photos] = await Promise.all([
-      selectRows('guests', `event_id=eq.${id}&select=id`),
-      selectRows('photos', `event_id=eq.${id}&select=id`),
-    ])
-    payload.guestCount = Array.isArray(guests.data) ? guests.data.length : 0
-    payload.photoCount = Array.isArray(photos.data) ? photos.data.length : 0
+    const list = await selectRows('guests', `event_id=eq.${id}&phone=not.is.null&select=display_name,phone&order=created_at.asc`)
+    payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({ name: g.display_name, phone: g.phone }))
   }
 
   return Response.json(payload)

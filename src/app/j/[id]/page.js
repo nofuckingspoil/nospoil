@@ -27,6 +27,19 @@ function countdownToReveal(iso, now) {
   return `révélation dans ${m} min`
 }
 
+// Décompose le temps restant en jours / heures / minutes / secondes
+function breakdownToReveal(iso, now) {
+  let diff = new Date(iso).getTime() - now
+  if (isNaN(diff) || diff < 0) diff = 0
+  return {
+    d: Math.floor(diff / 86400000),
+    h: Math.floor((diff % 86400000) / 3600000),
+    m: Math.floor((diff % 3600000) / 60000),
+    s: Math.floor((diff % 60000) / 1000),
+    done: diff <= 0,
+  }
+}
+
 let _tmp = 0
 
 export default function GuestCamera({ params }) {
@@ -35,12 +48,14 @@ export default function GuestCamera({ params }) {
   const [phase, setPhase] = useState('loading') // loading | cover | name | camera | error
   const [meta, setMeta] = useState(null)
   const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [guest, setGuest] = useState(null)       // { guestId, shotsTaken, shotsPerGuest }
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [flashFx, setFlashFx] = useState(false)
   const [shutterFx, setShutterFx] = useState(false)
   const [flashOn, setFlashOn] = useState(false)
+  const [screenFlash, setScreenFlash] = useState(false) // flash écran (selfie) pendant la capture
   const [liveCam, setLiveCam] = useState(false)
   const [camBlocked, setCamBlocked] = useState(false)
   const [facingMode, setFacingMode] = useState('environment')
@@ -49,6 +64,9 @@ export default function GuestCamera({ params }) {
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [deleting, setDeleting] = useState(false)
   const [showQR, setShowQR] = useState(false)    // pop-up "inviter un proche"
+  const [showAlbum, setShowAlbum] = useState(false) // écran album (mes photos)
+  const [downloading, setDownloading] = useState(false)
+  const [bonusUsed, setBonusUsed] = useState(false) // +5 photos déjà réclamées ?
   const [qrUrl, setQrUrl] = useState('')
   const [qrCopied, setQrCopied] = useState(false)
   const [now, setNow] = useState(() => Date.now())  // pour le compte à rebours
@@ -90,9 +108,27 @@ export default function GuestCamera({ params }) {
     navigator.clipboard?.writeText(joinUrl).then(() => { setQrCopied(true); setTimeout(() => setQrCopied(false), 1800) })
   }
 
-  // Rafraîchit le compte à rebours toutes les 30 s
+  // Télécharge mes propres photos en .zip
+  async function downloadMine() {
+    if (downloading || !myPhotos.length) return
+    setDownloading(true)
+    try {
+      const JSZip = (await import('jszip')).default
+      const z = new JSZip()
+      let i = 0
+      for (const p of myPhotos) {
+        try { const blob = await fetch(p.url).then((r) => r.blob()); z.file(`declic-${String(++i).padStart(2, '0')}.jpg`, blob) } catch { i++ }
+      }
+      const out = await z.generateAsync({ type: 'blob' })
+      const url = URL.createObjectURL(out)
+      const a = document.createElement('a'); a.href = url; a.download = 'mes-photos-declic.zip'; a.click()
+      URL.revokeObjectURL(url)
+    } catch { setError('Téléchargement impossible.') } finally { setDownloading(false) }
+  }
+
+  // Rafraîchit le compte à rebours chaque seconde (décompte actif)
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), 30000)
+    const t = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(t)
   }, [])
 
@@ -105,7 +141,12 @@ export default function GuestCamera({ params }) {
       })
       const d = await res.json()
       if (Array.isArray(d.photos)) setMyPhotos(d.photos)
-      if (typeof d.shotsTaken === 'number') setGuest((g) => (g ? { ...g, shotsTaken: d.shotsTaken } : g))
+      setGuest((g) => (g ? {
+        ...g,
+        shotsTaken: typeof d.shotsTaken === 'number' ? d.shotsTaken : g.shotsTaken,
+        shotsPerGuest: typeof d.shotsPerGuest === 'number' ? d.shotsPerGuest : g.shotsPerGuest,
+      } : g))
+      if (typeof d.bonusUsed === 'boolean') setBonusUsed(d.bonusUsed)
     } catch {}
   }
 
@@ -114,7 +155,7 @@ export default function GuestCamera({ params }) {
     try {
       const res = await fetch('/api/join', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName }),
+        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, phone: phone.trim() }),
       })
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
@@ -147,6 +188,18 @@ export default function GuestCamera({ params }) {
     if (streamRef.current) { streamRef.current.getTracks().forEach((t) => t.stop()); streamRef.current = null }
   }
   function flipCamera() { setFacingMode((m) => (m === 'environment' ? 'user' : 'environment')) }
+
+  // Active/désactive la torche (vrai flash) si le téléphone le permet (surtout Android).
+  async function applyTorch(on) {
+    try {
+      const track = streamRef.current?.getVideoTracks?.()[0]
+      if (!track || !track.getCapabilities) return false
+      const caps = track.getCapabilities()
+      if (!caps || !caps.torch) return false
+      await track.applyConstraints({ advanced: [{ torch: on }] })
+      return true
+    } catch { return false }
+  }
   // Nouvelle tentative d'accès caméra (après que l'invité a réautorisé dans son navigateur)
   function retryCamera() {
     setCamBlocked(false)
@@ -188,9 +241,43 @@ export default function GuestCamera({ params }) {
     const remaining = guest.shotsPerGuest - guest.shotsTaken
     if (remaining <= 0) { setError('Pellicule pleine — supprime une photo pour en reprendre une.'); return }
     setBusy(true); setError('')
-    fireShutterFeedback()
+
+    // Flash : torche réelle si dispo (Android), sinon flash écran pour les selfies (caméra avant)
+    let torchUsed = false
+    if (flashOn) {
+      torchUsed = await applyTorch(true)
+      if (torchUsed) await new Promise((r) => setTimeout(r, 180)) // laisse la torche éclairer
+    }
+    const useScreenFlash = flashOn && !torchUsed && facingMode === 'user'
+    if (useScreenFlash) { setScreenFlash(true); await new Promise((r) => setTimeout(r, 280)) } // éclaire le visage
+
+    playShutter()
+    setShutterFx(true); setTimeout(() => setShutterFx(false), 240)
+    if (flashOn && !useScreenFlash) { setFlashFx(true); setTimeout(() => setFlashFx(false), 420) }
+
     try { await capture(await compressToBlob(videoRef.current)) }
-    catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
+    catch (err) { setError(err.message || 'Erreur.') }
+    finally {
+      setBusy(false)
+      if (useScreenFlash) setScreenFlash(false)
+      if (torchUsed) applyTorch(false)
+    }
+  }
+
+  // Demande +5 photos gratuites (quand la pellicule est pleine)
+  async function grantBonus() {
+    if (!guest) return
+    setError('')
+    try {
+      const res = await fetch('/api/guest/bonus', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId: id, guestId: guest.guestId, deviceToken: getDeviceToken() }),
+      })
+      const d = await res.json()
+      if (!res.ok) throw new Error(d.error || 'Erreur.')
+      if (typeof d.shotsPerGuest === 'number') setGuest((g) => (g ? { ...g, shotsPerGuest: d.shotsPerGuest } : g))
+      setBonusUsed(true)
+    } catch (err) { setError(err.message || 'Erreur.') }
   }
 
   async function onFilePicked(e) {
@@ -266,6 +353,11 @@ export default function GuestCamera({ params }) {
       <p className="lead small" style={{ marginBottom: 26 }}>Pour qu'on sache qui a pris quelle photo dans la galerie finale.</p>
       <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) join(name.trim()) }}>
         <input type="text" placeholder="Votre prénom" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} autoFocus />
+        <input type="tel" inputMode="tel" placeholder="Votre téléphone (facultatif)" value={phone}
+          onChange={(e) => setPhone(e.target.value)} maxLength={30} style={{ marginTop: 12 }} />
+        <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
+          📲 Pour recevoir le lien de l'album final avec toutes les photos.
+        </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         <button className="btn btn-dark" type="submit" disabled={busy || !name.trim()} style={{ marginTop: 16 }}>
           {busy ? 'Un instant…' : "Ouvrir l'appareil →"}
@@ -323,6 +415,19 @@ export default function GuestCamera({ params }) {
             </button>
           </div>
         )}
+
+        {full && !camBlocked && (
+          <div className="vf-full">
+            <div className="vf-full-icon">🎞️</div>
+            <p className="vf-full-title">Pellicule pleine !</p>
+            <p className="vf-full-sub">
+              {bonusUsed
+                ? `Tes ${guest?.shotsPerGuest} photos sont en cours de développement. Rendez-vous à la révélation 🎉`
+                : `Tes ${guest?.shotsPerGuest} photos sont en cours de développement.`}
+            </p>
+            {!bonusUsed && <button className="vf-full-btn" onClick={grantBonus}>+5 photos gratuites →</button>}
+          </div>
+        )}
       </div>
 
       {isInAppBrowser() && (
@@ -361,14 +466,14 @@ export default function GuestCamera({ params }) {
         {roll.length === 0 ? (
           <div className="cam-pile"><span className="pf-empty" /></div>
         ) : (
-          <a className="cam-pile" href={`/g/${id}`} aria-label="Voir mes photos">
+          <button className="cam-pile" onClick={() => setShowAlbum(true)} aria-label="Voir l'album et mes photos">
             {roll.slice(0, 3).map((p, i) => (
               <span key={p.tempId || p.id || i} className="pf" style={{ zIndex: 3 - i, transform: `rotate(${[-6, 7, 14][i] || 0}deg)` }}>
                 <img src={p.url} alt="" loading="lazy" />
               </span>
             ))}
-            {roll.length > 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
-          </a>
+            {roll.length >= 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
+          </button>
         )}
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           {liveCam ? (
@@ -380,18 +485,94 @@ export default function GuestCamera({ params }) {
             </>
           )}
         </div>
-        <div className="cam-side">
-          <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
-          <button className="cam-gallerybtn" onClick={() => galleryInputRef.current?.click()} disabled={busy || full} aria-label="Importer une photo de ma galerie">
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="3" width="18" height="18" rx="3" /><circle cx="8.5" cy="8.5" r="1.6" /><path d="M21 15l-5-5L5 21" />
-            </svg>
-          </button>
-          <span className="cam-side-label">Galerie</span>
-        </div>
+        <div className="cam-pile" aria-hidden="true" style={{ pointerEvents: 'none' }} />
       </div>
 
-      {full && <div className="cam-full-hint">Pellicule pleine — tu as utilisé toutes tes poses.</div>}
+      <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
+      <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full}>
+        🖼️ Importer une photo de ma galerie
+      </button>
+
+
+      {screenFlash && <div className="screen-flash" />}
+
+      {/* Écran "Album" (ouvert en touchant la pile de photos) */}
+      {showAlbum && (
+        <div className="album-screen">
+          <div className="album-top">
+            <button className="cam-iconbtn" onClick={() => setShowAlbum(false)} aria-label="Retour à la caméra">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+            </button>
+            <span className="album-eyebrow">Album partagé</span>
+            <span style={{ width: 42 }} />
+          </div>
+
+          <div className="album-header">
+            <div className="album-headtext"><h2 className="album-name">{coupleLabel}</h2></div>
+            {meta?.coverUrl && <img className="album-cover" src={meta.coverUrl} alt="" />}
+          </div>
+
+          {(() => {
+            const cd = breakdownToReveal(meta?.revealAt, now)
+            return (
+              <div className="album-countdown">
+                {cd.done ? (
+                  <span className="cd-open">🎉 L'album est révélé !</span>
+                ) : (
+                  <>
+                    <span className="cd-label">Révélation dans</span>
+                    <div className="cd-blocks">
+                      <div className="cd-b"><b>{cd.d}</b><i>jours</i></div>
+                      <div className="cd-b"><b>{String(cd.h).padStart(2, '0')}</b><i>h</i></div>
+                      <div className="cd-b"><b>{String(cd.m).padStart(2, '0')}</b><i>min</i></div>
+                      <div className="cd-b"><b>{String(cd.s).padStart(2, '0')}</b><i>sec</i></div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )
+          })()}
+
+          <div className="album-bigstats">
+            <div className="album-bstat"><div className="v">{meta?.photoCount ?? roll.length}</div><div className="l">Photos</div></div>
+            <div className="album-bstat"><div className="v">{meta?.guestCount ?? 1}</div><div className="l">Participant{(meta?.guestCount || 0) > 1 ? 's' : ''}</div></div>
+          </div>
+
+          <div className="album-actions">
+            <button className="album-btn album-btn-accent" onClick={() => setShowAlbum(false)}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
+              Caméra
+            </button>
+            <button className="album-btn" onClick={() => setShowQR(true)}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM21 14v7M14 21h7" /></svg>
+              Inviter
+            </button>
+            <button className="album-icon" onClick={downloadMine} disabled={downloading || !myPhotos.length} aria-label="Télécharger mes photos">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" /></svg>
+            </button>
+          </div>
+
+          <div className="album-divider" />
+          <div className="album-mine-label">Mes photos · {myPhotos.length}/{guest?.shotsPerGuest}</div>
+
+          <div className="album-grid">
+            {roll.length === 0 ? (
+              <p className="album-empty">Tes photos apparaîtront ici.</p>
+            ) : (
+              roll.map((p, i) => (
+                <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
+                  onClick={() => !p.pending && p.id && setViewer({ id: p.id, url: p.url })} aria-label="Voir la photo">
+                  <img src={p.url} alt="" loading="lazy" />
+                </button>
+              ))
+            )}
+          </div>
+
+          {meta?.revealed && (
+            <a className="album-fulllink" href={`/g/${id}`}>🎞️ Voir l'album complet de tous les invités →</a>
+          )}
+        </div>
+      )}
 
       {/* Pop-up "Inviter un proche" */}
       {showQR && (
@@ -400,7 +581,7 @@ export default function GuestCamera({ params }) {
             <button onClick={() => setShowQR(false)} aria-label="Fermer"
               style={{ position: 'absolute', top: 14, right: 14, width: 34, height: 34, borderRadius: '50%', background: 'rgba(34,26,18,.08)', border: 'none', color: 'var(--ink)', fontSize: 19, cursor: 'pointer', lineHeight: 1 }}>×</button>
             <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 4 }}>Inviter un proche</div>
-            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 18px' }}>Scannez pour rejoindre</h3>
+            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 18px', color: '#1a1410' }}>Scannez pour rejoindre</h3>
             <div style={{ background: '#FCF8F0', borderRadius: 16, padding: 16, display: 'flex', justifyContent: 'center' }}>
               {qrUrl ? <img src={qrUrl} alt="QR code de l'événement" style={{ display: 'block', width: '100%', maxWidth: 210, height: 'auto' }} />
                      : <div style={{ width: 210, height: 210 }} />}

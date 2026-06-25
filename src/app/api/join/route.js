@@ -2,7 +2,7 @@ import { rpc } from '../../../lib/supabase'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
-  const { eventId, deviceToken, displayName } = body
+  const { eventId, deviceToken, displayName, phone } = body
 
   if (!eventId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
@@ -12,6 +12,7 @@ export async function POST(request) {
     p_event_id: eventId,
     p_device_token: deviceToken,
     p_display_name: displayName ?? '',
+    p_phone: (phone ?? '').toString().slice(0, 30),
   })
 
   if (!ok) {
