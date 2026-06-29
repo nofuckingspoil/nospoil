@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
-import { getMyEvents, getDeviceToken } from '../../lib/device'
+import { getMyEvents, getOwnerToken } from '../../lib/device'
 
 function fmtDate(iso) {
   try { return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) }
@@ -17,7 +17,7 @@ export default function MyEvents() {
     const ids = getMyEvents()
     if (!ids.length) { setEvents([]); return }
     Promise.all(ids.map((id) =>
-      fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getDeviceToken() } })
+      fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getOwnerToken(id) } })
         .then((r) => (r.ok ? r.json() : null))
         .then((d) => (d && !d.error ? d : null))
         .catch(() => null)

@@ -63,6 +63,7 @@ export default function GuestCamera({ params }) {
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [deleting, setDeleting] = useState(false)
   const [showQR, setShowQR] = useState(false)    // pop-up "inviter un proche"
+  const [showSaveTip, setShowSaveTip] = useState(false) // rappel "garde ton lien pour revenir" (une seule fois)
   const [showAlbum, setShowAlbum] = useState(false) // écran album (mes photos)
   const [downloading, setDownloading] = useState(false)
   const [bonusUsed, setBonusUsed] = useState(false) // +5 photos déjà réclamées ?
@@ -82,7 +83,7 @@ export default function GuestCamera({ params }) {
         if (d.error) { setError(d.error); setPhase('error'); return }
         setMeta(d)
         const saved = getGuest(id)
-        if (saved?.name) { setName(saved.name); join(saved.name) }
+        if (saved?.name) { setName(saved.name); if (saved.phone) setPhone(saved.phone); join(saved.name, saved.phone) }
         else setPhase('cover')
       })
       .catch(() => { setError('Connexion impossible.'); setPhase('error') })
@@ -95,6 +96,20 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, liveCam, facingMode])
 
+  // À la 1re ouverture de la caméra (par appareil + événement), on rappelle à l'invité
+  // de garder son lien pour revenir finir ses photos. Affiché une seule fois.
+  useEffect(() => {
+    if (phase !== 'camera') return
+    try {
+      const key = `pellicule_savetip_${id}`
+      if (!localStorage.getItem(key)) {
+        setShowSaveTip(true)
+        localStorage.setItem(key, '1')
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, id])
+
   // Génère le QR code d'invitation à l'ouverture de la pop-up
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/j/${id}` : ''
   useEffect(() => {
@@ -105,6 +120,23 @@ export default function GuestCamera({ params }) {
 
   function copyJoinLink() {
     navigator.clipboard?.writeText(joinUrl).then(() => { setQrCopied(true); setTimeout(() => setQrCopied(false), 1800) })
+  }
+
+  // Ouvre l'appli Messages du téléphone, pré-remplie avec le lien : l'invité se l'envoie
+  // à lui-même (gratuit) pour revenir prendre ses photos restantes plus tard.
+  // Si l'invité a laissé son numéro, le SMS est déjà adressé à lui-même.
+  function smsMyLink() {
+    const body = `Mon lien pour reprendre mes photos 📸 : ${joinUrl}`
+    const num = String(phone || '').replace(/[^\d+]/g, '')
+    window.location.href = `sms:${num}?&body=${encodeURIComponent(body)}`
+  }
+
+  // Partage natif (Notes, WhatsApp, Mail…) ; repli sur copie si indisponible.
+  async function shareMyLink() {
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try { await navigator.share({ title: meta?.name || 'Déclic', text: 'Mon lien pour reprendre mes photos 📸', url: joinUrl }); return } catch {}
+    }
+    copyJoinLink()
   }
 
   // Télécharge mes propres photos en .zip
@@ -171,16 +203,18 @@ export default function GuestCamera({ params }) {
     } catch {}
   }
 
-  async function join(displayName) {
+  async function join(displayName, phoneArg) {
     setBusy(true); setError('')
+    // phoneArg : utilisé à la reconnexion (numéro mémorisé) ; sinon, le champ du formulaire.
+    const phoneVal = ((phoneArg !== undefined ? phoneArg : phone) || '').trim()
     try {
       const res = await fetch('/api/join', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, phone: phone.trim() }),
+        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, phone: phoneVal }),
       })
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
-      saveGuest(id, d.guestId, d.displayName)
+      saveGuest(id, d.guestId, d.displayName, phoneVal)
       setGuest({ guestId: d.guestId, shotsTaken: d.shotsTaken, shotsPerGuest: d.shotsPerGuest })
       setLiveCam(supportsLiveCamera())
       loadMyPhotos()
@@ -611,16 +645,49 @@ export default function GuestCamera({ params }) {
           <div style={{ position: 'relative', width: '100%', maxWidth: 340, background: '#F4EDDD', borderRadius: 22, padding: '26px 22px', boxShadow: '0 24px 60px rgba(0,0,0,.4)' }}>
             <button onClick={() => setShowQR(false)} aria-label="Fermer"
               style={{ position: 'absolute', top: 14, right: 14, width: 34, height: 34, borderRadius: '50%', background: 'rgba(34,26,18,.08)', border: 'none', color: 'var(--ink)', fontSize: 19, cursor: 'pointer', lineHeight: 1 }}>×</button>
-            <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 4 }}>Inviter un proche</div>
-            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 18px', color: '#1a1410' }}>Scannez pour rejoindre</h3>
+            <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 4 }}>Inviter un proche · garder mon lien</div>
+            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 18px', color: '#1a1410' }}>Scannez ou partagez</h3>
             <div style={{ background: '#FCF8F0', borderRadius: 16, padding: 16, display: 'flex', justifyContent: 'center' }}>
               {qrUrl ? <img src={qrUrl} alt="QR code de l'événement" style={{ display: 'block', width: '100%', maxWidth: 210, height: 'auto' }} />
                      : <div style={{ width: 210, height: 210 }} />}
             </div>
             <div style={{ background: 'rgba(34,26,18,.05)', borderRadius: 12, padding: '11px 13px', margin: '14px 0 12px', fontFamily: 'var(--font-mono)', fontSize: 12.5, color: 'var(--text2)', wordBreak: 'break-all', textAlign: 'center' }}>{joinUrl}</div>
-            <button className="btn btn-accent" style={{ width: '100%' }} onClick={copyJoinLink}>
-              {qrCopied ? '✓ Lien copié' : 'Copier le lien'}
-            </button>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button className="btn btn-accent" style={{ width: '100%' }} onClick={smsMyLink}>📲 M'envoyer le lien par SMS</button>
+              <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
+                Au tarif d'un SMS classique vers un numéro non surtaxé, généralement inclus dans votre forfait.
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyJoinLink}>{qrCopied ? '✓ Copié' : 'Copier le lien'}</button>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rappel "garde ton lien pour revenir" — affiché une seule fois à la 1re ouverture caméra */}
+      {showSaveTip && (
+        <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setShowSaveTip(false) }} style={{ background: 'rgba(10,8,6,.72)' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: 340, background: '#F4EDDD', borderRadius: 22, padding: '26px 22px', boxShadow: '0 24px 60px rgba(0,0,0,.4)' }}>
+            <div style={{ textAlign: 'center', fontSize: 34, marginBottom: 8 }}>📲</div>
+            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 8px', color: '#1a1410' }}>Gardez votre lien pour revenir</h3>
+            <p className="muted small" style={{ textAlign: 'center', margin: '0 0 18px' }}>
+              Vous pourrez rouvrir votre appareil et finir vos {guest?.shotsPerGuest} photos quand vous voulez. Envoyez-vous le lien pour le retrouver facilement.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button className="btn btn-accent" style={{ width: '100%' }} onClick={smsMyLink}>📲 M'envoyer le lien par SMS</button>
+              <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
+                Au tarif d'un SMS classique vers un numéro non surtaxé, généralement inclus dans votre forfait.
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyJoinLink}>{qrCopied ? '✓ Copié' : 'Copier le lien'}</button>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>
+              </div>
+              <button onClick={() => setShowSaveTip(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text3)', fontSize: 13, padding: '6px 0', marginTop: 2 }}>
+                Plus tard — commencer à photographier
+              </button>
+            </div>
           </div>
         </div>
       )}

@@ -7,7 +7,7 @@ import QRCode from 'qrcode'
 import { BRAND } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
-import { getDeviceToken, forgetMyEvent } from '../../../lib/device'
+import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
 
 function formatDate(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
@@ -25,14 +25,28 @@ export default function EventManage({ params }) {
   const [ev, setEv] = useState(null)
   const [error, setError] = useState('')
   const [joinUrl, setJoinUrl] = useState('')
+  const [ownerUrl, setOwnerUrl] = useState('')
   const [qrUrl, setQrUrl] = useState('')
   const [copied, setCopied] = useState(false)
+  const [ownerCopied, setOwnerCopied] = useState(false)
   const [confirmDel, setConfirmDel] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
+    // Lien privé organisateur ouvert depuis un autre appareil : ?k=<jeton> → on l'enregistre
+    // pour reconnaître cet appareil comme organisateur, puis on nettoie l'adresse.
+    const params = new URLSearchParams(window.location.search)
+    const k = params.get('k')
+    if (k) {
+      saveOwnerToken(id, k)
+      rememberMyEvent(id)
+      window.history.replaceState(null, '', `/event/${id}`)
+    }
+
+    const token = getOwnerToken(id)
     setJoinUrl(`${window.location.origin}/j/${id}`)
-    fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getDeviceToken() } })
+    setOwnerUrl(`${window.location.origin}/event/${id}?k=${token}`)
+    fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } })
       .then((r) => r.json())
       .then((d) => (d.error ? setError(d.error) : setEv(d)))
       .catch(() => setError("Impossible de charger l'événement."))
@@ -52,10 +66,56 @@ export default function EventManage({ params }) {
       try { await navigator.share({ title: ev?.name || BRAND.name, text: 'Prenez des photos pour notre appareil jetable 📸', url: joinUrl }) } catch {}
     } else copyLink()
   }
+
+  // --- Accès organisateur : à sauvegarder pour retrouver le tableau de bord depuis n'importe où ---
+  function copyOwnerLink() {
+    navigator.clipboard?.writeText(ownerUrl).then(() => { setOwnerCopied(true); setTimeout(() => setOwnerCopied(false), 1800) })
+  }
+  async function saveAccess() {
+    // Ouvre le partage natif du téléphone → l'organisateur peut s'envoyer le lien
+    // dans ses Notes, par mail, WhatsApp… une appli qu'il a déjà sous la main.
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Accès organisateur — ${ev?.name || BRAND.name}`,
+          text: `Mon tableau de bord ${BRAND.name} (à garder précieusement, ne pas partager aux invités) :`,
+          url: ownerUrl,
+        })
+        return
+      } catch {}
+    }
+    copyOwnerLink()
+  }
+  function pad(n) { return String(n).padStart(2, '0') }
+  function icsStamp(d) {
+    return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`
+  }
+  function addToCalendar() {
+    // Crée un rappel le jour de la révélation, avec le lien organisateur dans la description.
+    const start = new Date(ev.revealAt)
+    const end = new Date(start.getTime() + 60 * 60 * 1000)
+    const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
+    const ics = [
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Declic//FR', 'CALSCALE:GREGORIAN',
+      'BEGIN:VEVENT',
+      `UID:${id}@declic`,
+      `DTSTART:${icsStamp(start)}`,
+      `DTEND:${icsStamp(end)}`,
+      `SUMMARY:${esc(`📸 Révélation des photos — ${ev.name}`)}`,
+      `DESCRIPTION:${esc(`Vos photos se révèlent aujourd'hui !\nTableau de bord organisateur (à garder privé) : ${ownerUrl}`)}`,
+      'BEGIN:VALARM', 'TRIGGER:-PT0M', 'ACTION:DISPLAY', `DESCRIPTION:${esc(ev.name)}`, 'END:VALARM',
+      'END:VEVENT', 'END:VCALENDAR',
+    ].join('\r\n')
+    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url; a.download = 'declic-revelation.ics'; a.click()
+    URL.revokeObjectURL(url)
+  }
+
   async function deleteEvent() {
     setDeleting(true); setError('')
     try {
-      const res = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'x-owner-token': getDeviceToken() } })
+      const res = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) } })
       const d = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(d.error || 'Suppression impossible.')
       forgetMyEvent(id)
@@ -132,8 +192,28 @@ export default function EventManage({ params }) {
               <div className="hint" style={{ marginTop: 10 }}>Pour partager le lien de l'album final avec eux.</div>
             </div>
           )}
-          <div className="notice" style={{ marginTop: 16 }}>
-            💡 Gardez ce lien : c'est votre tableau de bord privé. Vous y reviendrez après la fête pour voir et télécharger toutes les photos.
+          {/* Accès organisateur : à sauvegarder pour retrouver son tableau de bord depuis n'importe où */}
+          <div className="card" style={{ marginTop: 16, borderColor: 'rgba(238,122,69,.35)', background: 'linear-gradient(180deg, rgba(247,194,107,.10), transparent)' }}>
+            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔐 Votre accès organisateur</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
+              Enregistrez ce lien pour le retrouver
+            </div>
+            <p className="muted small" style={{ marginBottom: 14 }}>
+              C'est <strong>votre</strong> tableau de bord privé : vous y reviendrez après la fête pour voir et
+              télécharger toutes les photos. Gardez-le pour vous — <strong>ne le donnez pas à vos invités</strong>.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button className="btn btn-accent" onClick={saveAccess}>
+                {typeof navigator !== 'undefined' && navigator.share ? '💾 Enregistrer mon lien (Notes, mail, WhatsApp…)' : '💾 Enregistrer / copier mon lien'}
+              </button>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyOwnerLink}>{ownerCopied ? '✓ Copié' : 'Copier le lien'}</button>
+                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={addToCalendar}>🗓️ Ajouter au calendrier</button>
+              </div>
+            </div>
+            <div className="hint" style={{ marginTop: 10 }}>
+              Astuce : « Ajouter au calendrier » place un rappel le jour de la révélation, avec ce lien dedans.
+            </div>
           </div>
           <InstallPrompt label="Épinglez votre tableau de bord" />
 
