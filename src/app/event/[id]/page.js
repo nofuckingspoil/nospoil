@@ -353,10 +353,12 @@ export default function EventManage({ params }) {
                   <p className="muted small" style={{ marginBottom: 10 }}>
                     Ajoutez un code pour que seules les personnes qui l'ont puissent ouvrir l'album.
                   </p>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    <input type="text" placeholder="Choisir un code" value={galleryCodeInput} onChange={(e) => setGalleryCodeInput(e.target.value)} style={{ flex: 1 }} />
-                    <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)} disabled={savingGallery || !galleryCodeInput.trim()}>
-                      {savingGallery ? '…' : 'Activer'}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <input type="text" placeholder="Choisir un code (ex : 1234)" value={galleryCodeInput}
+                      onChange={(e) => setGalleryCodeInput(e.target.value)}
+                      style={{ width: '100%', textAlign: 'center', fontSize: 17, letterSpacing: '.08em' }} />
+                    <button className="btn btn-dark" style={{ width: '100%' }} onClick={() => saveGalleryCode(galleryCodeInput)} disabled={savingGallery || !galleryCodeInput.trim()}>
+                      {savingGallery ? 'Activation…' : 'Activer le code'}
                     </button>
                   </div>
                 </>
