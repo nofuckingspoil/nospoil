@@ -31,6 +31,17 @@ export default function EventManage({ params }) {
   const [ownerCopied, setOwnerCopied] = useState(false)
   const [confirmDel, setConfirmDel] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  // Gestion des admins (côté organisateur)
+  const [adminName, setAdminName] = useState('')
+  const [adminEmail, setAdminEmail] = useState('')
+  const [adminCode, setAdminCode] = useState('')
+  const [adminMsg, setAdminMsg] = useState('')
+  const [addingAdmin, setAddingAdmin] = useState(false)
+  // Connexion admin (côté ami invité à co-gérer)
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginCode, setLoginCode] = useState('')
+  const [loginMsg, setLoginMsg] = useState('')
+  const [loggingIn, setLoggingIn] = useState(false)
 
   useEffect(() => {
     // Lien privé organisateur ouvert depuis un autre appareil : ?k=<jeton> → on l'enregistre
@@ -110,6 +121,54 @@ export default function EventManage({ params }) {
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a'); a.href = url; a.download = 'declic-revelation.ics'; a.click()
     URL.revokeObjectURL(url)
+  }
+
+  // Recharge les infos de l'événement (après ajout/retrait d'un admin)
+  async function reloadEvent() {
+    const token = getOwnerToken(id)
+    const d = await fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } }).then((r) => r.json()).catch(() => null)
+    if (d && !d.error) setEv(d)
+  }
+
+  async function addAdmin(e) {
+    e.preventDefault()
+    setAdminMsg(''); setAddingAdmin(true)
+    try {
+      const res = await fetch(`/api/events/${id}/admins`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ name: adminName, email: adminEmail, code: adminCode }),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || "Impossible d'ajouter cet admin.")
+      setAdminName(''); setAdminEmail(''); setAdminCode('')
+      await reloadEvent()
+    } catch (err) { setAdminMsg(err.message) }
+    finally { setAddingAdmin(false) }
+  }
+
+  async function removeAdmin(adminId) {
+    await fetch(`/api/events/${id}/admins?adminId=${adminId}`, {
+      method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) },
+    }).catch(() => {})
+    await reloadEvent()
+  }
+
+  async function adminLogin(e) {
+    e.preventDefault()
+    setLoginMsg(''); setLoggingIn(true)
+    try {
+      const res = await fetch(`/api/events/${id}/admin-login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: loginEmail, code: loginCode }),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Mail ou code incorrect.')
+      saveOwnerToken(id, d.ownerToken)
+      rememberMyEvent(id)
+      window.location.reload()
+    } catch (err) { setLoginMsg(err.message); setLoggingIn(false) }
   }
 
   async function deleteEvent() {
@@ -215,6 +274,44 @@ export default function EventManage({ params }) {
               Astuce : « Ajouter au calendrier » place un rappel le jour de la révélation, avec ce lien dedans.
             </div>
           </div>
+          {/* Admins de l'événement : co-organisateurs qui se connectent avec mail + code */}
+          <div className="card" style={{ marginTop: 16 }}>
+            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>👥 Admins de l'événement</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
+              Donnez les mêmes pouvoirs à vos proches
+            </div>
+            <p className="muted small" style={{ marginBottom: 14 }}>
+              Ajoutez un admin avec un mail et un code que vous choisissez. Transmettez-lui vous-même ses
+              identifiants — il pourra ouvrir ce tableau de bord depuis n'importe quel téléphone.
+            </p>
+
+            {Array.isArray(ev.admins) && ev.admins.length > 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+                {ev.admins.map((a) => (
+                  <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, background: 'var(--screen)' }}>
+                    <div style={{ minWidth: 0 }}>
+                      <div style={{ fontWeight: 600 }}>{a.name || a.email}</div>
+                      <div className="mono small" style={{ color: 'var(--text2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {a.email} · code <strong style={{ color: 'var(--ink)' }}>{a.code}</strong>
+                      </div>
+                    </div>
+                    <button onClick={() => removeAdmin(a.id)} className="mono small" style={{ background: 'none', border: 'none', color: '#b23b2e', cursor: 'pointer', textDecoration: 'underline', flex: '0 0 auto' }}>
+                      Retirer
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
+              <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
+              <input type="text" placeholder="Code d'accès (ex : 4821)" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} required />
+              {adminMsg && <div className="err">{adminMsg}</div>}
+              <button className="btn btn-dark" type="submit" disabled={addingAdmin}>{addingAdmin ? 'Ajout…' : '+ Ajouter cet admin'}</button>
+            </form>
+          </div>
+
           <InstallPrompt label="Épinglez votre tableau de bord" />
 
           {/* Zone de suppression */}
@@ -244,11 +341,28 @@ export default function EventManage({ params }) {
           </div>
         </>
       ) : (
-        <div className="notice" style={{ marginTop: 16 }}>
-          📷 Vous voulez prendre des photos ? <a href={`/j/${id}`} style={{ color: 'var(--accent-deep)', fontWeight: 700 }}>Rejoignez l'événement ici</a>.
-          <br /><br />
-          Le tableau de bord est réservé à l'organisateur, sur l'appareil qui a créé l'événement.
-        </div>
+        <>
+          {/* Connexion admin : un proche à qui l'organisateur a donné un mail + code */}
+          <div className="card" style={{ marginTop: 16 }}>
+            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔑 Vous êtes admin ?</div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
+              Connectez-vous au tableau de bord
+            </div>
+            <p className="muted small" style={{ marginBottom: 14 }}>
+              L'organisateur vous a donné une adresse mail et un code ? Entrez-les pour accéder à la gestion de l'événement.
+            </p>
+            <form onSubmit={adminLogin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <input type="email" placeholder="Adresse mail" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+              <input type="text" placeholder="Code d'accès" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} required />
+              {loginMsg && <div className="err">{loginMsg}</div>}
+              <button className="btn btn-accent" type="submit" disabled={loggingIn}>{loggingIn ? 'Connexion…' : 'Se connecter'}</button>
+            </form>
+          </div>
+
+          <div className="notice" style={{ marginTop: 16 }}>
+            📷 Vous voulez juste prendre des photos ? <a href={`/j/${id}`} style={{ color: 'var(--accent-deep)', fontWeight: 700 }}>Rejoignez l'événement ici</a>.
+          </div>
+        </>
       )}
     </main>
   )

@@ -44,10 +44,13 @@ export async function GET(request, { params }) {
   payload.guestCount = Array.isArray(guests.data) ? guests.data.length : 0
   payload.photoCount = Array.isArray(photos.data) ? photos.data.length : 0
 
-  // Numéros collectés : réservés à l'organisateur
+  // Numéros collectés + liste des admins : réservés à l'organisateur
   if (isOwner) {
     const list = await selectRows('guests', `event_id=eq.${id}&phone=not.is.null&select=display_name,phone&order=created_at.asc`)
     payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({ name: g.display_name, phone: g.phone }))
+
+    const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,code&order=created_at.asc`)
+    payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
   }
 
   return Response.json(payload)
