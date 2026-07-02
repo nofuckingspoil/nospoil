@@ -228,6 +228,12 @@ export default function EventManage({ params }) {
     finally { setSavingGallery(false) }
   }
 
+  // --- Copier juste le lien de l'album (pour l'ouvrir soi-même) ---
+  async function copyGalleryLink() {
+    const url = `${window.location.origin}/g/${id}`
+    try { await navigator.clipboard.writeText(url); setGalleryCopied(true); setTimeout(() => setGalleryCopied(false), 1800) } catch {}
+  }
+
   // --- Partager le lien de l'album (avec le code s'il est activé) ---
   async function shareGallery() {
     const url = `${window.location.origin}/g/${id}`
@@ -334,9 +340,14 @@ export default function EventManage({ params }) {
             <p className="muted small" style={{ marginBottom: 12 }}>
               Envoyez ce lien à vos invités pour qu'ils voient et téléchargent toutes les photos (à la révélation).
             </p>
-            <button className="btn btn-accent" onClick={shareGallery}>
-              {galleryCopied ? '✓ Copié' : "Partager le lien de l'album"}
-            </button>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-accent" style={{ flex: 1 }} onClick={copyGalleryLink}>
+                {galleryCopied ? '✓ Lien copié' : "Copier le lien de l'album"}
+              </button>
+              <button className="btn btn-ghost" style={{ flex: '0 0 auto', width: 54, padding: 0 }} onClick={shareGallery} aria-label="Partager">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              </button>
+            </div>
 
             <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
