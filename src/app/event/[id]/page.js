@@ -58,6 +58,7 @@ export default function EventManage({ params }) {
   const [savingGallery, setSavingGallery] = useState(false)
   const [galleryMsg, setGalleryMsg] = useState('')
   const [galleryCopied, setGalleryCopied] = useState(false)
+  const [showContacts, setShowContacts] = useState(false)
 
   useEffect(() => {
     // Lien privé organisateur ouvert depuis un autre appareil : ?k=<jeton> → on l'enregistre
@@ -369,19 +370,32 @@ export default function EventManage({ params }) {
 
           {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
             <div className="card" style={{ marginTop: 16 }}>
-              <div className="eyebrow-mute" style={{ marginBottom: 4 }}>Numéros collectés</div>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, marginBottom: 12 }}>
-                {ev.contacts.length} invité{ev.contacts.length > 1 ? 's ont' : ' a'} laissé son numéro
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {ev.contacts.map((c, i) => (
-                  <a key={i} href={`tel:${c.phone}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderRadius: 12, background: 'var(--screen)', textDecoration: 'none', color: 'var(--ink)' }}>
-                    <span style={{ fontWeight: 600 }}>{c.name}</span>
-                    <span className="mono" style={{ color: 'var(--text2)' }}>{c.phone}</span>
-                  </a>
-                ))}
-              </div>
-              <div className="hint" style={{ marginTop: 10 }}>Pour partager le lien de l'album final avec eux.</div>
+              <button
+                onClick={() => setShowContacts((v) => !v)}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', color: 'var(--ink)' }}
+              >
+                <div>
+                  <div className="eyebrow-mute" style={{ marginBottom: 4 }}>Numéros collectés</div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>
+                    {ev.contacts.length} invité{ev.contacts.length > 1 ? 's ont' : ' a'} laissé son numéro
+                  </div>
+                </div>
+                <span style={{ fontSize: 20, color: 'var(--text3)', transform: showContacts ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>⌄</span>
+              </button>
+
+              {showContacts && (
+                <>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
+                    {ev.contacts.map((c, i) => (
+                      <a key={i} href={`tel:${c.phone}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderRadius: 12, background: 'var(--screen)', textDecoration: 'none', color: 'var(--ink)' }}>
+                        <span style={{ fontWeight: 600 }}>{c.name}</span>
+                        <span className="mono" style={{ color: 'var(--text2)' }}>{c.phone}</span>
+                      </a>
+                    ))}
+                  </div>
+                  <div className="hint" style={{ marginTop: 10 }}>Pour partager le lien de l'album final avec eux.</div>
+                </>
+              )}
             </div>
           )}
           {/* Accès organisateur : à sauvegarder pour retrouver son tableau de bord depuis n'importe où */}
