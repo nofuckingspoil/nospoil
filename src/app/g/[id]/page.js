@@ -81,6 +81,26 @@ function PreReveal({ data, onDone }) {
   )
 }
 
+function CodeGate({ data, value, onChange, onSubmit, err }) {
+  return (
+    <main className="screen screen-cream center">
+      <div className="card" style={{ maxWidth: 380, textAlign: 'center' }}>
+        <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+        <h3 className="h3" style={{ marginBottom: 6 }}>Album privé</h3>
+        <p className="muted small" style={{ marginBottom: 16 }}>
+          Les souvenirs de {data.hostNames || data.name} sont protégés. Entrez le code communiqué par l'organisateur.
+        </p>
+        <form onSubmit={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <input type="text" placeholder="Code d'accès" value={value} onChange={(e) => onChange(e.target.value)} autoFocus
+            style={{ textAlign: 'center', fontSize: 18, letterSpacing: '.1em' }} />
+          {err && <div className="err">{err}</div>}
+          <button className="btn btn-accent" type="submit">Voir l'album</button>
+        </form>
+      </div>
+    </main>
+  )
+}
+
 export default function Gallery({ params }) {
   const { id } = use(params)
   const [data, setData] = useState(null)
@@ -113,13 +133,39 @@ export default function Gallery({ params }) {
     } finally { setZip(null) }
   }
 
+  const [codeInput, setCodeInput] = useState('')
+  const [codeErr, setCodeErr] = useState('')
+
+  function fetchGallery(extraCode) {
+    const headers = { 'x-owner-token': getOwnerToken(id) }
+    let gc = extraCode
+    if (gc === undefined) { try { gc = localStorage.getItem(`pellicule_gallery_${id}`) } catch {} }
+    if (gc) headers['x-gallery-code'] = gc
+    return fetch(`/api/gallery/${id}`, { headers }).then((r) => r.json())
+  }
+
   function load() {
-    fetch(`/api/gallery/${id}`, { headers: { 'x-owner-token': getOwnerToken(id) } })
-      .then((r) => r.json())
+    fetchGallery()
       .then((d) => (d.error ? setError(d.error) : setData(d)))
       .catch(() => setError('Connexion impossible.'))
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // L'invité saisit le code d'accès à l'album privé
+  function submitCode(e) {
+    e.preventDefault()
+    const c = codeInput.trim()
+    if (!c) return
+    setCodeErr('')
+    fetchGallery(c)
+      .then((d) => {
+        if (d.needCode) { setCodeErr('Code incorrect.'); return }
+        if (d.error) { setError(d.error); return }
+        try { localStorage.setItem(`pellicule_gallery_${id}`, c) } catch {}
+        setData(d)
+      })
+      .catch(() => setError('Connexion impossible.'))
+  }
 
   // Masquer / réafficher une photo (organisateur + admins)
   async function toggleHide(photoId, hidden) {
@@ -144,6 +190,8 @@ export default function Gallery({ params }) {
   if (!data) return <main className="center-screen"><p className="muted">Chargement…</p></main>
   // Galerie cachée tant que non révélée — sauf aperçu organisateur
   if (!data.revealed && !data.ownerPreview) return <PreReveal data={data} onDone={load} />
+  // Album protégé par un code : porte d'entrée pour les invités
+  if (data.needCode) return <CodeGate data={data} value={codeInput} onChange={setCodeInput} onSubmit={submitCode} err={codeErr} />
 
   const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
   const hiddenCount = data.isOwner ? data.photos.filter((p) => p.hidden).length : 0

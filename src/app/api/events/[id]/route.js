@@ -1,11 +1,13 @@
-import { selectRows, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
+import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
+
+const DAY = 24 * 60 * 60 * 1000
 
 export async function GET(request, { params }) {
   const { id } = await params
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token`
+    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token,gallery_code`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -51,9 +53,45 @@ export async function GET(request, { params }) {
 
     const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,code&order=created_at.asc`)
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
+
+    payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
   }
 
   return Response.json(payload)
+}
+
+// Modification de réglages (réservée à l'organisateur/admin) : date de révélation, code galerie
+export async function PATCH(request, { params }) {
+  const { id } = await params
+  const ownerToken = request.headers.get('x-owner-token')
+  if (!ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+
+  const { data } = await selectRows('events', `id=eq.${id}&select=owner_token`)
+  const ev = Array.isArray(data) ? data[0] : null
+  if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
+  if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+
+  const body = await request.json().catch(() => ({}))
+  const patch = {}
+
+  if (body.revealAt !== undefined) {
+    const reveal = new Date(body.revealAt)
+    if (isNaN(reveal.getTime())) return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
+    patch.reveal_at = reveal.toISOString()
+    patch.expires_at = new Date(reveal.getTime() + 60 * DAY).toISOString() // rétention : 60 jours après
+  }
+
+  // Code d'accès à la galerie : chaîne pour l'activer, "" ou null pour le retirer
+  if (body.galleryCode !== undefined) {
+    const code = (body.galleryCode || '').toString().trim()
+    patch.gallery_code = code ? code.slice(0, 40) : null
+  }
+
+  if (!Object.keys(patch).length) return Response.json({ error: 'Rien à modifier.' }, { status: 400 })
+
+  const upd = await updateRow('events', `id=eq.${id}`, patch)
+  if (!upd.ok) return Response.json({ error: 'Modification impossible.' }, { status: 500 })
+  return Response.json({ ok: true })
 }
 
 // Suppression d'un événement (réservée à l'organisateur) : photos, invités, fichiers et ligne

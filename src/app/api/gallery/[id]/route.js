@@ -5,7 +5,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at,owner_token`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,owner_token,gallery_code`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -25,6 +25,20 @@ export async function GET(request, { params }) {
       hostNames: ev.host_names,
       revealAt: ev.reveal_at,
     })
+  }
+
+  // Galerie protégée par un code (facultatif) : exigé pour les invités, jamais pour l'organisateur/admin
+  if (ev.gallery_code && !isOwner) {
+    const given = (request.headers.get('x-gallery-code') || '').trim()
+    if (given !== ev.gallery_code) {
+      return Response.json({
+        revealed,
+        needCode: true,
+        name: ev.name,
+        hostNames: ev.host_names,
+        revealAt: ev.reveal_at,
+      })
+    }
   }
 
   // Photos + prénom de l'auteur (jointure via la clé étrangère guest_id)

@@ -18,6 +18,12 @@ function daysUntil(iso) {
   if (diff <= 0) return 'J'
   return 'J-' + Math.ceil(diff / 86400000)
 }
+// Convertit une date ISO en valeur pour un champ <input type="datetime-local"> (heure locale)
+function toLocalInput(iso) {
+  const d = new Date(iso)
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
 export default function EventManage({ params }) {
   const { id } = use(params)
@@ -42,6 +48,16 @@ export default function EventManage({ params }) {
   const [loginCode, setLoginCode] = useState('')
   const [loginMsg, setLoginMsg] = useState('')
   const [loggingIn, setLoggingIn] = useState(false)
+  // Modifier la date de révélation
+  const [editingDate, setEditingDate] = useState(false)
+  const [newDate, setNewDate] = useState('')
+  const [savingDate, setSavingDate] = useState(false)
+  const [dateMsg, setDateMsg] = useState('')
+  // Code d'accès à la galerie
+  const [galleryCodeInput, setGalleryCodeInput] = useState('')
+  const [savingGallery, setSavingGallery] = useState(false)
+  const [galleryMsg, setGalleryMsg] = useState('')
+  const [galleryCopied, setGalleryCopied] = useState(false)
 
   useEffect(() => {
     // Lien privé organisateur ouvert depuis un autre appareil : ?k=<jeton> → on l'enregistre
@@ -171,6 +187,58 @@ export default function EventManage({ params }) {
     } catch (err) { setLoginMsg(err.message); setLoggingIn(false) }
   }
 
+  // --- Modifier la date de révélation ---
+  function startEditDate() {
+    setDateMsg('')
+    setNewDate(toLocalInput(ev.revealAt))
+    setEditingDate(true)
+  }
+  async function saveDate(e) {
+    e.preventDefault()
+    setDateMsg(''); setSavingDate(true)
+    try {
+      const res = await fetch(`/api/events/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ revealAt: newDate }),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Modification impossible.')
+      setEditingDate(false)
+      await reloadEvent()
+    } catch (err) { setDateMsg(err.message) }
+    finally { setSavingDate(false) }
+  }
+
+  // --- Code d'accès à la galerie (activer / retirer) ---
+  async function saveGalleryCode(codeValue) {
+    setGalleryMsg(''); setSavingGallery(true)
+    try {
+      const res = await fetch(`/api/events/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ galleryCode: codeValue }),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Modification impossible.')
+      setGalleryCodeInput('')
+      await reloadEvent()
+    } catch (err) { setGalleryMsg(err.message) }
+    finally { setSavingGallery(false) }
+  }
+
+  // --- Partager le lien de l'album (avec le code s'il est activé) ---
+  async function shareGallery() {
+    const url = `${window.location.origin}/g/${id}`
+    const text = ev.galleryCode
+      ? `Les photos de ${ev.name} 📸\nLien : ${url}\nCode d'accès : ${ev.galleryCode}`
+      : `Les photos de ${ev.name} 📸\n${url}`
+    if (navigator.share) {
+      try { await navigator.share({ title: ev.name, text, url }); return } catch {}
+    }
+    try { await navigator.clipboard.writeText(text); setGalleryCopied(true); setTimeout(() => setGalleryCopied(false), 1800) } catch {}
+  }
+
   async function deleteEvent() {
     setDeleting(true); setError('')
     try {
@@ -233,6 +301,69 @@ export default function EventManage({ params }) {
           <Link href={`/g/${id}`} className="btn btn-ghost" style={{ marginTop: 16 }}>
             {ev.revealed ? 'Voir la galerie →' : 'Aperçu des photos (avant révélation) →'}
           </Link>
+
+          {/* Date de révélation : modifiable */}
+          <div className="card" style={{ marginTop: 16 }}>
+            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🗓️ Date de révélation</div>
+            {!editingDate ? (
+              <>
+                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
+                  {formatDate(ev.revealAt)}
+                </div>
+                <p className="muted small" style={{ marginBottom: 12 }}>
+                  Le moment où les photos s'ouvrent d'un coup pour tous les invités.
+                </p>
+                <button className="btn btn-ghost" onClick={startEditDate}>Modifier la date</button>
+              </>
+            ) : (
+              <form onSubmit={saveDate} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <input type="datetime-local" value={newDate} onChange={(e) => setNewDate(e.target.value)} required />
+                {dateMsg && <div className="err">{dateMsg}</div>}
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button type="button" className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setEditingDate(false)} disabled={savingDate}>Annuler</button>
+                  <button type="submit" className="btn btn-accent" style={{ flex: 1 }} disabled={savingDate}>{savingDate ? 'Enregistrement…' : 'Enregistrer'}</button>
+                </div>
+              </form>
+            )}
+          </div>
+
+          {/* Partage de l'album aux invités + code d'accès facultatif */}
+          <div className="card" style={{ marginTop: 16 }}>
+            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔗 Partager l'album aux invités</div>
+            <p className="muted small" style={{ marginBottom: 12 }}>
+              Envoyez ce lien à vos invités pour qu'ils voient et téléchargent toutes les photos (à la révélation).
+            </p>
+            <button className="btn btn-accent" onClick={shareGallery}>
+              {galleryCopied ? '✓ Copié' : "Partager le lien de l'album"}
+            </button>
+
+            <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
+              <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
+              {ev.galleryCode ? (
+                <>
+                  <p className="muted small" style={{ marginBottom: 10 }}>
+                    L'album est protégé. Les invités doivent entrer ce code : <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>
+                  </p>
+                  <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
+                    {savingGallery ? '…' : 'Retirer le code'}
+                  </button>
+                </>
+              ) : (
+                <>
+                  <p className="muted small" style={{ marginBottom: 10 }}>
+                    Ajoutez un code pour que seules les personnes qui l'ont puissent ouvrir l'album.
+                  </p>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <input type="text" placeholder="Choisir un code" value={galleryCodeInput} onChange={(e) => setGalleryCodeInput(e.target.value)} style={{ flex: 1 }} />
+                    <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)} disabled={savingGallery || !galleryCodeInput.trim()}>
+                      {savingGallery ? '…' : 'Activer'}
+                    </button>
+                  </div>
+                </>
+              )}
+              {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
+            </div>
+          </div>
 
           {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
             <div className="card" style={{ marginTop: 16 }}>
