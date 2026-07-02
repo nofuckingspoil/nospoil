@@ -32,6 +32,8 @@ export default function EventManage({ params }) {
   const [error, setError] = useState('')
   const [joinUrl, setJoinUrl] = useState('')
   const [ownerUrl, setOwnerUrl] = useState('')
+  const [adminLink, setAdminLink] = useState('')
+  const [adminLinkCopied, setAdminLinkCopied] = useState(false)
   const [qrUrl, setQrUrl] = useState('')
   const [copied, setCopied] = useState(false)
   const [ownerCopied, setOwnerCopied] = useState(false)
@@ -74,6 +76,7 @@ export default function EventManage({ params }) {
     const token = getOwnerToken(id)
     setJoinUrl(`${window.location.origin}/j/${id}`)
     setOwnerUrl(`${window.location.origin}/event/${id}?k=${token}`)
+    setAdminLink(`${window.location.origin}/event/${id}`)
     fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } })
       .then((r) => r.json())
       .then((d) => (d.error ? setError(d.error) : setEv(d)))
@@ -228,6 +231,10 @@ export default function EventManage({ params }) {
     finally { setSavingGallery(false) }
   }
 
+  async function copyAdminLink() {
+    try { await navigator.clipboard.writeText(adminLink); setAdminLinkCopied(true); setTimeout(() => setAdminLinkCopied(false), 1800) } catch {}
+  }
+
   // --- Copier juste le lien de l'album (pour l'ouvrir soi-même) ---
   async function copyGalleryLink() {
     const url = `${window.location.origin}/g/${id}`
@@ -338,8 +345,13 @@ export default function EventManage({ params }) {
           <div className="card" style={{ marginTop: 16 }}>
             <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔗 Partager l'album aux invités</div>
             <p className="muted small" style={{ marginBottom: 12 }}>
-              Envoyez ce lien à vos invités pour qu'ils voient et téléchargent toutes les photos (à la révélation).
+              Envoyez ce lien à vos invités pour qu'ils voient et téléchargent toutes les photos.
             </p>
+            <div className="notice small" style={{ marginBottom: 12, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
+              ⏳ <strong>Partageable seulement après la révélation.</strong> {ev.revealed
+                ? "C'est bon, l'album est ouvert : vos invités verront les photos."
+                : `Avant le ${formatDate(ev.revealAt)}, vos invités ne verront qu'un compte à rebours, pas les photos.`}
+            </div>
             <div style={{ display: 'flex', gap: 8 }}>
               <button className="btn btn-accent" style={{ flex: 1 }} onClick={copyGalleryLink}>
                 {galleryCopied ? '✓ Lien copié' : "Copier le lien de l'album"}
@@ -442,6 +454,21 @@ export default function EventManage({ params }) {
               Ajoutez un admin avec un mail et un code que vous choisissez. Transmettez-lui vous-même ses
               identifiants — il pourra ouvrir ce tableau de bord depuis n'importe quel téléphone.
             </p>
+
+            {/* Lien de connexion à donner aux admins (page événement sans le ?k= secret) */}
+            <div style={{ marginBottom: 16 }}>
+              <div className="hint" style={{ marginBottom: 6 }}>
+                🔗 Lien de connexion à envoyer à vos admins (avec leur mail + code) :
+              </div>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <div className="mono small" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', background: 'var(--screen)', borderRadius: 10, padding: '11px 12px', color: 'var(--text2)', alignSelf: 'center' }}>
+                  {adminLink}
+                </div>
+                <button className="btn btn-dark" style={{ flex: '0 0 auto' }} onClick={copyAdminLink}>
+                  {adminLinkCopied ? '✓ Copié' : 'Copier'}
+                </button>
+              </div>
+            </div>
 
             {Array.isArray(ev.admins) && ev.admins.length > 0 && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
