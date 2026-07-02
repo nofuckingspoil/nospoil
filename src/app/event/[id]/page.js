@@ -388,7 +388,7 @@ export default function EventManage({ params }) {
                 <div>
                   <div className="eyebrow-mute" style={{ marginBottom: 4 }}>Numéros collectés</div>
                   <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>
-                    {ev.contacts.length} invité{ev.contacts.length > 1 ? 's ont' : ' a'} laissé son numéro
+                    {ev.contacts.length} invité{ev.contacts.length > 1 ? 's ont' : ' a'} laissé {ev.contacts.length > 1 ? 'leur' : 'son'} numéro
                   </div>
                 </div>
                 <span style={{ fontSize: 20, color: 'var(--text3)', transform: showContacts ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>⌄</span>
