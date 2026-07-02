@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from 'react'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
-import { getDeviceToken } from '../../../lib/device'
+import { getOwnerToken } from '../../../lib/device'
 
 const TEASER_GRADS = [
   'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)',
@@ -106,12 +106,31 @@ export default function Gallery({ params }) {
   }
 
   function load() {
-    fetch(`/api/gallery/${id}`, { headers: { 'x-owner-token': getDeviceToken() } })
+    fetch(`/api/gallery/${id}`, { headers: { 'x-owner-token': getOwnerToken(id) } })
       .then((r) => r.json())
       .then((d) => (d.error ? setError(d.error) : setData(d)))
       .catch(() => setError('Connexion impossible.'))
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Masquer / réafficher une photo (organisateur + admins)
+  async function toggleHide(photoId, hidden) {
+    setData((d) => ({ ...d, photos: d.photos.map((p) => (p.id === photoId ? { ...p, hidden } : p)) }))
+    await fetch(`/api/events/${id}/photo`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+      body: JSON.stringify({ photoId, hidden }),
+    }).catch(() => {})
+  }
+
+  // Supprimer définitivement une photo (organisateur + admins)
+  async function removePhoto(photoId) {
+    if (!window.confirm('Supprimer définitivement cette photo ? Cette action est irréversible.')) return
+    setData((d) => ({ ...d, photos: d.photos.filter((p) => p.id !== photoId) }))
+    await fetch(`/api/events/${id}/photo?photoId=${photoId}`, {
+      method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) },
+    }).catch(() => {})
+  }
 
   if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
   if (!data) return <main className="center-screen"><p className="muted">Chargement…</p></main>
@@ -119,12 +138,24 @@ export default function Gallery({ params }) {
   if (!data.revealed && !data.ownerPreview) return <PreReveal data={data} onDone={load} />
 
   const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
+  const hiddenCount = data.isOwner ? data.photos.filter((p) => p.hidden).length : 0
+  const ovBtn = {
+    width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer',
+    background: 'rgba(20,22,31,.82)', color: '#fff', fontSize: 15, lineHeight: 1,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)',
+  }
 
   return (
     <main className="screen screen-cream wide">
       {data.ownerPreview && (
         <div className="notice" style={{ marginBottom: 14, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
           👁️ <strong>Aperçu organisateur</strong> — vous voyez les photos en avant-première. Vos invités ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt)}.
+        </div>
+      )}
+      {data.isOwner && (
+        <div className="notice small" style={{ marginBottom: 14, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
+          🛠️ <strong>Vous gérez cet album.</strong> Sur chaque photo : 🙈 pour la masquer aux invités (elle reste visible pour vous), 🗑️ pour la supprimer.
+          {hiddenCount > 0 && <> {hiddenCount} photo{hiddenCount > 1 ? 's' : ''} actuellement masquée{hiddenCount > 1 ? 's' : ''}.</>}
         </div>
       )}
       <div className="gal-head">
@@ -153,11 +184,26 @@ export default function Gallery({ params }) {
           {photos.map((p, i) => {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
-              <a key={i} className={`polaroid ${retro ? 'retro' : ''}`} href={p.url} target="_blank" rel="noreferrer"
-                style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms` }}>
+              <a key={p.id || i} className={`polaroid ${retro ? 'retro' : ''}`} href={p.url} target="_blank" rel="noreferrer"
+                style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
                   <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" />
                   {retro && <div className="tint" />}
+                  {p.hidden && (
+                    <div style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(20,22,31,.85)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '.05em', padding: '4px 8px', borderRadius: 8, fontFamily: 'var(--font-mono)' }}>
+                      🙈 MASQUÉE
+                    </div>
+                  )}
+                  {data.isOwner && (
+                    <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 6 }}>
+                      <button title={p.hidden ? 'Réafficher aux invités' : 'Masquer aux invités'}
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleHide(p.id, !p.hidden) }}
+                        style={ovBtn}>{p.hidden ? '👁️' : '🙈'}</button>
+                      <button title="Supprimer définitivement"
+                        onClick={(e) => { e.preventDefault(); e.stopPropagation(); removePhoto(p.id) }}
+                        style={ovBtn}>🗑️</button>
+                    </div>
+                  )}
                 </div>
                 <div className="cap">
                   <span className="who">{p.who}</span>

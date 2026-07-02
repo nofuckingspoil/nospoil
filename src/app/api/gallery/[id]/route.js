@@ -30,18 +30,23 @@ export async function GET(request, { params }) {
   // Photos + prénom de l'auteur (jointure via la clé étrangère guest_id)
   const photosRes = await selectRows(
     'photos',
-    `event_id=eq.${id}&select=storage_path,taken_at,guest_id,guests(display_name)&order=taken_at.asc`
+    `event_id=eq.${id}&select=id,storage_path,taken_at,guest_id,hidden,guests(display_name)&order=taken_at.asc`
   )
-  const rows = Array.isArray(photosRes.data) ? photosRes.data : []
+  let rows = Array.isArray(photosRes.data) ? photosRes.data : []
+
+  // Les invités ne voient jamais les photos masquées ; l'organisateur/admin voit tout.
+  if (!isOwner) rows = rows.filter((r) => !r.hidden)
 
   const signed = await signPhotos(rows.map((r) => r.storage_path), 3600)
 
   const photos = rows
     .map((r) => ({
+      id: r.id,
       url: signed[r.storage_path],
       who: r.guests?.display_name || 'Invité',
       guestId: r.guest_id,
       takenAt: r.taken_at,
+      hidden: !!r.hidden,
     }))
     .filter((p) => p.url)
 
