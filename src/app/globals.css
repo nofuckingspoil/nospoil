@@ -351,9 +351,9 @@ a.cam-pile:active { transform: scale(.94); }
 .chip { flex: 0 0 auto; background: #fff; color: var(--text3); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
 .chip.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-.masonry { columns: 2; column-gap: 12px; }
+.masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
 .polaroid {
-  break-inside: avoid; margin-bottom: 12px; background: var(--card); padding: 7px 7px 0;
+  background: var(--card); padding: 7px 7px 0;
   border-radius: 7px; box-shadow: 0 6px 16px rgba(34,26,18,.14); animation: dc-develop .8s ease both;
   display: block; text-decoration: none;
 }
@@ -363,7 +363,7 @@ a.cam-pile:active { transform: scale(.94); }
 .polaroid .media .tint { position: absolute; inset: 0; background: linear-gradient(135deg, rgba(244,193,78,.18), rgba(236,91,51,.14)); mix-blend-mode: multiply; }
 .polaroid .cap { display: flex; align-items: center; justify-content: space-between; padding: 7px 3px 9px; }
 .polaroid .cap .who { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--ink); }
-.polaroid .cap .time { font-family: var(--font-mono); font-size: 9.5px; color: var(--text4); }
+.polaroid .cap .time { font-family: var(--font-mono); font-size: 9.5px; color: var(--text4); text-align: right; white-space: nowrap; }
 
 /* ---------- Stat cards (organisateur) ---------- */
 .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }

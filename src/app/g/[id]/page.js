@@ -22,6 +22,14 @@ function formatTime(iso) {
   try { return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) }
   catch { return '' }
 }
+// Date courte + heure, ex : « 12 juin · 14:32 »
+function formatStamp(iso) {
+  try {
+    const d = new Date(iso)
+    const jour = d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })
+    return `${jour} · ${formatTime(iso)}`
+  } catch { return formatTime(iso) }
+}
 
 function useCountdown(target) {
   const [now, setNow] = useState(() => Date.now())
@@ -207,7 +215,7 @@ export default function Gallery({ params }) {
                 </div>
                 <div className="cap">
                   <span className="who">{p.who}</span>
-                  <span className="time">{formatTime(p.takenAt)}</span>
+                  <span className="time">{formatStamp(p.takenAt)}</span>
                 </div>
               </a>
             )
