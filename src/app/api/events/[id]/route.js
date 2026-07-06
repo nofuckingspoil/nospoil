@@ -7,7 +7,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token,gallery_code`
+    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token,gallery_code,download_count`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -55,6 +55,7 @@ export async function GET(request, { params }) {
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
 
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
+    payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
   }
 
   return Response.json(payload)

@@ -269,8 +269,13 @@ export default function GuestCamera({ params }) {
     setPending((p) => [{ tempId, url }, ...p])
     setGuest((g) => (g ? { ...g, shotsTaken: Math.min(g.shotsPerGuest, g.shotsTaken + 1) } : g))
     try {
+      // Mini-version légère (~640px) pour l'affichage de l'album — économise la data
+      let thumbBlob = null
+      try { const im = await fileToImage(blob); thumbBlob = await compressToBlob(im, { maxSize: 640, quality: 0.6 }) } catch {}
+
       const fd = new FormData()
       fd.append('file', blob, 'photo.jpg')
+      if (thumbBlob) fd.append('thumb', thumbBlob, 'thumb.jpg')
       fd.append('eventId', id); fd.append('guestId', guest.guestId); fd.append('deviceToken', getDeviceToken())
       const res = await fetch('/api/photo', { method: 'POST', body: fd })
       const d = await res.json()

@@ -1,4 +1,4 @@
-import { rpc, uploadPhoto, deletePhoto } from '../../../lib/supabase'
+import { rpc, uploadPhoto, deletePhoto, updateRow } from '../../../lib/supabase'
 
 export const runtime = 'nodejs'
 // Autorise des images compressées jusqu'à ~8 Mo
@@ -9,6 +9,7 @@ export async function POST(request) {
   try { form = await request.formData() } catch { return Response.json({ error: 'Requête invalide.' }, { status: 400 }) }
 
   const file = form.get('file')
+  const thumb = form.get('thumb') // mini-version facultative (pour alléger l'album)
   const eventId = form.get('eventId')
   const guestId = form.get('guestId')
   const deviceToken = form.get('deviceToken')
@@ -32,6 +33,19 @@ export async function POST(request) {
     return Response.json({ error: "Échec de l'envoi de la photo." }, { status: 500 })
   }
 
+  // Mini-version : on l'envoie à côté (échec silencieux → on retombera sur la pleine qualité)
+  let thumbPath = null
+  if (thumb && typeof thumb !== 'string') {
+    try {
+      const tbytes = Buffer.from(await thumb.arrayBuffer())
+      if (tbytes.length > 0 && tbytes.length < 2 * 1024 * 1024) {
+        const tp = path.replace(/\.jpg$/, '_thumb.jpg')
+        const tup = await uploadPhoto(tp, tbytes, 'image/jpeg')
+        if (tup.ok) thumbPath = tp
+      }
+    } catch {}
+  }
+
   // Réserve le cliché (atomique) + enregistre la ligne photo
   const { ok, data } = await rpc('take_photo', {
     p_event_id: eventId,
@@ -46,7 +60,13 @@ export async function POST(request) {
   }
   if (data?.status === 'full') {
     await deletePhoto(path) // on annule l'upload : plus de clichés disponibles
+    if (thumbPath) await deletePhoto(thumbPath)
     return Response.json({ full: true, error: data.message }, { status: 409 })
+  }
+
+  // Associe la mini-version à la ligne photo créée (repérée par son chemin unique)
+  if (thumbPath) {
+    await updateRow('photos', `storage_path=eq.${encodeURIComponent(path)}`, { thumb_path: thumbPath })
   }
 
   return Response.json({ shotsTaken: data.shots_taken, shotsPerGuest: data.shots_per_guest })

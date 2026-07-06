@@ -44,25 +44,32 @@ export async function GET(request, { params }) {
   // Photos + prénom de l'auteur (jointure via la clé étrangère guest_id)
   const photosRes = await selectRows(
     'photos',
-    `event_id=eq.${id}&select=id,storage_path,taken_at,guest_id,hidden,guests(display_name)&order=taken_at.asc`
+    `event_id=eq.${id}&select=id,storage_path,thumb_path,taken_at,guest_id,hidden,guests(display_name)&order=taken_at.asc`
   )
   let rows = Array.isArray(photosRes.data) ? photosRes.data : []
 
   // Les invités ne voient jamais les photos masquées ; l'organisateur/admin voit tout.
   if (!isOwner) rows = rows.filter((r) => !r.hidden)
 
-  const signed = await signPhotos(rows.map((r) => r.storage_path), 3600)
+  // On signe la pleine qualité ET les mini-versions en un seul appel
+  const allPaths = []
+  for (const r of rows) {
+    allPaths.push(r.storage_path)
+    if (r.thumb_path) allPaths.push(r.thumb_path)
+  }
+  const signed = await signPhotos(allPaths, 3600)
 
   const photos = rows
     .map((r) => ({
       id: r.id,
-      url: signed[r.storage_path],
+      url: signed[r.thumb_path] || signed[r.storage_path], // mini-version pour l'album (léger)
+      fullUrl: signed[r.storage_path],                     // pleine qualité (ouverture / téléchargement)
       who: r.guests?.display_name || 'Invité',
       guestId: r.guest_id,
       takenAt: r.taken_at,
       hidden: !!r.hidden,
     }))
-    .filter((p) => p.url)
+    .filter((p) => p.fullUrl)
 
   // Liste des invités (pour le filtre "point de vue")
   const guestMap = {}

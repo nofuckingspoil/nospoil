@@ -111,13 +111,14 @@ export default function Gallery({ params }) {
 
   async function downloadAll(photos) {
     if (zip) return
+    fetch(`/api/gallery/${id}/track-download`, { method: 'POST' }).catch(() => {}) // compteur de téléchargements
     setZip({ done: 0, total: photos.length })
     try {
       const z = new JSZip()
       let i = 0
       for (const p of photos) {
         try {
-          const blob = await fetch(p.url).then((r) => r.blob())
+          const blob = await fetch(p.fullUrl || p.url).then((r) => r.blob())
           const safe = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
           z.file(`declic-${String(++i).padStart(3, '0')}-${safe}.jpg`, blob)
         } catch { i++ }
@@ -240,7 +241,7 @@ export default function Gallery({ params }) {
           {photos.map((p, i) => {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
-              <a key={p.id || i} className={`polaroid ${retro ? 'retro' : ''}`} href={p.url} target="_blank" rel="noreferrer"
+              <a key={p.id || i} className={`polaroid ${retro ? 'retro' : ''}`} href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
                 style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
                   <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" />

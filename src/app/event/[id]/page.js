@@ -361,6 +361,10 @@ export default function EventManage({ params }) {
               </button>
             </div>
 
+            <div className="hint" style={{ marginTop: 10 }}>
+              📥 Album téléchargé <strong>{ev.downloadCount || 0}</strong> fois via « Tout télécharger ».
+            </div>
+
             <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
               <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
               {ev.galleryCode ? (
