@@ -100,7 +100,7 @@ a { color: inherit; }
 .field label { display: block; font-weight: 600; font-size: 14px; margin-bottom: 7px; }
 .field .hint { color: var(--text4); font-size: 12.5px; margin-top: 7px; line-height: 1.45; }
 
-input[type=text], input[type=tel], input[type=email], input[type=date], input[type=datetime-local], input[type=number], select {
+input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], input[type=datetime-local], input[type=number], select {
   width: 100%; font-family: var(--font-body); font-size: 17px; font-weight: 600;
   padding: 16px 17px; border: 2px solid var(--line); border-radius: 16px;
   background: var(--card); color: var(--ink); outline: none; transition: border-color .15s;
@@ -483,6 +483,30 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .fill .n { font-family: var(--font-mono); font-size: 12px; color: var(--text2); white-space: nowrap; }
 .evrow .big { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .badge-warn { background: rgba(178,59,46,.14); color: #b23b2e; }
+
+/* ---------- Fiche événement (admin) ---------- */
+.ev-head-admin { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+.ev-meta { display: flex; flex-wrap: wrap; gap: 6px 20px; margin-top: 16px; font-size: 13.5px; color: var(--text2); }
+.ev-meta strong { color: var(--ink); }
+.ev-meta a { color: var(--accent-deep); font-weight: 600; }
+
+.contacts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap: 8px; }
+.contact-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 12px; padding: 10px 14px; font-size: 14px; }
+.contact-item a { color: var(--accent-deep); font-size: 13px; }
+
+.ph-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px,1fr)); gap: 8px; }
+.ph-item { position: relative; display: block; border-radius: 10px; overflow: hidden; background: rgba(34,26,18,.06); }
+.ph-item img { width: 100%; aspect-ratio: 1; object-fit: cover; display: block; transition: transform .2s; }
+.ph-item:hover img { transform: scale(1.05); }
+.ph-item.hidden img { opacity: .5; }
+.ph-tag { position: absolute; top: 6px; left: 6px; background: rgba(20,16,8,.75); color: #fff; font-family: var(--font-mono); font-size: 9px; letter-spacing: .04em; text-transform: uppercase; padding: 3px 7px; border-radius: 999px; }
+
+.danger-zone { margin-top: 40px; padding: 20px; border: 1px solid rgba(178,59,46,.3); border-radius: 16px; background: rgba(178,59,46,.04); }
+.danger-zone > div:first-child { margin-bottom: 14px; }
+.danger-zone .btn { width: auto; font-size: 15px; padding: 12px 20px; }
+.btn-danger { background: #b23b2e; color: #fff; }
+.btn-danger:hover { background: #9c3227; }
+.confirm-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 
 @media (max-width: 760px) {
   .evtable { border: none; background: transparent; overflow: visible; display: flex; flex-direction: column; gap: 12px; }

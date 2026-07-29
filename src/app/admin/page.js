@@ -201,7 +201,7 @@ export default function Admin() {
               const pct = e.maxGuests ? Math.min(100, Math.round((e.guestCount / e.maxGuests) * 100)) : 0
               const warn = isWarn(e)
               return (
-                <a className={`evrow ${warn ? 'warn' : ''}`} key={e.id} href={`/event/${e.id}`} target="_blank" rel="noreferrer">
+                <a className={`evrow ${warn ? 'warn' : ''}`} key={e.id} href={`/admin/event/${e.id}`}>
                   <span className="ev-name">
                     {e.coverUrl
                       ? <img className="ev-thumb" src={e.coverUrl} alt="" />
