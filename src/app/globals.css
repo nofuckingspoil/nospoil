@@ -446,12 +446,53 @@ a.cam-pile:active { transform: scale(.94); }
 .cta-band p { color: var(--text2); font-size: 15.5px; margin-bottom: 22px; }
 .cta-band .btn { width: auto; display: inline-flex; margin: 0 auto; }
 
-/* Table admin */
+/* Table admin (ancien) */
 .admin-table { border: 1px solid var(--line-soft); border-radius: 14px; overflow-x: auto; background: var(--card); }
 .admin-row { display: grid; grid-template-columns: minmax(180px,2.2fr) 1.2fr .7fr .7fr .9fr 1fr 1fr; gap: 12px; align-items: center; padding: 13px 18px; border-top: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); font-size: 14px; min-width: 760px; }
 .admin-row:first-child { border-top: none; }
 .admin-head { background: rgba(34,26,18,.04); font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
 a.admin-row:hover { background: rgba(236,91,51,.05); }
+
+/* ---------- Tableau de bord admin ---------- */
+.adash-toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 26px 0 14px; }
+.adash-search { flex: 1 1 260px; min-width: 200px; }
+.adash-search input { width: 100%; }
+.adash-filters { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { font-family: var(--font-mono); font-size: 11px; letter-spacing: .03em; padding: 8px 13px; border-radius: 999px; border: 1px solid var(--line); background: var(--card); color: var(--text2); cursor: pointer; white-space: nowrap; }
+.chip:hover { border-color: var(--accent); color: var(--accent-deep); }
+.chip.on { background: var(--ink); color: #fff; border-color: var(--ink); }
+.adash-sort select { font-family: var(--font-mono); font-size: 12px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+
+.evtable { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--card); overflow: hidden; }
+.evrow { display: grid; grid-template-columns: minmax(200px,2.4fr) 1.3fr .8fr .8fr .8fr 1.1fr 1fr; gap: 12px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); font-size: 14px; }
+.evrow:first-child { border-top: none; }
+.evhead { background: rgba(34,26,18,.04); font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
+a.evrow:hover { background: rgba(236,91,51,.05); }
+.evrow.warn { background: rgba(178,59,46,.05); }
+a.evrow.warn:hover { background: rgba(178,59,46,.09); }
+
+.ev-name { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.ev-thumb { width: 38px; height: 38px; border-radius: 9px; object-fit: cover; background: rgba(34,26,18,.09); flex: none; }
+.ev-name .t { min-width: 0; }
+.ev-name .t strong { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ev-name .t .who { font-size: 12px; color: var(--text3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.fill { display: flex; align-items: center; gap: 8px; }
+.fill .bar { flex: 1; height: 6px; border-radius: 999px; background: rgba(34,26,18,.1); overflow: hidden; min-width: 36px; }
+.fill .bar i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.fill .n { font-family: var(--font-mono); font-size: 12px; color: var(--text2); white-space: nowrap; }
+.evrow .big { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
+.badge-warn { background: rgba(178,59,46,.14); color: #b23b2e; }
+
+@media (max-width: 760px) {
+  .evtable { border: none; background: transparent; overflow: visible; display: flex; flex-direction: column; gap: 12px; }
+  .evhead { display: none; }
+  .evrow { grid-template-columns: 1fr 1fr; border: 1px solid var(--line-soft); border-radius: 14px; background: var(--card); padding: 15px; gap: 14px 12px; }
+  .evrow > span { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
+  .evrow > span[data-label]::before { content: attr(data-label); font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--text4); }
+  .evrow > span.ev-name { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+  .ev-thumb { width: 44px; height: 44px; }
+}
 
 /* Liste "Mes événements" */
 .ev-card { display: flex; align-items: center; justify-content: space-between; gap: 14px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; padding: 18px; text-decoration: none; color: var(--ink); margin-bottom: 12px; transition: border-color .15s; }
