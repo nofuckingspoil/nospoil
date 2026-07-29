@@ -4,7 +4,7 @@ import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
-import { getDeviceToken, rememberMyEvent } from '../../lib/device'
+import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
 
@@ -23,6 +23,7 @@ function CreateForm() {
   const isPaid = tier.priceCents > 0
 
   const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
   const [hostNames, setHostNames] = useState('')
   const [revealAt, setRevealAt] = useState(defaultReveal())
   const [shots, setShots] = useState(10)
@@ -42,13 +43,17 @@ function CreateForm() {
     e.preventDefault()
     setError('')
     if (!name.trim()) { setError('Donnez un nom à votre événement.'); return }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Entrez une adresse mail valide : c\'est elle qui vous permettra de retrouver votre événement.')
+      return
+    }
     setLoading(true)
     try {
       // Quand Stripe sera branché : ici, rediriger vers le paiement pour les formules payantes.
       const res = await fetch('/api/events', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ownerToken: getDeviceToken(), name, hostNames,
+          ownerToken: getDeviceToken(), name, hostNames, ownerEmail: email.trim(),
           revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots,
           maxGuests: tier.maxGuests,
         }),
@@ -56,6 +61,7 @@ function CreateForm() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Erreur.')
       rememberMyEvent(data.id)
+      saveAccount(email.trim().toLowerCase())
 
       // Upload de la photo de couverture (facultative), compressée côté navigateur
       if (coverFile) {
@@ -109,6 +115,12 @@ function CreateForm() {
           <label>Nom de l'événement</label>
           <input type="text" placeholder="Ex : Mariage de Marie & Paul" value={name}
             onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
+        </div>
+        <div className="field">
+          <label>Votre adresse mail</label>
+          <input type="email" inputMode="email" autoComplete="email" placeholder="vous@exemple.fr"
+            value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} />
+          <div className="hint">On vous y envoie votre accès organisateur : c'est ce qui vous permettra de retrouver votre tableau de bord, même en changeant de téléphone.</div>
         </div>
         <div className="field">
           <label>Vos prénoms <span className="muted">(facultatif)</span></label>

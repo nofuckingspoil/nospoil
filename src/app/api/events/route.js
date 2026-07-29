@@ -1,16 +1,22 @@
 import { insertRow } from '../../../lib/supabase'
+import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
+import { normalizeEmail, isValidEmail } from '../../../lib/account'
 
 const DAY = 24 * 60 * 60 * 1000
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const { ownerToken, name, hostNames, revealAt, shotsPerGuest, maxGuests } = body
+  const ownerEmail = normalizeEmail(body.ownerEmail)
 
   if (!ownerToken) {
     return Response.json({ error: 'Appareil non identifié.' }, { status: 400 })
   }
   if (!name || !name.trim()) {
     return Response.json({ error: "Donne un nom à ton événement." }, { status: 400 })
+  }
+  if (!isValidEmail(ownerEmail)) {
+    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
   }
 
   const reveal = new Date(revealAt)
@@ -27,6 +33,7 @@ export async function POST(request) {
 
   const { ok, data } = await insertRow('events', {
     owner_token: ownerToken,
+    owner_email: ownerEmail,
     name: name.trim().slice(0, 80),
     host_names: hostNames ? hostNames.trim().slice(0, 80) : null,
     shots_per_guest: shots,
@@ -39,6 +46,21 @@ export async function POST(request) {
   if (!ok || !data?.id) {
     console.error('create event error:', data)
     return Response.json({ error: "Erreur lors de la création de l'événement." }, { status: 500 })
+  }
+
+  // Mail d'accès organisateur : filet de sécurité si l'appareil ou le lien est perdu.
+  // Un échec d'envoi ne doit pas empêcher la création de l'événement.
+  try {
+    const base = siteUrl()
+    const mail = eventCreatedEmail({
+      eventName: name.trim().slice(0, 80),
+      ownerUrl: `${base}/event/${data.id}?k=${ownerToken}`,
+      joinUrl: `${base}/j/${data.id}`,
+      revealAt: reveal.toISOString(),
+    })
+    await sendMail({ to: ownerEmail, subject: mail.subject, html: mail.html })
+  } catch (err) {
+    console.error('mail création événement:', err)
   }
 
   return Response.json({ id: data.id })

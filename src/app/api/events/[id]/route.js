@@ -1,4 +1,5 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
+import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -7,7 +8,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token,gallery_code,download_count`
+    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token,owner_email,gallery_code,download_count`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -54,6 +55,7 @@ export async function GET(request, { params }) {
     const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,code&order=created_at.asc`)
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
 
+    payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
   }
@@ -80,6 +82,13 @@ export async function PATCH(request, { params }) {
     if (isNaN(reveal.getTime())) return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
     patch.reveal_at = reveal.toISOString()
     patch.expires_at = new Date(reveal.getTime() + 60 * DAY).toISOString() // rétention : 60 jours après
+  }
+
+  // Mail de l'organisateur : permet de se reconnecter depuis n'importe quel appareil
+  if (body.ownerEmail !== undefined) {
+    const email = normalizeEmail(body.ownerEmail)
+    if (!isValidEmail(email)) return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    patch.owner_email = email
   }
 
   // Code d'accès à la galerie : chaîne pour l'activer, "" ou null pour le retirer

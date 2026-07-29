@@ -57,6 +57,38 @@ export function getOwnerToken(eventId) {
   return getDeviceToken()
 }
 
+// ---- Compte organisateur (connexion par mail) ----
+// On mémorise le mail connecté, puis on enregistre l'accès à chaque événement
+// retrouvé : cet appareil est ensuite reconnu comme organisateur, comme avant.
+export function saveAccount(email) {
+  if (typeof window === 'undefined' || !email) return
+  try { localStorage.setItem('declic_email', email) } catch {}
+}
+
+export function getAccountEmail() {
+  if (typeof window === 'undefined') return null
+  try { return localStorage.getItem('declic_email') } catch { return null }
+}
+
+export function signOut() {
+  if (typeof window === 'undefined') return
+  try {
+    for (const id of getMyEvents()) localStorage.removeItem(`pellicule_owner_${id}`)
+    localStorage.removeItem('pellicule_my_events')
+    localStorage.removeItem('declic_email')
+  } catch {}
+}
+
+// Après une connexion réussie : on garde les accès aux événements retrouvés.
+export function applyLogin(email, events) {
+  saveAccount(email)
+  for (const ev of events || []) {
+    if (!ev?.id) continue
+    saveOwnerToken(ev.id, ev.ownerToken)
+    rememberMyEvent(ev.id)
+  }
+}
+
 // Retire un événement de la liste locale (après suppression)
 export function forgetMyEvent(id) {
   if (typeof window === 'undefined') return

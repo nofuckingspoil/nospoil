@@ -7,7 +7,7 @@ import QRCode from 'qrcode'
 import { BRAND } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
-import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
+import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent, saveAccount } from '../../../lib/device'
 
 function formatDate(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
@@ -435,6 +435,13 @@ export default function EventManage({ params }) {
               C'est <strong>votre</strong> tableau de bord privé : vous y reviendrez après la fête pour voir et
               télécharger toutes les photos. Gardez-le pour vous — <strong>ne le donnez pas à vos invités</strong>.
             </p>
+            {ev.ownerEmail && (
+              <div className="notice" style={{ marginBottom: 14 }}>
+                ✉️ Cet événement est rattaché à <strong>{ev.ownerEmail}</strong>. Même si vous perdez ce lien, vous
+                pourrez toujours revenir ici depuis <a href="/connexion" style={{ color: 'var(--accent-deep)' }}>la page de connexion</a>,
+                sur n'importe quel appareil.
+              </div>
+            )}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <button className="btn btn-accent" onClick={saveAccess}>
                 {typeof navigator !== 'undefined' && navigator.share ? '💾 Enregistrer mon lien (Notes, mail, WhatsApp…)' : '💾 Enregistrer / copier mon lien'}
