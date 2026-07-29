@@ -4,9 +4,12 @@
 // ============================================================
 import 'server-only'
 
+// Le stockage des photos est géré par Cloudflare R2 (egress gratuit).
+// On ré-exporte ces fonctions pour que les routes existantes ne changent pas.
+export { uploadPhoto, deletePhoto, deletePhotos, signPhotos } from './r2'
+
 const URL = process.env.SUPABASE_URL
 const KEY = process.env.SUPABASE_SERVICE_KEY
-const BUCKET = 'event-photos'
 
 function assertConfig() {
   if (!URL || !KEY) throw new Error('Configuration Supabase manquante (SUPABASE_URL / SUPABASE_SERVICE_KEY).')
@@ -78,56 +81,4 @@ export async function deleteRows(table, query) {
   return { ok: res.status < 300, status: res.status }
 }
 
-// --- Upload d'un fichier dans le Storage privé ---
-export async function uploadPhoto(path, bytes, contentType = 'image/jpeg') {
-  assertConfig()
-  const res = await fetch(`${URL}/storage/v1/object/${BUCKET}/${path}`, {
-    method: 'POST',
-    headers: { ...authHeaders(), 'Content-Type': contentType, 'x-upsert': 'true' },
-    body: bytes,
-  })
-  return { ok: res.status < 300, status: res.status }
-}
-
-// --- Suppression d'un fichier (nettoyage en cas d'échec) ---
-export async function deletePhoto(path) {
-  assertConfig()
-  await fetch(`${URL}/storage/v1/object/${BUCKET}/${path}`, {
-    method: 'DELETE',
-    headers: { ...authHeaders() },
-  }).catch(() => {})
-}
-
-// --- Suppression groupée de fichiers du Storage ---
-export async function deletePhotos(paths) {
-  assertConfig()
-  if (!paths.length) return { ok: true }
-  const res = await fetch(`${URL}/storage/v1/object/${BUCKET}`, {
-    method: 'DELETE',
-    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ prefixes: paths }),
-  }).catch(() => ({ status: 500 }))
-  return { ok: res.status < 300 }
-}
-
-// --- Génère des URLs signées temporaires pour afficher les photos ---
-export async function signPhotos(paths, expiresIn = 3600) {
-  assertConfig()
-  if (!paths.length) return {}
-  const res = await fetch(`${URL}/storage/v1/object/sign/${BUCKET}`, {
-    method: 'POST',
-    headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-    body: JSON.stringify({ expiresIn, paths }),
-    cache: 'no-store',
-  })
-  const data = await res.json().catch(() => [])
-  const map = {}
-  if (Array.isArray(data)) {
-    for (const item of data) {
-      if (item?.path && item?.signedURL) {
-        map[item.path] = `${URL}/storage/v1${item.signedURL}`
-      }
-    }
-  }
-  return map
-}
+// (Le stockage des photos est désormais géré par Cloudflare R2 — voir ./r2)
