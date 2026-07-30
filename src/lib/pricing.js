@@ -1,11 +1,16 @@
 // ============================================================
-//  Tarifs Déclic — paiement unique par événement, sans abonnement.
+//  Tarifs Time to Flash — paiement unique par événement, sans abonnement.
 //  Pour changer les prix : modifier UNIQUEMENT ce fichier.
 // ============================================================
 
-// Tant que Stripe n'est pas branché, les formules payantes sont
-// créées sans encaissement (offert pendant le lancement).
-export const PAYMENTS_ENABLED = false
+// Paiement Stripe activé. Le tunnel de paiement ne dépend PAS de l'e-mail :
+// après paiement, l'organisateur arrive directement sur son tableau de bord.
+export const PAYMENTS_ENABLED = true
+
+// Vérification de l'e-mail par code à la création.
+// Désactivé temporairement : l'envoi d'e-mails depuis Vercel est bloqué par Brevo
+// (restriction d'IP). À repasser à true dès que l'envoi d'e-mails est fiable.
+export const EMAIL_VERIFICATION_ENABLED = false
 
 export const TIERS = [
   { maxGuests: 5,   priceCents: 0,    popular: false },

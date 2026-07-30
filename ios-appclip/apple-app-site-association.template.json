@@ -1,0 +1,17 @@
+{
+  "_commentaire": "MODELE — à compléter quand vous aurez votre identifiant Apple (Team ID).",
+  "_ou_le_mettre": "Une fois complété (sans l'extension .template), à servir sur https://no-spoil.fr/.well-known/apple-app-site-association SANS extension de fichier et en JSON brut.",
+  "_remplacer": "TEAMID = votre identifiant d'équipe Apple. com.declic.app = l'identifiant que vous choisirez pour l'app.",
+
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["TEAMID.com.declic.app"],
+        "components": [{ "/": "/j/*" }]
+      }
+    ]
+  },
+  "appclips": {
+    "apps": ["TEAMID.com.declic.app.Clip"]
+  }
+}

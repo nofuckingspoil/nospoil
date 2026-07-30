@@ -134,7 +134,7 @@ export default function GuestCamera({ params }) {
   // Partage natif (Notes, WhatsApp, Mail…) ; repli sur copie si indisponible.
   async function shareMyLink() {
     if (typeof navigator !== 'undefined' && navigator.share) {
-      try { await navigator.share({ title: meta?.name || 'Déclic', text: 'Mon lien pour reprendre mes photos 📸', url: joinUrl }); return } catch {}
+      try { await navigator.share({ title: meta?.name || 'Time to Flash', text: 'Mon lien pour reprendre mes photos 📸', url: joinUrl }); return } catch {}
     }
     copyJoinLink()
   }
@@ -148,11 +148,11 @@ export default function GuestCamera({ params }) {
       const z = new JSZip()
       let i = 0
       for (const p of myPhotos) {
-        try { const blob = await fetch(p.url).then((r) => r.blob()); z.file(`declic-${String(++i).padStart(2, '0')}.jpg`, blob) } catch { i++ }
+        try { const blob = await fetch(p.url).then((r) => r.blob()); z.file(`timetoflash-${String(++i).padStart(2, '0')}.jpg`, blob) } catch { i++ }
       }
       const out = await z.generateAsync({ type: 'blob' })
       const url = URL.createObjectURL(out)
-      const a = document.createElement('a'); a.href = url; a.download = 'mes-photos-declic.zip'; a.click()
+      const a = document.createElement('a'); a.href = url; a.download = 'mes-photos-timetoflash.zip'; a.click()
       URL.revokeObjectURL(url)
     } catch { setError('Téléchargement impossible.') } finally { setDownloading(false) }
   }
@@ -463,7 +463,7 @@ export default function GuestCamera({ params }) {
           ? <video ref={videoRef} playsInline muted autoPlay style={facingMode === 'user' ? { transform: 'scaleX(-1)' } : undefined} />
           : <div className="vf-anim" />}
         <div className="vignette" />
-        <div className="vf-label">DÉCLIC&nbsp;400</div>
+        <div className="vf-label">FLASH&nbsp;400</div>
         <div className="vf-frame">№ {frameNo}</div>
         <div className="vf-corner tl" /><div className="vf-corner tr" /><div className="vf-corner bl" /><div className="vf-corner br" />
         <div className="vf-reticle"><div /></div>

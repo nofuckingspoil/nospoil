@@ -12,7 +12,7 @@ export async function GET(request) {
 
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,host_names,cover_url,created_at,reveal_at,status,max_guests,download_count,guests(count),photos(count)&order=created_at.desc'
+    'select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,guests(count),photos(count)&order=created_at.desc'
   )
   if (!ok) return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
   const rows = Array.isArray(data) ? data : []
@@ -32,6 +32,7 @@ export async function GET(request) {
     id: e.id,
     name: e.name,
     hostNames: e.host_names,
+    ownerEmail: e.owner_email || null,
     coverUrl: e.cover_url ? signedCovers[e.cover_url] || null : null,
     createdAt: e.created_at,
     revealAt: e.reveal_at,

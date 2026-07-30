@@ -15,7 +15,7 @@ function ShareIcon({ size = 16 }) {
 // Invite à épingler la page sur l'écran d'accueil.
 // Android : vrai bouton d'installation (beforeinstallprompt).
 // iOS : instructions visuelles "Partager → Sur l'écran d'accueil".
-export default function InstallPrompt({ label = "Ajoute Déclic à ton écran d'accueil" }) {
+export default function InstallPrompt({ label = "Ajoute Time to Flash à ton écran d'accueil" }) {
   const [deferred, setDeferred] = useState(null)
   const [isIOS, setIsIOS] = useState(false)
   const [show, setShow] = useState(false)

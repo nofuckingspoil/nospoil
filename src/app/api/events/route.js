@@ -1,6 +1,7 @@
 import { insertRow } from '../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
-import { normalizeEmail, isValidEmail } from '../../../lib/account'
+import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib/account'
+import { EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
 
 const DAY = 24 * 60 * 60 * 1000
 
@@ -17,6 +18,15 @@ export async function POST(request) {
   }
   if (!isValidEmail(ownerEmail)) {
     return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+  }
+
+  // L'adresse doit être vérifiée : on exige le code à 6 chiffres envoyé par mail.
+  // (Désactivable via EMAIL_VERIFICATION_ENABLED tant que l'envoi d'e-mails n'est pas fiable.)
+  if (EMAIL_VERIFICATION_ENABLED) {
+    const check = await verifyAndConsumeCode(ownerEmail, body.code)
+    if (!check.ok) {
+      return Response.json({ error: check.error }, { status: check.status })
+    }
   }
 
   const reveal = new Date(revealAt)

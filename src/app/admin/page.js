@@ -71,7 +71,7 @@ export default function Admin() {
 
   const list = useMemo(() => {
     let l = (events || []).filter((e) => {
-      if (q && !`${e.name} ${e.hostNames || ''}`.toLowerCase().includes(q.toLowerCase())) return false
+      if (q && !`${e.name} ${e.hostNames || ''} ${e.ownerEmail || ''}`.toLowerCase().includes(q.toLowerCase())) return false
       if (statusFilter === 'ongoing' && e.revealed) return false
       if (statusFilter === 'revealed' && !e.revealed) return false
       if (statusFilter === 'warn' && !isWarn(e)) return false
@@ -93,7 +93,7 @@ export default function Admin() {
       <Logo />
       <div className="card" style={{ marginTop: 24, width: '100%' }}>
         <h2 className="h3" style={{ marginBottom: 6 }}>Espace admin</h2>
-        <p className="muted small" style={{ marginBottom: 18 }}>Réservé à l'équipe Déclic.</p>
+        <p className="muted small" style={{ marginBottom: 18 }}>Réservé à l'équipe Time to Flash.</p>
         <form onSubmit={(e) => { e.preventDefault(); if (keyInput.trim()) load(keyInput.trim()) }}>
           <input type="password" placeholder="Mot de passe admin" value={keyInput}
             onChange={(e) => setKeyInput(e.target.value)} autoFocus />
@@ -209,6 +209,9 @@ export default function Admin() {
                     <span className="t">
                       <strong>{e.name}</strong>
                       {e.hostNames ? <span className="who">{e.hostNames}</span> : null}
+                      {e.ownerEmail
+                        ? <span className="who owner-email">✉ {e.ownerEmail}</span>
+                        : <span className="who owner-email missing">✉ email inconnu</span>}
                     </span>
                   </span>
                   <span data-label="Remplissage">

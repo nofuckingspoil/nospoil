@@ -3,7 +3,37 @@
 //  Pas de mot de passe — l'identité est prouvée par le mail (lien + code).
 // ============================================================
 import 'server-only'
-import { selectRows } from './supabase'
+import { selectRows, updateRow } from './supabase'
+
+const MAX_ATTEMPTS = 6
+
+// Vérifie un code à 6 chiffres pour un mail, et le consomme s'il est correct.
+// Renvoie { ok:true } ou { ok:false, status, error }.
+export async function verifyAndConsumeCode(email, code) {
+  const clean = (code || '').toString().replace(/\D/g, '')
+  if (!isValidEmail(email) || clean.length !== 6) {
+    return { ok: false, status: 400, error: 'Mail ou code manquant.' }
+  }
+  const enc = encodeURIComponent(email)
+  const { data } = await selectRows(
+    'login_codes',
+    `email=eq.${enc}&used_at=is.null&order=created_at.desc&limit=1&select=*`
+  )
+  const row = Array.isArray(data) ? data[0] : null
+  if (!row || row.used_at || new Date(row.expires_at).getTime() < Date.now()) {
+    return { ok: false, status: 401, error: 'Ce code a expiré. Demandez-en un nouveau.' }
+  }
+  if (row.attempts >= MAX_ATTEMPTS) {
+    await updateRow('login_codes', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
+    return { ok: false, status: 429, error: 'Trop de tentatives. Demandez un nouveau code.' }
+  }
+  if (row.code !== clean) {
+    await updateRow('login_codes', `id=eq.${row.id}`, { attempts: row.attempts + 1 })
+    return { ok: false, status: 401, error: 'Code incorrect.' }
+  }
+  await updateRow('login_codes', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
+  return { ok: true }
+}
 
 export function normalizeEmail(v) {
   return (v || '').toString().trim().toLowerCase()

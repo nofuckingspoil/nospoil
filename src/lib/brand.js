@@ -3,7 +3,7 @@
 //  Pour renommer l'app, change UNIQUEMENT ces valeurs.
 // ============================================================
 export const BRAND = {
-  name: 'Déclic',
+  name: 'Time to Flash',
   tagline: "L'appareil photo jetable de vos événements.",
   pitch: "Un QR code, un nombre de clichés limité par invité, et toutes les photos qui se révèlent après la fête. Aucune appli à installer.",
 }

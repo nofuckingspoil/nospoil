@@ -24,12 +24,12 @@ export default function TryQR() {
   }, [])
 
   return (
-    <a className="tryqr" href={href} aria-label="Essayer Déclic — ouvrir l'appareil photo de démonstration">
+    <a className="tryqr" href={href} aria-label="Essayer Time to Flash — ouvrir l'appareil photo de démonstration">
       <div className="tryqr-head">
-        <span className="tryqr-star">✱</span> ESSAYER DÉCLIC
+        <span className="tryqr-star">✱</span> ESSAYER TIME TO FLASH
       </div>
       <div className="tryqr-frame">
-        {qr ? <img src={qr} alt="QR code de démonstration Déclic" /> : <div className="tryqr-skeleton" />}
+        {qr ? <img src={qr} alt="QR code de démonstration Time to Flash" /> : <div className="tryqr-skeleton" />}
       </div>
       <div className="tryqr-sub">
         Votre appareil vous attend déjà.<br />Aucune appli à installer.

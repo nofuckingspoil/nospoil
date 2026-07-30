@@ -127,9 +127,9 @@ export default function EventManage({ params }) {
     const end = new Date(start.getTime() + 60 * 60 * 1000)
     const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
     const ics = [
-      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Declic//FR', 'CALSCALE:GREGORIAN',
+      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TimeToFlash//FR', 'CALSCALE:GREGORIAN',
       'BEGIN:VEVENT',
-      `UID:${id}@declic`,
+      `UID:${id}@timetoflash`,
       `DTSTART:${icsStamp(start)}`,
       `DTEND:${icsStamp(end)}`,
       `SUMMARY:${esc(`📸 Révélation des photos — ${ev.name}`)}`,
@@ -139,7 +139,7 @@ export default function EventManage({ params }) {
     ].join('\r\n')
     const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
     const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = 'declic-revelation.ics'; a.click()
+    const a = document.createElement('a'); a.href = url; a.download = 'timetoflash-revelation.ics'; a.click()
     URL.revokeObjectURL(url)
   }
 

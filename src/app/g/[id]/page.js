@@ -120,14 +120,14 @@ export default function Gallery({ params }) {
         try {
           const blob = await fetch(p.fullUrl || p.url).then((r) => r.blob())
           const safe = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
-          z.file(`declic-${String(++i).padStart(3, '0')}-${safe}.jpg`, blob)
+          z.file(`timetoflash-${String(++i).padStart(3, '0')}-${safe}.jpg`, blob)
         } catch { i++ }
         setZip({ done: i, total: photos.length })
       }
       const out = await z.generateAsync({ type: 'blob' })
       const url = URL.createObjectURL(out)
       const a = document.createElement('a')
-      a.href = url; a.download = 'declic-photos.zip'; a.click()
+      a.href = url; a.download = 'timetoflash-photos.zip'; a.click()
       URL.revokeObjectURL(url)
     } catch (e) {
       setError('Téléchargement impossible.')

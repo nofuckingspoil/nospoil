@@ -1,6 +1,6 @@
 import { BRAND } from '../lib/brand'
 
-// Logo Déclic : marque orange + objectif d'appareil photo.
+// Logo Time to Flash : marque orange + objectif d'appareil photo.
 // size = taille de la pastille ; dark = variante pour fond sombre.
 export default function Logo({ size = 46, showName = true, dark = false, nameSize = 30 }) {
   const lens = Math.round(size * 0.5)
@@ -22,6 +22,7 @@ export default function Logo({ size = 46, showName = true, dark = false, nameSiz
         <span style={{
           fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800,
           fontSize: nameSize, letterSpacing: '-.03em', color: dark ? '#fff' : 'var(--ink)',
+          whiteSpace: 'nowrap',
         }}>{BRAND.name}</span>
       )}
     </div>

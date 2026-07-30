@@ -8,7 +8,7 @@ import { BRAND } from './brand'
 const API = 'https://api.brevo.com/v3/smtp/email'
 
 export function siteUrl() {
-  return (process.env.SITE_URL || 'https://no-spoil.fr').replace(/\/$/, '')
+  return (process.env.SITE_URL || 'https://timetoflash.fr').replace(/\/$/, '')
 }
 
 // Envoie un mail. Ne fait jamais planter l'appelant : renvoie { ok, error }.
@@ -79,6 +79,20 @@ export function loginEmail({ code, link }) {
         <div style="text-align:center;font-size:14px;color:#8a7c69;padding:22px 0 10px;">ou saisissez ce code sur la page ouverte :</div>
         <div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.14em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${spaced}</div>`,
       footer: `Ce lien et ce code sont valables 15 minutes et ne servent qu'une fois.<br>Si vous n'avez pas demandé cette connexion, ignorez ce message.`,
+    }),
+  }
+}
+
+// ---------- Mail de vérification à la création (code seul, avant création) ----------
+export function verifyEmail({ code }) {
+  const spaced = String(code).replace(/(\d{3})(\d{3})/, '$1 $2')
+  return {
+    subject: `${code} — votre code de vérification ${BRAND.name}`,
+    html: layout({
+      title: 'Confirmez votre adresse',
+      intro: `Saisissez ce code sur la page pour créer votre événement. Il confirme que cette adresse est bien la vôtre.`,
+      body: `<div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.14em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${spaced}</div>`,
+      footer: `Ce code est valable 15 minutes et ne sert qu'une fois.<br>Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.`,
     }),
   }
 }

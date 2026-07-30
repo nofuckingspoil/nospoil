@@ -77,6 +77,9 @@ export default function AdminEvent() {
               <div>
                 <h1 className="h2" style={{ marginBottom: 4 }}>{data.event.name}</h1>
                 {data.event.hostNames ? <div className="muted">{data.event.hostNames}</div> : null}
+                {data.event.ownerEmail
+                  ? <div className="muted small" style={{ marginTop: 2 }}>Créé par <a href={`mailto:${data.event.ownerEmail}`} className="mono">{data.event.ownerEmail}</a></div>
+                  : <div className="muted small" style={{ marginTop: 2, fontStyle: 'italic' }}>Créateur inconnu (email non renseigné)</div>}
               </div>
               <span className={`badge ${data.event.revealed ? 'badge-live' : 'badge-wait'}`}>
                 <span className="dot" />{data.event.revealed ? 'Révélé' : 'En cours'}

@@ -51,6 +51,7 @@ export default function Home() {
       <nav className="vnav">
         <Logo nameSize={22} size={36} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <Link href="/journal" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Journal</Link>
           <Link href="/mes-evenements" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Mes événements</Link>
           <Link href="/connexion" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Connexion</Link>
           <Link href="/create?tier=5" className="btn btn-dark">Créer un événement</Link>

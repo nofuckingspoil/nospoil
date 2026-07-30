@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,created_at,reveal_at,status,max_guests,download_count,gallery_code,guests(count),photos(count)`
+    `id=eq.${id}&select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,gallery_code,guests(count),photos(count)`
   )
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -49,6 +49,7 @@ export async function GET(request, { params }) {
       id: ev.id,
       name: ev.name,
       hostNames: ev.host_names,
+      ownerEmail: ev.owner_email || null,
       coverUrl: ev.cover_url ? signed[ev.cover_url] || null : null,
       createdAt: ev.created_at,
       revealAt: ev.reveal_at,
