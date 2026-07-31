@@ -7,7 +7,7 @@ export default function robots() {
         userAgent: '*',
         allow: '/',
         // On n'indexe pas les espaces privés / techniques.
-        disallow: ['/admin', '/api/', '/event/', '/create/paiement'],
+        disallow: ['/admin', '/api/', '/event/', '/create/paiement', '/connexion'],
       },
     ],
     sitemap: 'https://timetoflash.fr/sitemap.xml',
