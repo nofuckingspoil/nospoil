@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
 
 // ---------- Petits utilitaires de date ----------
@@ -43,8 +43,6 @@ const SHOT_PRESETS = [
   { n: 8, em: '📸', title: '8 clichés', sub: 'Plus généreux, pour les longues soirées' },
 ]
 
-const SHOTS_MIN = 3
-const SHOTS_MAX = 15
 
 // ---------- Assistant ----------
 
@@ -161,6 +159,9 @@ function CreateForm() {
       code: code.replace(/\D/g, ''),
       revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots,
       maxGuests: tier.maxGuests,
+      // Preuve du consentement : le serveur pose lui-même l'horodatage.
+      cgvAccepted: cgvOk,
+      withdrawalWaived: waiverOk,
     }
 
     // Formule payante : direction le paiement Stripe. L'événement sera créé au retour.

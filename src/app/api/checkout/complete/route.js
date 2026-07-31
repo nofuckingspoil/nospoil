@@ -1,8 +1,8 @@
 import { getStripe } from '../../../../lib/stripe'
 import { insertRow, selectRows } from '../../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../../lib/mail'
+import { purgeDate } from '../../../../lib/retention'
 
-const DAY = 24 * 60 * 60 * 1000
 export const runtime = 'nodejs'
 
 // Confirme un paiement Stripe et crée l'événement. Idempotent : rappelable sans
@@ -34,7 +34,7 @@ export async function POST(request) {
 
   const m = session.metadata || {}
   const reveal = new Date(m.reveal_at)
-  const expires = new Date(reveal.getTime() + 60 * DAY)
+  const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
 
   const { ok, data } = await insertRow('events', {
     owner_token: m.owner_token,
@@ -47,6 +47,10 @@ export async function POST(request) {
     expires_at: expires.toISOString(),
     status: 'active',
     stripe_session_id: sessionId,
+    // Preuve du consentement recueillie avant le paiement (voir /api/checkout).
+    cgv_accepted_at: m.cgv_accepted_at || null,
+    withdrawal_waived_at: m.withdrawal_waived_at || null,
+    cgv_version: m.cgv_version || null,
   })
   if (!ok || !data?.id) {
     console.error('create paid event error:', data)

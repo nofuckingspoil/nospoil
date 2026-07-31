@@ -1,9 +1,9 @@
 import { insertRow } from '../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib/account'
-import { EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
-
-const DAY = 24 * 60 * 60 * 1000
+import { EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { purgeDate } from '../../../lib/retention'
+import { LEGAL_UPDATED } from '../../../lib/legal'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
@@ -18,6 +18,11 @@ export async function POST(request) {
   }
   if (!isValidEmail(ownerEmail)) {
     return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+  }
+  // L'acceptation des CGV est exigée côté serveur aussi : sans elle, la case
+  // cochée dans le navigateur ne prouverait rien.
+  if (body.cgvAccepted !== true) {
+    return Response.json({ error: 'Vous devez accepter les conditions générales.' }, { status: 400 })
   }
 
   // L'adresse doit être vérifiée : on exige le code à 6 chiffres envoyé par mail.
@@ -37,9 +42,9 @@ export async function POST(request) {
     return Response.json({ error: 'La date de révélation doit être dans le futur.' }, { status: 400 })
   }
 
-  const shots = Math.min(50, Math.max(1, parseInt(shotsPerGuest, 10) || 10))
+  const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
   const guests = Math.min(500, Math.max(5, parseInt(maxGuests, 10) || 5)) // palier choisi
-  const expires = new Date(reveal.getTime() + 60 * DAY) // rétention : 60 jours après la révélation
+  const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
 
   const { ok, data } = await insertRow('events', {
     owner_token: ownerToken,
@@ -51,6 +56,9 @@ export async function POST(request) {
     reveal_at: reveal.toISOString(),
     expires_at: expires.toISOString(),
     status: 'active',
+    cgv_accepted_at: new Date().toISOString(),
+    withdrawal_waived_at: body.withdrawalWaived === true ? new Date().toISOString() : null,
+    cgv_version: LEGAL_UPDATED,
   })
 
   if (!ok || !data?.id) {

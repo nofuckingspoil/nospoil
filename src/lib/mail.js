@@ -97,6 +97,34 @@ export function verifyEmail({ code }) {
   }
 }
 
+// ---------- Alerte avant suppression définitive des photos ----------
+// `remaining` : 'un mois' ou 'une semaine'. `purgeDate` : date lisible.
+export function purgeWarningEmail({ eventName, galleryUrl, remaining, purgeDate, photoCount }) {
+  const urgent = remaining === 'une semaine'
+  const count = photoCount > 0
+    ? `${photoCount} photo${photoCount > 1 ? 's' : ''}`
+    : 'Vos photos'
+  return {
+    subject: urgent
+      ? `⏳ Dernière semaine pour récupérer les photos de « ${eventName} »`
+      : `Vos photos de « ${eventName} » seront supprimées dans un mois`,
+    html: layout({
+      title: urgent
+        ? `Plus qu'une semaine`
+        : `Encore un mois pour télécharger vos photos`,
+      intro: `${count} de l'événement « <strong>${eventName}</strong> » seront <strong>définitivement supprimées le ${purgeDate}</strong>, comme prévu lors de la création de votre événement.`,
+      body: `${bigButton(galleryUrl, 'Télécharger mes photos →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Téléchargez l'album complet en une fois depuis votre galerie, et conservez-le
+          à l'abri (ordinateur, disque externe, cloud).
+        </div>`,
+      footer: urgent
+        ? `Passé le ${purgeDate}, la suppression est définitive et irréversible : nous ne pourrons pas récupérer ces photos.`
+        : `Cette suppression automatique protège la vie privée de vos invités (RGPD). Elle est définitive et irréversible.`,
+    }),
+  }
+}
+
 // ---------- Mail envoyé à la création d'un événement (filet de sécurité) ----------
 export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
   const date = (() => {

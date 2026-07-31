@@ -1,7 +1,6 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
 import { normalizeEmail, isValidEmail } from '../../../../lib/account'
-
-const DAY = 24 * 60 * 60 * 1000
+import { purgeDateISO } from '../../../../lib/retention'
 
 export async function GET(request, { params }) {
   const { id } = await params
@@ -81,7 +80,10 @@ export async function PATCH(request, { params }) {
     const reveal = new Date(body.revealAt)
     if (isNaN(reveal.getTime())) return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
     patch.reveal_at = reveal.toISOString()
-    patch.expires_at = new Date(reveal.getTime() + 60 * DAY).toISOString() // rétention : 60 jours après
+    patch.expires_at = purgeDateISO(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
+    // La date de suppression change : les alertes déjà envoyées ne valent plus.
+    patch.warned_1m_at = null
+    patch.warned_1w_at = null
   }
 
   // Mail de l'organisateur : permet de se reconnecter depuis n'importe quel appareil

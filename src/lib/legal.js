@@ -320,6 +320,7 @@ const confidentialite = {
     <tr><td>Adresse électronique, nom ou prénom</td><td>création et gestion du compte, envoi des accès à l'événement</td><td>exécution du contrat</td><td>3 ans à compter du dernier contact</td></tr>
     <tr><td>Données de commande et de facturation</td><td>gestion de la commande, obligations comptables</td><td>exécution du contrat et obligation légale</td><td>10 ans (article L.123-22 du Code de commerce)</td></tr>
     <tr><td>Adresse électronique, contenu des échanges</td><td>traitement des demandes de support</td><td>intérêt légitime</td><td>3 ans à compter du dernier contact</td></tr>
+    <tr><td>Acceptation des CGV et, le cas échéant, renonciation au droit de rétractation (horodatage, version des CGV)</td><td>preuve du consentement contractuel</td><td>exécution du contrat et intérêt légitime</td><td>10 ans (durée de prescription commerciale)</td></tr>
     <tr><td>Journaux de connexion techniques</td><td>sécurité du service, prévention des abus</td><td>intérêt légitime</td><td>12 mois</td></tr>
   </tbody>
 </table>

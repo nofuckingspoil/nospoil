@@ -1,7 +1,8 @@
 import { getStripe, paymentsLive } from '../../../lib/stripe'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib/account'
-import { tierByGuests, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
+import { tierByGuests, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
 import { siteUrl } from '../../../lib/mail'
+import { LEGAL_UPDATED } from '../../../lib/legal'
 
 export const runtime = 'nodejs'
 
@@ -36,7 +37,17 @@ export async function POST(request) {
     if (!check.ok) return Response.json({ error: check.error }, { status: check.status })
   }
 
-  const shots = Math.min(50, Math.max(1, parseInt(shotsPerGuest, 10) || 10))
+  // Formule payante : l'acceptation des CGV ET la renonciation au droit de
+  // rétractation sont exigées avant d'ouvrir le paiement (CGV art. 6 et 9.2).
+  if (body.cgvAccepted !== true) {
+    return Response.json({ error: 'Vous devez accepter les conditions générales.' }, { status: 400 })
+  }
+  if (body.withdrawalWaived !== true) {
+    return Response.json({ error: "Vous devez demander l'exécution immédiate du service." }, { status: 400 })
+  }
+  const consentAt = new Date().toISOString()
+
+  const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
   const cleanName = name.trim().slice(0, 80)
   const base = siteUrl()
   const stripe = getStripe()
@@ -64,6 +75,10 @@ export async function POST(request) {
         shots_per_guest: String(shots),
         max_guests: String(tier.maxGuests),
         reveal_at: reveal.toISOString(),
+        // Preuve du consentement, horodatée par le serveur avant le paiement.
+        cgv_accepted_at: consentAt,
+        withdrawal_waived_at: consentAt,
+        cgv_version: LEGAL_UPDATED,
       },
     })
     return Response.json({ url: session.url })

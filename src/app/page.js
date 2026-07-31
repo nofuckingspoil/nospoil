@@ -19,7 +19,7 @@ const REASSURE = [
   { ic: '🇪🇺', title: 'Hébergé en Europe', sub: 'Vos photos restent sur des serveurs européens.' },
   { ic: '🔒', title: 'Privé & sécurisé', sub: 'Galerie accessible uniquement via votre lien. Photos protégées.' },
   { ic: '📱', title: 'Aucune appli', sub: 'Tout se passe dans le navigateur, même pour vos invités.' },
-  { ic: '🗓️', title: 'Suppression auto', sub: 'Les photos sont effacées après l\'événement (RGPD).' },
+  { ic: '🗓️', title: 'Suppression auto', sub: 'Photos effacées 6 mois après la révélation. On vous prévient avant.' },
 ]
 
 const FAQ = [

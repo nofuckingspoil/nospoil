@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,gallery_code,guests(count),photos(count)`
+    `id=eq.${id}&select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,gallery_code,expires_at,purged_at,cgv_accepted_at,withdrawal_waived_at,cgv_version,guests(count),photos(count)`
   )
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -60,6 +60,11 @@ export async function GET(request, { params }) {
       galleryCode: ev.gallery_code || null,
       guestCount: ev.guests?.[0]?.count ?? 0,
       photoCount: ev.photos?.[0]?.count ?? 0,
+      expiresAt: ev.expires_at || null,
+      purgedAt: ev.purged_at || null,
+      cgvAcceptedAt: ev.cgv_accepted_at || null,
+      withdrawalWaivedAt: ev.withdrawal_waived_at || null,
+      cgvVersion: ev.cgv_version || null,
     },
     contacts,
     photos,

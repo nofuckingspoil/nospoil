@@ -99,7 +99,28 @@ export default function AdminEvent() {
               <span>Créé le <strong>{fmtDate(data.event.createdAt)}</strong></span>
               <span>Révélation <strong>{fmtDate(data.event.revealAt)}</strong> <span className="muted">({relTime(data.event.revealAt)})</span></span>
               {data.event.galleryCode ? <span>Code album <strong className="mono">{data.event.galleryCode}</strong></span> : null}
+              {data.event.expiresAt ? (
+                <span>
+                  {data.event.purgedAt ? 'Photos supprimées le ' : 'Suppression des photos '}
+                  <strong>{fmtDate(data.event.purgedAt || data.event.expiresAt)}</strong>
+                  {!data.event.purgedAt && <span className="muted"> ({relTime(data.event.expiresAt)})</span>}
+                </span>
+              ) : null}
               <a href={`/g/${data.event.id}`} target="_blank" rel="noreferrer">Voir l'album public ↗</a>
+            </div>
+
+            {/* Preuve du consentement — utile en cas de litige */}
+            <div className="ev-meta" style={{ marginTop: 8 }}>
+              {data.event.cgvAcceptedAt ? (
+                <span>✅ CGV acceptées le <strong>{fmtDate(data.event.cgvAcceptedAt)}</strong>
+                  {data.event.cgvVersion ? <span className="muted"> (version du {data.event.cgvVersion})</span> : null}
+                </span>
+              ) : (
+                <span className="muted">CGV : acceptation non enregistrée (événement antérieur au suivi)</span>
+              )}
+              {data.event.withdrawalWaivedAt
+                ? <span>✅ Rétractation : exécution immédiate demandée le <strong>{fmtDate(data.event.withdrawalWaivedAt)}</strong></span>
+                : <span className="muted">Rétractation : pas de renonciation (formule gratuite ou événement ancien)</span>}
             </div>
 
             {/* Numéros collectés */}
