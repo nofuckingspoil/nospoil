@@ -552,8 +552,12 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 /* ===== Badge QR « Essayer Time to Flash » (flottant, type Once) ===== */
 .tryqr {
-  position: fixed; left: 20px; bottom: 20px; z-index: 40;
-  width: 264px; padding: 22px 22px 18px;
+  /* La taille suit l'écran : jamais plus large que 16 % de la largeur,
+     ni plus haute que ~34 % de la hauteur de la fenêtre. */
+  --tryqr-w: clamp(200px, min(16vw, 30vh), 264px);
+  position: fixed; left: clamp(12px, 1.6vw, 20px); bottom: clamp(12px, 1.6vw, 20px); z-index: 40;
+  width: var(--tryqr-w); max-width: calc(100vw - 24px);
+  padding: calc(var(--tryqr-w) * .083) calc(var(--tryqr-w) * .072) calc(var(--tryqr-w) * .068);
   background: var(--dark); color: #fff; text-decoration: none;
   border-radius: 20px; border: 1px solid rgba(255,255,255,.08);
   box-shadow: 0 18px 44px rgba(0,0,0,.34);
@@ -562,23 +566,27 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 }
 .tryqr:hover { transform: translateY(-3px); box-shadow: 0 24px 56px rgba(0,0,0,.42); }
 .tryqr-head {
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em;
-  text-transform: uppercase; color: rgba(255,255,255,.82); margin-bottom: 12px;
+  font-family: var(--font-mono); font-size: clamp(9px, calc(var(--tryqr-w) * .042), 11px);
+  letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.82);
+  margin-bottom: calc(var(--tryqr-w) * .045);
 }
 .tryqr-star { color: var(--accent); margin-right: 4px; }
 .tryqr-frame {
-  width: 220px; height: 220px; background: #fff; border-radius: 14px;
-  padding: 10px; display: flex; align-items: center; justify-content: center;
+  width: 100%; aspect-ratio: 1 / 1; background: #fff; border-radius: 14px;
+  padding: calc(var(--tryqr-w) * .038); display: flex; align-items: center; justify-content: center;
 }
 .tryqr-frame img { width: 100%; height: 100%; display: block; }
 .tryqr-skeleton { width: 100%; height: 100%; background: #efefef; border-radius: 6px; }
 .tryqr-sub {
-  font-family: var(--font-mono); font-size: 10.5px; line-height: 1.45;
-  color: rgba(255,255,255,.62); margin-top: 12px;
+  font-family: var(--font-mono); font-size: clamp(8.5px, calc(var(--tryqr-w) * .04), 10.5px);
+  line-height: 1.45;
+  color: rgba(255,255,255,.62); margin-top: calc(var(--tryqr-w) * .045);
 }
 
-/* Sur mobile : scanner son propre écran n'a pas de sens → pastille tappable */
-@media (max-width: 720px) {
+/* Écrans étroits ou peu hauts (et mobile, où scanner son propre écran n'a
+   pas de sens) : on replie le badge en pastille tappable. */
+@media (max-width: 1100px), (max-height: 700px) {
   .tryqr { width: auto; flex-direction: row; gap: 8px; padding: 12px 16px; border-radius: 999px; align-items: center; }
   .tryqr-frame, .tryqr-sub { display: none; }
   .tryqr-head { margin-bottom: 0; font-size: 12px; }
@@ -754,50 +762,89 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 .pk-preview { margin-top: 26px; }
 
-/* Le « ticket » : même bloc décliné en trois tailles. */
+/* Le « ticket » : même bloc décliné en trois tailles.
+   Règle de conception : aucun aplat de fond CSS. Les navigateurs les
+   suppriment à l'impression quand « graphiques d'arrière-plan » est décoché.
+   On ne s'appuie donc que sur des dessins SVG, des bordures et du texte
+   coloré, qui sortent toujours. */
 .pk-ticket {
-  background: #fff; color: var(--ink); border: 1px solid rgba(34,26,18,.18);
-  border-radius: 10px; display: flex; flex-direction: column; align-items: center;
-  justify-content: center; text-align: center; box-sizing: border-box; overflow: hidden;
+  background: #fff; color: var(--ink); display: flex; flex-direction: column;
+  box-sizing: border-box; overflow: hidden; position: relative;
+}
+.pk-film { display: block; width: 100%; flex: none; }
+.pk-body {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; text-align: center; min-height: 0;
 }
 .pk-eyebrow { font-family: var(--font-mono); text-transform: uppercase; color: var(--accent); }
-.pk-title { font-family: var(--font-display); font-weight: 800; letter-spacing: -.02em; line-height: 1.08; }
+.pk-title { font-family: var(--font-display); font-weight: 800; letter-spacing: -.025em; line-height: 1.05; }
 .pk-who { color: var(--text3); }
-.pk-qr { background: #fff; display: flex; justify-content: center; }
+.pk-punch { font-family: var(--font-display); font-weight: 700; color: var(--text2); font-style: italic; }
+
+/* Le QR dans un viseur d'appareil photo */
+.pk-viewfinder { position: relative; display: flex; justify-content: center; }
+.pk-qr { background: #fff; }
 .pk-qr img { display: block; width: 100%; height: auto; }
-.pk-cta { font-weight: 700; color: var(--ink); }
-.pk-rules { color: var(--text2); }
-.pk-rules .pk-dot { color: var(--text4); margin: 0 .4em; }
+.pk-c { position: absolute; border-color: var(--accent); border-style: solid; border-width: 0; }
+.pk-c.tl { top: 0; left: 0; border-left-width: 2px; border-top-width: 2px; }
+.pk-c.tr { top: 0; right: 0; border-right-width: 2px; border-top-width: 2px; }
+.pk-c.bl { bottom: 0; left: 0; border-left-width: 2px; border-bottom-width: 2px; }
+.pk-c.br { bottom: 0; right: 0; border-right-width: 2px; border-bottom-width: 2px; }
+
+.pk-cta { font-family: var(--font-mono); text-transform: uppercase; color: var(--ink); }
+.pk-badge {
+  border: 2px solid var(--accent); border-radius: 999px; color: var(--accent-deep);
+  font-weight: 800; white-space: nowrap;
+}
+.pk-reveal { color: var(--text2); }
+.pk-reveal strong { color: var(--ink); }
 .pk-foot { font-family: var(--font-mono); color: var(--text4); }
 
 /* Grande (affiche A4) */
-.pk-lg { padding: 8% 7%; gap: 0; height: 100%; }
-.pk-lg .pk-eyebrow { font-size: 11pt; letter-spacing: .2em; }
-.pk-lg .pk-title { font-size: 38pt; margin-top: 10pt; }
-.pk-lg .pk-who { font-size: 13pt; margin-top: 6pt; }
-.pk-lg .pk-qr { width: 74%; margin: 26pt 0 16pt; }
-.pk-lg .pk-cta { font-size: 15pt; }
-.pk-lg .pk-rules { font-size: 12pt; margin-top: 8pt; }
-.pk-lg .pk-foot { font-size: 9pt; margin-top: 16pt; letter-spacing: .1em; }
+.pk-lg .pk-film { height: 9mm; }
+.pk-lg .pk-body { padding: 7% 8%; }
+.pk-lg .pk-eyebrow { font-size: 10.5pt; letter-spacing: .2em; }
+.pk-lg .pk-title { font-size: 36pt; margin-top: 10pt; }
+.pk-lg .pk-who { font-size: 12.5pt; margin-top: 5pt; }
+.pk-lg .pk-punch { font-size: 15pt; margin-top: 12pt; }
+.pk-lg .pk-viewfinder { width: 68%; padding: 16pt; margin: 16pt 0 14pt; }
+.pk-lg .pk-c { width: 26pt; height: 26pt; }
+.pk-lg .pk-cta { font-size: 11pt; letter-spacing: .14em; }
+.pk-lg .pk-badge { font-size: 14pt; padding: 8pt 20pt; margin-top: 14pt; }
+.pk-lg .pk-reveal { font-size: 13pt; margin-top: 12pt; }
+.pk-lg .pk-foot { font-size: 8.5pt; margin-top: 16pt; letter-spacing: .1em; }
 
 /* Moyenne (chevalet : moitié de page) */
-.pk-md { padding: 5% 7%; height: 100%; }
-.pk-md .pk-eyebrow { font-size: 8pt; letter-spacing: .18em; }
-.pk-md .pk-title { font-size: 20pt; margin-top: 6pt; }
-.pk-md .pk-who { font-size: 10pt; margin-top: 3pt; }
-.pk-md .pk-qr { width: 40%; margin: 10pt 0 8pt; }
-.pk-md .pk-cta { font-size: 11pt; }
-.pk-md .pk-rules { font-size: 9.5pt; margin-top: 5pt; }
-.pk-md .pk-foot { font-size: 7.5pt; margin-top: 8pt; letter-spacing: .08em; }
+.pk-md .pk-film { height: 5.5mm; }
+.pk-md .pk-body { padding: 4% 7%; }
+.pk-md .pk-eyebrow { font-size: 7.5pt; letter-spacing: .18em; }
+.pk-md .pk-title { font-size: 21pt; margin-top: 6pt; }
+.pk-md .pk-who { font-size: 9.5pt; margin-top: 3pt; }
+.pk-md .pk-punch { font-size: 10pt; margin-top: 6pt; }
+.pk-md .pk-viewfinder { width: 42%; padding: 9pt; margin: 9pt 0 8pt; }
+.pk-md .pk-c { width: 15pt; height: 15pt; }
+.pk-md .pk-cta { font-size: 8pt; letter-spacing: .12em; }
+.pk-md .pk-badge { font-size: 10pt; padding: 5pt 14pt; margin-top: 8pt; }
+.pk-md .pk-reveal { font-size: 9.5pt; margin-top: 7pt; }
+.pk-md .pk-foot { font-size: 7pt; margin-top: 8pt; letter-spacing: .08em; }
 
 /* Petite (carton à découper) */
-.pk-sm { padding: 5% 4%; height: 100%; }
-.pk-sm .pk-eyebrow { font-size: 5.5pt; letter-spacing: .14em; }
-.pk-sm .pk-title { font-size: 10.5pt; margin-top: 2pt; display: -webkit-box;
-  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.pk-sm .pk-qr { width: 68%; margin: 5pt 0 4pt; }
-.pk-sm .pk-cta { font-size: 7.5pt; }
-.pk-sm .pk-rules { font-size: 6.5pt; margin-top: 3pt; }
+.pk-sm .pk-film { height: 3mm; }
+.pk-sm .pk-body { padding: 5% 6%; }
+.pk-sm .pk-eyebrow { font-size: 5pt; letter-spacing: .12em; }
+.pk-sm .pk-title {
+  font-size: 10.5pt; margin-top: 2pt; display: -webkit-box;
+  -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.pk-sm .pk-viewfinder { width: 64%; padding: 5pt; margin: 5pt 0 4pt; }
+.pk-sm .pk-c { width: 8pt; height: 8pt; border-width: 0; }
+.pk-sm .pk-c.tl { border-left-width: 1.5px; border-top-width: 1.5px; }
+.pk-sm .pk-c.tr { border-right-width: 1.5px; border-top-width: 1.5px; }
+.pk-sm .pk-c.bl { border-left-width: 1.5px; border-bottom-width: 1.5px; }
+.pk-sm .pk-c.br { border-right-width: 1.5px; border-bottom-width: 1.5px; }
+.pk-sm .pk-cta { font-size: 5.5pt; letter-spacing: .08em; }
+.pk-sm .pk-badge { font-size: 6.5pt; padding: 2.5pt 7pt; margin-top: 4pt; border-width: 1.5px; }
+.pk-sm .pk-reveal { font-size: 6pt; margin-top: 3pt; }
 
 /* Mise en page d'une feuille */
 .pk-page { background: #fff; box-shadow: 0 10px 30px rgba(34,26,18,.14); margin: 0 auto; }

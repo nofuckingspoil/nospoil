@@ -87,20 +87,52 @@ export default function PrintKit({ params }) {
   const shots = ev.shotsPerGuest
   const reveal = shortDate(ev.revealAt)
 
+  // Bande de pellicule. En SVG et non en fond CSS : les navigateurs suppriment
+  // les fonds à l'impression quand « graphiques d'arrière-plan » est décoché,
+  // alors qu'un dessin SVG sort toujours.
+  const Film = () => (
+    <svg className="pk-film" viewBox="0 0 120 7" preserveAspectRatio="none" aria-hidden="true">
+      <rect width="120" height="7" fill="#14161F" />
+      {Array.from({ length: 24 }, (_, i) => (
+        <rect key={i} x={1.6 + i * 5} y="1.9" width="2.9" height="3.2" rx=".7" fill="#F4EBDA" />
+      ))}
+    </svg>
+  )
+
   // Bloc réutilisé par les trois formats.
   const Ticket = ({ size }) => (
     <div className={`pk-ticket pk-${size}`}>
-      <div className="pk-eyebrow">Appareil photo jetable</div>
-      <div className="pk-title">{title}</div>
-      {who && size !== 'sm' && <div className="pk-who">{who}</div>}
-      <div className="pk-qr">{qr && <img src={qr} alt="" />}</div>
-      <div className="pk-cta">Scannez avec votre téléphone</div>
-      <div className="pk-rules">
-        <span><strong>{shots}</strong> photo{shots > 1 ? 's' : ''} chacun</span>
-        <span className="pk-dot">·</span>
-        <span>Révélation le <strong>{reveal}</strong></span>
+      <Film />
+
+      <div className="pk-body">
+        <div className="pk-eyebrow">◉ Appareil photo jetable</div>
+        <div className="pk-title">{title}</div>
+        {who && size !== 'sm' && <div className="pk-who">{who}</div>}
+
+        {size !== 'sm' && <div className="pk-punch">Ce soir, le photographe c'est vous.</div>}
+
+        {/* QR cadré comme un viseur */}
+        <div className="pk-viewfinder">
+          <span className="pk-c tl" /><span className="pk-c tr" />
+          <span className="pk-c bl" /><span className="pk-c br" />
+          <div className="pk-qr">{qr && <img src={qr} alt="" />}</div>
+        </div>
+
+        {/* Sur un carton de 7 cm, la formule longue frôle le trait de découpe. */}
+        <div className="pk-cta">{size === 'sm' ? 'Scannez-moi' : 'Scannez · photographiez · disparaissez'}</div>
+
+        <div className="pk-badge">
+          {shots} clichés chacun{size === 'sm' ? '' : ', pas un de plus'}
+        </div>
+
+        <div className="pk-reveal">
+          Tout se développe le <strong>{reveal}</strong>
+        </div>
+
+        {size !== 'sm' && <div className="pk-foot">Aucune appli à installer · timetoflash.fr</div>}
       </div>
-      {size !== 'sm' && <div className="pk-foot">Aucune application à installer</div>}
+
+      <Film />
     </div>
   )
 
