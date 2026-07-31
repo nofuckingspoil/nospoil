@@ -308,6 +308,9 @@ export default function EventManage({ params }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         </div>
+        <Link href={`/event/${id}/imprimer`} className="qr-print-link">
+          🖨️ Imprimer affiches et chevalets de table →
+        </Link>
       </div>
 
       {ev.isOwner ? (
