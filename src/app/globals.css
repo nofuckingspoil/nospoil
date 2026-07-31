@@ -22,9 +22,10 @@
   --text4:     #9b8d79;   /* métadonnées */
   --line:      rgba(34,26,18,.12);
   --line-soft: rgba(34,26,18,.07);
-  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
-  --font-body:    'Manrope', system-ui, sans-serif;
-  --font-mono:    'Space Mono', ui-monospace, monospace;
+  /* var(--f-*) = polices auto-hébergées, injectées par next/font (voir layout.js) */
+  --font-display: var(--f-display), system-ui, sans-serif;
+  --font-body:    var(--f-body), system-ui, sans-serif;
+  --font-mono:    var(--f-mono), ui-monospace, monospace;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -589,9 +590,9 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   --dj-line:rgba(34,26,18,.07); --dj-line-2:rgba(34,26,18,.12);
   --dj-shadow:0 2px 2px rgba(34,26,18,.06);
   --dj-shadow-hover:0 16px 34px rgba(34,26,18,.13);
-  --dj-display:'Bricolage Grotesque',Georgia,serif;
-  --dj-body:'Manrope',system-ui,sans-serif;
-  --dj-mono:'Space Mono',ui-monospace,monospace;
+  --dj-display:var(--f-display),Georgia,serif;
+  --dj-body:var(--f-body),system-ui,sans-serif;
+  --dj-mono:var(--f-mono),ui-monospace,monospace;
   background:var(--dj-cream); color:var(--dj-ink);
   font-family:var(--dj-body); -webkit-font-smoothing:antialiased;
 }

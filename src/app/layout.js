@@ -1,5 +1,25 @@
 import './globals.css'
+import { Bricolage_Grotesque, Manrope, Space_Mono } from 'next/font/google'
 import { BRAND } from '../lib/brand'
+
+// Polices auto-hébergées par Next (plus d'appel à fonts.googleapis.com, qui
+// bloquait l'affichage du texte pendant ~750 ms au premier chargement).
+const fontDisplay = Bricolage_Grotesque({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--f-display',
+})
+const fontBody = Manrope({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--f-body',
+})
+const fontMono = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  display: 'swap',
+  variable: '--f-mono',
+})
 
 const SITE_URL = 'https://timetoflash.fr'
 
@@ -88,11 +108,8 @@ const jsonLd = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className={`${fontDisplay.variable} ${fontBody.variable} ${fontMono.variable}`}>
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" />
         <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
