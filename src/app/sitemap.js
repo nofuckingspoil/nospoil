@@ -1,5 +1,6 @@
 // Plan du site pour Google.
 import { POSTS } from '../lib/journal'
+import { LEGAL_DOCS } from '../lib/legal'
 
 const BASE = 'https://timetoflash.fr'
 
@@ -17,5 +18,11 @@ export default function sitemap() {
     changeFrequency: 'monthly',
     priority: 0.6,
   }))
-  return [...pages, ...articles]
+  const legal = LEGAL_DOCS.map((d) => ({
+    url: `${BASE}/${d.slug}`,
+    lastModified: now,
+    changeFrequency: 'yearly',
+    priority: 0.3,
+  }))
+  return [...pages, ...articles, ...legal]
 }

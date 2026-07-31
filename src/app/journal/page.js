@@ -41,7 +41,7 @@ export default async function JournalIndex({ searchParams }) {
   const rest = list.slice(1)
 
   return (
-    <section className="dj" id="journal" aria-label={`Journal ${BRAND.name}`}>
+    <main className="dj" id="journal" aria-label={`Journal ${BRAND.name}`}>
       <div className="dj-wrap" style={{ paddingTop: 22 }}>
         <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
       </div>
@@ -104,6 +104,6 @@ export default async function JournalIndex({ searchParams }) {
           </div>
         </div>
       </div>
-    </section>
+    </main>
   )
 }

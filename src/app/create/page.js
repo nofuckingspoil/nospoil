@@ -71,6 +71,10 @@ function CreateForm() {
   const [error, setError] = useState('')
   const [code, setCode] = useState('')
 
+  // Cases à cocher légales (jamais pré-cochées) — cf. CGV art. 6 et 9.2.
+  const [cgvOk, setCgvOk] = useState(false)
+  const [waiverOk, setWaiverOk] = useState(false)
+
   function goTo(n) { setError(''); setStep(n) }
 
   function onCoverPick(e) {
@@ -111,6 +115,12 @@ function CreateForm() {
   async function submitEmail() {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError('Entrez une adresse mail valide : c\'est elle qui vous permettra de retrouver votre événement.')
+      return
+    }
+    if (!cgvOk) { setError('Merci d\'accepter les conditions générales pour continuer.'); return }
+    // Renonciation au droit de rétractation : obligatoire uniquement pour les formules payantes.
+    if (isPaid && PAYMENTS_ENABLED && !waiverOk) {
+      setError('Merci de cocher la demande d\'exécution immédiate pour finaliser votre commande.')
       return
     }
     if (!EMAIL_VERIFICATION_ENABLED) return handleCreate()
@@ -398,6 +408,26 @@ function CreateForm() {
               <span>Formule</span>
               <span>{tier.maxGuests} invités · {formatPrice(tier.priceCents)}</span>
             </div>
+          </div>
+
+          <div className="wiz-legal">
+            <label className="wiz-check">
+              <input type="checkbox" checked={cgvOk} onChange={(e) => setCgvOk(e.target.checked)} />
+              <span>
+                J'accepte les <Link href="/cgv" target="_blank">conditions générales de vente</Link> et
+                la <Link href="/politique-de-confidentialite" target="_blank">politique de confidentialité</Link>.
+              </span>
+            </label>
+            {isPaid && PAYMENTS_ENABLED && (
+              <label className="wiz-check">
+                <input type="checkbox" checked={waiverOk} onChange={(e) => setWaiverOk(e.target.checked)} />
+                <span>
+                  Je demande l'exécution immédiate du service et je reconnais qu'une fois l'événement créé
+                  et le service pleinement exécuté, je perdrai mon droit de rétractation, conformément à
+                  l'article L.221-28 du Code de la consommation.
+                </span>
+              </label>
+            )}
           </div>
 
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}

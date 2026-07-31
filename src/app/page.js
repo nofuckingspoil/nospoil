@@ -58,7 +58,9 @@ export default function Home() {
         </div>
       </nav>
 
-      <div className="site-inner">
+      {/* <main> : repère qui permet aux lecteurs d'écran de sauter directement
+          au contenu principal, en passant la navigation. */}
+      <main className="site-inner">
         {/* HERO */}
         <section className="hero">
           <div className="eyebrow">Appareil photo jetable · événements</div>
@@ -79,7 +81,7 @@ export default function Home() {
             {STEPS.map((s, i) => (
               <div key={i} className="step-card">
                 <div className="step-ic">{s.ic}</div>
-                <h4>{s.title}</h4>
+                <h3>{s.title}</h3>
                 <p>{s.sub}</p>
               </div>
             ))}
@@ -107,7 +109,7 @@ export default function Home() {
             {REASSURE.map((r, i) => (
               <div key={i} className="reassure-item">
                 <span className="ic">{r.ic}</span>
-                <div><h4>{r.title}</h4><p>{r.sub}</p></div>
+                <div><h3>{r.title}</h3><p>{r.sub}</p></div>
               </div>
             ))}
           </div>
@@ -119,7 +121,7 @@ export default function Home() {
           <div className="section-sub" />
           {FAQ.map((f, i) => (
             <div key={i} className="faq-item">
-              <h4>{f.q}</h4>
+              <h3>{f.q}</h3>
               <p>{f.a}</p>
             </div>
           ))}
@@ -131,11 +133,16 @@ export default function Home() {
           <p>Créez votre appareil jetable en 2 minutes.</p>
           <Link href="/create?tier=5" className="btn btn-accent">Créer mon événement →</Link>
         </section>
-      </div>
+      </main>
 
       <footer className="vfooter">
         <div className="vfooter-inner">
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff', fontSize: 15 }}>{BRAND.name}</span>
+          <nav className="vfooter-links">
+            <Link href="/mentions-legales">Mentions légales</Link>
+            <Link href="/cgv">CGV</Link>
+            <Link href="/politique-de-confidentialite">Confidentialité</Link>
+          </nav>
           <span className="mono">© 2026 · Hébergé en UE · RGPD</span>
         </div>
       </footer>

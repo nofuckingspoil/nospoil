@@ -65,7 +65,7 @@ export default async function Article({ params }) {
   const related = relatedPosts(p)
 
   return (
-    <section className="dj" id="journal" aria-label={p.title}>
+    <main className="dj" id="journal" aria-label={p.title}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div className="dj-wrap" style={{ paddingTop: 22 }}>
@@ -102,7 +102,7 @@ export default async function Article({ params }) {
 
           <div className="dj-cta">
             <div>
-              <h4>Essaie sur ton mariage</h4>
+              <h3>Essaie sur ton mariage</h3>
               <span>Un appareil jetable partagé, prêt en 2 minutes. Paiement unique.</span>
             </div>
             <Link className="dj-btn dj-btn--dark" href="/create">Créer le mien</Link>
@@ -128,6 +128,6 @@ export default async function Article({ params }) {
           </div>
         </div>
       </div>
-    </section>
+    </main>
   )
 }
