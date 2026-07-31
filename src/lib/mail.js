@@ -149,3 +149,65 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
     }),
   }
 }
+
+// ---------- Rappel le matin de l'événement ----------
+// Objectif : que l'organisateur ouvre son tableau de bord au bon moment,
+// avec le QR sous la main. C'est le seul rappel avant la fête.
+export function eventDayEmail({ eventName, ownerUrl, shotsPerGuest }) {
+  return {
+    subject: `C'est aujourd'hui : « ${eventName} » 📸`,
+    html: layout({
+      title: `C'est aujourd'hui`,
+      intro: `Vos invités vont pouvoir scanner. Chacun aura <strong>${shotsPerGuest} photos</strong>, pas une de plus — et personne ne verra rien avant la révélation.`,
+      body: `${bigButton(ownerUrl, 'Ouvrir mon tableau de bord →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          <strong style="color:#221A12;">Les deux choses à ne pas oublier :</strong><br>
+          1. Poser les cartons QR là où on passe : l'entrée, le bar, les tables.<br>
+          2. Demander à quelqu'un d'annoncer le jeu au début du repas — c'est ce qui fait décoller la participation.
+        </div>
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
+          Un retardataire ? Votre tableau de bord affiche le QR en plein écran, à faire scanner directement.
+        </div>`,
+      footer: `Vous pouvez suivre en direct qui joue et combien de photos ont été prises, depuis votre tableau de bord.`,
+    }),
+  }
+}
+
+// ---------- Rappel le lendemain : les photos attendent ----------
+// C'est ce mail qui déclenche le partage de l'album : sans lui, beaucoup
+// d'organisateurs ne reviennent jamais et l'album reste invisible.
+export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, revealDate }) {
+  return {
+    subject: `${photoCount} photos vous attendent — « ${eventName} »`,
+    html: layout({
+      title: `${photoCount} photos vous attendent`,
+      intro: `${guestCount} invité${guestCount > 1 ? 's ont' : ' a'} joué le jeu hier soir. <strong>Vous seul pouvez déjà les voir</strong> — vos invités devront patienter jusqu'à la révélation.`,
+      body: `${bigButton(ownerUrl, 'Voir les photos →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Profitez-en pour <strong style="color:#221A12;">masquer celles qui gênent</strong> avant que tout le monde les découvre :
+          dans l'album, un bouton sur chaque photo suffit.
+        </div>
+        ${revealDate ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">Révélation prévue :</strong><br>${revealDate}</div>` : ''}`,
+      footer: `Le jour de la révélation, votre tableau de bord vous proposera un message tout prêt à envoyer à vos invités.`,
+    }),
+  }
+}
+
+// ---------- Envoi du lien de l'album aux invités qui ont laissé leur mail ----------
+// C'est la seule raison pour laquelle on demande leur adresse : le message
+// le dit, et le pied de page le rappelle.
+export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }) {
+  const bonjour = guestName ? `Bonjour ${guestName},` : 'Bonjour,'
+  return {
+    subject: `Les photos de « ${eventName} » sont en ligne 📸`,
+    html: layout({
+      title: `Les photos sont sorties`,
+      intro: `${bonjour} l'album de « <strong>${eventName}</strong> » vient de s'ouvrir : <strong>${photoCount} photo${photoCount > 1 ? 's' : ''}</strong> prises par tous les invités, y compris les vôtres.`,
+      body: `${bigButton(galleryUrl, "Voir l'album →")}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Vous pouvez les regarder, les télécharger, et retrouver celles que vous avez prises.
+        </div>`,
+      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, uniquement pour cela. Elle n'est utilisée pour rien d'autre et sera supprimée avec l'album.`,
+    }),
+  }
+}

@@ -250,7 +250,7 @@ const cgv = {
   <li><strong>Durée</strong> : durée de l'Événement, augmentée de la période de conservation prévue à l'article 8.</li>
   <li><strong>Nature des opérations</strong> : collecte, enregistrement, stockage, organisation, consultation, transmission, effacement.</li>
   <li><strong>Catégories de personnes concernées</strong> : Organisateur, Invités, et toute personne figurant sur les Contenus.</li>
-  <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, données techniques de connexion.</li>
+  <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, adresse électronique facultative des Invités (envoi du lien de l'album), numéros de téléphone recueillis avant l'abandon de cette collecte, données techniques de connexion.</li>
 </ul>
 
 <h3>3. Obligations de BLACK BY C</h3>
@@ -334,10 +334,14 @@ const confidentialite = {
   <tbody>
     <tr><td>Photographies</td><td>constitution de la galerie de l'événement</td><td>6 mois après la date de révélation, puis suppression automatique</td></tr>
     <tr><td>Prénom ou pseudonyme saisi</td><td>identification des contributions au sein de l'événement</td><td>idem</td></tr>
+    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi du lien de l'album, une seule fois, au moment de la révélation</td><td>idem</td></tr>
+    <tr><td>Numéro de téléphone (facultatif, plus collecté)</td><td>transmission du lien de l'album par l'Organisateur</td><td>idem</td></tr>
     <tr><td>Horodatage, données techniques de connexion</td><td>fonctionnement et sécurité du service</td><td>12 mois</td></tr>
   </tbody>
 </table>
 <p>Aucun compte n'est requis pour déposer un contenu en tant qu'invité.</p>
+<p>La saisie d'une adresse électronique est <strong>facultative</strong> : l'invité peut participer sans la renseigner. Elle sert <strong>uniquement</strong> à lui adresser le lien de l'album lorsque les photographies sont révélées. Elle n'est utilisée à aucune fin de prospection, n'est jamais transmise à un tiers, et est supprimée avec l'événement.</p>
+<p>La collecte du numéro de téléphone a été abandonnée. Les numéros recueillis avant ce changement restent soumis aux mêmes règles et sont supprimés avec l'événement auquel ils se rattachent.</p>
 <p>Les photographies sont susceptibles de révéler des informations sensibles — pratique religieuse lors d'une cérémonie, état de santé apparent, appartenance supposée à un groupe. BLACK BY C n'exploite jamais ces informations et n'opère aucune analyse du contenu des images, aucune reconnaissance faciale, aucun profilage.</p>
 
 <h2>4. Destinataires et sous-traitants</h2>

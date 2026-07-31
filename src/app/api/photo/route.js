@@ -69,5 +69,11 @@ export async function POST(request) {
     await updateRow('photos', `storage_path=eq.${encodeURIComponent(path)}`, { thumb_path: thumbPath })
   }
 
+  // Signe de vie de l'invité : alimente l'indicateur « joue en ce moment »
+  // du tableau de bord. Un échec ici ne doit pas faire rater la photo.
+  try {
+    await updateRow('guests', `id=eq.${guestId}`, { last_active_at: new Date().toISOString() })
+  } catch {}
+
   return Response.json({ shotsTaken: data.shots_taken, shotsPerGuest: data.shots_per_guest })
 }

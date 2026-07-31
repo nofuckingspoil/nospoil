@@ -10,10 +10,18 @@ import { fileToImage, compressToBlob } from '../../lib/camera'
 
 // ---------- Petits utilitaires de date ----------
 
-function atDay(daysAhead, hour) {
-  const d = new Date()
+function atDay(daysAhead, hour, from = new Date()) {
+  const d = new Date(from)
   d.setDate(d.getDate() + daysAhead)
   d.setHours(hour, 0, 0, 0)
+  return d
+}
+
+// Proposition par défaut pour la soirée : le prochain samedi à 19h.
+function nextSaturday() {
+  const d = new Date()
+  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7))
+  d.setHours(19, 0, 0, 0)
   return d
 }
 
@@ -30,10 +38,12 @@ function frDate(iso) {
 
 // ---------- Choix proposés ----------
 
+// Les délais sont comptés à partir de la soirée, pas d'aujourd'hui :
+// « le lendemain » = le lendemain de la fête.
 const REVEAL_PRESETS = [
   { key: 'd1-12', em: '☕️', title: 'Le lendemain, à midi', sub: 'Le brunch d\'après fête', days: 1, hour: 12 },
   { key: 'd1-20', em: '🌙', title: 'Le lendemain, en soirée', sub: 'Le grand classique', days: 1, hour: 20 },
-  { key: 'd7-20', em: '🗓️', title: 'Dans 1 semaine', sub: 'Le temps que chacun fasse le tri', days: 7, hour: 20 },
+  { key: 'd7-20', em: '🗓️', title: 'Une semaine après', sub: 'Le temps que chacun fasse le tri', days: 7, hour: 20 },
   { key: 'custom', em: '✏️', title: 'Choisir une date précise', sub: 'Vous fixez le jour et l\'heure' },
 ]
 
@@ -60,8 +70,9 @@ function CreateForm() {
   const [email, setEmail] = useState('')
   const [shots, setShots] = useState(5)
   const [shotsCustom, setShotsCustom] = useState(false)
+  const [startsAt, setStartsAt] = useState(toInputValue(nextSaturday()))
   const [revealKey, setRevealKey] = useState('d1-20')
-  const [revealAt, setRevealAt] = useState(toInputValue(atDay(1, 20)))
+  const [revealAt, setRevealAt] = useState(toInputValue(atDay(1, 20, nextSaturday())))
   const [coverFile, setCoverFile] = useState(null)
   const [coverPreview, setCoverPreview] = useState('')
 
@@ -82,9 +93,19 @@ function CreateForm() {
     setCoverPreview(URL.createObjectURL(f))
   }
 
-  function pickReveal(p) {
+  function pickReveal(p, base = startsAt) {
     setRevealKey(p.key)
-    if (p.key !== 'custom') setRevealAt(toInputValue(atDay(p.days, p.hour)))
+    if (p.key !== 'custom') setRevealAt(toInputValue(atDay(p.days, p.hour, new Date(base))))
+  }
+
+  // Changer la date de la soirée recale la révélation choisie (« le lendemain »
+  // doit rester le lendemain de la fête).
+  function pickStart(value) {
+    setStartsAt(value)
+    const preset = REVEAL_PRESETS.find((p) => p.key === revealKey)
+    if (preset && preset.key !== 'custom' && !isNaN(new Date(value))) {
+      setRevealAt(toInputValue(atDay(preset.days, preset.hour, new Date(value))))
+    }
   }
 
   function pickShots(n) {
@@ -103,7 +124,11 @@ function CreateForm() {
     if (step === 2) return goTo(3)
     if (step === 3) return goTo(4)
     if (step === 4) {
+      if (!startsAt || isNaN(new Date(startsAt))) { setError('Indiquez la date de votre événement.'); return }
       if (!revealAt || isNaN(new Date(revealAt))) { setError('Choisissez une date de révélation.'); return }
+      if (new Date(revealAt) <= new Date(startsAt)) {
+        setError('La révélation doit venir après le début de votre événement.'); return
+      }
       return goTo(5)
     }
     if (step === 5) return submitEmail()
@@ -157,6 +182,7 @@ function CreateForm() {
     const payload = {
       ownerToken: getDeviceToken(), name, ownerEmail: email.trim(),
       code: code.replace(/\D/g, ''),
+      startsAt: new Date(startsAt).toISOString(),
       revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots,
       maxGuests: tier.maxGuests,
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
@@ -340,7 +366,17 @@ function CreateForm() {
       {/* ÉTAPE 4 — Révélation */}
       {step === 4 && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Quand révéler les photos ?</h2>
+          <h2 className="wiz-q">Quand a lieu votre événement ?</h2>
+          <p className="wiz-sub">
+            La date de la fête elle-même. Elle sert à préparer votre tableau de bord :
+            il vous montrera la bonne chose au bon moment.
+          </p>
+          <div className="field" style={{ marginBottom: 24 }}>
+            <label>Date et heure de l'événement</label>
+            <input type="datetime-local" value={startsAt} onChange={(e) => pickStart(e.target.value)} />
+          </div>
+
+          <h2 className="wiz-q" style={{ marginTop: 0 }}>Et quand révéler les photos ?</h2>
           <p className="wiz-sub">
             Jusqu'à cette date, tout reste caché — comme une pellicule qu'on développe.
             Ensuite, les photos deviennent visibles par <strong>tous les invités</strong>.
@@ -400,6 +436,10 @@ function CreateForm() {
             <div className="wiz-recap-row">
               <span>Clichés / invité</span>
               <span>{shots} <button type="button" className="linklike" onClick={() => goTo(3)}>modifier</button></span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Événement le</span>
+              <span>{frDate(startsAt)} <button type="button" className="linklike" onClick={() => goTo(4)}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
               <span>Révélation</span>

@@ -47,7 +47,9 @@ export default function GuestCamera({ params }) {
   const [phase, setPhase] = useState('loading') // loading | cover | name | camera | error
   const [meta, setMeta] = useState(null)
   const [name, setName] = useState('')
-  const [phone, setPhone] = useState('')
+  const [email, setEmail] = useState('')
+  const [mailCheck, setMailCheck] = useState(null) // {status, suggestion?, reason?}
+  const [checkingMail, setCheckingMail] = useState(false)
   const [guest, setGuest] = useState(null)       // { guestId, shotsTaken, shotsPerGuest }
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -83,7 +85,7 @@ export default function GuestCamera({ params }) {
         if (d.error) { setError(d.error); setPhase('error'); return }
         setMeta(d)
         const saved = getGuest(id)
-        if (saved?.name) { setName(saved.name); if (saved.phone) setPhone(saved.phone); join(saved.name, saved.phone) }
+        if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
         else setPhase('cover')
       })
       .catch(() => { setError('Connexion impossible.'); setPhase('error') })
@@ -112,6 +114,8 @@ export default function GuestCamera({ params }) {
 
   // Génère le QR code d'invitation à l'ouverture de la pop-up
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/j/${id}` : ''
+  // Fichier agenda : un tap ouvre le Calendrier du téléphone, le lien y reste au chaud
+  const agendaUrl = `/api/events/${id}/agenda.ics`
   useEffect(() => {
     if (!showQR || qrUrl || !joinUrl) return
     QRCode.toDataURL(joinUrl, { width: 440, margin: 1, color: { dark: '#221A12', light: '#FCF8F0' } })
@@ -124,11 +128,10 @@ export default function GuestCamera({ params }) {
 
   // Ouvre l'appli Messages du téléphone, pré-remplie avec le lien : l'invité se l'envoie
   // à lui-même (gratuit) pour revenir prendre ses photos restantes plus tard.
-  // Si l'invité a laissé son numéro, le SMS est déjà adressé à lui-même.
+  // Le destinataire est laissé vide : il choisit son propre numéro dans l'appli.
   function smsMyLink() {
     const body = `Mon lien pour reprendre mes photos 📸 : ${joinUrl}`
-    const num = String(phone || '').replace(/[^\d+]/g, '')
-    window.location.href = `sms:${num}?&body=${encodeURIComponent(body)}`
+    window.location.href = `sms:?&body=${encodeURIComponent(body)}`
   }
 
   // Partage natif (Notes, WhatsApp, Mail…) ; repli sur copie si indisponible.
@@ -203,18 +206,39 @@ export default function GuestCamera({ params }) {
     } catch {}
   }
 
-  async function join(displayName, phoneArg) {
+  // Vérifie l'adresse quand l'invité quitte le champ : la correction arrive
+  // avant qu'il ait à revenir dessus. Ne bloque jamais : l'adresse est facultative.
+  async function verifierMail(value) {
+    const v = (value || '').trim()
+    if (!v) { setMailCheck(null); return }
+    setCheckingMail(true)
+    try {
+      const r = await fetch('/api/email/check', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: v }),
+      })
+      setMailCheck(await r.json())
+    } catch { setMailCheck(null) } finally { setCheckingMail(false) }
+  }
+
+  function accepterSuggestion() {
+    if (!mailCheck?.suggestion) return
+    setEmail(mailCheck.suggestion)
+    verifierMail(mailCheck.suggestion)
+  }
+
+  async function join(displayName, emailArg) {
     setBusy(true); setError('')
-    // phoneArg : utilisé à la reconnexion (numéro mémorisé) ; sinon, le champ du formulaire.
-    const phoneVal = ((phoneArg !== undefined ? phoneArg : phone) || '').trim()
+    // emailArg : utilisé à la reconnexion (adresse mémorisée) ; sinon, le champ du formulaire.
+    const emailVal = ((emailArg !== undefined ? emailArg : email) || '').trim().toLowerCase()
     try {
       const res = await fetch('/api/join', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, phone: phoneVal }),
+        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, email: emailVal }),
       })
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
-      saveGuest(id, d.guestId, d.displayName, phoneVal)
+      saveGuest(id, d.guestId, d.displayName, d.email ?? emailVal)
       setGuest({ guestId: d.guestId, shotsTaken: d.shotsTaken, shotsPerGuest: d.shotsPerGuest })
       setLiveCam(supportsLiveCamera())
       loadMyPhotos()
@@ -378,6 +402,17 @@ export default function GuestCamera({ params }) {
   const full = remaining <= 0
   const coupleLabel = meta?.hostNames || meta?.name || ''
 
+  // Bouton « agenda » — proposé tant que l'album n'est pas révélé.
+  // Le lien de l'événement part avec le rendez-vous : impossible de le perdre.
+  const agendaBlock = meta && !meta.revealed ? (
+    <>
+      <a className="btn btn-ghost" href={agendaUrl} style={{ width: '100%' }}>📅 Ajouter à mon agenda</a>
+      <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 6px' }}>
+        La soirée, un rappel photo dans 1 h et la révélation — avec votre lien dans chaque.
+      </p>
+    </>
+  ) : null
+
   // ---------- Écrans ----------
   if (phase === 'loading') return <main className="center-screen"><p className="muted">Chargement…</p></main>
   if (phase === 'error') return <main className="screen screen-cream center"><div className="card">{error || 'Événement introuvable.'}</div></main>
@@ -417,16 +452,34 @@ export default function GuestCamera({ params }) {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 2px 8px' }}>
-          <span style={{ fontWeight: 600, fontSize: 14 }}>Votre téléphone</span>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>Votre adresse mail</span>
           <span className="field-tag">facultatif</span>
         </div>
         <div className="input-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 16.92z" /></svg>
-          <input type="tel" inputMode="tel" placeholder="06 12 34 56 78" value={phone}
-            onChange={(e) => setPhone(e.target.value)} maxLength={30} />
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>
+          <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
+            autoCorrect="off" spellCheck="false" placeholder="vous@exemple.fr" value={email}
+            onChange={(e) => { setEmail(e.target.value); setMailCheck(null) }}
+            onBlur={(e) => verifierMail(e.target.value)} maxLength={160} />
         </div>
+
+        {/* Filets de sécurité : on corrige et on prévient, on ne bloque jamais. */}
+        {mailCheck?.status === 'suggestion' && (
+          <div className="mail-tip">
+            Vous vouliez dire{' '}
+            <button type="button" onClick={accepterSuggestion}>{mailCheck.suggestion}</button> ?
+          </div>
+        )}
+        {(mailCheck?.status === 'invalide' || mailCheck?.status === 'domaine-inconnu') && (
+          <div className="mail-tip mail-tip-warn">⚠️ {mailCheck.reason}</div>
+        )}
+        {mailCheck?.status === 'ok' && (
+          <div className="mail-tip mail-tip-ok">✓ Adresse vérifiée</div>
+        )}
+
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
-          📲 Pour recevoir le lien de l'album final avec toutes les photos.
+          ✉️ Uniquement pour recevoir le lien de l'album quand les photos sortent.
+          Rien d'autre, jamais.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         <button className="btn btn-dark" type="submit" disabled={busy || !name.trim()} style={{ marginTop: 20 }}>
@@ -662,6 +715,7 @@ export default function GuestCamera({ params }) {
               <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
                 Au tarif d'un SMS classique vers un numéro non surtaxé, généralement inclus dans votre forfait.
               </p>
+              {agendaBlock}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyJoinLink}>{qrCopied ? '✓ Copié' : 'Copier le lien'}</button>
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>
@@ -685,6 +739,7 @@ export default function GuestCamera({ params }) {
               <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
                 Au tarif d'un SMS classique vers un numéro non surtaxé, généralement inclus dans votre forfait.
               </p>
+              {agendaBlock}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyJoinLink}>{qrCopied ? '✓ Copié' : 'Copier le lien'}</button>
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>

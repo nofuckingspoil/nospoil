@@ -46,6 +46,10 @@ export async function POST(request) {
   const guests = Math.min(500, Math.max(5, parseInt(maxGuests, 10) || 5)) // palier choisi
   const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
 
+  // Date de la fête : pilote l'affichage du tableau de bord. À défaut, on
+  // l'estime à la veille au soir de la révélation.
+  const start = body.startsAt ? new Date(body.startsAt) : new Date(reveal.getTime() - 13 * 3600 * 1000)
+
   const { ok, data } = await insertRow('events', {
     owner_token: ownerToken,
     owner_email: ownerEmail,
@@ -53,6 +57,7 @@ export async function POST(request) {
     host_names: hostNames ? hostNames.trim().slice(0, 80) : null,
     shots_per_guest: shots,
     max_guests: guests,
+    starts_at: (isNaN(start.getTime()) ? new Date(reveal.getTime() - 13 * 3600 * 1000) : start).toISOString(),
     reveal_at: reveal.toISOString(),
     expires_at: expires.toISOString(),
     status: 'active',

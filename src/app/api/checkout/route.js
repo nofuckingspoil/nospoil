@@ -25,6 +25,10 @@ export async function POST(request) {
     return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
   }
 
+  // Date de la fête : à défaut, estimée à la veille au soir de la révélation.
+  const startRaw = body.startsAt ? new Date(body.startsAt) : null
+  const startsAt = startRaw && !isNaN(startRaw.getTime()) ? startRaw : new Date(reveal.getTime() - 13 * 3600 * 1000)
+
   const tier = tierByGuests(maxGuests)
   if (tier.priceCents <= 0) {
     return Response.json({ error: 'Cette formule est gratuite : aucun paiement nécessaire.' }, { status: 400 })
@@ -74,6 +78,7 @@ export async function POST(request) {
         host_names: hostNames ? String(hostNames).trim().slice(0, 80) : '',
         shots_per_guest: String(shots),
         max_guests: String(tier.maxGuests),
+        starts_at: startsAt.toISOString(),
         reveal_at: reveal.toISOString(),
         // Preuve du consentement, horodatée par le serveur avant le paiement.
         cgv_accepted_at: consentAt,

@@ -1,22 +1,41 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+// ============================================================
+//  Tableau de bord organisateur.
+//
+//  Principe : un seul écran, toujours le même, dans le même ordre.
+//  Seule la GRANDE CARTE du haut change selon le moment (avant la
+//  fête / pendant / le lendemain). Tout le reste est toujours là,
+//  simplement replié — pour qu'on retrouve toujours ce qu'on cherche.
+// ============================================================
+
+import { use, useCallback, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import QRCode from 'qrcode'
-import { BRAND } from '../../../lib/brand'
+import { BRAND, avatarColor } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
-import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent, saveAccount } from '../../../lib/device'
+import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J } from '../../../lib/phase'
+import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
 
 function formatDate(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
   catch { return iso }
 }
+function formatShort(iso) {
+  try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) }
+  catch { return iso }
+}
+function formatHour(iso) {
+  try { return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) }
+  catch { return '' }
+}
 function daysUntil(iso) {
   const diff = new Date(iso).getTime() - Date.now()
-  if (diff <= 0) return 'J'
-  return 'J-' + Math.ceil(diff / 86400000)
+  if (diff <= 0) return 'Jour J'
+  const d = Math.ceil(diff / 86400000)
+  return d <= 1 ? 'Demain' : 'J-' + d
 }
 // Convertit une date ISO en valeur pour un champ <input type="datetime-local"> (heure locale)
 function toLocalInput(iso) {
@@ -25,543 +44,771 @@ function toLocalInput(iso) {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
 }
 
+// --- Bloc repliable : rien ne disparaît jamais, tout se range ---
+function Section({ title, hint, badge, children, open, onToggle }) {
+  return (
+    <section className={`db-sec ${open ? 'on' : ''}`}>
+      <h2>
+        <button type="button" className="db-sec-head" onClick={onToggle} aria-expanded={open}>
+          <span className="db-sec-titles">
+            <span className="db-sec-title">{title}</span>
+            {hint && <span className="db-sec-hint">{hint}</span>}
+          </span>
+          {badge && <span className="db-sec-badge">{badge}</span>}
+          <span className="db-sec-chev" aria-hidden="true">⌄</span>
+        </button>
+      </h2>
+      {open && <div className="db-sec-body">{children}</div>}
+    </section>
+  )
+}
+
 export default function EventManage({ params }) {
   const { id } = use(params)
   const router = useRouter()
   const [ev, setEv] = useState(null)
   const [error, setError] = useState('')
+  const [now, setNow] = useState(() => Date.now())
   const [joinUrl, setJoinUrl] = useState('')
+  const [galleryUrl, setGalleryUrl] = useState('')
   const [ownerUrl, setOwnerUrl] = useState('')
   const [adminLink, setAdminLink] = useState('')
-  const [adminLinkCopied, setAdminLinkCopied] = useState(false)
   const [qrUrl, setQrUrl] = useState('')
-  const [copied, setCopied] = useState(false)
-  const [ownerCopied, setOwnerCopied] = useState(false)
+  const [sheet, setSheet] = useState(null) // 'qr' | 'message' | null
+  const [openSec, setOpenSec] = useState(null) // une seule section ouverte à la fois
+
+  // Petits retours "copié ✓"
+  const [flash, setFlash] = useState('')
+  const ping = (k) => { setFlash(k); setTimeout(() => setFlash(''), 1800) }
+
+  const [adminLinkCopied, setAdminLinkCopied] = useState(false)
   const [confirmDel, setConfirmDel] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  // Gestion des admins (côté organisateur)
   const [adminName, setAdminName] = useState('')
   const [adminEmail, setAdminEmail] = useState('')
   const [adminCode, setAdminCode] = useState('')
   const [adminMsg, setAdminMsg] = useState('')
   const [addingAdmin, setAddingAdmin] = useState(false)
-  // Connexion admin (côté ami invité à co-gérer)
   const [loginEmail, setLoginEmail] = useState('')
   const [loginCode, setLoginCode] = useState('')
   const [loginMsg, setLoginMsg] = useState('')
   const [loggingIn, setLoggingIn] = useState(false)
-  // Modifier la date de révélation
-  const [editingDate, setEditingDate] = useState(false)
-  const [newDate, setNewDate] = useState('')
-  const [savingDate, setSavingDate] = useState(false)
-  const [dateMsg, setDateMsg] = useState('')
-  // Code d'accès à la galerie
+  const [editing, setEditing] = useState('') // 'start' | 'reveal' | 'shots' | ''
+  const [draftDate, setDraftDate] = useState('')
+  const [draftShots, setDraftShots] = useState(5)
+  const [settingMsg, setSettingMsg] = useState('')
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
   const [savingGallery, setSavingGallery] = useState(false)
   const [galleryMsg, setGalleryMsg] = useState('')
-  const [galleryCopied, setGalleryCopied] = useState(false)
-  const [showContacts, setShowContacts] = useState(false)
+  const [message, setMessage] = useState('')
+
+  const reload = useCallback(async () => {
+    const token = getOwnerToken(id)
+    try {
+      const r = await fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } })
+      const d = await r.json()
+      if (d.error) setError(d.error)
+      else setEv(d)
+    } catch { setError("Impossible de charger l'événement.") }
+  }, [id])
 
   useEffect(() => {
     // Lien privé organisateur ouvert depuis un autre appareil : ?k=<jeton> → on l'enregistre
     // pour reconnaître cet appareil comme organisateur, puis on nettoie l'adresse.
-    const params = new URLSearchParams(window.location.search)
-    const k = params.get('k')
+    const sp = new URLSearchParams(window.location.search)
+    const k = sp.get('k')
     if (k) {
       saveOwnerToken(id, k)
       rememberMyEvent(id)
       window.history.replaceState(null, '', `/event/${id}`)
     }
-
-    const token = getOwnerToken(id)
-    setJoinUrl(`${window.location.origin}/j/${id}`)
-    setOwnerUrl(`${window.location.origin}/event/${id}?k=${token}`)
-    setAdminLink(`${window.location.origin}/event/${id}`)
-    fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } })
-      .then((r) => r.json())
-      .then((d) => (d.error ? setError(d.error) : setEv(d)))
-      .catch(() => setError("Impossible de charger l'événement."))
-  }, [id])
+    const origin = window.location.origin
+    setJoinUrl(`${origin}/j/${id}`)
+    setGalleryUrl(`${origin}/g/${id}`)
+    setOwnerUrl(`${origin}/event/${id}?k=${getOwnerToken(id)}`)
+    setAdminLink(`${origin}/event/${id}`)
+    reload()
+  }, [id, reload])
 
   useEffect(() => {
     if (!joinUrl) return
-    QRCode.toDataURL(joinUrl, { width: 440, margin: 1, color: { dark: '#14161F', light: '#FCF8F0' } })
+    QRCode.toDataURL(joinUrl, { width: 520, margin: 1, color: { dark: '#14161F', light: '#FCF8F0' } })
       .then(setQrUrl).catch(() => {})
   }, [joinUrl])
 
-  function copyLink() {
-    navigator.clipboard?.writeText(joinUrl).then(() => { setCopied(true); setTimeout(() => setCopied(false), 1800) })
-  }
-  async function share() {
-    if (navigator.share) {
-      try { await navigator.share({ title: ev?.name || BRAND.name, text: 'Prenez des photos pour notre appareil jetable 📸', url: joinUrl }) } catch {}
-    } else copyLink()
+  // Pendant la soirée, l'écran doit vivre : on rafraîchit les compteurs.
+  const phase = ev ? eventPhase(ev, now) : null
+  useEffect(() => {
+    const tick = setInterval(() => setNow(Date.now()), 30000)
+    return () => clearInterval(tick)
+  }, [])
+  useEffect(() => {
+    if (phase !== JOUR_J) return
+    const t = setInterval(reload, 10000)
+    return () => clearInterval(t)
+  }, [phase, reload])
+
+  // --- Actions ---
+  async function patchEvent(patch) {
+    setSettingMsg('')
+    const token = getOwnerToken(id)
+    const r = await fetch(`/api/events/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-owner-token': token },
+      body: JSON.stringify(patch),
+    })
+    const d = await r.json().catch(() => ({}))
+    if (d.error) { setSettingMsg(d.error); return false }
+    await reload()
+    return true
   }
 
-  // --- Accès organisateur : à sauvegarder pour retrouver le tableau de bord depuis n'importe où ---
-  function copyOwnerLink() {
-    navigator.clipboard?.writeText(ownerUrl).then(() => { setOwnerCopied(true); setTimeout(() => setOwnerCopied(false), 1800) })
+  function copy(text, key) {
+    navigator.clipboard?.writeText(text).then(() => ping(key)).catch(() => {})
   }
-  async function saveAccess() {
-    // Ouvre le partage natif du téléphone → l'organisateur peut s'envoyer le lien
-    // dans ses Notes, par mail, WhatsApp… une appli qu'il a déjà sous la main.
+  async function shareOrCopy({ title, text, url }, key) {
     if (navigator.share) {
-      try {
-        await navigator.share({
-          title: `Accès organisateur — ${ev?.name || BRAND.name}`,
-          text: `Mon tableau de bord ${BRAND.name} (à garder précieusement, ne pas partager aux invités) :`,
-          url: ownerUrl,
-        })
-        return
-      } catch {}
+      try { await navigator.share({ title, text, url }); return } catch {}
     }
-    copyOwnerLink()
+    copy(url || text, key)
   }
+
   function pad(n) { return String(n).padStart(2, '0') }
   function icsStamp(d) {
     return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`
   }
   function addToCalendar() {
-    // Crée un rappel le jour de la révélation, avec le lien organisateur dans la description.
-    const start = new Date(ev.revealAt)
-    const end = new Date(start.getTime() + 60 * 60 * 1000)
+    // Deux rendez-vous : la fête elle-même (avec le QR à montrer) et la révélation.
     const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
+    const block = (uid, start, end, summary, description) => [
+      'BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${icsStamp(new Date())}`,
+      `DTSTART:${icsStamp(start)}`, `DTEND:${icsStamp(end)}`,
+      `SUMMARY:${esc(summary)}`, `DESCRIPTION:${esc(description)}`,
+      'BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', `DESCRIPTION:${esc(ev.name)}`, 'END:VALARM',
+      'END:VEVENT',
+    ]
+    const start = new Date(ev.startsAt || ev.revealAt)
+    const reveal = new Date(ev.revealAt)
     const ics = [
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TimeToFlash//FR', 'CALSCALE:GREGORIAN',
-      'BEGIN:VEVENT',
-      `UID:${id}@timetoflash`,
-      `DTSTART:${icsStamp(start)}`,
-      `DTEND:${icsStamp(end)}`,
-      `SUMMARY:${esc(`📸 Révélation des photos — ${ev.name}`)}`,
-      `DESCRIPTION:${esc(`Vos photos se révèlent aujourd'hui !\nTableau de bord organisateur (à garder privé) : ${ownerUrl}`)}`,
-      'BEGIN:VALARM', 'TRIGGER:-PT0M', 'ACTION:DISPLAY', `DESCRIPTION:${esc(ev.name)}`, 'END:VALARM',
-      'END:VEVENT', 'END:VCALENDAR',
+      ...block(`${id}-start@timetoflash`, start, new Date(start.getTime() + 5 * 3600000),
+        `📸 ${ev.name} — appareil photo partagé`,
+        `Pensez à poser les cartons QR.\nVotre tableau de bord organisateur (à garder privé) : ${ownerUrl}`),
+      ...block(`${id}-reveal@timetoflash`, reveal, new Date(reveal.getTime() + 3600000),
+        `📸 Révélation des photos — ${ev.name}`,
+        `Les photos s'ouvrent aujourd'hui !\nTableau de bord : ${ownerUrl}`),
+      'END:VCALENDAR',
     ].join('\r\n')
     const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a'); a.href = url; a.download = 'timetoflash-revelation.ics'; a.click()
-    URL.revokeObjectURL(url)
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(blob)
+    a.download = `${ev.name.replace(/[^\w\s-]/g, '')}.ics`
+    a.click()
+    URL.revokeObjectURL(a.href)
+    ping('cal')
   }
 
-  // Recharge les infos de l'événement (après ajout/retrait d'un admin)
-  async function reloadEvent() {
-    const token = getOwnerToken(id)
-    const d = await fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } }).then((r) => r.json()).catch(() => null)
-    if (d && !d.error) setEv(d)
+  async function saveGalleryCode(code) {
+    setSavingGallery(true); setGalleryMsg('')
+    const okDone = await patchEvent({ galleryCode: code })
+    if (okDone) { setGalleryCodeInput(''); setGalleryMsg('') } else setGalleryMsg(settingMsg || 'Enregistrement impossible.')
+    setSavingGallery(false)
   }
 
   async function addAdmin(e) {
-    e.preventDefault()
-    setAdminMsg(''); setAddingAdmin(true)
+    e.preventDefault(); setAdminMsg(''); setAddingAdmin(true)
     try {
-      const res = await fetch(`/api/events/${id}/admins`, {
+      const r = await fetch(`/api/events/${id}/admins`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
         body: JSON.stringify({ name: adminName, email: adminEmail, code: adminCode }),
       })
-      const d = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(d.error || "Impossible d'ajouter cet admin.")
-      setAdminName(''); setAdminEmail(''); setAdminCode('')
-      await reloadEvent()
-    } catch (err) { setAdminMsg(err.message) }
-    finally { setAddingAdmin(false) }
+      const d = await r.json()
+      if (d.error) setAdminMsg(d.error)
+      else { setAdminName(''); setAdminEmail(''); setAdminCode(''); await reload() }
+    } catch { setAdminMsg('Ajout impossible.') }
+    setAddingAdmin(false)
   }
-
   async function removeAdmin(adminId) {
     await fetch(`/api/events/${id}/admins?adminId=${adminId}`, {
       method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) },
-    }).catch(() => {})
-    await reloadEvent()
+    })
+    await reload()
   }
-
   async function adminLogin(e) {
-    e.preventDefault()
-    setLoginMsg(''); setLoggingIn(true)
+    e.preventDefault(); setLoginMsg(''); setLoggingIn(true)
     try {
-      const res = await fetch(`/api/events/${id}/admin-login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const r = await fetch(`/api/events/${id}/admin-login`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: loginEmail, code: loginCode }),
       })
-      const d = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(d.error || 'Mail ou code incorrect.')
+      const d = await r.json().catch(() => ({}))
+      if (!r.ok) throw new Error(d.error || 'Mail ou code incorrect.')
       saveOwnerToken(id, d.ownerToken)
       rememberMyEvent(id)
       window.location.reload()
-    } catch (err) { setLoginMsg(err.message); setLoggingIn(false) }
-  }
-
-  // --- Modifier la date de révélation ---
-  function startEditDate() {
-    setDateMsg('')
-    setNewDate(toLocalInput(ev.revealAt))
-    setEditingDate(true)
-  }
-  async function saveDate(e) {
-    e.preventDefault()
-    setDateMsg(''); setSavingDate(true)
-    try {
-      const res = await fetch(`/api/events/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
-        body: JSON.stringify({ revealAt: newDate }),
-      })
-      const d = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(d.error || 'Modification impossible.')
-      setEditingDate(false)
-      await reloadEvent()
-    } catch (err) { setDateMsg(err.message) }
-    finally { setSavingDate(false) }
-  }
-
-  // --- Code d'accès à la galerie (activer / retirer) ---
-  async function saveGalleryCode(codeValue) {
-    setGalleryMsg(''); setSavingGallery(true)
-    try {
-      const res = await fetch(`/api/events/${id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
-        body: JSON.stringify({ galleryCode: codeValue }),
-      })
-      const d = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(d.error || 'Modification impossible.')
-      setGalleryCodeInput('')
-      await reloadEvent()
-    } catch (err) { setGalleryMsg(err.message) }
-    finally { setSavingGallery(false) }
-  }
-
-  async function copyAdminLink() {
-    try { await navigator.clipboard.writeText(adminLink); setAdminLinkCopied(true); setTimeout(() => setAdminLinkCopied(false), 1800) } catch {}
-  }
-
-  // --- Copier juste le lien de l'album (pour l'ouvrir soi-même) ---
-  async function copyGalleryLink() {
-    const url = `${window.location.origin}/g/${id}`
-    try { await navigator.clipboard.writeText(url); setGalleryCopied(true); setTimeout(() => setGalleryCopied(false), 1800) } catch {}
-  }
-
-  // --- Partager le lien de l'album (avec le code s'il est activé) ---
-  async function shareGallery() {
-    const url = `${window.location.origin}/g/${id}`
-    const text = ev.galleryCode
-      ? `Les photos de ${ev.name} 📸\nLien : ${url}\nCode d'accès : ${ev.galleryCode}`
-      : `Les photos de ${ev.name} 📸\n${url}`
-    if (navigator.share) {
-      try { await navigator.share({ title: ev.name, text, url }); return } catch {}
-    }
-    try { await navigator.clipboard.writeText(text); setGalleryCopied(true); setTimeout(() => setGalleryCopied(false), 1800) } catch {}
+    } catch (err) { setLoginMsg(err.message || 'Connexion impossible.'); setLoggingIn(false) }
   }
 
   async function deleteEvent() {
-    setDeleting(true); setError('')
-    try {
-      const res = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) } })
-      const d = await res.json().catch(() => ({}))
-      if (!res.ok) throw new Error(d.error || 'Suppression impossible.')
-      forgetMyEvent(id)
-      router.push('/mes-evenements')
-    } catch (err) { setError(err.message); setDeleting(false) }
+    setDeleting(true)
+    const r = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) } })
+    const d = await r.json().catch(() => ({}))
+    if (d.error) { setError(d.error); setDeleting(false); return }
+    forgetMyEvent(id)
+    router.push('/mes-evenements')
   }
 
-  if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
+  if (error && !ev) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
   if (!ev) return <main className="center-screen"><p className="muted">Chargement…</p></main>
 
+  // ---- État dérivé ----
+  const revealed = isRevealed(ev, now)
+  const locked = quotaLocked(ev, now)
+  const published = !!ev.publishedAt
+  const paused = !!ev.revealPaused
+  const shotsLeft = Math.max(0, (ev.guestCount || 0) * (ev.shotsPerGuest || 0) - (ev.photoCount || 0))
+  const defaultMessage = `Les photos de ${ev.name} sont en ligne ! ${ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible 6 mois.`
+  const shareText = message || defaultMessage
+
+  const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
+
+  // ---- La grande carte : le seul élément qui change selon le moment ----
+  function Hero() {
+    if (phase === AVANT) {
+      return (
+        <div className="db-hero db-hero-ink">
+          <div className="db-hero-top">
+            <span className="db-eyebrow">à préparer</span>
+            <span className="db-pill">{daysUntil(ev.startsAt || ev.revealAt)}</span>
+          </div>
+          <h2 className="db-hero-title">Imprimez vos cartons</h2>
+          <p className="db-hero-sub">
+            Vos invités scannent sur place le jour J. Rien à leur envoyer avant, rien à installer.
+          </p>
+          <Link href={`/event/${id}/imprimer`} className="btn btn-accent db-hero-cta">
+            Choisir un format et imprimer →
+          </Link>
+          <button className="btn db-hero-2nd" onClick={addToCalendar}>
+            {flash === 'cal' ? '✓ Ajouté à votre agenda' : '🗓️ Mettre au calendrier'}
+          </button>
+          <p className="db-hero-foot">
+            L'agenda contient votre lien organisateur : vous le retrouverez sans rien noter.
+          </p>
+        </div>
+      )
+    }
+
+    if (phase === JOUR_J) {
+      const guests = ev.guests || []
+      return (
+        <div className="db-hero db-hero-ink">
+          <div className="db-hero-top">
+            <span className="db-live"><span className="db-dot" /> en direct</span>
+            <span className="db-eyebrow">depuis {formatHour(ev.startsAt)}</span>
+          </div>
+          <div className="db-stats">
+            <div><b>{ev.guestCount}</b><span>invités connectés</span></div>
+            <div><b>{ev.photoCount}</b><span>photos prises</span></div>
+            <div><b>{shotsLeft}</b><span>déclics restants</span></div>
+          </div>
+
+          {ev.recentPhotos?.length > 0 && (
+            <>
+              <div className="db-strip-head">
+                <span className="db-eyebrow">les dernières arrivées</span>
+                <span className="db-only">vous seul</span>
+              </div>
+              <div className="db-strip">
+                {ev.recentPhotos.map((p) => (
+                  // Une vignette illisible (fichier purgé, réseau coupé) se retire
+                  // toute seule plutôt que d'afficher une image cassée.
+                  <img key={p.id} src={p.url} alt="" loading="lazy"
+                    onError={(e) => { e.currentTarget.style.display = 'none' }} />
+                ))}
+              </div>
+            </>
+          )}
+
+          {guests.length > 0 && (
+            <div className="db-roster">
+              {guests.slice(0, 5).map((g) => (
+                <div className="db-roster-row" key={g.id}>
+                  <span className="db-av" style={{ background: avatarColor(g.name || '') }}>
+                    {(g.name || '?').trim().charAt(0).toUpperCase()}
+                    {g.active && <i className="db-av-dot" />}
+                  </span>
+                  <span className="db-roster-name">{g.name}</span>
+                  <span className="db-roster-count">{g.shots}/{g.total}</span>
+                </div>
+              ))}
+              {guests.length > 5 && (
+                <div className="db-roster-more">+ {guests.length - 5} autres invités</div>
+              )}
+            </div>
+          )}
+
+          <Link href={`/j/${id}`} className="btn btn-accent db-hero-cta">📷 Prendre mes photos</Link>
+          <button className="btn db-hero-2nd" onClick={() => setSheet('qr')}>
+            Un retardataire ? Montrer le QR
+          </button>
+        </div>
+      )
+    }
+
+    // --- Le lendemain ---
+    if (paused) {
+      return (
+        <div className="db-hero db-hero-paused">
+          <div className="db-hero-top"><span className="db-eyebrow">révélation suspendue</span></div>
+          <h2 className="db-hero-title">L'album est en pause</h2>
+          <p className="db-hero-sub">
+            Vos invités ne voient rien, même si l'heure de révélation est passée.
+            Prenez le temps de vérifier les photos, puis reprenez quand vous voulez.
+          </p>
+          <Link href={`/g/${id}`} className="btn btn-dark db-hero-cta">Vérifier les photos →</Link>
+          <button className="btn db-hero-2nd" onClick={() => patchEvent({ revealPaused: false })}>
+            Reprendre la révélation
+          </button>
+        </div>
+      )
+    }
+
+    if (revealed) {
+      return (
+        <div className="db-hero db-hero-ink">
+          <div className="db-hero-top"><span className="db-eyebrow">c'est ouvert</span></div>
+          <h2 className="db-hero-title">Album révélé</h2>
+          <p className="db-hero-sub">
+            {ev.photoCount} photos, visibles par tous vos invités. À eux de découvrir.
+          </p>
+          <button className="btn btn-accent db-hero-cta" onClick={() => setSheet('message')}>
+            ✉️ Prévenir les invités
+          </button>
+          <Link href={`/g/${id}`} className="btn db-hero-2nd">Voir l'album</Link>
+        </div>
+      )
+    }
+
+    if (published) {
+      return (
+        <div className="db-hero db-hero-ink">
+          <div className="db-hero-top">
+            <span className="db-eyebrow">album validé</span>
+            <span className="db-pill">{daysUntil(ev.revealAt)}</span>
+          </div>
+          <h2 className="db-hero-title">Révélation programmée</h2>
+          <p className="db-hero-sub">
+            Vos {ev.photoCount} photos s'ouvriront à tous le {formatShort(ev.revealAt)}. Vous n'avez plus rien à faire.
+          </p>
+          <button className="btn btn-accent db-hero-cta" onClick={() => patchEvent({ revealAt: new Date().toISOString() })}>
+            Révéler maintenant
+          </button>
+          <button className="btn db-hero-2nd" onClick={() => { setEditing('reveal'); setDraftDate(toLocalInput(ev.revealAt)); setOpenSec('reglages') }}>
+            Changer la date
+          </button>
+        </div>
+      )
+    }
+
+    return (
+      <div className="db-hero db-hero-accent">
+        <div className="db-hero-top">
+          <span className="db-eyebrow">la fête est finie</span>
+          <span className="db-pill db-pill-light">{daysUntil(ev.revealAt)}</span>
+        </div>
+        <h2 className="db-hero-title">{ev.photoCount} photos vous attendent</h2>
+        <p className="db-hero-sub">
+          Vous seul pouvez les voir. Jetez-y un œil : vous pouvez masquer celles qui gênent
+          avant que vos invités ne les découvrent.
+        </p>
+        <Link href={`/g/${id}`} className="btn btn-dark db-hero-cta">Vérifier les photos →</Link>
+        <button className="btn db-hero-2nd db-hero-2nd-light" onClick={() => patchEvent({ published: true })}>
+          C'est bon, je valide l'album
+        </button>
+        <p className="db-hero-foot">
+          Valider ne révèle rien tout de suite : l'ouverture reste prévue le {formatShort(ev.revealAt)}.
+          Et si vous ne faites rien, elle se fera quand même.
+        </p>
+      </div>
+    )
+  }
+
+  // ---- Écran d'un admin non connecté ----
+  if (!ev.isOwner) {
+    return (
+      <main className="screen screen-cream">
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
+        </div>
+        <div className="card" style={{ marginTop: 26 }}>
+          <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔑 Vous êtes admin ?</div>
+          <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
+            Connectez-vous au tableau de bord
+          </div>
+          <p className="muted small" style={{ marginBottom: 14 }}>
+            L'organisateur vous a donné une adresse mail et un code ? Entrez-les pour accéder à la gestion de l'événement.
+          </p>
+          <form onSubmit={adminLogin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <input type="email" placeholder="Adresse mail" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
+            <input type="text" placeholder="Code d'accès" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} required />
+            {loginMsg && <div className="err">{loginMsg}</div>}
+            <button className="btn btn-accent" type="submit" disabled={loggingIn}>{loggingIn ? 'Connexion…' : 'Se connecter'}</button>
+          </form>
+        </div>
+        <div className="notice" style={{ marginTop: 16 }}>
+          📷 Vous voulez juste prendre des photos ? <a href={`/j/${id}`} style={{ color: 'var(--accent-deep)', fontWeight: 700 }}>Rejoignez l'événement ici</a>.
+        </div>
+      </main>
+    )
+  }
+
   return (
-    <main className="screen screen-cream">
+    <main className="screen screen-cream db">
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
         <Link href="/mes-evenements" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Mes événements</Link>
       </div>
 
-      <header style={{ marginTop: 26 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <h1 className="h2" style={{ margin: 0 }}>{ev.name}</h1>
-          <span className={`badge ${ev.revealed ? 'badge-live' : 'badge-wait'}`}>
-            <span className="dot" />{ev.revealed ? 'RÉVÉLÉ' : 'EN COURS'}
-          </span>
-        </div>
-        <div className="mono" style={{ fontSize: 12.5, color: 'var(--text3)', marginTop: 6 }}>
-          révélation {formatDate(ev.revealAt)}
-        </div>
+      <header className="db-head">
+        <h1 className="h2">{ev.name}</h1>
+        <p className="mono db-head-date">
+          {ev.startsAt ? formatShort(ev.startsAt) : formatShort(ev.revealAt)}
+        </p>
       </header>
 
-      {ev.isOwner && (
-        <div className="stats" style={{ marginTop: 20 }}>
-          <div className="stat"><div className="lbl">Invités</div><div className="val">{ev.guestCount}</div><div className="note">ont rejoint</div></div>
-          <div className="stat"><div className="lbl">Souvenirs</div><div className="val" style={{ color: 'var(--accent)' }}>{ev.photoCount}</div><div className="note">photos prises</div></div>
-          <div className="stat"><div className="lbl">Clichés / invité</div><div className="val">{ev.shotsPerGuest}</div><div className="note">contrainte argentique</div></div>
-          <div className="stat"><div className="lbl">Révélation</div><div className="val">{daysUntil(ev.revealAt)}</div><div className="note">avant ouverture</div></div>
-        </div>
-      )}
+      {/* Bascule permanente : l'organisateur joue aussi */}
+      <nav className="db-modes" aria-label="Mode">
+        <span className="on">Organisation</span>
+        <Link href={`/j/${id}`}>Mon appareil 📷</Link>
+      </nav>
 
-      {/* Carte QR sombre */}
-      <div className="card-dark" style={{ marginTop: 16 }}>
-        <div className="eyebrow-mute" style={{ color: 'rgba(255,255,255,.5)', marginBottom: 14 }}>Inviter · scannez pour entrer</div>
+      <Hero />
+
+      {/* ---------- Tout le reste, toujours au même endroit ---------- */}
+
+      <Section title="Inviter vos convives" hint="QR code, lien, impression"
+        open={openSec === 'inviter'} onToggle={() => toggleSec('inviter')}>
         <div className="qr-tile">
           {qrUrl ? <img src={qrUrl} alt="QR code de l'événement" /> : <div style={{ width: 220, height: 220 }} />}
         </div>
         <div className="urlbox" style={{ margin: '14px 0 12px' }}>{joinUrl}</div>
         <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-accent" style={{ flex: 1 }} onClick={copyLink}>{copied ? '✓ Copié' : 'Copier le lien'}</button>
-          <button className="btn" style={{ flex: '0 0 auto', width: 54, background: 'rgba(255,255,255,.08)', color: '#fff', padding: 14 }} onClick={share} aria-label="Partager">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          <button className="btn btn-accent" style={{ flex: 1 }} onClick={() => copy(joinUrl, 'join')}>
+            {flash === 'join' ? '✓ Copié' : 'Copier le lien'}
+          </button>
+          <button className="btn btn-ghost" style={{ flex: '0 0 auto', width: 54, padding: 0 }} aria-label="Partager"
+            onClick={() => shareOrCopy({ title: ev.name, text: 'Prenez des photos pour notre appareil jetable 📸', url: joinUrl }, 'join')}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         </div>
-        <Link href={`/event/${id}/imprimer`} className="qr-print-link">
-          🖨️ Imprimer affiches et chevalets de table →
+        <Link href={`/event/${id}/imprimer`} className="btn btn-ghost" style={{ marginTop: 10 }}>
+          🖨️ Imprimer affiches et cartons de table
         </Link>
-      </div>
+      </Section>
 
-      {ev.isOwner ? (
-        <>
-          <Link href={`/g/${id}`} className="btn btn-ghost" style={{ marginTop: 16 }}>
-            {ev.revealed ? 'Voir la galerie →' : 'Aperçu des photos (avant révélation) →'}
-          </Link>
+      <Section title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
+        badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
+        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
+        <Link href={`/g/${id}`} className="btn btn-dark">
+          {revealed ? "Voir l'album →" : 'Vérifier les photos (vous seul) →'}
+        </Link>
 
-          {/* Date de révélation : modifiable */}
-          <div className="card" style={{ marginTop: 16 }}>
-            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🗓️ Date de révélation</div>
-            {!editingDate ? (
-              <>
-                <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
-                  {formatDate(ev.revealAt)}
-                </div>
-                <p className="muted small" style={{ marginBottom: 12 }}>
-                  Le moment où les photos s'ouvrent d'un coup pour tous les invités.
-                </p>
-                <button className="btn btn-ghost" onClick={startEditDate}>Modifier la date</button>
-              </>
-            ) : (
-              <form onSubmit={saveDate} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                <input type="datetime-local" value={newDate} onChange={(e) => setNewDate(e.target.value)} required />
-                {dateMsg && <div className="err">{dateMsg}</div>}
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button type="button" className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setEditingDate(false)} disabled={savingDate}>Annuler</button>
-                  <button type="submit" className="btn btn-accent" style={{ flex: 1 }} disabled={savingDate}>{savingDate ? 'Enregistrement…' : 'Enregistrer'}</button>
-                </div>
-              </form>
-            )}
-          </div>
+        <div className="notice small" style={{ margin: '14px 0' }}>
+          {revealed
+            ? "✅ L'album est ouvert : vos invités voient les photos."
+            : `⏳ Avant le ${formatDate(ev.revealAt)}, vos invités ne verront qu'un compte à rebours.`}
+          {' '}Dans l'album, chaque photo peut être masquée d'un geste — avant comme après la révélation.
+        </div>
 
-          {/* Partage de l'album aux invités + code d'accès facultatif */}
-          <div className="card" style={{ marginTop: 16 }}>
-            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔗 Partager l'album aux invités</div>
-            <p className="muted small" style={{ marginBottom: 12 }}>
-              Envoyez ce lien à vos invités pour qu'ils voient et téléchargent toutes les photos.
-            </p>
-            <div className="notice small" style={{ marginBottom: 12, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
-              ⏳ <strong>Partageable seulement après la révélation.</strong> {ev.revealed
-                ? "C'est bon, l'album est ouvert : vos invités verront les photos."
-                : `Avant le ${formatDate(ev.revealAt)}, vos invités ne verront qu'un compte à rebours, pas les photos.`}
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-accent" style={{ flex: 1 }} onClick={copyGalleryLink}>
-                {galleryCopied ? '✓ Lien copié' : "Copier le lien de l'album"}
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
+            {flash === 'gal' ? '✓ Lien copié' : "Copier le lien de l'album"}
+          </button>
+          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
+            ✉️ Message prêt
+          </button>
+        </div>
+
+        <div className="hint" style={{ marginTop: 10 }}>
+          📥 Album téléchargé <strong>{ev.downloadCount || 0}</strong> fois.
+        </div>
+
+        <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
+          {ev.galleryCode ? (
+            <>
+              <p className="muted small" style={{ marginBottom: 10 }}>
+                L'album est protégé. Les invités doivent entrer : <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>
+              </p>
+              <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
+                {savingGallery ? '…' : 'Retirer le code'}
               </button>
-              <button className="btn btn-ghost" style={{ flex: '0 0 auto', width: 54, padding: 0 }} onClick={shareGallery} aria-label="Partager">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <input type="text" placeholder="Choisir un code (ex : 1234)" value={galleryCodeInput}
+                onChange={(e) => setGalleryCodeInput(e.target.value)}
+                style={{ width: '100%', textAlign: 'center', fontSize: 17, letterSpacing: '.08em' }} />
+              <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)}
+                disabled={savingGallery || !galleryCodeInput.trim()}>
+                {savingGallery ? 'Activation…' : 'Activer le code'}
               </button>
-            </div>
-
-            <div className="hint" style={{ marginTop: 10 }}>
-              📥 Album téléchargé <strong>{ev.downloadCount || 0}</strong> fois via « Tout télécharger ».
-            </div>
-
-            <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
-              <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
-              {ev.galleryCode ? (
-                <>
-                  <p className="muted small" style={{ marginBottom: 10 }}>
-                    L'album est protégé. Les invités doivent entrer ce code : <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>
-                  </p>
-                  <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
-                    {savingGallery ? '…' : 'Retirer le code'}
-                  </button>
-                </>
-              ) : (
-                <>
-                  <p className="muted small" style={{ marginBottom: 10 }}>
-                    Ajoutez un code pour que seules les personnes qui l'ont puissent ouvrir l'album.
-                  </p>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <input type="text" placeholder="Choisir un code (ex : 1234)" value={galleryCodeInput}
-                      onChange={(e) => setGalleryCodeInput(e.target.value)}
-                      style={{ width: '100%', textAlign: 'center', fontSize: 17, letterSpacing: '.08em' }} />
-                    <button className="btn btn-dark" style={{ width: '100%' }} onClick={() => saveGalleryCode(galleryCodeInput)} disabled={savingGallery || !galleryCodeInput.trim()}>
-                      {savingGallery ? 'Activation…' : 'Activer le code'}
-                    </button>
-                  </div>
-                </>
-              )}
-              {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
-            </div>
-          </div>
-
-          {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-            <div className="card" style={{ marginTop: 16 }}>
-              <button
-                onClick={() => setShowContacts((v) => !v)}
-                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 10, background: 'none', border: 'none', padding: 0, cursor: 'pointer', textAlign: 'left', color: 'var(--ink)' }}
-              >
-                <div>
-                  <div className="eyebrow-mute" style={{ marginBottom: 4 }}>Numéros collectés</div>
-                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20 }}>
-                    {ev.contacts.length} invité{ev.contacts.length > 1 ? 's ont' : ' a'} laissé {ev.contacts.length > 1 ? 'leur' : 'son'} numéro
-                  </div>
-                </div>
-                <span style={{ fontSize: 20, color: 'var(--text3)', transform: showContacts ? 'rotate(180deg)' : 'none', transition: 'transform .2s' }}>⌄</span>
-              </button>
-
-              {showContacts && (
-                <>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginTop: 12 }}>
-                    {ev.contacts.map((c, i) => (
-                      <a key={i} href={`tel:${c.phone}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 12px', borderRadius: 12, background: 'var(--screen)', textDecoration: 'none', color: 'var(--ink)' }}>
-                        <span style={{ fontWeight: 600 }}>{c.name}</span>
-                        <span className="mono" style={{ color: 'var(--text2)' }}>{c.phone}</span>
-                      </a>
-                    ))}
-                  </div>
-                  <div className="hint" style={{ marginTop: 10 }}>Pour partager le lien de l'album final avec eux.</div>
-                </>
-              )}
             </div>
           )}
-          {/* Accès organisateur : à sauvegarder pour retrouver son tableau de bord depuis n'importe où */}
-          <div className="card" style={{ marginTop: 16, borderColor: 'rgba(238,122,69,.35)', background: 'linear-gradient(180deg, rgba(247,194,107,.10), transparent)' }}>
-            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔐 Votre accès organisateur</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
-              Enregistrez ce lien pour le retrouver
-            </div>
-            <p className="muted small" style={{ marginBottom: 14 }}>
-              C'est <strong>votre</strong> tableau de bord privé : vous y reviendrez après la fête pour voir et
-              télécharger toutes les photos. Gardez-le pour vous — <strong>ne le donnez pas à vos invités</strong>.
-            </p>
-            {ev.ownerEmail && (
-              <div className="notice" style={{ marginBottom: 14 }}>
-                ✉️ Cet événement est rattaché à <strong>{ev.ownerEmail}</strong>. Même si vous perdez ce lien, vous
-                pourrez toujours revenir ici depuis <a href="/connexion" style={{ color: 'var(--accent-deep)' }}>la page de connexion</a>,
-                sur n'importe quel appareil.
-              </div>
-            )}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <button className="btn btn-accent" onClick={saveAccess}>
-                {typeof navigator !== 'undefined' && navigator.share ? '💾 Enregistrer mon lien (Notes, mail, WhatsApp…)' : '💾 Enregistrer / copier mon lien'}
-              </button>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyOwnerLink}>{ownerCopied ? '✓ Copié' : 'Copier le lien'}</button>
-                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={addToCalendar}>🗓️ Ajouter au calendrier</button>
-              </div>
-            </div>
-            <div className="hint" style={{ marginTop: 10 }}>
-              Astuce : « Ajouter au calendrier » place un rappel le jour de la révélation, avec ce lien dedans.
-            </div>
+          {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
+        </div>
+
+        {/* Frein d'urgence : discret, mais toujours accessible */}
+        {!paused ? (
+          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: true })}>
+            Suspendre la révélation
+          </button>
+        ) : (
+          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: false })}>
+            Reprendre la révélation
+          </button>
+        )}
+      </Section>
+
+      <Section title="Réglages de l'événement" hint="Dates, nombre de photos"
+        open={openSec === 'reglages'} onToggle={() => toggleSec('reglages')}>
+
+        {/* Date de l'événement */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">Date de l'événement</span>
+            <span className="db-set-val">{ev.startsAt ? formatDate(ev.startsAt) : 'Non renseignée'}</span>
           </div>
-          {/* Admins de l'événement : co-organisateurs qui se connectent avec mail + code */}
-          <div className="card" style={{ marginTop: 16 }}>
-            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>👥 Admins de l'événement</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
-              Donnez les mêmes pouvoirs à vos proches
-            </div>
-            <p className="muted small" style={{ marginBottom: 14 }}>
-              Ajoutez un admin avec un mail et un code que vous choisissez. Transmettez-lui vous-même ses
-              identifiants — il pourra ouvrir ce tableau de bord depuis n'importe quel téléphone.
-            </p>
+          <button className="db-set-act" onClick={() => { setEditing(editing === 'start' ? '' : 'start'); setDraftDate(toLocalInput(ev.startsAt || ev.revealAt)) }}>
+            {editing === 'start' ? 'Annuler' : 'Modifier'}
+          </button>
+        </div>
+        {editing === 'start' && (
+          <div className="db-set-edit">
+            <input type="datetime-local" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
+            <button className="btn btn-accent" onClick={async () => {
+              if (await patchEvent({ startsAt: new Date(draftDate).toISOString() })) setEditing('')
+            }}>Enregistrer</button>
+          </div>
+        )}
 
-            {/* Lien de connexion à donner aux admins (page événement sans le ?k= secret) */}
-            <div style={{ marginBottom: 16 }}>
-              <div className="hint" style={{ marginBottom: 6 }}>
-                🔗 Lien de connexion à envoyer à vos admins (avec leur mail + code) :
-              </div>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <div className="mono small" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', background: 'var(--screen)', borderRadius: 10, padding: '11px 12px', color: 'var(--text2)', alignSelf: 'center' }}>
-                  {adminLink}
-                </div>
-                <button className="btn btn-dark" style={{ flex: '0 0 auto' }} onClick={copyAdminLink}>
-                  {adminLinkCopied ? '✓ Copié' : 'Copier'}
-                </button>
-              </div>
-            </div>
+        {/* Photos par invité — se fige au début de la soirée */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">
+              Photos par invité {locked && <span className="db-frozen">figé</span>}
+            </span>
+            <span className="db-set-val" style={locked ? { color: 'var(--text4)' } : undefined}>
+              {ev.shotsPerGuest} photos
+              {locked
+                ? ' — la soirée a commencé, tout le monde joue au même jeu'
+                : ` — modifiable jusqu'au ${formatShort(ev.startsAt)}`}
+            </span>
+          </div>
+          {!locked && (
+            <button className="db-set-act" onClick={() => { setEditing(editing === 'shots' ? '' : 'shots'); setDraftShots(ev.shotsPerGuest) }}>
+              {editing === 'shots' ? 'Annuler' : 'Modifier'}
+            </button>
+          )}
+        </div>
+        {editing === 'shots' && !locked && (
+          <div className="db-set-edit">
+            <input type="number" min={3} max={30} value={draftShots} onChange={(e) => setDraftShots(e.target.value)} />
+            <button className="btn btn-accent" onClick={async () => {
+              if (await patchEvent({ shotsPerGuest: parseInt(draftShots, 10) })) setEditing('')
+            }}>Enregistrer</button>
+          </div>
+        )}
 
-            {Array.isArray(ev.admins) && ev.admins.length > 0 && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-                {ev.admins.map((a) => (
-                  <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, background: 'var(--screen)' }}>
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontWeight: 600 }}>{a.name || a.email}</div>
-                      <div className="mono small" style={{ color: 'var(--text2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {a.email} · code <strong style={{ color: 'var(--ink)' }}>{a.code}</strong>
-                      </div>
+        {/* Date de révélation */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">Révélation des photos</span>
+            <span className="db-set-val">{formatDate(ev.revealAt)}</span>
+          </div>
+          <button className="db-set-act" onClick={() => { setEditing(editing === 'reveal' ? '' : 'reveal'); setDraftDate(toLocalInput(ev.revealAt)) }}>
+            {editing === 'reveal' ? 'Annuler' : 'Modifier'}
+          </button>
+        </div>
+        {editing === 'reveal' && (
+          <div className="db-set-edit">
+            <input type="datetime-local" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
+            <button className="btn btn-accent" onClick={async () => {
+              if (await patchEvent({ revealAt: new Date(draftDate).toISOString() })) setEditing('')
+            }}>Enregistrer</button>
+          </div>
+        )}
+
+        {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
+      </Section>
+
+      <Section title="Votre accès et vos admins" hint="Retrouver le tableau de bord, partager la gestion"
+        open={openSec === 'acces'} onToggle={() => toggleSec('acces')}>
+        <p className="muted small" style={{ marginBottom: 12 }}>
+          C'est <strong>votre</strong> tableau de bord privé. Gardez-le pour vous — ne le donnez pas à vos invités.
+        </p>
+        {ev.ownerEmail && (
+          <div className="notice" style={{ marginBottom: 14 }}>
+            ✉️ Rattaché à <strong>{ev.ownerEmail}</strong>. Même si vous perdez ce lien, vous pourrez revenir
+            depuis <a href="/connexion" style={{ color: 'var(--accent-deep)' }}>la page de connexion</a>.
+          </div>
+        )}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <button className="btn btn-accent" onClick={() => shareOrCopy({
+            title: `Accès organisateur — ${ev.name}`,
+            text: `Mon tableau de bord ${BRAND.name} (à garder précieusement) :`,
+            url: ownerUrl,
+          }, 'owner')}>
+            {flash === 'owner' ? '✓ Copié' : '💾 Enregistrer mon lien (Notes, mail, WhatsApp…)'}
+          </button>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(ownerUrl, 'owner2')}>
+              {flash === 'owner2' ? '✓ Copié' : 'Copier le lien'}
+            </button>
+            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={addToCalendar}>
+              {flash === 'cal' ? '✓ Ajouté' : '🗓️ Calendrier'}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ marginTop: 20, borderTop: '1px solid var(--line)', paddingTop: 16 }}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>👥 Admins de l'événement</div>
+          <p className="muted small" style={{ marginBottom: 12 }}>
+            Un mail + un code que vous choisissez. Transmettez-les vous-même : la personne pourra
+            ouvrir ce tableau de bord depuis n'importe quel téléphone.
+          </p>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            <div className="mono small" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', background: 'var(--screen)', borderRadius: 10, padding: '11px 12px', color: 'var(--text2)', alignSelf: 'center' }}>
+              {adminLink}
+            </div>
+            <button className="btn btn-dark" style={{ flex: '0 0 auto' }}
+              onClick={() => { navigator.clipboard?.writeText(adminLink); setAdminLinkCopied(true); setTimeout(() => setAdminLinkCopied(false), 1800) }}>
+              {adminLinkCopied ? '✓' : 'Copier'}
+            </button>
+          </div>
+
+          {Array.isArray(ev.admins) && ev.admins.length > 0 && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
+              {ev.admins.map((a) => (
+                <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, background: 'var(--screen)' }}>
+                  <div style={{ minWidth: 0 }}>
+                    <div style={{ fontWeight: 600 }}>{a.name || a.email}</div>
+                    <div className="mono small" style={{ color: 'var(--text2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                      {a.email} · code <strong style={{ color: 'var(--ink)' }}>{a.code}</strong>
                     </div>
-                    <button onClick={() => removeAdmin(a.id)} className="mono small" style={{ background: 'none', border: 'none', color: '#b23b2e', cursor: 'pointer', textDecoration: 'underline', flex: '0 0 auto' }}>
-                      Retirer
-                    </button>
                   </div>
-                ))}
-              </div>
-            )}
-
-            <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
-              <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
-              <input type="text" placeholder="Code d'accès (ex : 4821)" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} required />
-              {adminMsg && <div className="err">{adminMsg}</div>}
-              <button className="btn btn-dark" type="submit" disabled={addingAdmin}>{addingAdmin ? 'Ajout…' : '+ Ajouter cet admin'}</button>
-            </form>
-          </div>
-
-          <InstallPrompt label="Épinglez votre tableau de bord" />
-
-          {/* Zone de suppression */}
-          <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
-            {error && <div className="err" style={{ marginBottom: 12 }}>{error}</div>}
-            {!confirmDel ? (
-              <button
-                onClick={() => { setError(''); setConfirmDel(true) }}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#b23b2e', fontFamily: 'var(--font-mono)', fontSize: 12, letterSpacing: '.04em', padding: 0, textDecoration: 'underline' }}
-              >
-                Supprimer cet événement
-              </button>
-            ) : (
-              <div className="card" style={{ borderColor: 'rgba(178,59,46,.35)' }}>
-                <h3 className="h3" style={{ marginBottom: 8 }}>Supprimer « {ev.name} » ?</h3>
-                <p className="muted small" style={{ marginBottom: 16 }}>
-                  Toutes les photos de l'événement et le lien d'invitation seront <strong>définitivement effacés</strong>. Cette action est irréversible.
-                </p>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setConfirmDel(false)} disabled={deleting}>Annuler</button>
-                  <button className="btn btn-danger" style={{ flex: 1 }} onClick={deleteEvent} disabled={deleting}>
-                    {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+                  <button onClick={() => removeAdmin(a.id)} className="mono small" style={{ background: 'none', border: 'none', color: '#b23b2e', cursor: 'pointer', textDecoration: 'underline', flex: '0 0 auto' }}>
+                    Retirer
                   </button>
                 </div>
-              </div>
-            )}
-          </div>
-        </>
-      ) : (
-        <>
-          {/* Connexion admin : un proche à qui l'organisateur a donné un mail + code */}
-          <div className="card" style={{ marginTop: 16 }}>
-            <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔑 Vous êtes admin ?</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
-              Connectez-vous au tableau de bord
+              ))}
             </div>
-            <p className="muted small" style={{ marginBottom: 14 }}>
-              L'organisateur vous a donné une adresse mail et un code ? Entrez-les pour accéder à la gestion de l'événement.
-            </p>
-            <form onSubmit={adminLogin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <input type="email" placeholder="Adresse mail" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-              <input type="text" placeholder="Code d'accès" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} required />
-              {loginMsg && <div className="err">{loginMsg}</div>}
-              <button className="btn btn-accent" type="submit" disabled={loggingIn}>{loggingIn ? 'Connexion…' : 'Se connecter'}</button>
-            </form>
-          </div>
+          )}
 
-          <div className="notice" style={{ marginTop: 16 }}>
-            📷 Vous voulez juste prendre des photos ? <a href={`/j/${id}`} style={{ color: 'var(--accent-deep)', fontWeight: 700 }}>Rejoignez l'événement ici</a>.
+          <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
+            <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
+            <input type="text" placeholder="Code d'accès (ex : 4821)" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} required />
+            {adminMsg && <div className="err">{adminMsg}</div>}
+            <button className="btn btn-dark" type="submit" disabled={addingAdmin}>{addingAdmin ? 'Ajout…' : '+ Ajouter cet admin'}</button>
+          </form>
+        </div>
+      </Section>
+
+      {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
+        <Section title="Invités à prévenir" badge={String(ev.contacts.length)}
+          hint="Ils recevront l'album automatiquement"
+          open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
+          <div className="notice small" style={{ marginBottom: 12 }}>
+            ✉️ Ceux qui ont laissé leur adresse reçoivent le lien de l'album <strong>tout seuls</strong>,
+            dès la révélation. Vous n'avez rien à faire.
           </div>
-        </>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {ev.contacts.map((c, i) => (
+              <div key={i} className="db-contact">
+                <span className="db-contact-name">{c.name}</span>
+                <span className="db-contact-val">
+                  {c.email || c.phone}
+                  {c.email && c.failed && <em className="db-contact-ko"> · non distribué</em>}
+                  {c.email && c.notified && !c.failed && <em className="db-contact-ok"> · envoyé ✓</em>}
+                </span>
+              </div>
+            ))}
+          </div>
+          {ev.contacts.some((c) => c.failed) && (
+            <div className="notice small" style={{ marginTop: 12, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
+              ⚠️ Une ou plusieurs adresses n'ont pas pu être livrées. Utilisez le message prêt
+              pour prévenir ces invités par un autre canal.
+            </div>
+          )}
+        </Section>
+      )}
+
+      <InstallPrompt label="Épinglez votre tableau de bord" />
+
+      <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
+        {error && <div className="err" style={{ marginBottom: 12 }}>{error}</div>}
+        {!confirmDel ? (
+          <button onClick={() => { setError(''); setConfirmDel(true) }} className="db-danger-link" style={{ marginTop: 0 }}>
+            Supprimer cet événement
+          </button>
+        ) : (
+          <div className="card" style={{ borderColor: 'rgba(178,59,46,.35)' }}>
+            <h3 className="h3" style={{ marginBottom: 8 }}>Supprimer « {ev.name} » ?</h3>
+            <p className="muted small" style={{ marginBottom: 16 }}>
+              Toutes les photos de l'événement et le lien d'invitation seront <strong>définitivement effacés</strong>. Cette action est irréversible.
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setConfirmDel(false)} disabled={deleting}>Annuler</button>
+              <button className="btn btn-danger" style={{ flex: 1 }} onClick={deleteEvent} disabled={deleting}>
+                {deleting ? 'Suppression…' : 'Supprimer définitivement'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* ---------- Feuilles modales ---------- */}
+      {sheet && (
+        <div className="db-overlay" onClick={() => setSheet(null)}>
+          <div className="db-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
+            <div className="db-sheet-grip" />
+            {sheet === 'qr' && (
+              <>
+                <h3 className="h3">Faites-le scanner</h3>
+                <p className="muted small">
+                  Il reçoit ses {ev.shotsPerGuest} photos tout de suite. Aucune installation.
+                </p>
+                <div className="qr-tile" style={{ marginTop: 16 }}>
+                  {qrUrl && <img src={qrUrl} alt="QR code de l'événement" />}
+                </div>
+                <button className="btn btn-ghost" style={{ marginTop: 14 }} onClick={() => copy(joinUrl, 'join')}>
+                  {flash === 'join' ? '✓ Copié' : 'Copier le lien'}
+                </button>
+              </>
+            )}
+            {sheet === 'message' && (
+              <>
+                <h3 className="h3">Message prêt</h3>
+                <p className="muted small">
+                  Modifiez-le si vous voulez, puis envoyez-le par le canal de votre choix.
+                </p>
+                <textarea className="db-msg" rows={6} value={shareText} onChange={(e) => setMessage(e.target.value)} />
+                <div className="db-msg-chans">
+                  <a className="btn btn-ghost" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+                  <a className="btn btn-ghost" href={`mailto:?subject=${encodeURIComponent(`Les photos de ${ev.name}`)}&body=${encodeURIComponent(shareText)}`}>Mail</a>
+                  <a className="btn btn-ghost" href={`sms:?&body=${encodeURIComponent(shareText)}`}>SMS</a>
+                </div>
+                <button className="btn btn-dark" style={{ marginTop: 10 }}
+                  onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'msg')}>
+                  {flash === 'msg' ? '✓ Message copié' : 'Partager / copier le message'}
+                </button>
+              </>
+            )}
+            <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => setSheet(null)}>Fermer</button>
+          </div>
+        </div>
       )}
     </main>
   )

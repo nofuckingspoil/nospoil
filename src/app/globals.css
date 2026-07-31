@@ -994,3 +994,168 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .dj-cta{flex-direction:column;align-items:flex-start}
   .dj-prose{font-size:16px}
 }
+
+/* ============================================================
+   Tableau de bord organisateur
+   Une grande carte qui change selon le moment, puis des blocs
+   repliables toujours au même endroit.
+   ============================================================ */
+
+.db-head { margin-top: 24px; }
+.db-head .h2 { margin: 0; }
+.db-head-date { font-size: 12.5px; color: var(--text3); margin: 6px 0 0; text-transform: capitalize; }
+
+/* --- Bascule Organisation / Mon appareil --- */
+.db-modes {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+  background: var(--screen); border-radius: 999px; padding: 4px; margin-top: 18px;
+}
+.db-modes > * {
+  text-align: center; padding: 10px 8px; border-radius: 999px; text-decoration: none;
+  font-size: 13.5px; font-weight: 700; color: var(--text2);
+}
+.db-modes > .on { background: var(--card); color: var(--ink); box-shadow: 0 1px 2px rgba(24,24,32,.08); }
+.db-modes > a:hover { color: var(--ink); }
+
+/* --- La grande carte --- */
+.db-hero {
+  margin-top: 16px; border-radius: 24px; padding: 24px 22px 22px;
+  box-shadow: 0 18px 38px rgba(24,18,10,.18);
+}
+.db-hero-ink { background: var(--dark); color: #fff; }
+.db-hero-accent { background: var(--accent-btn); color: #fff; }
+.db-hero-paused { background: #6b3b2e; color: #fff; }
+
+.db-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.db-eyebrow {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .16em;
+  text-transform: uppercase; color: rgba(255,255,255,.72);
+}
+.db-pill {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700; letter-spacing: .04em;
+  background: rgba(236,91,51,.28); color: #ffd9c9; border-radius: 999px; padding: 5px 11px;
+}
+.db-pill-light { background: rgba(255,255,255,.22); color: #fff; }
+
+.db-hero-title {
+  font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1.08;
+  letter-spacing: -.03em; margin: 0 0 8px;
+}
+.db-hero-sub { margin: 0 0 18px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.78); }
+.db-hero-foot {
+  margin: 12px 0 0; font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.6);
+}
+.db-hero-cta { width: 100%; }
+.db-hero-2nd {
+  width: 100%; margin-top: 8px; background: rgba(255,255,255,.1); color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+}
+.db-hero-2nd:hover { background: rgba(255,255,255,.18); }
+.db-hero-2nd-light { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); }
+
+/* --- Compteurs du jour J --- */
+.db-live { display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-mono);
+  font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; color: #fff; }
+.db-dot { width: 8px; height: 8px; border-radius: 50%; background: #4ED98E; animation: dbPulse 1.6s ease-in-out infinite; }
+@keyframes dbPulse { 0%,100% { opacity: 1; transform: scale(1) } 50% { opacity: .45; transform: scale(.8) } }
+
+.db-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 18px; }
+.db-stats > div { background: rgba(255,255,255,.09); border-radius: 15px; padding: 13px 10px; text-align: center; }
+.db-stats b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -.04em; }
+.db-stats span { display: block; margin-top: 3px; font-size: 10.5px; line-height: 1.3; color: rgba(255,255,255,.62); }
+
+.db-strip-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.db-only { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .14em; text-transform: uppercase;
+  background: rgba(255,255,255,.14); border-radius: 999px; padding: 4px 9px; color: #fff; }
+.db-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 18px; }
+.db-strip img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; display: block; }
+
+.db-roster { margin-bottom: 18px; }
+.db-roster-row { display: flex; align-items: center; gap: 11px; padding: 9px 0;
+  border-top: 1px solid rgba(255,255,255,.1); }
+.db-roster-row:first-child { border-top: none; }
+.db-av { position: relative; flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%;
+  display: grid; place-items: center; font-weight: 800; font-size: 12.5px; color: #fff; }
+.db-av-dot { position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 50%;
+  background: #4ED98E; border: 2px solid var(--dark); }
+.db-roster-name { flex: 1; font-weight: 700; font-size: 13.5px; }
+.db-roster-count { font-family: var(--font-mono); font-size: 12px; color: rgba(255,255,255,.6); }
+.db-roster-more { padding-top: 9px; font-size: 12.5px; color: rgba(255,255,255,.55);
+  border-top: 1px solid rgba(255,255,255,.1); }
+
+/* --- Blocs repliables --- */
+.db-sec { background: var(--card); border: 1px solid var(--line); border-radius: 20px;
+  margin-top: 12px; overflow: hidden; }
+.db-sec h2 { margin: 0; font-size: inherit; font-weight: inherit; }
+.db-sec-head { width: 100%; display: flex; align-items: center; gap: 12px; padding: 17px 18px;
+  background: none; border: none; cursor: pointer; text-align: left; color: var(--ink); }
+.db-sec-head:hover { background: rgba(24,24,32,.02); }
+.db-sec-titles { flex: 1; min-width: 0; }
+.db-sec-title { display: block; font-family: var(--font-display); font-weight: 700; font-size: 16.5px; letter-spacing: -.01em; }
+.db-sec-hint { display: block; margin-top: 3px; font-size: 12.5px; color: var(--text3); }
+.db-sec-badge { flex: 0 0 auto; font-family: var(--font-mono); font-size: 11px; color: var(--text2);
+  background: var(--screen); border-radius: 999px; padding: 4px 10px; }
+.db-sec-chev { flex: 0 0 auto; font-size: 19px; color: var(--text3); transition: transform .2s; }
+.db-sec.on .db-sec-chev { transform: rotate(180deg); }
+.db-sec-body { padding: 0 18px 18px; }
+.db-sec-body .urlbox { background: var(--screen); color: var(--text2); }
+.db-sec-body .qr-tile { background: var(--screen); }
+
+/* --- Lignes de réglage --- */
+.db-set { display: flex; align-items: flex-start; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); }
+.db-set:first-child { border-top: none; padding-top: 4px; }
+.db-set-l { flex: 1; min-width: 0; }
+.db-set-lbl { display: block; font-weight: 700; font-size: 13.5px; margin-bottom: 3px; }
+.db-set-val { display: block; font-size: 12.5px; color: var(--text2); line-height: 1.45; }
+.db-set-act { flex: 0 0 auto; background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px; color: var(--accent-deep); text-decoration: underline; }
+.db-set-edit { display: flex; gap: 8px; padding-bottom: 12px; }
+.db-set-edit input { flex: 1; min-width: 0; }
+.db-frozen { display: inline-block; margin-left: 6px; font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: .1em; text-transform: uppercase; background: var(--screen); color: var(--text3);
+  border-radius: 5px; padding: 2px 6px; vertical-align: middle; }
+
+.db-danger-link { display: block; margin-top: 18px; background: none; border: none; padding: 0;
+  cursor: pointer; color: #b23b2e; font-family: var(--font-mono); font-size: 12px;
+  letter-spacing: .04em; text-decoration: underline; }
+
+/* --- Feuilles modales --- */
+.db-overlay { position: fixed; inset: 0; z-index: 60; background: rgba(14,14,19,.62);
+  backdrop-filter: blur(3px); display: flex; align-items: flex-end; justify-content: center; }
+.db-sheet { width: 100%; max-width: 460px; max-height: 88vh; overflow-y: auto;
+  background: var(--screen); border-radius: 28px 28px 0 0; padding: 12px 22px 26px;
+  animation: dbSlide .22s ease; }
+@keyframes dbSlide { from { transform: translateY(18px); opacity: .6 } to { transform: none; opacity: 1 } }
+.db-sheet-grip { width: 38px; height: 4px; border-radius: 999px; background: rgba(24,24,32,.18); margin: 0 auto 16px; }
+.db-sheet .h3 { margin-bottom: 6px; }
+.db-msg { width: 100%; margin-top: 14px; font-family: inherit; font-size: 14px; line-height: 1.5;
+  border-radius: 14px; border: 1px solid var(--line); background: var(--card); padding: 13px 14px;
+  color: var(--ink); resize: vertical; }
+.db-msg-chans { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 10px; }
+.db-msg-chans .btn { padding: 12px 6px; font-size: 13.5px; text-align: center; text-decoration: none; }
+
+@media (min-width: 560px) {
+  .db-sheet { border-radius: 28px; margin-bottom: 24px; }
+  .db-overlay { align-items: center; }
+}
+
+/* --- Vérification de l'adresse mail de l'invité --- */
+.mail-tip {
+  margin: 9px 2px 0; font-size: 13px; line-height: 1.5; color: var(--text2);
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px;
+}
+.mail-tip button {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font: inherit; font-weight: 700; color: var(--accent-deep); text-decoration: underline;
+}
+.mail-tip-warn { background: #fdf3e6; border-color: rgba(236,91,51,.35); color: var(--accent-deep); }
+.mail-tip-ok { background: rgba(31,138,91,.08); border-color: rgba(31,138,91,.3); color: var(--ok); }
+
+/* --- Liste des invités à prévenir --- */
+.db-contact { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+  padding: 10px 12px; border-radius: 12px; background: var(--screen); }
+.db-contact-name { font-weight: 600; flex: 0 0 auto; }
+.db-contact-val { font-family: var(--font-mono); font-size: 12px; color: var(--text2);
+  text-align: right; min-width: 0; overflow-wrap: anywhere; }
+.db-contact-ok { font-style: normal; color: var(--ok); }
+.db-contact-ko { font-style: normal; color: #b23b2e; }

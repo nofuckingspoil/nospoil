@@ -1,17 +1,19 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
+import { isRevealed } from '../../../../lib/phase'
 
 export async function GET(request, { params }) {
   const { id } = await params
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at,owner_token,gallery_code`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
   }
   const ev = data[0]
-  const revealed = new Date(ev.reveal_at).getTime() <= Date.now()
+  // La suspension d'urgence de l'organisateur prime sur l'heure de révélation.
+  const revealed = isRevealed({ revealAt: ev.reveal_at, revealPaused: ev.reveal_paused })
 
   // L'organisateur (appareil créateur) peut voir les photos avant la révélation.
   const ownerToken = request.headers.get('x-owner-token')
@@ -21,6 +23,7 @@ export async function GET(request, { params }) {
   if (!canView) {
     return Response.json({
       revealed: false,
+      paused: !!ev.reveal_paused, // l'organisateur a mis la révélation en pause
       name: ev.name,
       hostNames: ev.host_names,
       revealAt: ev.reveal_at,

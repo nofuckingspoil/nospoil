@@ -35,6 +35,8 @@ export async function POST(request) {
   const m = session.metadata || {}
   const reveal = new Date(m.reveal_at)
   const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
+  // Date de la fête (événements payés avant l'ajout du champ : on l'estime).
+  const start = m.starts_at ? new Date(m.starts_at) : new Date(reveal.getTime() - 13 * 3600 * 1000)
 
   const { ok, data } = await insertRow('events', {
     owner_token: m.owner_token,
@@ -43,6 +45,7 @@ export async function POST(request) {
     host_names: m.host_names || null,
     shots_per_guest: parseInt(m.shots_per_guest, 10) || 10,
     max_guests: parseInt(m.max_guests, 10) || 5,
+    starts_at: (isNaN(start.getTime()) ? new Date(reveal.getTime() - 13 * 3600 * 1000) : start).toISOString(),
     reveal_at: reveal.toISOString(),
     expires_at: expires.toISOString(),
     status: 'active',

@@ -101,9 +101,9 @@ export function forgetMyEvent(id) {
 }
 
 // Mémorise l'identité d'invité par événement (id + prénom + téléphone éventuel)
-export function saveGuest(eventId, guestId, name, phone) {
+export function saveGuest(eventId, guestId, name, email) {
   if (typeof window === 'undefined') return
-  try { localStorage.setItem(`pellicule_guest_${eventId}`, JSON.stringify({ guestId, name, phone: phone || '' })) } catch {}
+  try { localStorage.setItem(`pellicule_guest_${eventId}`, JSON.stringify({ guestId, name, email: email || '' })) } catch {}
 }
 
 export function getGuest(eventId) {

@@ -1,13 +1,19 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
 import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
+import { eventPhase, isRevealed, quotaLocked, JOUR_J } from '../../../../lib/phase'
+import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
+
+// Un invité est considéré « en train de jouer » si son appareil a donné signe
+// de vie récemment (scan ou photo).
+const ACTIF_MS = 10 * 60 * 1000
 
 export async function GET(request, { params }) {
   const { id } = await params
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,reveal_at,status,owner_token,owner_email,gallery_code,download_count`
+    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -26,15 +32,18 @@ export async function GET(request, { params }) {
   }
 
   // Infos publiques : nécessaires aux invités (nom, date, nb de clichés)
+  const dates = { startsAt: ev.starts_at, revealAt: ev.reveal_at, revealPaused: ev.reveal_paused }
   const payload = {
     id: ev.id,
     name: ev.name,
     hostNames: ev.host_names,
     coverUrl,
     shotsPerGuest: ev.shots_per_guest,
+    startsAt: ev.starts_at,
     revealAt: ev.reveal_at,
     status: ev.status,
-    revealed: new Date(ev.reveal_at).getTime() <= Date.now(),
+    revealed: isRevealed(dates),
+    phase: eventPhase(dates),
     isOwner,
   }
 
@@ -48,8 +57,20 @@ export async function GET(request, { params }) {
 
   // Numéros collectés + liste des admins : réservés à l'organisateur
   if (isOwner) {
-    const list = await selectRows('guests', `event_id=eq.${id}&phone=not.is.null&select=display_name,phone&order=created_at.asc`)
-    payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({ name: g.display_name, phone: g.phone }))
+    // Contacts laissés par les invités : les adresses mail (envoi automatique de
+    // l'album) et les numéros recueillis avant le passage au mail.
+    const list = await selectRows(
+      'guests',
+      `event_id=eq.${id}&or=(email.not.is.null,phone.not.is.null)` +
+        `&select=display_name,email,phone,notified_at,notify_failed&order=created_at.asc`
+    )
+    payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({
+      name: g.display_name,
+      email: g.email || null,
+      phone: g.phone || null,
+      notified: !!g.notified_at,
+      failed: !!g.notify_failed,
+    }))
 
     const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,code&order=created_at.asc`)
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
@@ -57,6 +78,37 @@ export async function GET(request, { params }) {
     payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
+    payload.publishedAt = ev.published_at || null // album validé par l'organisateur
+    payload.revealPaused = !!ev.reveal_paused // frein d'urgence
+    payload.quotaLocked = quotaLocked(dates) // le nb de photos/invité est-il figé ?
+
+    // Pendant la soirée, l'organisateur veut voir que ça tourne : qui joue,
+    // et les dernières photos arrivées (lui seul — les invités ne voient rien).
+    if (payload.phase === JOUR_J) {
+      const seuil = Date.now() - ACTIF_MS
+      const roster = await selectRows(
+        'guests',
+        `event_id=eq.${id}&select=id,display_name,shots_taken,bonus_shots,last_active_at&order=last_active_at.desc.nullslast&limit=40`
+      )
+      payload.guests = (Array.isArray(roster.data) ? roster.data : []).map((g) => ({
+        id: g.id,
+        name: g.display_name,
+        shots: g.shots_taken || 0,
+        total: ev.shots_per_guest + (g.bonus_shots || 0),
+        active: !!g.last_active_at && new Date(g.last_active_at).getTime() >= seuil,
+      }))
+      payload.activeNow = payload.guests.filter((g) => g.active).length
+
+      const recent = await selectRows(
+        'photos',
+        `event_id=eq.${id}&select=id,storage_path,thumb_path,taken_at&order=taken_at.desc&limit=8`
+      )
+      const rows = Array.isArray(recent.data) ? recent.data : []
+      const signed = await signPhotos(rows.map((r) => r.thumb_path || r.storage_path), 3600)
+      payload.recentPhotos = rows
+        .map((r) => ({ id: r.id, url: signed[r.thumb_path || r.storage_path], takenAt: r.taken_at }))
+        .filter((p) => p.url)
+    }
   }
 
   return Response.json(payload)
@@ -68,13 +120,44 @@ export async function PATCH(request, { params }) {
   const ownerToken = request.headers.get('x-owner-token')
   if (!ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
-  const { data } = await selectRows('events', `id=eq.${id}&select=owner_token`)
+  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,reveal_at,reveal_paused`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
   if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
   const body = await request.json().catch(() => ({}))
   const patch = {}
+
+  // Date et heure de la soirée : pilote l'affichage du tableau de bord.
+  if (body.startsAt !== undefined) {
+    const start = new Date(body.startsAt)
+    if (isNaN(start.getTime())) return Response.json({ error: 'Date de l’événement invalide.' }, { status: 400 })
+    patch.starts_at = start.toISOString()
+  }
+
+  // Photos par invité : modifiable tant que la soirée n'a pas commencé.
+  // Après, tout le monde n'aurait pas joué au même jeu.
+  if (body.shotsPerGuest !== undefined) {
+    if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
+      return Response.json({ error: 'La soirée a commencé : le nombre de photos est figé.' }, { status: 409 })
+    }
+    const n = parseInt(body.shotsPerGuest, 10)
+    if (!Number.isFinite(n) || n < 3 || n > 30) {
+      return Response.json({ error: 'Nombre de photos invalide (entre 3 et 30).' }, { status: 400 })
+    }
+    patch.shots_per_guest = n
+  }
+
+  // Validation de l'album par l'organisateur. Facultative : sans elle, la
+  // révélation part quand même à l'heure prévue.
+  if (body.published !== undefined) {
+    patch.published_at = body.published ? new Date().toISOString() : null
+  }
+
+  // Frein d'urgence : gèle la révélation tant qu'il n'a pas réactivé.
+  if (body.revealPaused !== undefined) {
+    patch.reveal_paused = body.revealPaused === true
+  }
 
   if (body.revealAt !== undefined) {
     const reveal = new Date(body.revealAt)
@@ -103,7 +186,19 @@ export async function PATCH(request, { params }) {
 
   const upd = await updateRow('events', `id=eq.${id}`, patch)
   if (!upd.ok) return Response.json({ error: 'Modification impossible.' }, { status: 500 })
-  return Response.json({ ok: true })
+
+  // Si ce réglage vient d'ouvrir l'album (« révéler maintenant », reprise après
+  // suspension), les invités qui ont laissé leur adresse reçoivent le lien tout
+  // de suite — sans attendre le passage de la tâche planifiée. Sans effet si
+  // l'album n'est pas ouvert, et jamais deux fois pour le même invité.
+  let notified = null
+  try {
+    notified = await notifyGuestsOfAlbum(upd.data || { ...ev, ...patch, id })
+  } catch (err) {
+    console.error('envoi du lien de l’album:', err)
+  }
+
+  return Response.json({ ok: true, notified })
 }
 
 // Suppression d'un événement (réservée à l'organisateur) : photos, invités, fichiers et ligne
