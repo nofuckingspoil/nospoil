@@ -2,7 +2,7 @@
 
 import { use, useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { getDeviceToken, saveGuest, getGuest, getOwnerToken, getAccountEmail } from '../../../lib/device'
+import { getDeviceToken, saveGuest, getGuest, getOwnerToken } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
@@ -90,11 +90,12 @@ export default function GuestCamera({ params }) {
         const saved = getGuest(id)
         if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
         else {
-          // Rien de saisi encore : on reprend ce qu'on sait déjà de la personne.
-          // Le champ demande un prénom, on ne garde donc que le premier mot.
+          // Rien de saisi encore : on reprend ce que le serveur sait de cet
+          // événement précis. Surtout pas l'adresse mémorisée par le navigateur :
+          // elle vient d'une autre connexion, et ce champ est facultatif — le
+          // pré-remplir changerait un consentement donné en consentement à retirer.
           if (d.ownerName) setName(String(d.ownerName).trim().split(/\s+/)[0])
-          const connu = d.ownerEmail || getAccountEmail()
-          if (connu) setEmail(connu)
+          if (d.ownerEmail) setEmail(d.ownerEmail)
           setPhase('cover')
         }
       })
