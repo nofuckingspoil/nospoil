@@ -7,6 +7,29 @@ import { tierByGuests, formatPrice } from '../../lib/pricing'
 
 const KEY_STORE = 'declic_admin_key'
 
+function IconePause() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <rect x="6" y="4" width="4" height="16" rx="1.4" /><rect x="14" y="4" width="4" height="16" rx="1.4" />
+    </svg>
+  )
+}
+function IconePlay() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <path d="M7 4.8v14.4c0 .9 1 1.4 1.7.9l10.3-7.2c.6-.4.6-1.4 0-1.8L8.7 3.9c-.7-.5-1.7 0-1.7.9z" />
+    </svg>
+  )
+}
+function IconePoubelle() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M4 7h16M10 11v6M14 11v6M5 7l1 13a1 1 0 001 1h10a1 1 0 001-1l1-13M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" />
+    </svg>
+  )
+}
+
 function fmtDate(iso) {
   try { return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: '2-digit' }) }
   catch { return iso }
@@ -299,14 +322,21 @@ export default function Admin() {
                           ? <span className="badge badge-live"><span className="dot" />Révélé</span>
                           : <span className="badge badge-wait"><span className="dot" />En cours</span>}
                   </span>
+                  {/* Deux gestes, deux icônes. Le nom de l'événement reste le
+                      chemin pour l'ouvrir : un troisième bouton n'aurait fait
+                      que répéter ce lien. */}
                   <span className="pc-actions">
-                    <a className="pc-mini" href={`/admin/event/${e.id}`}>Ouvrir</a>
-                    <button className="pc-mini" type="button"
+                    <button className="pc-icon" type="button"
+                      title={suspendu ? 'Réactiver cet événement' : 'Suspendre cet événement'}
+                      aria-label={suspendu ? 'Réactiver cet événement' : 'Suspendre cet événement'}
                       onClick={() => { setActionErr(''); setASuspendre(e) }}>
-                      {suspendu ? 'Réactiver' : 'Suspendre'}
+                      {suspendu ? <IconePlay /> : <IconePause />}
                     </button>
-                    <button className="pc-mini danger" type="button"
-                      onClick={() => { setActionErr(''); setASupprimer(e) }}>Supprimer</button>
+                    <button className="pc-icon danger" type="button"
+                      title="Supprimer cet événement" aria-label="Supprimer cet événement"
+                      onClick={() => { setActionErr(''); setASupprimer(e) }}>
+                      <IconePoubelle />
+                    </button>
                   </span>
                 </div>
               )
