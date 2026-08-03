@@ -23,6 +23,11 @@ function formatReveal(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
   catch { return iso }
 }
+// Jour en toutes lettres, ex : « 3 février 2027 »
+function formatJour(iso) {
+  try { return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) }
+  catch { return '' }
+}
 function formatTime(iso) {
   try { return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) }
   catch { return '' }
@@ -503,6 +508,15 @@ export default function Gallery({ params }) {
               </button>
             )}
           </div>
+        )}
+
+        {/* Combien de temps « plus tard » peut durer : sans cette date, on
+            remet à demain un album qui finira par disparaître. */}
+        {data.expiresAt && (
+          <p className="gal-fin">
+            🗓️ Album en ligne jusqu'au <strong>{formatJour(data.expiresAt)}</strong>.
+            Enregistrez ce que vous voulez garder avant cette date.
+          </p>
         )}
       </div>
 

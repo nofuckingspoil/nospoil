@@ -1117,6 +1117,15 @@ export default function EventManage({ params }) {
           {revealed ? "Voir l'album →" : 'Vérifier et trier les photos →'}
         </Link>
 
+        {/* La date de suppression n'apparaissait que dans le message de partage
+            pré-rédigé : l'organisateur qui n'y touchait pas ne l'a jamais lue. */}
+        {finAlbum && (
+          <p className="db-alb-fin">
+            🗓️ Album en ligne jusqu'au <strong>{formatJour(finAlbum)}</strong>. Passé cette
+            date, les photos sont supprimées — invitez vos convives à les enregistrer avant.
+          </p>
+        )}
+
         {/* Le frein reste ici : on le cherche à la seconde où l'on vient de
             tomber sur une photo qui pose problème. */}
         <div className="db-alb-frein">

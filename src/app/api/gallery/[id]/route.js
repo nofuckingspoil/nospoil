@@ -7,7 +7,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status,expires_at`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -122,5 +122,8 @@ export async function GET(request, { params }) {
     photos,
     guests,
     mesFavoris: miens,
+    // Jusqu'à quand l'album reste en ligne : l'invité qui remet à plus tard
+    // doit savoir combien de temps « plus tard » peut durer.
+    expiresAt: ev.expires_at || null,
   })
 }

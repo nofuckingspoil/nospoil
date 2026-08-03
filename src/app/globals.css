@@ -560,6 +560,12 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .wrap-barre i.court { width: 100%; }
 }
 
+/* Jusqu'à quand l'album reste en ligne — côté invité et côté organisateur. */
+.gal-fin, .db-alb-fin { margin: 12px 0 0; font-size: 12.5px; line-height: 1.55; color: var(--text3);
+  background: rgba(244,193,78,.13); border: 1px solid rgba(244,193,78,.4);
+  border-radius: 12px; padding: 10px 13px; }
+.gal-fin strong, .db-alb-fin strong { color: var(--ink); }
+
 /* Bandeau d'invitation aux favoris, au-dessus de l'album. */
 .gal-favbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
   flex-wrap: wrap; margin: 0 0 14px; padding: 11px 14px; border-radius: 14px;
