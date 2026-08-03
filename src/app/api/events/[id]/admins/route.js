@@ -1,4 +1,4 @@
-import { selectRows, insertRow, deleteRows } from '../../../../../lib/supabase'
+import { selectRows, insertRow, deleteRows, updateRow } from '../../../../../lib/supabase'
 import { roleFor, canDelete } from '../../../../../lib/authz'
 import { makeToken, normalizeEmail, isValidEmail } from '../../../../../lib/account'
 import { sendMail, adminInviteEmail, siteUrl } from '../../../../../lib/mail'
@@ -20,7 +20,11 @@ export async function POST(request, { params }) {
 
   const body = await request.json().catch(() => ({}))
   const email = normalizeEmail(body.email)
-  const name = (body.name || '').toString().trim().slice(0, 60) || null
+  // Prénom et nom arrivent séparés ; on les range en un seul libellé d'affichage.
+  const prenom = (body.firstName || '').toString().trim().slice(0, 40)
+  const nom = (body.lastName || '').toString().trim().slice(0, 40)
+  const name = [prenom, nom].filter(Boolean).join(' ').slice(0, 80)
+    || (body.name || '').toString().trim().slice(0, 80) || null
 
   if (!isValidEmail(email)) {
     return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
@@ -49,11 +53,14 @@ export async function POST(request, { params }) {
   // C'est la connexion par mail qui prouvera son identité.
   const evRow = await selectRows('events', `id=eq.${id}&select=name`)
   const eventName = (Array.isArray(evRow.data) ? evRow.data[0]?.name : '') || 'votre événement'
+  // L'envoi peut échouer sans que rien ne le laisse voir : on l'horodate pour
+  // pouvoir dire à l'organisateur que la personne n'a jamais été prévenue.
   let invited = false
   try {
     const mail = adminInviteEmail({ eventName, loginUrl: `${siteUrl()}/connexion` })
     const sent = await sendMail({ to: email, subject: mail.subject, html: mail.html })
     invited = !!sent?.ok
+    if (invited) await updateRow('event_admins', `id=eq.${data.id}`, { invited_at: new Date().toISOString() })
   } catch (err) {
     console.error('mail invitation admin:', err)
   }

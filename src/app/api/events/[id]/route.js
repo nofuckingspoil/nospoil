@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count,max_guests`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -88,10 +88,11 @@ export async function GET(request, { params }) {
       failed: !!g.notify_failed,
     }))
 
-    const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email&order=created_at.asc`)
-    payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email }))
+    const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,invited_at,joined_at&order=created_at.asc`)
+    payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, invitedAt: a.invited_at, joinedAt: a.joined_at }))
 
     payload.role = role // 'owner' | 'admin' — pilote l'accès à la suppression
+    payload.ownerName = ev.owner_name || null
     payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"

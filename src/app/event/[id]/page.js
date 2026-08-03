@@ -109,7 +109,8 @@ export default function EventManage({ params }) {
 
   const [confirmDel, setConfirmDel] = useState(false)
   const [deleting, setDeleting] = useState(false)
-  const [adminName, setAdminName] = useState('')
+  const [adminFirst, setAdminFirst] = useState('')
+  const [adminLast, setAdminLast] = useState('')
   const [adminEmail, setAdminEmail] = useState('')
   const [adminMsg, setAdminMsg] = useState('')
   const [addingAdmin, setAddingAdmin] = useState(false)
@@ -393,11 +394,11 @@ export default function EventManage({ params }) {
       const r = await fetch(`/api/events/${id}/admins`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
-        body: JSON.stringify({ name: adminName, email: adminEmail }),
+        body: JSON.stringify({ firstName: adminFirst, lastName: adminLast, email: adminEmail }),
       })
       const d = await r.json()
       if (d.error) setAdminMsg(d.error)
-      else { setAdminName(''); setAdminEmail(''); await reload() }
+      else { setAdminFirst(''); setAdminLast(''); setAdminEmail(''); await reload() }
     } catch { setAdminMsg('Ajout impossible.') }
     setAddingAdmin(false)
   }
@@ -1059,7 +1060,7 @@ export default function EventManage({ params }) {
           <div className="db-coorg-row">
             <span className="db-coorg-id">
               <span className="nn">
-                {ev.role === 'owner' ? 'Vous' : 'Organisateur'}
+                {ev.ownerName || (ev.role === 'owner' ? 'Vous' : 'Organisateur')}
                 <span className="rr">organisateur</span>
               </span>
               <span className="ee">{ev.ownerEmail || 'adresse non renseignée'}</span>
@@ -1070,7 +1071,14 @@ export default function EventManage({ params }) {
               <span className="db-coorg-id">
                 <span className="nn">
                   {a.name || a.email}
-                  <span className="rr">co-organisateur</span>
+                  {/* Trois états, et le troisième compte autant que les autres :
+                      une invitation refusée par le service d'envoi laisserait
+                      croire que la personne a été prévenue. */}
+                  {a.joinedAt
+                    ? <span className="rr ok">a rejoint</span>
+                    : a.invitedAt
+                      ? <span className="rr">invitation envoyée</span>
+                      : <span className="rr ko">invitation non partie</span>}
                 </span>
                 <span className="ee">{a.email}</span>
               </span>
@@ -1080,7 +1088,12 @@ export default function EventManage({ params }) {
         </div>
 
         <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input type="text" placeholder="Prénom" style={{ flex: 1, minWidth: 0 }}
+              value={adminFirst} onChange={(e) => setAdminFirst(e.target.value)} />
+            <input type="text" placeholder="Nom" style={{ flex: 1, minWidth: 0 }}
+              value={adminLast} onChange={(e) => setAdminLast(e.target.value)} />
+          </div>
           <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
           {adminMsg && <div className="err">{adminMsg}</div>}
           <button className="btn btn-dark" type="submit" disabled={addingAdmin}>

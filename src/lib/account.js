@@ -55,7 +55,14 @@ export async function eventsForEmail(email) {
   const owned = await selectRows('events', `owner_email=eq.${enc}&status=eq.active&select=${FIELDS}`)
   const list = (Array.isArray(owned.data) ? owned.data : []).map((e) => ({ ...e, _token: e.owner_token }))
 
-  const admin = await selectRows('event_admins', `email=eq.${enc}&select=event_id,token`)
+  const admin = await selectRows('event_admins', `email=eq.${enc}&select=id,event_id,token,joined_at`)
+
+  // Se connecter, c'est rejoindre : c'est le seul moment où l'on sait que la
+  // personne a bien reçu son invitation et s'en est servie.
+  for (const a of Array.isArray(admin.data) ? admin.data : []) {
+    if (a.joined_at) continue
+    try { await updateRow('event_admins', `id=eq.${a.id}`, { joined_at: new Date().toISOString() }) } catch {}
+  }
   const parEvenement = new Map(
     (Array.isArray(admin.data) ? admin.data : [])
       .filter((a) => a.event_id && a.token && !list.some((e) => e.id === a.event_id))
