@@ -415,16 +415,27 @@ a.cam-pile:active { transform: scale(.94); }
 .site-inner { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
 .vnav { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; max-width: 1040px; margin: 0 auto; }
 .vnav .btn { width: auto; font-size: 14px; padding: 11px 18px; }
-.vnav-links { display: flex; align-items: center; gap: 16px; }
+.vnav-links { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+.vnav-court { display: none; }
 .vnav-links a.mono { color: var(--text2); text-decoration: none; white-space: nowrap; }
 .vnav-links a.mono:hover { color: var(--accent-deep); }
-/* Téléphone : quatre entrées ne tiennent pas sur une ligne. Le logo garde la
-   sienne, les liens passent dessous — au lieu de pousser la page à droite. */
+/* Deuxième rangée : compte et connexion, sous la barre principale. */
+.vnav-second { display: flex; align-items: center; gap: 18px; width: 100%;
+  justify-content: flex-end; margin-top: -4px; }
+.vnav-second a.mono { color: var(--text3); text-decoration: none; white-space: nowrap; font-size: 12px; }
+.vnav-second a.mono:hover { color: var(--accent-deep); }
+
+/* Téléphone : les entrées ne tiennent pas sur une ligne. Le logo et l'essentiel
+   gardent la première, le reste passe dessous — au lieu de pousser la page à
+   droite. */
 @media (max-width: 680px) {
-  .vnav { flex-wrap: wrap; row-gap: 12px; padding: 16px 18px; }
-  .vnav-links { width: 100%; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
-  .vnav-links a.mono { font-size: 11.5px; }
-  .vnav .btn { font-size: 13px; padding: 10px 14px; }
+  .vnav { flex-wrap: wrap; row-gap: 10px; padding: 16px 18px; column-gap: 10px; }
+  .vnav-links { gap: 12px; }
+  .vnav-links a.mono { font-size: 12px; }
+  .vnav .btn { font-size: 13px; padding: 9px 14px; }
+  .vnav-long { display: none; }
+  .vnav-court { display: inline; }
+  .vnav-second { justify-content: space-between; margin-top: 0; }
 }
 
 .hero { padding: 40px 0 30px; }

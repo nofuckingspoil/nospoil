@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
 
-// Événement « démo » permanent — le QR du site ouvre cet appareil photo.
-const DEMO_EVENT_ID = '7f507e30-2d08-4ce1-afff-46195f43aae2'
-
+// Le QR mène à une adresse fixe qui fabrique un album d'essai neuf à chaque
+// visiteur. Il pointait auparavant sur un événement unique, supprimé depuis :
+// le QR de la page d'accueil ne menait donc plus nulle part.
 export default function TryQR() {
   const [qr, setQr] = useState('')
-  const [href, setHref] = useState(`/j/${DEMO_EVENT_ID}`)
+  const [href, setHref] = useState('/essai')
 
   useEffect(() => {
-    const url = `${window.location.origin}/j/${DEMO_EVENT_ID}`
+    const url = `${window.location.origin}/essai`
     setHref(url)
     QRCode.toDataURL(url, {
       margin: 1,

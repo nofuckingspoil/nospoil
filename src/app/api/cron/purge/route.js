@@ -121,6 +121,44 @@ async function purgeExpired(now) {
   return purged
 }
 
+// --- Étape 3 : les essais du site ---
+//
+// Chaque visiteur qui scanne le QR de l'accueil repart avec son propre album.
+// Ils ne sont pas conservés : passé un jour, il ne reste rien — ni ligne, ni
+// fichier. Les adresses laissées volontairement, elles, vivent dans `accounts`
+// et survivent à ce ménage.
+async function purgeDemos(now) {
+  const limite = new Date(now.getTime() - DAY).toISOString()
+  const { ok, data } = await selectRows(
+    'events',
+    `select=id,cover_url&is_demo=is.true&created_at=lte.${limite}&order=created_at.asc&limit=${BATCH}`
+  )
+  if (!ok || !Array.isArray(data)) {
+    console.error('cron/purge: lecture des essais impossible', data)
+    return []
+  }
+
+  const supprimes = []
+  for (const ev of data) {
+    const photos = await selectRows('photos', `select=storage_path,thumb_path&event_id=eq.${ev.id}`)
+    const rows = Array.isArray(photos.data) ? photos.data : []
+    const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path]).filter(Boolean)
+    if (paths.length) await deletePhotos(paths)
+    if (ev.cover_url) await deletePhoto(ev.cover_url)
+
+    await deleteRows('photos', `event_id=eq.${ev.id}`)
+    await deleteRows('guests', `event_id=eq.${ev.id}`)
+    await deleteRows('event_admins', `event_id=eq.${ev.id}`)
+    // Contrairement à un vrai événement, l'essai ne laisse aucune trace :
+    // rien à facturer, rien à archiver.
+    await deleteRows('events', `id=eq.${ev.id}`)
+
+    supprimes.push(ev.id)
+  }
+  if (supprimes.length) console.log(`cron/purge: ${supprimes.length} essai(s) supprimé(s)`)
+  return supprimes
+}
+
 export async function GET(request) {
   if (!authorized(request)) {
     return Response.json({ error: 'Non autorisé.' }, { status: 401 })
@@ -132,7 +170,8 @@ export async function GET(request) {
     // prévenu lors des passages précédents, il n'y a pas de collision.
     const warned = await sendWarnings(now)
     const purged = await purgeExpired(now)
-    return Response.json({ ok: true, at: now.toISOString(), warned, purged })
+    const demos = await purgeDemos(now)
+    return Response.json({ ok: true, at: now.toISOString(), warned, purged, demos: demos.length })
   } catch (err) {
     console.error('cron/purge: erreur', err)
     return Response.json({ error: 'Erreur pendant le ménage.' }, { status: 500 })
