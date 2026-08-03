@@ -609,9 +609,11 @@ export default function EventManage({ params }) {
             <div className="db-hero-confirm">
               <p className="db-hero-confirm-t">Ouvrir l'album maintenant ?</p>
               <p className="db-hero-confirm-s">
-                Vos {ev.guestCount} invité{ev.guestCount > 1 ? 's' : ''} pourr{ev.guestCount > 1 ? 'ont' : 'a'} voir
-                les {ev.photoCount} photos dans la seconde. Vous pourrez refermer l'album,
-                mais pas faire oublier ce qui aura été vu.
+                {ev.guestCount > 1
+                  ? `Vos ${ev.guestCount} invités pourront voir`
+                  : 'Votre invité pourra voir'}
+                {ev.photoCount > 1 ? ` les ${ev.photoCount} photos` : ' la photo'} dans la seconde.
+                Vous pourrez refermer l'album, mais pas faire oublier ce qui aura été vu.
               </p>
               <div className="db-hero-duo">
                 <button className="btn db-hero-2nd" onClick={() => setConfirmReveal(false)}>

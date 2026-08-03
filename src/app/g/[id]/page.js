@@ -146,6 +146,9 @@ export default function Gallery({ params }) {
   const [filter, setFilter] = useState('all')
   const [retro, setRetro] = useState(true)
   const [zip, setZip] = useState(null) // null | {done, total}
+  // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
+  const [selecting, setSelecting] = useState(false)
+  const [selected, setSelected] = useState(() => new Set())
 
   async function downloadAll(photos) {
     if (zip) return
@@ -233,6 +236,8 @@ export default function Gallery({ params }) {
   if (data.needCode) return <CodeGate data={data} value={codeInput} onChange={setCodeInput} onSubmit={submitCode} err={codeErr} />
 
   const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
+  // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
+  const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
   const hiddenCount = data.isOwner ? data.photos.filter((p) => p.hidden).length : 0
   const ovBtn = {
     width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer',
@@ -289,11 +294,26 @@ export default function Gallery({ params }) {
           {photos.map((p, i) => {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
-              <a key={p.id || i} className={`polaroid ${retro ? 'retro' : ''}`} href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
+              <a key={p.id || i} className={`polaroid ${retro ? 'retro' : ''} ${selecting && selected.has(p.id) ? 'pris' : ''}`}
+                href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
+                onClick={(e) => {
+                  if (!selecting) return
+                  e.preventDefault()
+                  setSelected((prev) => {
+                    const n = new Set(prev)
+                    n.has(p.id) ? n.delete(p.id) : n.add(p.id)
+                    return n
+                  })
+                }}
                 style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
                   <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" />
                   {retro && <div className="tint" />}
+                  {selecting && (
+                    <span className={`gal-coche ${selected.has(p.id) ? 'on' : ''}`} aria-hidden="true">
+                      {selected.has(p.id) ? '✓' : ''}
+                    </span>
+                  )}
                   {p.hidden && (
                     <div style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(20,22,31,.85)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '.05em', padding: '4px 8px', borderRadius: 8, fontFamily: 'var(--font-mono)' }}>
                       🙈 MASQUÉE
@@ -320,21 +340,44 @@ export default function Gallery({ params }) {
         </div>
       )}
 
-      {data.photos.length > 0 && (
-        <button className="btn btn-dark" style={{ marginTop: 20 }} disabled={!!zip}
-          onClick={() => downloadAll(data.photos)}>
-          {zip
-            ? `Préparation… ${zip.done}/${zip.total}`
-            : (
-              <>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                Tout télécharger ({data.photos.length})
-              </>
+      {photos.length > 0 && (
+        <div className="gal-dl">
+          <div className="gal-dl-row">
+            <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
+              {selecting ? 'Annuler la sélection' : 'Choisir des photos'}
+            </button>
+            {selecting && (
+              <button className="btn btn-ghost" onClick={() =>
+                setSelected(selected.size === photos.length ? new Set() : new Set(photos.map((p) => p.id)))}>
+                {selected.size === photos.length ? 'Tout décocher' : 'Tout cocher'}
+              </button>
             )}
-        </button>
+          </div>
+
+          {/* On télécharge ce qui est réellement visé : le filtre par personne
+              était ignoré, et l'on repartait avec l'album entier. */}
+          <button className="btn btn-dark" style={{ marginTop: 10 }}
+            disabled={!!zip || (selecting && selected.size === 0)}
+            onClick={() => downloadAll(aTelecharger)}>
+            {zip
+              ? `Préparation… ${zip.done}/${zip.total}`
+              : (
+                <>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                  {selecting
+                    ? `Télécharger la sélection (${selected.size})`
+                    : filter === 'all'
+                      ? `Tout télécharger (${photos.length})`
+                      : `Télécharger ces ${photos.length} photos`}
+                </>
+              )}
+          </button>
+        </div>
       )}
 
-      <div className="footer-note">Appuyez longuement sur une photo pour l'enregistrer une à une.</div>
+      <div className="footer-note">
+        Pour une seule photo : appui long sur mobile, clic droit sur ordinateur.
+      </div>
     </main>
   )
 }
