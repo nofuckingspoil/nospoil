@@ -37,11 +37,19 @@ function keyToUrl(path) {
 }
 
 // --- Upload d'un fichier ---
+//
+// `Content-Length` est déclaré explicitement : au-delà d'une certaine taille, le
+// corps part sinon en flux, sans longueur connue, et R2 refuse le dépôt par un
+// « 411 Length Required ». Les petits fichiers passaient, les vraies photos non.
 export async function uploadPhoto(path, bytes, contentType = 'image/jpeg') {
   assertConfig()
+  const taille = bytes?.byteLength ?? bytes?.length
   const res = await client().fetch(keyToUrl(path), {
     method: 'PUT',
-    headers: { 'Content-Type': contentType },
+    headers: {
+      'Content-Type': contentType,
+      ...(Number.isFinite(taille) ? { 'Content-Length': String(taille) } : {}),
+    },
     body: bytes,
   })
   return { ok: res.status < 300, status: res.status }
