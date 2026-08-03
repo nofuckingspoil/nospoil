@@ -48,9 +48,9 @@ function toLocalInput(iso) {
 }
 
 // --- Bloc repliable : rien ne disparaît jamais, tout se range ---
-function Section({ title, hint, badge, children, open, onToggle }) {
+function Section({ id, title, hint, badge, children, open, onToggle }) {
   return (
-    <section className={`db-sec ${open ? 'on' : ''}`}>
+    <section id={id} className={`db-sec ${open ? 'on' : ''}`}>
       <h2>
         <button type="button" className="db-sec-head" onClick={onToggle} aria-expanded={open}>
           <span className="db-sec-titles">
@@ -434,6 +434,15 @@ export default function EventManage({ params }) {
   const shareText = message || defaultMessage
 
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
+
+  // Renvoi d'une section à une autre : l'ouvrir ne suffit pas si elle est
+  // ailleurs dans la page — on l'amène aussi sous les yeux.
+  function allerA(cle, ancre) {
+    setOpenSec(cle)
+    requestAnimationFrame(() => {
+      document.getElementById(ancre)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    })
+  }
 
   const invitant = ev.hostNames || ev.name || ''
   const posAffichee = pos || ev.coverPos || '50% 50%'
@@ -978,7 +987,7 @@ export default function EventManage({ params }) {
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
-      <Section title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
+      <Section id="sec-album" title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
         badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
         open={openSec === 'album'} onToggle={() => toggleSec('album')}>
         <Link href={`/g/${id}`} className="btn btn-dark">
@@ -1103,12 +1112,17 @@ export default function EventManage({ params }) {
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-        <Section title="Invités inscrits" badge={String(ev.contacts.length)}
-          hint="Ils recevront l'album automatiquement"
+        <Section title="Invités" badge={String(ev.contacts.length)}
+          hint="Liste des invités inscrits"
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
+          {/* Cette liste ne montre que ceux qui ont laissé une adresse : dire
+              « vous n'avez rien à faire » passait sous silence tous les autres. */}
           <div className="notice small" style={{ marginBottom: 12 }}>
             ✉️ Ceux qui ont laissé leur adresse reçoivent le lien de l'album <strong>tout seuls</strong>,
-            dès la révélation. Vous n'avez rien à faire.
+            dès la révélation. Pour les autres, partagez le lien depuis{' '}
+            <button type="button" className="linklike" onClick={() => allerA('album', 'sec-album')}>
+              la section L'album
+            </button>.
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {ev.contacts.map((c, i) => (
