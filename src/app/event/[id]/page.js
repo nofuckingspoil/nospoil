@@ -863,7 +863,7 @@ export default function EventManage({ params }) {
               <button type="button" className={`wiz-opt ${shotsLibre ? 'on' : ''}`}
                 onClick={() => { setShotsLibre(true); setDraftShots((n) => (Number(n) <= 8 ? 10 : n)) }}>
                 <span className="em">🎚️</span>
-                <span><span className="tt">Plus</span><span className="ss">Jusqu'à {SHOTS_MAX} clichés</span></span>
+                <span><span className="tt">Nombre personnalisé</span><span className="ss">Jusqu'à {SHOTS_MAX} clichés</span></span>
               </button>
             </div>
             {shotsLibre && (
@@ -883,9 +883,9 @@ export default function EventManage({ params }) {
                 <input type="checkbox" checked={draftBonus > 0}
                   onChange={(e) => setDraftBonus(e.target.checked ? 5 : 0)} />
                 <span>
-                  <strong>Autoriser une recharge</strong><br />
+                  <strong>Surprise</strong><br />
                   Un invité à court de photos pourra en obtenir quelques-unes de plus,
-                  une seule fois. Décochez pour que la pellicule soit vraiment finie.
+                  une seule fois (jusqu'à 5 max).
                 </span>
               </label>
               {draftBonus > 0 && (

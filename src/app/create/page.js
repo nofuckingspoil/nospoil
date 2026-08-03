@@ -377,7 +377,7 @@ function CreateForm() {
             <button type="button" className={`wiz-opt ${shotsCustom ? 'on' : ''}`}
               onClick={() => { setShotsCustom(true); setShots((s) => (s <= 8 ? 10 : s)) }}>
               <span className="em">🎚️</span>
-              <span><span className="tt">Plus</span><span className="ss">Jusqu'à {SHOTS_MAX} clichés</span></span>
+              <span><span className="tt">Nombre personnalisé</span><span className="ss">Jusqu'à {SHOTS_MAX} clichés</span></span>
             </button>
           </div>
           {shotsCustom && (
