@@ -1040,14 +1040,19 @@ export default function EventManage({ params }) {
               ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
               : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
           </p>
+          {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
+              il s'agit, et le message tout prêt le contenait déjà. */}
           <div className="db-alb-actions">
-            <button className="btn btn-ghost" onClick={() => copy(galleryUrl, 'gal')}>
-              {flash === 'gal' ? '✓ Lien copié' : 'Copier le lien'}
-            </button>
-            <button className="btn btn-ghost" onClick={() => setSheet('message')}>
-              ✉️ Message prêt
+            <button className="btn btn-ghost"
+              onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'gal')}>
+              {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
             </button>
           </div>
+          <p className="hint" style={{ marginTop: 8 }}>
+            {revealed
+              ? 'Le message annonce les photos en ligne et contient le lien.'
+              : 'Le message annonce la date de sortie et contient le lien.'}
+          </p>
         </div>
 
         {/* 4. Le code : on dit enfin contre quoi il protège. */}
