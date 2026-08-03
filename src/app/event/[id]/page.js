@@ -1048,11 +1048,6 @@ export default function EventManage({ params }) {
               {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
             </button>
           </div>
-          <p className="hint" style={{ marginTop: 8 }}>
-            {revealed
-              ? 'Le message annonce les photos en ligne et contient le lien.'
-              : 'Le message annonce la date de sortie et contient le lien.'}
-          </p>
         </div>
 
         {/* 4. Le code : on dit enfin contre quoi il protège. */}
