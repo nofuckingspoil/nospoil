@@ -23,9 +23,18 @@ const BATCH = 120
 export async function notifyGuestsOfAlbum(ev) {
   if (!ev?.id) return { envoyes: 0, echecs: 0, ignore: 'événement inconnu' }
 
-  // Rien ne part tant que les photos ne sont pas réellement ouvertes :
-  // ni avant l'heure, ni pendant une suspension d'urgence.
-  if (!isRevealed({ revealAt: ev.reveal_at, revealPaused: ev.reveal_paused })) {
+  // Rien ne part tant que les photos ne sont pas réellement ouvertes : ni avant
+  // l'heure, ni pendant une suspension d'urgence, ni tant que la formule
+  // souscrite est dépassée. Envoyer le lien d'un album encore fermé serait pire
+  // que de ne rien envoyer : l'invité cliquerait dans le vide.
+  const tous = await selectRows('guests', `event_id=eq.${ev.id}&select=id`)
+  const guestCount = Array.isArray(tous.data) ? tous.data.length : 0
+  if (!isRevealed({
+    revealAt: ev.reveal_at,
+    revealPaused: ev.reveal_paused,
+    maxGuests: ev.max_guests,
+    guestCount,
+  })) {
     return { envoyes: 0, echecs: 0, ignore: 'album non révélé' }
   }
 

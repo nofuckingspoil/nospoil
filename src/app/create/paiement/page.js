@@ -5,18 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Logo from '../../../components/Logo'
 import { rememberMyEvent, saveAccount } from '../../../lib/device'
 
-const COVER_KEY = 'declic_pending_cover'
-const EMAIL_KEY = 'declic_pending_email'
-
-function dataUrlToBlob(dataUrl) {
-  const [head, b64] = dataUrl.split(',')
-  const mime = head.match(/:(.*?);/)?.[1] || 'image/jpeg'
-  const bin = atob(b64)
-  const arr = new Uint8Array(bin.length)
-  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i)
-  return new Blob([arr], { type: mime })
-}
-
 function PaiementInner() {
   const router = useRouter()
   const sp = useSearchParams()
@@ -37,21 +25,9 @@ function PaiementInner() {
         if (done) return
 
         rememberMyEvent(data.id)
-        const email = sessionStorage.getItem(EMAIL_KEY)
-        if (email) saveAccount(email)
-
-        // Photo de couverture mise de côté avant le paiement : on l'envoie maintenant.
-        const cover = sessionStorage.getItem(COVER_KEY)
-        if (cover) {
-          try {
-            const fd = new FormData()
-            fd.append('file', dataUrlToBlob(cover), 'cover.jpg')
-            fd.append('ownerToken', data.ownerToken)
-            await fetch(`/api/events/${data.id}/cover`, { method: 'POST', body: fd })
-          } catch {}
-        }
-        sessionStorage.removeItem(COVER_KEY)
-        sessionStorage.removeItem(EMAIL_KEY)
+        // L'adresse vient de la page de paiement Stripe : on la retient pour que
+        // l'organisateur puisse se reconnecter depuis n'importe quel appareil.
+        if (data.ownerEmail) saveAccount(String(data.ownerEmail).toLowerCase())
 
         router.replace(`/event/${data.id}`)
       } catch (err) { if (!done) setError(err.message) }

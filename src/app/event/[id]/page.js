@@ -17,6 +17,8 @@ import { BRAND, avatarColor } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J } from '../../../lib/phase'
+import { formatPrice } from '../../../lib/pricing'
+import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
 
 function formatDate(iso) {
@@ -63,6 +65,8 @@ function Section({ title, hint, badge, children, open, onToggle }) {
   )
 }
 
+const SEEN_KEY = (id) => `ttf_seen_${id}`
+
 export default function EventManage({ params }) {
   const { id } = use(params)
   const router = useRouter()
@@ -93,10 +97,17 @@ export default function EventManage({ params }) {
   const [loginCode, setLoginCode] = useState('')
   const [loginMsg, setLoginMsg] = useState('')
   const [loggingIn, setLoggingIn] = useState(false)
-  const [editing, setEditing] = useState('') // 'start' | 'reveal' | 'shots' | ''
+  const [editing, setEditing] = useState('') // 'name' | 'start' | 'reveal' | 'shots' | ''
+  const [draftName, setDraftName] = useState('')
   const [draftDate, setDraftDate] = useState('')
   const [draftShots, setDraftShots] = useState(5)
   const [settingMsg, setSettingMsg] = useState('')
+  const [coverBusy, setCoverBusy] = useState(false)
+  // Réglages déjà passés en revue par l'organisateur. Simple aide-mémoire
+  // d'affichage : rien de critique, donc pas de colonne en base pour ça.
+  const [seen, setSeen] = useState({})
+  const [upgradeMsg, setUpgradeMsg] = useState('')
+  const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
   const [savingGallery, setSavingGallery] = useState(false)
   const [galleryMsg, setGalleryMsg] = useState('')
@@ -122,6 +133,22 @@ export default function EventManage({ params }) {
       rememberMyEvent(id)
       window.history.replaceState(null, '', `/event/${id}`)
     }
+    // Retour du paiement d'une mise à niveau de formule : on l'applique, puis on
+    // nettoie l'adresse pour qu'un rechargement ne rejoue pas l'opération.
+    const up = sp.get('upgrade_session')
+    if (up) {
+      window.history.replaceState(null, '', `/event/${id}`)
+      fetch('/api/checkout/upgrade/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ sessionId: up }),
+      })
+        .then((r) => r.json())
+        .then((d) => { if (d.error) setUpgradeMsg(d.error); else setUpgradeMsg('ok') })
+        .catch(() => setUpgradeMsg('La mise à niveau n’a pas pu être appliquée. Réessayez.'))
+        .finally(reload)
+    }
+    try { setSeen(JSON.parse(localStorage.getItem(SEEN_KEY(id)) || '{}')) } catch {}
     const origin = window.location.origin
     setJoinUrl(`${origin}/j/${id}`)
     setGalleryUrl(`${origin}/g/${id}`)
@@ -161,6 +188,49 @@ export default function EventManage({ params }) {
     if (d.error) { setSettingMsg(d.error); return false }
     await reload()
     return true
+  }
+
+  // Agrandir la formule : direction Stripe pour régler la seule différence.
+  async function startUpgrade() {
+    if (!ev?.upgrade) return
+    setUpgradeMsg('')
+    setUpgrading(true)
+    try {
+      const r = await fetch('/api/checkout/upgrade', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ eventId: id, maxGuests: ev.upgrade.maxGuests }),
+      })
+      const d = await r.json()
+      if (d.error) throw new Error(d.error)
+      window.location.href = d.url
+    } catch (err) {
+      setUpgradeMsg(err.message)
+      setUpgrading(false)
+    }
+  }
+
+  // Photo de couverture : réglée après paiement, pas avant. Compressée dans le
+  // navigateur — une photo de téléphone brute est bien trop lourde.
+  async function uploadCover(file) {
+    if (!file) return
+    setSettingMsg('')
+    setCoverBusy(true)
+    try {
+      const img = await fileToImage(file)
+      const blob = await compressToBlob(img, { maxSize: 1400, quality: 0.85 })
+      const fd = new FormData()
+      fd.append('file', blob, 'cover.jpg')
+      fd.append('ownerToken', getOwnerToken(id))
+      const r = await fetch(`/api/events/${id}/cover`, { method: 'POST', body: fd })
+      const d = await r.json().catch(() => ({}))
+      if (d.error) throw new Error(d.error)
+      await reload()
+    } catch (err) {
+      setSettingMsg(err.message || "Échec de l'envoi de l'image.")
+    } finally {
+      setCoverBusy(false)
+    }
   }
 
   function copy(text, key) {
@@ -264,6 +334,10 @@ export default function EventManage({ params }) {
 
   // ---- État dérivé ----
   const revealed = isRevealed(ev, now)
+  // L'heure de révélation est-elle passée ? Distinct de `revealed`, qui tient
+  // aussi compte de la formule dépassée : c'est ce qui permet de dire à
+  // l'organisateur « l'album attend » plutôt que « c'est prévu pour plus tard ».
+  const revealedTime = !!ev.revealAt && new Date(ev.revealAt).getTime() <= now
   const locked = quotaLocked(ev, now)
   const published = !!ev.publishedAt
   const paused = !!ev.revealPaused
@@ -272,6 +346,34 @@ export default function EventManage({ params }) {
   const shareText = message || defaultMessage
 
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
+
+  function markSeen(k) {
+    setSeen((s) => {
+      const next = { ...s, [k]: true }
+      try { localStorage.setItem(SEEN_KEY(id), JSON.stringify(next)) } catch {}
+      return next
+    })
+  }
+
+  // Ce qui a quitté le tunnel de création se retrouve ici, sous forme de
+  // checklist : après paiement, on a envie de fignoler — c'est le bon moment.
+  // Elle ne s'affiche qu'avant l'événement, et disparaît une fois terminée.
+  const todo = [
+    {
+      key: 'cover',
+      done: !!ev.coverUrl,
+      title: 'Ajouter une photo de couverture',
+      sub: "Elle habille l'écran d'accueil que voient vos invités en scannant le QR.",
+    },
+    {
+      key: 'shots',
+      done: !!seen.shots,
+      title: 'Choisir le nombre de clichés par invité',
+      sub: `Actuellement ${ev.shotsPerGuest} par personne — modifiable jusqu'au jour J.`,
+    },
+  ]
+  const todoLeft = todo.filter((t) => !t.done).length
+  const showTodo = phase === AVANT && todoLeft > 0
 
   // ---- La grande carte : le seul élément qui change selon le moment ----
   function Hero() {
@@ -483,7 +585,81 @@ export default function EventManage({ params }) {
         <Link href={`/j/${id}`}>Mon appareil 📷</Link>
       </nav>
 
+      {/* Formule dépassée : prévenu dès le dépassement, jamais à la dernière
+          minute. Les invités, eux, n'ont jamais été bloqués. */}
+      {ev.quotaExceeded && ev.upgrade && (
+        <div className="db-quota">
+          <div className="db-quota-top">
+            <span className="db-eyebrow">formule dépassée</span>
+            <span className="db-quota-count">{ev.guestCount} / {ev.maxGuests} invités</span>
+          </div>
+          <h2 className="db-quota-title">
+            {revealedTime
+              ? "L'album attend votre formule"
+              : "Agrandissez votre formule avant la révélation"}
+          </h2>
+          <p className="db-quota-sub">
+            Vous êtes <strong>{ev.guestCount}</strong> alors que votre formule en couvre{' '}
+            <strong>{ev.maxGuests}</strong>. Tout le monde a pu photographier normalement —
+            rien n'a été bloqué pendant la fête.{' '}
+            {revealedTime
+              ? "Il ne reste qu'à passer à la formule supérieure pour ouvrir l'album."
+              : `Mais l'album ne s'ouvrira pas le ${formatShort(ev.revealAt)} tant que la formule ne correspond pas.`}
+          </p>
+          <button className="btn btn-accent db-quota-cta" onClick={startUpgrade} disabled={upgrading}>
+            {upgrading
+              ? 'Redirection vers le paiement…'
+              : `Passer à ${ev.upgrade.maxGuests} invités — ${formatPrice(ev.upgrade.priceCents)} →`}
+          </button>
+          <p className="db-quota-foot">
+            Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.
+          </p>
+          {upgradeMsg && upgradeMsg !== 'ok' && <div className="err" style={{ marginTop: 10 }}>{upgradeMsg}</div>}
+        </div>
+      )}
+
+      {upgradeMsg === 'ok' && !ev.quotaExceeded && (
+        <div className="notice" style={{ marginTop: 16 }}>
+          ✅ <strong>Formule agrandie</strong> — vous couvrez maintenant {ev.maxGuests} invités.
+        </div>
+      )}
+
       <Hero />
+
+      {/* Finitions déplacées hors du tunnel de création : on les propose ici,
+          quand l'organisateur a envie de fignoler plutôt qu'avant de payer. */}
+      {showTodo && (
+        <div className="db-todo">
+          <div className="db-todo-head">
+            <span className="db-eyebrow">à finaliser</span>
+            <span className="db-todo-count">{todo.length - todoLeft}/{todo.length}</span>
+          </div>
+          {todo.map((t) => (
+            <div key={t.key} className={`db-todo-item ${t.done ? 'done' : ''}`}>
+              <span className="db-todo-check" aria-hidden="true">{t.done ? '✓' : ''}</span>
+              <span className="db-todo-l">
+                <span className="db-todo-t">{t.title}</span>
+                <span className="db-todo-s">{t.sub}</span>
+              </span>
+              {!t.done && (
+                t.key === 'cover' ? (
+                  <label className="db-todo-act">
+                    {coverBusy ? '…' : 'Ajouter'}
+                    <input type="file" accept="image/*" hidden
+                      onChange={(e) => uploadCover(e.target.files?.[0])} />
+                  </label>
+                ) : (
+                  <button className="db-todo-act" onClick={() => {
+                    markSeen('shots')
+                    setOpenSec('reglages')
+                    if (!locked) { setEditing('shots'); setDraftShots(ev.shotsPerGuest) }
+                  }}>Régler</button>
+                )
+              )}
+            </div>
+          ))}
+        </div>
+      )}
 
       {/* ---------- Tout le reste, toujours au même endroit ---------- */}
 
@@ -571,8 +747,46 @@ export default function EventManage({ params }) {
         )}
       </Section>
 
-      <Section title="Réglages de l'événement" hint="Dates, nombre de photos"
+      <Section title="Réglages de l'événement" hint="Nom, couverture, dates, nombre de photos"
         open={openSec === 'reglages'} onToggle={() => toggleSec('reglages')}>
+
+        {/* Photo de couverture — modifiable à tout moment */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">Photo de couverture</span>
+            <span className="db-set-val">
+              {ev.coverUrl ? 'Ajoutée' : 'Aucune'} — elle habille l'écran d'accueil de vos invités
+            </span>
+          </div>
+          <label className="db-set-act" style={{ cursor: 'pointer' }}>
+            {coverBusy ? '…' : ev.coverUrl ? 'Changer' : 'Ajouter'}
+            <input type="file" accept="image/*" hidden
+              onChange={(e) => uploadCover(e.target.files?.[0])} />
+          </label>
+        </div>
+        {ev.coverUrl && (
+          <img src={ev.coverUrl} alt="Photo de couverture" className="db-cover-preview" />
+        )}
+
+        {/* Nom de l'événement */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">Nom de l'événement</span>
+            <span className="db-set-val">{ev.name}</span>
+          </div>
+          <button className="db-set-act" onClick={() => { setEditing(editing === 'name' ? '' : 'name'); setDraftName(ev.name || '') }}>
+            {editing === 'name' ? 'Annuler' : 'Modifier'}
+          </button>
+        </div>
+        {editing === 'name' && (
+          <div className="db-set-edit">
+            <input type="text" maxLength={80} value={draftName} onChange={(e) => setDraftName(e.target.value)}
+              placeholder="Ex : Mariage de Marie & Paul" />
+            <button className="btn btn-accent" onClick={async () => {
+              if (await patchEvent({ name: draftName })) setEditing('')
+            }}>Enregistrer</button>
+          </div>
+        )}
 
         {/* Date de l'événement */}
         <div className="db-set">

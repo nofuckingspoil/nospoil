@@ -5,8 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
-import { fileToImage, compressToBlob } from '../../lib/camera'
+import { TIERS, TOP_TIER, tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../lib/pricing'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -47,11 +46,14 @@ const REVEAL_PRESETS = [
   { key: 'custom', em: '✏️', title: 'Choisir une date précise', sub: 'Vous fixez le jour et l\'heure' },
 ]
 
-const SHOT_PRESETS = [
-  { n: 3, em: '💎', title: '3 clichés', sub: 'Très rare — chaque photo est un événement' },
-  { n: 5, em: '🎞️', title: '5 clichés', sub: 'Le bon équilibre, recommandé' },
-  { n: 8, em: '📸', title: '8 clichés', sub: 'Plus généreux, pour les longues soirées' },
-]
+// Nombre de clichés par invité à la création. Ce n'est pas demandé ici : le
+// réglage se fait après paiement, depuis le tableau de bord, jusqu'au jour J.
+const DEFAULT_SHOTS = 5
+
+// Diamètre de la bille du curseur de formule. Doit rester égal à la largeur
+// définie pour .wiz-tierrange dans globals.css : c'est ce qui aligne les
+// nombres sous la bille.
+const THUMB = 28
 
 
 // ---------- Assistant ----------
@@ -59,22 +61,32 @@ const SHOT_PRESETS = [
 function CreateForm() {
   const router = useRouter()
   const sp = useSearchParams()
-  const tier = tierByGuests(sp.get('tier'))
+
+  // La formule choisie sur la page d'accueil n'est qu'un point de départ : elle
+  // reste modifiable sans quitter l'assistant (sinon toute la saisie serait perdue).
+  const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
+  const [tierOpen, setTierOpen] = useState('') // '' | 'head' | 'recap'
+  const tier = tierByGuests(maxGuests)
   const isPaid = tier.priceCents > 0
 
-  // Étapes : 1 nom · 2 couverture · 3 clichés · 4 révélation · 5 mail + récap · 'code'
+  // Sur une formule payante, Stripe collecte déjà l'adresse pendant le paiement :
+  // la demander en plus ferait saisir deux fois la même chose. On ne la demande
+  // donc que quand personne d'autre ne le fera.
+  const needEmail = !PAYMENTS_ENABLED || !isPaid || EMAIL_VERIFICATION_ENABLED
+
+  // Étapes : 1 nom · 2 dates + révélation · 3 récap · 'code'
+  //
+  // Volontairement court. Tout ce qui n'est pas indispensable pour créer
+  // l'événement (couverture, nombre de clichés) se règle après, depuis le
+  // tableau de bord : c'est là qu'on a envie de fignoler, pas avant de payer.
   const [step, setStep] = useState(1)
-  const TOTAL = 5
+  const TOTAL = 3
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [shots, setShots] = useState(5)
-  const [shotsCustom, setShotsCustom] = useState(false)
   const [startsAt, setStartsAt] = useState(toInputValue(nextSaturday()))
   const [revealKey, setRevealKey] = useState('d1-20')
   const [revealAt, setRevealAt] = useState(toInputValue(atDay(1, 20, nextSaturday())))
-  const [coverFile, setCoverFile] = useState(null)
-  const [coverPreview, setCoverPreview] = useState('')
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -86,11 +98,60 @@ function CreateForm() {
 
   function goTo(n) { setError(''); setStep(n) }
 
-  function onCoverPick(e) {
-    const f = e.target.files?.[0]
-    if (!f) return
-    setCoverFile(f)
-    setCoverPreview(URL.createObjectURL(f))
+  // Changement de formule : on garde l'adresse à jour pour que le retour depuis
+  // Stripe (ou un rafraîchissement) retombe sur la bonne formule.
+  function pickTier(n) {
+    setMaxGuests(n)
+    setError('')
+    try { window.history.replaceState(null, '', `/create?tier=${n}`) } catch {}
+  }
+
+  // Sélecteur de formule. Volontairement une fonction (et non un composant) :
+  // un composant redéfini à chaque rendu se remonterait et casserait le glissement.
+  //
+  // `inline` : version posée à demeure sur le premier écran, où le nombre
+  // d'invités est une question qu'on pose, pas un paramètre d'adresse hérité.
+  function tierPicker({ inline = false } = {}) {
+    const idx = TIERS.findIndex((t) => t.maxGuests === tier.maxGuests)
+    return (
+      <div className={`wiz-tierpick ${inline ? 'wiz-tierpick-inline' : ''}`}>
+        <div className="wiz-tierpick-q">Vous serez combien ?</div>
+        <div className="wiz-tierpick-val">
+          <span className="n">
+            {tier.maxGuests === TOP_TIER.maxGuests
+              ? `${tier.maxGuests} invités ou plus`
+              : `Jusqu'à ${tier.maxGuests} invités`}
+          </span>
+          <span className="p">{formatPrice(tier.priceCents)}</span>
+        </div>
+        <input
+          type="range" min={0} max={TIERS.length - 1} step={1} value={idx}
+          onChange={(e) => pickTier(TIERS[Number(e.target.value)].maxGuests)}
+          className="wiz-tierrange" aria-label="Nombre d'invités"
+        />
+        {/* La bille d'un curseur natif ne parcourt pas toute la largeur : elle
+            s'arrête à un demi-diamètre de chaque bord. On place donc chaque
+            nombre sur la position réelle de la bille, pas sur une répartition
+            régulière — sinon les deux ne tombent jamais en face. */}
+        <div className="wiz-tierticks">
+          {TIERS.map((t, i) => (
+            <button key={t.maxGuests} type="button"
+              className={t.maxGuests === tier.maxGuests ? 'on' : ''}
+              style={{ left: `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${i} / ${TIERS.length - 1})` }}
+              onClick={() => pickTier(t.maxGuests)}>
+              {t.maxGuests}{t.maxGuests === TOP_TIER.maxGuests ? '+' : ''}
+            </button>
+          ))}
+        </div>
+        {/* Ni promesse de mise à niveau (la formule se choisit pour de bon), ni
+            rappel du paiement unique : il est déjà en pied de page. */}
+        {!inline && (
+          <button type="button" className="btn btn-ghost wiz-tierpick-ok" onClick={() => setTierOpen('')}>
+            C'est noté
+          </button>
+        )}
+      </div>
+    )
   }
 
   function pickReveal(p, base = startsAt) {
@@ -108,11 +169,6 @@ function CreateForm() {
     }
   }
 
-  function pickShots(n) {
-    setShots(n)
-    setShotsCustom(false)
-  }
-
   // Validation + passage à l'étape suivante.
   function nextStep(e) {
     e.preventDefault()
@@ -121,22 +177,22 @@ function CreateForm() {
       if (!name.trim()) { setError('Donnez un nom à votre événement.'); return }
       return goTo(2)
     }
-    if (step === 2) return goTo(3)
-    if (step === 3) return goTo(4)
-    if (step === 4) {
+    if (step === 2) {
       if (!startsAt || isNaN(new Date(startsAt))) { setError('Indiquez la date de votre événement.'); return }
       if (!revealAt || isNaN(new Date(revealAt))) { setError('Choisissez une date de révélation.'); return }
       if (new Date(revealAt) <= new Date(startsAt)) {
         setError('La révélation doit venir après le début de votre événement.'); return
       }
-      return goTo(5)
+      return goTo(3)
     }
-    if (step === 5) return submitEmail()
+    if (step === 3) return submitEmail()
   }
 
-  // Étape 5 : on valide le mail, puis code de vérification (si activé) ou création directe.
+  // Dernière étape : contrôles, puis code de vérification (si activé) ou création.
   async function submitEmail() {
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    // L'adresse n'est demandée ici que si Stripe ne va pas la collecter
+    // lui-même : sur une formule payante, la saisir deux fois n'apporte rien.
+    if (needEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
       setError('Entrez une adresse mail valide : c\'est elle qui vous permettra de retrouver votre événement.')
       return
     }
@@ -183,7 +239,7 @@ function CreateForm() {
       ownerToken: getDeviceToken(), name, ownerEmail: email.trim(),
       code: code.replace(/\D/g, ''),
       startsAt: new Date(startsAt).toISOString(),
-      revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots,
+      revealAt: new Date(revealAt).toISOString(), shotsPerGuest: DEFAULT_SHOTS,
       maxGuests: tier.maxGuests,
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
       cgvAccepted: cgvOk,
@@ -193,19 +249,6 @@ function CreateForm() {
     // Formule payante : direction le paiement Stripe. L'événement sera créé au retour.
     if (isPaid && PAYMENTS_ENABLED) {
       try {
-        // On met de côté la couverture (compressée) et le mail, le temps de l'aller-retour Stripe.
-        if (coverFile) {
-          try {
-            const img = await fileToImage(coverFile)
-            const blob = await compressToBlob(img, { maxSize: 1400, quality: 0.85 })
-            const dataUrl = await new Promise((resolve) => {
-              const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(blob)
-            })
-            sessionStorage.setItem('declic_pending_cover', dataUrl)
-          } catch {}
-        }
-        sessionStorage.setItem('declic_pending_email', email.trim().toLowerCase())
-
         const res = await fetch('/api/checkout', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -226,19 +269,6 @@ function CreateForm() {
       if (!res.ok) throw new Error(data.error || 'Erreur.')
       rememberMyEvent(data.id)
       saveAccount(email.trim().toLowerCase())
-
-      // Upload de la photo de couverture (facultative), compressée côté navigateur
-      if (coverFile) {
-        try {
-          const img = await fileToImage(coverFile)
-          const blob = await compressToBlob(img, { maxSize: 1400, quality: 0.85 })
-          const fd = new FormData()
-          fd.append('file', blob, 'cover.jpg')
-          fd.append('ownerToken', getDeviceToken())
-          await fetch(`/api/events/${data.id}/cover`, { method: 'POST', body: fd })
-        } catch {}
-      }
-
       router.push(`/event/${data.id}`)
     } catch (err) { setError(err.message); setLoading(false) }
   }
@@ -247,7 +277,7 @@ function CreateForm() {
     ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(tier.priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
-  const step5Label = EMAIL_VERIFICATION_ENABLED
+  const lastStepLabel = EMAIL_VERIFICATION_ENABLED
     ? (loading ? 'Envoi du code…' : 'Continuer →')
     : finalLabel
 
@@ -266,11 +296,19 @@ function CreateForm() {
         </div>
         <div className="wiz-headline">
           <span className="wiz-count">Étape {stepNum} sur {TOTAL}</span>
-          <span className="wiz-tier">
-            {tier.maxGuests} invités · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
-            <Link href="/#tarifs">changer</Link>
-          </span>
+          {/* Le prix ne s'affiche qu'une fois par écran : ici seulement à
+              l'étape 2, où ni le sélecteur ni le récapitulatif ne le portent. */}
+          {step === 2 && (
+            <span className="wiz-tier">
+              {tier.maxGuests} invités · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
+              <button type="button" className="linklike"
+                onClick={() => setTierOpen(tierOpen === 'head' ? '' : 'head')}>
+                {tierOpen === 'head' ? 'fermer' : 'changer'}
+              </button>
+            </span>
+          )}
         </div>
+        {step === 2 && tierOpen === 'head' && tierPicker()}
       </div>
 
       {isPaid && !PAYMENTS_ENABLED && (
@@ -283,12 +321,22 @@ function CreateForm() {
       {step === 1 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">C'est quoi l'occasion ?</h2>
-          <p className="wiz-sub">Ce nom s'affichera en grand sur l'écran d'accueil de vos invités.</p>
+          {/* La réassurance est fondue dans l'explication : une ligne à part se
+              lirait comme un avertissement. */}
+          <p className="wiz-sub">
+            Ce nom s'affichera en grand sur l'écran d'accueil de vos invités.
+            Vous pourrez le changer plus tard.
+          </p>
           <div className="field">
             <label>Nom de l'événement</label>
             <input type="text" placeholder="Ex : Mariage de Marie & Paul" value={name}
               onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
           </div>
+
+          {/* Le nombre d'invités décide du prix — et, une fois l'événement passé,
+              de l'ouverture de l'album. Il se demande, il ne se devine pas. */}
+          {tierPicker({ inline: true })}
+
           {error && <div className="err">{error}</div>}
           <div className="wiz-nav">
             <button className="btn btn-accent" type="submit">Continuer →</button>
@@ -296,83 +344,16 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE 2 — Photo de couverture */}
+      {/* ÉTAPE 2 — Dates + révélation */}
       {step === 2 && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Une photo de couverture ?</h2>
-          <p className="wiz-sub">Elle habille l'écran d'accueil que voient vos invités. Vous pourrez l'ajouter ou la changer plus tard.</p>
-          {coverPreview ? (
-            <>
-              <img src={coverPreview} alt="Aperçu de la couverture" className="wiz-coverimg" />
-              <label className="btn btn-ghost wiz-coverchange">
-                Changer la photo
-                <input type="file" accept="image/*" onChange={onCoverPick} hidden />
-              </label>
-            </>
-          ) : (
-            <label className="wiz-coverpick">
-              <span className="em">🖼️</span>
-              <span className="tt">Choisir une photo</span>
-              <span className="ss">JPG ou PNG, depuis votre téléphone</span>
-              <input type="file" accept="image/*" onChange={onCoverPick} hidden />
-            </label>
-          )}
-          <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(1)} aria-label="Retour">←</button>
-            <button className="btn btn-accent" type="submit">Continuer →</button>
-          </div>
-          {!coverPreview && (
-            <button type="button" className="linklike wiz-skip" onClick={() => goTo(3)}>Passer cette étape</button>
-          )}
-        </form>
-      )}
-
-      {/* ÉTAPE 3 — Clichés par invité */}
-      {step === 3 && (
-        <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Combien de clichés par invité ?</h2>
-          <p className="wiz-sub">La contrainte argentique : moins de poses, et chaque photo compte davantage.</p>
-          <div className="wiz-opts">
-            {SHOT_PRESETS.map((p) => (
-              <button key={p.n} type="button"
-                className={`wiz-opt ${!shotsCustom && shots === p.n ? 'on' : ''}`}
-                onClick={() => pickShots(p.n)}>
-                <span className="em">{p.em}</span>
-                <span><span className="tt">{p.title}</span><span className="ss">{p.sub}</span></span>
-              </button>
-            ))}
-            <button type="button" className={`wiz-opt ${shotsCustom ? 'on' : ''}`}
-              onClick={() => { setShotsCustom(true); setShots((s) => (s <= 8 ? 10 : s)) }}>
-              <span className="em">🎚️</span>
-              <span><span className="tt">Plus</span><span className="ss">Jusqu'à {SHOTS_MAX} clichés</span></span>
-            </button>
-          </div>
-          {shotsCustom && (
-            <div className="field" style={{ marginTop: 16, marginBottom: 0 }}>
-              <div className="stepper">
-                <button type="button" onClick={() => setShots((s) => Math.max(SHOTS_MIN, s - 1))} aria-label="Moins">−</button>
-                <span className="val">{shots}</span>
-                <button type="button" onClick={() => setShots((s) => Math.min(SHOTS_MAX, s + 1))} aria-label="Plus">+</button>
-              </div>
-            </div>
-          )}
-          <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(2)} aria-label="Retour">←</button>
-            <button className="btn btn-accent" type="submit">Continuer →</button>
-          </div>
-        </form>
-      )}
-
-      {/* ÉTAPE 4 — Révélation */}
-      {step === 4 && (
-        <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">Quand a lieu votre événement ?</h2>
-          <p className="wiz-sub">
-            La date de la fête elle-même. Elle sert à préparer votre tableau de bord :
-            il vous montrera la bonne chose au bon moment.
-          </p>
-          <div className="field" style={{ marginBottom: 24 }}>
-            <label>Date et heure de l'événement</label>
+          {/* Pas de sous-titre : l'étiquette du champ dit déjà tout. */}
+          <div className="field" style={{ marginTop: 18, marginBottom: 24 }}>
+            <label>
+              Date et heure de l'événement{' '}
+              <span className="lbl-soft">(modifiable plus tard)</span>
+            </label>
             <input type="datetime-local" value={startsAt} onChange={(e) => pickStart(e.target.value)} />
           </div>
 
@@ -397,31 +378,42 @@ function CreateForm() {
               <input type="datetime-local" value={revealAt} onChange={(e) => setRevealAt(e.target.value)} />
             </div>
           )}
-          {revealKey !== 'custom' && (
-            <p className="wiz-echo">Révélation le {frDate(revealAt)}</p>
-          )}
+          {/* Le résultat du choix, et le moment que l'organisateur se figure :
+              il mérite mieux qu'une ligne grise. Affiché aussi en date libre,
+              où il traduit la saisie brute en quelque chose de lisible. */}
+          <div className="wiz-reveal-echo">
+            <span className="lbl">Révélation</span>
+            <strong className="val">{frDate(revealAt)}</strong>
+          </div>
           <div className="notice" style={{ marginTop: 16 }}>
             💡 Laissez-leur le temps. Avant la révélation, chacun peut revoir ses clichés et supprimer
             ceux qu'il ne veut pas montrer — après, c'est visible par tout le monde.
           </div>
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(3)} aria-label="Retour">←</button>
+            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(1)} aria-label="Retour">←</button>
             <button className="btn btn-accent" type="submit">Continuer →</button>
           </div>
         </form>
       )}
 
-      {/* ÉTAPE 5 — Mail + récapitulatif */}
-      {step === 5 && (
+      {/* ÉTAPE 3 — Récapitulatif (+ mail si Stripe ne le collecte pas) */}
+      {step === 3 && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Où vous envoyer votre accès ?</h2>
-          <p className="wiz-sub">Votre adresse mail vous permet de retrouver votre tableau de bord, même en changeant de téléphone.</p>
-          <div className="field">
-            <label>Votre adresse mail</label>
-            <input type="email" inputMode="email" autoComplete="email" placeholder="vous@exemple.fr"
-              value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} autoFocus />
-          </div>
+          <h2 className="wiz-q">On y est presque</h2>
+          <p className="wiz-sub">
+            {needEmail
+              ? 'Vérifiez votre événement, puis indiquez l’adresse qui vous permettra de retrouver votre tableau de bord.'
+              : 'Vérifiez votre événement. Le reste — photo de couverture, nombre de clichés — se règle juste après, tranquillement.'}
+          </p>
+
+          {needEmail && (
+            <div className="field">
+              <label>Votre adresse mail</label>
+              <input type="email" inputMode="email" autoComplete="email" placeholder="vous@exemple.fr"
+                value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} autoFocus />
+            </div>
+          )}
 
           <div className="wiz-recap">
             <div className="wiz-recap-title">Récapitulatif</div>
@@ -430,25 +422,34 @@ function CreateForm() {
               <span>{name} <button type="button" className="linklike" onClick={() => goTo(1)}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
-              <span>Couverture</span>
-              <span>{coverPreview ? 'Ajoutée' : 'Aucune'} <button type="button" className="linklike" onClick={() => goTo(2)}>modifier</button></span>
-            </div>
-            <div className="wiz-recap-row">
-              <span>Clichés / invité</span>
-              <span>{shots} <button type="button" className="linklike" onClick={() => goTo(3)}>modifier</button></span>
-            </div>
-            <div className="wiz-recap-row">
               <span>Événement le</span>
-              <span>{frDate(startsAt)} <button type="button" className="linklike" onClick={() => goTo(4)}>modifier</button></span>
+              <span>{frDate(startsAt)} <button type="button" className="linklike" onClick={() => goTo(2)}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
               <span>Révélation</span>
-              <span>{frDate(revealAt)} <button type="button" className="linklike" onClick={() => goTo(4)}>modifier</button></span>
+              <span>{frDate(revealAt)} <button type="button" className="linklike" onClick={() => goTo(2)}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
               <span>Formule</span>
-              <span>{tier.maxGuests} invités · {formatPrice(tier.priceCents)}</span>
+              <span>
+                {tier.maxGuests} invités · {formatPrice(tier.priceCents)}{' '}
+                <button type="button" className="linklike"
+                  onClick={() => setTierOpen(tierOpen === 'recap' ? '' : 'recap')}>
+                  {tierOpen === 'recap' ? 'fermer' : 'modifier'}
+                </button>
+              </span>
             </div>
+            {tierOpen === 'recap' && tierPicker()}
+          </div>
+
+          {/* Le doute juste avant de payer, c'est « et si je me suis trompé ? ».
+              On y répond ici, au moment précis où la question se pose. */}
+          {/* La formule est volontairement absente de cette liste : elle se
+              choisit maintenant, pour de bon. */}
+          <div className="notice wiz-reassure">
+            ✎ <strong>Rien n'est figé.</strong> Nom, dates, moment de la révélation, photo de
+            couverture : tout se modifie ensuite depuis votre tableau de bord. Le nombre de clichés
+            se règle jusqu'au jour de l'événement.
           </div>
 
           <div className="wiz-legal">
@@ -473,8 +474,8 @@ function CreateForm() {
 
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(4)} aria-label="Retour">←</button>
-            <button className="btn btn-accent" type="submit" disabled={loading}>{step5Label}</button>
+            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(2)} aria-label="Retour">←</button>
+            <button className="btn btn-accent" type="submit" disabled={loading}>{lastStepLabel}</button>
           </div>
         </form>
       )}
@@ -501,7 +502,7 @@ function CreateForm() {
             Pas reçu ?{' '}
             <button type="button" onClick={resendCode} className="linklike">Renvoyer le code</button>
             {' · '}
-            <button type="button" onClick={() => goTo(5)} className="linklike">Changer d'adresse</button>
+            <button type="button" onClick={() => goTo(3)} className="linklike">Changer d'adresse</button>
           </div>
         </form>
       )}

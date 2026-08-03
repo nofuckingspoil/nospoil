@@ -1,7 +1,8 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
 import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
-import { eventPhase, isRevealed, quotaLocked, JOUR_J } from '../../../../lib/phase'
+import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
+import { tierForCount, upgradeCents } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 
 // Un invité est considéré « en train de jouer » si son appareil a donné signe
@@ -13,7 +14,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count`
+    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count,max_guests`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -31,9 +32,27 @@ export async function GET(request, { params }) {
     coverUrl = map[ev.cover_url] || null
   }
 
+  // Compteurs publics (participants + photos) — affichés sur l'écran d'album des
+  // invités. Comptés avant tout le reste : le nombre d'invités décide aussi si
+  // l'album peut s'ouvrir (formule dépassée = révélation en attente).
+  const [guests, photos] = await Promise.all([
+    selectRows('guests', `event_id=eq.${id}&select=id`),
+    selectRows('photos', `event_id=eq.${id}&select=id`),
+  ])
+  const guestCount = Array.isArray(guests.data) ? guests.data.length : 0
+  const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
+
   // Infos publiques : nécessaires aux invités (nom, date, nb de clichés)
-  const dates = { startsAt: ev.starts_at, revealAt: ev.reveal_at, revealPaused: ev.reveal_paused }
+  const dates = {
+    startsAt: ev.starts_at,
+    revealAt: ev.reveal_at,
+    revealPaused: ev.reveal_paused,
+    maxGuests: ev.max_guests,
+    guestCount,
+  }
   const payload = {
+    guestCount,
+    photoCount,
     id: ev.id,
     name: ev.name,
     hostNames: ev.host_names,
@@ -46,14 +65,6 @@ export async function GET(request, { params }) {
     phase: eventPhase(dates),
     isOwner,
   }
-
-  // Compteurs publics (participants + photos) — affichés sur l'écran d'album des invités
-  const [guests, photos] = await Promise.all([
-    selectRows('guests', `event_id=eq.${id}&select=id`),
-    selectRows('photos', `event_id=eq.${id}&select=id`),
-  ])
-  payload.guestCount = Array.isArray(guests.data) ? guests.data.length : 0
-  payload.photoCount = Array.isArray(photos.data) ? photos.data.length : 0
 
   // Numéros collectés + liste des admins : réservés à l'organisateur
   if (isOwner) {
@@ -81,6 +92,19 @@ export async function GET(request, { params }) {
     payload.publishedAt = ev.published_at || null // album validé par l'organisateur
     payload.revealPaused = !!ev.reveal_paused // frein d'urgence
     payload.quotaLocked = quotaLocked(dates) // le nb de photos/invité est-il figé ?
+
+    // Formule souscrite et dépassement éventuel. Si la formule est trop petite,
+    // on indique déjà celle qu'il faut viser et ce qu'il reste à régler : le
+    // message doit être actionnable, pas seulement alarmant.
+    payload.maxGuests = ev.max_guests || null
+    payload.quotaExceeded = quotaExceeded(dates)
+    if (payload.quotaExceeded) {
+      const cible = tierForCount(guestCount)
+      payload.upgrade = {
+        maxGuests: cible.maxGuests,
+        priceCents: upgradeCents(ev.max_guests, cible.maxGuests),
+      }
+    }
 
     // Pendant la soirée, l'organisateur veut voir que ça tourne : qui joue,
     // et les dernières photos arrivées (lui seul — les invités ne voient rien).
@@ -120,13 +144,21 @@ export async function PATCH(request, { params }) {
   const ownerToken = request.headers.get('x-owner-token')
   if (!ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
-  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,reveal_at,reveal_paused`)
+  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,reveal_at,reveal_paused,max_guests`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
   if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
   const body = await request.json().catch(() => ({}))
   const patch = {}
+
+  // Nom de l'événement : s'affiche chez les invités, donc modifiable à tout moment
+  // (une faute de frappe ne doit pas rester figée jusqu'à la révélation).
+  if (body.name !== undefined) {
+    const clean = String(body.name).trim().slice(0, 80)
+    if (!clean) return Response.json({ error: "Donnez un nom à votre événement." }, { status: 400 })
+    patch.name = clean
+  }
 
   // Date et heure de la soirée : pilote l'affichage du tableau de bord.
   if (body.startsAt !== undefined) {

@@ -7,7 +7,7 @@
 //  Pensez à mettre à jour `updated` à chaque changement de fond.
 // ============================================================
 
-export const LEGAL_UPDATED = '31 juillet 2026'
+export const LEGAL_UPDATED = '3 août 2026'
 
 export const COMPANY = {
   name: 'BLACK BY C',
@@ -135,11 +135,12 @@ const cgv = {
     <tr><td>50 invités</td><td>50</td><td>14,99 €</td></tr>
     <tr><td>100 invités</td><td>100</td><td>24,99 €</td></tr>
     <tr><td>150 invités</td><td>150</td><td>29,99 €</td></tr>
-    <tr><td>Au-delà de 150 invités</td><td>sur demande</td><td>sur devis, à l'adresse support@timetoflash.fr</td></tr>
+    <tr><td>200 invités et plus</td><td>200 et au-delà</td><td>49,99 €</td></tr>
   </tbody>
 </table>
 <p>Les prix sont indiqués <strong>en euros, toutes taxes comprises</strong>. Aucun abonnement n'est souscrit : chaque Formule donne lieu à un <strong>paiement unique</strong>, dû à la création de l'Événement.</p>
 <p>BLACK BY C se réserve le droit de modifier ses prix à tout moment. Le prix applicable est celui affiché au jour de la création de l'Événement.</p>
+<p><strong>Dépassement du nombre d'Invités.</strong> Le nombre maximal d'Invités de la Formule n'empêche jamais un Invité de rejoindre l'Événement ni de prendre des photographies : aucun blocage n'intervient pendant l'Événement, et toutes les photographies sont conservées. En revanche, lorsque le nombre d'Invités effectivement inscrits dépasse celui de la Formule souscrite, <strong>l'ouverture de l'album aux Invités (la « révélation ») est suspendue</strong> jusqu'à ce que l'Organisateur souscrive la Formule correspondant au nombre réel d'Invités. Cette mise à niveau ne donne lieu au règlement que de la <strong>différence de prix</strong> entre la Formule souscrite et la Formule requise, le montant déjà réglé restant acquis. L'Organisateur en est informé sur son tableau de bord ainsi que par courrier électronique. Aucune suspension n'est appliquée lorsque l'Organisateur a souscrit la Formule la plus élevée, qui n'est assortie d'aucune limite de nombre d'Invités.</p>
 
 <h2>Article 6 — Commande et formation du contrat</h2>
 <p>La création d'un Événement suppose la saisie des informations demandées, la validation de la Formule choisie et, pour les Formules payantes, le règlement du prix.</p>

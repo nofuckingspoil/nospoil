@@ -18,7 +18,16 @@ export async function POST(request) {
 
   if (!ownerToken) return Response.json({ error: 'Appareil non identifié.' }, { status: 400 })
   if (!name || !name.trim()) return Response.json({ error: "Donne un nom à ton événement." }, { status: 400 })
-  if (!isValidEmail(ownerEmail)) return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+
+  // L'adresse est facultative ici : Stripe la demande de toute façon pendant le
+  // paiement, et on la récupère au retour. On l'exige seulement si elle doit
+  // être vérifiée par code en amont, ou si elle a été fournie mais mal formée.
+  if (EMAIL_VERIFICATION_ENABLED && !isValidEmail(ownerEmail)) {
+    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+  }
+  if (ownerEmail && !isValidEmail(ownerEmail)) {
+    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+  }
 
   const reveal = new Date(revealAt)
   if (!revealAt || isNaN(reveal.getTime()) || reveal.getTime() < Date.now() - 60 * 1000) {
@@ -59,7 +68,8 @@ export async function POST(request) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      customer_email: ownerEmail,
+      // Sans adresse fournie, Stripe la demande lui-même sur sa page de paiement.
+      customer_email: ownerEmail || undefined,
       line_items: [{
         quantity: 1,
         price_data: {
@@ -73,7 +83,7 @@ export async function POST(request) {
       // Toutes les infos de l'événement voyagent avec le paiement : on crée l'événement au retour.
       metadata: {
         owner_token: String(ownerToken),
-        owner_email: ownerEmail,
+        owner_email: ownerEmail || '',
         name: cleanName,
         host_names: hostNames ? String(hostNames).trim().slice(0, 80) : '',
         shots_per_guest: String(shots),

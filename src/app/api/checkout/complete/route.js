@@ -27,12 +27,18 @@ export async function POST(request) {
   // Déjà créé pour ce paiement ? On renvoie l'événement existant.
   const existing = await selectRows(
     'events',
-    `stripe_session_id=eq.${encodeURIComponent(sessionId)}&select=id,owner_token`
+    `stripe_session_id=eq.${encodeURIComponent(sessionId)}&select=id,owner_token,owner_email`
   )
   const found = Array.isArray(existing.data) ? existing.data[0] : null
-  if (found) return Response.json({ id: found.id, ownerToken: found.owner_token })
+  if (found) {
+    return Response.json({ id: found.id, ownerToken: found.owner_token, ownerEmail: found.owner_email || null })
+  }
 
   const m = session.metadata || {}
+
+  // L'adresse vient soit de l'assistant (formule gratuite, vérification par code),
+  // soit de la page de paiement Stripe : on ne la fait plus saisir deux fois.
+  const ownerEmail = m.owner_email || session.customer_details?.email || session.customer_email || null
   const reveal = new Date(m.reveal_at)
   const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
   // Date de la fête (événements payés avant l'ajout du champ : on l'estime).
@@ -40,7 +46,7 @@ export async function POST(request) {
 
   const { ok, data } = await insertRow('events', {
     owner_token: m.owner_token,
-    owner_email: m.owner_email,
+    owner_email: ownerEmail,
     name: m.name,
     host_names: m.host_names || null,
     shots_per_guest: parseInt(m.shots_per_guest, 10) || 10,
@@ -61,18 +67,20 @@ export async function POST(request) {
   }
 
   // Mail d'accès organisateur (filet de sécurité).
-  try {
-    const base = siteUrl()
-    const mail = eventCreatedEmail({
-      eventName: m.name,
-      ownerUrl: `${base}/event/${data.id}?k=${m.owner_token}`,
-      joinUrl: `${base}/j/${data.id}`,
-      revealAt: reveal.toISOString(),
-    })
-    await sendMail({ to: m.owner_email, subject: mail.subject, html: mail.html })
-  } catch (err) {
-    console.error('mail création événement payant:', err)
+  if (ownerEmail) {
+    try {
+      const base = siteUrl()
+      const mail = eventCreatedEmail({
+        eventName: m.name,
+        ownerUrl: `${base}/event/${data.id}?k=${m.owner_token}`,
+        joinUrl: `${base}/j/${data.id}`,
+        revealAt: reveal.toISOString(),
+      })
+      await sendMail({ to: ownerEmail, subject: mail.subject, html: mail.html })
+    } catch (err) {
+      console.error('mail création événement payant:', err)
+    }
   }
 
-  return Response.json({ id: data.id, ownerToken: m.owner_token })
+  return Response.json({ id: data.id, ownerToken: m.owner_token, ownerEmail })
 }

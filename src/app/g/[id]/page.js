@@ -46,7 +46,44 @@ function useCountdown(target) {
 
 function PreReveal({ data, onDone }) {
   const cd = useCountdown(data.revealAt)
-  useEffect(() => { if (cd.done) onDone?.() }, [cd.done, onDone])
+
+  // `pending` : l'heure est passée mais l'album attend encore l'organisateur.
+  // Surtout ne pas recharger sur la fin du compte à rebours — il est déjà à zéro,
+  // on bouclerait sans fin. On revient voir tranquillement toutes les 30 s.
+  const pending = !!data.pending
+  useEffect(() => {
+    if (pending || !cd.done) return
+    onDone?.()
+  }, [pending, cd.done, onDone])
+  useEffect(() => {
+    if (!pending) return
+    const t = setInterval(() => onDone?.(), 30000)
+    return () => clearInterval(t)
+  }, [pending, onDone])
+
+  if (pending) {
+    return (
+      <main className="screen screen-dark">
+        <div className="eyebrow-mute" style={{ color: 'rgba(255,255,255,.55)', marginBottom: 6 }}>Événement · {data.hostNames || data.name}</div>
+        <h3 className="h3" style={{ marginBottom: 22 }}>L'album arrive</h3>
+        <div style={{ display: 'flex', justifyContent: 'center', margin: '8px 0 24px' }}>
+          <div style={{ position: 'relative', width: 120, height: 120, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid rgba(255,255,255,.12)' }} />
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '2px solid transparent', borderTopColor: 'var(--accent)', animation: 'dc-spin 1.4s linear infinite' }} />
+            <div style={{ width: 74, height: 74, borderRadius: 18, background: '#0d0f16', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ width: 40, height: 40, borderRadius: '50%', border: '3px solid var(--accent)', background: 'radial-gradient(circle at 35% 30%,#3a3f52,#14161F)' }} />
+            </div>
+          </div>
+        </div>
+        <div className="spacer" />
+        <div className="notice" style={{ background: 'rgba(255,255,255,.06)', border: '1px solid rgba(255,255,255,.1)', color: 'rgba(255,255,255,.7)' }}>
+          🎞️ Vos photos sont bien enregistrées. L'organisateur met la dernière main à l'album —
+          cette page s'ouvrira toute seule.
+        </div>
+      </main>
+    )
+  }
+
   return (
     <main className="screen screen-dark">
       <div className="eyebrow-mute" style={{ color: 'rgba(255,255,255,.55)', marginBottom: 6 }}>Événement · {data.hostNames || data.name}</div>

@@ -23,7 +23,12 @@ export const TIERS = [
   { maxGuests: 50,  priceCents: 1499, popular: true  },
   { maxGuests: 100, priceCents: 2499, popular: false },
   { maxGuests: 150, priceCents: 2999, popular: false },
+  { maxGuests: 200, priceCents: 4999, popular: false },
 ]
+
+// Le plus grand palier n'est jamais bloquant (cf. quotaExceeded) : au-delà,
+// il n'y aurait plus rien à vendre. Il vaut donc « et plus », et s'affiche ainsi.
+export const TOP_TIER = TIERS[TIERS.length - 1]
 
 export function formatPrice(cents) {
   if (!cents) return 'Gratuit'
@@ -33,4 +38,19 @@ export function formatPrice(cents) {
 export function tierByGuests(n) {
   const v = Number(n)
   return TIERS.find((t) => t.maxGuests === v) || TIERS[0]
+}
+
+// Plus petite formule capable d'accueillir `count` invités.
+// Au-delà du dernier palier, on renvoie le dernier (il n'y a rien au-dessus).
+export function tierForCount(count) {
+  const v = Number(count) || 0
+  return TIERS.find((t) => t.maxGuests >= v) || TIERS[TIERS.length - 1]
+}
+
+// Montant à régler pour passer d'une formule à une autre : on ne fait jamais
+// repayer ce qui l'a déjà été. Jamais négatif (on ne rembourse pas à la baisse).
+export function upgradeCents(fromMaxGuests, toMaxGuests) {
+  const from = tierByGuests(fromMaxGuests)
+  const to = tierByGuests(toMaxGuests)
+  return Math.max(0, to.priceCents - from.priceCents)
 }

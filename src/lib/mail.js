@@ -176,13 +176,31 @@ export function eventDayEmail({ eventName, ownerUrl, shotsPerGuest }) {
 // ---------- Rappel le lendemain : les photos attendent ----------
 // C'est ce mail qui déclenche le partage de l'album : sans lui, beaucoup
 // d'organisateurs ne reviennent jamais et l'album reste invisible.
-export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, revealDate }) {
+export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, revealDate, quota }) {
+  // `quota` (facultatif) : { maxGuests } quand la formule souscrite est dépassée.
+  // On le dit ici, le lendemain de la fête — c'est le dernier moment où
+  // l'organisateur peut encore agir tranquillement avant la révélation.
+  const alerte = quota ? `
+    <div style="margin-top:22px;padding:16px;border:2px solid #EC5B33;border-radius:14px;background:#fff;">
+      <div style="font-size:15px;font-weight:700;color:#221A12;">Votre formule est dépassée</div>
+      <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:6px;">
+        Vous étiez <strong style="color:#221A12;">${guestCount} invités</strong> pour une formule
+        de <strong style="color:#221A12;">${quota.maxGuests}</strong>. Personne n'a été bloqué pendant
+        la fête, et toutes les photos sont bien là. En revanche,
+        <strong style="color:#221A12;">l'album ne s'ouvrira pas</strong> tant que votre formule
+        ne correspond pas au nombre réel d'invités. Vous ne réglerez que la différence.
+      </div>
+    </div>` : ''
+
   return {
-    subject: `${photoCount} photos vous attendent — « ${eventName} »`,
+    subject: quota
+      ? `Action requise avant la révélation — « ${eventName} »`
+      : `${photoCount} photos vous attendent — « ${eventName} »`,
     html: layout({
       title: `${photoCount} photos vous attendent`,
       intro: `${guestCount} invité${guestCount > 1 ? 's ont' : ' a'} joué le jeu hier soir. <strong>Vous seul pouvez déjà les voir</strong> — vos invités devront patienter jusqu'à la révélation.`,
       body: `${bigButton(ownerUrl, 'Voir les photos →')}
+        ${alerte}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           Profitez-en pour <strong style="color:#221A12;">masquer celles qui gênent</strong> avant que tout le monde les découvre :
           dans l'album, un bouton sur chaque photo suffit.

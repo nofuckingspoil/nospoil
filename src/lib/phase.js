@@ -5,6 +5,8 @@
 //  le temps qui passe. Trois moments, une seule carte qui change.
 // ============================================================
 
+import { TIERS } from './pricing'
+
 export const AVANT = 'avant'
 export const JOUR_J = 'jourj'
 export const APRES = 'apres'
@@ -27,10 +29,31 @@ export function eventPhase(ev, now = Date.now()) {
   return APRES
 }
 
+// La formule souscrite est-elle dépassée ?
+//
+// Le palier n'a jamais empêché personne d'entrer : pendant la fête, tout le monde
+// joue, quoi qu'il arrive. C'est l'ouverture de l'album qui attend que la formule
+// corresponde au nombre réel d'invités.
+//
+// Prudence volontaire : si l'appelant ne fournit pas les deux nombres, on
+// considère qu'il n'y a pas de dépassement — on ne bloque jamais sur un doute.
+export function quotaExceeded(ev) {
+  const max = Number(ev?.maxGuests)
+  const count = Number(ev?.guestCount)
+  if (!Number.isFinite(max) || max <= 0) return false
+  if (!Number.isFinite(count)) return false
+  // Au plus grand palier, il n'y a plus rien à vendre : on ne retient jamais un
+  // album que l'organisateur n'aurait aucun moyen de débloquer.
+  if (max >= TIERS[TIERS.length - 1].maxGuests) return false
+  return count > max
+}
+
 // Les photos sont-elles ouvertes aux invités ?
-// La suspension d'urgence de l'organisateur prime sur l'heure.
+// La suspension d'urgence de l'organisateur prime sur l'heure, et une formule
+// dépassée retient l'album jusqu'à la mise à niveau.
 export function isRevealed(ev, now = Date.now()) {
   if (ev?.revealPaused) return false
+  if (quotaExceeded(ev)) return false
   return new Date(ev?.revealAt || 0).getTime() <= now
 }
 

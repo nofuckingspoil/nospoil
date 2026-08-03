@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { BRAND } from '../lib/brand'
 import Logo from '../components/Logo'
 import TryQR from '../components/TryQR'
-import { TIERS, formatPrice } from '../lib/pricing'
+import { TIERS, TOP_TIER, formatPrice } from '../lib/pricing'
 
 export const metadata = {
   title: `${BRAND.name} — ${BRAND.tagline}`,
@@ -31,10 +31,12 @@ const FAQ = [
 
 function PriceCard({ tier }) {
   const isFree = tier.priceCents === 0
+  // La formule la plus élevée n'a pas de plafond : elle se lit « et plus ».
+  const isTop = tier.maxGuests === TOP_TIER.maxGuests
   return (
     <div className={`price-card ${tier.popular ? 'popular' : ''}`}>
       {tier.popular && <span className="price-pop">LE PLUS CHOISI</span>}
-      <div className="price-guests">{isFree ? 'Pour tester' : 'Jusqu\'à'}</div>
+      <div className="price-guests">{isFree ? 'Pour tester' : isTop ? 'À partir de' : 'Jusqu\'à'}</div>
       <div className="price-amount">{tier.maxGuests}<span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text3)' }}> invités</span></div>
       <div className="price-unit">{isFree ? 'Gratuit · sans carte' : `${formatPrice(tier.priceCents)} · paiement unique`}</div>
       <Link href={`/create?tier=${tier.maxGuests}`} className={`btn ${tier.popular ? 'btn-accent' : 'btn-ghost'}`}>

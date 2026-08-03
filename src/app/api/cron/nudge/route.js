@@ -13,6 +13,7 @@
 import { selectRows, updateRow } from '../../../../lib/supabase'
 import { sendMail, eventDayEmail, afterPartyEmail, siteUrl } from '../../../../lib/mail'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
+import { quotaExceeded } from '../../../../lib/phase'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -34,7 +35,7 @@ function frDate(iso) {
   } catch { return '' }
 }
 
-const champs = 'id,name,owner_email,owner_token,starts_at,reveal_at,shots_per_guest'
+const champs = 'id,name,owner_email,owner_token,starts_at,reveal_at,shots_per_guest,max_guests'
 
 // --- 1. Le matin de l'événement ---
 // On vise les événements qui commencent dans les 24 h à venir : le cron
@@ -113,6 +114,11 @@ async function nudgeAfterParty(now, base) {
       photoCount,
       guestCount,
       revealDate: frDate(ev.reveal_at),
+      // Formule dépassée : on l'annonce dans ce mail plutôt que dans un envoi
+      // séparé — il arrive pile au bon moment, entre la fête et la révélation.
+      quota: quotaExceeded({ maxGuests: ev.max_guests, guestCount })
+        ? { maxGuests: ev.max_guests }
+        : null,
     })
     const res = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
     await updateRow('events', `id=eq.${ev.id}`, { nudged_after_at: now.toISOString() })
@@ -127,7 +133,7 @@ async function nudgeAfterParty(now, base) {
 async function notifyRevealedEvents(now) {
   const { ok, data } = await selectRows(
     'events',
-    `select=id,name,reveal_at,reveal_paused` +
+    `select=id,name,reveal_at,reveal_paused,max_guests` +
       `&reveal_at=lte.${now.toISOString()}` +
       `&reveal_paused=is.false` +
       `&purged_at=is.null` +
