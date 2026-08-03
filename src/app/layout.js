@@ -1,6 +1,7 @@
 import './globals.css'
 import { Bricolage_Grotesque, Manrope, Space_Mono } from 'next/font/google'
 import { BRAND } from '../lib/brand'
+import PromoCapture from '../components/PromoCapture'
 
 // Polices auto-hébergées par Next (plus d'appel à fonts.googleapis.com, qui
 // bloquait l'affichage du texte pendant ~750 ms au premier chargement).
@@ -118,7 +119,11 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {/* Mémorise un éventuel ?promo=… dès la première page visitée. */}
+        <PromoCapture />
+        {children}
+      </body>
     </html>
   )
 }

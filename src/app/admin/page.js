@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { tierByGuests, formatPrice } from '../../lib/pricing'
 
@@ -57,17 +58,24 @@ export default function Admin() {
   const isWarn = (e) => e.revealed && e.photoCount === 0
 
   const totals = useMemo(() => {
-    const t = { guests: 0, photos: 0, downloads: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0 }
+    const t = { guests: 0, photos: 0, downloads: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0, tests: 0 }
     for (const e of events || []) {
+      // Les événements d'essai ne comptent dans aucun total : sinon les
+      // moyennes ne veulent plus rien dire, et le revenu encore moins.
+      if (e.isTest) { t.tests++; continue }
       t.guests += e.guestCount; t.photos += e.photoCount
       t.downloads += e.downloadCount; t.contacts += e.contactsCount
-      t.revenue += tierByGuests(e.maxGuests).priceCents
+      // Ce qui a réellement été encaissé (remise déduite, 0 si offert).
+      // Les événements antérieurs à cet enregistrement gardent le prix du palier.
+      t.revenue += e.paidCents ?? tierByGuests(e.maxGuests).priceCents
       if (e.revealed) t.revealed++; else t.ongoing++
     }
     return t
   }, [events])
 
-  const avg = (n) => (events && events.length ? Math.round(n / events.length) : 0)
+  // Moyennes calculées sur les seuls vrais événements.
+  const reels = (events || []).filter((e) => !e.isTest).length
+  const avg = (n) => (reels ? Math.round(n / reels) : 0)
 
   const list = useMemo(() => {
     let l = (events || []).filter((e) => {
@@ -75,6 +83,7 @@ export default function Admin() {
       if (statusFilter === 'ongoing' && e.revealed) return false
       if (statusFilter === 'revealed' && !e.revealed) return false
       if (statusFilter === 'warn' && !isWarn(e)) return false
+      if (statusFilter === 'test' && !e.isTest) return false
       return true
     })
     l = [...l].sort((a, b) => {
@@ -118,14 +127,20 @@ export default function Admin() {
       </nav>
 
       <div className="site-inner" style={{ paddingBottom: 60 }}>
-        <h1 className="h2" style={{ margin: '20px 0 18px' }}>Tableau de bord</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, margin: '20px 0 18px', flexWrap: 'wrap' }}>
+          <h1 className="h2" style={{ margin: 0 }}>Tableau de bord</h1>
+          <Link href="/admin/codes" className="linklike" style={{ fontSize: 14 }}>Codes promo →</Link>
+        </div>
 
         {/* Chiffres clés */}
         <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(150px,1fr))' }}>
           <div className="stat">
             <div className="lbl">Événements</div>
-            <div className="val">{events.length}</div>
-            <div className="note">{totals.ongoing} en cours · {totals.revealed} révélés</div>
+            <div className="val">{reels}</div>
+            <div className="note">
+              {totals.ongoing} en cours · {totals.revealed} révélés
+              {totals.tests > 0 && <> · {totals.tests} test{totals.tests > 1 ? 's' : ''} exclu{totals.tests > 1 ? 's' : ''}</>}
+            </div>
           </div>
           <div className="stat">
             <div className="lbl">Invités</div>
@@ -166,6 +181,7 @@ export default function Admin() {
               ['ongoing', `En cours (${totals.ongoing})`],
               ['revealed', `Révélés (${totals.revealed})`],
               ['warn', `À vérifier (${warnCount})`],
+              ['test', `Tests (${totals.tests})`],
             ].map(([val, label]) => (
               <button key={val} className={`chip ${statusFilter === val ? 'on' : ''}`}
                 onClick={() => setStatusFilter(val)}>{label}</button>
@@ -207,7 +223,10 @@ export default function Admin() {
                       ? <img className="ev-thumb" src={e.coverUrl} alt="" />
                       : <span className="ev-thumb" />}
                     <span className="t">
-                      <strong>{e.name}</strong>
+                      <strong>
+                        {e.isTest && <span className="badge badge-wait" style={{ marginRight: 6, fontSize: 10 }}>TEST</span>}
+                        {e.name}
+                      </strong>
                       {e.hostNames ? <span className="who">{e.hostNames}</span> : null}
                       {e.ownerEmail
                         ? <span className="who owner-email">✉ {e.ownerEmail}</span>

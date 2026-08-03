@@ -1,7 +1,8 @@
 import { insertRow } from '../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode, ensureAccount } from '../../../lib/account'
-import { EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX, tierByGuests } from '../../../lib/pricing'
+import { quotePromo, consumePromo } from '../../../lib/promo'
 import { purgeDate } from '../../../lib/retention'
 import { LEGAL_UPDATED } from '../../../lib/legal'
 
@@ -43,7 +44,31 @@ export async function POST(request) {
   }
 
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
-  const guests = Math.min(500, Math.max(5, parseInt(maxGuests, 10) || 5)) // palier choisi
+  const tier = tierByGuests(maxGuests)
+  const guests = tier.maxGuests // palier choisi, ramené à un palier réel du tarif
+
+  // Cette route crée un événement sans passer par la caisse. Elle ne doit donc
+  // ouvrir une formule payante que sur présentation d'un code qui l'offre :
+  // sans ce contrôle, il suffisait de demander 200 invités pour les obtenir.
+  let promoCode = null
+  let isTest = false
+  if (tier.priceCents > 0) {
+    if (!body.promo) {
+      return Response.json({ error: 'Cette formule doit être réglée.' }, { status: 402 })
+    }
+    const q = await quotePromo(body.promo, guests)
+    if (!q.ok || !q.free) {
+      return Response.json({ error: q.ok ? 'Ce code ne rend pas cette formule gratuite.' : q.error }, { status: 402 })
+    }
+    // Décompté avant la création : deux demandes simultanées ne peuvent pas
+    // dépasser le nombre d'utilisations prévu.
+    if (!(await consumePromo(q.code, 0))) {
+      return Response.json({ error: 'Ce code promo n’est plus disponible.' }, { status: 409 })
+    }
+    promoCode = q.code
+    isTest = q.marksTest
+  }
+
   const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
 
   // Date de la fête : pilote l'affichage du tableau de bord. À défaut, on
@@ -68,6 +93,9 @@ export async function POST(request) {
     cgv_accepted_at: new Date().toISOString(),
     withdrawal_waived_at: body.withdrawalWaived === true ? new Date().toISOString() : null,
     cgv_version: LEGAL_UPDATED,
+    promo_code: promoCode,
+    paid_cents: 0, // création sans paiement : formule gratuite, ou offerte par un code
+    is_test: isTest,
   })
 
   if (!ok || !data?.id) {

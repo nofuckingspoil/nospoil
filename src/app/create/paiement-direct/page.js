@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../../components/Logo'
 import TierPicker from '../../../components/TierPicker'
+import PromoField from '../../../components/PromoField'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
 import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, atDay, nextSaturday } from '../../../lib/event-defaults'
@@ -26,7 +27,12 @@ function ExpressForm() {
 
   const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
   const tier = tierByGuests(maxGuests)
-  const isPaid = tier.priceCents > 0
+
+  // Un code promo peut rendre payante une formule gratuite… ou l'inverse.
+  // Tout ce qui suit raisonne donc sur le prix réellement dû.
+  const [promo, setPromo] = useState(null)
+  const priceCents = promo ? promo.priceCents : tier.priceCents
+  const isPaid = priceCents > 0
 
   // Sur une formule payante, Stripe collecte l'adresse pendant le paiement.
   const needEmail = !PAYMENTS_ENABLED || !isPaid || EMAIL_VERIFICATION_ENABLED
@@ -73,6 +79,7 @@ function ExpressForm() {
       flow: 'express', // variante d'où l'on vient (retour d'annulation Stripe)
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
+      promo: promo?.code || undefined,
     }
 
     if (isPaid && PAYMENTS_ENABLED) {
@@ -102,7 +109,7 @@ function ExpressForm() {
   }
 
   const label = isPaid && PAYMENTS_ENABLED
-    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(tier.priceCents)} →`)
+    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
   return (
@@ -117,6 +124,10 @@ function ExpressForm() {
         </p>
 
         <TierPicker value={maxGuests} onChange={pickTier} inline />
+
+        {tier.priceCents > 0 && (
+          <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
+        )}
 
         {needEmail && (
           <div className="field" style={{ marginTop: 22 }}>

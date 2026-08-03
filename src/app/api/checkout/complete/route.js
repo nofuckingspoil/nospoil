@@ -3,6 +3,7 @@ import { insertRow, selectRows } from '../../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../../lib/mail'
 import { purgeDate } from '../../../../lib/retention'
 import { ensureAccount } from '../../../../lib/account'
+import { consumePromo } from '../../../../lib/promo'
 
 export const runtime = 'nodejs'
 
@@ -70,10 +71,21 @@ export async function POST(request) {
     cgv_accepted_at: m.cgv_accepted_at || null,
     withdrawal_waived_at: m.withdrawal_waived_at || null,
     cgv_version: m.cgv_version || null,
+    promo_code: m.promo_code || null,
+    paid_cents: session.amount_total ?? null, // ce qui a réellement été encaissé, remise déduite
+    is_test: m.is_test === '1',
   })
   if (!ok || !data?.id) {
     console.error('create paid event error:', data)
     return Response.json({ error: "Erreur lors de la création de l'événement." }, { status: 500 })
+  }
+
+  // Le code promo n'est décompté qu'ici : l'événement existe, l'argent est
+  // encaissé. On enregistre au passage ce qu'il a réellement rapporté, base de
+  // calcul de la commission du partenaire.
+  if (m.promo_code) {
+    try { await consumePromo(m.promo_code, session.amount_total || 0) }
+    catch (err) { console.error('décompte code promo:', err) }
   }
 
   // Mail d'accès organisateur (filet de sécurité).

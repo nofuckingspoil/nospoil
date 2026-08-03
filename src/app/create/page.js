@@ -8,6 +8,7 @@ import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
 import TierPicker from '../../components/TierPicker'
+import PromoField from '../../components/PromoField'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -66,7 +67,12 @@ function CreateForm() {
   const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
   const [tierOpen, setTierOpen] = useState(false)
   const tier = tierByGuests(maxGuests)
-  const isPaid = tier.priceCents > 0
+
+  // Un code promo change le montant réellement dû : c'est lui qui décide s'il
+  // y a paiement, et ce qu'annonce le bouton final.
+  const [promo, setPromo] = useState(null)
+  const priceCents = promo ? promo.priceCents : tier.priceCents
+  const isPaid = priceCents > 0
 
   // Étapes : 1 nom · 2 couverture · 3 clichés · 4 révélation · 5 mail + récap · 'code'
   const [step, setStep] = useState(1)
@@ -202,6 +208,7 @@ function CreateForm() {
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
+      promo: promo?.code || undefined,
     }
 
     // Formule payante : direction le paiement Stripe. L'événement sera créé au retour.
@@ -258,7 +265,7 @@ function CreateForm() {
   }
 
   const finalLabel = isPaid && PAYMENTS_ENABLED
-    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(tier.priceCents)} →`)
+    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
   const step5Label = EMAIL_VERIFICATION_ENABLED
@@ -486,6 +493,9 @@ function CreateForm() {
               <span>Formule</span>
               <span>{tier.maxGuests} invités · {formatPrice(tier.priceCents)}</span>
             </div>
+            {tier.priceCents > 0 && (
+              <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
+            )}
           </div>
 
           <div className="wiz-legal">

@@ -12,7 +12,7 @@ export async function GET(request) {
 
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,guests(count),photos(count)&order=created_at.desc'
+    'select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,promo_code,paid_cents,is_test,guests(count),photos(count)&order=created_at.desc'
   )
   if (!ok) return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
   const rows = Array.isArray(data) ? data : []
@@ -43,6 +43,11 @@ export async function GET(request) {
     photoCount: e.photos?.[0]?.count ?? 0,
     downloadCount: e.download_count || 0,
     contactsCount: contactsByEvent[e.id] || 0,
+    promoCode: e.promo_code || null,
+    isTest: !!e.is_test,
+    // Null pour les événements créés avant l'enregistrement du montant :
+    // le tableau de bord retombe alors sur le prix du palier.
+    paidCents: e.paid_cents,
   }))
 
   return Response.json({ events })

@@ -3,6 +3,7 @@ import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib
 import { tierByGuests, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
 import { siteUrl } from '../../../lib/mail'
 import { LEGAL_UPDATED } from '../../../lib/legal'
+import { quotePromo } from '../../../lib/promo'
 
 export const runtime = 'nodejs'
 
@@ -43,6 +44,18 @@ export async function POST(request) {
     return Response.json({ error: 'Cette formule est gratuite : aucun paiement nécessaire.' }, { status: 400 })
   }
 
+  // Code promo : revérifié ici même si le navigateur l'a déjà fait vérifier.
+  // Un prix annoncé par le client ne prouve rien.
+  let promo = null
+  if (body.promo) {
+    const q = await quotePromo(body.promo, tier.maxGuests)
+    if (!q.ok) return Response.json({ error: q.error }, { status: 400 })
+    // Plus rien à encaisser : ce n'est plus une vente, c'est une création
+    // directe. Le navigateur doit passer par /api/events.
+    if (q.free) return Response.json({ free: true, code: q.code, error: 'Ce code offre la formule : aucun paiement nécessaire.' }, { status: 400 })
+    promo = q
+  }
+
   // L'adresse doit être vérifiée (code à 6 chiffres) avant d'aller au paiement.
   // (Désactivable via EMAIL_VERIFICATION_ENABLED tant que l'envoi d'e-mails n'est pas fiable.)
   if (EMAIL_VERIFICATION_ENABLED) {
@@ -70,16 +83,35 @@ export async function POST(request) {
   const base = siteUrl()
   const stripe = getStripe()
 
+  // La remise est présentée comme une remise, pas comme un prix plus bas venu
+  // de nulle part : Stripe affiche « Réduction » sous le montant d'origine.
+  let discounts
+  if (promo) {
+    try {
+      const coupon = promo.promo.kind === 'percent'
+        ? await stripe.coupons.create({ percent_off: promo.promo.value, duration: 'once', name: `Code ${promo.code}` })
+        : await stripe.coupons.create({ amount_off: tier.priceCents - promo.priceCents, currency: 'eur', duration: 'once', name: `Code ${promo.code}` })
+      discounts = [{ coupon: coupon.id }]
+    } catch (err) {
+      console.error('coupon stripe:', err)
+      discounts = undefined // repli plus bas : on facture directement le prix remisé
+    }
+  }
+  // Sans coupon, on facture le montant remisé : mieux vaut une remise discrète
+  // qu'un organisateur qui paie le plein tarif.
+  const unitAmount = promo && !discounts ? promo.priceCents : tier.priceCents
+
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      discounts,
       // Sans adresse fournie, Stripe la demande lui-même sur sa page de paiement.
       customer_email: ownerEmail || undefined,
       line_items: [{
         quantity: 1,
         price_data: {
           currency: 'eur',
-          unit_amount: tier.priceCents,
+          unit_amount: unitAmount,
           product_data: { name: `Time to Flash — « ${cleanName} » (jusqu'à ${tier.maxGuests} invités)` },
         },
       }],
@@ -101,6 +133,10 @@ export async function POST(request) {
         cgv_accepted_at: consentAt,
         withdrawal_waived_at: consentAt,
         cgv_version: LEGAL_UPDATED,
+        // Le code voyage avec le paiement : il ne sera décompté qu'au retour,
+        // une fois l'événement réellement créé.
+        promo_code: promo ? promo.code : '',
+        is_test: promo && promo.marksTest ? '1' : '',
       },
     })
     return Response.json({ url: session.url })

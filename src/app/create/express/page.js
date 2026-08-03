@@ -7,6 +7,7 @@ import Logo from '../../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
 import TierPicker from '../../../components/TierPicker'
+import PromoField from '../../../components/PromoField'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -63,7 +64,12 @@ function CreateForm() {
   const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
   const [tierOpen, setTierOpen] = useState('') // '' | 'head' | 'recap'
   const tier = tierByGuests(maxGuests)
-  const isPaid = tier.priceCents > 0
+
+  // Un code promo change le montant réellement dû : tout ce qui suit
+  // (paiement ou non, adresse à demander, libellé du bouton) s'y rapporte.
+  const [promo, setPromo] = useState(null)
+  const priceCents = promo ? promo.priceCents : tier.priceCents
+  const isPaid = priceCents > 0
 
   // Sur une formule payante, Stripe collecte déjà l'adresse pendant le paiement :
   // la demander en plus ferait saisir deux fois la même chose. On ne la demande
@@ -193,6 +199,7 @@ function CreateForm() {
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
+      promo: promo?.code || undefined,
     }
 
     // Formule payante : direction le paiement Stripe. L'événement sera créé au retour.
@@ -223,7 +230,7 @@ function CreateForm() {
   }
 
   const finalLabel = isPaid && PAYMENTS_ENABLED
-    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(tier.priceCents)} →`)
+    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
   const lastStepLabel = EMAIL_VERIFICATION_ENABLED
@@ -392,6 +399,9 @@ function CreateForm() {
             </div>
             {tierOpen === 'recap' && (
               <TierPicker value={maxGuests} onChange={pickTier} onClose={() => setTierOpen('')} />
+            )}
+            {tier.priceCents > 0 && (
+              <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
             )}
           </div>
 
