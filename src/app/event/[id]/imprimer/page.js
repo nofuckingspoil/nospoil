@@ -185,6 +185,12 @@ export default function PrintKit({ params }) {
             {format === 'cartons' && Array.from({ length: 9 }, (_, i) => <Ticket key={i} size="sm" />)}
           </div>
         </div>
+
+        {/* Doublon assumé du retour collé en haut : arrivé au bout de l'aperçu,
+            on est déjà là et on n'a pas à viser la barre. */}
+        <Link href={`/event/${id}`} className="btn btn-ghost" style={{ marginTop: 20 }}>
+          ← Retour au tableau de bord
+        </Link>
       </main>
 
       {/* ---------- Impression : la page réelle ---------- */}
