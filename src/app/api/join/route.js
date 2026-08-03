@@ -68,6 +68,20 @@ export async function POST(request) {
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}
 
+  // L'organisateur qui prend ses propres photos se nomme : sur une formule
+  // gratuite, c'est la seule occasion de connaître son nom, Stripe ne l'ayant
+  // jamais recueilli. On ne touche à rien s'il est déjà connu.
+  try {
+    const nom = (displayName || '').toString().trim()
+    if (nom) {
+      const { data: evData } = await selectRows('events', `id=eq.${eventId}&select=owner_token,owner_name`)
+      const ev = Array.isArray(evData) ? evData[0] : null
+      if (ev && ev.owner_token === deviceToken && !ev.owner_name) {
+        await updateRow('events', `id=eq.${eventId}`, { owner_name: nom.slice(0, 80) })
+      }
+    }
+  } catch {}
+
   // Lien d'accès personnel : envoyé une seule fois, dès qu'une adresse est
   // connue. Sans lui, l'identité de l'invité disparaît avec son navigateur.
   // Un échec d'envoi ne doit jamais empêcher quelqu'un de photographier.

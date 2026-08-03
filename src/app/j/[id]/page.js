@@ -2,7 +2,7 @@
 
 import { use, useEffect, useRef, useState } from 'react'
 import QRCode from 'qrcode'
-import { getDeviceToken, saveGuest, getGuest } from '../../../lib/device'
+import { getDeviceToken, saveGuest, getGuest, getOwnerToken, getAccountEmail } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
@@ -79,14 +79,24 @@ export default function GuestCamera({ params }) {
   const galleryInputRef = useRef(null)
 
   useEffect(() => {
-    fetch(`/api/events/${id}`)
+    // Le jeton part avec la requête : l'organisateur qui prend ses propres photos
+    // n'a pas à se présenter comme un inconnu. Sans jeton valable, le serveur ne
+    // renvoie rien de plus qu'à n'importe quel invité.
+    fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getOwnerToken(id) } })
       .then((r) => r.json())
       .then((d) => {
         if (d.error) { setError(d.error); setPhase('error'); return }
         setMeta(d)
         const saved = getGuest(id)
         if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
-        else setPhase('cover')
+        else {
+          // Rien de saisi encore : on reprend ce qu'on sait déjà de la personne.
+          // Le champ demande un prénom, on ne garde donc que le premier mot.
+          if (d.ownerName) setName(String(d.ownerName).trim().split(/\s+/)[0])
+          const connu = d.ownerEmail || getAccountEmail()
+          if (connu) setEmail(connu)
+          setPhase('cover')
+        }
       })
       .catch(() => { setError('Connexion impossible.'); setPhase('error') })
     // eslint-disable-next-line react-hooks/exhaustive-deps
