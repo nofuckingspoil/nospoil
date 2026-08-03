@@ -115,6 +115,7 @@ export default function EventManage({ params }) {
 
   const [confirmDel, setConfirmDel] = useState(false)
   const [confirmReveal, setConfirmReveal] = useState(false)
+  const [confirmPublish, setConfirmPublish] = useState(false)
   const [confirmNom, setConfirmNom] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [adminFirst, setAdminFirst] = useState('')
@@ -661,14 +662,38 @@ export default function EventManage({ params }) {
           Vous seul pouvez les voir. Jetez-y un œil : vous pouvez masquer celles qui gênent
           avant que vos invités ne les découvrent.
         </p>
-        <Link href={`/g/${id}`} className="btn btn-dark db-hero-cta">Vérifier les photos →</Link>
-        <button className="btn db-hero-2nd db-hero-2nd-light" onClick={() => patchEvent({ published: true })}>
-          C'est bon, je valide l'album
-        </button>
-        <p className="db-hero-foot">
-          Valider ne révèle rien tout de suite : l'ouverture reste prévue le {formatShort(ev.revealAt)}.
-          Et si vous ne faites rien, elle se fera quand même.
-        </p>
+        {/* Valider ne fige rien : le tri reste possible, avant comme après. On
+            le rappelle ici, faute de quoi on croit sceller l'album. */}
+        {confirmPublish ? (
+          <div className="db-hero-confirm">
+            <p className="db-hero-confirm-t">
+              Vous avez bien regardé {ev.photoCount > 1 ? `les ${ev.photoCount} photos` : 'la photo'} ?
+            </p>
+            <p className="db-hero-confirm-s">
+              Valider n'ouvre rien : l'album s'ouvrira le {formatShort(ev.revealAt)}, comme prévu.
+              Vous pourrez encore <strong>masquer ou supprimer</strong> une photo jusque-là,
+              et même après — filtrez par personne dans l'album pour aller plus vite.
+            </p>
+            <div className="db-hero-duo">
+              <Link href={`/g/${id}`} className="btn db-hero-2nd">Vérifier d'abord</Link>
+              <button className="btn btn-dark" onClick={async () => {
+                if (await patchEvent({ published: true })) setConfirmPublish(false)
+              }}>Oui, je valide</button>
+            </div>
+            <button className="db-hero-annuler" onClick={() => setConfirmPublish(false)}>Annuler</button>
+          </div>
+        ) : (
+          <>
+            <Link href={`/g/${id}`} className="btn btn-dark db-hero-cta">Vérifier les photos →</Link>
+            <button className="btn db-hero-2nd db-hero-2nd-light" onClick={() => setConfirmPublish(true)}>
+              C'est bon, je valide l'album
+            </button>
+            <p className="db-hero-foot">
+              Valider ne révèle rien tout de suite : l'ouverture reste prévue le {formatShort(ev.revealAt)}.
+              Et si vous ne faites rien, elle se fera quand même.
+            </p>
+          </>
+        )}
       </div>
     )
   }

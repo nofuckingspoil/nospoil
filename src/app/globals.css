@@ -1170,7 +1170,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-hero-confirm-t { font-family: var(--font-display); font-weight: 800; font-size: 16px; color: #fff; }
 .db-hero-confirm-s { margin-top: 5px; font-size: 12.5px; line-height: 1.5; color: rgba(255,255,255,.66); }
 .db-hero-duo { display: flex; gap: 8px; margin-top: 12px; }
-.db-hero-duo .btn { flex: 1 1 0; min-width: 0; width: auto; margin-top: 0; padding: 13px 12px; font-size: 14.5px; }
+.db-hero-duo .btn { flex: 1 1 0; min-width: 0; width: auto; margin-top: 0; padding: 13px 12px; font-size: 14.5px; text-decoration: none; }
+.db-hero-annuler {
+  display: block; margin: 10px auto 0; background: none; border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; color: rgba(255,255,255,.6); text-decoration: underline;
+}
 /* Rappel qui passe une fois — ni carte, ni tâche : une simple bande */
 .db-notif {
   display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
