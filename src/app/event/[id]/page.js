@@ -149,6 +149,8 @@ export default function EventManage({ params }) {
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
   const [protecting, setProtecting] = useState(false)
   const [codeDraft, setCodeDraft] = useState('')
+  const [souhaiteCode, setSouhaiteCode] = useState(false) // case cochée, code pas encore saisi
+  const [codeSauve, setCodeSauve] = useState(false)
   const [savingGallery, setSavingGallery] = useState(false)
   const [galleryMsg, setGalleryMsg] = useState('')
   const [message, setMessage] = useState('')
@@ -223,8 +225,12 @@ export default function EventManage({ params }) {
   }, [phase, reload])
 
   // Le champ suit le code enregistré : rouvrir la feuille ne doit pas montrer
-  // un code périmé.
-  useEffect(() => { setCodeDraft(ev?.galleryCode || '') }, [ev?.galleryCode])
+  // un code périmé. Un code actif implique évidemment la case cochée.
+  useEffect(() => {
+    if (!ev?.galleryCode) return
+    setCodeDraft(ev.galleryCode)
+    setSouhaiteCode(true)
+  }, [ev?.galleryCode])
 
   // Section ouverte au premier chargement : décidée une seule fois, dès que
   // l'événement est connu, pour ne pas défaire un repli fait à la main.
@@ -440,36 +446,70 @@ export default function EventManage({ params }) {
   // Protéger l'album depuis la feuille de partage. Le code n'a de valeur que
   // s'il voyage avec le lien : on l'ajoute au message dans le même geste,
   // sinon l'organisateur protège un album que personne ne peut plus ouvrir.
-  const LIGNE_CODE = (c) => `\n\nCode d'accès à l'album : ${c}`
-  const sansLigneCode = (t) => t.replace(/\n*Code d'accès à l'album\s*:.*$/s, '').trimEnd()
+  const LIGNE_CODE = (c) => `Code d'accès à l'album : ${c}`
 
-  async function basculerProtection(active) {
-    setProtecting(true)
-    try {
-      if (active) {
-        // Une proposition à quatre chiffres pour ne pas laisser l'organisateur
-        // devant un champ vide — modifiable juste en dessous.
-        const code = ev.galleryCode || String(Math.floor(1000 + Math.random() * 9000))
-        if (!(await patchEvent({ galleryCode: code }))) return
-        setCodeDraft(code)
-        setMessage(`${sansLigneCode(shareText)}${LIGNE_CODE(code)}`)
-      } else {
-        if (!(await patchEvent({ galleryCode: '' }))) return
-        setMessage(sansLigneCode(shareText))
-      }
-    } finally { setProtecting(false) }
+  function sansLigneCode(t) {
+    return (t || '')
+      .split('\n')
+      .filter((l) => !/^Code d'accès à l'album\s*:/.test(l.trim()))
+      .join('\n')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
   }
 
-  // Code choisi à la main : enregistré, et répercuté dans le message pour que
-  // les deux ne se contredisent jamais.
-  async function appliquerCode() {
-    const code = codeDraft.trim()
+  // Le code se glisse avant la phrase de disponibilité : on lit d'abord ce
+  // qu'il faut pour entrer, la date de fin vient après.
+  function avecLigneCode(t, code) {
+    const paragraphes = sansLigneCode(t).split('\n\n')
+    const i = paragraphes.findIndex((p) => /L'album reste disponible/.test(p))
+    if (i === -1) paragraphes.push(LIGNE_CODE(code))
+    else paragraphes.splice(i, 0, LIGNE_CODE(code))
+    return paragraphes.join('\n\n')
+  }
+
+  // Le dernier code choisi, gardé même après avoir retiré la protection :
+  // celui qui la remet veut presque toujours reprendre le même.
+  const CLE_CODE = `ttf_code_${id}`
+  const lireCodeMemo = () => { try { return localStorage.getItem(CLE_CODE) || '' } catch { return '' } }
+  const garderCodeMemo = (c) => { try { localStorage.setItem(CLE_CODE, c) } catch {} }
+
+  async function basculerProtection(active) {
+    setSouhaiteCode(active)
+    if (!active) {
+      setProtecting(true)
+      try {
+        if (await patchEvent({ galleryCode: '' })) setMessage(sansLigneCode(shareText))
+      } finally { setProtecting(false) }
+      return
+    }
+    // On n'invente rien à la place de l'organisateur : soit on reprend le code
+    // qu'il avait déjà choisi, soit on lui laisse le champ libre.
+    const memo = ev.galleryCode || lireCodeMemo()
+    setCodeDraft(memo)
+    if (memo) enregistrerCode(memo)
+  }
+
+  // Enregistrement automatique : un code qu'il faut penser à valider est un
+  // code qu'on croit posé alors qu'il ne l'est pas.
+  const minuteurCode = useRef(null)
+  async function enregistrerCode(valeur) {
+    const code = (valeur || '').trim()
     if (!code || code === ev.galleryCode) return
     setProtecting(true)
     try {
       if (!(await patchEvent({ galleryCode: code }))) return
-      setMessage(`${sansLigneCode(shareText)}${LIGNE_CODE(code)}`)
+      garderCodeMemo(code)
+      setMessage(avecLigneCode(shareText, code))
+      setCodeSauve(true)
+      clearTimeout(minuteurSauve.current)
+      minuteurSauve.current = setTimeout(() => setCodeSauve(false), 1800)
     } finally { setProtecting(false) }
+  }
+  const minuteurSauve = useRef(null)
+  function saisirCode(valeur) {
+    setCodeDraft(valeur)
+    clearTimeout(minuteurCode.current)
+    minuteurCode.current = setTimeout(() => enregistrerCode(valeur), 700)
   }
 
   async function saveGalleryCode(code) {
@@ -524,10 +564,10 @@ export default function EventManage({ params }) {
   const finAlbum = purgeDate(ev.revealAt)
   // Un album protégé dont le message tait le code laisse cent invités devant
   // une porte fermée : le code fait partie du message par défaut.
-  const defaultMessage = (revealed
+  const messageDeBase = revealed
     ? `Les photos de ${ev.name} sont en ligne ! ${ev.visibleCount ?? ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible jusqu'au ${finAlbum ? formatJour(finAlbum) : 'dans six mois'}.`
-    : `Les photos de ${ev.name} sortent le ${formatDate(ev.revealAt)}. Gardez ce lien, elles s'ouvriront toutes seules : ${galleryUrl}`)
-    + (ev.galleryCode ? LIGNE_CODE(ev.galleryCode) : '')
+    : `Les photos de ${ev.name} sortent le ${formatDate(ev.revealAt)}. Gardez ce lien, elles s'ouvriront toutes seules : ${galleryUrl}`
+  const defaultMessage = ev.galleryCode ? avecLigneCode(messageDeBase, ev.galleryCode) : messageDeBase
   const shareText = message || defaultMessage
 
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
@@ -1430,13 +1470,17 @@ export default function EventManage({ params }) {
                 <p className="muted small">
                   Modifiez-le si vous voulez, puis envoyez-le par le canal de votre choix.
                 </p>
-                <textarea className="db-msg" rows={6} value={shareText} onChange={(e) => setMessage(e.target.value)} />
+                {/* Le message se lit d'un coup d'œil : la zone s'ajuste à son
+                    contenu plutôt que de forcer à faire défiler. */}
+                <textarea className="db-msg" rows={3} value={shareText}
+                  ref={(el) => { if (el) { el.style.height = 'auto'; el.style.height = `${el.scrollHeight}px` } }}
+                  onChange={(e) => setMessage(e.target.value)} />
 
                 {/* Le moment de partager est le seul où l'on pense vraiment à
                     qui verra les photos. La protection se décide donc ici, et
                     le code part dans le même message que le lien. */}
                 <label className="wiz-check" style={{ marginTop: 12 }}>
-                  <input type="checkbox" checked={!!ev.galleryCode} disabled={protecting}
+                  <input type="checkbox" checked={souhaiteCode} disabled={protecting}
                     onChange={(e) => basculerProtection(e.target.checked)} />
                   <span>
                     <strong>Protéger l'album par un code.</strong>{' '}
@@ -1446,25 +1490,36 @@ export default function EventManage({ params }) {
                   </span>
                 </label>
 
-                {ev.galleryCode && (
-                  <div className="db-set-edit" style={{ marginTop: 8 }}>
-                    <input type="text" value={codeDraft} maxLength={12} placeholder="Ex : 1234"
-                      onChange={(e) => setCodeDraft(e.target.value)}
-                      onBlur={appliquerCode}
-                      onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); appliquerCode() } }} />
-                    <button className="btn btn-accent" onClick={appliquerCode}
-                      disabled={protecting || !codeDraft.trim() || codeDraft.trim() === ev.galleryCode}>
-                      {protecting ? '…' : 'Changer'}
-                    </button>
-                  </div>
+                {souhaiteCode && (
+                  <>
+                    <input type="text" style={{ marginTop: 8 }} value={codeDraft} maxLength={12}
+                      placeholder="Choisissez votre code" autoFocus autoComplete="off"
+                      onChange={(e) => saisirCode(e.target.value)}
+                      onBlur={() => enregistrerCode(codeDraft)} />
+                    <p className="hint" style={{ marginTop: 6 }}>
+                      {protecting ? 'Enregistrement…'
+                        : codeSauve ? '✓ Code enregistré'
+                          : ev.galleryCode ? `Code actif : ${ev.galleryCode}`
+                            : 'Choisissez un code : il s’enregistre tout seul et s’ajoute au message.'}
+                    </p>
+                  </>
                 )}
 
                 {/* Les trois canaux faisaient doublon : le partage du téléphone
                     les propose déjà tous, et bien d'autres. */}
+                {/* Partager un message qui promet un code inexistant enverrait
+                    tout le monde devant une porte close : on attend qu'il soit
+                    posé. */}
                 <button className="btn btn-dark" style={{ marginTop: 10 }}
+                  disabled={protecting || (souhaiteCode && !ev.galleryCode)}
                   onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'msg')}>
                   {flash === 'msg' ? '✓ Message copié' : 'Partager / copier le message'}
                 </button>
+                {souhaiteCode && !ev.galleryCode && (
+                  <p className="hint" style={{ marginTop: 6 }}>
+                    Entrez d'abord le code, sinon vos invités trouveront porte close.
+                  </p>
+                )}
               </>
             )}
             <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => setSheet(null)}>Fermer</button>
