@@ -1103,7 +1103,7 @@ export default function EventManage({ params }) {
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-        <Section title="Invités à prévenir" badge={String(ev.contacts.length)}
+        <Section title="Invités inscrits" badge={String(ev.contacts.length)}
           hint="Ils recevront l'album automatiquement"
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
           <div className="notice small" style={{ marginBottom: 12 }}>
