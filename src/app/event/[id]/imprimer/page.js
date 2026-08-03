@@ -201,9 +201,14 @@ export default function PrintKit({ params }) {
         <button className="btn btn-accent" style={{ marginTop: 18 }} onClick={() => window.print()}>
           Imprimer →
         </button>
-        <button className="btn btn-ghost" style={{ marginTop: 8 }} onClick={telechargerQR}>
-          Télécharger le QR code (PNG)
-        </button>
+        {/* Le téléchargement ne vaut que pour le format sans habillage : sous
+            « Petits cartons », il proposait un fichier sans rapport avec la
+            page choisie juste au-dessus. */}
+        {format === 'qr' && (
+          <button className="btn btn-ghost" style={{ marginTop: 8 }} onClick={telechargerQR}>
+            Télécharger le QR code (PNG)
+          </button>
+        )}
         <p className="hint" style={{ textAlign: 'center', marginTop: 10 }}>
           Astuce : dans la fenêtre d'impression, choisissez « Enregistrer en PDF »
           pour l'envoyer à un imprimeur.
