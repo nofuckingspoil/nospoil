@@ -1155,13 +1155,15 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 @keyframes dbPulse { 0%,100% { opacity: 1; transform: scale(1) } 50% { opacity: .45; transform: scale(.8) } }
 
 .db-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 18px; }
-.db-stats > div, .db-stats > button {
+.db-stats > div, .db-stats > a {
   background: rgba(255,255,255,.09); border: none; border-radius: 15px;
   padding: 13px 10px; text-align: center; font-family: var(--font-body); color: inherit;
 }
-.db-stats > button { cursor: pointer; transition: background .15s; }
-.db-stats > button:hover:not(:disabled) { background: rgba(255,255,255,.16); }
-.db-stats > button:disabled { cursor: default; }
+/* Le seul compteur qui mène quelque part se distingue franchement : un survol
+   ne suffit pas sur fond sombre, et n'existe pas sur téléphone. */
+.db-stats-go { text-decoration: none; background: rgba(255,255,255,.16) !important; }
+.db-stats-go:hover { background: rgba(255,255,255,.24) !important; }
+.db-stats-go span { color: #fff !important; }
 .db-stats b { display: block; font-family: var(--font-display); font-weight: 800; font-size: 24px; letter-spacing: -.04em; }
 .db-stats span { display: block; margin-top: 3px; font-size: 10.5px; line-height: 1.3; color: rgba(255,255,255,.62); }
 

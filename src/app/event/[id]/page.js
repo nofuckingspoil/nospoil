@@ -498,17 +498,16 @@ export default function EventManage({ params }) {
             <span className="db-live"><span className="db-dot" /> en direct</span>
             <span className="db-eyebrow">depuis {formatHour(ev.startsAt)}</span>
           </div>
-          {/* Les deux premiers compteurs mènent à la section qui les détaille :
-              on les lit, on veut voir ce qu'il y a derrière. Le troisième ne
-              renvoie nulle part, il reste donc inerte. */}
+          {/* Seul « photos prises » mène quelque part, et directement à l'album :
+              taper ce nombre, c'est vouloir les voir. « Invités connectés »
+              compte tout le monde, là où la section n'en liste qu'une partie —
+              le lien aurait déçu. La flèche signale ce qui se touche : sur un
+              fond sombre, un survol ne se voit pas, et sur téléphone il n'existe pas. */}
           <div className="db-stats">
-            <button type="button" onClick={() => allerA('contacts', 'sec-invites')}
-              disabled={!ev.contacts?.length}>
-              <b>{ev.guestCount}</b><span>invités connectés</span>
-            </button>
-            <button type="button" onClick={() => allerA('album', 'sec-album')}>
-              <b>{ev.photoCount}</b><span>photos prises</span>
-            </button>
+            <div><b>{ev.guestCount}</b><span>invités connectés</span></div>
+            <Link href={`/g/${id}`} className="db-stats-go">
+              <b>{ev.photoCount}</b><span>photos prises <span aria-hidden="true">→</span></span>
+            </Link>
             <div><b>{shotsLeft}</b><span>déclics restants</span></div>
           </div>
 
