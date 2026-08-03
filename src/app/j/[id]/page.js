@@ -88,6 +88,9 @@ export default function GuestCamera({ params }) {
       .then((d) => {
         if (d.error) { setError(d.error); setPhase('error'); return }
         setMeta(d)
+        // Album ouvert : la pellicule est finie. Continuer à photographier
+        // ajouterait des images à un album que tout le monde a déjà vu.
+        if (d.revealed) { setPhase('revele'); return }
         const saved = getGuest(id)
         if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
         else {
@@ -429,6 +432,29 @@ export default function GuestCamera({ params }) {
   if (phase === 'loading') return <main className="center-screen"><p className="muted">Chargement…</p></main>
   if (phase === 'error') return <main className="screen screen-cream center"><div className="card">{error || 'Événement introuvable.'}</div></main>
 
+  if (phase === 'revele') return (
+    <main className="screen screen-cream">
+      {meta?.isOwner && (
+        <nav className="db-modes" aria-label="Mode">
+          <Link href={`/event/${id}`}>Organisation</Link>
+          <span className="on">Mon appareil 📷</span>
+        </nav>
+      )}
+      <div className="spacer" />
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ fontSize: 44, marginBottom: 10 }}>🎞️</div>
+        <h3 className="h3" style={{ marginBottom: 8 }}>Les photos sont sorties</h3>
+        <p className="lead small" style={{ marginBottom: 22 }}>
+          La pellicule de {coupleLabel} est développée. Il n'y a plus de photo à prendre —
+          mais tout est là.
+        </p>
+      </div>
+      <a className="btn btn-accent" href={`/g/${id}`}>Voir l'album →</a>
+      <div className="spacer" />
+      <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
+    </main>
+  )
+
   if (phase === 'cover') return (
     <main className="screen screen-cream">
       {/* Même bascule que sur le tableau de bord, inversée : l'organisateur qui
@@ -525,6 +551,11 @@ export default function GuestCamera({ params }) {
 
   return (
     <main className="screen screen-dark force-portrait">
+      {/* L'organisateur qui photographie doit pouvoir repartir d'ici même :
+          la barre du haut est pleine, ce rappel se pose donc en dessous. */}
+      {meta?.isOwner && (
+        <Link href={`/event/${id}`} className="cam-retour">← Tableau de bord</Link>
+      )}
       <div className="cam-top">
         <button className="cam-iconbtn" onClick={() => setPhase('cover')} aria-label="Retour">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
