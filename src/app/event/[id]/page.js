@@ -97,7 +97,6 @@ export default function EventManage({ params }) {
   const [joinUrl, setJoinUrl] = useState('')
   const [galleryUrl, setGalleryUrl] = useState('')
   const [ownerUrl, setOwnerUrl] = useState('')
-  const [adminLink, setAdminLink] = useState('')
   const [qrUrl, setQrUrl] = useState('')
   const [sheet, setSheet] = useState(null) // 'qr' | 'message' | null
   // Une seule section ouverte à la fois. « Réglages » l'est d'emblée : c'est là
@@ -108,7 +107,6 @@ export default function EventManage({ params }) {
   const [flash, setFlash] = useState('')
   const ping = (k) => { setFlash(k); setTimeout(() => setFlash(''), 1800) }
 
-  const [adminLinkCopied, setAdminLinkCopied] = useState(false)
   const [confirmDel, setConfirmDel] = useState(false)
   const [deleting, setDeleting] = useState(false)
   const [adminName, setAdminName] = useState('')
@@ -182,7 +180,6 @@ export default function EventManage({ params }) {
     setJoinUrl(`${origin}/j/${id}`)
     setGalleryUrl(`${origin}/g/${id}`)
     setOwnerUrl(`${origin}/event/${id}?k=${getOwnerToken(id)}`)
-    setAdminLink(`${origin}/event/${id}`)
     reload()
   }, [id, reload])
 
@@ -952,6 +949,31 @@ export default function EventManage({ params }) {
           </div>
         )}
 
+        {/* Votre accès : le rappel tient en une ligne, la connexion par mail et
+            le mail d'achat faisant déjà le travail. */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">Votre accès</span>
+            <span className="db-set-val">
+              {ev.ownerEmail
+                ? <>Rattaché à {ev.ownerEmail} — retrouvez ce tableau de bord depuis la page de connexion</>
+                : <>Aucune adresse rattachée : notez le lien de cette page pour y revenir</>}
+            </span>
+          </div>
+          {ev.ownerEmail && <a className="db-set-act" href="/connexion">Connexion</a>}
+        </div>
+
+        {/* L'agenda contient le lien organisateur : sa place est auprès des dates. */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">Rappel dans votre agenda</span>
+            <span className="db-set-val">L'événement et la révélation, avec votre lien organisateur</span>
+          </div>
+          <button className="db-set-act" onClick={addToCalendar}>
+            {flash === 'cal' ? '✓ Ajouté' : 'Ajouter'}
+          </button>
+        </div>
+
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
@@ -1019,80 +1041,36 @@ export default function EventManage({ params }) {
         )}
       </Section>
 
-      <Section title="Votre accès et vos admins" hint="Retrouver le tableau de bord, partager la gestion"
+      <Section title="Co-organisateurs" hint="Partager la gestion de l'événement"
         open={openSec === 'acces'} onToggle={() => toggleSec('acces')}>
-        <p className="muted small" style={{ marginBottom: 12 }}>
-          C'est <strong>votre</strong> tableau de bord privé. Gardez-le pour vous — ne le donnez pas à vos invités.
+        <p className="muted small" style={{ marginBottom: 14 }}>
+          Invitez qui vous voulez à gérer cet événement avec vous. La personne recevra une
+          invitation et se connectera avec son adresse mail, sans code à retenir.
+          Elle pourra tout faire, <strong>sauf supprimer l'événement</strong>.
         </p>
-        {ev.ownerEmail && (
-          <div className="notice" style={{ marginBottom: 14 }}>
-            ✉️ Rattaché à <strong>{ev.ownerEmail}</strong>. Même si vous perdez ce lien, vous pourrez revenir
-            depuis <a href="/connexion" style={{ color: 'var(--accent-deep)' }}>la page de connexion</a>.
+
+        {Array.isArray(ev.admins) && ev.admins.length > 0 && (
+          <div className="db-coorg">
+            {ev.admins.map((a) => (
+              <div key={a.id} className="db-coorg-row">
+                <span className="db-coorg-id">
+                  <span className="nn">{a.name || a.email}</span>
+                  {a.name && <span className="ee">{a.email}</span>}
+                </span>
+                <button onClick={() => removeAdmin(a.id)} className="db-coorg-out">Retirer</button>
+              </div>
+            ))}
           </div>
         )}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <button className="btn btn-accent" onClick={() => shareOrCopy({
-            title: `Accès organisateur — ${ev.name}`,
-            text: `Mon tableau de bord ${BRAND.name} (à garder précieusement) :`,
-            url: ownerUrl,
-          }, 'owner')}>
-            {flash === 'owner' ? '✓ Copié' : '💾 Enregistrer mon lien (Notes, mail, WhatsApp…)'}
+
+        <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
+          <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
+          {adminMsg && <div className="err">{adminMsg}</div>}
+          <button className="btn btn-dark" type="submit" disabled={addingAdmin}>
+            {addingAdmin ? 'Envoi…' : '+ Inviter ce co-organisateur'}
           </button>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(ownerUrl, 'owner2')}>
-              {flash === 'owner2' ? '✓ Copié' : 'Copier le lien'}
-            </button>
-            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={addToCalendar}>
-              {flash === 'cal' ? '✓ Ajouté' : '🗓️ Calendrier'}
-            </button>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 20, borderTop: '1px solid var(--line)', paddingTop: 16 }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>👥 Admins de l'événement</div>
-          <p className="muted small" style={{ marginBottom: 12 }}>
-            Un mail + un code que vous choisissez. Transmettez-les vous-même : la personne pourra
-            ouvrir ce tableau de bord depuis n'importe quel téléphone.
-          </p>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
-            <div className="mono small" style={{ flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', background: 'var(--screen)', borderRadius: 10, padding: '11px 12px', color: 'var(--text2)', alignSelf: 'center' }}>
-              {adminLink}
-            </div>
-            <button className="btn btn-dark" style={{ flex: '0 0 auto' }}
-              onClick={() => { navigator.clipboard?.writeText(adminLink); setAdminLinkCopied(true); setTimeout(() => setAdminLinkCopied(false), 1800) }}>
-              {adminLinkCopied ? '✓' : 'Copier'}
-            </button>
-          </div>
-
-          {Array.isArray(ev.admins) && ev.admins.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14 }}>
-              {ev.admins.map((a) => (
-                <div key={a.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, background: 'var(--screen)' }}>
-                  <div style={{ minWidth: 0 }}>
-                    <div style={{ fontWeight: 600 }}>{a.name || a.email}</div>
-                    <div className="mono small" style={{ color: 'var(--text2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {a.email} · se connecte par mail
-                    </div>
-                  </div>
-                  <button onClick={() => removeAdmin(a.id)} className="mono small" style={{ background: 'none', border: 'none', color: '#b23b2e', cursor: 'pointer', textDecoration: 'underline', flex: '0 0 auto' }}>
-                    Retirer
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-
-          <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
-            <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
-            {adminMsg && <div className="err">{adminMsg}</div>}
-            <button className="btn btn-dark" type="submit" disabled={addingAdmin}>{addingAdmin ? 'Envoi…' : '+ Inviter ce co-organisateur'}</button>
-            <p className="hint">
-              Il recevra une invitation et se connectera avec cette adresse, sans code à retenir.
-              Il pourra tout gérer, sauf supprimer l'événement.
-            </p>
-          </form>
-        </div>
+        </form>
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
