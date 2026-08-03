@@ -707,7 +707,7 @@ export default function EventManage({ params }) {
             lui-même cliquable le faisait lire comme un intitulé de rubrique du
             tableau de bord, et non comme le titre vu par les invités. */}
         <div className="db-ident">
-          <span className="db-ident-eyebrow">Aperçu · ce que voient vos invités</span>
+          <span className="db-ident-eyebrow">Aperçu · ce que voient les invités</span>
 
           <div className="db-ident-ecran">
             <div
