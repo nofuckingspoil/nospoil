@@ -206,7 +206,7 @@ export default function PrintKit({ params }) {
             page choisie juste au-dessus. */}
         {format === 'qr' && (
           <button className="btn btn-ghost" style={{ marginTop: 8 }} onClick={telechargerQR}>
-            Télécharger le QR code (PNG)
+            Télécharger le QR code (.png)
           </button>
         )}
         <p className="hint" style={{ textAlign: 'center', marginTop: 10 }}>

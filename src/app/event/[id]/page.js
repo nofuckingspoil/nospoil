@@ -719,7 +719,7 @@ export default function EventManage({ params }) {
           {/* Dans la boîte du QR, sous lui : c'est une commodité attachée à ce
               code, pas une des trois façons d'inviter ses convives. */}
           <button className="qr-dl" onClick={telechargerQR}>
-            {flash === 'qr' ? '✓ Téléchargé' : 'Télécharger le QR (PNG)'}
+            {flash === 'qr' ? '✓ Téléchargé' : 'Télécharger le QR code (.png)'}
           </button>
         </div>
 
