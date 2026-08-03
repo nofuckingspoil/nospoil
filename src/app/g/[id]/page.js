@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useEffect, useState } from 'react'
+import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken } from '../../../lib/device'
@@ -241,6 +242,16 @@ export default function Gallery({ params }) {
 
   return (
     <main className="screen screen-cream wide">
+      {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
+          la page des invités, qui n'ont rien à y faire. Collé en haut, la page
+          étant longue par nature. */}
+      {data.isOwner && (
+        <div className="gal-top">
+          <Link href={`/event/${id}`} className="gal-back">
+            <span aria-hidden="true">←</span> Tableau de bord
+          </Link>
+        </div>
+      )}
       {data.ownerPreview && (
         <div className="notice" style={{ marginBottom: 14, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
           👁️ <strong>Aperçu organisateur</strong> — vous voyez les photos en avant-première. Vos invités ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt)}.
