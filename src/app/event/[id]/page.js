@@ -1040,12 +1040,12 @@ export default function EventManage({ params }) {
               ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
               : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
           </p>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
+          <div className="db-alb-actions">
+            <button className="btn btn-ghost" onClick={() => copy(galleryUrl, 'gal')}>
               {flash === 'gal' ? '✓ Lien copié' : 'Copier le lien'}
             </button>
-            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
-              ✉️ Message tout prêt
+            <button className="btn btn-ghost" onClick={() => setSheet('message')}>
+              ✉️ Message prêt
             </button>
           </div>
         </div>
@@ -1063,22 +1063,21 @@ export default function EventManage({ params }) {
                   qu'il circule au-delà de vos invités — transféré, ou posté dans un groupe.</>}
           </p>
           {ev.galleryCode ? (
-            <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
-              {savingGallery ? '…' : 'Retirer le code'}
-            </button>
+            <div className="db-alb-actions">
+              <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
+                {savingGallery ? '…' : 'Retirer le code'}
+              </button>
+            </div>
           ) : (
-            <>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <input type="text" placeholder="Ex : 1234" value={galleryCodeInput}
-                  onChange={(e) => setGalleryCodeInput(e.target.value)}
-                  style={{ flex: 1, minWidth: 0, textAlign: 'center', letterSpacing: '.08em' }} />
-                <button className="btn btn-dark" style={{ flex: '0 0 auto', width: 'auto', padding: '14px 20px', fontSize: 15 }}
-                  onClick={() => saveGalleryCode(galleryCodeInput)}
-                  disabled={savingGallery || !galleryCodeInput.trim()}>
-                  {savingGallery ? '…' : 'Activer'}
-                </button>
-              </div>
-            </>
+            <div className="db-set-edit" style={{ paddingBottom: 0 }}>
+              <input type="text" placeholder="Ex : 1234" value={galleryCodeInput}
+                onChange={(e) => setGalleryCodeInput(e.target.value)}
+                style={{ textAlign: 'center', letterSpacing: '.08em' }} />
+              <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)}
+                disabled={savingGallery || !galleryCodeInput.trim()}>
+                {savingGallery ? '…' : 'Activer'}
+              </button>
+            </div>
           )}
           {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
         </div>

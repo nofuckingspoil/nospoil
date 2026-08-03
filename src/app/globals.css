@@ -1256,9 +1256,13 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-head-plan.over { color: var(--accent-deep); font-weight: 700; }
 
 /* Section de l'album : des blocs séparés plutôt qu'une suite d'éléments */
-.db-alb-frein { margin-top: 14px; }
 .db-alb-bloc { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
 .db-alb-t { font-weight: 700; font-size: 14.5px; color: var(--ink); margin-bottom: 6px; }
+/* Toutes les actions secondaires de la section au même gabarit : elles se
+   partageaient la largeur au cas par cas, avec trois tailles différentes. */
+.db-alb-actions { display: flex; gap: 8px; }
+.db-alb-actions .btn { flex: 1 1 0; min-width: 0; padding: 14px 12px; font-size: 14.5px; }
+.db-alb-frein { margin: 14px 0 2px; }
 
 /* Liste des co-organisateurs */
 .db-coorg { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
