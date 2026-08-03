@@ -1241,6 +1241,20 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-ident-poubelle:hover { background: #b23b2e; color: #fff; }
 .db-ident-poubelle:disabled { opacity: .5; cursor: default; }
 
+/* Confirmation posée sur la photo concernée */
+.db-ident-confirm {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px; padding: 16px;
+  text-align: center; background: rgba(20,22,31,.82); backdrop-filter: blur(3px);
+}
+.db-ident-confirm p {
+  font-family: var(--font-display); font-weight: 800; font-size: 17px; color: #fff;
+}
+.db-ident-confirm span { font-size: 12.5px; line-height: 1.4; color: rgba(255,255,255,.72); }
+.db-ident-confirm-duo { display: flex; gap: 8px; margin-top: 12px; }
+.db-ident-confirm-duo .btn { width: auto; padding: 11px 20px; font-size: 14px; }
+.db-ident-confirm-duo .btn-ghost { background: rgba(255,255,255,.14); color: #fff; border-color: rgba(255,255,255,.3); }
+
 /* Formule dépassée — l'album attend une mise à niveau */
 .db-quota {
   margin-top: 18px; padding: 18px; border-radius: 20px;

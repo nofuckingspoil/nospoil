@@ -118,6 +118,7 @@ export default function EventManage({ params }) {
   // Recadrage : `pos` est la position en cours d'ajustement, `null` tant qu'on
   // n'y a pas touché — on affiche alors celle enregistrée.
   const [recadrage, setRecadrage] = useState(false)
+  const [confirmCover, setConfirmCover] = useState(false)
   const [pos, setPos] = useState(null)
   const glisseRef = useRef(null)
   const [fait, setFait] = useState({})
@@ -254,8 +255,9 @@ export default function EventManage({ params }) {
       const d = await r.json().catch(() => ({}))
       if (d.error) throw new Error(d.error)
       await reload()
-      // On enchaîne sur le cadrage : c'est le moment où l'on regarde sa photo,
-      // et où l'on voit si elle tombe juste dans le cadre.
+      // Le cadrage n'existe qu'ici, dans la foulée de l'envoi : c'est le moment
+      // où l'on regarde sa photo et où l'on voit si elle tombe juste. En faire
+      // une option permanente ajoutait un bouton pour un geste rarement repris.
       setPos('50% 50%')
       setRecadrage(true)
     } catch (err) {
@@ -277,6 +279,7 @@ export default function EventManage({ params }) {
       if (d.error) throw new Error(d.error)
       setPos(null)
       setRecadrage(false)
+      setConfirmCover(false)
       await reload()
     } catch (err) {
       setSettingMsg(err.message || 'Suppression impossible.')
@@ -726,10 +729,24 @@ export default function EventManage({ params }) {
                     style={{ objectPosition: posAffichee }} />
                 : <span className="db-ident-tag">ÉVÉNEMENT PRIVÉ</span>}
               {recadrage && <span className="db-ident-guide">Faites glisser pour recadrer</span>}
+              {/* La question se pose sur la photo qu'elle concerne, plutôt que
+                  dans une fenêtre qui la masquerait au moment de décider. */}
+              {confirmCover && (
+                <div className="db-ident-confirm">
+                  <p>Retirer cette photo ?</p>
+                  <span>Vos invités retrouveront le dégradé d'origine.</span>
+                  <div className="db-ident-confirm-duo">
+                    <button className="btn btn-ghost" onClick={() => setConfirmCover(false)}
+                      disabled={coverBusy}>Annuler</button>
+                    <button className="btn btn-danger" onClick={supprimerCover}
+                      disabled={coverBusy}>{coverBusy ? 'Retrait…' : 'Retirer'}</button>
+                  </div>
+                </div>
+              )}
               {/* Retrait au même endroit que ce qu'il retire. Masqué pendant le
                   recadrage : le doigt y traîne, la corbeille serait un piège. */}
-              {ev.coverUrl && !recadrage && (
-                <button className="db-ident-poubelle" onClick={supprimerCover}
+              {ev.coverUrl && !recadrage && !confirmCover && (
+                <button className="db-ident-poubelle" onClick={() => setConfirmCover(true)}
                   disabled={coverBusy} aria-label="Retirer la photo" title="Retirer la photo">
                   <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M4 7h16M10 4h4M9 7v12m6-12v12M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13"
@@ -773,11 +790,6 @@ export default function EventManage({ params }) {
               <button className="btn btn-ghost" onClick={() => {
                 setEditing('name'); setDraftName(ev.name || '')
               }}>✎ Modifier le nom</button>
-              {ev.coverUrl && (
-                <button className="btn btn-ghost" onClick={() => {
-                  setPos(ev.coverPos || '50% 50%'); setRecadrage(true)
-                }}>⤢ Recadrer</button>
-              )}
             </div>
           )}
         </div>
