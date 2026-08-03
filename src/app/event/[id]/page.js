@@ -449,7 +449,7 @@ export default function EventManage({ params }) {
             <span className="db-eyebrow">à préparer</span>
             <span className="db-pill">{daysUntil(ev.startsAt || ev.revealAt)}</span>
           </div>
-          <h2 className="db-hero-title">Imprimez vos cartons</h2>
+          <h2 className="db-hero-title">Imprimez votre QR code</h2>
           <p className="db-hero-sub">
             Vos invités scannent sur place le jour J. Rien à leur envoyer avant, rien à installer.
           </p>
