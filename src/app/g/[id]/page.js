@@ -4,7 +4,7 @@ import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
-import { getOwnerToken } from '../../../lib/device'
+import { getOwnerToken, getGuest } from '../../../lib/device'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -152,6 +152,8 @@ export default function Gallery({ params }) {
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
   const [chercheQui, setChercheQui] = useState('')
+  // Qui regarde : beaucoup s'inscrivent sous un surnom et ne le retrouvent pas.
+  const [moiId, setMoiId] = useState(null)
   const [tousLesAuteurs, setTousLesAuteurs] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
@@ -199,6 +201,8 @@ export default function Gallery({ params }) {
 
   const [codeInput, setCodeInput] = useState('')
   const [codeErr, setCodeErr] = useState('')
+
+  useEffect(() => { setMoiId(getGuest(id)?.guestId || null) }, [id])
 
   function fetchGallery(extraCode) {
     const headers = { 'x-owner-token': getOwnerToken(id) }
@@ -282,7 +286,7 @@ export default function Gallery({ params }) {
   // Les plus prolifiques d'abord : c'est presque toujours eux qu'on cherche.
   const auteurs = data.guests
     .map((g) => ({ ...g, n: data.photos.filter((p) => p.guestId === g.id).length }))
-    .sort((a, b) => b.n - a.n)
+    .sort((a, b) => (b.id === moiId) - (a.id === moiId) || b.n - a.n)
   const sansAccent = (v) => (v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   const auteursMontres = !tousLesAuteurs
     ? auteurs.slice(0, SEUIL_AUTEURS)
@@ -338,7 +342,7 @@ export default function Gallery({ params }) {
               </button>
               {auteursMontres.map((g) => (
                 <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>
-                  {g.name} · {g.n}
+                  {g.name}{g.id === moiId ? ' (vous)' : ''} · {g.n}
                 </button>
               ))}
             </div>
