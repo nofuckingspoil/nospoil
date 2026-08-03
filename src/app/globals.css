@@ -1186,31 +1186,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 }
 .db-dev a.on { background: var(--accent); color: #fff; font-weight: 700; }
 
-/* Fil des trois moments — repère fixe au-dessus d'une carte qui, elle, change */
-.db-fil { display: flex; list-style: none; margin: 18px 0 0; padding: 0; }
-.db-fil li { flex: 1; position: relative; padding-top: 20px; text-align: center; }
-.db-fil li::before {
-  content: ''; position: absolute; top: 5px; left: 0; right: 0; height: 2px;
-  background: var(--line);
-}
-.db-fil li:first-child::before { left: 50%; }
-.db-fil li:last-child::before { right: 50%; }
-.db-fil li.done::before, .db-fil li.now::before { background: var(--accent); }
-
-.db-fil-pt {
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 1;
-  width: 12px; height: 12px; border-radius: 50%; background: var(--line);
-}
-.db-fil li.done .db-fil-pt { background: var(--accent); }
-.db-fil li.now .db-fil-pt { background: var(--accent); box-shadow: 0 0 0 4px rgba(236,91,51,.2); }
-
-.db-fil-t { display: block; font-weight: 700; font-size: 13px; color: var(--text3); }
-.db-fil li.now .db-fil-t { color: var(--ink); }
-.db-fil-s {
-  display: block; margin-top: 2px; font-family: var(--font-mono);
-  font-size: 10px; letter-spacing: .02em; color: var(--text4); line-height: 1.3;
-}
-
 /* L'identité de l'événement, telle que les invités la voient.
    On touche la photo ou le nom pour les changer : manipulation directe
    plutôt que formulaire. */

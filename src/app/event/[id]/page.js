@@ -74,7 +74,7 @@ const DEV = process.env.NODE_ENV !== 'production'
 // d'affichage, propre à l'appareil : rien de critique, donc pas de colonne en base.
 const FAIT_KEY = (id) => `ttf_fait_${id}`
 
-// Les trois moments d'un événement, dans l'ordre. Sert de fil au tableau de bord.
+// Les trois moments d'un événement, dans l'ordre. Sert à la barre d'aperçu locale.
 const MOMENTS = [
   { key: AVANT, title: 'Avant', sub: () => 'Préparatifs' },
   { key: JOUR_J, title: 'Le jour J', sub: (ev) => (ev.startsAt ? formatShort(ev.startsAt) : 'La fête') },
@@ -113,9 +113,6 @@ export default function EventManage({ params }) {
   const [draftDate, setDraftDate] = useState('')
   const [draftShots, setDraftShots] = useState(5)
   const [settingMsg, setSettingMsg] = useState('')
-  // Le fil des trois moments s'affiche par défaut. `?fil=0` l'enlève, le temps
-  // de comparer les deux versions sur le même écran.
-  const [fil, setFil] = useState(true)
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
   const [fait, setFait] = useState({})
@@ -163,7 +160,6 @@ export default function EventManage({ params }) {
         .catch(() => setUpgradeMsg('La mise à niveau n’a pas pu être appliquée. Réessayez.'))
         .finally(reload)
     }
-    if (sp.get('fil') === '0') setFil(false)
     const m = sp.get('moment')
     if (DEV && MOMENTS.some((x) => x.key === m)) setForceMoment(m)
     try { setFait(JSON.parse(localStorage.getItem(FAIT_KEY(id)) || '{}')) } catch {}
@@ -585,25 +581,6 @@ export default function EventManage({ params }) {
         <span className="on">Organisation</span>
         <Link href={`/j/${id}`}>Mon appareil 📷</Link>
       </nav>
-
-      {/* Fil des trois moments. La grande carte ci-dessous change avec le temps ;
-          sans repère, ce changement se lit comme une application qui bouge toute
-          seule. Ici il devient attendu, et on sait où l'on en est. */}
-      {fil && (
-        <ol className="db-fil" aria-label="Où vous en êtes">
-          {MOMENTS.map((m, i) => {
-            const rang = MOMENTS.findIndex((x) => x.key === phase)
-            const etat = i < rang ? 'done' : i === rang ? 'now' : ''
-            return (
-              <li key={m.key} className={etat}>
-                <span className="db-fil-pt" aria-hidden="true" />
-                <span className="db-fil-t">{m.title}</span>
-                <span className="db-fil-s">{m.sub(ev)}</span>
-              </li>
-            )
-          })}
-        </ol>
-      )}
 
       {/* Formule dépassée : prévenu dès le dépassement, jamais à la dernière
           minute. Les invités, eux, n'ont jamais été bloqués. */}
