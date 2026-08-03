@@ -1,6 +1,7 @@
 'use client'
 
 import { use, useEffect, useRef, useState } from 'react'
+import Link from 'next/link'
 import QRCode from 'qrcode'
 import { getDeviceToken, saveGuest, getGuest, getOwnerToken } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
@@ -430,6 +431,14 @@ export default function GuestCamera({ params }) {
 
   if (phase === 'cover') return (
     <main className="screen screen-cream">
+      {/* Même bascule que sur le tableau de bord, inversée : l'organisateur qui
+          vient prendre ses photos doit pouvoir repartir aussi simplement. */}
+      {meta?.isOwner && (
+        <nav className="db-modes" aria-label="Mode">
+          <Link href={`/event/${id}`}>Organisation</Link>
+          <span className="on">Mon appareil 📷</span>
+        </nav>
+      )}
       <div className="cover" style={meta?.coverUrl ? undefined : { background: COVER_GRAD }}>
         {meta?.coverUrl ? (
           <img src={meta.coverUrl} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: meta.coverPos || '50% 50%' }} />
@@ -454,6 +463,14 @@ export default function GuestCamera({ params }) {
 
   if (phase === 'name') return (
     <main className="screen screen-cream">
+      {/* Même bascule que sur le tableau de bord, inversée : l'organisateur qui
+          vient prendre ses photos doit pouvoir repartir aussi simplement. */}
+      {meta?.isOwner && (
+        <nav className="db-modes" aria-label="Mode">
+          <Link href={`/event/${id}`}>Organisation</Link>
+          <span className="on">Mon appareil 📷</span>
+        </nav>
+      )}
       <button onClick={() => setPhase('cover')} style={{ alignSelf: 'flex-start', background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6, color: 'var(--text3)', fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', marginBottom: 30, padding: 0 }}>‹ retour</button>
       <div className="eyebrow" style={{ marginBottom: 12 }}>Étape 1 / 1</div>
       <h3 className="h3" style={{ marginBottom: 10 }}>Comment vous<br />appelez-vous ?</h3>
