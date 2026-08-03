@@ -238,6 +238,7 @@ export default function Gallery({ params }) {
   const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
+  const nomFiltre = data.guests.find((g) => g.id === filter)?.name || 'cette personne'
   const hiddenCount = data.isOwner ? data.photos.filter((p) => p.hidden).length : 0
   const ovBtn = {
     width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer',
@@ -276,13 +277,36 @@ export default function Gallery({ params }) {
           </button>
         </div>
         <h3 className="h3" style={{ margin: '2px 0 12px' }}>Les souvenirs de {data.hostNames || data.name}</h3>
+
+        {/* Qui a pris quoi */}
         {data.guests.length > 1 && (
-          <div className="chips">
-            <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Tous · {data.photos.length}</button>
-            {data.guests.map((g) => {
-              const n = data.photos.filter((p) => p.guestId === g.id).length
-              return <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>{g.name} · {n}</button>
-            })}
+          <>
+            <div className="gal-lbl">Photos de</div>
+            <div className="chips">
+              <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Tout le monde · {data.photos.length}</button>
+              {data.guests.map((g) => {
+                const n = data.photos.filter((p) => p.guestId === g.id).length
+                return <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>{g.name} · {n}</button>
+              })}
+            </div>
+          </>
+        )}
+
+        {/* Emporter : à côté des filtres, dont il dépend, et non à l'autre bout
+            de la page. Le libellé nomme ce qu'il va réellement télécharger. */}
+        {photos.length > 0 && (
+          <div className="gal-actions">
+            <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
+              {selecting ? 'Annuler' : 'Choisir des photos'}
+            </button>
+            {!selecting && (
+              <button className="btn btn-dark" disabled={!!zip} onClick={() => downloadAll(photos)}>
+                {zip ? `Préparation… ${zip.done}/${zip.total}`
+                  : filter === 'all'
+                    ? `Tout télécharger (${photos.length})`
+                    : `Télécharger les ${photos.length} de ${nomFiltre}`}
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -340,38 +364,21 @@ export default function Gallery({ params }) {
         </div>
       )}
 
-      {photos.length > 0 && (
-        <div className="gal-dl">
-          <div className="gal-dl-row">
-            <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
-              {selecting ? 'Annuler la sélection' : 'Choisir des photos'}
+      {selecting && (
+        <div className="gal-bar">
+          <div className="gal-bar-in">
+            <button className="gal-bar-tout" onClick={() =>
+              setSelected(selected.size === photos.length ? new Set() : new Set(photos.map((p) => p.id)))}>
+              {selected.size === photos.length ? 'Tout décocher' : 'Tout cocher'}
             </button>
-            {selecting && (
-              <button className="btn btn-ghost" onClick={() =>
-                setSelected(selected.size === photos.length ? new Set() : new Set(photos.map((p) => p.id)))}>
-                {selected.size === photos.length ? 'Tout décocher' : 'Tout cocher'}
-              </button>
-            )}
+            <span className="gal-bar-n">
+              {selected.size} photo{selected.size > 1 ? 's' : ''}
+            </span>
+            <button className="btn btn-accent gal-bar-dl" disabled={!!zip || selected.size === 0}
+              onClick={() => downloadAll(aTelecharger)}>
+              {zip ? `${zip.done}/${zip.total}` : 'Télécharger'}
+            </button>
           </div>
-
-          {/* On télécharge ce qui est réellement visé : le filtre par personne
-              était ignoré, et l'on repartait avec l'album entier. */}
-          <button className="btn btn-dark" style={{ marginTop: 10 }}
-            disabled={!!zip || (selecting && selected.size === 0)}
-            onClick={() => downloadAll(aTelecharger)}>
-            {zip
-              ? `Préparation… ${zip.done}/${zip.total}`
-              : (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                  {selecting
-                    ? `Télécharger la sélection (${selected.size})`
-                    : filter === 'all'
-                      ? `Tout télécharger (${photos.length})`
-                      : `Télécharger ces ${photos.length} photos`}
-                </>
-              )}
-          </button>
         </div>
       )}
 

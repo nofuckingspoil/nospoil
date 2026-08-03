@@ -875,10 +875,30 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .pk-preview .pk-page { width: 100%; max-width: 420px; aspect-ratio: 210 / 297; }
 .pk-print { display: none; }
 
-/* Choix des photos à emporter */
-.gal-dl { margin-top: 20px; }
-.gal-dl-row { display: flex; gap: 8px; }
-.gal-dl-row .btn { flex: 1 1 0; min-width: 0; padding: 13px 12px; font-size: 14.5px; }
+/* Filtres et téléchargement, réunis en tête : le bouton dépend du filtre, il
+   n'avait rien à faire à l'autre bout de la page. */
+.gal-lbl {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
+}
+.gal-actions { display: flex; gap: 8px; margin-top: 14px; }
+.gal-actions .btn { flex: 1 1 0; min-width: 0; width: auto; padding: 13px 12px; font-size: 14px; }
+
+/* Barre de sélection : elle suit le doigt, plutôt que d'obliger à remonter et
+   redescendre entre les photos qu'on coche et le bouton qui les emporte. */
+.gal-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: rgba(20,22,31,.94); backdrop-filter: blur(8px);
+  padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+.gal-bar-in { display: flex; align-items: center; gap: 12px; max-width: 980px; margin: 0 auto; }
+.gal-bar-tout {
+  flex: none; background: none; border: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.75);
+  text-decoration: underline;
+}
+.gal-bar-n { flex: 1; text-align: center; font-weight: 700; font-size: 14px; color: #fff; }
+.gal-bar-dl { flex: none; width: auto; padding: 12px 22px; font-size: 14.5px; }
 .gal-coche {
   position: absolute; top: 8px; left: 8px; width: 26px; height: 26px;
   display: flex; align-items: center; justify-content: center;
