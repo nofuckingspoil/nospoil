@@ -881,11 +881,12 @@ export default function EventManage({ params }) {
             <div className="db-shots-bonus">
               <label className="wiz-check">
                 <input type="checkbox" checked={draftBonus > 0}
-                  onChange={(e) => setDraftBonus(e.target.checked ? 5 : 0)} />
+                  onChange={(e) => setDraftBonus(e.target.checked ? 2 : 0)} />
                 <span>
                   <strong>Surprise</strong><br />
-                  Un invité à court de photos pourra en obtenir quelques-unes de plus,
-                  une seule fois (jusqu'à 5 max).
+                  {draftBonus > 0
+                    ? "Un invité à court de photos pourra en obtenir quelques-unes de plus, une seule fois (jusqu'à 5 max)."
+                    : "Cochez pour qu'un invité à court de photos puisse en obtenir quelques-unes de plus, une seule fois."}
                 </span>
               </label>
               {draftBonus > 0 && (
