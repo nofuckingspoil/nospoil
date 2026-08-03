@@ -140,9 +140,16 @@ export default function PrintKit({ params }) {
     <>
       {/* ---------- Écran : réglages ---------- */}
       <main className="screen screen-cream pk-screen">
-        <Link href={`/event/${id}`} style={{ alignSelf: 'flex-start', textDecoration: 'none' }}>
-          <Logo nameSize={22} size={36} />
-        </Link>
+        {/* Le retour suit le défilement : l'aperçu est long, et il était
+            auparavant seul tout en bas de la page. */}
+        <div className="pk-top">
+          <Link href={`/event/${id}`} className="pk-back">
+            <span aria-hidden="true">←</span> Tableau de bord
+          </Link>
+          <Link href={`/event/${id}`} style={{ textDecoration: 'none' }}>
+            <Logo nameSize={18} size={28} />
+          </Link>
+        </div>
 
         <h1 className="h2" style={{ marginTop: 22 }}>Kit d'impression</h1>
         <p className="lead" style={{ marginTop: 6 }}>
@@ -178,10 +185,6 @@ export default function PrintKit({ params }) {
             {format === 'cartons' && Array.from({ length: 9 }, (_, i) => <Ticket key={i} size="sm" />)}
           </div>
         </div>
-
-        <Link href={`/event/${id}`} className="btn btn-ghost" style={{ marginTop: 20 }}>
-          ← Retour au tableau de bord
-        </Link>
       </main>
 
       {/* ---------- Impression : la page réelle ---------- */}

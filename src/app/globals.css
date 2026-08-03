@@ -863,6 +863,23 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .pk-preview .pk-page { width: 100%; max-width: 420px; aspect-ratio: 210 / 297; }
 .pk-print { display: none; }
 
+/* Kit d'impression : le retour suit le défilement.
+   Il déborde des marges de la page pour couvrir toute la largeur une fois collé
+   en haut, sinon le contenu défilerait dans les gouttières. */
+.pk-top {
+  position: sticky; top: 0; z-index: 5;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: -28px -22px 0; padding: 14px 22px;
+  background: var(--screen); border-bottom: 1px solid transparent;
+}
+.pk-back {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 15px; border-radius: 999px; text-decoration: none;
+  background: #fff; border: 1px solid var(--line);
+  font-weight: 700; font-size: 14px; color: var(--ink);
+}
+.pk-back:hover { border-color: var(--accent); }
+
 @media print {
   /* On masque l'interface et on ne laisse que la feuille. */
   .pk-screen, .vfooter, .vnav { display: none !important; }
