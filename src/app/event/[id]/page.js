@@ -19,6 +19,7 @@ import InstallPrompt from '../../../components/InstallPrompt'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J } from '../../../lib/phase'
 import { formatPrice } from '../../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
+import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
 
 function formatDate(iso) {
@@ -360,6 +361,19 @@ export default function EventManage({ params }) {
   // Elle ne s'affiche qu'avant l'événement, et disparaît une fois terminée.
   const todo = [
     {
+      key: 'name',
+      // Créé par le tunnel express : l'événement porte encore son nom provisoire.
+      done: ev.name !== DEFAULT_EVENT_NAME,
+      title: 'Donner un nom à votre événement',
+      sub: "Il s'affiche en grand sur l'écran d'accueil de vos invités.",
+    },
+    {
+      key: 'dates',
+      done: !!seen.dates,
+      title: 'Vérifier vos dates',
+      sub: `Événement le ${formatShort(ev.startsAt)}, révélation le ${formatShort(ev.revealAt)}.`,
+    },
+    {
       key: 'cover',
       done: !!ev.coverUrl,
       title: 'Ajouter une photo de couverture',
@@ -648,6 +662,19 @@ export default function EventManage({ params }) {
                     <input type="file" accept="image/*" hidden
                       onChange={(e) => uploadCover(e.target.files?.[0])} />
                   </label>
+                ) : t.key === 'name' ? (
+                  <button className="db-todo-act" onClick={() => {
+                    setOpenSec('reglages')
+                    setEditing('name')
+                    setDraftName(ev.name === DEFAULT_EVENT_NAME ? '' : ev.name || '')
+                  }}>Nommer</button>
+                ) : t.key === 'dates' ? (
+                  <button className="db-todo-act" onClick={() => {
+                    markSeen('dates')
+                    setOpenSec('reglages')
+                    setEditing('start')
+                    setDraftDate(toLocalInput(ev.startsAt || ev.revealAt))
+                  }}>Vérifier</button>
                 ) : (
                   <button className="db-todo-act" onClick={() => {
                     markSeen('shots')

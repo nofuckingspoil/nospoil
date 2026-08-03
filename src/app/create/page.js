@@ -5,7 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
-import { TIERS, TOP_TIER, tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../lib/pricing'
+import TierPicker from '../../components/TierPicker'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -49,11 +50,6 @@ const REVEAL_PRESETS = [
 // Nombre de clichés par invité à la création. Ce n'est pas demandé ici : le
 // réglage se fait après paiement, depuis le tableau de bord, jusqu'au jour J.
 const DEFAULT_SHOTS = 5
-
-// Diamètre de la bille du curseur de formule. Doit rester égal à la largeur
-// définie pour .wiz-tierrange dans globals.css : c'est ce qui aligne les
-// nombres sous la bille.
-const THUMB = 28
 
 
 // ---------- Assistant ----------
@@ -104,54 +100,6 @@ function CreateForm() {
     setMaxGuests(n)
     setError('')
     try { window.history.replaceState(null, '', `/create?tier=${n}`) } catch {}
-  }
-
-  // Sélecteur de formule. Volontairement une fonction (et non un composant) :
-  // un composant redéfini à chaque rendu se remonterait et casserait le glissement.
-  //
-  // `inline` : version posée à demeure sur le premier écran, où le nombre
-  // d'invités est une question qu'on pose, pas un paramètre d'adresse hérité.
-  function tierPicker({ inline = false } = {}) {
-    const idx = TIERS.findIndex((t) => t.maxGuests === tier.maxGuests)
-    return (
-      <div className={`wiz-tierpick ${inline ? 'wiz-tierpick-inline' : ''}`}>
-        <div className="wiz-tierpick-q">Vous serez combien ?</div>
-        <div className="wiz-tierpick-val">
-          <span className="n">
-            {tier.maxGuests === TOP_TIER.maxGuests
-              ? `${tier.maxGuests} invités ou plus`
-              : `Jusqu'à ${tier.maxGuests} invités`}
-          </span>
-          <span className="p">{formatPrice(tier.priceCents)}</span>
-        </div>
-        <input
-          type="range" min={0} max={TIERS.length - 1} step={1} value={idx}
-          onChange={(e) => pickTier(TIERS[Number(e.target.value)].maxGuests)}
-          className="wiz-tierrange" aria-label="Nombre d'invités"
-        />
-        {/* La bille d'un curseur natif ne parcourt pas toute la largeur : elle
-            s'arrête à un demi-diamètre de chaque bord. On place donc chaque
-            nombre sur la position réelle de la bille, pas sur une répartition
-            régulière — sinon les deux ne tombent jamais en face. */}
-        <div className="wiz-tierticks">
-          {TIERS.map((t, i) => (
-            <button key={t.maxGuests} type="button"
-              className={t.maxGuests === tier.maxGuests ? 'on' : ''}
-              style={{ left: `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${i} / ${TIERS.length - 1})` }}
-              onClick={() => pickTier(t.maxGuests)}>
-              {t.maxGuests}{t.maxGuests === TOP_TIER.maxGuests ? '+' : ''}
-            </button>
-          ))}
-        </div>
-        {/* Ni promesse de mise à niveau (la formule se choisit pour de bon), ni
-            rappel du paiement unique : il est déjà en pied de page. */}
-        {!inline && (
-          <button type="button" className="btn btn-ghost wiz-tierpick-ok" onClick={() => setTierOpen('')}>
-            C'est noté
-          </button>
-        )}
-      </div>
-    )
   }
 
   function pickReveal(p, base = startsAt) {
@@ -308,7 +256,9 @@ function CreateForm() {
             </span>
           )}
         </div>
-        {step === 2 && tierOpen === 'head' && tierPicker()}
+        {step === 2 && tierOpen === 'head' && (
+          <TierPicker value={maxGuests} onChange={pickTier} onClose={() => setTierOpen('')} />
+        )}
       </div>
 
       {isPaid && !PAYMENTS_ENABLED && (
@@ -335,7 +285,7 @@ function CreateForm() {
 
           {/* Le nombre d'invités décide du prix — et, une fois l'événement passé,
               de l'ouverture de l'album. Il se demande, il ne se devine pas. */}
-          {tierPicker({ inline: true })}
+          <TierPicker value={maxGuests} onChange={pickTier} inline />
 
           {error && <div className="err">{error}</div>}
           <div className="wiz-nav">
@@ -439,7 +389,9 @@ function CreateForm() {
                 </button>
               </span>
             </div>
-            {tierOpen === 'recap' && tierPicker()}
+            {tierOpen === 'recap' && (
+              <TierPicker value={maxGuests} onChange={pickTier} onClose={() => setTierOpen('')} />
+            )}
           </div>
 
           {/* Le doute juste avant de payer, c'est « et si je me suis trompé ? ».
