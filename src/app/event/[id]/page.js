@@ -445,7 +445,9 @@ export default function EventManage({ params }) {
   const published = !!ev.publishedAt
   const paused = !!ev.revealPaused
   const shotsLeft = Math.max(0, (ev.guestCount || 0) * (ev.shotsPerGuest || 0) - (ev.photoCount || 0))
-  const defaultMessage = `Les photos de ${ev.name} sont en ligne ! ${ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible 6 mois.`
+  const defaultMessage = revealed
+    ? `Les photos de ${ev.name} sont en ligne ! ${ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible 6 mois.`
+    : `Les photos de ${ev.name} sortent le ${formatDate(ev.revealAt)}. Gardez ce lien, elles s'ouvriront toutes seules : ${galleryUrl}`
   const shareText = message || defaultMessage
 
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
@@ -1031,22 +1033,22 @@ export default function EventManage({ params }) {
         {/* 3. Partager : proposé seulement quand il y a quelque chose à voir.
             Avant, le lien menait à un compte à rebours et le message annonçait
             des photos invisibles. */}
-        {revealed && (
-          <div className="db-alb-bloc">
-            <div className="db-alb-t">Partager l'album</div>
-            <p className="muted small" style={{ marginBottom: 10 }}>
-              Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :
-            </p>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
-                {flash === 'gal' ? '✓ Lien copié' : 'Copier le lien'}
-              </button>
-              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
-                ✉️ Message tout prêt
-              </button>
-            </div>
+        <div className="db-alb-bloc">
+          <div className="db-alb-t">Partager l'album</div>
+          <p className="muted small" style={{ marginBottom: 10 }}>
+            {revealed
+              ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
+              : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
+          </p>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
+              {flash === 'gal' ? '✓ Lien copié' : 'Copier le lien'}
+            </button>
+            <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
+              ✉️ Message tout prêt
+            </button>
           </div>
-        )}
+        </div>
 
         {/* 4. Le code : on dit enfin contre quoi il protège. */}
         <div className="db-alb-bloc">
