@@ -1112,6 +1112,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   border: 1px solid rgba(255,255,255,.2);
 }
 .db-hero-2nd:hover { background: rgba(255,255,255,.18); }
+/* Confirmer / recommencer, côte à côte : télécharger le fichier ne prouve pas
+   qu'on l'a ouvert, c'est donc l'organisateur qui tranche. */
+.db-hero-confirm { margin-top: 12px; }
+.db-hero-duo { display: flex; gap: 8px; }
+.db-hero-duo .db-hero-2nd { flex: 1; min-width: 0; }
 .db-hero-2nd-light { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); }
 
 /* --- Compteurs du jour J --- */

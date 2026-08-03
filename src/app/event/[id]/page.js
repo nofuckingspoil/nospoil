@@ -117,6 +117,8 @@ export default function EventManage({ params }) {
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
   const [fait, setFait] = useState({})
+  // Fichier .ics téléchargé — on attend que l'organisateur confirme l'avoir ouvert.
+  const [calTelecharge, setCalTelecharge] = useState(false)
   const [upgradeMsg, setUpgradeMsg] = useState('')
   const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
@@ -272,7 +274,7 @@ export default function EventManage({ params }) {
   }
 
   function addToCalendar() {
-    marquerFait('cal')
+    setCalTelecharge(true)
     // Deux rendez-vous : la fête elle-même (avec le QR à montrer) et la révélation.
     const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
     const block = (uid, start, end, summary, description) => [
@@ -379,19 +381,34 @@ export default function EventManage({ params }) {
           <Link href={`/event/${id}/imprimer`} className="btn btn-accent db-hero-cta">
             Choisir un format et imprimer →
           </Link>
-          {/* Mettre au calendrier ne se fait qu'une fois : la proposition s'efface
-              ensuite, après un court instant de confirmation. Le bouton reste
-              disponible en permanence dans « Votre accès », plus bas. */}
-          {(!fait.cal || flash === 'cal') && (
+          {/* Mettre au calendrier ne se fait qu'une fois, et la proposition
+              s'efface ensuite. Mais télécharger le fichier ne prouve pas qu'on
+              l'a ouvert : c'est donc l'organisateur qui le dit, pas nous. Le
+              bouton reste disponible en permanence dans « Votre accès ». */}
+          {!fait.cal && (calTelecharge ? (
+            <div className="db-hero-confirm">
+              <p className="db-hero-foot" style={{ marginTop: 0 }}>
+                Le fichier est téléchargé. Ouvrez-le pour l'ajouter à votre agenda.
+              </p>
+              <div className="db-hero-duo">
+                <button className="btn db-hero-2nd" onClick={() => marquerFait('cal')}>
+                  ✓ C'est dans mon agenda
+                </button>
+                <button className="btn db-hero-2nd" onClick={addToCalendar}>
+                  Retélécharger
+                </button>
+              </div>
+            </div>
+          ) : (
             <>
               <button className="btn db-hero-2nd" onClick={addToCalendar}>
-                {flash === 'cal' ? '✓ Ajouté à votre agenda' : '🗓️ Mettre au calendrier'}
+                🗓️ Mettre au calendrier
               </button>
               <p className="db-hero-foot">
                 L'agenda contient votre lien organisateur : vous le retrouverez sans rien noter.
               </p>
             </>
-          )}
+          ))}
         </div>
       )
     }
