@@ -568,6 +568,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-favbar-ic { color: #FF6B6B; font-size: 15px; }
 .gal-favbar .chip:disabled { opacity: .45; cursor: not-allowed; }
 
+/* Médaille du classement, dans le coin haut-gauche de la photo. */
+.gal-rang { position: absolute; top: 8px; left: 8px; z-index: 3; font-size: 20px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+
 /* Cœur de favori, posé dans le coin de la photo. */
 .gal-coeur { position: absolute; bottom: 8px; right: 8px; z-index: 3;
   display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px;

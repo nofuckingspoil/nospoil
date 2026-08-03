@@ -18,6 +18,11 @@ const DUREE = 3600 // ms par carte
 export function wrapDejaVu(eventId) {
   try { return !!localStorage.getItem(`ttf_wrap_${eventId}`) } catch { return true }
 }
+// Le résumé ne se montre qu'une fois, mais on doit pouvoir le redemander :
+// c'est le genre de chose qu'on veut remontrer à quelqu'un à côté de soi.
+export function oublierWrap(eventId) {
+  try { localStorage.removeItem(`ttf_wrap_${eventId}`) } catch {}
+}
 function marquerVu(eventId) {
   try { localStorage.setItem(`ttf_wrap_${eventId}`, '1') } catch {}
 }

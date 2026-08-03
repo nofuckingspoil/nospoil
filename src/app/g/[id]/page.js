@@ -5,7 +5,7 @@ import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
-import WrapInvite, { wrapDejaVu } from '../../../components/WrapInvite'
+import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -212,7 +212,8 @@ export default function Gallery({ params }) {
 
   // Favoris posés par cet appareil. Le compte, lui, vit sur la photo elle-même.
   const [favs, setFavs] = useState(() => new Set())
-  const [seulementFavs, setSeulementFavs] = useState(false)
+  // 'tous' · 'miens' (mes coups de cœur) · 'aimees' (le classement de tous)
+  const [vueFav, setVueFav] = useState('tous')
 
   // Résumé de soirée : décidé une fois pour toutes au montage, pour qu'il ne
   // resurgisse pas à chaque rechargement des données.
@@ -313,15 +314,23 @@ export default function Gallery({ params }) {
   // Album protégé par un code : porte d'entrée pour les invités
   if (data.needCode) return <CodeGate data={data} value={codeInput} onChange={setCodeInput} onSubmit={submitCode} err={codeErr} />
 
-  // « Mes favoris » se cumule au filtre par personne : on peut vouloir ses
-  // coups de cœur parmi les photos d'un seul invité.
-  const parCoeur = seulementFavs ? data.photos.filter((p) => favs.has(p.id)) : data.photos
+  // Les deux vues de cœur se cumulent au filtre par personne : on peut vouloir
+  // ses coups de cœur, ou le palmarès, parmi les photos d'un seul invité.
+  const lesAimees = data.photos.filter((p) => (p.favs || 0) > 0)
+  const parCoeur = vueFav === 'miens' ? data.photos.filter((p) => favs.has(p.id))
+    : vueFav === 'aimees' ? lesAimees
+      : data.photos
   const parAuteur = filter === 'all' ? parCoeur : parCoeur.filter((p) => p.guestId === filter)
   // Le tri par visibilité n'a de sens que pour l'organisateur : lui seul voit
   // les photos masquées, et lui seul a besoin de les retrouver.
-  const photos = !data.isOwner || vue === 'toutes' ? parAuteur
+  const parVisibilite = !data.isOwner || vue === 'toutes' ? parAuteur
     : vue === 'masquees' ? parAuteur.filter((p) => p.hidden)
       : parAuteur.filter((p) => !p.hidden)
+  // Le palmarès se lit de haut en bas : la plus aimée d'abord, et à égalité la
+  // plus ancienne — celle qui a plu la première.
+  const photos = vueFav === 'aimees'
+    ? [...parVisibilite].sort((a, b) => (b.favs || 0) - (a.favs || 0) || new Date(a.takenAt) - new Date(b.takenAt))
+    : parVisibilite
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
   const nomFiltre = data.guests.find((g) => g.id === filter)?.name || 'cette personne'
@@ -398,16 +407,34 @@ export default function Gallery({ params }) {
             RÉTRO {retro ? 'ON' : 'OFF'}
           </button>
         </div>
-        <h3 className="h3" style={{ margin: '2px 0 12px' }}>Les souvenirs de {data.hostNames || data.name}</h3>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', margin: '2px 0 12px' }}>
+          <h3 className="h3" style={{ margin: 0 }}>Les souvenirs de {data.hostNames || data.name}</h3>
+          {data.photos.length > 1 && (
+            <button className="linklike" style={{ fontSize: 13 }}
+              onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
+              ↺ Revoir le résumé
+            </button>
+          )}
+        </div>
 
         {/* Sans un mot, le cœur passe pour une décoration : on dit à quoi il
             sert, et l'on offre le raccourci vers ce qu'il a mis de côté. */}
         <div className="gal-favbar">
           <p>Touchez le <span className="gal-favbar-ic" aria-hidden="true">♥</span> sur une photo pour la garder de côté.</p>
-          <button className={`chip ${seulementFavs ? 'active' : ''}`}
-            onClick={() => setSeulementFavs((v) => !v)} disabled={!seulementFavs && favs.size === 0}>
-            {seulementFavs ? '← Toutes les photos' : `Mes favoris · ${favs.size}`}
-          </button>
+          <div className="chips" style={{ overflow: 'visible' }}>
+            <button className={`chip ${vueFav === 'tous' ? 'active' : ''}`}
+              onClick={() => setVueFav('tous')}>Toutes · {data.photos.length}</button>
+            <button className={`chip ${vueFav === 'miens' ? 'active' : ''}`}
+              onClick={() => setVueFav('miens')} disabled={favs.size === 0}>
+              Mes favoris · {favs.size}
+            </button>
+            {/* Le palmarès de tout le monde, distinct de ses propres coups de
+                cœur : on veut savoir ce qui a plu aux autres. */}
+            <button className={`chip ${vueFav === 'aimees' ? 'active' : ''}`}
+              onClick={() => setVueFav('aimees')} disabled={lesAimees.length === 0}>
+              Les plus aimées · {lesAimees.length}
+            </button>
+          </div>
         </div>
 
         {/* Qui a pris quoi. À 170 participants, une rangée de pastilles devient
@@ -510,6 +537,11 @@ export default function Gallery({ params }) {
                     <div style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(20,22,31,.85)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '.05em', padding: '4px 8px', borderRadius: 8, fontFamily: 'var(--font-mono)' }}>
                       🙈 MASQUÉE
                     </div>
+                  )}
+                  {/* Podium : seulement dans le classement, et seulement si la
+                      photo a vraiment recueilli des cœurs. */}
+                  {vueFav === 'aimees' && i < 3 && p.favs > 0 && (
+                    <span className="gal-rang" aria-hidden="true">{['🥇', '🥈', '🥉'][i]}</span>
                   )}
                   {data.isOwner && (
                     <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 6 }}>
