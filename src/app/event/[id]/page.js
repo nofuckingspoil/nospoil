@@ -18,6 +18,7 @@ import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J, APRES } from '../../../lib/phase'
 import { formatPrice, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { purgeDate } from '../../../lib/retention'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
@@ -39,6 +40,11 @@ function daysUntil(iso) {
   if (diff <= 0) return 'Jour J'
   const d = Math.ceil(diff / 86400000)
   return d <= 1 ? 'Demain' : 'J-' + d
+}
+// Jour seul, sans heure : « 6 mars 2027 ».
+function formatJour(iso) {
+  try { return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) }
+  catch { return '' }
 }
 // Convertit une date ISO en valeur pour un champ <input type="datetime-local"> (heure locale)
 function toLocalInput(iso) {
@@ -446,8 +452,9 @@ export default function EventManage({ params }) {
   const published = !!ev.publishedAt
   const paused = !!ev.revealPaused
   const shotsLeft = Math.max(0, (ev.guestCount || 0) * (ev.shotsPerGuest || 0) - (ev.photoCount || 0))
+  const finAlbum = purgeDate(ev.revealAt)
   const defaultMessage = revealed
-    ? `Les photos de ${ev.name} sont en ligne ! ${ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible 6 mois.`
+    ? `Les photos de ${ev.name} sont en ligne ! ${ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible jusqu'au ${finAlbum ? formatJour(finAlbum) : 'dans six mois'}.`
     : `Les photos de ${ev.name} sortent le ${formatDate(ev.revealAt)}. Gardez ce lien, elles s'ouvriront toutes seules : ${galleryUrl}`
   const shareText = message || defaultMessage
 
@@ -1292,11 +1299,8 @@ export default function EventManage({ params }) {
                   Modifiez-le si vous voulez, puis envoyez-le par le canal de votre choix.
                 </p>
                 <textarea className="db-msg" rows={6} value={shareText} onChange={(e) => setMessage(e.target.value)} />
-                <div className="db-msg-chans">
-                  <a className="btn btn-ghost" href={`https://wa.me/?text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
-                  <a className="btn btn-ghost" href={`mailto:?subject=${encodeURIComponent(`Les photos de ${ev.name}`)}&body=${encodeURIComponent(shareText)}`}>Mail</a>
-                  <a className="btn btn-ghost" href={`sms:?&body=${encodeURIComponent(shareText)}`}>SMS</a>
-                </div>
+                {/* Les trois canaux faisaient doublon : le partage du téléphone
+                    les propose déjà tous, et bien d'autres. */}
                 <button className="btn btn-dark" style={{ marginTop: 10 }}
                   onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'msg')}>
                   {flash === 'msg' ? '✓ Message copié' : 'Partager / copier le message'}
