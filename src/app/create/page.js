@@ -400,12 +400,12 @@ function CreateForm() {
       {step === 4 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">Quand a lieu votre événement ?</h2>
-          <p className="wiz-sub">
-            La date de la fête elle-même. Elle sert à préparer votre tableau de bord :
-            il vous montrera la bonne chose au bon moment.
-          </p>
-          <div className="field" style={{ marginBottom: 24 }}>
-            <label>Date et heure de l'événement</label>
+          {/* Pas de sous-titre : l'étiquette du champ dit déjà tout. */}
+          <div className="field" style={{ marginTop: 18, marginBottom: 24 }}>
+            <label>
+              Date et heure de l'événement{' '}
+              <span className="lbl-soft">(modifiable plus tard)</span>
+            </label>
             <input type="datetime-local" value={startsAt} onChange={(e) => pickStart(e.target.value)} />
           </div>
 
@@ -430,9 +430,13 @@ function CreateForm() {
               <input type="datetime-local" value={revealAt} onChange={(e) => setRevealAt(e.target.value)} />
             </div>
           )}
-          {revealKey !== 'custom' && (
-            <p className="wiz-echo">Révélation le {frDate(revealAt)}</p>
-          )}
+          {/* Le résultat du choix, et le moment que l'organisateur se figure :
+              il mérite mieux qu'une ligne grise. Affiché aussi en date libre,
+              où il traduit la saisie brute en quelque chose de lisible. */}
+          <div className="wiz-reveal-echo">
+            <span className="lbl">Révélation</span>
+            <strong className="val">{frDate(revealAt)}</strong>
+          </div>
           <div className="notice" style={{ marginTop: 16 }}>
             💡 Laissez-leur le temps. Avant la révélation, chacun peut revoir ses clichés et supprimer
             ceux qu'il ne veut pas montrer — après, c'est visible par tout le monde.
