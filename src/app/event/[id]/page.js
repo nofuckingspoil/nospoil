@@ -117,8 +117,8 @@ export default function EventManage({ params }) {
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
   const [fait, setFait] = useState({})
-  // Fichier .ics téléchargé — on attend que l'organisateur confirme l'avoir ouvert.
-  const [calTelecharge, setCalTelecharge] = useState(false)
+  // Rappel « mettez-le à votre agenda » : passe une fois, puis plus jamais.
+  const [notifCal, setNotifCal] = useState(false)
   const [upgradeMsg, setUpgradeMsg] = useState('')
   const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
@@ -192,6 +192,13 @@ export default function EventManage({ params }) {
     const t = setInterval(reload, 10000)
     return () => clearInterval(t)
   }, [phase, reload])
+
+  useEffect(() => {
+    if (!ev || phase !== AVANT || fait.calVue) return
+    setNotifCal(true)      // visible pour toute cette visite
+    marquerFait('calVue')  // et plus jamais aux suivantes
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ev, phase])
 
   // --- Actions ---
   async function patchEvent(patch) {
@@ -274,7 +281,6 @@ export default function EventManage({ params }) {
   }
 
   function addToCalendar() {
-    setCalTelecharge(true)
     // Deux rendez-vous : la fête elle-même (avec le QR à montrer) et la révélation.
     const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
     const block = (uid, start, end, summary, description) => [
@@ -381,34 +387,10 @@ export default function EventManage({ params }) {
           <Link href={`/event/${id}/imprimer`} className="btn btn-accent db-hero-cta">
             Choisir un format et imprimer →
           </Link>
-          {/* Mettre au calendrier ne se fait qu'une fois, et la proposition
-              s'efface ensuite. Mais télécharger le fichier ne prouve pas qu'on
-              l'a ouvert : c'est donc l'organisateur qui le dit, pas nous. Le
-              bouton reste disponible en permanence dans « Votre accès ». */}
-          {!fait.cal && (calTelecharge ? (
-            <div className="db-hero-confirm">
-              <p className="db-hero-foot" style={{ marginTop: 0 }}>
-                Le fichier est téléchargé. Ouvrez-le pour l'ajouter à votre agenda.
-              </p>
-              <div className="db-hero-duo">
-                <button className="btn db-hero-2nd" onClick={() => marquerFait('cal')}>
-                  ✓ C'est dans mon agenda
-                </button>
-                <button className="btn db-hero-2nd" onClick={addToCalendar}>
-                  Retélécharger
-                </button>
-              </div>
-            </div>
-          ) : (
-            <>
-              <button className="btn db-hero-2nd" onClick={addToCalendar}>
-                🗓️ Mettre au calendrier
-              </button>
-              <p className="db-hero-foot">
-                L'agenda contient votre lien organisateur : vous le retrouverez sans rien noter.
-              </p>
-            </>
-          ))}
+          {/* L'agenda a quitté cette carte : il fait l'objet d'un rappel qui
+              passe une fois (voir plus haut), puis reste dans « Votre accès ».
+              On ne peut pas savoir si le fichier a été ouvert, donc on ne
+              prétend rien : on cesse simplement d'insister. */}
         </div>
       )
     }
@@ -661,6 +643,18 @@ export default function EventManage({ params }) {
       {upgradeMsg === 'ok' && !ev.quotaExceeded && (
         <div className="notice" style={{ marginTop: 16 }}>
           ✅ <strong>Formule agrandie</strong> — vous couvrez maintenant {ev.maxGuests} invités.
+        </div>
+      )}
+
+      {notifCal && (
+        <div className="db-notif">
+          <div className="db-notif-txt">
+            <strong>🗓️ Mettez l'événement à votre agenda</strong>
+            <span>Le rendez-vous contient votre lien organisateur : vous le retrouverez sans rien noter.</span>
+          </div>
+          <button className="btn btn-ghost db-notif-act" onClick={addToCalendar}>
+            {flash === 'cal' ? '✓ Ajouté' : 'Ajouter'}
+          </button>
         </div>
       )}
 

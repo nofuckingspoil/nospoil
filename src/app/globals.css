@@ -1112,11 +1112,16 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   border: 1px solid rgba(255,255,255,.2);
 }
 .db-hero-2nd:hover { background: rgba(255,255,255,.18); }
-/* Confirmer / recommencer, côte à côte : télécharger le fichier ne prouve pas
-   qu'on l'a ouvert, c'est donc l'organisateur qui tranche. */
-.db-hero-confirm { margin-top: 12px; }
-.db-hero-duo { display: flex; gap: 8px; }
-.db-hero-duo .db-hero-2nd { flex: 1; min-width: 0; }
+/* Rappel qui passe une fois — ni carte, ni tâche : une simple bande */
+.db-notif {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-top: 16px; padding: 13px 15px; border-radius: 16px;
+  background: #fff; border: 1px solid var(--line);
+}
+.db-notif-txt { flex: 1; min-width: 180px; }
+.db-notif-txt strong { display: block; font-size: 14.5px; color: var(--ink); }
+.db-notif-txt span { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.4; color: var(--text3); }
+.db-notif-act { flex: 0 0 auto; padding: 10px 18px; }
 .db-hero-2nd-light { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); }
 
 /* --- Compteurs du jour J --- */
