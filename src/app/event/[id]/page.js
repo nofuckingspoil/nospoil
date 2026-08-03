@@ -658,6 +658,16 @@ export default function EventManage({ params }) {
         <h1 className="h2">{ev.name}</h1>
         <p className="mono db-head-date">
           {ev.startsAt ? formatShort(ev.startsAt) : formatShort(ev.revealAt)}
+          {/* La formule se perdait de vue : elle décide pourtant du prix et,
+              une fois dépassée, de l'ouverture de l'album. */}
+          {ev.maxGuests > 0 && (
+            <>
+              {' · '}
+              <span className={`db-head-plan ${ev.quotaExceeded ? 'over' : ''}`}>
+                {ev.guestCount}/{ev.maxGuests} invités
+              </span>
+            </>
+          )}
         </p>
       </header>
 
@@ -1049,22 +1059,21 @@ export default function EventManage({ params }) {
         {/* 4. Le code : on dit enfin contre quoi il protège. */}
         <div className="db-alb-bloc">
           <div className="db-alb-t">Protéger par un code</div>
+          {/* Même silhouette dans les deux états — titre, une ligne, une action.
+              Le bloc se réorganisait entièrement, au point qu'on croyait avoir
+              changé de section. */}
+          <p className="muted small" style={{ marginBottom: 10 }}>
+            {ev.galleryCode
+              ? <>Actif — vos invités doivent entrer <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>. Pensez à le leur donner.</>
+              : <>Le lien de l'album est déjà secret. Un code n'est utile que si vous craignez
+                  qu'il circule au-delà de vos invités — transféré, ou posté dans un groupe.</>}
+          </p>
           {ev.galleryCode ? (
-            <>
-              <p className="muted small" style={{ marginBottom: 10 }}>
-                L'album est protégé. Vos invités doivent entrer{' '}
-                <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong> — pensez à le leur donner.
-              </p>
-              <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
-                {savingGallery ? '…' : 'Retirer le code'}
-              </button>
-            </>
+            <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
+              {savingGallery ? '…' : 'Retirer le code'}
+            </button>
           ) : (
             <>
-              <p className="muted small" style={{ marginBottom: 10 }}>
-                Le lien de l'album est déjà secret. Un code n'est utile que si vous craignez
-                qu'il circule au-delà de vos invités — transféré, ou posté dans un groupe.
-              </p>
               <div style={{ display: 'flex', gap: 8 }}>
                 <input type="text" placeholder="Ex : 1234" value={galleryCodeInput}
                   onChange={(e) => setGalleryCodeInput(e.target.value)}
