@@ -60,6 +60,11 @@ export async function POST(request) {
   }
   const consentAt = new Date().toISOString()
 
+  // Variante du tunnel d'où vient la demande. Liste fermée : le client ne doit
+  // pas pouvoir faire pointer l'annulation vers n'importe quelle adresse.
+  const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct' }
+  const cancelPath = CANCEL_PATHS[body.flow] || CANCEL_PATHS.long
+
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
   const cleanName = name.trim().slice(0, 80)
   const base = siteUrl()
@@ -79,7 +84,9 @@ export async function POST(request) {
         },
       }],
       success_url: `${base}/create/paiement?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${base}/create?tier=${tier.maxGuests}`,
+      // Une annulation doit ramener sur la variante d'où l'on vient, sinon la
+      // comparaison entre les tunnels est faussée.
+      cancel_url: `${base}${cancelPath}?tier=${tier.maxGuests}`,
       // Toutes les infos de l'événement voyagent avec le paiement : on crée l'événement au retour.
       metadata: {
         owner_token: String(ownerToken),

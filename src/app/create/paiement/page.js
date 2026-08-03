@@ -5,6 +5,21 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Logo from '../../../components/Logo'
 import { rememberMyEvent, saveAccount } from '../../../lib/device'
 
+// Le tunnel long (/create) demande la couverture AVANT le paiement : il la met
+// de côté, compressée, le temps de l'aller-retour Stripe. Les tunnels courts ne
+// s'en servent pas — les clés sont alors simplement absentes.
+const COVER_KEY = 'declic_pending_cover'
+const EMAIL_KEY = 'declic_pending_email'
+
+function dataUrlToBlob(dataUrl) {
+  const [head, b64] = dataUrl.split(',')
+  const mime = head.match(/:(.*?);/)?.[1] || 'image/jpeg'
+  const bin = atob(b64)
+  const arr = new Uint8Array(bin.length)
+  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i)
+  return new Blob([arr], { type: mime })
+}
+
 function PaiementInner() {
   const router = useRouter()
   const sp = useSearchParams()
@@ -25,9 +40,25 @@ function PaiementInner() {
         if (done) return
 
         rememberMyEvent(data.id)
-        // L'adresse vient de la page de paiement Stripe : on la retient pour que
-        // l'organisateur puisse se reconnecter depuis n'importe quel appareil.
-        if (data.ownerEmail) saveAccount(String(data.ownerEmail).toLowerCase())
+
+        // L'adresse vient soit du tunnel (mise de côté avant le paiement), soit
+        // de Stripe. On la retient pour permettre de se reconnecter depuis
+        // n'importe quel appareil.
+        const email = sessionStorage.getItem(EMAIL_KEY) || data.ownerEmail
+        if (email) saveAccount(String(email).toLowerCase())
+
+        // Couverture choisie avant le paiement : c'est maintenant qu'on l'envoie.
+        const cover = sessionStorage.getItem(COVER_KEY)
+        if (cover) {
+          try {
+            const fd = new FormData()
+            fd.append('file', dataUrlToBlob(cover), 'cover.jpg')
+            fd.append('ownerToken', data.ownerToken)
+            await fetch(`/api/events/${data.id}/cover`, { method: 'POST', body: fd })
+          } catch {}
+        }
+        sessionStorage.removeItem(COVER_KEY)
+        sessionStorage.removeItem(EMAIL_KEY)
 
         router.replace(`/event/${data.id}`)
       } catch (err) { if (!done) setError(err.message) }

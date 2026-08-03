@@ -1,0 +1,167 @@
+'use client'
+
+import { Suspense, useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import Logo from '../../../components/Logo'
+import TierPicker from '../../../components/TierPicker'
+import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
+import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, atDay, nextSaturday } from '../../../lib/event-defaults'
+
+// ============================================================
+//  Variante « express » du tunnel de création.
+//
+//  On choisit sa formule, on paie, et TOUT le paramétrage (nom, dates,
+//  révélation, couverture, clichés) se fait ensuite depuis le tableau de bord.
+//  L'événement est donc créé avec des valeurs de départ, que la checklist du
+//  tableau de bord invite à reprendre une par une.
+//
+//  Existe en parallèle de /create pour pouvoir comparer les deux parcours.
+// ============================================================
+
+function ExpressForm() {
+  const router = useRouter()
+  const sp = useSearchParams()
+
+  const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
+  const tier = tierByGuests(maxGuests)
+  const isPaid = tier.priceCents > 0
+
+  // Sur une formule payante, Stripe collecte l'adresse pendant le paiement.
+  const needEmail = !PAYMENTS_ENABLED || !isPaid || EMAIL_VERIFICATION_ENABLED
+
+  const [email, setEmail] = useState('')
+  const [cgvOk, setCgvOk] = useState(false)
+  const [waiverOk, setWaiverOk] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+
+  function pickTier(n) {
+    setMaxGuests(n)
+    setError('')
+    try { window.history.replaceState(null, '', `/create/paiement-direct?tier=${n}`) } catch {}
+  }
+
+  async function submit(e) {
+    e.preventDefault()
+    setError('')
+
+    if (needEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      setError('Entrez une adresse mail valide : c\'est elle qui vous permettra de retrouver votre événement.')
+      return
+    }
+    if (!cgvOk) { setError('Merci d\'accepter les conditions générales pour continuer.'); return }
+    if (isPaid && PAYMENTS_ENABLED && !waiverOk) {
+      setError('Merci de cocher la demande d\'exécution immédiate pour finaliser votre commande.')
+      return
+    }
+
+    setLoading(true)
+
+    // Valeurs de départ : l'organisateur les reprendra depuis son tableau de bord.
+    const start = nextSaturday()
+    const reveal = atDay(1, 20, start)
+    const payload = {
+      ownerToken: getDeviceToken(),
+      name: DEFAULT_EVENT_NAME,
+      ownerEmail: email.trim(),
+      startsAt: start.toISOString(),
+      revealAt: reveal.toISOString(),
+      shotsPerGuest: DEFAULT_SHOTS,
+      maxGuests: tier.maxGuests,
+      flow: 'express', // variante d'où l'on vient (retour d'annulation Stripe)
+      cgvAccepted: cgvOk,
+      withdrawalWaived: waiverOk,
+    }
+
+    if (isPaid && PAYMENTS_ENABLED) {
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        })
+        const data = await res.json()
+        if (!res.ok) throw new Error(data.error || 'Erreur.')
+        window.location.href = data.url
+        return
+      } catch (err) { setError(err.message); setLoading(false); return }
+    }
+
+    try {
+      const res = await fetch('/api/events', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erreur.')
+      rememberMyEvent(data.id)
+      saveAccount(email.trim().toLowerCase())
+      router.push(`/event/${data.id}`)
+    } catch (err) { setError(err.message); setLoading(false) }
+  }
+
+  const label = isPaid && PAYMENTS_ENABLED
+    ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(tier.priceCents)} →`)
+    : (loading ? 'Création…' : 'Créer mon événement →')
+
+  return (
+    <main className="screen screen-cream">
+      <Link href="/" style={{ alignSelf: 'flex-start', textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
+
+      <form className="card wiz-card" style={{ marginTop: 26 }} onSubmit={submit}>
+        <h2 className="wiz-q">Créez votre événement</h2>
+        <p className="wiz-sub">
+          Une seule chose à décider maintenant : le nombre d'invités.
+          Le nom, les dates et le moment de la révélation se règlent juste après.
+        </p>
+
+        <TierPicker value={maxGuests} onChange={pickTier} inline />
+
+        {needEmail && (
+          <div className="field" style={{ marginTop: 22 }}>
+            <label>Votre adresse mail</label>
+            <input type="email" inputMode="email" autoComplete="email" placeholder="vous@exemple.fr"
+              value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} />
+          </div>
+        )}
+
+        <div className="wiz-legal">
+          <label className="wiz-check">
+            <input type="checkbox" checked={cgvOk} onChange={(e) => setCgvOk(e.target.checked)} />
+            <span>
+              J'accepte les <Link href="/cgv" target="_blank">conditions générales de vente</Link> et
+              la <Link href="/politique-de-confidentialite" target="_blank">politique de confidentialité</Link>.
+            </span>
+          </label>
+          {isPaid && PAYMENTS_ENABLED && (
+            <label className="wiz-check">
+              <input type="checkbox" checked={waiverOk} onChange={(e) => setWaiverOk(e.target.checked)} />
+              <span>
+                Je demande l'exécution immédiate du service et je reconnais qu'une fois l'événement créé
+                et le service pleinement exécuté, je perdrai mon droit de rétractation, conformément à
+                l'article L.221-28 du Code de la consommation.
+              </span>
+            </label>
+          )}
+        </div>
+
+        {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
+
+        <div className="wiz-nav">
+          <button className="btn btn-accent" type="submit" disabled={loading}>{label}</button>
+        </div>
+      </form>
+
+      <div className="footer-note" style={{ marginTop: 24 }}>PAIEMENT UNIQUE · SANS ABONNEMENT</div>
+    </main>
+  )
+}
+
+export default function ExpressPage() {
+  return (
+    <Suspense fallback={<main className="center-screen"><p className="muted">Chargement…</p></main>}>
+      <ExpressForm />
+    </Suspense>
+  )
+}
