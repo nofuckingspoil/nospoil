@@ -116,7 +116,7 @@ const cgv = {
 <p>Le Service permet à l'Organisateur de créer un Événement, d'inviter des participants au moyen d'un lien ou d'un QR code, et de collecter les Contenus déposés par ces derniers.</p>
 <p>Les caractéristiques essentielles du Service sont les suivantes :</p>
 <ul>
-  <li><strong>Nombre de prises par Invité</strong> : fixé par l'Organisateur à la création de l'Événement, entre <strong>3 et 15 clichés</strong>. Ce nombre est identique pour tous les Invités d'un même Événement et ne peut être augmenté une fois l'Événement créé.</li>
+  <li><strong>Nombre de prises par Invité</strong> : fixé par l'Organisateur entre <strong>3 et 15 clichés</strong>, identique pour tous les Invités d'un même Événement. Il reste modifiable jusqu'au début de l'Événement, après quoi il est figé. L'Organisateur peut en outre autoriser une <strong>recharge unique</strong> de 1 à 5 clichés supplémentaires, que chaque Invité ayant épuisé ses prises peut demander une seule fois ; cette recharge peut être refusée par l'Organisateur.</li>
   <li><strong>Formats acceptés</strong> : <strong>photographies uniquement</strong>, à l'exclusion des vidéos et des enregistrements sonores. Les images déposées sont automatiquement redimensionnées et compressées.</li>
   <li><strong>Nombre maximal d'Invités</strong> : déterminé par la Formule choisie, selon le tableau de l'article 5.</li>
   <li><strong>Accès</strong> : depuis un navigateur web, sans installation d'application, tant pour l'Organisateur que pour les Invités.</li>

@@ -1274,6 +1274,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-set-val { display: block; font-size: 12.5px; color: var(--text2); line-height: 1.45; }
 .db-set-act { flex: 0 0 auto; background: none; border: none; padding: 0; cursor: pointer;
   font-family: var(--font-mono); font-size: 12px; color: var(--accent-deep); text-decoration: underline; }
+/* Modification du nombre de prises : mêmes propositions qu'à la création */
+.db-shots { padding: 4px 0 16px; }
+.db-shots-bonus { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+
 .db-set-edit { display: flex; gap: 8px; padding-bottom: 12px; }
 /* Les boutons sont en largeur pleine par défaut : dans cette rangée ils
    écraseraient le champ de saisie, qui est pourtant l'essentiel. */

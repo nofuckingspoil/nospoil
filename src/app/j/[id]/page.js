@@ -550,7 +550,13 @@ export default function GuestCamera({ params }) {
                 ? `Tes ${guest?.shotsPerGuest} photos sont en cours de développement. Rendez-vous à la révélation 🎉`
                 : `Tes ${guest?.shotsPerGuest} photos sont en cours de développement.`}
             </p>
-            {!bonusUsed && <button className="vf-full-btn" onClick={grantBonus}>Recharger ma pellicule (+5) →</button>}
+            {/* La recharge est réglée par l'organisateur : à zéro, on ne la
+                propose pas — la pellicule est vraiment finie. */}
+            {!bonusUsed && (meta?.bonusShots > 0) && (
+              <button className="vf-full-btn" onClick={grantBonus}>
+                Recharger ma pellicule (+{meta.bonusShots}) →
+              </button>
+            )}
           </div>
         )}
       </div>

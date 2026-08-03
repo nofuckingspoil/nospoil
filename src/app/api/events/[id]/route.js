@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count,max_guests`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count,max_guests`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -62,6 +62,7 @@ export async function GET(request, { params }) {
     coverUrl,
     coverPos: ev.cover_pos || null,
     shotsPerGuest: ev.shots_per_guest,
+    bonusShots: ev.bonus_shots ?? 0,
     startsAt: ev.starts_at,
     revealAt: ev.reveal_at,
     status: ev.status,
@@ -149,7 +150,7 @@ export async function PATCH(request, { params }) {
   const ownerToken = request.headers.get('x-owner-token')
   if (!ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
-  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,reveal_at,reveal_paused,max_guests`)
+  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,reveal_at,reveal_paused,max_guests,bonus_shots`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
   // Les réglages du quotidien sont ouverts aux co-admins : c'est le sens même
@@ -196,6 +197,19 @@ export async function PATCH(request, { params }) {
       return Response.json({ error: 'Nombre de photos invalide (entre 3 et 30).' }, { status: 400 })
     }
     patch.shots_per_guest = n
+  }
+
+  // Recharge unique : 0 pour la refuser, jusqu'à 5 photos sinon. Modifiable
+  // tant que la soirée n'a pas commencé, comme le nombre de prises.
+  if (body.bonusShots !== undefined) {
+    if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
+      return Response.json({ error: 'La soirée a commencé : la recharge est figée.' }, { status: 409 })
+    }
+    const n = parseInt(body.bonusShots, 10)
+    if (!Number.isFinite(n) || n < 0 || n > 5) {
+      return Response.json({ error: 'Recharge invalide (entre 0 et 5).' }, { status: 400 })
+    }
+    patch.bonus_shots = n
   }
 
   // Validation de l'album par l'organisateur. Facultative : sans elle, la

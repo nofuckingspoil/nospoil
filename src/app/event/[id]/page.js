@@ -17,7 +17,7 @@ import { BRAND, avatarColor } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J, APRES } from '../../../lib/phase'
-import { formatPrice } from '../../../lib/pricing'
+import { formatPrice, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
@@ -74,6 +74,13 @@ const DEV = process.env.NODE_ENV !== 'production'
 // d'affichage, propre à l'appareil : rien de critique, donc pas de colonne en base.
 const FAIT_KEY = (id) => `ttf_fait_${id}`
 
+// Repris du tunnel de création : la même explication doit accompagner le même choix.
+const SHOT_PRESETS = [
+  { n: 3, em: '💎', title: '3 clichés', sub: 'Très rare — chaque photo est un événement' },
+  { n: 5, em: '🎞️', title: '5 clichés', sub: 'Le bon équilibre, recommandé' },
+  { n: 8, em: '📸', title: '8 clichés', sub: 'Plus généreux, pour les longues soirées' },
+]
+
 // Les trois moments d'un événement, dans l'ordre. Sert à la barre d'aperçu locale.
 const MOMENTS = [
   { key: AVANT, title: 'Avant', sub: () => 'Préparatifs' },
@@ -112,6 +119,8 @@ export default function EventManage({ params }) {
   const [draftName, setDraftName] = useState('')
   const [draftDate, setDraftDate] = useState('')
   const [draftShots, setDraftShots] = useState(5)
+  const [shotsLibre, setShotsLibre] = useState(false) // palier « Plus » sélectionné
+  const [draftBonus, setDraftBonus] = useState(5)
   const [settingMsg, setSettingMsg] = useState('')
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
@@ -821,22 +830,81 @@ export default function EventManage({ params }) {
             </span>
             <span className="db-set-val" style={locked ? { color: 'var(--text4)' } : undefined}>
               {ev.shotsPerGuest} photos
+              {ev.bonusShots > 0 ? `, recharge de +${ev.bonusShots}` : ', sans recharge'}
               {locked
                 ? ' — la soirée a commencé, tout le monde joue au même jeu'
                 : ` — modifiable jusqu'au ${formatShort(ev.startsAt)}`}
             </span>
           </div>
           {!locked && (
-            <button className="db-set-act" onClick={() => { setEditing(editing === 'shots' ? '' : 'shots'); setDraftShots(ev.shotsPerGuest) }}>
+            <button className="db-set-act" onClick={() => {
+              setEditing(editing === 'shots' ? '' : 'shots')
+              setDraftShots(ev.shotsPerGuest)
+              setShotsLibre(!SHOT_PRESETS.some((p) => p.n === ev.shotsPerGuest))
+              setDraftBonus(ev.bonusShots ?? 0)
+            }}>
               {editing === 'shots' ? 'Annuler' : 'Modifier'}
             </button>
           )}
         </div>
         {editing === 'shots' && !locked && (
-          <div className="db-set-edit">
-            <input type="number" min={3} max={30} value={draftShots} onChange={(e) => setDraftShots(e.target.value)} />
-            <button className="btn btn-accent" onClick={async () => {
-              if (await patchEvent({ shotsPerGuest: parseInt(draftShots, 10) })) setEditing('')
+          <div className="db-shots">
+            {/* Les mêmes propositions qu'à la création : le chiffre seul ne dit
+                pas pourquoi on en choisirait cinq plutôt que quinze. */}
+            <div className="wiz-opts">
+              {SHOT_PRESETS.map((p) => (
+                <button key={p.n} type="button"
+                  className={`wiz-opt ${!shotsLibre && Number(draftShots) === p.n ? 'on' : ''}`}
+                  onClick={() => { setShotsLibre(false); setDraftShots(p.n) }}>
+                  <span className="em">{p.em}</span>
+                  <span><span className="tt">{p.title}</span><span className="ss">{p.sub}</span></span>
+                </button>
+              ))}
+              <button type="button" className={`wiz-opt ${shotsLibre ? 'on' : ''}`}
+                onClick={() => { setShotsLibre(true); setDraftShots((n) => (Number(n) <= 8 ? 10 : n)) }}>
+                <span className="em">🎚️</span>
+                <span><span className="tt">Plus</span><span className="ss">Jusqu'à {SHOTS_MAX} clichés</span></span>
+              </button>
+            </div>
+            {shotsLibre && (
+              <div className="stepper" style={{ marginTop: 14 }}>
+                <button type="button" aria-label="Moins"
+                  onClick={() => setDraftShots((n) => Math.max(SHOTS_MIN, Number(n) - 1))}>−</button>
+                <span className="val">{draftShots}</span>
+                <button type="button" aria-label="Plus"
+                  onClick={() => setDraftShots((n) => Math.min(SHOTS_MAX, Number(n) + 1))}>+</button>
+              </div>
+            )}
+
+            {/* La recharge défait la rareté qui fait tout le jeu : c'est donc un
+                choix, pas un cadeau imposé. */}
+            <div className="db-shots-bonus">
+              <label className="wiz-check">
+                <input type="checkbox" checked={draftBonus > 0}
+                  onChange={(e) => setDraftBonus(e.target.checked ? 5 : 0)} />
+                <span>
+                  <strong>Autoriser une recharge</strong><br />
+                  Un invité à court de photos pourra en obtenir quelques-unes de plus,
+                  une seule fois. Décochez pour que la pellicule soit vraiment finie.
+                </span>
+              </label>
+              {draftBonus > 0 && (
+                <div className="stepper" style={{ marginTop: 12 }}>
+                  <button type="button" aria-label="Moins"
+                    onClick={() => setDraftBonus((n) => Math.max(1, n - 1))}>−</button>
+                  <span className="val">+{draftBonus}</span>
+                  <button type="button" aria-label="Plus"
+                    onClick={() => setDraftBonus((n) => Math.min(5, n + 1))}>+</button>
+                </div>
+              )}
+            </div>
+
+            <button className="btn btn-accent" style={{ marginTop: 16 }} onClick={async () => {
+              const ok = await patchEvent({
+                shotsPerGuest: parseInt(draftShots, 10),
+                bonusShots: draftBonus,
+              })
+              if (ok) setEditing('')
             }}>Enregistrer</button>
           </div>
         )}
