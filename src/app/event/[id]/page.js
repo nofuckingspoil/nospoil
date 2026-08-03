@@ -1100,12 +1100,14 @@ export default function EventManage({ params }) {
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
-      {/* La date de suppression est portée par le titre : la section est repliée
-          par défaut, et personne n'ouvre une section pour y chercher une date
-          dont il ignore l'existence. */}
-      <Section id="sec-album"
-        title={finAlbum ? `L'album (jusqu'au ${formatJour(finAlbum)})` : "L'album"}
-        hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
+      {/* La date de suppression vit dans le sous-titre : visible sans déplier la
+          section — personne n'ouvre une section pour y chercher une date dont il
+          ignore l'existence — mais sans alourdir le titre. */}
+      <Section id="sec-album" title="L'album"
+        hint={[
+          revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation',
+          finAlbum ? `disponible jusqu'au ${formatJour(finAlbum)}` : null,
+        ].filter(Boolean).join(' · ')}
         badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
         open={openSec === 'album'} onToggle={() => toggleSec('album')}>
 
