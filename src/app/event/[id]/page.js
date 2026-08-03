@@ -886,7 +886,7 @@ export default function EventManage({ params }) {
                   <strong>Surprise (gratuit)</strong><br />
                   {draftBonus > 0
                     ? "Choisissez le nombre de photos supplémentaires (5 au maximum). Un invité qui n'en a plus pourra les demander, une seule fois."
-                    : "Cochez pour offrir des photos supplémentaires à un invité qui n'en a plus."}
+                    : 'Cochez pour offrir gratuitement des photos supplémentaires.'}
                 </span>
               </label>
               {draftBonus > 0 && (
