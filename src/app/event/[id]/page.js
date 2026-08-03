@@ -93,7 +93,9 @@ export default function EventManage({ params }) {
   const [adminLink, setAdminLink] = useState('')
   const [qrUrl, setQrUrl] = useState('')
   const [sheet, setSheet] = useState(null) // 'qr' | 'message' | null
-  const [openSec, setOpenSec] = useState(null) // une seule section ouverte à la fois
+  // Une seule section ouverte à la fois. « Réglages » l'est d'emblée : c'est là
+  // qu'on se rend en préparant son événement.
+  const [openSec, setOpenSec] = useState('reglages')
 
   // Petits retours "copié ✓"
   const [flash, setFlash] = useState('')
@@ -678,70 +680,6 @@ export default function EventManage({ params }) {
         </Link>
       </Section>
 
-      <Section title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
-        badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
-        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
-        <Link href={`/g/${id}`} className="btn btn-dark">
-          {revealed ? "Voir l'album →" : 'Vérifier les photos (vous seul) →'}
-        </Link>
-
-        <div className="notice small" style={{ margin: '14px 0' }}>
-          {revealed
-            ? "✅ L'album est ouvert : vos invités voient les photos."
-            : `⏳ Avant le ${formatDate(ev.revealAt)}, vos invités ne verront qu'un compte à rebours.`}
-          {' '}Dans l'album, chaque photo peut être masquée d'un geste — avant comme après la révélation.
-        </div>
-
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
-            {flash === 'gal' ? '✓ Lien copié' : "Copier le lien de l'album"}
-          </button>
-          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
-            ✉️ Message prêt
-          </button>
-        </div>
-
-        <div className="hint" style={{ marginTop: 10 }}>
-          📥 Album téléchargé <strong>{ev.downloadCount || 0}</strong> fois.
-        </div>
-
-        <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
-          {ev.galleryCode ? (
-            <>
-              <p className="muted small" style={{ marginBottom: 10 }}>
-                L'album est protégé. Les invités doivent entrer : <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>
-              </p>
-              <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
-                {savingGallery ? '…' : 'Retirer le code'}
-              </button>
-            </>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <input type="text" placeholder="Choisir un code (ex : 1234)" value={galleryCodeInput}
-                onChange={(e) => setGalleryCodeInput(e.target.value)}
-                style={{ width: '100%', textAlign: 'center', fontSize: 17, letterSpacing: '.08em' }} />
-              <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)}
-                disabled={savingGallery || !galleryCodeInput.trim()}>
-                {savingGallery ? 'Activation…' : 'Activer le code'}
-              </button>
-            </div>
-          )}
-          {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
-        </div>
-
-        {/* Frein d'urgence : discret, mais toujours accessible */}
-        {!paused ? (
-          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: true })}>
-            Suspendre la révélation
-          </button>
-        ) : (
-          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: false })}>
-            Reprendre la révélation
-          </button>
-        )}
-      </Section>
-
       <Section title="Réglages de l'événement" hint="Nom, couverture, dates, nombre de photos"
         open={openSec === 'reglages'} onToggle={() => toggleSec('reglages')}>
 
@@ -773,7 +711,7 @@ export default function EventManage({ params }) {
           ) : (
             <button className="db-ident-nom"
               onClick={() => { setEditing('name'); setDraftName(ev.name || '') }}>
-              <span>{invitant} vous invite{invitant.includes('&') ? 'nt' : ''} dans l'objectif.</span>
+              <span>Participez à l'événement {invitant}</span>
               <span className="db-ident-crayon" aria-hidden="true">✎</span>
             </button>
           )}
@@ -850,6 +788,70 @@ export default function EventManage({ params }) {
         )}
 
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
+      </Section>
+
+      <Section title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
+        badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
+        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
+        <Link href={`/g/${id}`} className="btn btn-dark">
+          {revealed ? "Voir l'album →" : 'Vérifier les photos (vous seul) →'}
+        </Link>
+
+        <div className="notice small" style={{ margin: '14px 0' }}>
+          {revealed
+            ? "✅ L'album est ouvert : vos invités voient les photos."
+            : `⏳ Avant le ${formatDate(ev.revealAt)}, vos invités ne verront qu'un compte à rebours.`}
+          {' '}Dans l'album, chaque photo peut être masquée d'un geste — avant comme après la révélation.
+        </div>
+
+        <div style={{ display: 'flex', gap: 8 }}>
+          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
+            {flash === 'gal' ? '✓ Lien copié' : "Copier le lien de l'album"}
+          </button>
+          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
+            ✉️ Message prêt
+          </button>
+        </div>
+
+        <div className="hint" style={{ marginTop: 10 }}>
+          📥 Album téléchargé <strong>{ev.downloadCount || 0}</strong> fois.
+        </div>
+
+        <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
+          <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
+          {ev.galleryCode ? (
+            <>
+              <p className="muted small" style={{ marginBottom: 10 }}>
+                L'album est protégé. Les invités doivent entrer : <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>
+              </p>
+              <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
+                {savingGallery ? '…' : 'Retirer le code'}
+              </button>
+            </>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <input type="text" placeholder="Choisir un code (ex : 1234)" value={galleryCodeInput}
+                onChange={(e) => setGalleryCodeInput(e.target.value)}
+                style={{ width: '100%', textAlign: 'center', fontSize: 17, letterSpacing: '.08em' }} />
+              <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)}
+                disabled={savingGallery || !galleryCodeInput.trim()}>
+                {savingGallery ? 'Activation…' : 'Activer le code'}
+              </button>
+            </div>
+          )}
+          {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
+        </div>
+
+        {/* Frein d'urgence : discret, mais toujours accessible */}
+        {!paused ? (
+          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: true })}>
+            Suspendre la révélation
+          </button>
+        ) : (
+          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: false })}>
+            Reprendre la révélation
+          </button>
+        )}
       </Section>
 
       <Section title="Votre accès et vos admins" hint="Retrouver le tableau de bord, partager la gestion"

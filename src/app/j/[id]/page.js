@@ -429,7 +429,9 @@ export default function GuestCamera({ params }) {
           </>
         )}
       </div>
-      <h3 className="h3" style={{ margin: '22px 0 8px' }}>{coupleLabel} vous invite{coupleLabel.includes('&') ? 'nt' : ''} dans l'objectif.</h3>
+      {/* Formulation neutre : « Mariage de X & Y vous invitent » sonnait faux
+          dès que le nom n'était pas celui d'une personne. */}
+      <h3 className="h3" style={{ margin: '22px 0 8px' }}>Participez à l'événement {coupleLabel}</h3>
       <p className="lead small" style={{ marginBottom: 16 }}>
         Prenez <strong>{meta?.shotsPerGuest} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{meta && formatReveal(meta.revealAt)}</strong>.
       </p>
