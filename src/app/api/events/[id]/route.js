@@ -3,6 +3,7 @@ import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
 import { roleFor, canManage, canDelete, ADMIN, MESSAGE_SUSPENDU } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
+// (isRevealed sert aussi à figer les dates une fois l'album ouvert — voir PATCH)
 import { tierForCount, upgradeCents } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 
@@ -168,6 +169,25 @@ export async function PATCH(request, { params }) {
 
   const body = await request.json().catch(() => ({}))
   const patch = {}
+
+  // Album déjà ouvert : les dates se figent. Les déplacer reviendrait à
+  // refermer un album que des invités ont vu, et à repousser en douce la date
+  // de suppression annoncée. Pour refermer, il y a le frein d'urgence
+  // (revealPaused) — et une fois l'album refermé, les dates redeviennent
+  // modifiables.
+  const nbInvites = await selectRows('guests', `event_id=eq.${id}&select=id`)
+  const albumOuvert = isRevealed({
+    revealAt: ev.reveal_at,
+    revealPaused: ev.reveal_paused,
+    maxGuests: ev.max_guests,
+    guestCount: Array.isArray(nbInvites.data) ? nbInvites.data.length : undefined,
+  })
+  if (albumOuvert && (body.revealAt !== undefined || body.startsAt !== undefined)) {
+    return Response.json(
+      { error: "L'album est ouvert : les dates sont figées. Refermez-le d'abord si vous devez les changer." },
+      { status: 409 }
+    )
+  }
 
   // Cadrage de la couverture, au format « X% Y% ». Validé strictement : cette
   // valeur part telle quelle dans une propriété CSS.
