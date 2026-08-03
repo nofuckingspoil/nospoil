@@ -108,6 +108,7 @@ export default function EventManage({ params }) {
   const ping = (k) => { setFlash(k); setTimeout(() => setFlash(''), 1800) }
 
   const [confirmDel, setConfirmDel] = useState(false)
+  const [confirmReveal, setConfirmReveal] = useState(false)
   const [confirmNom, setConfirmNom] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [adminFirst, setAdminFirst] = useState('')
@@ -602,15 +603,40 @@ export default function EventManage({ params }) {
           <p className="db-hero-sub">
             Vos {ev.photoCount} photos s'ouvriront à tous le {formatShort(ev.revealAt)}. Vous n'avez plus rien à faire.
           </p>
-          <button className="btn btn-accent db-hero-cta" onClick={() => patchEvent({ revealAt: new Date().toISOString() })}>
-            Révéler maintenant
-          </button>
-          <button className="btn db-hero-2nd" onClick={() => {
-            setEditing('reveal'); setDraftDate(toLocalInput(ev.revealAt))
-            allerA('reglages', 'sec-reglages')
-          }}>
-            Changer la date
-          </button>
+          {/* Ouvrir l'album ne se défait pas vraiment : on peut le refermer,
+              mais pas faire oublier ce qui a été vu. */}
+          {confirmReveal ? (
+            <div className="db-hero-confirm">
+              <p className="db-hero-confirm-t">Ouvrir l'album maintenant ?</p>
+              <p className="db-hero-confirm-s">
+                Vos {ev.guestCount} invité{ev.guestCount > 1 ? 's' : ''} pourr{ev.guestCount > 1 ? 'ont' : 'a'} voir
+                les {ev.photoCount} photos dans la seconde. Vous pourrez refermer l'album,
+                mais pas faire oublier ce qui aura été vu.
+              </p>
+              <div className="db-hero-duo">
+                <button className="btn db-hero-2nd" onClick={() => setConfirmReveal(false)}>
+                  Annuler
+                </button>
+                <button className="btn btn-accent" onClick={async () => {
+                  if (await patchEvent({ revealAt: new Date().toISOString() })) setConfirmReveal(false)
+                }}>
+                  Oui, révéler
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <button className="btn btn-accent db-hero-cta" onClick={() => setConfirmReveal(true)}>
+                Révéler maintenant
+              </button>
+              <button className="btn db-hero-2nd" onClick={() => {
+                setEditing('reveal'); setDraftDate(toLocalInput(ev.revealAt))
+                allerA('reglages', 'sec-reglages')
+              }}>
+                Changer la date
+              </button>
+            </>
+          )}
         </div>
       )
     }
