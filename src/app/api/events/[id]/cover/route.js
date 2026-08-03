@@ -1,4 +1,5 @@
 import { selectRows, updateRow, uploadPhoto } from '../../../../../lib/supabase'
+import { roleFor, canManage } from '../../../../../lib/authz'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -19,7 +20,9 @@ export async function POST(request, { params }) {
   const { ok: found, data } = await selectRows('events', `id=eq.${id}&select=owner_token`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!found || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
-  if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  if (!canManage(await roleFor(id, ownerToken))) {
+    return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  }
 
   const bytes = Buffer.from(await file.arrayBuffer())
   if (bytes.length > 8 * 1024 * 1024) return Response.json({ error: 'Image trop lourde.' }, { status: 413 })

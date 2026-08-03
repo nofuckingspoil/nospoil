@@ -1,12 +1,10 @@
 import { selectRows, updateRow, deleteRows, deletePhoto } from '../../../../../lib/supabase'
+import { roleFor, canManage } from '../../../../../lib/authz'
 
-// Vérifie que la requête vient de l'organisateur ou d'un admin (même owner_token).
+// Masquer une photo gênante fait partie de la gestion courante : l'organisateur
+// comme les co-admins peuvent le faire.
 async function requireOwner(id, request) {
-  const ownerToken = request.headers.get('x-owner-token')
-  if (!ownerToken) return false
-  const { data } = await selectRows('events', `id=eq.${id}&select=owner_token`)
-  const ev = Array.isArray(data) ? data[0] : null
-  return !!ev && ev.owner_token === ownerToken
+  return canManage(await roleFor(id, request.headers.get('x-owner-token')))
 }
 
 // Masquer / réafficher une photo (hidden true|false)

@@ -1163,6 +1163,19 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-sec-body .qr-tile { background: var(--screen); }
 
 /* --- Lignes de réglage --- */
+/* Barre d'aperçu — poste de développement uniquement, jamais en ligne */
+.db-dev {
+  display: flex; align-items: center; flex-wrap: wrap; gap: 6px;
+  margin-top: 14px; padding: 8px 10px; border-radius: 12px;
+  background: #14161F; font-family: var(--font-mono); font-size: 11px;
+}
+.db-dev-lbl { color: rgba(255,255,255,.45); letter-spacing: .12em; text-transform: uppercase; margin-right: 2px; }
+.db-dev a {
+  padding: 4px 9px; border-radius: 999px; text-decoration: none;
+  color: rgba(255,255,255,.7); background: rgba(255,255,255,.08);
+}
+.db-dev a.on { background: var(--accent); color: #fff; font-weight: 700; }
+
 /* Fil des trois moments — repère fixe au-dessus d'une carte qui, elle, change */
 .db-fil { display: flex; list-style: none; margin: 18px 0 0; padding: 0; }
 .db-fil li { flex: 1; position: relative; padding-top: 20px; text-align: center; }

@@ -97,6 +97,24 @@ export function loginEmail({ code, link }) {
   }
 }
 
+// ---------- Invitation d'un co-organisateur ----------
+// Ne transporte aucun secret : c'est la connexion par mail qui prouvera son
+// identité. Un lien d'invitation volé ne donnerait donc accès à rien.
+export function adminInviteEmail({ eventName, loginUrl }) {
+  return {
+    subject: `Vous co-organisez « ${eventName} » sur ${BRAND.name}`,
+    html: layout({
+      title: 'Vous êtes co-organisateur',
+      intro: `On vous a confié la gestion de « <strong>${eventName}</strong> ». Vous pourrez inviter les convives, veiller sur l'album et régler les dates.`,
+      body: `${bigButton(loginUrl, 'Accéder à l’événement →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Connectez-vous avec <strong style="color:#221A12;">cette adresse mail</strong> : vous recevrez un code, sans mot de passe à retenir.
+        </div>`,
+      footer: `Vous avez accès à toute la gestion de l'événement, sauf à sa suppression, qui reste réservée à son organisateur.`,
+    }),
+  }
+}
+
 // ---------- Mail de vérification à la création (code seul, avant création) ----------
 export function verifyEmail({ code }) {
   const spaced = String(code).replace(/(\d{3})(\d{3})/, '$1 $2')

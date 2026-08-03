@@ -66,6 +66,10 @@ function Section({ title, hint, badge, children, open, onToggle }) {
   )
 }
 
+// Outils d'aperçu réservés au poste de développement : la condition est figée à
+// la compilation, donc rien de tout cela n'existe dans la version en ligne.
+const DEV = process.env.NODE_ENV !== 'production'
+
 // Les trois moments d'un événement, dans l'ordre. Sert de fil au tableau de bord.
 const MOMENTS = [
   { key: AVANT, title: 'Avant', sub: () => 'Préparatifs' },
@@ -96,13 +100,8 @@ export default function EventManage({ params }) {
   const [deleting, setDeleting] = useState(false)
   const [adminName, setAdminName] = useState('')
   const [adminEmail, setAdminEmail] = useState('')
-  const [adminCode, setAdminCode] = useState('')
   const [adminMsg, setAdminMsg] = useState('')
   const [addingAdmin, setAddingAdmin] = useState(false)
-  const [loginEmail, setLoginEmail] = useState('')
-  const [loginCode, setLoginCode] = useState('')
-  const [loginMsg, setLoginMsg] = useState('')
-  const [loggingIn, setLoggingIn] = useState(false)
   const [editing, setEditing] = useState('') // 'name' | 'start' | 'reveal' | 'shots' | ''
   const [draftName, setDraftName] = useState('')
   const [draftDate, setDraftDate] = useState('')
@@ -111,6 +110,7 @@ export default function EventManage({ params }) {
   // Le fil des trois moments s'affiche par défaut. `?fil=0` l'enlève, le temps
   // de comparer les deux versions sur le même écran.
   const [fil, setFil] = useState(true)
+  const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
   const [upgradeMsg, setUpgradeMsg] = useState('')
   const [upgrading, setUpgrading] = useState(false)
@@ -155,6 +155,8 @@ export default function EventManage({ params }) {
         .finally(reload)
     }
     if (sp.get('fil') === '0') setFil(false)
+    const m = sp.get('moment')
+    if (DEV && MOMENTS.some((x) => x.key === m)) setForceMoment(m)
     const origin = window.location.origin
     setJoinUrl(`${origin}/j/${id}`)
     setGalleryUrl(`${origin}/g/${id}`)
@@ -170,7 +172,9 @@ export default function EventManage({ params }) {
   }, [joinUrl])
 
   // Pendant la soirée, l'écran doit vivre : on rafraîchit les compteurs.
-  const phase = ev ? eventPhase(ev, now) : null
+  // En local, `?moment=` force le moment affiché pour pouvoir regarder les trois
+  // écrans sans attendre la vraie date. Neutralisé dans la version en ligne.
+  const phase = ev ? (DEV && forceMoment ? forceMoment : eventPhase(ev, now)) : null
   useEffect(() => {
     const tick = setInterval(() => setNow(Date.now()), 30000)
     return () => clearInterval(tick)
@@ -297,11 +301,11 @@ export default function EventManage({ params }) {
       const r = await fetch(`/api/events/${id}/admins`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
-        body: JSON.stringify({ name: adminName, email: adminEmail, code: adminCode }),
+        body: JSON.stringify({ name: adminName, email: adminEmail }),
       })
       const d = await r.json()
       if (d.error) setAdminMsg(d.error)
-      else { setAdminName(''); setAdminEmail(''); setAdminCode(''); await reload() }
+      else { setAdminName(''); setAdminEmail(''); await reload() }
     } catch { setAdminMsg('Ajout impossible.') }
     setAddingAdmin(false)
   }
@@ -311,21 +315,6 @@ export default function EventManage({ params }) {
     })
     await reload()
   }
-  async function adminLogin(e) {
-    e.preventDefault(); setLoginMsg(''); setLoggingIn(true)
-    try {
-      const r = await fetch(`/api/events/${id}/admin-login`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: loginEmail, code: loginCode }),
-      })
-      const d = await r.json().catch(() => ({}))
-      if (!r.ok) throw new Error(d.error || 'Mail ou code incorrect.')
-      saveOwnerToken(id, d.ownerToken)
-      rememberMyEvent(id)
-      window.location.reload()
-    } catch (err) { setLoginMsg(err.message || 'Connexion impossible.'); setLoggingIn(false) }
-  }
-
   async function deleteEvent() {
     setDeleting(true)
     const r = await fetch(`/api/events/${id}`, { method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) } })
@@ -528,19 +517,15 @@ export default function EventManage({ params }) {
           <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
         </div>
         <div className="card" style={{ marginTop: 26 }}>
-          <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔑 Vous êtes admin ?</div>
+          <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔑 Vous co-organisez cet événement ?</div>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
-            Connectez-vous au tableau de bord
+            Connectez-vous avec votre adresse mail
           </div>
           <p className="muted small" style={{ marginBottom: 14 }}>
-            L'organisateur vous a donné une adresse mail et un code ? Entrez-les pour accéder à la gestion de l'événement.
+            Aucun code à retenir : indiquez l'adresse à laquelle vous avez reçu l'invitation,
+            et vous recevrez un lien de connexion.
           </p>
-          <form onSubmit={adminLogin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <input type="email" placeholder="Adresse mail" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required />
-            <input type="text" placeholder="Code d'accès" value={loginCode} onChange={(e) => setLoginCode(e.target.value)} required />
-            {loginMsg && <div className="err">{loginMsg}</div>}
-            <button className="btn btn-accent" type="submit" disabled={loggingIn}>{loggingIn ? 'Connexion…' : 'Se connecter'}</button>
-          </form>
+          <a className="btn btn-accent" href="/connexion">Recevoir mon lien de connexion →</a>
         </div>
         <div className="notice" style={{ marginTop: 16 }}>
           📷 Vous voulez juste prendre des photos ? <a href={`/j/${id}`} style={{ color: 'var(--accent-deep)', fontWeight: 700 }}>Rejoignez l'événement ici</a>.
@@ -555,6 +540,19 @@ export default function EventManage({ params }) {
         <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
         <Link href="/mes-evenements" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Mes événements</Link>
       </div>
+
+      {/* Aperçu local uniquement : permet de voir les trois écrans sans attendre
+          la vraie date. Absent de la version en ligne. */}
+      {DEV && (
+        <div className="db-dev">
+          <span className="db-dev-lbl">Aperçu</span>
+          {MOMENTS.map((m) => (
+            <a key={m.key} href={`?moment=${m.key}`}
+              className={forceMoment === m.key ? 'on' : ''}>{m.title}</a>
+          ))}
+          <a href="?" className={forceMoment ? '' : 'on'}>Réel</a>
+        </div>
+      )}
 
       <header className="db-head">
         <h1 className="h2">{ev.name}</h1>
@@ -899,7 +897,7 @@ export default function EventManage({ params }) {
                   <div style={{ minWidth: 0 }}>
                     <div style={{ fontWeight: 600 }}>{a.name || a.email}</div>
                     <div className="mono small" style={{ color: 'var(--text2)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {a.email} · code <strong style={{ color: 'var(--ink)' }}>{a.code}</strong>
+                      {a.email} · se connecte par mail
                     </div>
                   </div>
                   <button onClick={() => removeAdmin(a.id)} className="mono small" style={{ background: 'none', border: 'none', color: '#b23b2e', cursor: 'pointer', textDecoration: 'underline', flex: '0 0 auto' }}>
@@ -913,9 +911,12 @@ export default function EventManage({ params }) {
           <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
             <input type="email" placeholder="Adresse mail" value={adminEmail} onChange={(e) => setAdminEmail(e.target.value)} required />
-            <input type="text" placeholder="Code d'accès (ex : 4821)" value={adminCode} onChange={(e) => setAdminCode(e.target.value)} required />
             {adminMsg && <div className="err">{adminMsg}</div>}
-            <button className="btn btn-dark" type="submit" disabled={addingAdmin}>{addingAdmin ? 'Ajout…' : '+ Ajouter cet admin'}</button>
+            <button className="btn btn-dark" type="submit" disabled={addingAdmin}>{addingAdmin ? 'Envoi…' : '+ Inviter ce co-organisateur'}</button>
+            <p className="hint">
+              Il recevra une invitation et se connectera avec cette adresse, sans code à retenir.
+              Il pourra tout gérer, sauf supprimer l'événement.
+            </p>
           </form>
         </div>
       </Section>
@@ -953,7 +954,15 @@ export default function EventManage({ params }) {
 
       <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
         {error && <div className="err" style={{ marginBottom: 12 }}>{error}</div>}
-        {!confirmDel ? (
+        {/* Effacer les photos de tous les invités reste au seul organisateur.
+            Le serveur le refuse de toute façon : on évite juste de proposer un
+            geste qui échouerait. */}
+        {ev.role === 'admin' ? (
+          <p className="muted small">
+            Vous co-organisez cet événement. Sa suppression est réservée à la personne
+            qui l'a créé.
+          </p>
+        ) : !confirmDel ? (
           <button onClick={() => { setError(''); setConfirmDel(true) }} className="db-danger-link" style={{ marginTop: 0 }}>
             Supprimer cet événement
           </button>

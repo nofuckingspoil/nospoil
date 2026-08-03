@@ -1,6 +1,7 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
 import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
+import { roleFor, canManage, canDelete, ADMIN } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
 import { tierForCount, upgradeCents } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
@@ -21,9 +22,11 @@ export async function GET(request, { params }) {
   }
   const ev = data[0]
 
-  // Vérifie si la requête vient de l'organisateur (appareil qui a créé l'événement)
+  // Organisateur ou co-admin : les deux voient le tableau de bord complet.
+  // Seule la suppression leur est distinguée (voir DELETE plus bas).
   const ownerToken = request.headers.get('x-owner-token')
-  const isOwner = !!ownerToken && ownerToken === ev.owner_token
+  const role = await roleFor(id, ownerToken)
+  const isOwner = canManage(role)
 
   // URL signée temporaire pour la photo de couverture (si présente)
   let coverUrl = null
@@ -86,6 +89,7 @@ export async function GET(request, { params }) {
     const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,code&order=created_at.asc`)
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
 
+    payload.role = role // 'owner' | 'admin' — pilote l'accès à la suppression
     payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
@@ -147,7 +151,11 @@ export async function PATCH(request, { params }) {
   const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,reveal_at,reveal_paused,max_guests`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
-  if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  // Les réglages du quotidien sont ouverts aux co-admins : c'est le sens même
+  // de les inviter. Seule la suppression reste au propriétaire.
+  if (!canManage(await roleFor(id, ownerToken))) {
+    return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  }
 
   const body = await request.json().catch(() => ({}))
   const patch = {}
@@ -243,7 +251,17 @@ export async function DELETE(request, { params }) {
   const { ok, data } = await selectRows('events', `id=eq.${id}&select=owner_token,cover_url`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
-  if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+
+  // Le seul geste réservé au propriétaire : il efface les photos de tous les
+  // invités, sans retour possible. Un co-admin ne doit pas pouvoir le faire.
+  const role = await roleFor(id, ownerToken)
+  if (!canDelete(role)) {
+    return Response.json({
+      error: role === ADMIN
+        ? "Seul l'organisateur peut supprimer l'événement."
+        : 'Action non autorisée.',
+    }, { status: 403 })
+  }
 
   // Fichiers à effacer du Storage : toutes les photos + la couverture éventuelle
   const ph = await selectRows('photos', `event_id=eq.${id}&select=storage_path`)

@@ -46,19 +46,28 @@ export function isValidEmail(v) {
 const FIELDS = 'id,name,host_names,reveal_at,created_at,owner_token'
 
 // Tous les événements liés à ce mail : ceux qu'il a créés + ceux où il est co-organisateur.
+//
+// Le jeton renvoyé dépend du lien : le propriétaire reçoit celui de l'événement,
+// le co-admin le sien. Auparavant tout le monde recevait celui du propriétaire,
+// ce qui donnait à n'importe quel co-admin le droit de tout supprimer.
 export async function eventsForEmail(email) {
   const enc = encodeURIComponent(email)
   const owned = await selectRows('events', `owner_email=eq.${enc}&status=eq.active&select=${FIELDS}`)
-  const list = Array.isArray(owned.data) ? [...owned.data] : []
+  const list = (Array.isArray(owned.data) ? owned.data : []).map((e) => ({ ...e, _token: e.owner_token }))
 
-  const admin = await selectRows('event_admins', `email=eq.${enc}&select=event_id`)
-  const ids = (Array.isArray(admin.data) ? admin.data : [])
-    .map((a) => a.event_id)
-    .filter((id) => id && !list.some((e) => e.id === id))
+  const admin = await selectRows('event_admins', `email=eq.${enc}&select=event_id,token`)
+  const parEvenement = new Map(
+    (Array.isArray(admin.data) ? admin.data : [])
+      .filter((a) => a.event_id && a.token && !list.some((e) => e.id === a.event_id))
+      .map((a) => [a.event_id, a.token])
+  )
 
-  if (ids.length) {
+  if (parEvenement.size) {
+    const ids = [...parEvenement.keys()]
     const co = await selectRows('events', `id=in.(${ids.join(',')})&status=eq.active&select=${FIELDS}`)
-    if (Array.isArray(co.data)) list.push(...co.data)
+    for (const e of Array.isArray(co.data) ? co.data : []) {
+      list.push({ ...e, _token: parEvenement.get(e.id) })
+    }
   }
 
   list.sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
@@ -67,7 +76,7 @@ export async function eventsForEmail(email) {
     name: e.name,
     hostNames: e.host_names,
     revealAt: e.reveal_at,
-    ownerToken: e.owner_token,
+    ownerToken: e._token,
   }))
 }
 
