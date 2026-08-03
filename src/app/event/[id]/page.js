@@ -1212,8 +1212,8 @@ export default function EventManage({ params }) {
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-        <Section id="sec-invites" title="Invités" badge={String(ev.contacts.length)}
-          hint="Tout le monde, avec ou sans adresse"
+        <Section id="sec-invites" title="Invités inscrits" badge={String(ev.contacts.length)}
+          hint="Tous les participants, avec ou sans adresse"
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
           <div className="notice small" style={{ marginBottom: 12 }}>
             ✉️ Ceux qui ont laissé leur adresse reçoivent le lien de l'album <strong>tout seuls</strong>,

@@ -1122,7 +1122,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 .db-head { margin-top: 24px; }
 .db-head .h2 { margin: 0; }
-.db-head-date { font-size: 12.5px; color: var(--text3); margin: 6px 0 0; text-transform: capitalize; }
+/* Majuscule à la première lettre seulement : `capitalize` en mettait une à
+   chaque mot, d'où « Lun. 3 Août · Jusqu'à 5 Invités ». */
+.db-head-date { font-size: 12.5px; color: var(--text3); margin: 6px 0 0; }
+.db-head-date::first-letter { text-transform: uppercase; }
 
 /* --- Bascule Organisation / Mon appareil --- */
 .db-modes {
