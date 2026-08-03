@@ -153,6 +153,22 @@ export default function Gallery({ params }) {
   async function downloadAll(photos) {
     if (zip) return
     fetch(`/api/gallery/${id}/track-download`, { method: 'POST' }).catch(() => {}) // compteur de téléchargements
+
+    // Une seule photo : on l'enregistre telle quelle. L'enfermer dans une
+    // archive obligerait à la décompresser pour voir une image.
+    if (photos.length === 1) {
+      const p = photos[0]
+      try {
+        const blob = await fetch(p.fullUrl || p.url).then((r) => r.blob())
+        const qui = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
+        const url = URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url; a.download = `timetoflash-${qui}.jpg`; a.click()
+        URL.revokeObjectURL(url)
+      } catch { setError('Téléchargement impossible.') }
+      return
+    }
+
     setZip({ done: 0, total: photos.length })
     try {
       const z = new JSZip()
@@ -382,9 +398,6 @@ export default function Gallery({ params }) {
         </div>
       )}
 
-      <div className="footer-note">
-        Pour une seule photo : appui long sur mobile, clic droit sur ordinateur.
-      </div>
     </main>
   )
 }
