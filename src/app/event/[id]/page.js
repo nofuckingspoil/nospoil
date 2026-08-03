@@ -70,6 +70,10 @@ function Section({ title, hint, badge, children, open, onToggle }) {
 // la compilation, donc rien de tout cela n'existe dans la version en ligne.
 const DEV = process.env.NODE_ENV !== 'production'
 
+// Gestes qu'on ne pose qu'une fois (mettre au calendrier). Simple aide-mémoire
+// d'affichage, propre à l'appareil : rien de critique, donc pas de colonne en base.
+const FAIT_KEY = (id) => `ttf_fait_${id}`
+
 // Les trois moments d'un événement, dans l'ordre. Sert de fil au tableau de bord.
 const MOMENTS = [
   { key: AVANT, title: 'Avant', sub: () => 'Préparatifs' },
@@ -112,6 +116,7 @@ export default function EventManage({ params }) {
   const [fil, setFil] = useState(true)
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
+  const [fait, setFait] = useState({})
   const [upgradeMsg, setUpgradeMsg] = useState('')
   const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
@@ -157,6 +162,7 @@ export default function EventManage({ params }) {
     if (sp.get('fil') === '0') setFil(false)
     const m = sp.get('moment')
     if (DEV && MOMENTS.some((x) => x.key === m)) setForceMoment(m)
+    try { setFait(JSON.parse(localStorage.getItem(FAIT_KEY(id)) || '{}')) } catch {}
     const origin = window.location.origin
     setJoinUrl(`${origin}/j/${id}`)
     setGalleryUrl(`${origin}/g/${id}`)
@@ -257,7 +263,16 @@ export default function EventManage({ params }) {
   function icsStamp(d) {
     return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`
   }
+  function marquerFait(k) {
+    setFait((f) => {
+      const suite = { ...f, [k]: true }
+      try { localStorage.setItem(FAIT_KEY(id), JSON.stringify(suite)) } catch {}
+      return suite
+    })
+  }
+
   function addToCalendar() {
+    marquerFait('cal')
     // Deux rendez-vous : la fête elle-même (avec le QR à montrer) et la révélation.
     const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
     const block = (uid, start, end, summary, description) => [
@@ -364,12 +379,19 @@ export default function EventManage({ params }) {
           <Link href={`/event/${id}/imprimer`} className="btn btn-accent db-hero-cta">
             Choisir un format et imprimer →
           </Link>
-          <button className="btn db-hero-2nd" onClick={addToCalendar}>
-            {flash === 'cal' ? '✓ Ajouté à votre agenda' : '🗓️ Mettre au calendrier'}
-          </button>
-          <p className="db-hero-foot">
-            L'agenda contient votre lien organisateur : vous le retrouverez sans rien noter.
-          </p>
+          {/* Mettre au calendrier ne se fait qu'une fois : la proposition s'efface
+              ensuite, après un court instant de confirmation. Le bouton reste
+              disponible en permanence dans « Votre accès », plus bas. */}
+          {(!fait.cal || flash === 'cal') && (
+            <>
+              <button className="btn db-hero-2nd" onClick={addToCalendar}>
+                {flash === 'cal' ? '✓ Ajouté à votre agenda' : '🗓️ Mettre au calendrier'}
+              </button>
+              <p className="db-hero-foot">
+                L'agenda contient votre lien organisateur : vous le retrouverez sans rien noter.
+              </p>
+            </>
+          )}
         </div>
       )
     }
