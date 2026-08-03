@@ -162,7 +162,8 @@ const cgv = {
 <p>Conformément à l'article L.221-18 du Code de la consommation, l'Organisateur consommateur dispose en principe d'un délai de quatorze (14) jours à compter de la conclusion du contrat pour exercer son droit de rétractation, sans avoir à motiver sa décision.</p>
 <h3>9.2 Renonciation expresse</h3>
 <p>Le Service étant fourni immédiatement après le paiement, l'Organisateur est invité, lors de la commande, à <strong>demander expressément l'exécution immédiate du Service et à renoncer à son droit de rétractation</strong>, au moyen d'une case à cocher distincte et non pré-cochée, libellée comme suit :</p>
-<blockquote>« Je demande l'exécution immédiate du service et je reconnais qu'une fois l'Événement créé et le service pleinement exécuté, je perdrai mon droit de rétractation, conformément à l'article L.221-28 du Code de la consommation. »</blockquote>
+<blockquote>« Je demande la création immédiate de mon événement et je renonce à mon droit de rétractation de 14 jours. »</p>
+<p>Cocher cette case vaut, au sens de l'article L.221-28 du Code de la consommation, demande expresse d'exécution immédiate du Service avant l'expiration du délai de rétractation et renonciation expresse à ce droit, l'Organisateur reconnaissant qu'il le perdra une fois le Service pleinement exécuté.</blockquote>
 <p>En l'absence de cette renonciation, le droit de rétractation demeure applicable et peut être exercé par tout moyen dénué d'ambiguïté à l'adresse support@timetoflash.fr, ou au moyen du formulaire type figurant en <strong>Annexe 1</strong>.</p>
 <h3>9.3 Effets</h3>
 <p>Lorsque l'Organisateur exerce son droit de rétractation alors que l'exécution du Service a commencé à sa demande expresse, il est redevable d'un montant proportionnel au service fourni jusqu'à la communication de sa décision, conformément à l'article L.221-25 du Code de la consommation.</p>

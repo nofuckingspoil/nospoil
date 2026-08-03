@@ -500,9 +500,8 @@ function CreateForm() {
               <label className="wiz-check">
                 <input type="checkbox" checked={waiverOk} onChange={(e) => setWaiverOk(e.target.checked)} />
                 <span>
-                  Je demande l'exécution immédiate du service et je reconnais qu'une fois l'événement créé
-                  et le service pleinement exécuté, je perdrai mon droit de rétractation, conformément à
-                  l'article L.221-28 du Code de la consommation.
+                  Je demande la création immédiate de mon événement et je renonce à mon
+                  droit de rétractation de 14 jours.
                 </span>
               </label>
             )}
