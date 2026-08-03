@@ -1227,14 +1227,18 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 .db-ident-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .db-ident-actions .btn { flex: 1 1 auto; width: auto; padding: 12px 16px; font-size: 14px; }
-/* Corbeille posée sur la photo : le retrait se fait là où est son objet */
+/* Corbeille posée sur la photo : le retrait se fait là où est son objet.
+   Pastille blanche pleine — sur une photo quelconque, c'est le seul fond qui
+   reste lisible à coup sûr. */
 .db-ident-poubelle {
-  position: absolute; top: 8px; right: 8px; width: 34px; height: 34px;
+  position: absolute; top: 10px; right: 10px; width: 38px; height: 38px;
   display: flex; align-items: center; justify-content: center;
-  border: none; border-radius: 50%; cursor: pointer; font-size: 15px;
-  color: #fff; background: rgba(20,22,31,.55); backdrop-filter: blur(4px);
+  border: none; border-radius: 50%; cursor: pointer;
+  color: var(--ink); background: #fff;
+  box-shadow: 0 2px 10px rgba(0,0,0,.3);
+  transition: background .15s, color .15s;
 }
-.db-ident-poubelle:hover { background: rgba(178,59,46,.9); }
+.db-ident-poubelle:hover { background: #b23b2e; color: #fff; }
 .db-ident-poubelle:disabled { opacity: .5; cursor: default; }
 
 /* Formule dépassée — l'album attend une mise à niveau */

@@ -731,7 +731,10 @@ export default function EventManage({ params }) {
               {ev.coverUrl && !recadrage && (
                 <button className="db-ident-poubelle" onClick={supprimerCover}
                   disabled={coverBusy} aria-label="Retirer la photo" title="Retirer la photo">
-                  🗑
+                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M4 7h16M10 4h4M9 7v12m6-12v12M6 7l1 13a1 1 0 001 1h8a1 1 0 001-1l1-13"
+                      stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </button>
               )}
             </div>
