@@ -73,8 +73,11 @@ export async function POST(request) {
     if (email) {
       patch.email = email
       // Un invité qui laisse son adresse est une personne comme une autre :
-      // c'est peut-être l'organisateur d'un autre événement.
-      patch.account_id = await ensureAccount(email, displayName)
+      // c'est peut-être l'organisateur d'un autre événement. Et s'il vient de
+      // l'essai du site, on le note : c'est quelqu'un qui a tenu l'appareil.
+      const { data: evData } = await selectRows('events', `id=eq.${eventId}&select=is_demo`)
+      const estEssai = Array.isArray(evData) && !!evData[0]?.is_demo
+      patch.account_id = await ensureAccount(email, displayName, { demo: estEssai })
     }
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}

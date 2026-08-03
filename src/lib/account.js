@@ -49,25 +49,35 @@ export function normalizeEmail(v) {
 //  Ne fait jamais échouer l'appelant : un compte manquant n'empêche ni de créer
 //  un événement, ni de prendre une photo.
 // ------------------------------------------------------------
-export async function ensureAccount(email, name) {
+// `demo` : la personne vient d'essayer l'appareil depuis le site. On horodate
+// ce premier contact — l'album d'essai, lui, disparaîtra le lendemain.
+export async function ensureAccount(email, name, { demo = false } = {}) {
   const mail = normalizeEmail(email)
   if (!isValidEmail(mail)) return null
   const nom = (name || '').toString().trim().slice(0, 80) || null
+  const maintenant = new Date().toISOString()
 
   try {
-    const { data } = await selectRows('accounts', `email=eq.${encodeURIComponent(mail)}&select=id,name&limit=1`)
+    const { data } = await selectRows('accounts', `email=eq.${encodeURIComponent(mail)}&select=id,name,tried_demo_at&limit=1`)
     const existant = Array.isArray(data) ? data[0] : null
 
     if (existant) {
       // On complète un nom manquant, on n'écrase jamais celui qui est là :
       // un prénom saisi à la volée ne vaut pas un nom déjà enregistré.
-      const patch = { last_seen_at: new Date().toISOString() }
+      const patch = { last_seen_at: maintenant }
       if (nom && !existant.name) patch.name = nom
+      // Le premier essai fait foi : on ne réécrit pas la date à chaque passage.
+      if (demo && !existant.tried_demo_at) patch.tried_demo_at = maintenant
       await updateRow('accounts', `id=eq.${existant.id}`, patch)
       return existant.id
     }
 
-    const cree = await insertRow('accounts', { email: mail, name: nom, last_seen_at: new Date().toISOString() })
+    const cree = await insertRow('accounts', {
+      email: mail,
+      name: nom,
+      last_seen_at: maintenant,
+      tried_demo_at: demo ? maintenant : null,
+    })
     if (cree.ok && cree.data?.id) return cree.data.id
 
     // Course entre deux requêtes simultanées : l'autre a gagné, on la relit.
