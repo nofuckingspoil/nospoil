@@ -365,10 +365,6 @@ export default function EventManage({ params }) {
 
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
 
-  // Un aperçu vaut mieux qu'une liste de tâches : il montre ce qu'on gagne
-  // au lieu de rappeler ce qu'on n'a pas fait. Il ne sert qu'à héberger l'ajout
-  // de couverture, donc il s'efface dès qu'une photo est là.
-  const showApercu = phase === AVANT && !ev.coverUrl
   const invitant = ev.hostNames || ev.name || ''
 
   // ---- La grande carte : le seul élément qui change selon le moment ----
@@ -660,28 +656,6 @@ export default function EventManage({ params }) {
 
       <Hero />
 
-      {/* Montre l'écran d'accueil tel que les invités le verront, et offre au
-          passage l'endroit où déposer la couverture. */}
-      {showApercu && (
-        <div className="db-apercu">
-          <span className="db-eyebrow">ce que verront vos invités</span>
-          <div className="db-apercu-mini">
-            <div className="db-apercu-cover"><span>ÉVÉNEMENT PRIVÉ</span></div>
-            <p className="db-apercu-nom">
-              {invitant} vous invite{invitant.includes('&') ? 'nt' : ''} dans l'objectif.
-            </p>
-          </div>
-          <label className="btn btn-ghost db-apercu-act">
-            {coverBusy ? 'Envoi…' : '🖼️ Ajouter une photo de couverture'}
-            <input type="file" accept="image/*" hidden
-              onChange={(e) => uploadCover(e.target.files?.[0])} />
-          </label>
-          <p className="db-apercu-foot">
-            Facultatif. Sans photo, vos invités voient ce dégradé.
-          </p>
-        </div>
-      )}
-
       {/* ---------- Tout le reste, toujours au même endroit ---------- */}
 
       <Section title="Inviter vos convives" hint="QR code, lien, impression"
@@ -771,43 +745,43 @@ export default function EventManage({ params }) {
       <Section title="Réglages de l'événement" hint="Nom, couverture, dates, nombre de photos"
         open={openSec === 'reglages'} onToggle={() => toggleSec('reglages')}>
 
-        {/* Photo de couverture — modifiable à tout moment */}
-        <div className="db-set">
-          <div className="db-set-l">
-            <span className="db-set-lbl">Photo de couverture</span>
-            <span className="db-set-val">
-              {ev.coverUrl ? 'Ajoutée' : 'Aucune'} — elle habille l'écran d'accueil de vos invités
+        {/* L'identité de l'événement, montrée comme les invités la verront :
+            on touche ce qu'on veut changer, au lieu de remplir des champs.
+            Calquée sur l'écran d'accueil réel — une miniature qui ne lui
+            ressemblerait pas serait décorative, donc trompeuse. */}
+        <div className="db-ident">
+          <label className="db-ident-cover">
+            {ev.coverUrl
+              ? <img src={ev.coverUrl} alt="" />
+              : <span className="db-ident-tag">ÉVÉNEMENT PRIVÉ</span>}
+            <span className="db-ident-act">
+              {coverBusy ? 'Envoi…' : ev.coverUrl ? '🖼️ Changer la photo' : '🖼️ Ajouter une photo'}
             </span>
-          </div>
-          <label className="db-set-act" style={{ cursor: 'pointer' }}>
-            {coverBusy ? '…' : ev.coverUrl ? 'Changer' : 'Ajouter'}
             <input type="file" accept="image/*" hidden
               onChange={(e) => uploadCover(e.target.files?.[0])} />
           </label>
-        </div>
-        {ev.coverUrl && (
-          <img src={ev.coverUrl} alt="Photo de couverture" className="db-cover-preview" />
-        )}
 
-        {/* Nom de l'événement */}
-        <div className="db-set">
-          <div className="db-set-l">
-            <span className="db-set-lbl">Nom de l'événement</span>
-            <span className="db-set-val">{ev.name}</span>
-          </div>
-          <button className="db-set-act" onClick={() => { setEditing(editing === 'name' ? '' : 'name'); setDraftName(ev.name || '') }}>
-            {editing === 'name' ? 'Annuler' : 'Modifier'}
-          </button>
+          {editing === 'name' ? (
+            <div className="db-set-edit" style={{ marginTop: 12 }}>
+              <input type="text" maxLength={80} value={draftName} autoFocus
+                onChange={(e) => setDraftName(e.target.value)}
+                placeholder="Ex : Mariage de Marie & Paul" />
+              <button className="btn btn-accent" onClick={async () => {
+                if (await patchEvent({ name: draftName })) setEditing('')
+              }}>Enregistrer</button>
+            </div>
+          ) : (
+            <button className="db-ident-nom"
+              onClick={() => { setEditing('name'); setDraftName(ev.name || '') }}>
+              <span>{invitant} vous invite{invitant.includes('&') ? 'nt' : ''} dans l'objectif.</span>
+              <span className="db-ident-crayon" aria-hidden="true">✎</span>
+            </button>
+          )}
+
+          <p className="db-ident-aide">
+            Voilà ce que voient vos invités en scannant le QR. Touchez la photo ou le nom pour les changer.
+          </p>
         </div>
-        {editing === 'name' && (
-          <div className="db-set-edit">
-            <input type="text" maxLength={80} value={draftName} onChange={(e) => setDraftName(e.target.value)}
-              placeholder="Ex : Mariage de Marie & Paul" />
-            <button className="btn btn-accent" onClick={async () => {
-              if (await patchEvent({ name: draftName })) setEditing('')
-            }}>Enregistrer</button>
-          </div>
-        )}
 
         {/* Date de l'événement */}
         <div className="db-set">

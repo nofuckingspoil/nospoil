@@ -1211,27 +1211,36 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   font-size: 10px; letter-spacing: .02em; color: var(--text4); line-height: 1.3;
 }
 
-/* Aperçu de l'écran d'accueil des invités — montre plutôt que de rappeler.
-   N'apparaît que tant qu'aucune couverture n'a été choisie. */
-.db-apercu { margin-top: 16px; padding: 16px 18px 18px; border-radius: 20px; background: #fff; border: 1px solid var(--line); }
-.db-apercu-mini { margin-top: 10px; }
-.db-apercu-cover {
-  position: relative; width: 100%; aspect-ratio: 16 / 9; border-radius: 14px;
-  display: flex; align-items: flex-start; justify-content: center;
+/* L'identité de l'événement, telle que les invités la voient.
+   On touche la photo ou le nom pour les changer : manipulation directe
+   plutôt que formulaire. */
+.db-ident { margin-bottom: 6px; }
+.db-ident-cover {
+  position: relative; display: block; width: 100%; aspect-ratio: 16 / 10;
+  border-radius: 16px; overflow: hidden; cursor: pointer;
   background: linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C);
 }
-.db-apercu-cover span {
-  margin-top: 12px; font-family: var(--font-mono); font-size: 9.5px;
-  letter-spacing: .16em; color: rgba(255,255,255,.85);
+.db-ident-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.db-ident-tag {
+  position: absolute; top: 14px; left: 0; right: 0; text-align: center;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .18em;
+  color: rgba(255,255,255,.85);
 }
-.db-apercu-nom {
-  margin-top: 10px; font-family: var(--font-display); font-weight: 800;
-  font-size: 16px; line-height: 1.25; color: var(--ink);
+.db-ident-act {
+  position: absolute; left: 10px; right: 10px; bottom: 10px; text-align: center;
+  padding: 9px 12px; border-radius: 10px; font-size: 13.5px; font-weight: 700;
+  color: #fff; background: rgba(20,22,31,.62); backdrop-filter: blur(4px);
 }
-.db-apercu-act { width: 100%; margin-top: 14px; cursor: pointer; }
-.db-apercu-foot { margin-top: 8px; font-size: 12px; color: var(--text3); text-align: center; }
+.db-ident-cover:hover .db-ident-act { background: rgba(20,22,31,.78); }
 
-.db-cover-preview { width: 100%; border-radius: 14px; aspect-ratio: 16 / 10; object-fit: cover; display: block; margin-bottom: 12px; }
+.db-ident-nom {
+  display: flex; align-items: baseline; gap: 8px; width: 100%; text-align: left;
+  margin-top: 12px; padding: 0; background: none; border: none; cursor: pointer;
+  font-family: var(--font-display); font-weight: 800; font-size: 17px;
+  line-height: 1.25; color: var(--ink);
+}
+.db-ident-crayon { flex: none; font-size: 14px; color: var(--accent-deep); }
+.db-ident-aide { margin-top: 8px; font-size: 12.5px; line-height: 1.45; color: var(--text3); }
 
 /* Formule dépassée — l'album attend une mise à niveau */
 .db-quota {
