@@ -6,6 +6,9 @@ import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken } from '../../../lib/device'
 
+// Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
+const SEUIL_AUTEURS = 8
+
 const TEASER_GRADS = [
   'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)',
   'linear-gradient(160deg,#2B2540,#6E466C,#D08193)',
@@ -148,6 +151,8 @@ export default function Gallery({ params }) {
   const [zip, setZip] = useState(null) // null | {done, total}
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
+  const [chercheQui, setChercheQui] = useState('')
+  const [tousLesAuteurs, setTousLesAuteurs] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
 
@@ -261,6 +266,15 @@ export default function Gallery({ params }) {
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
   const nomFiltre = data.guests.find((g) => g.id === filter)?.name || 'cette personne'
+
+  // Les plus prolifiques d'abord : c'est presque toujours eux qu'on cherche.
+  const auteurs = data.guests
+    .map((g) => ({ ...g, n: data.photos.filter((p) => p.guestId === g.id).length }))
+    .sort((a, b) => b.n - a.n)
+  const sansAccent = (v) => (v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  const auteursMontres = !tousLesAuteurs
+    ? auteurs.slice(0, SEUIL_AUTEURS)
+    : auteurs.filter((g) => sansAccent(g.name).includes(sansAccent(chercheQui)))
   const hiddenCount = data.isOwner ? data.photos.filter((p) => p.hidden).length : 0
   const ovBtn = {
     width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer',
@@ -300,17 +314,34 @@ export default function Gallery({ params }) {
         </div>
         <h3 className="h3" style={{ margin: '2px 0 12px' }}>Les souvenirs de {data.hostNames || data.name}</h3>
 
-        {/* Qui a pris quoi */}
+        {/* Qui a pris quoi. À 170 participants, une rangée de pastilles devient
+            illisible : on montre d'abord les plus prolifiques, et l'on cherche
+            par le nom au-delà. */}
         {data.guests.length > 1 && (
           <>
             <div className="gal-lbl">Photos de</div>
             <div className="chips">
-              <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>Tout le monde · {data.photos.length}</button>
-              {data.guests.map((g) => {
-                const n = data.photos.filter((p) => p.guestId === g.id).length
-                return <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>{g.name} · {n}</button>
-              })}
+              <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
+                Tout le monde · {data.photos.length}
+              </button>
+              {auteursMontres.map((g) => (
+                <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>
+                  {g.name} · {g.n}
+                </button>
+              ))}
             </div>
+            {auteurs.length > SEUIL_AUTEURS && (
+              <>
+                <button className="gal-plus" onClick={() => setTousLesAuteurs((v) => !v)}>
+                  {tousLesAuteurs ? 'Réduire la liste' : `Chercher parmi les ${auteurs.length} participants`}
+                </button>
+                {tousLesAuteurs && (
+                  <input className="gal-cherche" type="search" value={chercheQui}
+                    onChange={(e) => setChercheQui(e.target.value)}
+                    placeholder="Prénom d'un participant" />
+                )}
+              </>
+            )}
           </>
         )}
 
