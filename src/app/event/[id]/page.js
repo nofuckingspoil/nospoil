@@ -254,6 +254,10 @@ export default function EventManage({ params }) {
       const d = await r.json().catch(() => ({}))
       if (d.error) throw new Error(d.error)
       await reload()
+      // On enchaîne sur le cadrage : c'est le moment où l'on regarde sa photo,
+      // et où l'on voit si elle tombe juste dans le cadre.
+      setPos('50% 50%')
+      setRecadrage(true)
     } catch (err) {
       setSettingMsg(err.message || "Échec de l'envoi de l'image.")
     } finally {
@@ -722,6 +726,14 @@ export default function EventManage({ params }) {
                     style={{ objectPosition: posAffichee }} />
                 : <span className="db-ident-tag">ÉVÉNEMENT PRIVÉ</span>}
               {recadrage && <span className="db-ident-guide">Faites glisser pour recadrer</span>}
+              {/* Retrait au même endroit que ce qu'il retire. Masqué pendant le
+                  recadrage : le doigt y traîne, la corbeille serait un piège. */}
+              {ev.coverUrl && !recadrage && (
+                <button className="db-ident-poubelle" onClick={supprimerCover}
+                  disabled={coverBusy} aria-label="Retirer la photo" title="Retirer la photo">
+                  🗑
+                </button>
+              )}
             </div>
             <p className="db-ident-titre">Participez à l'événement {invitant}</p>
             <p className="db-ident-sous">
@@ -759,14 +771,9 @@ export default function EventManage({ params }) {
                 setEditing('name'); setDraftName(ev.name || '')
               }}>✎ Modifier le nom</button>
               {ev.coverUrl && (
-                <>
-                  <button className="btn btn-ghost" onClick={() => {
-                    setPos(ev.coverPos || '50% 50%'); setRecadrage(true)
-                  }}>⤢ Recadrer</button>
-                  <button className="db-danger-link db-ident-suppr" onClick={supprimerCover}>
-                    Retirer la photo
-                  </button>
-                </>
+                <button className="btn btn-ghost" onClick={() => {
+                  setPos(ev.coverPos || '50% 50%'); setRecadrage(true)
+                }}>⤢ Recadrer</button>
               )}
             </div>
           )}

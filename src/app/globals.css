@@ -1227,7 +1227,15 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 .db-ident-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .db-ident-actions .btn { flex: 1 1 auto; width: auto; padding: 12px 16px; font-size: 14px; }
-.db-ident-suppr { flex: 1 1 100%; margin-top: 2px; text-align: center; }
+/* Corbeille posée sur la photo : le retrait se fait là où est son objet */
+.db-ident-poubelle {
+  position: absolute; top: 8px; right: 8px; width: 34px; height: 34px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 50%; cursor: pointer; font-size: 15px;
+  color: #fff; background: rgba(20,22,31,.55); backdrop-filter: blur(4px);
+}
+.db-ident-poubelle:hover { background: rgba(178,59,46,.9); }
+.db-ident-poubelle:disabled { opacity: .5; cursor: default; }
 
 /* Formule dépassée — l'album attend une mise à niveau */
 .db-quota {
