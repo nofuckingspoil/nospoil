@@ -33,7 +33,9 @@ export default function Bilan({ bilan }) {
   if (champion) {
     faits.push({
       cle: 'champion',
-      label: 'Photographe de la soirée',
+      // « De la soirée » supposait une fête nocturne : un baptême ou un
+      // séminaire n'en sont pas.
+      label: 'Photographe en chef',
       valeur: champion.nom,
       // Départagé à la rapidité quand plusieurs invités sont à égalité : sans
       // ça, le titre revenait au hasard de l'ordre de lecture.
@@ -58,7 +60,7 @@ export default function Bilan({ bilan }) {
   if (dureeFete) {
     faits.push({
       cle: 'duree',
-      label: 'La fête a duré',
+      label: 'Ça a duré',
       valeur: dureeFete,
       detail: 'du premier au dernier cliché',
     })
@@ -72,7 +74,7 @@ export default function Bilan({ bilan }) {
       <span className="bilan-coin bl" aria-hidden="true" />
       <span className="bilan-coin br" aria-hidden="true" />
 
-      <span className="bilan-eyebrow">la soirée en chiffres</span>
+      <span className="bilan-eyebrow">votre événement en chiffres</span>
 
       <div className="bilan-nombres">
         <div>
@@ -103,7 +105,7 @@ export default function Bilan({ bilan }) {
         <div className="bilan-star">
           <img src={photoDeLaSoiree.url} alt="" loading="lazy" />
           <div>
-            <span>La photo de la soirée</span>
+            <span>La photo préférée</span>
             <b>{photoDeLaSoiree.coeurs} ❤</b>
             <em>
               par {photoDeLaSoiree.nom}, à {photoDeLaSoiree.heure}

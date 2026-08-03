@@ -51,7 +51,7 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
         oeil: nom ? `l’album de ${nom}` : 'votre album',
         chiffre: photos.length,
         titre: `photo${photos.length > 1 ? 's' : ''} développée${photos.length > 1 ? 's' : ''}`,
-        sous: 'La pellicule de la soirée est prête.',
+        sous: 'La pellicule est prête.',
       },
       {
         cle: 'photographes',
@@ -93,7 +93,7 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
     if (champion && champion.n > 1) {
       liste.push({
         cle: 'champion',
-        oeil: 'photographe de la soirée',
+        oeil: 'photographe en chef',
         texte: champion.nom,
         sous: `${champion.n} clichés à lui seul. Respect.`,
       })
@@ -138,7 +138,7 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
   const derniere = i === cartes.length - 1
 
   return (
-    <div className="wrap" role="dialog" aria-label="Résumé de la soirée">
+    <div className="wrap" role="dialog" aria-label="Résumé de l'événement">
       <div className="wrap-barres" aria-hidden="true">
         {cartes.map((x, n) => (
           <span key={x.cle} className="wrap-barre">
