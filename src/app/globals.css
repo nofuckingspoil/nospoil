@@ -856,6 +856,12 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* Le haut est retourné : plié en deux, le chevalet se lit des deux côtés. */
 .pk-page-chevalet .pk-ticket:first-child { transform: rotate(180deg); }
 .pk-fold { flex: 0 0 0; border-top: 1px dashed rgba(34,26,18,.35); }
+/* QR seul : plein cadre, sans habillage — pour un écran, un faire-part, un
+   panneau existant. */
+.pk-page-qr { display: flex; align-items: center; justify-content: center; padding: 12%; }
+.pk-qronly { width: 100%; }
+.pk-qronly img { width: 100%; height: auto; display: block; }
+
 .pk-page-cartons { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
 .pk-page-cartons .pk-ticket { border-radius: 0; border: 1px dashed rgba(34,26,18,.3); }
 
@@ -886,6 +892,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .pk-print { display: block; }
   .pk-print.pk-page-chevalet { display: flex; flex-direction: column; }
   .pk-print.pk-page-cartons { display: grid; }
+  .pk-print.pk-page-qr { display: flex; align-items: center; justify-content: center; }
   .pk-print { width: 210mm; height: 297mm; }
   .pk-ticket { box-shadow: none; }
   @page { size: A4 portrait; margin: 0; }

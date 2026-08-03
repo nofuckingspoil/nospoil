@@ -17,7 +17,15 @@ const FORMATS = [
   { key: 'affiche', label: 'Affiche A4', sub: "Entrée, bar, vestiaire", per: '1 par page' },
   { key: 'chevalet', label: 'Chevalet de table', sub: 'À plier en deux', per: '2 par page' },
   { key: 'cartons', label: 'Petits cartons', sub: 'À découper et disperser', per: '9 par page' },
+  { key: 'qr', label: 'QR code seul', sub: 'Sans habillage, à intégrer', per: 'plein cadre' },
 ]
+
+// Nom de fichier lisible tiré du nom de l'événement.
+function nomFichier(nom) {
+  const base = (nom || 'evenement').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
+  return `qr-${base || 'evenement'}.png`
+}
 
 // Date et heure : sur un carton, savoir « le 9 août » sans l'heure ne suffit pas
 // à se tenir prêt au bon moment.
@@ -73,6 +81,20 @@ export default function PrintKit({ params }) {
     QRCode.toDataURL(joinUrl, { width: 1200, margin: 1, color: { dark: '#14161F', light: '#ffffff' } })
       .then(setQr).catch(() => {})
   }, [id])
+
+  // Le QR affiché est calibré pour l'écran : pour un fichier destiné à être
+  // repris ailleurs, on le régénère plus grand, sur fond blanc franc.
+  async function telechargerQR() {
+    try {
+      const url = await QRCode.toDataURL(`${window.location.origin}/j/${id}`, {
+        width: 2000, margin: 2, color: { dark: '#14161F', light: '#ffffff' },
+      })
+      const a = document.createElement('a')
+      a.href = url
+      a.download = nomFichier(ev?.name)
+      a.click()
+    } catch {}
+  }
 
   if (error) {
     return (
@@ -132,7 +154,8 @@ export default function PrintKit({ params }) {
         {/* Sur un carton de 7 cm, la formule complète déborderait : on garde
             l'essentiel, la date et l'heure. */}
         <div className="pk-reveal">
-          {size === 'sm' ? 'Révélation le ' : 'Révélation commune des clichés le '}
+          {size === 'sm' ? 'Révélation le' : 'Révélation commune des clichés le'}
+          <br />
           <strong>{reveal}</strong>
         </div>
 
@@ -178,6 +201,9 @@ export default function PrintKit({ params }) {
         <button className="btn btn-accent" style={{ marginTop: 18 }} onClick={() => window.print()}>
           Imprimer →
         </button>
+        <button className="btn btn-ghost" style={{ marginTop: 8 }} onClick={telechargerQR}>
+          Télécharger le QR code (PNG)
+        </button>
         <p className="hint" style={{ textAlign: 'center', marginTop: 10 }}>
           Astuce : dans la fenêtre d'impression, choisissez « Enregistrer en PDF »
           pour l'envoyer à un imprimeur.
@@ -190,6 +216,7 @@ export default function PrintKit({ params }) {
             {format === 'affiche' && <Ticket size="lg" />}
             {format === 'chevalet' && (<><Ticket size="md" /><div className="pk-fold" /><Ticket size="md" /></>)}
             {format === 'cartons' && Array.from({ length: 9 }, (_, i) => <Ticket key={i} size="sm" />)}
+            {format === 'qr' && <div className="pk-qronly">{qr && <img src={qr} alt="" />}</div>}
           </div>
         </div>
 
@@ -205,6 +232,7 @@ export default function PrintKit({ params }) {
         {format === 'affiche' && <Ticket size="lg" />}
         {format === 'chevalet' && (<><Ticket size="md" /><div className="pk-fold" /><Ticket size="md" /></>)}
         {format === 'cartons' && Array.from({ length: 9 }, (_, i) => <Ticket key={i} size="sm" />)}
+        {format === 'qr' && <div className="pk-qronly">{qr && <img src={qr} alt="" />}</div>}
       </div>
     </>
   )

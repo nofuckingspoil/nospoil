@@ -313,6 +313,23 @@ export default function EventManage({ params }) {
   }
   function finGlisse() { glisseRef.current = null }
 
+  // Le QR affiché est calibré pour l'écran : pour un fichier qu'on va reprendre
+  // ailleurs (faire-part, écran, imprimeur), on le régénère bien plus grand.
+  async function telechargerQR() {
+    try {
+      const url = await QRCode.toDataURL(joinUrl, {
+        width: 2000, margin: 2, color: { dark: '#14161F', light: '#ffffff' },
+      })
+      const base = (ev?.name || 'evenement').normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `qr-${base || 'evenement'}.png`
+      a.click()
+      ping('qr')
+    } catch {}
+  }
+
   function copy(text, key) {
     navigator.clipboard?.writeText(text).then(() => ping(key)).catch(() => {})
   }
@@ -710,6 +727,9 @@ export default function EventManage({ params }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         </div>
+        <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={telechargerQR}>
+          ⬇ Télécharger le QR code (PNG)
+        </button>
         <Link href={`/event/${id}/imprimer`} className="btn btn-ghost" style={{ marginTop: 10 }}>
           🖨️ Imprimer affiches et cartons de table
         </Link>
