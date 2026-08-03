@@ -19,9 +19,13 @@ const FORMATS = [
   { key: 'cartons', label: 'Petits cartons', sub: 'À découper et disperser', per: '9 par page' },
 ]
 
-function shortDate(iso) {
+// Date et heure : sur un carton, savoir « le 9 août » sans l'heure ne suffit pas
+// à se tenir prêt au bon moment.
+function dateHeure(iso) {
   try {
-    return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })
+    return new Date(iso).toLocaleString('fr-FR', {
+      day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
+    })
   } catch { return '' }
 }
 
@@ -85,7 +89,7 @@ export default function PrintKit({ params }) {
   const title = ev.name
   const who = ev.hostNames || ''
   const shots = ev.shotsPerGuest
-  const reveal = shortDate(ev.revealAt)
+  const reveal = dateHeure(ev.revealAt)
 
   // Bande de pellicule. En SVG et non en fond CSS : les navigateurs suppriment
   // les fonds à l'impression quand « graphiques d'arrière-plan » est décoché,
@@ -125,8 +129,11 @@ export default function PrintKit({ params }) {
           {shots} clichés chacun{size === 'sm' ? '' : ', pas un de plus'}
         </div>
 
+        {/* Sur un carton de 7 cm, la formule complète déborderait : on garde
+            l'essentiel, la date et l'heure. */}
         <div className="pk-reveal">
-          Tout se développe le <strong>{reveal}</strong>
+          {size === 'sm' ? 'Révélation le ' : 'Révélation commune des clichés le '}
+          <strong>{reveal}</strong>
         </div>
 
         {size !== 'sm' && <div className="pk-foot">Aucune appli à installer · timetoflash.fr</div>}
