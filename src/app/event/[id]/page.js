@@ -1173,8 +1173,11 @@ export default function EventManage({ params }) {
           </div>
           {ev.contacts.some((c) => c.failed) && (
             <div className="notice small" style={{ marginTop: 12, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
-              ⚠️ Une ou plusieurs adresses n'ont pas pu être livrées. Utilisez le message prêt
-              pour prévenir ces invités par un autre canal.
+              ⚠️ Une ou plusieurs adresses n'ont pas pu être livrées. Prévenez ces invités
+              autrement : le message et le lien sont dans{' '}
+              <button type="button" className="linklike" onClick={() => allerA('album', 'sec-album')}>
+                la section L'album
+              </button>.
             </div>
           )}
         </Section>
