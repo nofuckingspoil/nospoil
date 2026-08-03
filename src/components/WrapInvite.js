@@ -79,8 +79,10 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
         const derniere = mesPhotos[mesPhotos.length - 1]
         if (heure(premiere.takenAt) !== heure(derniere.takenAt)) {
           liste.push({
-            cle: 'nuit',
-            oeil: 'ta nuit',
+            cle: 'evenement',
+            // « Ta nuit » supposait une fête nocturne : un baptême à 15 h s'y
+            // serait senti moqué.
+            oeil: 'ton événement',
             texte: `de ${heure(premiere.takenAt)} à ${heure(derniere.takenAt)}`,
             sous: 'Entre les deux, il s’est passé des choses.',
           })
