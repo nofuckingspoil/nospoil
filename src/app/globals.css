@@ -381,7 +381,7 @@ a.cam-pile:active { transform: scale(.94); }
 .stat .note { font-size: 11.5px; color: var(--text4); margin-top: 6px; }
 
 /* ---------- QR / lien ---------- */
-.qr-tile { background: var(--card); border-radius: 16px; padding: 18px; display: flex; justify-content: center; }
+.qr-tile { background: var(--card); border-radius: 16px; padding: 18px; display: flex; flex-direction: column; align-items: center; }
 .qr-tile img { display: block; width: 100%; max-width: 220px; height: auto; }
 .urlbox { background: rgba(255,255,255,.07); border-radius: 12px; padding: 12px 14px; font-family: var(--font-mono); font-size: 12px; color: var(--amber); word-break: break-all; }
 
@@ -1293,7 +1293,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 /* Téléchargement du QR : une commodité, pas une action de premier plan */
 .qr-dl {
-  display: block; margin: 8px auto 0; padding: 4px 6px;
+  display: block; margin: 10px auto 0; padding: 4px 6px;
   background: none; border: none; cursor: pointer;
   font-family: var(--font-body); font-size: 12.5px; color: var(--text3);
   text-decoration: underline; text-underline-offset: 3px;

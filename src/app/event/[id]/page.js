@@ -716,12 +716,12 @@ export default function EventManage({ params }) {
         open={openSec === 'inviter'} onToggle={() => toggleSec('inviter')}>
         <div className="qr-tile">
           {qrUrl ? <img src={qrUrl} alt="QR code de l'événement" /> : <div style={{ width: 220, height: 220 }} />}
+          {/* Dans la boîte du QR, sous lui : c'est une commodité attachée à ce
+              code, pas une des trois façons d'inviter ses convives. */}
+          <button className="qr-dl" onClick={telechargerQR}>
+            {flash === 'qr' ? '✓ Téléchargé' : 'Télécharger le QR (PNG)'}
+          </button>
         </div>
-        {/* Discret et collé au QR : c'est une commodité, pas une des trois
-            façons d'inviter ses convives. */}
-        <button className="qr-dl" onClick={telechargerQR}>
-          {flash === 'qr' ? '✓ Téléchargé' : 'Télécharger le QR (PNG)'}
-        </button>
 
         <div className="urlbox" style={{ margin: '14px 0 12px' }}>{joinUrl}</div>
         <div style={{ display: 'flex', gap: 8 }}>
