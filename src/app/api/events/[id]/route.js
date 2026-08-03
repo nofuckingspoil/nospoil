@@ -253,7 +253,10 @@ export async function PATCH(request, { params }) {
   if (patch.starts_at || patch.reveal_at) {
     const debut = new Date(patch.starts_at || ev.starts_at).getTime()
     const rev = new Date(patch.reveal_at || ev.reveal_at).getTime()
-    if (Number.isFinite(debut) && Number.isFinite(rev) && rev <= debut) {
+    // « Révéler maintenant » est un geste délibéré, pas une programmation : on
+    // ne contrôle l'ordre que sur des dates à venir.
+    const immediate = Number.isFinite(rev) && rev <= Date.now() + 60 * 1000
+    if (!immediate && Number.isFinite(debut) && Number.isFinite(rev) && rev <= debut) {
       return Response.json(
         { error: 'La révélation doit venir après le début de l’événement.' },
         { status: 400 }

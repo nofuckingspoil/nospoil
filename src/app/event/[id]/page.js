@@ -584,9 +584,9 @@ export default function EventManage({ params }) {
             {ev.photoCount} photos, visibles par tous vos invités. À eux de découvrir.
           </p>
           <button className="btn btn-accent db-hero-cta" onClick={() => setSheet('message')}>
-            ✉️ Prévenir les invités
+            ✉️ Partager l'album
           </button>
-          <Link href={`/g/${id}`} className="btn db-hero-2nd">Voir l'album</Link>
+          <Link href={`/g/${id}`} className="btn db-hero-2nd">Voir les photos</Link>
         </div>
       )
     }
@@ -605,7 +605,10 @@ export default function EventManage({ params }) {
           <button className="btn btn-accent db-hero-cta" onClick={() => patchEvent({ revealAt: new Date().toISOString() })}>
             Révéler maintenant
           </button>
-          <button className="btn db-hero-2nd" onClick={() => { setEditing('reveal'); setDraftDate(toLocalInput(ev.revealAt)); setOpenSec('reglages') }}>
+          <button className="btn db-hero-2nd" onClick={() => {
+            setEditing('reveal'); setDraftDate(toLocalInput(ev.revealAt))
+            allerA('reglages', 'sec-reglages')
+          }}>
             Changer la date
           </button>
         </div>
@@ -784,7 +787,7 @@ export default function EventManage({ params }) {
         </Link>
       </Section>
 
-      <Section title="Réglages de l'événement" hint="Nom, couverture, dates, nombre de photos"
+      <Section id="sec-reglages" title="Réglages de l'événement" hint="Nom, couverture, dates, nombre de photos"
         open={openSec === 'reglages'} onToggle={() => toggleSec('reglages')}>
 
         {/* Deux zones distinctes, et c'est volontaire : au-dessus un APERÇU,
@@ -1052,9 +1055,8 @@ export default function EventManage({ params }) {
           {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
               il s'agit, et le message tout prêt le contenait déjà. */}
           <div className="db-alb-actions">
-            <button className="btn btn-ghost"
-              onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'gal')}>
-              {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
+            <button className="btn btn-ghost" onClick={() => setSheet('message')}>
+              Copier et partager le lien
             </button>
           </div>
         </div>
@@ -1257,7 +1259,7 @@ export default function EventManage({ params }) {
             )}
             {sheet === 'message' && (
               <>
-                <h3 className="h3">Message prêt</h3>
+                <h3 className="h3">{revealed ? 'Prévenir vos invités' : "Annoncer l'album"}</h3>
                 <p className="muted small">
                   Modifiez-le si vous voulez, puis envoyez-le par le canal de votre choix.
                 </p>
