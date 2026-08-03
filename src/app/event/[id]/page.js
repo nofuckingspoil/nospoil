@@ -108,6 +108,7 @@ export default function EventManage({ params }) {
   const ping = (k) => { setFlash(k); setTimeout(() => setFlash(''), 1800) }
 
   const [confirmDel, setConfirmDel] = useState(false)
+  const [confirmNom, setConfirmNom] = useState('')
   const [deleting, setDeleting] = useState(false)
   const [adminFirst, setAdminFirst] = useState('')
   const [adminLast, setAdminLast] = useState('')
@@ -445,6 +446,8 @@ export default function EventManage({ params }) {
   }
 
   const invitant = ev.hostNames || ev.name || ''
+  const aplat = (v) => (v || '').trim().toLowerCase().replace(/\s+/g, ' ')
+  const nomRecopie = aplat(confirmNom) === aplat(ev.name)
   const posAffichee = pos || ev.coverPos || '50% 50%'
 
   // ---- La grande carte : le seul élément qui change selon le moment ----
@@ -1164,12 +1167,30 @@ export default function EventManage({ params }) {
         ) : (
           <div className="card" style={{ borderColor: 'rgba(178,59,46,.35)' }}>
             <h3 className="h3" style={{ marginBottom: 8 }}>Supprimer « {ev.name} » ?</h3>
-            <p className="muted small" style={{ marginBottom: 16 }}>
-              Toutes les photos de l'événement et le lien d'invitation seront <strong>définitivement effacés</strong>. Cette action est irréversible.
+            <p className="muted small" style={{ marginBottom: 6 }}>
+              {ev.photoCount > 0
+                ? <><strong>{ev.photoCount} photo{ev.photoCount > 1 ? 's' : ''}</strong> prise{ev.photoCount > 1 ? 's' : ''} par
+                    {' '}<strong>{ev.guestCount} invité{ev.guestCount > 1 ? 's' : ''}</strong> seront effacées, chez eux comme chez vous.</>
+                : <>L'événement et son lien d'invitation seront effacés.</>}
             </p>
+            <p className="muted small" style={{ marginBottom: 16 }}>
+              Rien ne pourra être récupéré, ni par vous, ni par nous.
+            </p>
+
+            {/* Recopier le nom : deux clics ne pèsent pas assez lourd face à des
+                photos qui ne sont pas les nôtres et qu'on ne peut pas refaire. */}
+            <div className="field">
+              <label>Pour confirmer, recopiez le nom de l'événement</label>
+              <input type="text" value={confirmNom} autoFocus autoComplete="off"
+                placeholder={ev.name}
+                onChange={(e) => setConfirmNom(e.target.value)} />
+            </div>
+
             <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setConfirmDel(false)} disabled={deleting}>Annuler</button>
-              <button className="btn btn-danger" style={{ flex: 1 }} onClick={deleteEvent} disabled={deleting}>
+              <button className="btn btn-ghost" style={{ flex: 1 }}
+                onClick={() => { setConfirmDel(false); setConfirmNom('') }} disabled={deleting}>Annuler</button>
+              <button className="btn btn-danger" style={{ flex: 1 }} onClick={deleteEvent}
+                disabled={deleting || !nomRecopie}>
                 {deleting ? 'Suppression…' : 'Supprimer définitivement'}
               </button>
             </div>
