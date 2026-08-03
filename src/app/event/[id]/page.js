@@ -504,7 +504,10 @@ export default function EventManage({ params }) {
               le lien aurait déçu. La flèche signale ce qui se touche : sur un
               fond sombre, un survol ne se voit pas, et sur téléphone il n'existe pas. */}
           <div className="db-stats">
-            <div><b>{ev.guestCount}</b><span>invités connectés</span></div>
+            <button type="button" className="db-stats-go"
+              onClick={() => allerA('contacts', 'sec-invites')} disabled={!ev.contacts?.length}>
+              <b>{ev.guestCount}</b><span>invités connectés <span aria-hidden="true">→</span></span>
+            </button>
             <Link href={`/g/${id}`} className="db-stats-go">
               <b>{ev.photoCount}</b><span>photos prises <span aria-hidden="true">→</span></span>
             </Link>
@@ -1148,10 +1151,8 @@ export default function EventManage({ params }) {
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
         <Section id="sec-invites" title="Invités" badge={String(ev.contacts.length)}
-          hint="Liste des invités inscrits"
+          hint="Tout le monde, avec ou sans adresse"
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
-          {/* Cette liste ne montre que ceux qui ont laissé une adresse : dire
-              « vous n'avez rien à faire » passait sous silence tous les autres. */}
           <div className="notice small" style={{ marginBottom: 12 }}>
             ✉️ Ceux qui ont laissé leur adresse reçoivent le lien de l'album <strong>tout seuls</strong>,
             dès la révélation. Pour les autres, partagez le lien depuis{' '}
@@ -1164,7 +1165,9 @@ export default function EventManage({ params }) {
               <div key={i} className="db-contact">
                 <span className="db-contact-name">{c.name}</span>
                 <span className="db-contact-val">
-                  {c.email || c.phone}
+                  {/* Sans adresse, l'invité ne recevra rien : c'est justement ce
+                      qu'il faut voir pour penser à le prévenir autrement. */}
+                  {c.email || c.phone || <em className="db-contact-sans">à prévenir vous-même</em>}
                   {c.email && c.failed && <em className="db-contact-ko"> · non distribué</em>}
                   {c.email && c.notified && !c.failed && <em className="db-contact-ok"> · envoyé ✓</em>}
                 </span>

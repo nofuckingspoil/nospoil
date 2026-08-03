@@ -75,10 +75,11 @@ export async function GET(request, { params }) {
   if (isOwner) {
     // Contacts laissés par les invités : les adresses mail (envoi automatique de
     // l'album) et les numéros recueillis avant le passage au mail.
+    // Tous les invités, adresse ou non : n'afficher que ceux qui en ont laissé
+    // une passait sous silence ceux qui ne recevront jamais rien.
     const list = await selectRows(
       'guests',
-      `event_id=eq.${id}&or=(email.not.is.null,phone.not.is.null)` +
-        `&select=display_name,email,phone,notified_at,notify_failed&order=created_at.asc`
+      `event_id=eq.${id}&select=display_name,email,phone,notified_at,notify_failed&order=created_at.asc`
     )
     payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({
       name: g.display_name,
