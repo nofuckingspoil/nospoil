@@ -498,9 +498,17 @@ export default function EventManage({ params }) {
             <span className="db-live"><span className="db-dot" /> en direct</span>
             <span className="db-eyebrow">depuis {formatHour(ev.startsAt)}</span>
           </div>
+          {/* Les deux premiers compteurs mènent à la section qui les détaille :
+              on les lit, on veut voir ce qu'il y a derrière. Le troisième ne
+              renvoie nulle part, il reste donc inerte. */}
           <div className="db-stats">
-            <div><b>{ev.guestCount}</b><span>invités connectés</span></div>
-            <div><b>{ev.photoCount}</b><span>photos prises</span></div>
+            <button type="button" onClick={() => allerA('contacts', 'sec-invites')}
+              disabled={!ev.contacts?.length}>
+              <b>{ev.guestCount}</b><span>invités connectés</span>
+            </button>
+            <button type="button" onClick={() => allerA('album', 'sec-album')}>
+              <b>{ev.photoCount}</b><span>photos prises</span>
+            </button>
             <div><b>{shotsLeft}</b><span>déclics restants</span></div>
           </div>
 
@@ -1140,7 +1148,7 @@ export default function EventManage({ params }) {
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-        <Section title="Invités" badge={String(ev.contacts.length)}
+        <Section id="sec-invites" title="Invités" badge={String(ev.contacts.length)}
           hint="Liste des invités inscrits"
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
           {/* Cette liste ne montre que ceux qui ont laissé une adresse : dire
