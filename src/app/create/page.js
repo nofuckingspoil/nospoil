@@ -7,6 +7,7 @@ import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
+import TierPicker from '../../components/TierPicker'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -59,7 +60,12 @@ const SHOT_PRESETS = [
 function CreateForm() {
   const router = useRouter()
   const sp = useSearchParams()
-  const tier = tierByGuests(sp.get('tier'))
+
+  // La formule venue de la page d'accueil n'est qu'un point de départ : elle se
+  // choisit sur le premier écran, et se change sans quitter l'assistant.
+  const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
+  const [tierOpen, setTierOpen] = useState(false)
+  const tier = tierByGuests(maxGuests)
   const isPaid = tier.priceCents > 0
 
   // Étapes : 1 nom · 2 couverture · 3 clichés · 4 révélation · 5 mail + récap · 'code'
@@ -85,6 +91,14 @@ function CreateForm() {
   const [waiverOk, setWaiverOk] = useState(false)
 
   function goTo(n) { setError(''); setStep(n) }
+
+  // Changement de formule : on garde l'adresse à jour pour que le retour depuis
+  // Stripe (ou un rafraîchissement) retombe sur la bonne formule.
+  function pickTier(n) {
+    setMaxGuests(n)
+    setError('')
+    try { window.history.replaceState(null, '', `/create?tier=${n}`) } catch {}
+  }
 
   function onCoverPick(e) {
     const f = e.target.files?.[0]
@@ -266,11 +280,21 @@ function CreateForm() {
         </div>
         <div className="wiz-headline">
           <span className="wiz-count">Étape {stepNum} sur {TOTAL}</span>
-          <span className="wiz-tier">
-            {tier.maxGuests} invités · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
-            <Link href="/#tarifs">changer</Link>
-          </span>
+          {/* Inutile sur l'étape 1 : le sélecteur y est posé à demeure. Ailleurs,
+              il s'ouvre sur place — l'ancien lien vers la grille de tarifs
+              quittait la page et faisait perdre toute la saisie. */}
+          {step !== 1 && (
+            <span className="wiz-tier">
+              {tier.maxGuests} invités · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
+              <button type="button" className="linklike" onClick={() => setTierOpen(!tierOpen)}>
+                {tierOpen ? 'fermer' : 'changer'}
+              </button>
+            </span>
+          )}
         </div>
+        {step !== 1 && tierOpen && (
+          <TierPicker value={maxGuests} onChange={pickTier} onClose={() => setTierOpen(false)} />
+        )}
       </div>
 
       {isPaid && !PAYMENTS_ENABLED && (
@@ -283,12 +307,21 @@ function CreateForm() {
       {step === 1 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">C'est quoi l'occasion ?</h2>
-          <p className="wiz-sub">Ce nom s'affichera en grand sur l'écran d'accueil de vos invités.</p>
+          <p className="wiz-sub">
+            Ce nom s'affichera en grand sur l'écran d'accueil de vos invités.
+            Vous pourrez le changer plus tard.
+          </p>
           <div className="field">
             <label>Nom de l'événement</label>
             <input type="text" placeholder="Ex : Mariage de Marie & Paul" value={name}
               onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
           </div>
+
+          {/* Le nombre d'invités se demande, il ne se devine pas : la plupart des
+              points d'entrée n'en portent aucun et retombaient sur la formule
+              gratuite sans que personne ne l'ait choisie. */}
+          <TierPicker value={maxGuests} onChange={pickTier} inline />
+
           {error && <div className="err">{error}</div>}
           <div className="wiz-nav">
             <button className="btn btn-accent" type="submit">Continuer →</button>
