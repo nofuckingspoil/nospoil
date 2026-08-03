@@ -88,9 +88,11 @@ export default function GuestCamera({ params }) {
       .then((d) => {
         if (d.error) { setError(d.error); setPhase('error'); return }
         setMeta(d)
-        // Album ouvert : la pellicule est finie. Continuer à photographier
-        // ajouterait des images à un album que tout le monde a déjà vu.
-        if (d.revealed) { setPhase('revele'); return }
+        // Album ouvert : la pellicule est finie, et les photos sont là. On y va
+        // directement — un écran intermédiaire n'aurait annoncé que ce que la
+        // page suivante montre, animation d'ouverture comprise. `replace` pour
+        // que le retour du navigateur ne ramène pas ici.
+        if (d.revealed) { window.location.replace(`/g/${id}`); return }
         const saved = getGuest(id)
         if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
         else {
@@ -431,29 +433,6 @@ export default function GuestCamera({ params }) {
   // ---------- Écrans ----------
   if (phase === 'loading') return <main className="center-screen"><p className="muted">Chargement…</p></main>
   if (phase === 'error') return <main className="screen screen-cream center"><div className="card">{error || 'Événement introuvable.'}</div></main>
-
-  if (phase === 'revele') return (
-    <main className="screen screen-cream">
-      {meta?.isOwner && (
-        <nav className="db-modes" aria-label="Mode">
-          <Link href={`/event/${id}`}>Organisation</Link>
-          <span className="on">Mon appareil 📷</span>
-        </nav>
-      )}
-      <div className="spacer" />
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: 44, marginBottom: 10 }}>🎞️</div>
-        <h3 className="h3" style={{ marginBottom: 8 }}>Les photos sont sorties</h3>
-        <p className="lead small" style={{ marginBottom: 22 }}>
-          La pellicule de {coupleLabel} est développée. Il n'y a plus de photo à prendre —
-          mais tout est là.
-        </p>
-      </div>
-      <a className="btn btn-accent" href={`/g/${id}`}>Voir l'album →</a>
-      <div className="spacer" />
-      <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
-    </main>
-  )
 
   if (phase === 'cover') return (
     <main className="screen screen-cream">
