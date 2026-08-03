@@ -147,6 +147,7 @@ export default function Gallery({ params }) {
   const [retro, setRetro] = useState(true)
   const [zip, setZip] = useState(null) // null | {done, total}
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
+  const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
 
@@ -251,7 +252,12 @@ export default function Gallery({ params }) {
   // Album protégé par un code : porte d'entrée pour les invités
   if (data.needCode) return <CodeGate data={data} value={codeInput} onChange={setCodeInput} onSubmit={submitCode} err={codeErr} />
 
-  const photos = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
+  const parAuteur = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
+  // Le tri par visibilité n'a de sens que pour l'organisateur : lui seul voit
+  // les photos masquées, et lui seul a besoin de les retrouver.
+  const photos = !data.isOwner || vue === 'toutes' ? parAuteur
+    : vue === 'masquees' ? parAuteur.filter((p) => p.hidden)
+      : parAuteur.filter((p) => !p.hidden)
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
   const nomFiltre = data.guests.find((g) => g.id === filter)?.name || 'cette personne'
@@ -304,6 +310,25 @@ export default function Gallery({ params }) {
                 const n = data.photos.filter((p) => p.guestId === g.id).length
                 return <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>{g.name} · {n}</button>
               })}
+            </div>
+          </>
+        )}
+
+        {/* Ce que voient les invités, par opposition à ce que vous seul voyez.
+            Inutile tant que rien n'est masqué : il n'y aurait rien à trier. */}
+        {data.isOwner && hiddenCount > 0 && (
+          <>
+            <div className="gal-lbl" style={{ marginTop: 12 }}>Visibilité</div>
+            <div className="chips">
+              <button className={`chip ${vue === 'toutes' ? 'active' : ''}`} onClick={() => setVue('toutes')}>
+                Toutes · {parAuteur.length}
+              </button>
+              <button className={`chip ${vue === 'visibles' ? 'active' : ''}`} onClick={() => setVue('visibles')}>
+                Vues par les invités · {parAuteur.filter((p) => !p.hidden).length}
+              </button>
+              <button className={`chip ${vue === 'masquees' ? 'active' : ''}`} onClick={() => setVue('masquees')}>
+                Masquées · {parAuteur.filter((p) => p.hidden).length}
+              </button>
             </div>
           </>
         )}
