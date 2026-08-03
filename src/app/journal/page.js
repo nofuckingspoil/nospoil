@@ -44,7 +44,7 @@ export default async function JournalIndex({ searchParams }) {
     <main className="dj" id="journal" aria-label={`Blog ${BRAND.name}`}>
       {/* Un lecteur convaincu par un article doit pouvoir créer son événement
           sans repasser par l'accueil. */}
-      <SiteNav />
+      <SiteNav large />
 
       <div className="dj-wrap dj-head">
         <span className="dj-eyebrow">blog</span>

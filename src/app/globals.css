@@ -415,27 +415,39 @@ a.cam-pile:active { transform: scale(.94); }
 .site-inner { max-width: 1040px; margin: 0 auto; padding: 0 22px; }
 .vnav { display: flex; align-items: center; justify-content: space-between; padding: 20px 22px; max-width: 1040px; margin: 0 auto; }
 .vnav .btn { width: auto; font-size: 14px; padding: 11px 18px; }
-.vnav-links { display: flex; align-items: center; gap: 16px; margin-left: auto; }
-.vnav-court { display: none; }
+/* La barre suit le défilement : le bandeau tient toute la largeur, la barre
+   elle-même s'aligne sur le contenu de la page. */
+.vnav-bar { position: sticky; top: 0; z-index: 40;
+  /* Assez opaque pour que le titre qui passe dessous ne se lise pas au travers. */
+  background: rgba(244,235,218,.96); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft); }
+.vnav-bar.large .vnav { max-width: 1180px; }
+
+.vnav-links { display: flex; align-items: center; gap: 18px; margin-left: auto; }
 .vnav-links a.mono { color: var(--text2); text-decoration: none; white-space: nowrap; }
 .vnav-links a.mono:hover { color: var(--accent-deep); }
-/* Deuxième rangée : compte et connexion, sous la barre principale. */
-.vnav-second { display: flex; align-items: center; gap: 18px; width: 100%;
-  justify-content: flex-end; margin-top: -4px; }
-.vnav-second a.mono { color: var(--text3); text-decoration: none; white-space: nowrap; font-size: 12px; }
-.vnav-second a.mono:hover { color: var(--accent-deep); }
 
-/* Téléphone : les entrées ne tiennent pas sur une ligne. Le logo et l'essentiel
-   gardent la première, le reste passe dessous — au lieu de pousser la page à
-   droite. */
+/* Bouton posé en bas de l'écran, sur téléphone seulement. */
+.vnav-bottom { display: none; }
+
 @media (max-width: 680px) {
-  .vnav { flex-wrap: wrap; row-gap: 10px; padding: 16px 18px; column-gap: 10px; }
-  .vnav-links { gap: 12px; }
-  .vnav-links a.mono { font-size: 12px; }
-  .vnav .btn { font-size: 13px; padding: 9px 14px; }
-  .vnav-long { display: none; }
-  .vnav-court { display: inline; }
-  .vnav-second { justify-content: space-between; margin-top: 0; }
+  .vnav { padding: 12px 18px; }
+  .vnav-links { gap: 16px; }
+  .vnav-links a.mono { font-size: 12.5px; }
+  /* Le geste principal vit en bas : le répéter ici encombrerait la barre. */
+  .vnav-cta { display: none; }
+
+  .vnav-bottom { position: fixed; left: 12px; right: 12px; z-index: 45;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    display: block; text-align: center; text-decoration: none;
+    background: var(--dark); color: #fff; border-radius: 999px;
+    padding: 15px 20px; font-family: var(--font-body); font-weight: 700; font-size: 15px;
+    box-shadow: 0 10px 30px rgba(20,22,31,.28); }
+  .vnav-bottom:active { transform: translateY(1px); }
+
+  /* Le bandeau du bas ne doit rien recouvrir : on rend sa hauteur à la page,
+     et seulement sur les pages qui le portent. */
+  body:has(.vnav-bottom) { padding-bottom: calc(76px + env(safe-area-inset-bottom)); }
 }
 
 .hero { padding: 40px 0 30px; }

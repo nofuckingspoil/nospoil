@@ -6,34 +6,35 @@ import Logo from './Logo'
 //
 //  Elle n'existait que sur l'accueil : depuis un article du blog, on ne
 //  pouvait ni se connecter, ni retrouver ses événements, ni en créer un.
-//  Le lecteur convaincu par un article se retrouvait sans porte.
 //
-//  Sur téléphone, les quatre entrées ne tiennent pas sur une ligne : le
-//  logo garde la première, les liens passent dessous — plutôt que de
-//  pousser la page entière vers la droite.
+//  Elle suit maintenant le défilement, et sur téléphone le bouton de
+//  création reste posé en bas de l'écran : c'est le seul geste qu'on
+//  vient faire, il n'a pas à remonter le chercher.
+//
+//  `large` aligne la barre sur les pages dont le contenu est plus large
+//  que l'accueil — sinon elle paraît rentrée de soixante-dix pixels.
 // ============================================================
-export default function SiteNav() {
+export default function SiteNav({ large = false }) {
   return (
-    <nav className="vnav">
-      <Link href="/" style={{ textDecoration: 'none' }} aria-label="Accueil Time to Flash">
-        <Logo nameSize={22} size={36} />
-      </Link>
-      {/* Ce qu'on vient chercher — lire, ou créer — reste en haut à droite.
-          Le compte et la connexion prennent la ligne du dessous : on ne s'y
-          rend qu'en sachant déjà où l'on va. */}
-      <div className="vnav-links">
-        <Link href="/journal" className="mono small">Blog</Link>
-        {/* Sur téléphone, « Créer un événement » à lui seul chassait la barre
-            sur une deuxième ligne : le verbe suffit à cette largeur. */}
-        <Link href="/create?tier=5" className="btn btn-dark">
-          <span className="vnav-long">Créer un événement</span>
-          <span className="vnav-court">Créer</span>
-        </Link>
+    <>
+      <div className={`vnav-bar ${large ? 'large' : ''}`}>
+        <nav className="vnav">
+          <Link href="/" style={{ textDecoration: 'none' }} aria-label="Accueil Time to Flash">
+            <Logo nameSize={22} size={36} />
+          </Link>
+          <div className="vnav-links">
+            <Link href="/journal" className="mono small">Blog</Link>
+            {/* « Mes événements » et « Connexion » servaient le même visiteur —
+                celui qui revient. La page fusionnée propose déjà la connexion
+                quand elle ne trouve aucun événement. */}
+            <Link href="/mes-evenements" className="mono small">Mon compte</Link>
+            <Link href="/create?tier=5" className="btn btn-dark vnav-cta">Créer un événement</Link>
+          </div>
+        </nav>
       </div>
-      <div className="vnav-second">
-        <Link href="/mes-evenements" className="mono small">Mes événements</Link>
-        <Link href="/connexion" className="mono small">Connexion</Link>
-      </div>
-    </nav>
+
+      {/* Téléphone uniquement : le geste principal, toujours à portée de pouce. */}
+      <Link href="/create?tier=5" className="vnav-bottom">Créer mon événement →</Link>
+    </>
   )
 }

@@ -68,7 +68,7 @@ export default async function Article({ params }) {
     <main className="dj" id="journal" aria-label={p.title}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <SiteNav />
+      <SiteNav large />
 
       <div className="dj-wrap">
         <Link className="dj-back" href="/journal">
