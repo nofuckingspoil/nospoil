@@ -1,6 +1,6 @@
 import { insertRow } from '../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
-import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib/account'
+import { normalizeEmail, isValidEmail, verifyAndConsumeCode, ensureAccount } from '../../../lib/account'
 import { EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
 import { purgeDate } from '../../../lib/retention'
 import { LEGAL_UPDATED } from '../../../lib/legal'
@@ -50,9 +50,13 @@ export async function POST(request) {
   // l'estime à la veille au soir de la révélation.
   const start = body.startsAt ? new Date(body.startsAt) : new Date(reveal.getTime() - 13 * 3600 * 1000)
 
+  // Une adresse connue, c'est une personne : son compte existe dès maintenant.
+  const compte = await ensureAccount(ownerEmail)
+
   const { ok, data } = await insertRow('events', {
     owner_token: ownerToken,
     owner_email: ownerEmail,
+    owner_account_id: compte,
     name: name.trim().slice(0, 80),
     host_names: hostNames ? hostNames.trim().slice(0, 80) : null,
     shots_per_guest: shots,

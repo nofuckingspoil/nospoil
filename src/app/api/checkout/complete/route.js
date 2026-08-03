@@ -2,6 +2,7 @@ import { getStripe } from '../../../../lib/stripe'
 import { insertRow, selectRows } from '../../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../../lib/mail'
 import { purgeDate } from '../../../../lib/retention'
+import { ensureAccount } from '../../../../lib/account'
 
 export const runtime = 'nodejs'
 
@@ -48,10 +49,14 @@ export async function POST(request) {
   // Date de la fête (événements payés avant l'ajout du champ : on l'estime).
   const start = m.starts_at ? new Date(m.starts_at) : new Date(reveal.getTime() - 13 * 3600 * 1000)
 
+  // Le nom du moyen de paiement enrichit le compte au passage.
+  const compte = await ensureAccount(ownerEmail, ownerName)
+
   const { ok, data } = await insertRow('events', {
     owner_token: m.owner_token,
     owner_email: ownerEmail,
     owner_name: ownerName,
+    owner_account_id: compte,
     name: m.name,
     host_names: m.host_names || null,
     shots_per_guest: parseInt(m.shots_per_guest, 10) || 10,

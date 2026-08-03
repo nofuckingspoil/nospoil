@@ -1,6 +1,6 @@
 import { selectRows, insertRow, deleteRows, updateRow } from '../../../../../lib/supabase'
 import { roleFor, canDelete } from '../../../../../lib/authz'
-import { makeToken, normalizeEmail, isValidEmail } from '../../../../../lib/account'
+import { makeToken, normalizeEmail, isValidEmail, ensureAccount } from '../../../../../lib/account'
 import { sendMail, adminInviteEmail, siteUrl } from '../../../../../lib/mail'
 
 // Gérer la liste des co-admins reste au propriétaire seul : sinon un co-admin
@@ -36,10 +36,13 @@ export async function POST(request, { params }) {
     return Response.json({ error: 'Ce mail est déjà admin de cet événement.' }, { status: 409 })
   }
 
+  const compte = await ensureAccount(email, name)
+
   const { ok, data } = await insertRow('event_admins', {
     event_id: id,
     email,
     name,
+    account_id: compte,
     token: makeToken(),
     // Colonne héritée de l'ancien système de code convenu : elle ne sert plus
     // à s'authentifier, mais reste obligatoire en base.

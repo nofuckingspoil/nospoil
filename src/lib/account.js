@@ -3,7 +3,7 @@
 //  Pas de mot de passe — l'identité est prouvée par le mail (lien + code).
 // ============================================================
 import 'server-only'
-import { selectRows, updateRow } from './supabase'
+import { selectRows, updateRow, insertRow } from './supabase'
 
 const MAX_ATTEMPTS = 6
 
@@ -39,6 +39,46 @@ export function normalizeEmail(v) {
   return (v || '').toString().trim().toLowerCase()
 }
 
+// ------------------------------------------------------------
+//  Comptes : une personne, une adresse.
+//
+//  Appelé dès qu'une adresse est connue, quel que soit le rôle — organisateur,
+//  co-organisateur ou invité. Une même personne peut être les trois, et c'est
+//  précisément ce que l'adresse permet de recoller.
+//
+//  Ne fait jamais échouer l'appelant : un compte manquant n'empêche ni de créer
+//  un événement, ni de prendre une photo.
+// ------------------------------------------------------------
+export async function ensureAccount(email, name) {
+  const mail = normalizeEmail(email)
+  if (!isValidEmail(mail)) return null
+  const nom = (name || '').toString().trim().slice(0, 80) || null
+
+  try {
+    const { data } = await selectRows('accounts', `email=eq.${encodeURIComponent(mail)}&select=id,name&limit=1`)
+    const existant = Array.isArray(data) ? data[0] : null
+
+    if (existant) {
+      // On complète un nom manquant, on n'écrase jamais celui qui est là :
+      // un prénom saisi à la volée ne vaut pas un nom déjà enregistré.
+      const patch = { last_seen_at: new Date().toISOString() }
+      if (nom && !existant.name) patch.name = nom
+      await updateRow('accounts', `id=eq.${existant.id}`, patch)
+      return existant.id
+    }
+
+    const cree = await insertRow('accounts', { email: mail, name: nom, last_seen_at: new Date().toISOString() })
+    if (cree.ok && cree.data?.id) return cree.data.id
+
+    // Course entre deux requêtes simultanées : l'autre a gagné, on la relit.
+    const relu = await selectRows('accounts', `email=eq.${encodeURIComponent(mail)}&select=id&limit=1`)
+    return Array.isArray(relu.data) && relu.data[0] ? relu.data[0].id : null
+  } catch (err) {
+    console.error('compte:', err)
+    return null
+  }
+}
+
 export function isValidEmail(v) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v || '')
 }
@@ -52,6 +92,8 @@ const FIELDS = 'id,name,host_names,reveal_at,created_at,owner_token'
 // ce qui donnait à n'importe quel co-admin le droit de tout supprimer.
 export async function eventsForEmail(email) {
   const enc = encodeURIComponent(email)
+  // Se connecter, c'est se manifester : le compte existe au plus tard ici.
+  await ensureAccount(email)
   const owned = await selectRows('events', `owner_email=eq.${enc}&status=eq.active&select=${FIELDS}`)
   const list = (Array.isArray(owned.data) ? owned.data : []).map((e) => ({ ...e, _token: e.owner_token }))
 

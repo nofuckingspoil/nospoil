@@ -1,7 +1,7 @@
 import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
 import { sendMail, guestAccessEmail, siteUrl } from '../../../lib/mail'
-import { makeToken } from '../../../lib/account'
+import { makeToken, ensureAccount } from '../../../lib/account'
 
 // Envoie à l'invité son lien d'accès permanent, une seule fois.
 //
@@ -64,7 +64,12 @@ export async function POST(request) {
   // revient sans la resaisir ne doit pas perdre son inscription à l'album.
   try {
     const patch = { last_active_at: new Date().toISOString() }
-    if (email) patch.email = email
+    if (email) {
+      patch.email = email
+      // Un invité qui laisse son adresse est une personne comme une autre :
+      // c'est peut-être l'organisateur d'un autre événement.
+      patch.account_id = await ensureAccount(email, displayName)
+    }
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}
 
