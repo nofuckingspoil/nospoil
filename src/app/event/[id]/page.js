@@ -994,21 +994,22 @@ export default function EventManage({ params }) {
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
-      {/* Les photos elles-mêmes : ce qu'on regarde et ce qu'on trie. Séparé de
-          l'album, qui traite de sa diffusion — deux gestes, deux moments. */}
-      <Section title="Les photos"
-        hint={revealed ? 'Visibles par vos invités' : 'Vous seul y avez accès'}
+      <Section id="sec-album" title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
         badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
-        open={openSec === 'photos'} onToggle={() => toggleSec('photos')}>
+        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
 
-        <Link href={`/g/${id}`} className="btn btn-dark">
-          {revealed ? "Voir l'album →" : 'Vérifier et trier les photos →'}
-        </Link>
-        <p className="hint" style={{ marginTop: 8 }}>
+        {/* Trois blocs titrés : trier ses photos, diffuser l'album, en
+            restreindre l'accès. Trois gestes distincts, à des moments
+            différents, dans une même section. */}
+        <div className="db-alb-t">Vérifier et trier les photos</div>
+        <p className="muted small" style={{ marginBottom: 10 }}>
           {revealed
             ? "Vos invités voient les photos. Vous pouvez encore en masquer une d'un geste."
             : `Vous seul y avez accès. Masquez d'un geste celles qui gênent, avant que tout le monde ne les découvre le ${formatDate(ev.revealAt)}.`}
         </p>
+        <Link href={`/g/${id}`} className="btn btn-dark">
+          {revealed ? "Voir l'album →" : 'Vérifier et trier les photos →'}
+        </Link>
 
         {/* Le frein reste ici : on le cherche à la seconde où l'on vient de
             tomber sur une photo qui pose problème. */}
@@ -1030,32 +1031,27 @@ export default function EventManage({ params }) {
             </button>
           )}
         </div>
-      </Section>
 
-      <Section id="sec-album" title="L'album"
-        hint={revealed ? 'Ouvert à vos invités' : `S'ouvre le ${formatShort(ev.revealAt)}`}
-        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
-
-        <div className="db-alb-t">Partager l'album</div>
-        <p className="muted small" style={{ marginBottom: 10 }}>
-          {revealed
-            ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
-            : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
-        </p>
-        {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
-            il s'agit, et le message tout prêt le contenait déjà. */}
-        <div className="db-alb-actions">
-          <button className="btn btn-ghost"
-            onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'gal')}>
-            {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
-          </button>
+        <div className="db-alb-bloc">
+          <div className="db-alb-t">Partager l'album</div>
+          <p className="muted small" style={{ marginBottom: 10 }}>
+            {revealed
+              ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
+              : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
+          </p>
+          {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
+              il s'agit, et le message tout prêt le contenait déjà. */}
+          <div className="db-alb-actions">
+            <button className="btn btn-ghost"
+              onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'gal')}>
+              {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
+            </button>
+          </div>
         </div>
 
         <div className="db-alb-bloc">
           <div className="db-alb-t">Protéger par un code</div>
-          {/* Même silhouette dans les deux états — titre, une ligne, une action.
-              Le bloc se réorganisait entièrement, au point qu'on croyait avoir
-              changé de section. */}
+          {/* Même silhouette dans les deux états — titre, une ligne, une action. */}
           <p className="muted small" style={{ marginBottom: 10 }}>
             {ev.galleryCode
               ? <>Actif — vos invités doivent entrer <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>. Pensez à le leur donner.</>
