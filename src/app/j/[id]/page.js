@@ -421,7 +421,7 @@ export default function GuestCamera({ params }) {
     <main className="screen screen-cream">
       <div className="cover" style={meta?.coverUrl ? undefined : { background: COVER_GRAD }}>
         {meta?.coverUrl ? (
-          <img src={meta.coverUrl} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src={meta.coverUrl} alt="" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: meta.coverPos || '50% 50%' }} />
         ) : (
           <>
             <div className="gloss" />

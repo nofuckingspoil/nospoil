@@ -9,7 +9,7 @@
 //  simplement replié — pour qu'on retrouve toujours ce qu'on cherche.
 // ============================================================
 
-import { use, useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import QRCode from 'qrcode'
@@ -115,6 +115,11 @@ export default function EventManage({ params }) {
   const [settingMsg, setSettingMsg] = useState('')
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
+  // Recadrage : `pos` est la position en cours d'ajustement, `null` tant qu'on
+  // n'y a pas touché — on affiche alors celle enregistrée.
+  const [recadrage, setRecadrage] = useState(false)
+  const [pos, setPos] = useState(null)
+  const glisseRef = useRef(null)
   const [fait, setFait] = useState({})
   // Rappel « mettez-le à votre agenda » : passe une fois, puis plus jamais.
   const [notifCal, setNotifCal] = useState(false)
@@ -256,6 +261,42 @@ export default function EventManage({ params }) {
     }
   }
 
+  // Retirer la photo : l'écran d'accueil retrouve son dégradé.
+  async function supprimerCover() {
+    setSettingMsg('')
+    setCoverBusy(true)
+    try {
+      const r = await fetch(`/api/events/${id}/cover`, {
+        method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) },
+      })
+      const d = await r.json().catch(() => ({}))
+      if (d.error) throw new Error(d.error)
+      setPos(null)
+      setRecadrage(false)
+      await reload()
+    } catch (err) {
+      setSettingMsg(err.message || 'Suppression impossible.')
+    } finally { setCoverBusy(false) }
+  }
+
+  // --- Recadrage : on déplace la photo dans son cadre, en pourcentages ---
+  function debutGlisse(e) {
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    const [x, y] = (pos || ev.coverPos || '50% 50%').split(' ').map((v) => parseInt(v, 10))
+    glisseRef.current = { x0: e.clientX, y0: e.clientY, x, y, w: e.currentTarget.offsetWidth, h: e.currentTarget.offsetHeight }
+  }
+  function glisse(e) {
+    const g = glisseRef.current
+    if (!g) return
+    // Glisser vers la droite doit faire apparaître ce qui est à gauche : le
+    // déplacement du point de cadrage est donc inverse de celui du doigt.
+    const borne = (v) => Math.max(0, Math.min(100, Math.round(v)))
+    const x = borne(g.x - ((e.clientX - g.x0) / g.w) * 100)
+    const y = borne(g.y - ((e.clientY - g.y0) / g.h) * 100)
+    setPos(`${x}% ${y}%`)
+  }
+  function finGlisse() { glisseRef.current = null }
+
   function copy(text, key) {
     navigator.clipboard?.writeText(text).then(() => ping(key)).catch(() => {})
   }
@@ -364,6 +405,7 @@ export default function EventManage({ params }) {
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
 
   const invitant = ev.hostNames || ev.name || ''
+  const posAffichee = pos || ev.coverPos || '50% 50%'
 
   // ---- La grande carte : le seul élément qui change selon le moment ----
   function Hero() {
@@ -660,23 +702,44 @@ export default function EventManage({ params }) {
       <Section title="Réglages de l'événement" hint="Nom, couverture, dates, nombre de photos"
         open={openSec === 'reglages'} onToggle={() => toggleSec('reglages')}>
 
-        {/* L'identité de l'événement, montrée comme les invités la verront :
-            on touche ce qu'on veut changer, au lieu de remplir des champs.
-            Calquée sur l'écran d'accueil réel — une miniature qui ne lui
-            ressemblerait pas serait décorative, donc trompeuse. */}
+        {/* Deux zones distinctes, et c'est volontaire : au-dessus un APERÇU,
+            qu'on regarde ; en dessous des ACTIONS, qu'on touche. Rendre le titre
+            lui-même cliquable le faisait lire comme un intitulé de rubrique du
+            tableau de bord, et non comme le titre vu par les invités. */}
         <div className="db-ident">
-          <label className="db-ident-cover">
-            {ev.coverUrl
-              ? <img src={ev.coverUrl} alt="" />
-              : <span className="db-ident-tag">ÉVÉNEMENT PRIVÉ</span>}
-            <span className="db-ident-act">
-              {coverBusy ? 'Envoi…' : ev.coverUrl ? '🖼️ Changer la photo' : '🖼️ Ajouter une photo'}
-            </span>
-            <input type="file" accept="image/*" hidden
-              onChange={(e) => uploadCover(e.target.files?.[0])} />
-          </label>
+          <span className="db-ident-eyebrow">Aperçu · ce que voient vos invités</span>
 
-          {editing === 'name' ? (
+          <div className="db-ident-ecran">
+            <div
+              className={`db-ident-cover ${recadrage ? 'on' : ''}`}
+              onPointerDown={recadrage ? debutGlisse : undefined}
+              onPointerMove={recadrage ? glisse : undefined}
+              onPointerUp={recadrage ? finGlisse : undefined}
+              onPointerCancel={recadrage ? finGlisse : undefined}
+            >
+              {ev.coverUrl
+                ? <img src={ev.coverUrl} alt="" draggable={false}
+                    style={{ objectPosition: posAffichee }} />
+                : <span className="db-ident-tag">ÉVÉNEMENT PRIVÉ</span>}
+              {recadrage && <span className="db-ident-guide">Faites glisser pour recadrer</span>}
+            </div>
+            <p className="db-ident-titre">Participez à l'événement {invitant}</p>
+            <p className="db-ident-sous">
+              Prenez {ev.shotsPerGuest} photos pendant la soirée. Elles resteront cachées
+              jusqu'à la révélation, le {formatDate(ev.revealAt)}.
+            </p>
+          </div>
+
+          {recadrage ? (
+            <div className="db-ident-actions">
+              <button className="btn btn-accent" onClick={async () => {
+                if (await patchEvent({ coverPos: posAffichee })) setRecadrage(false)
+              }}>Enregistrer le cadrage</button>
+              <button className="btn btn-ghost" onClick={() => {
+                setPos(null); setRecadrage(false)
+              }}>Annuler</button>
+            </div>
+          ) : editing === 'name' ? (
             <div className="db-set-edit" style={{ marginTop: 12 }}>
               <input type="text" maxLength={80} value={draftName} autoFocus
                 onChange={(e) => setDraftName(e.target.value)}
@@ -686,16 +749,27 @@ export default function EventManage({ params }) {
               }}>Enregistrer</button>
             </div>
           ) : (
-            <button className="db-ident-nom"
-              onClick={() => { setEditing('name'); setDraftName(ev.name || '') }}>
-              <span>Participez à l'événement {invitant}</span>
-              <span className="db-ident-crayon" aria-hidden="true">✎</span>
-            </button>
+            <div className="db-ident-actions">
+              <label className="btn btn-ghost">
+                {coverBusy ? 'Envoi…' : ev.coverUrl ? '🖼️ Changer la photo' : '🖼️ Ajouter une photo'}
+                <input type="file" accept="image/*" hidden
+                  onChange={(e) => uploadCover(e.target.files?.[0])} />
+              </label>
+              <button className="btn btn-ghost" onClick={() => {
+                setEditing('name'); setDraftName(ev.name || '')
+              }}>✎ Modifier le nom</button>
+              {ev.coverUrl && (
+                <>
+                  <button className="btn btn-ghost" onClick={() => {
+                    setPos(ev.coverPos || '50% 50%'); setRecadrage(true)
+                  }}>⤢ Recadrer</button>
+                  <button className="db-danger-link db-ident-suppr" onClick={supprimerCover}>
+                    Retirer la photo
+                  </button>
+                </>
+              )}
+            </div>
           )}
-
-          <p className="db-ident-aide">
-            Voilà ce que voient vos invités en scannant le QR. Touchez la photo ou le nom pour les changer.
-          </p>
         </div>
 
         {/* Date de l'événement */}

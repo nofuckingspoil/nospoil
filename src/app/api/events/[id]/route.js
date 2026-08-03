@@ -15,7 +15,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,shots_per_guest,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count,max_guests`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,starts_at,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,gallery_code,download_count,max_guests`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -60,6 +60,7 @@ export async function GET(request, { params }) {
     name: ev.name,
     hostNames: ev.host_names,
     coverUrl,
+    coverPos: ev.cover_pos || null,
     shotsPerGuest: ev.shots_per_guest,
     startsAt: ev.starts_at,
     revealAt: ev.reveal_at,
@@ -159,6 +160,15 @@ export async function PATCH(request, { params }) {
 
   const body = await request.json().catch(() => ({}))
   const patch = {}
+
+  // Cadrage de la couverture, au format « X% Y% ». Validé strictement : cette
+  // valeur part telle quelle dans une propriété CSS.
+  if (body.coverPos !== undefined) {
+    const v = (body.coverPos || '').toString().trim()
+    if (v === '') patch.cover_pos = null
+    else if (/^\d{1,3}% \d{1,3}%$/.test(v)) patch.cover_pos = v
+    else return Response.json({ error: 'Cadrage invalide.' }, { status: 400 })
+  }
 
   // Nom de l'événement : s'affiche chez les invités, donc modifiable à tout moment
   // (une faute de frappe ne doit pas rester figée jusqu'à la révélation).
