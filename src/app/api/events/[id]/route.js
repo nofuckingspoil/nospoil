@@ -170,21 +170,13 @@ export async function PATCH(request, { params }) {
   const body = await request.json().catch(() => ({}))
   const patch = {}
 
-  // Album déjà ouvert : les dates se figent. Les déplacer reviendrait à
-  // refermer un album que des invités ont vu, et à repousser en douce la date
-  // de suppression annoncée. Pour refermer, il y a le frein d'urgence
-  // (revealPaused) — et une fois l'album refermé, les dates redeviennent
-  // modifiables.
-  const nbInvites = await selectRows('guests', `event_id=eq.${id}&select=id`)
-  const albumOuvert = isRevealed({
-    revealAt: ev.reveal_at,
-    revealPaused: ev.reveal_paused,
-    maxGuests: ev.max_guests,
-    guestCount: Array.isArray(nbInvites.data) ? nbInvites.data.length : undefined,
-  })
-  if (albumOuvert && (body.revealAt !== undefined || body.startsAt !== undefined)) {
+  // L'heure de la révélation est passée : les deux dates se figent, sans
+  // condition. Les déplacer réécrirait un événement qui a déjà eu lieu, et
+  // repousserait au passage la date de suppression annoncée dans les CGV.
+  const revelationPassee = new Date(ev.reveal_at || 0).getTime() <= Date.now()
+  if (revelationPassee && (body.revealAt !== undefined || body.startsAt !== undefined)) {
     return Response.json(
-      { error: "L'album est ouvert : les dates sont figées. Refermez-le d'abord si vous devez les changer." },
+      { error: 'La révélation a eu lieu : les dates ne peuvent plus être modifiées.' },
       { status: 409 }
     )
   }

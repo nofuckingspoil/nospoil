@@ -958,11 +958,11 @@ export default function EventManage({ params }) {
         <div className="db-set">
           <div className="db-set-l">
             <span className="db-set-lbl">
-              Date de l'événement {revealed && <span className="db-frozen">figée</span>}
+              Date de l'événement {revealedTime && <span className="db-frozen">figée</span>}
             </span>
             <span className="db-set-val">{ev.startsAt ? formatDate(ev.startsAt) : 'Non renseignée'}</span>
           </div>
-          {!revealed && (
+          {!revealedTime && (
             <button className="db-set-act" onClick={() => { setEditing(editing === 'start' ? '' : 'start'); setDraftDate(toLocalInput(ev.startsAt || ev.revealAt)) }}>
               {editing === 'start' ? 'Annuler' : 'Modifier'}
             </button>
@@ -1072,22 +1072,21 @@ export default function EventManage({ params }) {
         <div className="db-set">
           <div className="db-set-l">
             <span className="db-set-lbl">
-              Révélation des photos {revealed && <span className="db-frozen">figée</span>}
+              Révélation des photos {revealedTime && <span className="db-frozen">figée</span>}
             </span>
             <span className="db-set-val">{formatDate(ev.revealAt)}</span>
           </div>
-          {!revealed && (
+          {!revealedTime && (
             <button className="db-set-act" onClick={() => { setEditing(editing === 'reveal' ? '' : 'reveal'); setDraftDate(toLocalInput(ev.revealAt)) }}>
               {editing === 'reveal' ? 'Annuler' : 'Modifier'}
             </button>
           )}
         </div>
-        {/* Les dates ne se rouvrent pas par magie : on dit par où passer. */}
-        {revealed && (
+        {/* Dire pourquoi, plutôt que de laisser deviner devant un bouton absent. */}
+        {revealedTime && (
           <p className="hint" style={{ marginTop: 2 }}>
-            L'album est ouvert : les dates sont figées. Déplacer la révélation refermerait
-            un album que vos invités ont déjà vu. Pour les rouvrir, refermez d'abord l'album
-            depuis la section « L'album ».
+            La révélation a eu lieu : les dates ne se modifient plus. Elles racontent un
+            événement qui appartient désormais au passé.
           </p>
         )}
         {editing === 'reveal' && (
