@@ -27,7 +27,7 @@ export default function Bilan({ bilan }) {
   if (!bilan || !bilan.photoCount) return null
 
   const { photoCount, photographes, moyenne, champion, heurePointe,
-    premier, dernier, dureeFete, telechargements } = bilan
+    premier, dernier, dureeFete, photoDeLaSoiree, telechargements } = bilan
 
   const faits = []
   if (champion) {
@@ -96,6 +96,22 @@ export default function Bilan({ bilan }) {
           </div>
         )}
       </div>
+
+      {/* La photo la plus aimée : probablement la ligne la plus émouvante du
+          bilan. Absente tant que personne n'a mis de cœur. */}
+      {photoDeLaSoiree?.url && (
+        <div className="bilan-star">
+          <img src={photoDeLaSoiree.url} alt="" loading="lazy" />
+          <div>
+            <span>La photo de la soirée</span>
+            <b>{photoDeLaSoiree.coeurs} ❤</b>
+            <em>
+              par {photoDeLaSoiree.nom}, à {photoDeLaSoiree.heure}
+              {photoDeLaSoiree.rapidite ? ` — l'unanimité en ${photoDeLaSoiree.rapidite}` : ''}
+            </em>
+          </div>
+        </div>
+      )}
 
       {/* Les deux bornes de la soirée. Une vignette raconte ce qu'une heure
           seule ne dit pas : dans quel état on était au début, et à la fin. */}

@@ -1,10 +1,11 @@
 'use client'
 
-import { use, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useState } from 'react'
 import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
+import WrapInvite, { wrapDejaVu } from '../../../components/WrapInvite'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -209,8 +210,50 @@ export default function Gallery({ params }) {
 
   useEffect(() => { setMoiId(getGuest(id)?.guestId || null) }, [id])
 
+  // Favoris posés par cet appareil. Le compte, lui, vit sur la photo elle-même.
+  const [favs, setFavs] = useState(() => new Set())
+  const [seulementFavs, setSeulementFavs] = useState(false)
+
+  // Résumé de soirée : décidé une fois pour toutes au montage, pour qu'il ne
+  // resurgisse pas à chaque rechargement des données.
+  const [montrerWrap, setMontrerWrap] = useState(false)
+  useEffect(() => { setMontrerWrap(!wrapDejaVu(id)) }, [id])
+  // Référence stable : sinon le minuteur du résumé repartirait à zéro à chaque
+  // rendu de l'album.
+  const fermerWrap = useCallback(() => setMontrerWrap(false), [])
+
+  function toggleFav(photoId) {
+    const aime = favs.has(photoId)
+    // Affichage immédiat : un cœur qui attend le serveur ne donne pas envie.
+    setFavs((prev) => {
+      const n = new Set(prev)
+      aime ? n.delete(photoId) : n.add(photoId)
+      return n
+    })
+    setData((d) => ({
+      ...d,
+      photos: d.photos.map((p) => (p.id === photoId ? { ...p, favs: Math.max(0, (p.favs || 0) + (aime ? -1 : 1)) } : p)),
+    }))
+
+    fetch(`/api/gallery/${id}/favorite`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photoId, deviceToken: getDeviceToken(), on: !aime }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (typeof d.count !== 'number') return
+        // Le serveur tranche : d'autres invités ont pu voter entre-temps.
+        setData((prev) => ({
+          ...prev,
+          photos: prev.photos.map((p) => (p.id === photoId ? { ...p, favs: d.count } : p)),
+        }))
+      })
+      .catch(() => {})
+  }
+
   function fetchGallery(extraCode) {
-    const headers = { 'x-owner-token': getOwnerToken(id) }
+    // Le jeton d'appareil sert à rallumer les cœurs déjà posés par cet invité.
+    const headers = { 'x-owner-token': getOwnerToken(id), 'x-device-token': getDeviceToken() }
     let gc = extraCode
     if (gc === undefined) { try { gc = localStorage.getItem(`pellicule_gallery_${id}`) } catch {} }
     if (gc) headers['x-gallery-code'] = gc
@@ -219,7 +262,11 @@ export default function Gallery({ params }) {
 
   function load() {
     fetchGallery()
-      .then((d) => (d.error ? setError(d.error) : setData(d)))
+      .then((d) => {
+        if (d.error) { setError(d.error); return }
+        setData(d)
+        if (Array.isArray(d.mesFavoris)) setFavs(new Set(d.mesFavoris))
+      })
       .catch(() => setError('Connexion impossible.'))
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -266,7 +313,10 @@ export default function Gallery({ params }) {
   // Album protégé par un code : porte d'entrée pour les invités
   if (data.needCode) return <CodeGate data={data} value={codeInput} onChange={setCodeInput} onSubmit={submitCode} err={codeErr} />
 
-  const parAuteur = filter === 'all' ? data.photos : data.photos.filter((p) => p.guestId === filter)
+  // « Mes favoris » se cumule au filtre par personne : on peut vouloir ses
+  // coups de cœur parmi les photos d'un seul invité.
+  const parCoeur = seulementFavs ? data.photos.filter((p) => favs.has(p.id)) : data.photos
+  const parAuteur = filter === 'all' ? parCoeur : parCoeur.filter((p) => p.guestId === filter)
   // Le tri par visibilité n'a de sens que pour l'organisateur : lui seul voit
   // les photos masquées, et lui seul a besoin de les retrouver.
   const photos = !data.isOwner || vue === 'toutes' ? parAuteur
@@ -303,6 +353,21 @@ export default function Gallery({ params }) {
     display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(4px)',
   }
 
+  // Le résumé de soirée passe devant l'album, une seule fois, et seulement
+  // quand il y a de quoi le nourrir.
+  if (montrerWrap && data.photos.length > 1) {
+    return (
+      <WrapInvite
+        eventId={id}
+        nom={data.hostNames || data.name}
+        photos={data.photos.filter((p) => !p.hidden)}
+        guests={data.guests}
+        moiId={moiId}
+        onClose={fermerWrap}
+      />
+    )
+  }
+
   return (
     <main className="screen screen-cream wide">
       {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
@@ -334,6 +399,16 @@ export default function Gallery({ params }) {
           </button>
         </div>
         <h3 className="h3" style={{ margin: '2px 0 12px' }}>Les souvenirs de {data.hostNames || data.name}</h3>
+
+        {/* Sans un mot, le cœur passe pour une décoration : on dit à quoi il
+            sert, et l'on offre le raccourci vers ce qu'il a mis de côté. */}
+        <div className="gal-favbar">
+          <p>Touchez le <span className="gal-favbar-ic" aria-hidden="true">♥</span> sur une photo pour la garder de côté.</p>
+          <button className={`chip ${seulementFavs ? 'active' : ''}`}
+            onClick={() => setSeulementFavs((v) => !v)} disabled={!seulementFavs && favs.size === 0}>
+            {seulementFavs ? '← Toutes les photos' : `Mes favoris · ${favs.size}`}
+          </button>
+        </div>
 
         {/* Qui a pris quoi. À 170 participants, une rangée de pastilles devient
             illisible : on montre d'abord les plus prolifiques, et l'on cherche
@@ -445,6 +520,22 @@ export default function Gallery({ params }) {
                         onClick={(e) => { e.preventDefault(); e.stopPropagation(); removePhoto(p.id) }}
                         style={ovBtn}>🗑️</button>
                     </div>
+                  )}
+                  {/* Le cœur reste anonyme : on montre le total, jamais qui a
+                      aimé. Un vote qui se voit ne s'ose plus. */}
+                  {!selecting && !p.hidden && (
+                    <button
+                      className={`gal-coeur ${favs.has(p.id) ? 'on' : ''}`}
+                      aria-label={favs.has(p.id) ? 'Retirer des favoris' : 'Mettre en favori'}
+                      aria-pressed={favs.has(p.id)}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleFav(p.id) }}>
+                      <svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"
+                        fill={favs.has(p.id) ? 'currentColor' : 'none'}
+                        stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <path d="M20.8 5.6a5.5 5.5 0 00-7.8 0L12 6.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 22l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" />
+                      </svg>
+                      {p.favs > 0 && <span>{p.favs}</span>}
+                    </button>
                   )}
                 </div>
                 <div className="cap">

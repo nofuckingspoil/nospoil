@@ -94,6 +94,19 @@ export async function GET(request, { params }) {
     }))
     .filter((p) => p.fullUrl)
 
+  // Favoris : le total par photo, et ceux posés par CET appareil (pour que le
+  // cœur reste allumé au retour). Jamais qui a aimé quoi.
+  const favRes = await selectRows('favorites', `event_id=eq.${id}&select=photo_id,device_token`)
+  const favs = Array.isArray(favRes.data) ? favRes.data : []
+  const monJeton = request.headers.get('x-device-token') || ''
+  const compte = {}
+  const miens = []
+  for (const f of favs) {
+    compte[f.photo_id] = (compte[f.photo_id] || 0) + 1
+    if (monJeton && f.device_token === monJeton) miens.push(f.photo_id)
+  }
+  for (const p of photos) p.favs = compte[p.id] || 0
+
   // Liste des invités (pour le filtre "point de vue")
   const guestMap = {}
   for (const p of photos) guestMap[p.guestId] = p.who
@@ -108,5 +121,6 @@ export async function GET(request, { params }) {
     revealAt: ev.reveal_at,
     photos,
     guests,
+    mesFavoris: miens,
   })
 }

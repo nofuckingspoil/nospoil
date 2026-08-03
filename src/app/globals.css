@@ -505,6 +505,81 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .evrow .big { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .badge-warn { background: rgba(178,59,46,.14); color: #b23b2e; }
 
+/* ---------- Résumé de soirée de l'invité (avant l'album) ---------- */
+.wrap { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center; padding: 64px 28px 34px;
+  color: #fff; background: linear-gradient(155deg, #F7C26B 0%, #EE7A45 45%, #A23D5C 100%); }
+
+.wrap-barres { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; gap: 5px; }
+.wrap-barre { flex: 1; height: 3px; border-radius: 999px; background: rgba(255,255,255,.3); overflow: hidden; }
+.wrap-barre i { display: block; height: 100%; width: 0; background: #fff; border-radius: 999px; }
+.wrap-barre i.pleine { width: 100%; }
+.wrap-barre i.court { animation: wrapAvance linear forwards; }
+@keyframes wrapAvance { from { width: 0 } to { width: 100% } }
+
+/* Toujours visible dès la première seconde : personne ne doit se sentir retenu. */
+.wrap-passer { position: absolute; top: 28px; right: 20px; z-index: 3; border: 0; cursor: pointer;
+  background: rgba(255,255,255,.18); color: #fff; border-radius: 999px; padding: 7px 15px;
+  font-family: var(--font-body); font-weight: 600; font-size: 13px; backdrop-filter: blur(4px); }
+.wrap-passer:hover { background: rgba(255,255,255,.3); }
+
+/* Zones tactiles : à droite on avance, à gauche on revient. */
+.wrap-zone { position: absolute; top: 0; bottom: 74px; width: 32%; border: 0; background: transparent;
+  cursor: pointer; z-index: 1; }
+.wrap-zone.gauche { left: 0; }
+.wrap-zone.droite { right: 0; }
+
+.wrap-carte { position: relative; z-index: 2; pointer-events: none; max-width: 460px;
+  animation: wrapEntre .45s ease; }
+@keyframes wrapEntre { from { opacity: 0; transform: translateY(14px) } to { opacity: 1; transform: none } }
+.wrap-oeil { display: block; font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em;
+  text-transform: uppercase; opacity: .8; }
+.wrap-chiffre { display: block; margin-top: 14px; font-family: var(--font-display); font-weight: 800;
+  font-size: clamp(76px, 26vw, 132px); line-height: .88; letter-spacing: -.04em;
+  text-shadow: 0 6px 30px rgba(0,0,0,.18); }
+.wrap-titre { margin: 6px 0 0; font-size: clamp(21px, 6vw, 30px); font-weight: 800; }
+.wrap-texte { margin: 16px 0 0; font-size: clamp(34px, 10vw, 58px); font-weight: 800;
+  line-height: 1.04; text-shadow: 0 6px 30px rgba(0,0,0,.18); }
+.wrap-sous { margin: 14px 0 0; font-size: 15px; opacity: .9; line-height: 1.5; }
+
+.wrap-vignettes { display: flex; justify-content: center; gap: -6px; margin-top: 26px; }
+.wrap-vignettes span { display: block; margin: 0 -10px; padding: 5px 5px 12px; background: #fff;
+  border-radius: 5px; box-shadow: 0 10px 26px rgba(0,0,0,.22); }
+.wrap-vignettes img { display: block; width: 68px; height: 68px; object-fit: cover; border-radius: 3px; }
+
+.wrap-fin { position: absolute; left: 24px; right: 24px; bottom: 26px; z-index: 3; border: 0;
+  cursor: pointer; background: #14161F; color: #fff; border-radius: 999px; padding: 15px 22px;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.22); }
+.wrap-fin:hover { background: #22252f; }
+@media (min-width: 560px) { .wrap-fin { left: 50%; right: auto; transform: translateX(-50%); min-width: 300px; } }
+
+/* Mouvement réduit : on garde l'enchaînement, on retire les animations. */
+@media (prefers-reduced-motion: reduce) {
+  .wrap-carte, .wrap-barre i.court { animation: none; }
+  .wrap-barre i.court { width: 100%; }
+}
+
+/* Bandeau d'invitation aux favoris, au-dessus de l'album. */
+.gal-favbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  flex-wrap: wrap; margin: 0 0 14px; padding: 11px 14px; border-radius: 14px;
+  background: var(--card); border: 1px solid var(--line-soft); }
+.gal-favbar p { margin: 0; font-size: 13.5px; color: var(--text2); line-height: 1.45; }
+.gal-favbar-ic { color: #FF6B6B; font-size: 15px; }
+.gal-favbar .chip:disabled { opacity: .45; cursor: not-allowed; }
+
+/* Cœur de favori, posé dans le coin de la photo. */
+.gal-coeur { position: absolute; bottom: 8px; right: 8px; z-index: 3;
+  display: inline-flex; align-items: center; gap: 5px; padding: 6px 9px;
+  border: 0; border-radius: 999px; cursor: pointer;
+  background: rgba(20,22,31,.55); color: #fff;
+  backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  font-family: var(--font-mono); font-size: 11px; line-height: 1; }
+.gal-coeur:hover { background: rgba(20,22,31,.75); }
+.gal-coeur.on { color: #FF6B6B; }
+.gal-coeur.on svg { animation: coeurPop .28s ease; }
+@keyframes coeurPop { 0% { transform: scale(1) } 45% { transform: scale(1.35) } 100% { transform: scale(1) } }
+
 /* ---------- Bilan de la soirée (organisateur) ---------- */
 .bilan { position: relative; margin-top: 14px; border-radius: 22px; padding: 26px 22px 22px;
   background: linear-gradient(158deg, #FDF6E9 0%, #FBEEDC 52%, #F8E6D2 100%);
@@ -530,6 +605,17 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .bilan-nombres b { font-family: var(--font-display); font-weight: 800; font-size: 40px;
   line-height: .9; letter-spacing: -.03em; color: var(--accent); }
 .bilan-nombres span { font-size: 11.5px; line-height: 1.3; color: var(--text3); }
+
+/* La photo la plus aimée, mise en avant. */
+.bilan-star { display: flex; gap: 14px; align-items: center; margin-top: 20px;
+  background: var(--card); border: 1px solid rgba(236,91,51,.2); border-radius: 16px; padding: 12px; }
+.bilan-star img { width: 84px; height: 84px; flex: none; border-radius: 12px; object-fit: cover;
+  background: rgba(34,26,18,.06); }
+.bilan-star > div { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.bilan-star span { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text4); }
+.bilan-star b { font-family: var(--font-display); font-weight: 800; font-size: 22px; color: var(--accent); }
+.bilan-star em { font-style: normal; font-size: 12px; color: var(--text3); line-height: 1.4; }
 
 /* Les deux bornes de la soirée, encadrées comme des tirages. */
 .bilan-bornes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }

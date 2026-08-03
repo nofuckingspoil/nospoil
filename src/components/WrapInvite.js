@@ -102,18 +102,18 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
     onClose()
   }, [eventId, onClose])
 
+  // Fermer depuis une fonction de mise à jour d'état reviendrait à modifier un
+  // autre composant pendant un rendu : on décide ici, en clair.
   const suivant = useCallback(() => {
-    setI((n) => {
-      if (n + 1 >= cartes.length) { marquerVu(eventId); onClose(); return n }
-      return n + 1
-    })
-  }, [cartes.length, eventId, onClose])
+    if (i + 1 >= cartes.length) fermer()
+    else setI(i + 1)
+  }, [i, cartes.length, fermer])
 
   // Défilement automatique, comme une story. Le minuteur repart à chaque carte.
   useEffect(() => {
     const t = setTimeout(suivant, DUREE)
     return () => clearTimeout(t)
-  }, [i, suivant])
+  }, [suivant])
 
   // Échap pour sortir : personne ne doit se sentir retenu.
   useEffect(() => {

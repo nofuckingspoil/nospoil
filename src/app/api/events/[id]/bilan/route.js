@@ -44,7 +44,7 @@ export async function GET(request, { params }) {
 
   const { data } = await selectRows(
     'photos',
-    `event_id=eq.${id}&select=taken_at,guest_id,storage_path,thumb_path,hidden,guests(display_name)&order=taken_at.asc`
+    `event_id=eq.${id}&select=id,taken_at,guest_id,storage_path,thumb_path,hidden,guests(display_name)&order=taken_at.asc`
   )
   // Une photo masquée par l'organisateur n'est plus dans l'album : elle n'a à
   // peser sur aucun chiffre du bilan, pas même le total.
@@ -107,6 +107,43 @@ export async function GET(request, { params }) {
     ? duree(new Date(premierClic.taken_at).getTime(), new Date(dernierClic.taken_at).getTime())
     : null
 
+  // --- La photo de la soirée ---
+  // À égalité de cœurs, gagne celle qui les a rassemblés le plus vite : la même
+  // règle que pour le photographe, et ça se raconte mieux qu'un ex æquo.
+  const favRes = await selectRows('favorites', `event_id=eq.${id}&select=photo_id,created_at`)
+  const parPhoto = new Map()
+  for (const f of Array.isArray(favRes.data) ? favRes.data : []) {
+    const t = new Date(f.created_at).getTime()
+    const e = parPhoto.get(f.photo_id) || { n: 0, debut: t, fin: t }
+    e.n++
+    if (t < e.debut) e.debut = t
+    if (t > e.fin) e.fin = t
+    parPhoto.set(f.photo_id, e)
+  }
+  let favorite = null
+  for (const p of photos) {
+    const s = parPhoto.get(p.id)
+    if (!s) continue
+    const mieux = !favorite
+      || s.n > favorite.stats.n
+      || (s.n === favorite.stats.n && (s.fin - s.debut) < (favorite.stats.fin - favorite.stats.debut))
+    if (mieux) favorite = { photo: p, stats: s }
+  }
+  let photoDeLaSoiree = null
+  if (favorite) {
+    const url = (await signPhotos([favorite.photo.thumb_path || favorite.photo.storage_path], 3600))[
+      favorite.photo.thumb_path || favorite.photo.storage_path
+    ] || null
+    photoDeLaSoiree = {
+      url,
+      nom: favorite.photo.guests?.display_name || 'Un invité',
+      heure: heureCourte(favorite.photo.taken_at),
+      coeurs: favorite.stats.n,
+      // Le temps qu'il lui a fallu pour faire l'unanimité.
+      rapidite: favorite.stats.n > 1 ? duree(favorite.stats.debut, favorite.stats.fin) : null,
+    }
+  }
+
   // --- Qui a emporté l'album ---
   const dlRes = await selectRows('downloads', `event_id=eq.${id}&select=device_token,photo_count`)
   const dls = Array.isArray(dlRes.data) ? dlRes.data : []
@@ -141,6 +178,7 @@ export async function GET(request, { params }) {
         }
       : null,
     dureeFete,
+    photoDeLaSoiree,
     // Absents tant que personne n'a téléchargé : mieux vaut taire une ligne
     // qu'annoncer un zéro à quelqu'un qui vient de réussir sa soirée.
     telechargements: personnes > 0 ? { personnes, photos: photosEmportees } : null,
