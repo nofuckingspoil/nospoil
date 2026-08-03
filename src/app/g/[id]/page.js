@@ -267,6 +267,18 @@ export default function Gallery({ params }) {
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
   const nomFiltre = data.guests.find((g) => g.id === filter)?.name || 'cette personne'
 
+  // « Tout cocher » s'ajoute à la sélection au lieu de la remplacer : sans quoi
+  // passer de Pierre à Paul effaçait Pierre, et l'on ne pouvait pas emporter
+  // les photos de plusieurs personnes en une fois.
+  const tousCoches = photos.length > 0 && photos.every((p) => selected.has(p.id))
+  function basculerTout() {
+    setSelected((prev) => {
+      const n = new Set(prev)
+      for (const p of photos) tousCoches ? n.delete(p.id) : n.add(p.id)
+      return n
+    })
+  }
+
   // Les plus prolifiques d'abord : c'est presque toujours eux qu'on cherche.
   const auteurs = data.guests
     .map((g) => ({ ...g, n: data.photos.filter((p) => p.guestId === g.id).length }))
@@ -439,12 +451,12 @@ export default function Gallery({ params }) {
       {selecting && (
         <div className="gal-bar">
           <div className="gal-bar-in">
-            <button className="gal-bar-tout" onClick={() =>
-              setSelected(selected.size === photos.length ? new Set() : new Set(photos.map((p) => p.id)))}>
-              {selected.size === photos.length ? 'Tout décocher' : 'Tout cocher'}
+            <button className="gal-bar-tout" onClick={basculerTout}>
+              {tousCoches ? 'Décocher ces photos' : 'Cocher ces photos'}
             </button>
             <span className="gal-bar-n">
               {selected.size} photo{selected.size > 1 ? 's' : ''}
+              {filter !== 'all' && <em className="gal-bar-note">La sélection se garde d'une personne à l'autre</em>}
             </span>
             <button className="btn btn-accent gal-bar-dl" disabled={!!zip || selected.size === 0}
               onClick={() => downloadAll(aTelecharger)}>

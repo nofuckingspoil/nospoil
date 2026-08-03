@@ -905,6 +905,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   text-decoration: underline;
 }
 .gal-bar-n { flex: 1; text-align: center; font-weight: 700; font-size: 14px; color: #fff; }
+.gal-bar-note {
+  display: block; margin-top: 2px; font-style: normal; font-weight: 400;
+  font-size: 11px; color: rgba(255,255,255,.6);
+}
 .gal-bar-dl { flex: none; width: auto; padding: 12px 22px; font-size: 14.5px; }
 .gal-coche {
   position: absolute; top: 8px; left: 8px; width: 26px; height: 26px;
