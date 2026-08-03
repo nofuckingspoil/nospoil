@@ -717,6 +717,12 @@ export default function EventManage({ params }) {
         <div className="qr-tile">
           {qrUrl ? <img src={qrUrl} alt="QR code de l'événement" /> : <div style={{ width: 220, height: 220 }} />}
         </div>
+        {/* Discret et collé au QR : c'est une commodité, pas une des trois
+            façons d'inviter ses convives. */}
+        <button className="qr-dl" onClick={telechargerQR}>
+          {flash === 'qr' ? '✓ Téléchargé' : 'Télécharger le QR (PNG)'}
+        </button>
+
         <div className="urlbox" style={{ margin: '14px 0 12px' }}>{joinUrl}</div>
         <div style={{ display: 'flex', gap: 8 }}>
           <button className="btn btn-accent" style={{ flex: 1 }} onClick={() => copy(joinUrl, 'join')}>
@@ -727,9 +733,6 @@ export default function EventManage({ params }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 12v7a1 1 0 001 1h14a1 1 0 001-1v-7M16 6l-4-4-4 4M12 2v13" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         </div>
-        <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={telechargerQR}>
-          ⬇ Télécharger le QR code (PNG)
-        </button>
         <Link href={`/event/${id}/imprimer`} className="btn btn-ghost" style={{ marginTop: 10 }}>
           🖨️ Imprimer affiches et cartons de table
         </Link>
