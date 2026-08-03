@@ -830,7 +830,7 @@ export default function EventManage({ params }) {
             </span>
             <span className="db-set-val" style={locked ? { color: 'var(--text4)' } : undefined}>
               {ev.shotsPerGuest} photos
-              {ev.bonusShots > 0 ? `, recharge de +${ev.bonusShots}` : ', sans recharge'}
+              {ev.bonusShots > 0 ? `, recharge gratuite de +${ev.bonusShots}` : ', sans recharge'}
               {locked
                 ? ' — la soirée a commencé, tout le monde joue au même jeu'
                 : ` — modifiable jusqu'au ${formatShort(ev.startsAt)}`}
@@ -883,7 +883,7 @@ export default function EventManage({ params }) {
                 <input type="checkbox" checked={draftBonus > 0}
                   onChange={(e) => setDraftBonus(e.target.checked ? 2 : 0)} />
                 <span>
-                  <strong>Surprise</strong><br />
+                  <strong>Surprise (gratuit)</strong><br />
                   {draftBonus > 0
                     ? "Un invité à court de photos pourra en obtenir quelques-unes de plus, une seule fois (jusqu'à 5 max)."
                     : "Cochez pour qu'un invité à court de photos puisse en obtenir quelques-unes de plus, une seule fois."}
