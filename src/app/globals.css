@@ -531,6 +531,20 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   line-height: .9; letter-spacing: -.03em; color: var(--accent); }
 .bilan-nombres span { font-size: 11.5px; line-height: 1.3; color: var(--text3); }
 
+/* Les deux bornes de la soirée, encadrées comme des tirages. */
+.bilan-bornes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+.bilan-bornes figure { margin: 0; background: var(--card); border: 1px solid var(--line-soft);
+  border-radius: 14px; padding: 8px 8px 10px; box-shadow: 0 6px 16px rgba(34,26,18,.06); }
+.bilan-bornes img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 9px;
+  display: block; background: rgba(34,26,18,.06); }
+.bilan-bornes figcaption { display: flex; flex-direction: column; gap: 2px; padding: 8px 3px 0; }
+.bilan-bornes figcaption span { font-family: var(--font-mono); font-size: 9px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text4); }
+.bilan-bornes figcaption b { font-family: var(--font-display); font-weight: 700; font-size: 16px;
+  color: var(--ink); }
+.bilan-bornes figcaption em { font-style: normal; font-size: 11.5px; color: var(--text3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
 /* Étiquette en petites capitales, valeur en gros dessous : la même grammaire
    que les compteurs du reste du site. */
 .bilan-faits { margin: 22px 0 0; display: flex; flex-direction: column; }

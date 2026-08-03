@@ -1,4 +1,4 @@
-import { selectRows } from '../../../../../lib/supabase'
+import { selectRows, signPhotos } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
 
 export const runtime = 'nodejs'
@@ -44,9 +44,11 @@ export async function GET(request, { params }) {
 
   const { data } = await selectRows(
     'photos',
-    `event_id=eq.${id}&select=taken_at,guest_id,guests(display_name)&order=taken_at.asc`
+    `event_id=eq.${id}&select=taken_at,guest_id,storage_path,thumb_path,hidden,guests(display_name)&order=taken_at.asc`
   )
-  const photos = Array.isArray(data) ? data : []
+  // Une photo masquée par l'organisateur n'est plus dans l'album : elle n'a à
+  // peser sur aucun chiffre du bilan, pas même le total.
+  const photos = (Array.isArray(data) ? data : []).filter((p) => !p.hidden)
 
   const invitesRes = await selectRows('guests', `event_id=eq.${id}&select=id`)
   const nbInvites = Array.isArray(invitesRes.data) ? invitesRes.data.length : 0
@@ -93,6 +95,14 @@ export async function GET(request, { params }) {
   // anniversaire d'enfant à 16 h se serait senti moqué.
   const premierClic = photos[0] || null
   const dernierClic = photos.length > 1 ? photos[photos.length - 1] : null
+
+  // Les deux bornes de la soirée, en images : une vignette vaut mieux qu'une heure.
+  const aSigner = []
+  for (const p of [premierClic, dernierClic]) {
+    if (p) aSigner.push(p.thumb_path || p.storage_path)
+  }
+  const signees = aSigner.length ? await signPhotos(aSigner, 3600) : {}
+  const vignette = (p) => (p ? signees[p.thumb_path || p.storage_path] || null : null)
   const dureeFete = premierClic && dernierClic
     ? duree(new Date(premierClic.taken_at).getTime(), new Date(dernierClic.taken_at).getTime())
     : null
@@ -117,10 +127,18 @@ export async function GET(request, { params }) {
     champion,
     heurePointe,
     premier: premierClic
-      ? { nom: premierClic.guests?.display_name || 'Un invité', heure: heureCourte(premierClic.taken_at) }
+      ? {
+          nom: premierClic.guests?.display_name || 'Un invité',
+          heure: heureCourte(premierClic.taken_at),
+          url: vignette(premierClic),
+        }
       : null,
     dernier: dernierClic
-      ? { nom: dernierClic.guests?.display_name || 'Un invité', heure: heureCourte(dernierClic.taken_at) }
+      ? {
+          nom: dernierClic.guests?.display_name || 'Un invité',
+          heure: heureCourte(dernierClic.taken_at),
+          url: vignette(dernierClic),
+        }
       : null,
     dureeFete,
     // Absents tant que personne n'a téléchargé : mieux vaut taire une ligne

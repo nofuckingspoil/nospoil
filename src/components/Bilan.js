@@ -50,25 +50,11 @@ export default function Bilan({ bilan }) {
       detail: `${heurePointe.photos} photo${heurePointe.photos > 1 ? 's' : ''} sur ce seul créneau`,
     })
   }
-  if (premier) {
-    faits.push({
-      cle: 'premier',
-      label: 'A ouvert le bal',
-      valeur: premier.nom,
-      detail: `premier cliché à ${premier.heure}`,
-    })
-  }
-  // Même personne, même minute : c'est la seule photo de la soirée. Répéter la
-  // ligne ferait bavard là où il n'y a qu'un fait.
-  const dernierUtile = dernier && (!premier || dernier.nom !== premier.nom || dernier.heure !== premier.heure)
-  if (dernierUtile) {
-    faits.push({
-      cle: 'dernier',
-      label: 'Le dernier debout',
-      valeur: dernier.nom,
-      detail: `dernier cliché à ${dernier.heure}`,
-    })
-  }
+  // Même cliché aux deux bouts : la soirée n'a qu'une photo, on ne l'encadre
+  // pas deux fois.
+  const dernierUtile = dernier && (!premier || dernier.heure !== premier.heure)
+  const bornes = premier?.url && dernierUtile && dernier?.url
+
   if (dureeFete) {
     faits.push({
       cle: 'duree',
@@ -110,6 +96,29 @@ export default function Bilan({ bilan }) {
           </div>
         )}
       </div>
+
+      {/* Les deux bornes de la soirée. Une vignette raconte ce qu'une heure
+          seule ne dit pas : dans quel état on était au début, et à la fin. */}
+      {bornes && (
+        <div className="bilan-bornes">
+          <figure>
+            <img src={premier.url} alt="" loading="lazy" />
+            <figcaption>
+              <span>La première</span>
+              <b>{premier.heure}</b>
+              <em>par {premier.nom}</em>
+            </figcaption>
+          </figure>
+          <figure>
+            <img src={dernier.url} alt="" loading="lazy" />
+            <figcaption>
+              <span>La dernière</span>
+              <b>{dernier.heure}</b>
+              <em>par {dernier.nom}</em>
+            </figcaption>
+          </figure>
+        </div>
+      )}
 
       <dl className="bilan-faits">
         {faits.map((f) => (
