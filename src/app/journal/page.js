@@ -1,15 +1,15 @@
 import Link from 'next/link'
-import Logo from '../../components/Logo'
+import SiteNav from '../../components/SiteNav'
 import { BRAND } from '../../lib/brand'
 import { POSTS, CATEGORIES, gradientFor, avatarColor, formatDate } from '../../lib/journal'
 import NewsletterForm from './NewsletterForm'
 
 export const metadata = {
-  title: 'Journal',
+  title: 'Blog',
   description: "Conseils photo, organisation et souvenirs pour ton mariage. Des articles courts, écrits avec des mariés et des photographes.",
   alternates: { canonical: '/journal' },
   openGraph: {
-    title: `Journal — ${BRAND.name}`,
+    title: `Blog — ${BRAND.name}`,
     description: "Conseils photo, organisation et souvenirs pour ton mariage.",
     url: 'https://timetoflash.fr/journal',
     type: 'website',
@@ -41,13 +41,13 @@ export default async function JournalIndex({ searchParams }) {
   const rest = list.slice(1)
 
   return (
-    <main className="dj" id="journal" aria-label={`Journal ${BRAND.name}`}>
-      <div className="dj-wrap" style={{ paddingTop: 22 }}>
-        <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
-      </div>
+    <main className="dj" id="journal" aria-label={`Blog ${BRAND.name}`}>
+      {/* Un lecteur convaincu par un article doit pouvoir créer son événement
+          sans repasser par l'accueil. */}
+      <SiteNav />
 
       <div className="dj-wrap dj-head">
-        <span className="dj-eyebrow">journal</span>
+        <span className="dj-eyebrow">blog</span>
         <h1>Tout ce qu’on aurait aimé savoir<br />avant le grand jour.</h1>
         <p>Photo, organisation, souvenirs d’invités. Des articles courts, écrits avec des mariés et des photographes.</p>
       </div>

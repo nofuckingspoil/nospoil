@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import Logo from '../../../components/Logo'
+import SiteNav from '../../../components/SiteNav'
 import { BRAND } from '../../../lib/brand'
 import { POSTS, getPost, gradientFor, avatarColor, formatDate } from '../../../lib/journal'
 
@@ -68,9 +68,7 @@ export default async function Article({ params }) {
     <main className="dj" id="journal" aria-label={p.title}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="dj-wrap" style={{ paddingTop: 22 }}>
-        <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
-      </div>
+      <SiteNav />
 
       <div className="dj-wrap">
         <Link className="dj-back" href="/journal">

@@ -426,7 +426,7 @@ export default function Gallery({ params }) {
             sert, et l'on offre le raccourci vers ce qu'il a mis de côté. */}
         <div className="gal-favbar">
           <p>Touchez le <span className="gal-favbar-ic" aria-hidden="true">♥</span> sur une photo pour la garder de côté.</p>
-          <div className="chips" style={{ overflow: 'visible' }}>
+          <div className="chips">
             <button className={`chip ${vueFav === 'tous' ? 'active' : ''}`}
               onClick={() => setVueFav('tous')}>Toutes · {data.photos.length}</button>
             <button className={`chip ${vueFav === 'miens' ? 'active' : ''}`}

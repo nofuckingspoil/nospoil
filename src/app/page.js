@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { BRAND } from '../lib/brand'
 import Logo from '../components/Logo'
+import SiteNav from '../components/SiteNav'
 import TryQR from '../components/TryQR'
 import { TIERS, TOP_TIER, formatPrice } from '../lib/pricing'
 
@@ -50,15 +51,7 @@ export default function Home() {
   return (
     <div className="site">
       <TryQR />
-      <nav className="vnav">
-        <Logo nameSize={22} size={36} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-          <Link href="/journal" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Journal</Link>
-          <Link href="/mes-evenements" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Mes événements</Link>
-          <Link href="/connexion" className="mono small" style={{ color: 'var(--text2)', textDecoration: 'none' }}>Connexion</Link>
-          <Link href="/create?tier=5" className="btn btn-dark">Créer un événement</Link>
-        </div>
-      </nav>
+      <SiteNav />
 
       {/* <main> : repère qui permet aux lecteurs d'écran de sauter directement
           au contenu principal, en passant la navigation. */}
