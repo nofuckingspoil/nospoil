@@ -4,7 +4,7 @@ import { use, useEffect, useState } from 'react'
 import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
-import { getOwnerToken, getGuest } from '../../../lib/device'
+import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -160,7 +160,12 @@ export default function Gallery({ params }) {
 
   async function downloadAll(photos) {
     if (zip) return
-    fetch(`/api/gallery/${id}/track-download`, { method: 'POST' }).catch(() => {}) // compteur de téléchargements
+    // Qui emporte l'album, et combien de photos : c'est ce qui nourrit le bilan
+    // montré à l'organisateur une fois la fête passée.
+    fetch(`/api/gallery/${id}/track-download`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ deviceToken: getDeviceToken(), photoCount: photos.length }),
+    }).catch(() => {})
 
     // Une seule photo : on l'enregistre telle quelle. L'enfermer dans une
     // archive obligerait à la décompresser pour voir une image.

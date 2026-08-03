@@ -22,6 +22,7 @@ import { purgeDate } from '../../../lib/retention'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
+import Bilan from '../../../components/Bilan'
 
 function formatDate(iso) {
   try { return new Date(iso).toLocaleString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
@@ -148,6 +149,10 @@ export default function EventManage({ params }) {
   const [galleryMsg, setGalleryMsg] = useState('')
   const [message, setMessage] = useState('')
 
+  // Bilan de la soirée : chargé seulement une fois l'album ouvert. Avant, ces
+  // chiffres sont à zéro et n'annoncent qu'un échec.
+  const [bilan, setBilan] = useState(null)
+
   const reload = useCallback(async () => {
     const token = getOwnerToken(id)
     try {
@@ -212,6 +217,17 @@ export default function EventManage({ params }) {
     const t = setInterval(reload, 10000)
     return () => clearInterval(t)
   }, [phase, reload])
+
+  // Le bilan n'a de sens qu'une fois l'album ouvert : c'est là que
+  // l'organisateur revient, et là que les chiffres deviennent flatteurs.
+  useEffect(() => {
+    if (!ev || !isRevealed(ev, now) || bilan) return
+    fetch(`/api/events/${id}/bilan`, { headers: { 'x-owner-token': getOwnerToken(id) } })
+      .then((r) => r.json())
+      .then((d) => { if (!d.error) setBilan(d) })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ev, id])
 
   useEffect(() => {
     if (!ev || phase !== AVANT || fait.calVue) return
@@ -586,17 +602,20 @@ export default function EventManage({ params }) {
 
     if (revealed) {
       return (
-        <div className="db-hero db-hero-ink">
-          <div className="db-hero-top"><span className="db-eyebrow">c'est ouvert</span></div>
-          <h2 className="db-hero-title">Album révélé</h2>
-          <p className="db-hero-sub">
-            {ev.photoCount} photos, visibles par tous vos invités. À eux de découvrir.
-          </p>
-          <button className="btn btn-accent db-hero-cta" onClick={() => setSheet('message')}>
-            ✉️ Partager l'album
-          </button>
-          <Link href={`/g/${id}`} className="btn db-hero-2nd">Voir les photos</Link>
-        </div>
+        <>
+          <div className="db-hero db-hero-ink">
+            <div className="db-hero-top"><span className="db-eyebrow">c'est ouvert</span></div>
+            <h2 className="db-hero-title">Album révélé</h2>
+            <p className="db-hero-sub">
+              {ev.photoCount} photos, visibles par tous vos invités. À eux de découvrir.
+            </p>
+            <button className="btn btn-accent db-hero-cta" onClick={() => setSheet('message')}>
+              ✉️ Partager l'album
+            </button>
+            <Link href={`/g/${id}`} className="btn db-hero-2nd">Voir les photos</Link>
+          </div>
+          <Bilan bilan={bilan} />
+        </>
       )
     }
 
