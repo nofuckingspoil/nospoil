@@ -606,8 +606,11 @@ export default function EventManage({ params }) {
           <div className="db-hero db-hero-ink">
             <div className="db-hero-top"><span className="db-eyebrow">c'est ouvert</span></div>
             <h2 className="db-hero-title">Album révélé</h2>
+            {/* Le nombre annoncé est celui que les invités voient : les photos
+                masquées ne sont visibles de personne. */}
             <p className="db-hero-sub">
-              {ev.photoCount} photos, visibles par tous vos invités. À eux de découvrir.
+              {ev.visibleCount ?? ev.photoCount} photos, visibles par tous vos invités.
+              À eux de découvrir.
             </p>
             <button className="btn btn-accent db-hero-cta" onClick={() => setSheet('message')}>
               ✉️ Partager l'album

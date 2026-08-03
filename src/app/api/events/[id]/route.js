@@ -46,10 +46,13 @@ export async function GET(request, { params }) {
   // l'album peut s'ouvrir (formule dépassée = révélation en attente).
   const [guests, photos] = await Promise.all([
     selectRows('guests', `event_id=eq.${id}&select=id`),
-    selectRows('photos', `event_id=eq.${id}&select=id`),
+    selectRows('photos', `event_id=eq.${id}&select=id,hidden`),
   ])
   const guestCount = Array.isArray(guests.data) ? guests.data.length : 0
   const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
+  // Ce que les invités voient réellement : annoncer « 12 photos, visibles par
+  // tous vos invités » alors que trois sont masquées était faux.
+  const visibleCount = Array.isArray(photos.data) ? photos.data.filter((p) => !p.hidden).length : 0
 
   // Infos publiques : nécessaires aux invités (nom, date, nb de clichés)
   const dates = {
@@ -62,6 +65,7 @@ export async function GET(request, { params }) {
   const payload = {
     guestCount,
     photoCount,
+    visibleCount,
     id: ev.id,
     name: ev.name,
     hostNames: ev.host_names,
