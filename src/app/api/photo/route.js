@@ -1,4 +1,5 @@
 import { rpc, uploadPhoto, deletePhoto, updateRow } from '../../../lib/supabase'
+import { estSuspendu, MESSAGE_SUSPENDU } from '../../../lib/authz'
 
 export const runtime = 'nodejs'
 // Autorise des images compressées jusqu'à ~8 Mo
@@ -16,6 +17,12 @@ export async function POST(request) {
 
   if (!file || typeof file === 'string' || !eventId || !guestId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+  }
+
+  // Suspendu par l'administration : plus aucune photo n'entre. Vérifié avant
+  // de lire le fichier, pour ne pas transférer des octets qu'on jettera.
+  if (await estSuspendu(eventId)) {
+    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
   }
 
   const bytes = Buffer.from(await file.arrayBuffer())

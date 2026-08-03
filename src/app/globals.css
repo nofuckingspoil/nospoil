@@ -108,7 +108,7 @@ a { color: inherit; }
 .lbl-soft { font-weight: 500; color: var(--text3); }
 .field .hint { color: var(--text4); font-size: 12.5px; margin-top: 7px; line-height: 1.45; }
 
-input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], input[type=datetime-local], input[type=number], select {
+input:not([type]), input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], input[type=datetime-local], input[type=number], select {
   width: 100%; font-family: var(--font-body); font-size: 17px; font-weight: 600;
   padding: 16px 17px; border: 2px solid var(--line); border-radius: 16px;
   background: var(--card); color: var(--ink); outline: none; transition: border-color .15s;
@@ -478,7 +478,11 @@ a.admin-row:hover { background: rgba(236,91,51,.05); }
 .adash-sort select { font-family: var(--font-mono); font-size: 12px; padding: 9px 12px; border-radius: 10px; border: 1px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
 
 .evtable { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--card); overflow: hidden; }
-.evrow { display: grid; grid-template-columns: minmax(200px,2.4fr) 1.3fr .8fr .8fr .8fr 1.1fr 1fr; gap: 12px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); font-size: 14px; }
+.evrow { display: grid; grid-template-columns: minmax(170px,2fr) 1fr .6fr .6fr .6fr .9fr .9fr minmax(240px,1.4fr); gap: 12px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); font-size: 14px; }
+a.ev-name { text-decoration: none; color: inherit; }
+a.ev-name:hover strong { color: var(--accent-deep); }
+.evrow.off { opacity: .55; }
+.evrow .badge { white-space: nowrap; }
 .evrow:first-child { border-top: none; }
 .evhead { background: rgba(34,26,18,.04); font-family: var(--font-mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--text3); }
 a.evrow:hover { background: rgba(236,91,51,.05); }
@@ -500,6 +504,36 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .fill .n { font-family: var(--font-mono); font-size: 12px; color: var(--text2); white-space: nowrap; }
 .evrow .big { font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .badge-warn { background: rgba(178,59,46,.14); color: #b23b2e; }
+
+/* ---------- Codes promo (admin) ---------- */
+/* Même tableau que les événements, avec ses propres colonnes. */
+.pcrow { grid-template-columns: minmax(150px,1.4fr) .8fr 1.1fr .8fr 1.2fr minmax(210px,1.2fr); padding: 14px 16px; }
+/* Chaque cellule empile sa valeur et sa précision, sinon les deux se collent. */
+.pcrow > span { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.pcrow.evhead > span { display: block; }
+.pcrow.off { opacity: .5; }
+.pc-code { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.pc-code strong { font-family: var(--font-mono); font-size: 14.5px; letter-spacing: .04em; }
+.pc-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.pcrow > span.pc-actions { flex-direction: row; gap: 6px; flex-wrap: wrap; justify-content: flex-end; align-items: center; }
+.pc-mini { background: var(--card); border: 1px solid var(--line); border-radius: 999px;
+  padding: 5px 11px; font-size: 11.5px; font-family: var(--font-body); color: var(--text2);
+  cursor: pointer; white-space: nowrap; }
+.pc-mini:hover { border-color: var(--accent); color: var(--accent-deep); }
+.pc-mini.danger:hover { border-color: #b23b2e; color: #b23b2e; }
+.pc-strong { font-family: var(--font-display); font-weight: 700; font-size: 15px; }
+.pc-sub { font-size: 11.5px; color: var(--text4); }
+.pc-formblock { border: 1px solid var(--line-soft); border-radius: 14px; padding: 14px 15px; margin-top: 14px; background: var(--card); }
+.pc-formblock > .lbl { font-family: var(--font-mono); font-size: 10px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text3); display: block; margin-bottom: 4px; }
+.pc-hint { font-size: 12px; color: var(--text4); line-height: 1.55; margin-top: 6px; }
+.pc-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 760px) {
+  .pcrow { grid-template-columns: 1fr 1fr; }
+  .pcrow > span.pc-code { grid-column: 1 / -1; flex-direction: row; align-items: center; gap: 9px; flex-wrap: wrap; }
+  .pcrow > span.pc-actions { grid-column: 1 / -1; justify-content: flex-start; }
+  .pc-two { grid-template-columns: 1fr; }
+}
 
 /* ---------- Fiche événement (admin) ---------- */
 .ev-head-admin { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
@@ -531,7 +565,8 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .evrow { grid-template-columns: 1fr 1fr; border: 1px solid var(--line-soft); border-radius: 14px; background: var(--card); padding: 15px; gap: 14px 12px; }
   .evrow > span { display: flex; flex-direction: column; gap: 4px; font-size: 14px; }
   .evrow > span[data-label]::before { content: attr(data-label); font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--text4); }
-  .evrow > span.ev-name { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+  .evrow > .ev-name { grid-column: 1 / -1; flex-direction: row; align-items: center; }
+  .evrow > span.pc-actions { grid-column: 1 / -1; justify-content: flex-start; }
   .ev-thumb { width: 44px; height: 44px; }
 }
 

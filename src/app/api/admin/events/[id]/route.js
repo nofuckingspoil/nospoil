@@ -1,4 +1,4 @@
-import { selectRows, deleteRows, signPhotos, deletePhotos } from '../../../../../lib/supabase'
+import { selectRows, deleteRows, updateRow, signPhotos, deletePhotos } from '../../../../../lib/supabase'
 
 export const runtime = 'nodejs'
 
@@ -69,6 +69,24 @@ export async function GET(request, { params }) {
     contacts,
     photos,
   })
+}
+
+// --- Suspension immédiate d'un événement ---
+// Sert aux demandes urgentes (signalement, contenu problématique) : l'album
+// devient inaccessible et plus aucune photo ne peut être prise, mais rien
+// n'est détruit — on peut réactiver une fois la situation éclaircie.
+export async function PATCH(request, { params }) {
+  if (!authed(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
+  const { id } = await params
+  const { status } = await request.json().catch(() => ({}))
+
+  if (!['active', 'suspended'].includes(status)) {
+    return Response.json({ error: 'Statut inconnu.' }, { status: 400 })
+  }
+
+  const { ok } = await updateRow('events', `id=eq.${id}`, { status })
+  if (!ok) return Response.json({ error: 'Modification impossible.' }, { status: 500 })
+  return Response.json({ ok: true, status })
 }
 
 // --- Suppression complète d'un événement (photos, invités, fichiers) ---

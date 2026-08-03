@@ -16,6 +16,18 @@ import { selectRows } from './supabase'
 export const OWNER = 'owner'
 export const ADMIN = 'admin'
 
+// Un événement suspendu par l'administration n'est plus accessible à personne :
+// ni album, ni participation, ni nouvelle photo. Le statut existait en base
+// mais n'était appliqué nulle part — le suspendre ne suspendait rien.
+export const MESSAGE_SUSPENDU = 'Cet événement est momentanément suspendu.'
+
+export async function estSuspendu(eventId) {
+  if (!eventId) return false
+  const { data } = await selectRows('events', `id=eq.${eventId}&select=status`)
+  const ev = Array.isArray(data) ? data[0] : null
+  return !!ev && ev.status === 'suspended'
+}
+
 // Rôle du porteur de ce jeton sur cet événement, ou null s'il n'en a aucun.
 export async function roleFor(eventId, token) {
   if (!eventId || !token) return null

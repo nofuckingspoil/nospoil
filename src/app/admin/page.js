@@ -27,10 +27,18 @@ function relTime(iso) {
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false)
+  const [key, setKey] = useState('')      // clé admin courante, pour les actions
   const [keyInput, setKeyInput] = useState('')
   const [events, setEvents] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+
+  // Actions directes depuis la liste : une demande urgente ne doit pas obliger
+  // à ouvrir la fiche de l'événement pour agir.
+  const [aSuspendre, setASuspendre] = useState(null)
+  const [aSupprimer, setASupprimer] = useState(null)
+  const [actionErr, setActionErr] = useState('')
+  const [busy, setBusy] = useState(false)
 
   const [q, setQ] = useState('')
   const [statusFilter, setStatusFilter] = useState('all') // all | ongoing | revealed | warn
@@ -43,7 +51,7 @@ export default function Admin() {
       if (res.status === 401) { setError('Mot de passe incorrect.'); setAuthed(false); sessionStorage.removeItem(KEY_STORE); return }
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
-      setEvents(d.events); setAuthed(true)
+      setEvents(d.events); setAuthed(true); setKey(key)
       sessionStorage.setItem(KEY_STORE, key)
     } catch (err) { setError(err.message) } finally { setLoading(false) }
   }
@@ -56,6 +64,39 @@ export default function Admin() {
 
   // Un événement révélé mais sans aucune photo = à vérifier
   const isWarn = (e) => e.revealed && e.photoCount === 0
+
+  // Suspendre / réactiver : l'album se ferme et plus aucune photo n'entre,
+  // mais rien n'est détruit — c'est réversible.
+  async function suspendre() {
+    if (!aSuspendre) return
+    setActionErr(''); setBusy(true)
+    const cible = aSuspendre.status === 'suspended' ? 'active' : 'suspended'
+    try {
+      const res = await fetch(`/api/admin/events/${aSuspendre.id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'x-admin-key': key },
+        body: JSON.stringify({ status: cible }),
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Modification impossible.')
+      setASuspendre(null)
+      load(key)
+    } catch (err) { setActionErr(err.message) } finally { setBusy(false) }
+  }
+
+  // Suppression définitive : photos, invités et fichiers partent avec.
+  async function supprimer() {
+    if (!aSupprimer) return
+    setActionErr(''); setBusy(true)
+    try {
+      const res = await fetch(`/api/admin/events/${aSupprimer.id}`, {
+        method: 'DELETE', headers: { 'x-admin-key': key },
+      })
+      const d = await res.json().catch(() => ({}))
+      if (!res.ok) throw new Error(d.error || 'Suppression impossible.')
+      setASupprimer(null)
+      load(key)
+    } catch (err) { setActionErr(err.message) } finally { setBusy(false) }
+  }
 
   const totals = useMemo(() => {
     const t = { guests: 0, photos: 0, downloads: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0, tests: 0 }
@@ -212,13 +253,17 @@ export default function Admin() {
               <span>Numéros</span>
               <span>Révélation</span>
               <span>Statut</span>
+              <span style={{ textAlign: 'right' }}>Actions</span>
             </div>
             {list.map((e) => {
               const pct = e.maxGuests ? Math.min(100, Math.round((e.guestCount / e.maxGuests) * 100)) : 0
               const warn = isWarn(e)
+              const suspendu = e.status === 'suspended'
               return (
-                <a className={`evrow ${warn ? 'warn' : ''}`} key={e.id} href={`/admin/event/${e.id}`}>
-                  <span className="ev-name">
+                <div className={`evrow ${warn ? 'warn' : ''} ${suspendu ? 'off' : ''}`} key={e.id}>
+                  {/* La ligne n'est plus un lien : elle porte des boutons, et un
+                      bouton dans un lien s'active des deux façons à la fois. */}
+                  <a className="ev-name" href={`/admin/event/${e.id}`}>
                     {e.coverUrl
                       ? <img className="ev-thumb" src={e.coverUrl} alt="" />
                       : <span className="ev-thumb" />}
@@ -232,7 +277,7 @@ export default function Admin() {
                         ? <span className="who owner-email">✉ {e.ownerEmail}</span>
                         : <span className="who owner-email missing">✉ email inconnu</span>}
                     </span>
-                  </span>
+                  </a>
                   <span data-label="Remplissage">
                     <span className="fill">
                       <span className="bar"><i style={{ width: `${pct}%` }} /></span>
@@ -246,18 +291,98 @@ export default function Admin() {
                     <span title={fmtDate(e.revealAt)}>{relTime(e.revealAt)}</span>
                   </span>
                   <span data-label="Statut">
-                    {warn
-                      ? <span className="badge badge-warn"><span className="dot" />À vérifier</span>
-                      : e.revealed
-                        ? <span className="badge badge-live"><span className="dot" />Révélé</span>
-                        : <span className="badge badge-wait"><span className="dot" />En cours</span>}
+                    {suspendu
+                      ? <span className="badge badge-warn"><span className="dot" />Suspendu</span>
+                      : warn
+                        ? <span className="badge badge-warn"><span className="dot" />À vérifier</span>
+                        : e.revealed
+                          ? <span className="badge badge-live"><span className="dot" />Révélé</span>
+                          : <span className="badge badge-wait"><span className="dot" />En cours</span>}
                   </span>
-                </a>
+                  <span className="pc-actions">
+                    <a className="pc-mini" href={`/admin/event/${e.id}`}>Ouvrir</a>
+                    <button className="pc-mini" type="button"
+                      onClick={() => { setActionErr(''); setASuspendre(e) }}>
+                      {suspendu ? 'Réactiver' : 'Suspendre'}
+                    </button>
+                    <button className="pc-mini danger" type="button"
+                      onClick={() => { setActionErr(''); setASupprimer(e) }}>Supprimer</button>
+                  </span>
+                </div>
               )
             })}
           </div>
         )}
       </div>
+
+      {/* ---- Suspendre / réactiver ---- */}
+      {aSuspendre && (
+        <div className="db-overlay" onClick={(ev) => { if (ev.target === ev.currentTarget) setASuspendre(null) }}>
+          <div className="db-sheet" style={{ maxWidth: 430 }}>
+            <div className="db-sheet-grip" />
+            {aSuspendre.status === 'suspended' ? (
+              <>
+                <h3 className="h3">Réactiver cet événement ?</h3>
+                <p className="muted small" style={{ lineHeight: 1.65 }}>
+                  <strong>{aSuspendre.name}</strong> redeviendra accessible : les invités
+                  pourront à nouveau photographier, et l'album se rouvrira normalement.
+                </p>
+              </>
+            ) : (
+              <>
+                <h3 className="h3">Suspendre cet événement ?</h3>
+                <p className="muted small" style={{ lineHeight: 1.65 }}>
+                  <strong>{aSuspendre.name}</strong> devient immédiatement inaccessible : plus
+                  aucune photo ne peut être prise, l'album se ferme, et même l'organisateur n'y
+                  entre plus.
+                </p>
+                <p className="muted small" style={{ marginTop: 10, lineHeight: 1.65 }}>
+                  <strong>Rien n'est détruit</strong> — les {aSuspendre.photoCount} photos restent
+                  en place, et tu peux réactiver à tout moment.
+                </p>
+              </>
+            )}
+
+            {actionErr && <div className="err" style={{ marginTop: 14 }}>{actionErr}</div>}
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+              <button className="btn btn-ghost" type="button" onClick={() => setASuspendre(null)}>Annuler</button>
+              <button className={`btn ${aSuspendre.status === 'suspended' ? 'btn-dark' : 'btn-danger'}`}
+                type="button" onClick={suspendre} disabled={busy}>
+                {busy ? 'Un instant…' : aSuspendre.status === 'suspended' ? 'Réactiver' : 'Suspendre maintenant'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ---- Supprimer ---- */}
+      {aSupprimer && (
+        <div className="db-overlay" onClick={(ev) => { if (ev.target === ev.currentTarget) setASupprimer(null) }}>
+          <div className="db-sheet" style={{ maxWidth: 430 }}>
+            <div className="db-sheet-grip" />
+            <h3 className="h3">Supprimer cet événement ?</h3>
+            <p className="muted small" style={{ lineHeight: 1.65 }}>
+              <strong>{aSupprimer.name}</strong>, ses <strong>{aSupprimer.photoCount} photos</strong> et
+              ses {aSupprimer.guestCount} invités seront effacés définitivement, fichiers compris.
+              C'est irréversible : personne ne pourra les récupérer, toi non plus.
+            </p>
+            <p className="muted small" style={{ marginTop: 10, lineHeight: 1.65 }}>
+              Pour une demande urgente, <strong>suspendre</strong> suffit le plus souvent : c'est
+              immédiat et réversible.
+            </p>
+
+            {actionErr && <div className="err" style={{ marginTop: 14 }}>{actionErr}</div>}
+
+            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+              <button className="btn btn-ghost" type="button" onClick={() => setASupprimer(null)}>Annuler</button>
+              <button className="btn btn-danger" type="button" onClick={supprimer} disabled={busy}>
+                {busy ? 'Suppression…' : 'Supprimer définitivement'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

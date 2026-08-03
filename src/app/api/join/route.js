@@ -2,6 +2,7 @@ import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
 import { sendMail, guestAccessEmail, siteUrl } from '../../../lib/mail'
 import { makeToken, ensureAccount } from '../../../lib/account'
+import { estSuspendu, MESSAGE_SUSPENDU } from '../../../lib/authz'
 
 // Envoie à l'invité son lien d'accès permanent, une seule fois.
 //
@@ -36,6 +37,11 @@ export async function POST(request) {
 
   if (!eventId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+  }
+
+  // Suspendu par l'administration : personne ne rejoint.
+  if (await estSuspendu(eventId)) {
+    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
   }
 
   // Dernier filet : le navigateur peut être contourné, pas le serveur.

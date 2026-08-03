@@ -1,7 +1,7 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
 import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
-import { roleFor, canManage, canDelete, ADMIN } from '../../../../lib/authz'
+import { roleFor, canManage, canDelete, ADMIN, MESSAGE_SUSPENDU } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
 import { tierForCount, upgradeCents } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
@@ -21,6 +21,11 @@ export async function GET(request, { params }) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
   }
   const ev = data[0]
+
+  // Suspendu par l'administration : plus personne n'entre, organisateur compris.
+  if (ev.status === 'suspended') {
+    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+  }
 
   // Organisateur ou co-admin : les deux voient le tableau de bord complet.
   // Seule la suppression leur est distinguée (voir DELETE plus bas).

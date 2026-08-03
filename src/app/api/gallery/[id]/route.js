@@ -1,17 +1,23 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
 import { isRevealed, quotaExceeded } from '../../../../lib/phase'
+import { MESSAGE_SUSPENDU } from '../../../../lib/authz'
 
 export async function GET(request, { params }) {
   const { id } = await params
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
   }
   const ev = data[0]
+
+  // Suspendu par l'administration : l'album se ferme, sans rien détruire.
+  if (ev.status === 'suspended') {
+    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+  }
 
   // Le nombre d'invités décide aussi de l'ouverture : une formule dépassée
   // retient l'album jusqu'à ce que l'organisateur la mette à niveau.
