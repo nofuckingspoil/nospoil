@@ -7,8 +7,22 @@ import { BRAND } from './brand'
 
 const API = 'https://api.brevo.com/v3/smtp/email'
 
+// Adresse du site telle qu'elle apparaît aux clients.
+const CANONIQUE = 'https://timetoflash.fr'
+
+// SITE_URL permet de surcharger cette adresse, mais elle survit mal aux
+// changements de domaine : restée braquée sur l'adresse technique de
+// déploiement (*.vercel.app), elle envoyait aux clients des liens portant
+// l'ancien nom de la marque. On ne laisse jamais ces adresses sortir.
 export function siteUrl() {
-  return (process.env.SITE_URL || 'https://timetoflash.fr').replace(/\/$/, '')
+  const brut = (process.env.SITE_URL || '').trim().replace(/\/$/, '')
+  if (!brut) return CANONIQUE
+  try {
+    if (/\.vercel\.app$/i.test(new URL(brut).hostname)) return CANONIQUE
+  } catch {
+    return CANONIQUE // valeur inexploitable : mieux vaut le domaine connu
+  }
+  return brut
 }
 
 // Envoie un mail. Ne fait jamais planter l'appelant : renvoie { ok, error }.

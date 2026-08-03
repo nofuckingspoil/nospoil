@@ -16,7 +16,7 @@ import QRCode from 'qrcode'
 import { BRAND, avatarColor } from '../../../lib/brand'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
-import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J } from '../../../lib/phase'
+import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J, APRES } from '../../../lib/phase'
 import { formatPrice } from '../../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
@@ -66,7 +66,12 @@ function Section({ title, hint, badge, children, open, onToggle }) {
   )
 }
 
-const SEEN_KEY = (id) => `ttf_seen_${id}`
+// Les trois moments d'un événement, dans l'ordre. Sert de fil au tableau de bord.
+const MOMENTS = [
+  { key: AVANT, title: 'Avant', sub: () => 'Préparatifs' },
+  { key: JOUR_J, title: 'Le jour J', sub: (ev) => (ev.startsAt ? formatShort(ev.startsAt) : 'La fête') },
+  { key: APRES, title: 'Après', sub: (ev) => `Révélation ${formatShort(ev.revealAt)}` },
+]
 
 export default function EventManage({ params }) {
   const { id } = use(params)
@@ -103,10 +108,10 @@ export default function EventManage({ params }) {
   const [draftDate, setDraftDate] = useState('')
   const [draftShots, setDraftShots] = useState(5)
   const [settingMsg, setSettingMsg] = useState('')
+  // Le fil des trois moments s'affiche par défaut. `?fil=0` l'enlève, le temps
+  // de comparer les deux versions sur le même écran.
+  const [fil, setFil] = useState(true)
   const [coverBusy, setCoverBusy] = useState(false)
-  // Réglages déjà passés en revue par l'organisateur. Simple aide-mémoire
-  // d'affichage : rien de critique, donc pas de colonne en base pour ça.
-  const [seen, setSeen] = useState({})
   const [upgradeMsg, setUpgradeMsg] = useState('')
   const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
@@ -149,7 +154,7 @@ export default function EventManage({ params }) {
         .catch(() => setUpgradeMsg('La mise à niveau n’a pas pu être appliquée. Réessayez.'))
         .finally(reload)
     }
-    try { setSeen(JSON.parse(localStorage.getItem(SEEN_KEY(id)) || '{}')) } catch {}
+    if (sp.get('fil') === '0') setFil(false)
     const origin = window.location.origin
     setJoinUrl(`${origin}/j/${id}`)
     setGalleryUrl(`${origin}/g/${id}`)
@@ -348,46 +353,11 @@ export default function EventManage({ params }) {
 
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
 
-  function markSeen(k) {
-    setSeen((s) => {
-      const next = { ...s, [k]: true }
-      try { localStorage.setItem(SEEN_KEY(id), JSON.stringify(next)) } catch {}
-      return next
-    })
-  }
-
-  // Ce qui a quitté le tunnel de création se retrouve ici, sous forme de
-  // checklist : après paiement, on a envie de fignoler — c'est le bon moment.
-  // Elle ne s'affiche qu'avant l'événement, et disparaît une fois terminée.
-  const todo = [
-    {
-      key: 'name',
-      // Créé par le tunnel express : l'événement porte encore son nom provisoire.
-      done: ev.name !== DEFAULT_EVENT_NAME,
-      title: 'Donner un nom à votre événement',
-      sub: "Il s'affiche en grand sur l'écran d'accueil de vos invités.",
-    },
-    {
-      key: 'dates',
-      done: !!seen.dates,
-      title: 'Vérifier vos dates',
-      sub: `Événement le ${formatShort(ev.startsAt)}, révélation le ${formatShort(ev.revealAt)}.`,
-    },
-    {
-      key: 'cover',
-      done: !!ev.coverUrl,
-      title: 'Ajouter une photo de couverture',
-      sub: "Elle habille l'écran d'accueil que voient vos invités en scannant le QR.",
-    },
-    {
-      key: 'shots',
-      done: !!seen.shots,
-      title: 'Choisir le nombre de clichés par invité',
-      sub: `Actuellement ${ev.shotsPerGuest} par personne — modifiable jusqu'au jour J.`,
-    },
-  ]
-  const todoLeft = todo.filter((t) => !t.done).length
-  const showTodo = phase === AVANT && todoLeft > 0
+  // Un aperçu vaut mieux qu'une liste de tâches : il montre ce qu'on gagne
+  // au lieu de rappeler ce qu'on n'a pas fait. Il ne sert qu'à héberger l'ajout
+  // de couverture, donc il s'efface dès qu'une photo est là.
+  const showApercu = phase === AVANT && !ev.coverUrl
+  const invitant = ev.hostNames || ev.name || ''
 
   // ---- La grande carte : le seul élément qui change selon le moment ----
   function Hero() {
@@ -599,6 +569,25 @@ export default function EventManage({ params }) {
         <Link href={`/j/${id}`}>Mon appareil 📷</Link>
       </nav>
 
+      {/* Fil des trois moments. La grande carte ci-dessous change avec le temps ;
+          sans repère, ce changement se lit comme une application qui bouge toute
+          seule. Ici il devient attendu, et on sait où l'on en est. */}
+      {fil && (
+        <ol className="db-fil" aria-label="Où vous en êtes">
+          {MOMENTS.map((m, i) => {
+            const rang = MOMENTS.findIndex((x) => x.key === phase)
+            const etat = i < rang ? 'done' : i === rang ? 'now' : ''
+            return (
+              <li key={m.key} className={etat}>
+                <span className="db-fil-pt" aria-hidden="true" />
+                <span className="db-fil-t">{m.title}</span>
+                <span className="db-fil-s">{m.sub(ev)}</span>
+              </li>
+            )
+          })}
+        </ol>
+      )}
+
       {/* Formule dépassée : prévenu dès le dépassement, jamais à la dernière
           minute. Les invités, eux, n'ont jamais été bloqués. */}
       {ev.quotaExceeded && ev.upgrade && (
@@ -640,51 +629,25 @@ export default function EventManage({ params }) {
 
       <Hero />
 
-      {/* Finitions déplacées hors du tunnel de création : on les propose ici,
-          quand l'organisateur a envie de fignoler plutôt qu'avant de payer. */}
-      {showTodo && (
-        <div className="db-todo">
-          <div className="db-todo-head">
-            <span className="db-eyebrow">à finaliser</span>
-            <span className="db-todo-count">{todo.length - todoLeft}/{todo.length}</span>
+      {/* Montre l'écran d'accueil tel que les invités le verront, et offre au
+          passage l'endroit où déposer la couverture. */}
+      {showApercu && (
+        <div className="db-apercu">
+          <span className="db-eyebrow">ce que verront vos invités</span>
+          <div className="db-apercu-mini">
+            <div className="db-apercu-cover"><span>ÉVÉNEMENT PRIVÉ</span></div>
+            <p className="db-apercu-nom">
+              {invitant} vous invite{invitant.includes('&') ? 'nt' : ''} dans l'objectif.
+            </p>
           </div>
-          {todo.map((t) => (
-            <div key={t.key} className={`db-todo-item ${t.done ? 'done' : ''}`}>
-              <span className="db-todo-check" aria-hidden="true">{t.done ? '✓' : ''}</span>
-              <span className="db-todo-l">
-                <span className="db-todo-t">{t.title}</span>
-                <span className="db-todo-s">{t.sub}</span>
-              </span>
-              {!t.done && (
-                t.key === 'cover' ? (
-                  <label className="db-todo-act">
-                    {coverBusy ? '…' : 'Ajouter'}
-                    <input type="file" accept="image/*" hidden
-                      onChange={(e) => uploadCover(e.target.files?.[0])} />
-                  </label>
-                ) : t.key === 'name' ? (
-                  <button className="db-todo-act" onClick={() => {
-                    setOpenSec('reglages')
-                    setEditing('name')
-                    setDraftName(ev.name === DEFAULT_EVENT_NAME ? '' : ev.name || '')
-                  }}>Nommer</button>
-                ) : t.key === 'dates' ? (
-                  <button className="db-todo-act" onClick={() => {
-                    markSeen('dates')
-                    setOpenSec('reglages')
-                    setEditing('start')
-                    setDraftDate(toLocalInput(ev.startsAt || ev.revealAt))
-                  }}>Vérifier</button>
-                ) : (
-                  <button className="db-todo-act" onClick={() => {
-                    markSeen('shots')
-                    setOpenSec('reglages')
-                    if (!locked) { setEditing('shots'); setDraftShots(ev.shotsPerGuest) }
-                  }}>Régler</button>
-                )
-              )}
-            </div>
-          ))}
+          <label className="btn btn-ghost db-apercu-act">
+            {coverBusy ? 'Envoi…' : '🖼️ Ajouter une photo de couverture'}
+            <input type="file" accept="image/*" hidden
+              onChange={(e) => uploadCover(e.target.files?.[0])} />
+          </label>
+          <p className="db-apercu-foot">
+            Facultatif. Sans photo, vos invités voient ce dégradé.
+          </p>
         </div>
       )}
 
