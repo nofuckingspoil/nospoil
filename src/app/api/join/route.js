@@ -1,5 +1,34 @@
-import { rpc, updateRow } from '../../../lib/supabase'
+import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
+import { sendMail, guestAccessEmail, siteUrl } from '../../../lib/mail'
+import { makeToken } from '../../../lib/account'
+
+// Envoie à l'invité son lien d'accès permanent, une seule fois.
+//
+// Rien ne part sur un événement déjà révélé : le lien sert à protéger des poses
+// et des photos en cours de soirée. Passé la révélation, l'album est ouvert et
+// c'est le mail d'album qui prend le relais.
+async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealAt) {
+  const reveal = revealAt ? new Date(revealAt).getTime() : NaN
+  if (Number.isFinite(reveal) && reveal <= Date.now()) return
+
+  const { data } = await selectRows('guests', `id=eq.${guestId}&select=token,access_mailed_at`)
+  const g = Array.isArray(data) ? data[0] : null
+  if (!g || g.access_mailed_at) return // déjà envoyé : on ne le harcèle pas
+
+  const token = g.token || makeToken()
+  if (!g.token) await updateRow('guests', `id=eq.${guestId}`, { token })
+
+  const mail = guestAccessEmail({
+    eventName: eventName || 'votre événement',
+    link: `${siteUrl()}/mes-photos?t=${token}`,
+    shotsPerGuest,
+  })
+  const sent = await sendMail({ to: email, subject: mail.subject, html: mail.html })
+  // Horodaté même en cas d'échec : mieux vaut un lien manquant qu'un mail
+  // renvoyé à chaque photo prise.
+  if (sent?.ok) await updateRow('guests', `id=eq.${guestId}`, { access_mailed_at: new Date().toISOString() })
+}
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
@@ -38,6 +67,14 @@ export async function POST(request) {
     if (email) patch.email = email
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}
+
+  // Lien d'accès personnel : envoyé une seule fois, dès qu'une adresse est
+  // connue. Sans lui, l'identité de l'invité disparaît avec son navigateur.
+  // Un échec d'envoi ne doit jamais empêcher quelqu'un de photographier.
+  if (email) {
+    try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at) }
+    catch (err) { console.error('mail accès invité:', err) }
+  }
 
   return Response.json({
     email,

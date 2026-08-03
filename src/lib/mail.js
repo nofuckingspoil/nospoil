@@ -243,6 +243,26 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
   }
 }
 
+// ---------- Lien d'accès personnel d'un invité ----------
+// Part dès qu'il laisse son adresse, pendant la soirée. Son identité ne tenait
+// jusque-là que dans son navigateur : perdue avec un téléphone changé, elle
+// emportait ses poses restantes et l'accès à ses propres photos.
+export function guestAccessEmail({ eventName, link, shotsPerGuest }) {
+  return {
+    subject: `Votre accès aux photos de « ${eventName} »`,
+    html: layout({
+      title: 'Gardez ce lien',
+      intro: `Vous participez à l'album de « <strong>${eventName}</strong> ». Ce message est votre accès personnel : il vous permet de retrouver vos photos et vos poses restantes, même en changeant de téléphone.`,
+      body: `${bigButton(link, 'Retrouver mes photos →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          ${shotsPerGuest ? `Vous disposez de <strong style="color:#221A12;">${shotsPerGuest} photos</strong> pour cette soirée. ` : ''}
+          Vous recevrez l'album complet dès sa révélation, sans rien avoir à faire.
+        </div>`,
+      footer: `Ce lien vous est personnel : il donne accès à vos photos, ne le transférez pas. Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, et pour cela uniquement. Elle sera supprimée avec l'album.`,
+    }),
+  }
+}
+
 // ---------- Envoi du lien de l'album aux invités qui ont laissé leur mail ----------
 // C'est la seule raison pour laquelle on demande leur adresse : le message
 // le dit, et le pied de page le rappelle.

@@ -252,7 +252,7 @@ const cgv = {
   <li><strong>Durée</strong> : durée de l'Événement, augmentée de la période de conservation prévue à l'article 8.</li>
   <li><strong>Nature des opérations</strong> : collecte, enregistrement, stockage, organisation, consultation, transmission, effacement.</li>
   <li><strong>Catégories de personnes concernées</strong> : Organisateur, Invités, et toute personne figurant sur les Contenus.</li>
-  <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, adresse électronique facultative des Invités (envoi du lien de l'album), numéros de téléphone recueillis avant l'abandon de cette collecte, données techniques de connexion.</li>
+  <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, adresse électronique facultative des Invités (accès à ses propres photographies et envoi du lien de l'album), numéros de téléphone recueillis avant l'abandon de cette collecte, données techniques de connexion.</li>
 </ul>
 
 <h3>3. Obligations de BLACK BY C</h3>
@@ -336,7 +336,7 @@ const confidentialite = {
   <tbody>
     <tr><td>Photographies</td><td>constitution de la galerie de l'événement</td><td>6 mois après la date de révélation, puis suppression automatique</td></tr>
     <tr><td>Prénom ou pseudonyme saisi</td><td>identification des contributions au sein de l'événement</td><td>idem</td></tr>
-    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi du lien de l'album, une seule fois, au moment de la révélation</td><td>idem</td></tr>
+    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi, une seule fois, d'un lien d'accès personnel permettant à l'Invité de retrouver ses propres photographies et ses prises restantes depuis un autre appareil ; envoi du lien de l'album au moment de la révélation</td><td>idem</td></tr>
     <tr><td>Numéro de téléphone (facultatif, plus collecté)</td><td>transmission du lien de l'album par l'Organisateur</td><td>idem</td></tr>
     <tr><td>Horodatage, données techniques de connexion</td><td>fonctionnement et sécurité du service</td><td>12 mois</td></tr>
   </tbody>
