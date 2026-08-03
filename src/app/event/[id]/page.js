@@ -994,12 +994,13 @@ export default function EventManage({ params }) {
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
-      <Section id="sec-album" title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
+      {/* Les photos elles-mêmes : ce qu'on regarde et ce qu'on trie. Séparé de
+          l'album, qui traite de sa diffusion — deux gestes, deux moments. */}
+      <Section title="Les photos"
+        hint={revealed ? 'Visibles par vos invités' : 'Vous seul y avez accès'}
         badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
-        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
+        open={openSec === 'photos'} onToggle={() => toggleSec('photos')}>
 
-        {/* 1. Voir et trier — le seul bloc qui vaille à tout moment. Le pouvoir
-            de masquer était relégué en note de bas de page. */}
         <Link href={`/g/${id}`} className="btn btn-dark">
           {revealed ? "Voir l'album →" : 'Vérifier et trier les photos →'}
         </Link>
@@ -1009,8 +1010,8 @@ export default function EventManage({ params }) {
             : `Vous seul y avez accès. Masquez d'un geste celles qui gênent, avant que tout le monde ne les découvre le ${formatDate(ev.revealAt)}.`}
         </p>
 
-        {/* 2. Le frein, juste après : on le cherche au moment précis où l'on
-            vient de tomber sur une photo qui pose problème. */}
+        {/* Le frein reste ici : on le cherche à la seconde où l'on vient de
+            tomber sur une photo qui pose problème. */}
         <div className="db-alb-frein">
           {paused ? (
             <>
@@ -1029,28 +1030,27 @@ export default function EventManage({ params }) {
             </button>
           )}
         </div>
+      </Section>
 
-        {/* 3. Partager : proposé seulement quand il y a quelque chose à voir.
-            Avant, le lien menait à un compte à rebours et le message annonçait
-            des photos invisibles. */}
-        <div className="db-alb-bloc">
-          <div className="db-alb-t">Partager l'album</div>
-          <p className="muted small" style={{ marginBottom: 10 }}>
-            {revealed
-              ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
-              : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
-          </p>
-          {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
-              il s'agit, et le message tout prêt le contenait déjà. */}
-          <div className="db-alb-actions">
-            <button className="btn btn-ghost"
-              onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'gal')}>
-              {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
-            </button>
-          </div>
+      <Section id="sec-album" title="L'album"
+        hint={revealed ? 'Ouvert à vos invités' : `S'ouvre le ${formatShort(ev.revealAt)}`}
+        open={openSec === 'album'} onToggle={() => toggleSec('album')}>
+
+        <div className="db-alb-t">Partager l'album</div>
+        <p className="muted small" style={{ marginBottom: 10 }}>
+          {revealed
+            ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
+            : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
+        </p>
+        {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
+            il s'agit, et le message tout prêt le contenait déjà. */}
+        <div className="db-alb-actions">
+          <button className="btn btn-ghost"
+            onClick={() => shareOrCopy({ title: ev.name, text: shareText }, 'gal')}>
+            {flash === 'gal' ? '✓ Copié' : 'Copier et partager le lien'}
+          </button>
         </div>
 
-        {/* 4. Le code : on dit enfin contre quoi il protège. */}
         <div className="db-alb-bloc">
           <div className="db-alb-t">Protéger par un code</div>
           {/* Même silhouette dans les deux états — titre, une ligne, une action.
