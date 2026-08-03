@@ -753,7 +753,7 @@ export default function EventManage({ params }) {
             <>
               {' · '}
               <span className={`db-head-plan ${ev.quotaExceeded ? 'over' : ''}`}>
-                {ev.guestCount}/{ev.maxGuests} invités
+                Jusqu'à {ev.maxGuests} invités
               </span>
             </>
           )}
