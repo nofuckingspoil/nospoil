@@ -1251,6 +1251,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 .db-ident-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .db-ident-actions .btn { flex: 1 1 auto; width: auto; padding: 12px 16px; font-size: 14px; }
+/* Section de l'album : des blocs séparés plutôt qu'une suite d'éléments */
+.db-alb-frein { margin-top: 14px; }
+.db-alb-bloc { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.db-alb-t { font-weight: 700; font-size: 14.5px; color: var(--ink); margin-bottom: 6px; }
+
 /* Liste des co-organisateurs */
 .db-coorg { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
 .db-coorg-row {

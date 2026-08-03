@@ -993,65 +993,92 @@ export default function EventManage({ params }) {
       <Section id="sec-album" title="L'album" hint={revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation'}
         badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
         open={openSec === 'album'} onToggle={() => toggleSec('album')}>
+
+        {/* 1. Voir et trier — le seul bloc qui vaille à tout moment. Le pouvoir
+            de masquer était relégué en note de bas de page. */}
         <Link href={`/g/${id}`} className="btn btn-dark">
-          {revealed ? "Voir l'album →" : 'Vérifier les photos (vous seul) →'}
+          {revealed ? "Voir l'album →" : 'Vérifier et trier les photos →'}
         </Link>
-
-        <div className="notice small" style={{ margin: '14px 0' }}>
+        <p className="hint" style={{ marginTop: 8 }}>
           {revealed
-            ? "✅ L'album est ouvert : vos invités voient les photos."
-            : `⏳ Avant le ${formatDate(ev.revealAt)}, vos invités ne verront qu'un compte à rebours.`}
-          {' '}Dans l'album, chaque photo peut être masquée d'un geste — avant comme après la révélation.
+            ? "Vos invités voient les photos. Vous pouvez encore en masquer une d'un geste."
+            : `Vous seul y avez accès. Masquez d'un geste celles qui gênent, avant que tout le monde ne les découvre le ${formatDate(ev.revealAt)}.`}
+        </p>
+
+        {/* 2. Le frein, juste après : on le cherche au moment précis où l'on
+            vient de tomber sur une photo qui pose problème. */}
+        <div className="db-alb-frein">
+          {paused ? (
+            <>
+              <p className="muted small">
+                🔒 L'album est <strong>fermé</strong> : vos invités ne voient rien, même si
+                l'heure de révélation est passée.
+              </p>
+              <button className="btn btn-ghost" onClick={() => patchEvent({ revealPaused: false })}>
+                Rouvrir l'album
+              </button>
+            </>
+          ) : (
+            <button className="db-danger-link" style={{ marginTop: 0 }}
+              onClick={() => patchEvent({ revealPaused: true })}>
+              {revealedTime ? "Refermer l'album immédiatement" : "Empêcher l'ouverture automatique"}
+            </button>
+          )}
         </div>
 
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
-            {flash === 'gal' ? '✓ Lien copié' : "Copier le lien de l'album"}
-          </button>
-          <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
-            ✉️ Message prêt
-          </button>
-        </div>
+        {/* 3. Partager : proposé seulement quand il y a quelque chose à voir.
+            Avant, le lien menait à un compte à rebours et le message annonçait
+            des photos invisibles. */}
+        {revealed && (
+          <div className="db-alb-bloc">
+            <div className="db-alb-t">Partager l'album</div>
+            <p className="muted small" style={{ marginBottom: 10 }}>
+              Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :
+            </p>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => copy(galleryUrl, 'gal')}>
+                {flash === 'gal' ? '✓ Lien copié' : 'Copier le lien'}
+              </button>
+              <button className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setSheet('message')}>
+                ✉️ Message tout prêt
+              </button>
+            </div>
+          </div>
+        )}
 
-        <div className="hint" style={{ marginTop: 10 }}>
-          📥 Album téléchargé <strong>{ev.downloadCount || 0}</strong> fois.
-        </div>
-
-        <div style={{ marginTop: 16, borderTop: '1px solid var(--line)', paddingTop: 14 }}>
-          <div style={{ fontWeight: 600, marginBottom: 6 }}>🔒 Protéger par un code (facultatif)</div>
+        {/* 4. Le code : on dit enfin contre quoi il protège. */}
+        <div className="db-alb-bloc">
+          <div className="db-alb-t">Protéger par un code</div>
           {ev.galleryCode ? (
             <>
               <p className="muted small" style={{ marginBottom: 10 }}>
-                L'album est protégé. Les invités doivent entrer : <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>
+                L'album est protégé. Vos invités doivent entrer{' '}
+                <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong> — pensez à le leur donner.
               </p>
               <button className="btn btn-ghost" onClick={() => saveGalleryCode('')} disabled={savingGallery}>
                 {savingGallery ? '…' : 'Retirer le code'}
               </button>
             </>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <input type="text" placeholder="Choisir un code (ex : 1234)" value={galleryCodeInput}
-                onChange={(e) => setGalleryCodeInput(e.target.value)}
-                style={{ width: '100%', textAlign: 'center', fontSize: 17, letterSpacing: '.08em' }} />
-              <button className="btn btn-dark" onClick={() => saveGalleryCode(galleryCodeInput)}
-                disabled={savingGallery || !galleryCodeInput.trim()}>
-                {savingGallery ? 'Activation…' : 'Activer le code'}
-              </button>
-            </div>
+            <>
+              <p className="muted small" style={{ marginBottom: 10 }}>
+                Le lien de l'album est déjà secret. Un code n'est utile que si vous craignez
+                qu'il circule au-delà de vos invités — transféré, ou posté dans un groupe.
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <input type="text" placeholder="Ex : 1234" value={galleryCodeInput}
+                  onChange={(e) => setGalleryCodeInput(e.target.value)}
+                  style={{ flex: 1, minWidth: 0, textAlign: 'center', letterSpacing: '.08em' }} />
+                <button className="btn btn-dark" style={{ flex: '0 0 auto', width: 'auto', padding: '14px 20px', fontSize: 15 }}
+                  onClick={() => saveGalleryCode(galleryCodeInput)}
+                  disabled={savingGallery || !galleryCodeInput.trim()}>
+                  {savingGallery ? '…' : 'Activer'}
+                </button>
+              </div>
+            </>
           )}
           {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
         </div>
-
-        {/* Frein d'urgence : discret, mais toujours accessible */}
-        {!paused ? (
-          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: true })}>
-            Suspendre la révélation
-          </button>
-        ) : (
-          <button className="db-danger-link" onClick={() => patchEvent({ revealPaused: false })}>
-            Reprendre la révélation
-          </button>
-        )}
       </Section>
 
       <Section title="Co-organisateurs" hint="Partager la gestion de l'événement"
