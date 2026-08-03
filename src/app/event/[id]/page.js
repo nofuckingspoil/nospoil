@@ -107,8 +107,10 @@ export default function EventManage({ params }) {
   const [qrUrl, setQrUrl] = useState('')
   const [sheet, setSheet] = useState(null) // 'qr' | 'message' | null
   // Une seule section ouverte à la fois. « Réglages » l'est d'emblée : c'est là
-  // qu'on se rend en préparant son événement.
+  // qu'on se rend en préparant son événement. Une fois la révélation passée,
+  // il n'y a plus grand-chose à régler : c'est l'album qui prend la place.
   const [openSec, setOpenSec] = useState('reglages')
+  const sectionChoisie = useRef(false)
 
   // Petits retours "copié ✓"
   const [flash, setFlash] = useState('')
@@ -217,6 +219,15 @@ export default function EventManage({ params }) {
     const t = setInterval(reload, 10000)
     return () => clearInterval(t)
   }, [phase, reload])
+
+  // Section ouverte au premier chargement : décidée une seule fois, dès que
+  // l'événement est connu, pour ne pas défaire un repli fait à la main.
+  useEffect(() => {
+    if (!ev || sectionChoisie.current) return
+    sectionChoisie.current = true
+    const revelationPassee = !!ev.revealAt && new Date(ev.revealAt).getTime() <= Date.now()
+    if (revelationPassee) setOpenSec('album')
+  }, [ev])
 
   // Le bilan n'a de sens qu'une fois l'album ouvert : c'est là que
   // l'organisateur revient, et là que les chiffres deviennent flatteurs.
