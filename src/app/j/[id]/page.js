@@ -4,7 +4,7 @@ import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import { getDeviceToken, saveGuest, getGuest, getOwnerToken } from '../../../lib/device'
-import { supportsLiveCamera, isInAppBrowser, compressToBlob, fileToImage, playShutter } from '../../../lib/camera'
+import { supportsLiveCamera, isInAppBrowser, compressToBlob, decodeImage, prepareUpload, playShutter } from '../../../lib/camera'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
@@ -60,6 +60,7 @@ export default function GuestCamera({ params }) {
   const [screenFlash, setScreenFlash] = useState(false) // flash écran (selfie) pendant la capture
   const [liveCam, setLiveCam] = useState(false)
   const [camBlocked, setCamBlocked] = useState(false)
+  const [inApp, setInApp] = useState(false)      // page ouverte depuis une messagerie
   const [facingMode, setFacingMode] = useState('environment')
   const [myPhotos, setMyPhotos] = useState([])   // [{id, url}] confirmées (serveur)
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
@@ -80,6 +81,7 @@ export default function GuestCamera({ params }) {
   const galleryInputRef = useRef(null)
 
   useEffect(() => {
+    setInApp(isInAppBrowser()) // au montage seulement : le serveur ne connaît pas le navigateur
     // Le jeton part avec la requête : l'organisateur qui prend ses propres photos
     // n'a pas à se présenter comme un inconnu. Sans jeton valable, le serveur ne
     // renvoie rien de plus qu'à n'importe quel invité.
@@ -312,18 +314,33 @@ export default function GuestCamera({ params }) {
     try {
       // Mini-version légère (~640px) pour l'affichage de l'album — économise la data
       let thumbBlob = null
-      try { const im = await fileToImage(blob); thumbBlob = await compressToBlob(im, { maxSize: 640, quality: 0.6 }) } catch {}
+      try {
+        const im = await decodeImage(blob)
+        thumbBlob = await compressToBlob(im, { maxSize: 640, quality: 0.6 })
+        try { im.close?.() } catch {}
+      } catch {}
 
       const fd = new FormData()
       fd.append('file', blob, 'photo.jpg')
       if (thumbBlob) fd.append('thumb', thumbBlob, 'thumb.jpg')
       fd.append('eventId', id); fd.append('guestId', guest.guestId); fd.append('deviceToken', getDeviceToken())
-      const res = await fetch('/api/photo', { method: 'POST', body: fd })
-      const d = await res.json()
+
+      // Les navigateurs des messageries suspendent la page pendant que
+      // l'appareil photo est ouvert : la première requête au retour se perd
+      // parfois. On retente une fois avant de parler d'échec à l'invité.
+      let res = null
+      for (let tentative = 0; tentative < 2 && !res; tentative++) {
+        try { res = await fetch('/api/photo', { method: 'POST', body: fd }) }
+        catch (reseau) {
+          if (tentative) throw new Error('Connexion perdue pendant l’envoi. Vérifie ta connexion et réessaie.')
+          await new Promise((r) => setTimeout(r, 900))
+        }
+      }
+      const d = await res.json().catch(() => ({}))
       if (res.status === 409) { setError('Pellicule pleine — supprime une photo pour en reprendre une.') }
       else if (!res.ok) { throw new Error(d.error || "Échec de l'envoi.") }
     } catch (err) {
-      setError(err.message || 'Erreur.')
+      setError(err.message || "Échec de l'envoi. Réessaie.")
     } finally {
       setPending((p) => p.filter((x) => x.tempId !== tempId))
       URL.revokeObjectURL(url)
@@ -386,7 +403,7 @@ export default function GuestCamera({ params }) {
     if (!file) return
     setBusy(true); setError('')
     fireShutterFeedback()
-    try { const img = await fileToImage(file); await capture(await compressToBlob(img)) }
+    try { await capture(await prepareUpload(file)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
 
@@ -396,7 +413,7 @@ export default function GuestCamera({ params }) {
     if (!file) return
     if (full) { setError('Pellicule pleine — supprime une photo pour en importer une.'); return }
     setBusy(true); setError('')
-    try { const img = await fileToImage(file); await capture(await compressToBlob(img)) }
+    try { await capture(await prepareUpload(file)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
 
@@ -599,9 +616,12 @@ export default function GuestCamera({ params }) {
         )}
       </div>
 
-      {isInAppBrowser() && (
+      {/* Ouvert depuis une messagerie, sans caméra en direct : la plupart des
+          invités arrivent ainsi. On ne les renvoie pas ailleurs, on leur dit
+          simplement que le bouton marche quand même. */}
+      {inApp && !liveCam && !camBlocked && (
         <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.12)' }}>
-          ⚠️ Pour la caméra en direct, ouvrez ce lien dans <strong>Safari</strong> ou <strong>Chrome</strong>.
+          📸 Touche le déclencheur : l’appareil photo de ton téléphone s’ouvre, et ta photo rejoint l’album.
         </div>
       )}
 
