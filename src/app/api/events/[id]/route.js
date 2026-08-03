@@ -88,8 +88,8 @@ export async function GET(request, { params }) {
       failed: !!g.notify_failed,
     }))
 
-    const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,code&order=created_at.asc`)
-    payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, code: a.code }))
+    const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email&order=created_at.asc`)
+    payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email }))
 
     payload.role = role // 'owner' | 'admin' — pilote l'accès à la suppression
     payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur

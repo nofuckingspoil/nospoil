@@ -1043,25 +1043,41 @@ export default function EventManage({ params }) {
 
       <Section title="Co-organisateurs" hint="Partager la gestion de l'événement"
         open={openSec === 'acces'} onToggle={() => toggleSec('acces')}>
-        <p className="muted small" style={{ marginBottom: 14 }}>
+        <p className="muted small" style={{ marginBottom: 8 }}>
           Invitez qui vous voulez à gérer cet événement avec vous. La personne recevra une
           invitation et se connectera avec son adresse mail, sans code à retenir.
-          Elle pourra tout faire, <strong>sauf supprimer l'événement</strong>.
+        </p>
+        <p className="muted small" style={{ marginBottom: 14 }}>
+          Un co-organisateur voit les <strong>photos avant la révélation</strong> et peut en
+          faire le tri — masquer ou supprimer celles qui gênent. Il règle aussi les dates et
+          invite les convives. Il ne peut pas <strong>supprimer l'événement</strong>.
         </p>
 
-        {Array.isArray(ev.admins) && ev.admins.length > 0 && (
-          <div className="db-coorg">
-            {ev.admins.map((a) => (
-              <div key={a.id} className="db-coorg-row">
-                <span className="db-coorg-id">
-                  <span className="nn">{a.name || a.email}</span>
-                  {a.name && <span className="ee">{a.email}</span>}
-                </span>
-                <button onClick={() => removeAdmin(a.id)} className="db-coorg-out">Retirer</button>
-              </div>
-            ))}
+        {/* Qui a la main sur cet événement, organisateur compris : la liste ne
+            montrait que les personnes invitées, jamais celle qui invite. */}
+        <div className="db-coorg">
+          <div className="db-coorg-row">
+            <span className="db-coorg-id">
+              <span className="nn">
+                {ev.role === 'owner' ? 'Vous' : 'Organisateur'}
+                <span className="rr">organisateur</span>
+              </span>
+              <span className="ee">{ev.ownerEmail || 'adresse non renseignée'}</span>
+            </span>
           </div>
-        )}
+          {(ev.admins || []).map((a) => (
+            <div key={a.id} className="db-coorg-row">
+              <span className="db-coorg-id">
+                <span className="nn">
+                  {a.name || a.email}
+                  <span className="rr">co-organisateur</span>
+                </span>
+                <span className="ee">{a.email}</span>
+              </span>
+              <button onClick={() => removeAdmin(a.id)} className="db-coorg-out">Retirer</button>
+            </div>
+          ))}
+        </div>
 
         <form onSubmit={addAdmin} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <input type="text" placeholder="Nom (facultatif)" value={adminName} onChange={(e) => setAdminName(e.target.value)} />
