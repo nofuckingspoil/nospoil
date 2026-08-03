@@ -247,6 +247,19 @@ export async function PATCH(request, { params }) {
     patch.gallery_code = code ? code.slice(0, 40) : null
   }
 
+  // Rien n'empêchait de révéler les photos avant la fête : on vérifie le couple
+  // résultant, et non chaque date isolément.
+  if (patch.starts_at || patch.reveal_at) {
+    const debut = new Date(patch.starts_at || ev.starts_at).getTime()
+    const rev = new Date(patch.reveal_at || ev.reveal_at).getTime()
+    if (Number.isFinite(debut) && Number.isFinite(rev) && rev <= debut) {
+      return Response.json(
+        { error: 'La révélation doit venir après le début de l’événement.' },
+        { status: 400 }
+      )
+    }
+  }
+
   if (!Object.keys(patch).length) return Response.json({ error: 'Rien à modifier.' }, { status: 400 })
 
   const upd = await updateRow('events', `id=eq.${id}`, patch)

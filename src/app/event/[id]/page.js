@@ -329,6 +329,20 @@ export default function EventManage({ params }) {
     } catch {}
   }
 
+  // Déplacer la soirée déplace la révélation du même écart : « le lendemain »
+  // doit rester le lendemain. Sans ça, on pouvait révéler avant la fête.
+  async function decalerSoiree() {
+    const nouveau = new Date(draftDate)
+    if (isNaN(nouveau.getTime())) { setSettingMsg('Date invalide.'); return }
+    const ancien = new Date(ev.startsAt || ev.revealAt)
+    const ecart = new Date(ev.revealAt).getTime() - ancien.getTime()
+    const patch = { startsAt: nouveau.toISOString() }
+    if (Number.isFinite(ecart) && ecart > 0) {
+      patch.revealAt = new Date(nouveau.getTime() + ecart).toISOString()
+    }
+    if (await patchEvent(patch)) setEditing('')
+  }
+
   function copy(text, key) {
     navigator.clipboard?.writeText(text).then(() => ping(key)).catch(() => {})
   }
@@ -857,12 +871,15 @@ export default function EventManage({ params }) {
           </button>
         </div>
         {editing === 'start' && (
-          <div className="db-set-edit">
-            <input type="datetime-local" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
-            <button className="btn btn-accent" onClick={async () => {
-              if (await patchEvent({ startsAt: new Date(draftDate).toISOString() })) setEditing('')
-            }}>Enregistrer</button>
-          </div>
+          <>
+            <div className="db-set-edit">
+              <input type="datetime-local" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
+              <button className="btn btn-accent" onClick={decalerSoiree}>Enregistrer</button>
+            </div>
+            <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
+              La révélation se décalera d'autant, pour rester au même moment après la fête.
+            </p>
+          </>
         )}
 
         {/* Photos par invité — se fige au début de la soirée */}
@@ -971,31 +988,6 @@ export default function EventManage({ params }) {
             }}>Enregistrer</button>
           </div>
         )}
-
-        {/* Votre accès : le rappel tient en une ligne, la connexion par mail et
-            le mail d'achat faisant déjà le travail. */}
-        <div className="db-set">
-          <div className="db-set-l">
-            <span className="db-set-lbl">Votre accès</span>
-            <span className="db-set-val">
-              {ev.ownerEmail
-                ? <>Rattaché à {ev.ownerEmail} — retrouvez ce tableau de bord depuis la page de connexion</>
-                : <>Aucune adresse rattachée : notez le lien de cette page pour y revenir</>}
-            </span>
-          </div>
-          {ev.ownerEmail && <a className="db-set-act" href="/connexion">Connexion</a>}
-        </div>
-
-        {/* L'agenda contient le lien organisateur : sa place est auprès des dates. */}
-        <div className="db-set">
-          <div className="db-set-l">
-            <span className="db-set-lbl">Rappel dans votre agenda</span>
-            <span className="db-set-val">L'événement et la révélation, avec votre lien organisateur</span>
-          </div>
-          <button className="db-set-act" onClick={addToCalendar}>
-            {flash === 'cal' ? '✓ Ajouté' : 'Ajouter'}
-          </button>
-        </div>
 
         {settingMsg && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
