@@ -1085,8 +1085,7 @@ export default function EventManage({ params }) {
         {/* Dire pourquoi, plutôt que de laisser deviner devant un bouton absent. */}
         {revealedTime && (
           <p className="hint" style={{ marginTop: 2 }}>
-            La révélation a eu lieu : les dates ne se modifient plus. Elles racontent un
-            événement qui appartient désormais au passé.
+            La révélation a eu lieu : les dates ne se modifient plus.
           </p>
         )}
         {editing === 'reveal' && (
