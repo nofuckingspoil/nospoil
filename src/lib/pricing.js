@@ -23,6 +23,9 @@ export const BONUS_MAX = 5
 export const TIERS = [
   { maxGuests: 5,   priceCents: 0,    popular: false },
   { maxGuests: 10,  priceCents: 499,  popular: false },
+  // Anniversaires, EVJF, petits mariages : la tranche 25-40 invités tombait
+  // jusqu'ici sur la formule 50, trois fois plus chère que la formule 10.
+  { maxGuests: 30,  priceCents: 999,  popular: false },
   { maxGuests: 50,  priceCents: 1499, popular: true  },
   { maxGuests: 100, priceCents: 2499, popular: false },
   { maxGuests: 150, priceCents: 2999, popular: false },

@@ -132,6 +132,7 @@ const cgv = {
   <tbody>
     <tr><td>Découverte</td><td>5</td><td>Gratuit — sans carte bancaire</td></tr>
     <tr><td>10 invités</td><td>10</td><td>4,99 €</td></tr>
+    <tr><td>30 invités</td><td>30</td><td>9,99 €</td></tr>
     <tr><td>50 invités</td><td>50</td><td>14,99 €</td></tr>
     <tr><td>100 invités</td><td>100</td><td>24,99 €</td></tr>
     <tr><td>150 invités</td><td>150</td><td>29,99 €</td></tr>
