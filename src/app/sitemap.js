@@ -9,6 +9,7 @@ export default function sitemap() {
   const pages = [
     { url: `${BASE}/`, lastModified: now, changeFrequency: 'weekly', priority: 1.0 },
     { url: `${BASE}/journal`, lastModified: now, changeFrequency: 'weekly', priority: 0.8 },
+    { url: `${BASE}/guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/create`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ]
   const articles = POSTS.map((p) => ({

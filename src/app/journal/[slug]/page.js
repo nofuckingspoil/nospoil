@@ -105,6 +105,16 @@ export default async function Article({ params }) {
             </div>
             <Link className="dj-btn dj-btn--dark" href="/create">Créer le mien</Link>
           </div>
+
+          {/* Pas encore prêt à créer son événement ? Le guide récupère ceux
+              qui préparent leur fête et repartiraient sans rien laisser. */}
+          <div className="dj-guide">
+            <div>
+              <h3>Le guide de l'organisateur</h3>
+              <span>Combien de clichés donner, quand révéler l'album, comment faire scanner tout le monde. Sept chapitres, gratuits.</span>
+            </div>
+            <Link className="dj-btn" href="/guide">Lire le guide</Link>
+          </div>
         </div>
       </div>
 

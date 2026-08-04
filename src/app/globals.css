@@ -1725,3 +1725,205 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .db-contact-ok { font-style: normal; color: var(--ok); }
 .db-contact-ko { font-style: normal; color: #b23b2e; }
+
+/* ============================================================
+   Guide de l'organisateur (/guide) — réutilise l'univers du blog (.dj)
+   ============================================================ */
+
+/* Éléments de texte que les articles n'utilisaient pas encore, mais dont le
+   guide a besoin : sous-titres, listes et tableaux. */
+.dj-prose h3 { font-weight: 700; font-size: 19px; letter-spacing: -.015em;
+  margin: 28px 0 10px; color: var(--dj-ink); }
+.dj-prose ul, .dj-prose ol { margin: 0 0 22px; padding-left: 22px; }
+.dj-prose li { margin-bottom: 9px; }
+.dj-prose table { width: 100%; border-collapse: collapse; margin: 0 0 24px; font-size: 15px; }
+.dj-prose th, .dj-prose td { text-align: left; padding: 10px 12px;
+  border-bottom: 1px solid var(--dj-line-2); }
+.dj-prose th { font-family: var(--dj-mono); font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--dj-ink-3); font-weight: 400; }
+.dj-prose tbody tr:last-child td { border-bottom: none; }
+.dj-prose em { color: var(--dj-ink-2); }
+
+/* Le titre s'aligne sur la colonne de texte (720 px centrés), sinon il flotte
+   à gauche pendant que le guide se lit au milieu. */
+.dj-head.gd-head > *,
+.dj-head.gd-head h1,
+.dj-head.gd-head p { max-width: 720px; margin-left: auto; margin-right: auto; }
+.dj-head.gd-head h1 { font-size: clamp(32px, 4.2vw, 46px); margin-top: 14px; margin-bottom: 14px; }
+
+.gd-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 18px;
+  font-family: var(--dj-mono); font-size: 11.5px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--dj-ink-3); }
+
+/* Sommaire — la vitrine du guide, visible sans donner son adresse. */
+.gd-toc { background: var(--dj-paper); border: 1px solid var(--dj-line);
+  border-radius: 20px; padding: 28px 30px; margin-bottom: 40px; }
+.gd-toc h2 { font-weight: 700; font-size: 20px; letter-spacing: -.02em;
+  margin: 0 0 18px; color: var(--dj-ink); }
+.gd-toc ol { margin: 0; padding-left: 20px; }
+.gd-toc li { margin-bottom: 14px; line-height: 1.5; }
+.gd-toc li:last-child { margin-bottom: 0; }
+.gd-toc strong { display: block; color: var(--dj-ink); font-size: 16px; }
+.gd-toc span { display: block; font-size: 14.5px; color: var(--dj-ink-2); margin-top: 2px; }
+
+.gd-chap { margin-bottom: 44px; }
+.gd-chap-n { font-family: var(--dj-mono); font-size: 11.5px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--dj-orange-txt); }
+.gd-chap h2 { font-weight: 800; font-size: 27px; letter-spacing: -.025em;
+  margin: 8px 0 18px; color: var(--dj-ink); }
+
+/* La porte : formulaire d'accès au reste du guide. */
+.gd-gate { background: var(--dj-dark); border-radius: 24px; padding: 34px 34px 30px;
+  margin: 10px 0 44px; color: #fff; }
+.gd-gate .dj-eyebrow { color: #F7A583; }
+.gd-gate h2 { font-weight: 800; font-size: 26px; letter-spacing: -.02em;
+  margin: 10px 0 10px; color: #fff; }
+.gd-gate p { margin: 0 0 20px; font-size: 14.5px; line-height: 1.55;
+  color: rgba(255,255,255,.62); max-width: 460px; }
+.gd-gate form { display: flex; gap: 10px; align-items: center; }
+.gd-gate input { flex: 1; min-width: 0; background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.14); border-radius: 999px;
+  padding: 14px 18px; color: #fff; font: inherit; font-size: 15px; }
+.gd-gate input::placeholder { color: rgba(255,255,255,.4); }
+.gd-gate input:focus { border-color: var(--dj-orange); outline: none; }
+.gd-gate .dj-btn { flex: 0 0 auto; }
+.gd-gate-err { color: #ffb4a1; font-size: 13px; margin: 12px 0 0; }
+.gd-gate-fine { font-size: 12px; color: rgba(255,255,255,.42); margin: 14px 0 0; }
+
+/* Aide-mémoire en colonnes. */
+/* Quatre étapes : deux colonnes de deux, plutôt que trois + un orphelin. */
+.gd-check { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+.gd-check-col { background: var(--dj-paper); border: 1px solid var(--dj-line);
+  border-radius: 16px; padding: 18px 20px; }
+.gd-check-col h3 { font-family: var(--dj-mono); font-size: 12px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--dj-orange-txt); margin: 0 0 12px; font-weight: 400; }
+.gd-check-col ul { margin: 0; padding-left: 18px; font-size: 14.5px; line-height: 1.5; }
+.gd-check-col li { margin-bottom: 8px; }
+
+@media (max-width: 640px) {
+  .gd-gate { padding: 26px 22px 24px; }
+  .gd-gate form { flex-direction: column; align-items: stretch; }
+  .gd-gate .dj-btn { width: 100%; }
+  .gd-toc { padding: 22px 20px; }
+  .gd-chap h2 { font-size: 23px; }
+  .dj-prose table { font-size: 14px; }
+  .dj-prose th, .dj-prose td { padding: 8px 8px; }
+}
+
+/* --- Liste des invités dans l'admin --- */
+.adm-guests { display: flex; flex-direction: column; gap: 8px; }
+.adm-guest { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  padding: 12px 14px; border-radius: 12px; background: var(--screen); }
+.adm-guest-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.adm-guest-id strong { overflow-wrap: anywhere; }
+.adm-guest-shots { display: flex; align-items: center; gap: 10px; flex: 0 0 auto; }
+.adm-bar { width: 90px; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.adm-bar span { display: block; height: 100%; border-radius: 999px; background: var(--accent); }
+
+@media (max-width: 560px) {
+  .adm-guest { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .adm-guest-shots { width: 100%; }
+  .adm-bar { flex: 1; width: auto; }
+}
+
+/* ===== Carte flottante « Le guide de l'organisateur » =====
+   Pendant du badge QR, à droite. Contrastes relevés : sur fond sombre, tout
+   texte sous 70 % d'opacité devient illisible en petit corps. */
+.gb {
+  --gb-w: clamp(268px, 24vw, 340px);
+  position: fixed; right: clamp(12px, 1.6vw, 20px); bottom: clamp(12px, 1.6vw, 20px);
+  z-index: 40; width: var(--gb-w); max-width: calc(100vw - 24px);
+  background: var(--dark); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 22px; box-shadow: 0 20px 50px rgba(0,0,0,.4);
+  transition: transform .18s ease, box-shadow .18s ease;
+  animation: gb-in .35s cubic-bezier(.2,.8,.3,1);
+}
+.gb:hover { transform: translateY(-3px); box-shadow: 0 26px 62px rgba(0,0,0,.48); }
+@keyframes gb-in { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
+
+.gb-link {
+  display: flex; flex-direction: column; text-decoration: none;
+  padding: 22px 24px 20px;
+}
+/* Étiquette : orange vif sur sombre, en capitales espacées. */
+.gb-tag {
+  display: flex; align-items: center; gap: 7px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em;
+  text-transform: uppercase; color: var(--amber);
+}
+.gb-t1 {
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  line-height: 1.18; letter-spacing: -.025em; color: #fff; margin-top: 12px;
+}
+/* Blanc à 78 % : le minimum lisible en 14 px sur ce fond. */
+.gb-sub {
+  font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.78); margin-top: 10px;
+}
+.gb-go {
+  font-weight: 700; font-size: 14.5px; color: var(--accent-lt); margin-top: 16px;
+}
+.gb:hover .gb-go { text-decoration: underline; }
+.gb-x {
+  position: absolute; top: 9px; right: 10px; z-index: 1;
+  background: none; border: none; cursor: pointer; padding: 4px 8px;
+  font-size: 20px; line-height: 1; color: rgba(255,255,255,.5);
+}
+.gb-x:hover { color: #fff; }
+
+/* Fenêtres peu hautes : on retire la phrase de détail pour que les deux
+   cartes du bas d'écran ne mangent pas la page. */
+@media (max-height: 760px) {
+  .gb { --gb-w: clamp(250px, 21vw, 300px); }
+  .gb-sub { display: none; }
+  .gb-link { padding: 18px 20px 17px; }
+  .gb-t1 { font-size: 19px; margin-top: 10px; }
+  .gb-go { margin-top: 12px; }
+}
+
+/* ---- Mobile : panneau glissant, à la place de la carte ---- */
+.gs-veil {
+  position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end;
+  background: rgba(20,22,31,.55); backdrop-filter: blur(2px);
+  animation: gs-fond .22s ease-out;
+}
+@keyframes gs-fond { from { opacity: 0 } to { opacity: 1 } }
+.gs {
+  width: 100%; background: #fff; border-radius: 26px 26px 0 0;
+  padding: 12px 22px calc(24px + env(safe-area-inset-bottom));
+  box-shadow: 0 -18px 50px rgba(20,22,31,.3);
+  animation: gs-monte .3s cubic-bezier(.2,.8,.3,1);
+}
+@keyframes gs-monte { from { transform: translateY(100%) } to { transform: none } }
+.gs-grip {
+  width: 42px; height: 4px; border-radius: 999px; background: var(--line);
+  margin: 0 auto 18px;
+}
+.gs-ic { font-size: 30px; display: block; }
+.gs h2 {
+  font-family: var(--font-display); font-weight: 800; font-size: 22px;
+  letter-spacing: -.02em; margin: 10px 0 8px; color: var(--ink);
+}
+.gs p { margin: 0 0 20px; font-size: 14.5px; line-height: 1.55; color: var(--text2); }
+.gs-go { width: 100%; text-align: center; text-decoration: none; }
+.gs-no {
+  display: block; width: 100%; margin-top: 10px; padding: 12px 0;
+  background: none; border: none; cursor: pointer;
+  font: inherit; font-size: 14px; color: var(--text3);
+}
+
+/* ---- Encart guide en fin d'article de blog ---- */
+.dj-guide {
+  display: flex; align-items: center; justify-content: space-between; gap: 22px;
+  margin: 18px 0 10px; padding: 22px 26px;
+  background: var(--dj-paper); border: 1px solid var(--dj-line-2); border-radius: 20px;
+}
+.dj-guide h3 { font-weight: 700; font-size: 19px; letter-spacing: -.02em; margin-bottom: 5px; }
+.dj-guide span { display: block; font-size: 14.5px; color: var(--dj-ink-2); line-height: 1.5; }
+.dj-guide .dj-btn { background: transparent; color: var(--dj-orange-txt); box-shadow: none;
+  border: 1.5px solid var(--dj-orange); text-decoration: none; flex: 0 0 auto; }
+.dj-guide .dj-btn:hover { background: var(--dj-orange); color: #fff; }
+
+@media (max-width: 640px) {
+  .dj-guide { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
+  .dj-guide .dj-btn { width: 100%; text-align: center; }
+}

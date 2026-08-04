@@ -2,6 +2,10 @@ import { normalizeEmail, isValidEmail } from '../../../lib/account'
 
 export const runtime = 'nodejs'
 
+// D'où vient le contact : sert à distinguer, dans Brevo, l'inscrit newsletter
+// du lecteur du guide (qui a une intention d'achat bien plus marquée).
+const SOURCES = ['journal', 'guide']
+
 // Inscription à la newsletter du journal : ajoute/actualise le contact dans Brevo.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
@@ -9,6 +13,7 @@ export async function POST(request) {
   if (!isValidEmail(email)) {
     return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
   }
+  const source = SOURCES.includes(body.source) ? body.source : 'journal'
 
   const key = process.env.BREVO_API_KEY
   if (!key) {
@@ -24,7 +29,7 @@ export async function POST(request) {
       body: JSON.stringify({
         email,
         updateEnabled: true,
-        attributes: { SOURCE: 'journal' },
+        attributes: { SOURCE: source },
       }),
       cache: 'no-store',
     })
