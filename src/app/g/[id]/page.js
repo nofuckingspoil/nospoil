@@ -5,6 +5,7 @@ import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
+import { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, cssTeinte, tamponDate, cuirePhoto } from '../../../lib/film'
 import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
@@ -203,7 +204,11 @@ export default function Gallery({ params }) {
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
   const [filter, setFilter] = useState('all')
-  const [retro, setRetro] = useState(true)
+  // La pellicule vaut pour l'écran comme pour le fichier emporté : ce que l'on
+  // voit est ce que l'on enregistre.
+  const [pelliculeId, setPelliculeId] = useState(PELLICULE_DEFAUT)
+  const [avecDate, setAvecDate] = useState(true)
+  const pelli = pelliculeParId(pelliculeId)
   const [zip, setZip] = useState(null) // null | {done, total}
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
@@ -214,6 +219,20 @@ export default function Gallery({ params }) {
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
 
+  // Le goût de chacun tient d'un album à l'autre : on relit le choix précédent
+  // après le premier rendu, pour ne pas fâcher le serveur avec le localStorage.
+  useEffect(() => {
+    try {
+      const garde = JSON.parse(localStorage.getItem('ttf-pellicule') || 'null')
+      if (garde?.id) setPelliculeId(garde.id)
+      if (typeof garde?.date === 'boolean') setAvecDate(garde.date)
+    } catch {}
+  }, [])
+  function choisirPellicule(id, date) {
+    setPelliculeId(id); setAvecDate(date)
+    try { localStorage.setItem('ttf-pellicule', JSON.stringify({ id, date })) } catch {}
+  }
+
   async function downloadAll(photos) {
     if (zip) return
     // Qui emporte l'album, et combien de photos : c'est ce qui nourrit le bilan
@@ -223,12 +242,20 @@ export default function Gallery({ params }) {
       body: JSON.stringify({ deviceToken: getDeviceToken(), photoCount: photos.length }),
     }).catch(() => {})
 
+    // La pellicule choisie part avec la photo : sur le téléphone comme sur les
+    // réseaux, c'est le rendu vu dans l'album que l'on retrouve.
+    const cuire = (blob, p) => cuirePhoto(blob, {
+      pellicule: pelli,
+      date: avecDate ? tamponDate(p.takenAt) : '',
+    })
+
     // Une seule photo : on l'enregistre telle quelle. L'enfermer dans une
     // archive obligerait à la décompresser pour voir une image.
     if (photos.length === 1) {
       const p = photos[0]
       try {
-        const blob = await fetch(p.fullUrl || p.url).then((r) => r.blob())
+        const brut = await fetch(p.fullUrl || p.url).then((r) => r.blob())
+        const blob = await cuire(brut, p)
         const qui = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
         const url = URL.createObjectURL(blob)
         const a = document.createElement('a')
@@ -244,7 +271,8 @@ export default function Gallery({ params }) {
       let i = 0
       for (const p of photos) {
         try {
-          const blob = await fetch(p.fullUrl || p.url).then((r) => r.blob())
+          const brut = await fetch(p.fullUrl || p.url).then((r) => r.blob())
+          const blob = await cuire(brut, p)
           const safe = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
           z.file(`timetoflash-${String(++i).padStart(3, '0')}-${safe}.jpg`, blob)
         } catch { i++ }
@@ -459,12 +487,7 @@ export default function Gallery({ params }) {
         </div>
       )}
       <div className="gal-head">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-          <div className="eyebrow" style={{ fontSize: 10.5 }}>Révélé · {data.photos.length} souvenirs</div>
-          <button className={`retro-btn ${retro ? 'on' : ''}`} onClick={() => setRetro((v) => !v)}>
-            RÉTRO {retro ? 'ON' : 'OFF'}
-          </button>
-        </div>
+        <div className="eyebrow" style={{ fontSize: 10.5, marginBottom: 4 }}>Révélé · {data.photos.length} souvenirs</div>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', margin: '2px 0 12px' }}>
           <h3 className="h3" style={{ margin: 0 }}>Les souvenirs de {data.hostNames || data.name}</h3>
           {data.photos.length > 1 && (
@@ -494,6 +517,25 @@ export default function Gallery({ params }) {
             </button>
           </div>
         </div>
+
+        {/* La pellicule : d'abord parce qu'on aime ça, ensuite parce qu'elle
+            décide du fichier emporté. On le dit, sinon la surprise se découvre
+            à l'ouverture de la photo enregistrée. */}
+        <div className="gal-lbl" style={{ marginTop: 12 }}>Pellicule</div>
+        <div className="chips">
+          {PELLICULES.map((f) => (
+            <button key={f.id} className={`chip ${pelliculeId === f.id ? 'active' : ''}`}
+              title={f.resume} onClick={() => choisirPellicule(f.id, avecDate)}>
+              {f.nom}
+            </button>
+          ))}
+          <button className={`chip film-chip-date ${avecDate ? 'active' : ''}`}
+            title="Les chiffres orange dans le coin, comme sur un appareil jetable"
+            onClick={() => choisirPellicule(pelliculeId, !avecDate)}>
+            Date {avecDate ? '✓' : ''}
+          </button>
+        </div>
+        <p className="film-note">{pelli.resume}{avecDate && ' · la date s\'imprime dans le coin'}</p>
 
         {/* Qui a pris quoi. À 170 participants, une rangée de pastilles devient
             illisible : on montre d'abord les plus prolifiques, et l'on cherche
@@ -562,6 +604,12 @@ export default function Gallery({ params }) {
             )}
           </div>
         )}
+        {photos.length > 0 && (pelli.canaux || avecDate) && (
+          <p className="film-note">
+            🎞️ Vos photos seront enregistrées avec la pellicule <strong>{pelli.nom}</strong>
+            {avecDate && ' et la date'}. Choisissez <em>Original</em> sans la date pour les fichiers d'origine.
+          </p>
+        )}
 
         {/* Combien de temps « plus tard » peut durer : sans cette date, on
             remet à demain un album qui finira par disparaître. */}
@@ -580,7 +628,7 @@ export default function Gallery({ params }) {
           {photos.map((p, i) => {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
-              <a key={p.id || i} className={`polaroid ${retro ? 'retro' : ''} ${selecting && selected.has(p.id) ? 'pris' : ''}`}
+              <a key={p.id || i} className={`polaroid ${selecting && selected.has(p.id) ? 'pris' : ''}`}
                 href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
                 onClick={(e) => {
                   if (!selecting) return
@@ -593,8 +641,13 @@ export default function Gallery({ params }) {
                 }}
                 style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
-                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" />
-                  {retro && <div className="tint" />}
+                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy"
+                    style={pelli.css ? { filter: pelli.css } : undefined} />
+                  {pelli.teinte && <div className="film-teinte" style={{ background: cssTeinte(pelli) }} />}
+                  {pelli.halo > 0 && <div className="film-halo" style={{ opacity: pelli.halo }} />}
+                  {pelli.vignette > 0 && <div className="film-vignette" style={{ opacity: pelli.vignette }} />}
+                  {pelli.grain > 0 && <div className="film-grain" style={{ opacity: pelli.grain }} />}
+                  {avecDate && <span className="film-date">{tamponDate(p.takenAt)}</span>}
                   {selecting && (
                     <span className={`gal-coche ${selected.has(p.id) ? 'on' : ''}`} aria-hidden="true">
                       {selected.has(p.id) ? '✓' : ''}
