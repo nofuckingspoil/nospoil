@@ -13,11 +13,13 @@ import QRCode from 'qrcode'
 import Logo from '../../../../components/Logo'
 import { getOwnerToken, saveOwnerToken } from '../../../../lib/device'
 
+// Le QR nu vient en premier : c'est ce que demandent le plus les organisateurs
+// qui ont déjà leurs faire-part ou leur décoration et veulent juste l'intégrer.
 const FORMATS = [
+  { key: 'qr', label: 'QR code seul', sub: 'Sans habillage, à intégrer à vos supports', per: 'plein cadre' },
   { key: 'affiche', label: 'Affiche A4', sub: "Entrée, bar, vestiaire", per: '1 par page' },
   { key: 'chevalet', label: 'Chevalet de table', sub: 'À plier en deux', per: '2 par page' },
   { key: 'cartons', label: 'Petits cartons', sub: 'À découper et disperser', per: '9 par page' },
-  { key: 'qr', label: 'QR code seul', sub: 'Sans habillage, à intégrer', per: 'plein cadre' },
 ]
 
 // Nom de fichier lisible tiré du nom de l'événement.
@@ -43,7 +45,9 @@ export default function PrintKit({ params }) {
   const [error, setError] = useState('')
   const [qr, setQr] = useState('')
   // Le format vit dans l'adresse : la page reste partageable et rechargeable.
-  const [format, setFormat] = useState('affiche')
+  // Le premier format de la liste est celui qu'on propose d'emblée : les deux
+  // doivent rester d'accord, sinon la sélection ne correspond pas à l'ordre.
+  const [format, setFormat] = useState(FORMATS[0].key)
 
   useEffect(() => {
     const f = new URLSearchParams(window.location.search).get('f')

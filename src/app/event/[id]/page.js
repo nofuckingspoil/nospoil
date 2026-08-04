@@ -247,7 +247,7 @@ export default function EventManage({ params }) {
     if (!ev || !isRevealed(ev, now) || bilan) return
     fetch(`/api/events/${id}/bilan`, { headers: { 'x-owner-token': getOwnerToken(id) } })
       .then((r) => r.json())
-      .then((d) => { if (!d.error) setBilan(d) })
+      .then((d) => { if (!d.error && !d.quotaBlocked) setBilan(d) })
       .catch(() => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ev, id])
@@ -581,6 +581,22 @@ export default function EventManage({ params }) {
     })
   }
 
+  // QR nu, en grand format : destiné à être repris dans un faire-part ou une
+  // décoration, pas à être imprimé tel quel.
+  async function telechargerQRSeul() {
+    try {
+      const png = await QRCode.toDataURL(`${window.location.origin}/j/${id}`, {
+        width: 2000, margin: 2, color: { dark: '#14161F', light: '#ffffff' },
+      })
+      const base = (ev?.name || 'evenement').normalize('NFD').replace(/[̀-ͯ]/g, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
+      const a = document.createElement('a')
+      a.href = png
+      a.download = `qr-${base || 'evenement'}.png`
+      a.click()
+    } catch {}
+  }
+
   const invitant = ev.hostNames || ev.name || ''
   const aplat = (v) => (v || '').trim().toLowerCase().replace(/\s+/g, ' ')
   const nomRecopie = aplat(confirmNom) === aplat(ev.name)
@@ -602,6 +618,11 @@ export default function EventManage({ params }) {
           <Link href={`/event/${id}/imprimer`} className="btn btn-accent db-hero-cta">
             Choisir un format et imprimer →
           </Link>
+          {/* Raccourci pour ceux qui ont déjà leurs faire-part ou leur
+              décoration : ils ne veulent que l'image, pas une mise en page. */}
+          <button type="button" className="db-hero-alt" onClick={telechargerQRSeul}>
+            ou télécharger le QR code seul (PNG)
+          </button>
           {/* L'agenda a quitté cette carte : il fait l'objet d'un rappel qui
               passe une fois (voir plus haut), puis reste dans « Votre accès ».
               On ne peut pas savoir si le fichier a été ouvert, donc on ne
