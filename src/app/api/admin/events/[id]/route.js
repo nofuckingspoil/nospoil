@@ -14,14 +14,37 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,gallery_code,expires_at,purged_at,cgv_accepted_at,withdrawal_waived_at,cgv_version,guests(count),photos(count)`
+    `id=eq.${id}&select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,shots_per_guest,bonus_shots,download_count,gallery_code,expires_at,purged_at,cgv_accepted_at,withdrawal_waived_at,cgv_version,guests(count),photos(count)`
   )
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
 
+  // Tous les invités, du plus récemment actif au plus ancien : c'est la vue
+  // qui permet de comprendre en un coup d'œil qui a joué le jeu.
+  const guestsRes = await selectRows(
+    'guests',
+    `event_id=eq.${id}&select=id,display_name,phone,email,shots_taken,bonus_shots,created_at,last_active_at,notified_at,notify_failed&order=last_active_at.desc.nullslast,created_at.asc`
+  )
+  const guestRows = Array.isArray(guestsRes.data) ? guestsRes.data : []
+  const guests = guestRows.map((g) => ({
+    id: g.id,
+    name: g.display_name || null,
+    phone: g.phone || null,
+    email: g.email || null,
+    shotsTaken: g.shots_taken || 0,
+    // Quota réel de cet invité : la base de l'événement plus sa recharge à lui.
+    shotsTotal: (ev.shots_per_guest || 0) + (g.bonus_shots || 0),
+    bonusUsed: (g.bonus_shots || 0) > 0,
+    joinedAt: g.created_at,
+    lastActiveAt: g.last_active_at || null,
+    notifiedAt: g.notified_at || null,
+    notifyFailed: !!g.notify_failed,
+  }))
+
   // Numéros collectés (invités ayant laissé un téléphone)
-  const contactsRes = await selectRows('guests', `event_id=eq.${id}&phone=not.is.null&select=display_name,phone&order=created_at.asc`)
-  const contacts = (Array.isArray(contactsRes.data) ? contactsRes.data : []).map((g) => ({ name: g.display_name, phone: g.phone }))
+  const contacts = guestRows
+    .filter((g) => g.phone)
+    .map((g) => ({ name: g.display_name, phone: g.phone }))
 
   // Toutes les photos (y compris masquées : l'admin voit tout)
   const photosRes = await selectRows(
@@ -56,6 +79,8 @@ export async function GET(request, { params }) {
       revealed: new Date(ev.reveal_at).getTime() <= Date.now(),
       status: ev.status,
       maxGuests: ev.max_guests,
+      shotsPerGuest: ev.shots_per_guest,
+      bonusShots: ev.bonus_shots ?? 0,
       downloadCount: ev.download_count || 0,
       galleryCode: ev.gallery_code || null,
       guestCount: ev.guests?.[0]?.count ?? 0,
@@ -66,6 +91,7 @@ export async function GET(request, { params }) {
       withdrawalWaivedAt: ev.withdrawal_waived_at || null,
       cgvVersion: ev.cgv_version || null,
     },
+    guests,
     contacts,
     photos,
   })

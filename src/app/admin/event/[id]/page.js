@@ -123,6 +123,47 @@ export default function AdminEvent() {
                 : <span className="muted">Rétractation : pas de renonciation (formule gratuite ou événement ancien)</span>}
             </div>
 
+            {/* Invités — qui a scanné, qui a joué le jeu, qui n'a rien pris */}
+            <h3 className="h3" style={{ margin: '28px 0 10px' }}>
+              Invités ({data.guests?.length || 0})
+              <span className="muted small" style={{ fontWeight: 400, marginLeft: 8 }}>
+                {data.event.shotsPerGuest} clichés
+                {data.event.bonusShots > 0 ? ` + ${data.event.bonusShots} de recharge` : ' · sans recharge'}
+              </span>
+            </h3>
+            {!data.guests || data.guests.length === 0 ? (
+              <div className="notice">Personne n'a encore scanné le QR code.</div>
+            ) : (
+              <div className="adm-guests">
+                {data.guests.map((g) => (
+                  <div className="adm-guest" key={g.id}>
+                    <div className="adm-guest-id">
+                      <strong>{g.name || 'Invité sans nom'}</strong>
+                      <span className="muted small">
+                        Arrivé {relTime(g.joinedAt)}
+                        {g.lastActiveAt ? ` · vu ${relTime(g.lastActiveAt)}` : ' · jamais revenu'}
+                      </span>
+                      {(g.email || g.phone) && (
+                        <span className="mono small muted">
+                          {[g.email, g.phone].filter(Boolean).join(' · ')}
+                        </span>
+                      )}
+                    </div>
+                    <div className="adm-guest-shots">
+                      {/* Jauge : ce qui a été pris sur ce qui était permis. */}
+                      <div className="adm-bar" aria-hidden="true">
+                        <span style={{ width: `${Math.min(100, g.shotsTotal ? (g.shotsTaken / g.shotsTotal) * 100 : 0)}%` }} />
+                      </div>
+                      <span className="mono small">
+                        {g.shotsTaken}/{g.shotsTotal}
+                        {g.bonusUsed ? ' ⚡' : ''}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
             {/* Numéros collectés */}
             {data.contacts.length > 0 && (
               <>
