@@ -109,16 +109,16 @@ export default function PromoField({ maxGuests, applied, onApplied }) {
   return (
     <div className="field" style={{ marginTop: 16 }}>
       <label>Code promo</label>
-      <div style={{ display: 'flex', gap: 8 }}>
+      {/* .promo-row : sans elle le bouton, large par défaut sur ce site,
+          écrase le champ jusqu'à le rendre invisible. */}
+      <div className="promo-row">
         <input
           value={value}
           onChange={(e) => { setValue(e.target.value.toUpperCase()); setError('') }}
           onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); verifier(value) } }}
           placeholder="MONCODE" maxLength={40} autoCapitalize="characters" autoComplete="off"
-          style={{ flex: 1, textTransform: 'uppercase' }}
         />
-        <button type="button" className="btn" onClick={() => verifier(value)} disabled={busy}
-          style={{ whiteSpace: 'nowrap' }}>
+        <button type="button" className="btn btn-ghost promo-go" onClick={() => verifier(value)} disabled={busy}>
           {busy ? '…' : 'Appliquer'}
         </button>
       </div>
