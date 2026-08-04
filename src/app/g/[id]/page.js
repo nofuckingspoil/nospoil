@@ -207,7 +207,7 @@ export default function Gallery({ params }) {
   // La pellicule vaut pour l'écran comme pour le fichier emporté : ce que l'on
   // voit est ce que l'on enregistre.
   const [pelliculeId, setPelliculeId] = useState(PELLICULE_DEFAUT)
-  const [avecDate, setAvecDate] = useState(true)
+  const [avecDate, setAvecDate] = useState(false)
   const pelli = pelliculeParId(pelliculeId)
   const [zip, setZip] = useState(null) // null | {done, total}
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.

@@ -79,7 +79,9 @@ export const PELLICULES = [
   },
 ]
 
-export const PELLICULE_DEFAUT = 'jetable'
+// L'album s'ouvre comme avant : ceux qui en ont un en cours ne verront rien
+// changer. Le jetable et sa date sont à une pastille de là.
+export const PELLICULE_DEFAUT = 'retro'
 
 export function pelliculeParId(id) {
   return PELLICULES.find((p) => p.id === id) || PELLICULES[0]
