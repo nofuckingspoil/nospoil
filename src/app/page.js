@@ -166,6 +166,7 @@ export default function Home() {
         <div className="vfooter-inner">
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff', fontSize: 15 }}>{BRAND.name}</span>
           <nav className="vfooter-links">
+            <Link href="/aide">Aide</Link>
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/cgv">CGV</Link>
             <Link href="/politique-de-confidentialite">Confidentialité</Link>

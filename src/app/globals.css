@@ -1927,3 +1927,43 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .dj-guide { flex-direction: column; align-items: flex-start; gap: 16px; padding: 20px; }
   .dj-guide .dj-btn { width: 100%; text-align: center; }
 }
+
+/* ---- Ligne « code promo » : champ + bouton ----
+   Les boutons du site sont pleine largeur par défaut ; sans ces règles, le
+   bouton mange toute la ligne et le champ devient invisible. */
+.promo-row { display: flex; gap: 8px; align-items: stretch; }
+.promo-row input {
+  flex: 1 1 auto; min-width: 0; text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.promo-go {
+  flex: 0 0 auto; width: auto; white-space: nowrap;
+  padding: 0 20px; font-size: 15px;
+}
+
+@media (max-width: 420px) {
+  .promo-row { flex-direction: column; }
+  .promo-go { width: 100%; padding: 14px 20px; }
+}
+
+/* Lien secondaire sous le grand bouton de la carte du tableau de bord. */
+.db-hero-alt {
+  display: block; margin: 12px auto 0; background: none; border: none;
+  cursor: pointer; font: inherit; font-size: 13.5px;
+  color: rgba(255,255,255,.66); text-decoration: underline;
+  text-underline-offset: 3px; padding: 4px;
+}
+.db-hero-alt:hover { color: #fff; }
+
+/* Pile de photos + son libellé : sans le mot « Mon album », les invités ne
+   devinaient pas que la pile s'ouvrait, et ne voyaient jamais leurs photos. */
+.cam-pilewrap {
+  flex: 0 0 70px; width: 70px;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.cam-pilelabel {
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .09em;
+  text-transform: uppercase; color: rgba(255,255,255,.75); white-space: nowrap;
+}
+.cam-pilelabel:hover { color: #fff; }

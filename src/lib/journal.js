@@ -42,6 +42,73 @@ export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulis
 // n'importe où dans la liste ci-dessous sans te soucier de sa position.
 const ALL_POSTS = [
   {
+    // Article envoyé dans le mail de création : c'est la réponse à « et
+    // maintenant ? », la question que se posent les organisateurs juste après
+    // avoir payé. Volontairement chronologique, pour être suivi comme un plan.
+    slug: 'evenement-cree-et-maintenant',
+    cat: 'Organisation',
+    title: 'Ton événement est créé : et maintenant ?',
+    excerpt: 'Où poser le QR code, quoi dire à tes invités, et ce qui va se passer heure par heure jusqu’à la révélation.',
+    author: 'Léa Ferrand',
+    date: '2026-08-04',
+    read: '6 min',
+    caption: 'Un QR code posé sur une table de mariage au coucher du soleil',
+    image: '/journal/evenement-cree-et-maintenant.webp',
+    body: `
+<p>Tu viens de créer ton événement. Tu as un QR code, une date de révélation, et sans doute une question : concrètement, il se passe quoi maintenant ? Voici le déroulé complet, dans l’ordre.</p>
+
+<h2>Avant le jour J : imprimer et poser</h2>
+<p>Depuis ton tableau de bord, tu as quatre formats prêts à imprimer. Le <strong>QR code seul</strong> si tu veux l’intégrer à tes faire-part ou à ta déco, l’<strong>affiche A4</strong> pour l’entrée et le bar, les <strong>chevalets</strong> à poser sur les tables, et les <strong>petits cartons</strong> à disperser un peu partout.</p>
+<p>Le principe : plus il y a de points de contact, plus il y a de scans. Trois endroits qui marchent particulièrement bien :</p>
+<ul>
+  <li><strong>Sur les tables.</strong> Les gens scannent en s’asseyant, avant l’apéritif, quand ils n’ont rien d’autre à faire.</li>
+  <li><strong>Aux toilettes.</strong> Sans plaisanter : tout le monde y passe, seul, avec son téléphone à la main. C’est le meilleur taux de scan de la soirée.</li>
+  <li><strong>Au bar.</strong> Le temps d’attente pour une commande est parfait.</li>
+</ul>
+<p>Tu n’as rien à envoyer à tes invités avant la fête. Le QR suffit, et il n’y a aucune application à installer : la caméra s’ouvre dans leur navigateur.</p>
+
+<h2>Le jour J : les trente secondes qui changent tout</h2>
+<p>Fais dire un mot au micro, par le DJ ou par un témoin. C’est ce qui fait la différence entre dix scans et cinquante. Trente secondes suffisent :</p>
+<blockquote class="dj-quote">« Ce soir, c’est vous les photographes. Scannez le QR code sur votre table : vous avez chacun 8 photos, pas une de plus. Alors visez bien. On découvrira tout ensemble demain matin. »</blockquote>
+<p>Trois éléments à ne pas oublier dans ce message : <strong>le nombre de photos</strong> (c’est ce qui crée le jeu), <strong>le moment de la révélation</strong> (c’est ce qui crée l’attente), et <strong>« aucune appli à installer »</strong> (c’est ce qui lève la dernière réticence).</p>
+
+<h3>L’astuce pour ceux qui n’y arrivent pas</h3>
+<p>Il y aura toujours quelqu’un dont l’appareil photo ne scanne pas, ou qui a un téléphone trop ancien. La solution : <strong>fais-le scanner depuis le téléphone de quelqu’un d’autre</strong>, puis envoie-lui le lien par message. Le lien fonctionne exactement comme le QR code. Personne n’est laissé de côté.</p>
+
+<h2>Pendant la soirée : ce que chacun voit</h2>
+<p>C’est le point qui surprend le plus, alors autant être clair.</p>
+<p><strong>Tes invités</strong> voient uniquement leurs propres photos et leur compteur. Ils ne voient pas celles des autres. Chacun a sa pellicule, et personne ne sait ce que les autres ont capturé.</p>
+<p><strong>Toi</strong>, depuis ton tableau de bord, tu vois qui a scanné, combien de photos chacun a prises, et les derniers clichés arrivés. C’est utile en cours de soirée : si personne n’a scanné après une heure, c’est le moment de refaire un tour des tables.</p>
+<p>Un invité peut supprimer une photo ratée : la place se libère et il peut en reprendre une autre. En revanche il ne dépassera jamais la limite que tu as fixée.</p>
+
+<h2>Avant la révélation : ta demi-heure de tri</h2>
+<p>Entre la fin de la fête et la date de révélation, <strong>tu es le seul à voir l’ensemble des photos</strong>. C’est ta fenêtre pour relire l’album tranquillement et masquer ce qui gêne : la photo prise à 3 h du matin dont l’auteur ne se souvient pas, celle où quelqu’un est visiblement mal à l’aise, le doublon exact.</p>
+<p>Masquer une photo est discret : personne n’est notifié, et l’auteur ne saura pas qu’elle a été retirée. Tu peux aussi inviter des <strong>co-organisateurs</strong> — les mariés, un témoin — pour faire ce tri à plusieurs.</p>
+<p>Un conseil : résiste à l’envie de tout lisser. Le flou de mouvement, le cadrage de travers, l’œil fermé, c’est exactement ce qui donne son âme à un album participatif. Retire ce qui gêne quelqu’un, pas ce qui n’est pas joli.</p>
+
+<h2>La révélation : le second moment</h2>
+<p>À l’heure que tu as choisie, l’album s’ouvre d’un coup, pour tout le monde. Tes invités reçoivent une notification.</p>
+<p>Mais un message de ta part au même moment change complètement l’ampleur de la chose. Prépare-le à l’avance, le jour venu tu n’auras qu’à l’envoyer dans le groupe :</p>
+<blockquote class="dj-quote">« Ça y est, la pellicule est développée 🎞️ 142 photos, prises par 47 d’entre vous. Voilà ce que vous avez vu de notre soirée : [lien]. On n’avait rien vu de tout ça. »</blockquote>
+<p>Donne un chiffre. « 142 photos par 47 personnes » est infiniment plus fort que « les photos sont dispo » : le chiffre raconte la participation collective, et c’est ce qui donne envie de cliquer tout de suite.</p>
+
+<h2>Après : télécharger, et ne pas oublier</h2>
+<p>Une seule chose compte vraiment : <strong>télécharger l’album complet</strong>, en un clic depuis ton tableau de bord. Les photos restent en ligne six mois après la révélation, puis sont supprimées automatiquement — tu es prévenu par mail plusieurs fois avant.</p>
+<p>Range ce téléchargement au même endroit que le reste de tes photos, et envoie le lien de la galerie aux absents : elle reste accessible à tous ceux qui l’ont.</p>
+
+<h2>En résumé</h2>
+<ul>
+  <li><strong>Avant</strong> — imprime, pose le QR à plusieurs endroits, prépare le mot au micro.</li>
+  <li><strong>Pendant</strong> — fais annoncer au micro, surveille les scans depuis ton tableau de bord.</li>
+  <li><strong>Après la fête</strong> — relis l’album seul, masque ce qui gêne.</li>
+  <li><strong>À la révélation</strong> — envoie ton message avec le chiffre.</li>
+  <li><strong>Dans les six mois</strong> — télécharge tout et mets-le à l’abri.</li>
+</ul>
+<p>Si tu veux aller plus loin — combien de clichés donner selon le type de fête, quelle heure de révélation choisir, comment débloquer les invités timides — tout est détaillé dans <a href="/guide">le guide de l’organisateur</a>.</p>
+<p>Et garde sous la main <a href="/aide">les 9 pannes les plus fréquentes</a> : caméra refusée, mini-navigateur, réseau qui rame. C’est la page à transférer à un invité qui coince le jour J.</p>
+`,
+  },
+  {
     slug: 'appareil-photo-jetable-mariage',
     cat: 'Photo',
     title: 'Appareil photo jetable de mariage : le carton ou l’appli ?',

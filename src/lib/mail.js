@@ -176,7 +176,24 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
           <strong style="color:#221A12;">Le lien à donner à vos invités :</strong><br>
           <a href="${joinUrl}" style="color:#C9431F;word-break:break-all;">${joinUrl}</a>
         </div>
-        ${date ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">Révélation des photos :</strong><br>${date}</div>` : ''}`,
+        ${date ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">Révélation des photos :</strong><br>${date}</div>` : ''}
+        <!-- « Et maintenant ? » est la question qui suit immédiatement la
+             création. On y répond ici plutôt que d'alourdir le tableau de bord. -->
+        <div style="margin-top:26px;padding:18px 20px;background:#FCF8F0;border:1px solid rgba(34,26,18,.12);border-radius:14px;">
+          <div style="font-size:15px;font-weight:700;color:#221A12;margin-bottom:6px;">Et maintenant, comment ça se passe ?</div>
+          <div style="font-size:14px;line-height:1.6;color:#5f5341;">
+            Où poser le QR code, quoi faire dire au micro, ce que voient vos invités
+            pendant la soirée, et comment relire l'album avant la révélation.
+          </div>
+          <div style="padding-top:12px;">
+            <a href="${siteUrl()}/journal/evenement-cree-et-maintenant" style="color:#C9431F;font-weight:700;font-size:14px;text-decoration:underline;">Lire le déroulé complet (6 min) →</a>
+          </div>
+          <div style="padding-top:10px;font-size:13px;color:#6E6252;">
+            Un invité bloqué le jour J ? Gardez
+            <a href="${siteUrl()}/aide" style="color:#6E6252;">la page d'aide</a>
+            sous la main : elle se transfère telle quelle.
+          </div>
+        </div>`,
       footer: `Ne transmettez pas le lien du tableau de bord à vos invités — il donne accès à la gestion de l'événement.`,
     }),
   }
@@ -239,6 +256,31 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
         </div>
         ${revealDate ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">Révélation prévue :</strong><br>${revealDate}</div>` : ''}`,
       footer: `Le jour de la révélation, votre tableau de bord vous proposera un message tout prêt à envoyer à vos invités.`,
+    }),
+  }
+}
+
+// ---------- Alerte immédiate : la formule vient d'être dépassée ----------
+// Envoyé une seule fois, au moment précis où un invité de trop rejoint. Attendre
+// le lendemain, c'est laisser l'organisateur découvrir un album verrouillé sans
+// avoir jamais su qu'il l'était : ici, il l'apprend pendant qu'il peut encore
+// agir tranquillement, et personne n'a été bloqué pour autant.
+export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, upgradeMaxGuests, upgradePrice }) {
+  const offre = upgradeMaxGuests
+    ? `Passer à ${upgradeMaxGuests} invités${upgradePrice ? ` — ${upgradePrice}` : ''} →`
+    : 'Mettre ma formule à niveau →'
+  return {
+    subject: `Votre formule est dépassée — « ${eventName} »`,
+    html: layout({
+      title: 'Plus d’invités que prévu',
+      intro: `Vous êtes désormais <strong>${guestCount} invités</strong> sur « <strong>${eventName}</strong> », pour une formule qui en couvre <strong>${maxGuests}</strong>. Bonne nouvelle : <strong>personne n’a été bloqué</strong>, tout le monde photographie normalement.`,
+      body: `${bigButton(ownerUrl, offre)}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          En revanche, <strong style="color:#221A12;">l’album ne s’ouvrira pas</strong> — ni pour vos
+          invités, ni pour vous — tant que votre formule ne correspond pas au nombre réel d’invités.
+          Les photos sont bien enregistrées et vous attendent.
+        </div>`,
+      footer: `Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.`,
     }),
   }
 }
