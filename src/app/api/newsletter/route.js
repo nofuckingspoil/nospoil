@@ -2,9 +2,18 @@ import { normalizeEmail, isValidEmail } from '../../../lib/account'
 
 export const runtime = 'nodejs'
 
-// D'où vient le contact : sert à distinguer, dans Brevo, l'inscrit newsletter
-// du lecteur du guide (qui a une intention d'achat bien plus marquée).
-const SOURCES = ['journal', 'guide']
+// D'où vient le contact, et dans quelle liste Brevo il atterrit. Séparer les
+// deux compte : le lecteur du guide prépare un événement, l'abonné du blog
+// passait par là — on ne leur écrira pas la même chose.
+//
+// Les identifiants correspondent aux listes créées dans le compte Brevo
+// (CRM › Contacts › Listes). Une variable d'environnement peut les remplacer
+// sans toucher au code, par exemple pour un compte de test.
+const LISTES = {
+  journal: Number(process.env.BREVO_LIST_JOURNAL) || 3, // « Time to Flash — Blog »
+  guide: Number(process.env.BREVO_LIST_GUIDE) || 4,     // « Time to Flash — Guide »
+}
+const SOURCES = Object.keys(LISTES)
 
 // Inscription à la newsletter du journal : ajoute/actualise le contact dans Brevo.
 export async function POST(request) {
@@ -30,6 +39,9 @@ export async function POST(request) {
         email,
         updateEnabled: true,
         attributes: { SOURCE: source },
+        // L'attribut SOURCE renseigne, la liste regroupe : c'est elle qui
+        // permet d'écrire à tout le monde d'un coup, plus tard.
+        listIds: [LISTES[source]],
       }),
       cache: 'no-store',
     })
