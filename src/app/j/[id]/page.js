@@ -478,7 +478,22 @@ export default function GuestCamera({ params }) {
         Prenez <strong>{meta?.shotsPerGuest} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{meta && formatReveal(meta.revealAt)}</strong>.
       </p>
       <div className="spacer" />
-      <button className="btn btn-accent" onClick={() => setPhase('name')}>Participer à l'album collectif →</button>
+      {/* Quand on sait déjà qui c'est — l'organisateur, ou quelqu'un dont le
+          serveur connaît le nom — on ne redemande pas ce qu'on a sous la main.
+          Le nom reste modifiable juste en dessous. */}
+      {name.trim() ? (
+        <>
+          <button className="btn btn-accent" onClick={() => join(name.trim(), email)}>
+            Continuer en tant que {name.trim()} →
+          </button>
+          <button type="button" className="linklike" onClick={() => setPhase('name')}
+            style={{ marginTop: 12, fontSize: 13.5 }}>
+            Ce n'est pas vous ?
+          </button>
+        </>
+      ) : (
+        <button className="btn btn-accent" onClick={() => setPhase('name')}>Participer à l'album collectif →</button>
+      )}
       <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
     </main>
   )
@@ -632,6 +647,13 @@ export default function GuestCamera({ params }) {
             • <strong>iPhone (Safari)</strong> : touche « aA » à gauche de l'adresse → Réglages du site → Caméra → Autoriser.<br />
             • <strong>Android (Chrome)</strong> : touche le cadenas 🔒 → Autorisations → Caméra.<br />
             <span style={{ opacity: .8 }}>En attendant, le gros bouton ouvre l'appareil photo de ton téléphone.</span>
+            {/* Dernier recours : la page d'aide couvre les autres causes
+                (mini-navigateur, réseau, téléphone partagé…). */}
+            <br />
+            <a href="/aide" target="_blank" rel="noreferrer"
+              style={{ color: '#fff', textDecoration: 'underline', display: 'inline-block', marginTop: 6 }}>
+              Voir les autres solutions →
+            </a>
           </div>
         </details>
       )}
@@ -652,18 +674,27 @@ export default function GuestCamera({ params }) {
 
       {/* Bas : pile de photos (gauche) · déclencheur (centre) · import galerie (droite) */}
       <div className="cam-bottom">
-        {roll.length === 0 ? (
-          <div className="cam-pile"><span className="pf-empty" /></div>
-        ) : (
-          <button className="cam-pile" onClick={() => setShowAlbum(true)} aria-label="Voir l'album et mes photos">
-            {roll.slice(0, 3).map((p, i) => (
-              <span key={p.tempId || p.id || i} className="pf" style={{ zIndex: 3 - i, transform: `rotate(${[-6, 7, 14][i] || 0}deg)` }}>
-                <img src={p.url} alt="" loading="lazy" />
-              </span>
-            ))}
-            {roll.length >= 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
-          </button>
-        )}
+        {/* Rien n'indiquait que cette pile s'ouvrait : les invités ne
+            trouvaient pas leurs photos. Le libellé lève le doute. */}
+        <div className="cam-pilewrap">
+          {roll.length === 0 ? (
+            <div className="cam-pile"><span className="pf-empty" /></div>
+          ) : (
+            <button className="cam-pile" onClick={() => setShowAlbum(true)} aria-label="Voir l'album et mes photos">
+              {roll.slice(0, 3).map((p, i) => (
+                <span key={p.tempId || p.id || i} className="pf" style={{ zIndex: 3 - i, transform: `rotate(${[-6, 7, 14][i] || 0}deg)` }}>
+                  <img src={p.url} alt="" loading="lazy" />
+                </span>
+              ))}
+              {roll.length >= 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
+            </button>
+          )}
+          {roll.length > 0 && (
+            <button type="button" className="cam-pilelabel" onClick={() => setShowAlbum(true)}>
+              Mon album
+            </button>
+          )}
+        </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           {liveCam ? (
             <button className="shutter" onClick={snap} disabled={busy || full} aria-label="Déclencher"><span /></button>
@@ -674,7 +705,7 @@ export default function GuestCamera({ params }) {
             </>
           )}
         </div>
-        <div className="cam-pile" aria-hidden="true" style={{ pointerEvents: 'none' }} />
+        <div className="cam-pilewrap" aria-hidden="true" style={{ pointerEvents: 'none' }} />
       </div>
 
       <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
