@@ -17,17 +17,22 @@ export const EMAIL_VERIFICATION_ENABLED = false
 export const SHOTS_MIN = 3
 export const SHOTS_MAX = 15
 
+// Recharge unique offerte à l'invité qui a épuisé son quota. 0 = pas de recharge.
+export const BONUS_MAX = 5
+
 export const TIERS = [
   { maxGuests: 5,   priceCents: 0,    popular: false },
   { maxGuests: 10,  priceCents: 499,  popular: false },
   { maxGuests: 50,  priceCents: 1499, popular: true  },
   { maxGuests: 100, priceCents: 2499, popular: false },
   { maxGuests: 150, priceCents: 2999, popular: false },
-  { maxGuests: 200, priceCents: 4999, popular: false },
+  { maxGuests: 300, priceCents: 4999, popular: false },
 ]
 
-// Le plus grand palier n'est jamais bloquant (cf. quotaExceeded) : au-delà,
-// il n'y aurait plus rien à vendre. Il vaut donc « et plus », et s'affiche ainsi.
+// Le plus grand palier s'annonce « jusqu'à 300 », mais n'est jamais bloquant
+// (cf. quotaExceeded) : au-delà, il n'y aurait plus rien à vendre, et on ne
+// retient jamais un album que l'organisateur ne pourrait pas débloquer.
+// Au-delà de 300, on invite à nous écrire.
 export const TOP_TIER = TIERS[TIERS.length - 1]
 
 export function formatPrice(cents) {

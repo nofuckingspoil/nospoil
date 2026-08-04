@@ -135,7 +135,7 @@ const cgv = {
     <tr><td>50 invités</td><td>50</td><td>14,99 €</td></tr>
     <tr><td>100 invités</td><td>100</td><td>24,99 €</td></tr>
     <tr><td>150 invités</td><td>150</td><td>29,99 €</td></tr>
-    <tr><td>200 invités et plus</td><td>200 et au-delà</td><td>49,99 €</td></tr>
+    <tr><td>300 invités</td><td>300 et au-delà</td><td>49,99 €</td></tr>
   </tbody>
 </table>
 <p>Les prix sont indiqués <strong>en euros, toutes taxes comprises</strong>. Aucun abonnement n'est souscrit : chaque Formule donne lieu à un <strong>paiement unique</strong>, dû à la création de l'Événement.</p>

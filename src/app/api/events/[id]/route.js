@@ -4,7 +4,7 @@ import { purgeDateISO } from '../../../../lib/retention'
 import { roleFor, canManage, canDelete, ADMIN, MESSAGE_SUSPENDU } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
 // (isRevealed sert aussi à figer les dates une fois l'album ouvert — voir PATCH)
-import { tierForCount, upgradeCents } from '../../../../lib/pricing'
+import { tierForCount, upgradeCents, SHOTS_MIN, SHOTS_MAX, BONUS_MAX } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 
 // Un invité est considéré « en train de jouer » si son appareil a donné signe
@@ -215,9 +215,11 @@ export async function PATCH(request, { params }) {
     if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
       return Response.json({ error: 'La soirée a commencé : le nombre de photos est figé.' }, { status: 409 })
     }
+    // Mêmes bornes que le formulaire de création (src/lib/pricing.js) et que
+    // les CGV : l'API ne doit pas accepter ce que l'interface interdit.
     const n = parseInt(body.shotsPerGuest, 10)
-    if (!Number.isFinite(n) || n < 3 || n > 30) {
-      return Response.json({ error: 'Nombre de photos invalide (entre 3 et 30).' }, { status: 400 })
+    if (!Number.isFinite(n) || n < SHOTS_MIN || n > SHOTS_MAX) {
+      return Response.json({ error: `Nombre de photos invalide (entre ${SHOTS_MIN} et ${SHOTS_MAX}).` }, { status: 400 })
     }
     patch.shots_per_guest = n
   }
@@ -229,8 +231,8 @@ export async function PATCH(request, { params }) {
       return Response.json({ error: 'La soirée a commencé : la recharge est figée.' }, { status: 409 })
     }
     const n = parseInt(body.bonusShots, 10)
-    if (!Number.isFinite(n) || n < 0 || n > 5) {
-      return Response.json({ error: 'Recharge invalide (entre 0 et 5).' }, { status: 400 })
+    if (!Number.isFinite(n) || n < 0 || n > BONUS_MAX) {
+      return Response.json({ error: `Recharge invalide (entre 0 et ${BONUS_MAX}).` }, { status: 400 })
     }
     patch.bonus_shots = n
   }
