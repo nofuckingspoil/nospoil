@@ -904,40 +904,65 @@ export default function EventManage({ params }) {
         <Link href={`/j/${id}`}>Mon appareil 📷</Link>
       </nav>
 
-      {/* Formule dépassée : prévenu dès le dépassement, jamais à la dernière
-          minute. Les invités, eux, n'ont jamais été bloqués. */}
-      {ev.quotaExceeded && ev.upgrade && (
+      {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque
+          soit refusé — c'est le message qu'on veut voir le plus souvent.
+          « Dépassée » ne concerne plus que les événements d'avant la porte. */}
+      {(ev.quotaExceeded || ev.quotaFull) && (ev.upgrade || ev.surMesure) && (
         <div className="db-quota">
           <div className="db-quota-top">
-            <span className="db-eyebrow">formule dépassée</span>
+            <span className="db-eyebrow">{ev.quotaExceeded ? 'formule dépassée' : 'formule complète'}</span>
             <span className="db-quota-count">{ev.guestCount} / {ev.maxGuests} invités</span>
           </div>
           <h2 className="db-quota-title">
-            {revealedTime
-              ? "L'album attend votre formule"
-              : "Agrandissez votre formule avant la révélation"}
+            {ev.quotaExceeded
+              ? (revealedTime ? "L'album attend votre formule" : 'Agrandissez votre formule avant la révélation')
+              : 'Le prochain invité devra attendre'}
           </h2>
           <p className="db-quota-sub">
-            Vous êtes <strong>{ev.guestCount}</strong> alors que votre formule en couvre{' '}
-            <strong>{ev.maxGuests}</strong>. Tout le monde a pu photographier normalement —
-            rien n'a été bloqué pendant la fête.{' '}
-            {revealedTime
-              ? "Il ne reste qu'à passer à la formule supérieure pour ouvrir l'album."
-              : `Mais l'album ne s'ouvrira pas le ${formatShort(ev.revealAt)} tant que la formule ne correspond pas.`}
+            {ev.quotaExceeded ? (
+              <>
+                Vous êtes <strong>{ev.guestCount}</strong> alors que votre formule en couvre{' '}
+                <strong>{ev.maxGuests}</strong>. Tout le monde a pu photographier normalement —
+                rien n'a été bloqué pendant la fête.{' '}
+                {revealedTime
+                  ? "Il ne reste qu'à passer à la formule supérieure pour ouvrir l'album."
+                  : `Mais l'album ne s'ouvrira pas le ${formatShort(ev.revealAt)} tant que la formule ne correspond pas.`}
+              </>
+            ) : (
+              <>
+                Vos <strong>{ev.maxGuests}</strong> places sont prises. Ceux qui sont là continuent
+                de photographier sans rien voir changer, mais la prochaine personne qui scannera le
+                QR code restera sur un écran d'attente jusqu'à ce que vous agrandissiez. Vous serez
+                prévenu par mail si ça arrive.
+              </>
+            )}
           </p>
-          <button className="btn btn-accent db-quota-cta" onClick={startUpgrade} disabled={upgrading}>
-            {upgrading
-              ? 'Redirection vers le paiement…'
-              : `Passer à ${ev.upgrade.maxGuests} invités — ${formatPrice(ev.upgrade.priceCents)} →`}
-          </button>
+          {/* Au plus grand palier, il n'y a plus de formule au catalogue : on
+              ouvre une conversation au lieu d'un paiement. */}
+          {ev.surMesure ? (
+            <a
+              className="btn btn-accent db-quota-cta"
+              href={`mailto:${ev.contactEmail || 'support@timetoflash.fr'}?subject=${encodeURIComponent(`Plus de ${ev.maxGuests} invités — ${ev.name || 'mon événement'}`)}`}
+            >
+              Nous écrire pour agrandir →
+            </a>
+          ) : (
+            <button className="btn btn-accent db-quota-cta" onClick={startUpgrade} disabled={upgrading}>
+              {upgrading
+                ? 'Redirection vers le paiement…'
+                : `Passer à ${ev.upgrade.maxGuests} invités — ${formatPrice(ev.upgrade.priceCents)} →`}
+            </button>
+          )}
           <p className="db-quota-foot">
-            Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.
+            {ev.surMesure
+              ? `Au-delà de ${ev.maxGuests} invités, nous établissons un tarif sur mesure. Écrivez-nous, on ouvre l'accès dans la foulée.`
+              : 'Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.'}
           </p>
           {upgradeMsg && upgradeMsg !== 'ok' && <div className="err" style={{ marginTop: 10 }}>{upgradeMsg}</div>}
         </div>
       )}
 
-      {upgradeMsg === 'ok' && !ev.quotaExceeded && (
+      {upgradeMsg === 'ok' && !ev.quotaExceeded && !ev.quotaFull && (
         <div className="notice" style={{ marginTop: 16 }}>
           ✅ <strong>Formule agrandie</strong> — vous couvrez maintenant {ev.maxGuests} invités.
         </div>

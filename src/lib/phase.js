@@ -5,8 +5,6 @@
 //  le temps qui passe. Trois moments, une seule carte qui change.
 // ============================================================
 
-import { TIERS } from './pricing'
-
 export const AVANT = 'avant'
 export const JOUR_J = 'jourj'
 export const APRES = 'apres'
@@ -31,9 +29,10 @@ export function eventPhase(ev, now = Date.now()) {
 
 // La formule souscrite est-elle dépassée ?
 //
-// Le palier n'a jamais empêché personne d'entrer : pendant la fête, tout le monde
-// joue, quoi qu'il arrive. C'est l'ouverture de l'album qui attend que la formule
-// corresponde au nombre réel d'invités.
+// Le plus grand palier bloque comme les autres. Il n'a pas de successeur en
+// ligne, mais il a une suite : au-delà de 300, le tarif est fait à la main, et
+// c'est précisément ce qu'on annonce depuis la page des prix. Le laisser passer
+// reviendrait à offrir les plus gros événements — les seuls qui coûtent cher.
 //
 // Prudence volontaire : si l'appelant ne fournit pas les deux nombres, on
 // considère qu'il n'y a pas de dépassement — on ne bloque jamais sur un doute.
@@ -42,9 +41,6 @@ export function quotaExceeded(ev) {
   const count = Number(ev?.guestCount)
   if (!Number.isFinite(max) || max <= 0) return false
   if (!Number.isFinite(count)) return false
-  // Au plus grand palier, il n'y a plus rien à vendre : on ne retient jamais un
-  // album que l'organisateur n'aurait aucun moyen de débloquer.
-  if (max >= TIERS[TIERS.length - 1].maxGuests) return false
   return count > max
 }
 

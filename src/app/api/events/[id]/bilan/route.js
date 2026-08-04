@@ -1,5 +1,6 @@
 import { selectRows, signPhotos } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
+import { quotaExceeded } from '../../../../../lib/phase'
 
 export const runtime = 'nodejs'
 
@@ -52,6 +53,14 @@ export async function GET(request, { params }) {
 
   const invitesRes = await selectRows('guests', `event_id=eq.${id}&select=id`)
   const nbInvites = Array.isArray(invitesRes.data) ? invitesRes.data.length : 0
+
+  // Formule dépassée : le bilan montre la photo la plus aimée et nomme les
+  // invités. C'est l'album par une autre porte — elle se ferme comme l'autre.
+  const evRes = await selectRows('events', `id=eq.${id}&select=max_guests`)
+  const maxGuests = Array.isArray(evRes.data) ? evRes.data[0]?.max_guests : null
+  if (quotaExceeded({ maxGuests, guestCount: nbInvites })) {
+    return Response.json({ quotaBlocked: true }, { status: 402 })
+  }
 
   // --- Le photographe de la soirée ---
   // À égalité, on départage par la rapidité : celui qui a sorti son quota le

@@ -4,6 +4,7 @@
 // ============================================================
 import 'server-only'
 import { BRAND } from './brand'
+import { CONTACT_EMAIL } from './pricing'
 
 const API = 'https://api.brevo.com/v3/smtp/email'
 
@@ -260,27 +261,41 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
   }
 }
 
-// ---------- Alerte immédiate : la formule vient d'être dépassée ----------
-// Envoyé une seule fois, au moment précis où un invité de trop rejoint. Attendre
-// le lendemain, c'est laisser l'organisateur découvrir un album verrouillé sans
-// avoir jamais su qu'il l'était : ici, il l'apprend pendant qu'il peut encore
-// agir tranquillement, et personne n'a été bloqué pour autant.
-export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, upgradeMaxGuests, upgradePrice }) {
-  const offre = upgradeMaxGuests
-    ? `Passer à ${upgradeMaxGuests} invités${upgradePrice ? ` — ${upgradePrice}` : ''} →`
-    : 'Mettre ma formule à niveau →'
+// ---------- Alerte immédiate : quelqu'un attend à la porte ----------
+// Part à la seconde où un invité de trop scanne le QR code. Ce mail est le seul
+// lien entre cette personne restée sur le pas de la porte et celui qui peut la
+// faire entrer : il doit se lire d'un coup d'œil, au milieu d'une fête, et ne
+// demander qu'un seul geste. D'où le prénom dans l'objet — c'est quelqu'un de
+// précis qui attend, pas un compteur qui clignote.
+export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom, upgradeMaxGuests, upgradePrice }) {
+  const qui = prenom ? `<strong>${prenom}</strong>` : `Un invité`
+  // Pas de palier au-dessus : on est au plus grand format, le tarif se fait à la
+  // main. Le bouton mène alors vers nous, pas vers un paiement qui n'existe pas.
+  const surMesure = !upgradeMaxGuests
+  const offre = surMesure
+    ? 'Nous écrire pour agrandir →'
+    : `Passer à ${upgradeMaxGuests} invités${upgradePrice ? ` — ${upgradePrice}` : ''} →`
+  const lien = surMesure ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Plus de ${maxGuests} invités — ${eventName}`)}` : ownerUrl
   return {
-    subject: `Votre formule est dépassée — « ${eventName} »`,
+    subject: prenom
+      ? `${prenom} attend d’entrer — « ${eventName} »`
+      : `Un invité attend d’entrer — « ${eventName} »`,
     html: layout({
-      title: 'Plus d’invités que prévu',
-      intro: `Vous êtes désormais <strong>${guestCount} invités</strong> sur « <strong>${eventName}</strong> », pour une formule qui en couvre <strong>${maxGuests}</strong>. Bonne nouvelle : <strong>personne n’a été bloqué</strong>, tout le monde photographie normalement.`,
-      body: `${bigButton(ownerUrl, offre)}
+      title: prenom ? `${prenom} attend d’entrer` : `Un invité attend d’entrer`,
+      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais votre formule est complète : elle couvre <strong>${maxGuests} invités</strong> et ils sont déjà ${guestCount}.`,
+      body: `${bigButton(lien, offre)}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          En revanche, <strong style="color:#221A12;">l’album ne s’ouvrira pas</strong> — ni pour vos
-          invités, ni pour vous — tant que votre formule ne correspond pas au nombre réel d’invités.
-          Les photos sont bien enregistrées et vous attendent.
+          ${surMesure
+            ? `Au-delà de ${maxGuests} invités, nous établissons un tarif sur mesure — écrivez-nous et
+               nous ouvrons l’accès dans la foulée. <strong style="color:#221A12;">Vos autres invités
+               continuent de photographier normalement</strong> pendant ce temps.`
+            : `Un seul geste et ${prenom ? 'elle' : 'la personne'} entre aussitôt : son écran s’ouvrira
+               tout seul, elle n’a rien à refaire. <strong style="color:#221A12;">Vos autres invités
+               continuent de photographier normalement</strong> pendant ce temps.`}
         </div>`,
-      footer: `Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.`,
+      footer: surMesure
+        ? `Répondez simplement à ce message si c’est plus simple : nous vous recontactons vite.`
+        : `Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.`,
     }),
   }
 }

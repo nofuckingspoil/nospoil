@@ -4,7 +4,7 @@ import { purgeDateISO } from '../../../../lib/retention'
 import { roleFor, canManage, canDelete, ADMIN, MESSAGE_SUSPENDU } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
 // (isRevealed sert aussi à figer les dates une fois l'album ouvert — voir PATCH)
-import { tierForCount, upgradeCents, SHOTS_MIN, SHOTS_MAX, BONUS_MAX } from '../../../../lib/pricing'
+import { upgradeFor, SHOTS_MIN, SHOTS_MAX, BONUS_MAX, CONTACT_EMAIL } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 
 // Un invité est considéré « en train de jouer » si son appareil a donné signe
@@ -116,12 +116,22 @@ export async function GET(request, { params }) {
     // message doit être actionnable, pas seulement alarmant.
     payload.maxGuests = ev.max_guests || null
     payload.quotaExceeded = quotaExceeded(dates)
-    if (payload.quotaExceeded) {
-      const cible = tierForCount(guestCount)
-      payload.upgrade = {
-        maxGuests: cible.maxGuests,
-        priceCents: upgradeCents(ev.max_guests, cible.maxGuests),
-      }
+
+    // Formule pleine, mais pas encore dépassée : le prochain invité restera à la
+    // porte. Le lui dire maintenant vaut mieux que de le lui apprendre par un
+    // invité coincé devant un QR code — c'est la même somme, sans le moment de
+    // gêne.
+    const max = Number(ev.max_guests)
+    payload.quotaFull = Number.isFinite(max) && max > 0 && guestCount >= max
+
+    if (payload.quotaExceeded || payload.quotaFull) {
+      // Sur une formule pleine, la cible est le palier au-dessus : celui qui
+      // attend n'est pas encore compté.
+      payload.upgrade = upgradeFor(ev.max_guests, payload.quotaExceeded ? guestCount : guestCount + 1)
+      // Plus rien à vendre en ligne : c'est un tarif sur mesure, et l'écran doit
+      // proposer de nous écrire plutôt qu'un bouton de paiement introuvable.
+      payload.surMesure = !payload.upgrade
+      payload.contactEmail = payload.surMesure ? CONTACT_EMAIL : undefined
     }
 
     // Pendant la soirée, l'organisateur veut voir que ça tourne : qui joue,
@@ -141,15 +151,20 @@ export async function GET(request, { params }) {
       }))
       payload.activeNow = payload.guests.filter((g) => g.active).length
 
-      const recent = await selectRows(
-        'photos',
-        `event_id=eq.${id}&select=id,storage_path,thumb_path,taken_at&order=taken_at.desc&limit=8`
-      )
-      const rows = Array.isArray(recent.data) ? recent.data : []
-      const signed = await signPhotos(rows.map((r) => r.thumb_path || r.storage_path), 3600)
-      payload.recentPhotos = rows
-        .map((r) => ({ id: r.id, url: signed[r.thumb_path || r.storage_path], takenAt: r.taken_at }))
-        .filter((p) => p.url)
+      // Sauf formule dépassée : les dernières photos sont un aperçu de l'album,
+      // et l'album entier attend la mise à niveau. Sur un petit événement, huit
+      // vignettes, c'est déjà toute la soirée.
+      if (!payload.quotaExceeded) {
+        const recent = await selectRows(
+          'photos',
+          `event_id=eq.${id}&select=id,storage_path,thumb_path,taken_at&order=taken_at.desc&limit=8`
+        )
+        const rows = Array.isArray(recent.data) ? recent.data : []
+        const signed = await signPhotos(rows.map((r) => r.thumb_path || r.storage_path), 3600)
+        payload.recentPhotos = rows
+          .map((r) => ({ id: r.id, url: signed[r.thumb_path || r.storage_path], takenAt: r.taken_at }))
+          .filter((p) => p.url)
+      }
     }
   }
 

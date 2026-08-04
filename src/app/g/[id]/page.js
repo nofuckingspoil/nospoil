@@ -128,6 +128,56 @@ function PreReveal({ data, onDone }) {
   )
 }
 
+// Formule dépassée, vu par l'organisateur. Lui seul arrive ici : les invités
+// gardent l'écran neutre. On dit la raison et on donne la sortie dans le même
+// écran — un album verrouillé sans bouton pour le déverrouiller serait cruel.
+function QuotaGate({ data, id }) {
+  const q = data.quota || {}
+  const prix = q.upgrade?.priceCents
+    ? (q.upgrade.priceCents / 100).toFixed(2).replace('.', ',') + ' €'
+    : null
+  // Au plus grand palier, il n'y a plus de formule à acheter : le tarif se fait
+  // à la main. Le bouton doit mener à nous, jamais vers un paiement qui n'existe
+  // pas — sinon l'organisateur tourne en rond avec son album fermé.
+  const surMesure = !q.upgrade?.maxGuests
+
+  return (
+    <main className="screen screen-cream center">
+      <div className="card" style={{ maxWidth: 420, textAlign: 'center' }}>
+        <div style={{ fontSize: 40, marginBottom: 10 }}>🔒</div>
+        <h3 className="h3" style={{ marginBottom: 6 }}>L&apos;album attend votre formule</h3>
+        <p className="muted small" style={{ marginBottom: 16 }}>
+          Vous avez accueilli <strong>{q.guestCount}</strong> invités alors que votre formule
+          en couvre <strong>{q.maxGuests}</strong>. Tout le monde a pu photographier normalement,
+          rien n&apos;a été perdu — les photos vous attendent.
+        </p>
+        {surMesure ? (
+          <a
+            className="btn btn-accent"
+            href={`mailto:${q.contactEmail || 'support@timetoflash.fr'}?subject=${encodeURIComponent(`Plus de ${q.maxGuests} invités — ${data.name || 'mon événement'}`)}`}
+            style={{ display: 'block', marginBottom: 10 }}
+          >
+            Nous écrire pour ouvrir l&apos;album
+          </a>
+        ) : (
+          <Link
+            className="btn btn-accent"
+            href={`/event/${id}`}
+            style={{ display: 'block', marginBottom: 10 }}
+          >
+            Passer à {q.upgrade.maxGuests} invités{prix ? ` — ${prix}` : ''}
+          </Link>
+        )}
+        <p className="muted" style={{ fontSize: 12 }}>
+          {surMesure
+            ? `Au-delà de ${q.maxGuests} invités, nous établissons un tarif sur mesure. Écrivez-nous, on ouvre l'accès dans la foulée.`
+            : 'Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.'}
+        </p>
+      </div>
+    </main>
+  )
+}
+
 function CodeGate({ data, value, onChange, onSubmit, err }) {
   return (
     <main className="screen screen-cream center">
@@ -314,6 +364,9 @@ export default function Gallery({ params }) {
 
   if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
   if (!data) return <main className="center-screen"><p className="muted">Chargement…</p></main>
+  // Formule dépassée : l'organisateur est retenu comme tout le monde, mais on
+  // lui dit pourquoi. À vérifier avant PreReveal, qui resterait vague.
+  if (data.quotaBlocked) return <QuotaGate data={data} id={id} />
   // Galerie cachée tant que non révélée — sauf aperçu organisateur
   if (!data.revealed && !data.ownerPreview) return <PreReveal data={data} onDone={load} />
   // Album protégé par un code : porte d'entrée pour les invités

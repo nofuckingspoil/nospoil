@@ -1,5 +1,6 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
 import { isRevealed, quotaExceeded } from '../../../../lib/phase'
+import { upgradeFor, CONTACT_EMAIL } from '../../../../lib/pricing'
 import { MESSAGE_SUSPENDU } from '../../../../lib/authz'
 
 export async function GET(request, { params }) {
@@ -33,17 +34,38 @@ export async function GET(request, { params }) {
   const overQuota = quotaExceeded(etat)
 
   // L'organisateur (appareil créateur) peut voir les photos avant la révélation.
+  //
+  // Une exception, et une seule : la formule dépassée le retient lui aussi.
+  // L'aperçu organisateur existe pour vérifier l'album avant de l'ouvrir, pas
+  // pour le récupérer sans passer par la formule qui correspond au nombre réel
+  // d'invités. Sans ce verrou, le dépassement ne coûtait rien : il suffisait de
+  // télécharger depuis l'appareil créateur.
   const ownerToken = request.headers.get('x-owner-token')
   const isOwner = !!ownerToken && ownerToken === ev.owner_token
-  const canView = revealed || isOwner
+  const canView = revealed || (isOwner && !overQuota)
 
   if (!canView) {
+    // Formule dépassée : l'invité n'y est pour rien, on reste neutre côté écran
+    // (« bientôt »). L'organisateur, lui, a droit à la vraie raison et au moyen
+    // d'y remédier — un écran bloquant sans issue serait insupportable.
+    const quotaOwner = overQuota && isOwner
+    // `null` au plus grand palier : il n'y a plus de formule à vendre, l'écran
+    // proposera de nous écrire pour un tarif sur mesure.
+    const cible = quotaOwner ? upgradeFor(ev.max_guests, etat.guestCount) : null
     return Response.json({
       revealed: false,
       paused: !!ev.reveal_paused, // l'organisateur a mis la révélation en pause
-      // Formule dépassée : l'invité n'y est pour rien, on reste neutre côté
-      // écran (« bientôt »). C'est l'organisateur, et lui seul, qu'on alerte.
       pending: overQuota,
+      isOwner,
+      quotaBlocked: quotaOwner || undefined,
+      quota: quotaOwner
+        ? {
+            guestCount: etat.guestCount,
+            maxGuests: ev.max_guests,
+            upgrade: cible || undefined,
+            contactEmail: cible ? undefined : CONTACT_EMAIL,
+          }
+        : undefined,
       name: ev.name,
       hostNames: ev.host_names,
       revealAt: ev.reveal_at,

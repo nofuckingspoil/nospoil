@@ -1,6 +1,6 @@
 'use client'
 
-import { TIERS, TOP_TIER, formatPrice } from '../lib/pricing'
+import { TIERS, TOP_TIER, CONTACT_EMAIL, formatPrice } from '../lib/pricing'
 
 // Diamètre de la bille du curseur. Doit rester égal à la largeur définie pour
 // .wiz-tierrange dans globals.css : c'est ce qui aligne les nombres sous elle.
@@ -19,9 +19,10 @@ export default function TierPicker({ value, onChange, inline = false, onClose })
     <div className={`wiz-tierpick ${inline ? 'wiz-tierpick-inline' : ''}`}>
       <div className="wiz-tierpick-q">Vous serez combien ?</div>
       <div className="wiz-tierpick-val">
-        <span className="n">
-          {isTop ? `${tier.maxGuests} invités ou plus` : `Jusqu'à ${tier.maxGuests} invités`}
-        </span>
+        {/* Le dernier palier disait « 300 invités ou plus » : il s'arrête pourtant
+            à 300 comme les autres, et le 301e resterait à la porte. On annonce la
+            borne, et on renvoie vers nous pour ce qu'il y a au-dessus. */}
+        <span className="n">Jusqu&apos;à {tier.maxGuests} invités</span>
         <span className="p">{formatPrice(tier.priceCents)}</span>
       </div>
       <input
@@ -39,10 +40,21 @@ export default function TierPicker({ value, onChange, inline = false, onClose })
             className={t.maxGuests === tier.maxGuests ? 'on' : ''}
             style={{ left: `calc(${THUMB / 2}px + (100% - ${THUMB}px) * ${i} / ${TIERS.length - 1})` }}
             onClick={() => onChange(t.maxGuests)}>
-            {t.maxGuests}{t.maxGuests === TOP_TIER.maxGuests ? '+' : ''}
+            {t.maxGuests}
           </button>
         ))}
       </div>
+      {/* Le curseur s'arrête à 300 : ceux qui visent plus grand doivent savoir
+          qu'il y a une suite, et par où elle passe. */}
+      {isTop && (
+        <p className="wiz-tierpick-more">
+          Plus de {TOP_TIER.maxGuests} invités ?{' '}
+          <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Plus de ${TOP_TIER.maxGuests} invités`)}`}>
+            Écrivez-nous
+          </a>{' '}
+          — nous faisons un tarif sur mesure.
+        </p>
+      )}
       {!inline && (
         <button type="button" className="btn btn-ghost wiz-tierpick-ok" onClick={onClose}>
           C'est noté

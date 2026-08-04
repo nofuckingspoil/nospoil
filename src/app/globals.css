@@ -1296,6 +1296,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 }
 .wiz-tierticks button.on { color: var(--accent-deep); font-weight: 700; }
 .wiz-tierpick-ok { margin-top: 12px; width: 100%; }
+/* Sortie vers le sur-mesure, sous le dernier palier : présente sans se disputer
+   l'attention avec le prix affiché juste au-dessus. */
+.wiz-tierpick-more { margin-top: 14px; font-size: 12.5px; line-height: 1.5; color: var(--text3); text-align: center; }
+.wiz-tierpick-more a { color: var(--accent); font-weight: 600; }
 
 .wiz-card { margin-top: 14px; animation: wiz-in .22s ease both; }
 @keyframes wiz-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }

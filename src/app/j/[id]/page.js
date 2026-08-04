@@ -45,7 +45,9 @@ let _tmp = 0
 export default function GuestCamera({ params }) {
   const { id } = use(params)
 
-  const [phase, setPhase] = useState('loading') // loading | cover | name | camera | error
+  const [phase, setPhase] = useState('loading') // loading | cover | name | attente | camera | error
+  const [attente, setAttente] = useState(null)  // { eventName, maxGuests } — formule complète
+  const [mailRetour, setMailRetour] = useState('') // « j'ai déjà participé » : adresse d'alors
   const [meta, setMeta] = useState(null)
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -257,6 +259,10 @@ export default function GuestCamera({ params }) {
       })
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
+      // Formule complète : on reste à la porte. L'organisateur vient d'être
+      // prévenu ; l'écran se rouvrira tout seul dès qu'il aura agrandi.
+      if (d.waiting) { setAttente(d); setPhase('attente'); return }
+      setAttente(null)
       saveGuest(id, d.guestId, d.displayName, d.email ?? emailVal)
       setGuest({ guestId: d.guestId, shotsTaken: d.shotsTaken, shotsPerGuest: d.shotsPerGuest })
       setLiveCam(supportsLiveCamera())
@@ -266,6 +272,15 @@ export default function GuestCamera({ params }) {
       setError(err.message); setPhase('name')
     } finally { setBusy(false) }
   }
+
+  // À la porte : on retente tout seul. L'invité n'a rien à surveiller, et
+  // l'organisateur n'a personne à rappeler une fois qu'il a payé.
+  useEffect(() => {
+    if (phase !== 'attente') return
+    const t = setInterval(() => { join(name, email) }, 10000)
+    return () => clearInterval(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, name, email])
 
   async function startCamera() {
     stopCamera()
@@ -495,6 +510,51 @@ export default function GuestCamera({ params }) {
         <button className="btn btn-accent" onClick={() => setPhase('name')}>Participer à l'album collectif →</button>
       )}
       <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
+    </main>
+  )
+
+  // Formule complète : la seule porte fermée du site. On ne dit jamais que
+  // c'est une histoire d'argent — l'invité n'y est pour rien et n'a rien à
+  // régler. On lui promet que ça s'ouvrira tout seul, et on tient la promesse
+  // (relance toutes les 10 s). Et on lui laisse la sortie de secours : celui
+  // qui revient d'un autre téléphone n'a pas à attendre pour rien.
+  if (phase === 'attente') return (
+    <main className="screen screen-cream center">
+      <div className="card" style={{ maxWidth: 400, textAlign: 'center' }}>
+        <div style={{ fontSize: 40, marginBottom: 12 }}>⏳</div>
+        <h3 className="h3" style={{ marginBottom: 8 }}>Presque !</h3>
+        <p className="lead small" style={{ marginBottom: 18 }}>
+          L&apos;organisateur de {attente?.eventName ? `« ${attente.eventName} »` : 'l’événement'} finalise
+          votre accès. <strong>Cette page s&apos;ouvrira toute seule</strong> — gardez-la ouverte, il
+          n&apos;y a rien à faire.
+        </p>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+          <div style={{ position: 'relative', width: 54, height: 54 }}>
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '3px solid rgba(0,0,0,.08)' }} />
+            <div style={{ position: 'absolute', inset: 0, borderRadius: '50%', border: '3px solid transparent', borderTopColor: 'var(--accent)', animation: 'dc-spin 1.2s linear infinite' }} />
+          </div>
+        </div>
+        <details style={{ textAlign: 'left', borderTop: '1px solid rgba(34,26,18,.1)', paddingTop: 14 }}>
+          <summary style={{ cursor: 'pointer', fontSize: 13, color: 'var(--text3)' }}>
+            J&apos;ai déjà participé depuis un autre téléphone
+          </summary>
+          <p className="lead small" style={{ margin: '10px 0', color: 'var(--text3)' }}>
+            Indiquez l&apos;adresse mail que vous aviez laissée : vous retrouverez votre place et vos
+            photos, sans attendre.
+          </p>
+          <form
+            onSubmit={(e) => { e.preventDefault(); const v = mailRetour.trim().toLowerCase(); if (v) join(name || 'Invité', v) }}
+            style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+          >
+            <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
+              autoCorrect="off" spellCheck="false" placeholder="vous@exemple.fr"
+              value={mailRetour} onChange={(e) => setMailRetour(e.target.value)} maxLength={160} />
+            <button className="btn btn-dark" type="submit" disabled={busy || !mailRetour.trim()}>
+              {busy ? 'Un instant…' : 'Retrouver ma place'}
+            </button>
+          </form>
+        </details>
+      </div>
     </main>
   )
 

@@ -32,11 +32,12 @@ export const TIERS = [
   { maxGuests: 300, priceCents: 4999, popular: false },
 ]
 
-// Le plus grand palier s'annonce « jusqu'à 300 », mais n'est jamais bloquant
-// (cf. quotaExceeded) : au-delà, il n'y aurait plus rien à vendre, et on ne
-// retient jamais un album que l'organisateur ne pourrait pas débloquer.
-// Au-delà de 300, on invite à nous écrire.
+// Le plus grand palier s'annonce « jusqu'à 300 ». Il bloque comme les autres :
+// au-delà, le tarif se fait à la main, et on invite à nous écrire.
 export const TOP_TIER = TIERS[TIERS.length - 1]
+
+// Adresse à laquelle on négocie les événements hors barème.
+export const CONTACT_EMAIL = 'support@timetoflash.fr'
 
 export function formatPrice(cents) {
   if (!cents) return 'Gratuit'
@@ -61,4 +62,17 @@ export function upgradeCents(fromMaxGuests, toMaxGuests) {
   const from = tierByGuests(fromMaxGuests)
   const to = tierByGuests(toMaxGuests)
   return Math.max(0, to.priceCents - from.priceCents)
+}
+
+// Que proposer à un organisateur qui a besoin de place pour `count` invités ?
+//
+// Renvoie la formule à viser et ce qu'il reste à régler, ou `null` quand il est
+// déjà au plus grand palier : là, il n'y a plus rien à vendre en ligne, et c'est
+// un tarif sur mesure qu'il faut lui proposer. Un seul endroit décide, pour que
+// l'écran, le mail et le tableau de bord racontent tous la même chose.
+export function upgradeFor(currentMaxGuests, count) {
+  const from = Number(currentMaxGuests) || 0
+  const cible = tierForCount(count)
+  if (cible.maxGuests <= from) return null
+  return { maxGuests: cible.maxGuests, priceCents: upgradeCents(from, cible.maxGuests) }
 }
