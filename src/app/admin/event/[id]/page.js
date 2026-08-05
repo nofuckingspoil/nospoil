@@ -1,8 +1,10 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
 import Logo from '../../../../components/Logo'
+import { libelle, NOTES, estUneAlerte } from '../../../../lib/avis'
 
 const KEY_STORE = 'declic_admin_key'
 
@@ -30,6 +32,7 @@ export default function AdminEvent() {
   const [loading, setLoading] = useState(true)
   const [confirm, setConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const [avis, setAvis] = useState([])
 
   useEffect(() => {
     const k = sessionStorage.getItem(KEY_STORE)
@@ -43,6 +46,15 @@ export default function AdminEvent() {
         if (!res.ok) throw new Error(d.error || 'Erreur.')
         setData(d)
       } catch (err) { setError(err.message) } finally { setLoading(false) }
+    })()
+    // Les avis de cette soirée, chargés à part : leur absence ne doit pas
+    // empêcher d'ouvrir la fiche, qui sert aussi à tout autre chose.
+    ;(async () => {
+      try {
+        const res = await fetch(`/api/admin/avis?event=${id}`, { headers: { 'x-admin-key': k } })
+        const d = await res.json()
+        if (res.ok) setAvis(d.avis || [])
+      } catch {}
     })()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id])
@@ -122,6 +134,56 @@ export default function AdminEvent() {
                 ? <span>✅ Rétractation : exécution immédiate demandée le <strong>{fmtDate(data.event.withdrawalWaivedAt)}</strong></span>
                 : <span className="muted">Rétractation : pas de renonciation (formule gratuite ou événement ancien)</span>}
             </div>
+
+            {/* Avis de cette soirée. Placés juste au-dessus de la liste des
+                invités : « Marie n'a pas retrouvé le lien » se lit à côté de
+                la ligne de Marie, ce qu'aucun tableur ne saurait faire. */}
+            {avis.length > 0 && (
+              <>
+                <h3 className="h3" style={{ margin: '28px 0 10px' }}>
+                  Avis ({avis.length})
+                  <span className="muted small" style={{ fontWeight: 400, marginLeft: 8 }}>
+                    {(() => {
+                      const notes = avis.map((a) => a.rating).filter((n) => Number.isFinite(n))
+                      const moy = notes.length ? (notes.reduce((s, n) => s + n, 0) / notes.length).toFixed(1) : null
+                      const soucis = avis.filter((a) => (a.issues || []).some((i) => i !== 'ok')).length
+                      return `${moy ? `${moy}/4` : 'sans note'}${soucis ? ` · ${soucis} problème${soucis > 1 ? 's' : ''} signalé${soucis > 1 ? 's' : ''}` : ''}`
+                    })()}
+                  </span>
+                </h3>
+                {avis.map((a) => {
+                  const soucis = (a.issues || []).filter((i) => i !== 'ok')
+                  const note = NOTES.find((n) => n.valeur === a.rating)
+                  return (
+                    <div className={`avis-fiche ${estUneAlerte(a) ? 'alerte' : ''}`} key={a.id}>
+                      <div className="avis-fiche-tete">
+                        <span className="qui">{a.role === 'organisateur' ? 'Organisateur' : a.guestName || 'Invité'}</span>
+                        <span className="avis-etiq">{a.canal === 'mail' ? 'par mail' : 'dans l’album'}</span>
+                        <span style={{ marginLeft: 'auto' }}>{fmtDate(a.createdAt)}</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
+                        {note && <strong style={{ fontSize: 15 }}>{note.emoji} {note.mot}</strong>}
+                        {Number.isFinite(a.nps) && <span className="avis-etiq" style={{ fontSize: 11 }}>recommandation {a.nps}/10</span>}
+                        {a.wouldHost && <span className="avis-etiq" style={{ fontSize: 11 }}>referait : {a.wouldHost}</span>}
+                      </div>
+                      {soucis.length > 0 && <p className="souci">⚠️ {soucis.map(libelle).join(' · ')}</p>}
+                      {a.issueDetail && <p className="cite">« {a.issueDetail} »</p>}
+                      {a.npsReason && <p className="cite">« {a.npsReason} »</p>}
+                      {a.suggestion && <p className="cite">« {a.suggestion} »</p>}
+                      {a.callOk && (
+                        <p style={{ fontWeight: 600, color: 'var(--accent-deep)' }}>
+                          📞 Accepte un appel de 5 min{a.phone ? ` — ${a.phone}` : ' (sans numéro laissé)'}
+                        </p>
+                      )}
+                      {a.appareil && <div className="meta">{a.appareil}</div>}
+                    </div>
+                  )
+                })}
+                <Link href="/admin/avis" className="linklike" style={{ fontSize: 14 }}>
+                  Voir la synthèse de tous les avis →
+                </Link>
+              </>
+            )}
 
             {/* Invités — qui a scanné, qui a joué le jeu, qui n'a rien pris */}
             <h3 className="h3" style={{ margin: '28px 0 10px' }}>

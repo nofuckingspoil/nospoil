@@ -7,7 +7,7 @@
 //  Pensez à mettre à jour `updated` à chaque changement de fond.
 // ============================================================
 
-export const LEGAL_UPDATED = '3 août 2026'
+export const LEGAL_UPDATED = '5 août 2026'
 
 export const COMPANY = {
   name: 'BLACK BY C',
@@ -255,6 +255,7 @@ const cgv = {
   <li><strong>Catégories de personnes concernées</strong> : Organisateur, Invités, et toute personne figurant sur les Contenus.</li>
   <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, adresse électronique facultative des Invités (accès à ses propres photographies et envoi du lien de l'album), numéros de téléphone recueillis avant l'abandon de cette collecte, données techniques de connexion.</li>
 </ul>
+<p><strong>Hors du champ du présent accord</strong> : les réponses données par l'Organisateur ou par les Invités à l'enquête de satisfaction portant sur le Service lui-même. Ces réponses ne sont pas traitées pour le compte de l'Organisateur mais pour celui de BLACK BY C, qui en est responsable de traitement ; elles ne sont jamais communiquées à l'Organisateur. Les conditions en sont détaillées à l'article 3.3 de la politique de confidentialité.</p>
 
 <h3>3. Obligations de BLACK BY C</h3>
 <p>BLACK BY C s'engage à :</p>
@@ -312,6 +313,7 @@ const confidentialite = {
 <h2>2. Deux situations à distinguer</h2>
 <p><strong>Lorsque vous créez un événement</strong> (vous êtes « Organisateur »), BLACK BY C traite vos données pour son propre compte : elle est <strong>responsable de traitement</strong>.</p>
 <p><strong>Lorsque des invités déposent des photographies au sein d'un événement</strong>, c'est l'Organisateur qui décide de la collecte, invite les participants et détermine qui accède aux contenus. BLACK BY C n'intervient alors qu'en qualité de <strong>sous-traitant</strong>, sur instruction de l'Organisateur. Les demandes relatives à ces contenus doivent être adressées en priorité à l'Organisateur de l'événement concerné, BLACK BY C prêtant son assistance pour y répondre.</p>
+<p><strong>Une exception : les réponses à l'enquête de satisfaction.</strong> Lorsqu'un Organisateur ou un Invité donne son avis sur le service lui-même, il s'adresse à BLACK BY C et non à l'Organisateur de l'événement. BLACK BY C est alors <strong>responsable de traitement</strong>, et l'Organisateur de l'événement n'a jamais accès à ces réponses. Le détail figure à l'article 3.3.</p>
 
 <h2>3. Données traitées et finalités</h2>
 <h3>3.1 Organisateur</h3>
@@ -337,15 +339,31 @@ const confidentialite = {
   <tbody>
     <tr><td>Photographies</td><td>constitution de la galerie de l'événement</td><td>6 mois après la date de révélation, puis suppression automatique</td></tr>
     <tr><td>Prénom ou pseudonyme saisi</td><td>identification des contributions au sein de l'événement</td><td>idem</td></tr>
-    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi, une seule fois, d'un lien d'accès personnel permettant à l'Invité de retrouver ses propres photographies et ses prises restantes depuis un autre appareil ; envoi du lien de l'album au moment de la révélation</td><td>idem</td></tr>
+    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi, une seule fois, d'un lien d'accès personnel permettant à l'Invité de retrouver ses propres photographies et ses prises restantes depuis un autre appareil ; envoi du lien de l'album au moment de la révélation ; envoi, une seule fois et sans relance, d'un questionnaire de satisfaction (article 3.3)</td><td>idem</td></tr>
     <tr><td>Numéro de téléphone (facultatif, plus collecté)</td><td>transmission du lien de l'album par l'Organisateur</td><td>idem</td></tr>
     <tr><td>Horodatage, données techniques de connexion</td><td>fonctionnement et sécurité du service</td><td>12 mois</td></tr>
   </tbody>
 </table>
 <p>Aucun compte n'est requis pour déposer un contenu en tant qu'invité.</p>
-<p>La saisie d'une adresse électronique est <strong>facultative</strong> : l'invité peut participer sans la renseigner. Elle sert <strong>uniquement</strong> à lui adresser le lien de l'album lorsque les photographies sont révélées. Elle n'est utilisée à aucune fin de prospection, n'est jamais transmise à un tiers, et est supprimée avec l'événement.</p>
-<p>La collecte du numéro de téléphone a été abandonnée. Les numéros recueillis avant ce changement restent soumis aux mêmes règles et sont supprimés avec l'événement auquel ils se rattachent.</p>
+<p>La saisie d'une adresse électronique est <strong>facultative</strong> : l'invité peut participer sans la renseigner. Elle sert à lui adresser le lien de l'album lorsque les photographies sont révélées, ainsi que, le cas échéant, le questionnaire de satisfaction décrit à l'article 3.3. Elle n'est utilisée à <strong>aucune fin de prospection commerciale</strong>, n'est jamais transmise à un tiers, et est supprimée avec l'événement.</p>
+<p>La collecte du numéro de téléphone a été abandonnée. Les numéros recueillis avant ce changement restent soumis aux mêmes règles et sont supprimés avec l'événement auquel ils se rattachent. Cette collecte ne concernait que les Invités : un Organisateur peut, s'il le souhaite, communiquer son propre numéro dans le questionnaire de satisfaction, dans les conditions prévues à l'article 3.3.</p>
 <p>Les photographies sont susceptibles de révéler des informations sensibles — pratique religieuse lors d'une cérémonie, état de santé apparent, appartenance supposée à un groupe. BLACK BY C n'exploite jamais ces informations et n'opère aucune analyse du contenu des images, aucune reconnaissance faciale, aucun profilage.</p>
+
+<h3>3.3 Enquête de satisfaction</h3>
+<p>BLACK BY C interroge les Organisateurs et les Invités sur leur expérience du service, afin de corriger ce qui ne fonctionne pas et d'orienter ses développements. Pour ce traitement, BLACK BY C agit en qualité de <strong>responsable de traitement</strong> : les réponses la concernent, elles ne sont <strong>jamais communiquées à l'Organisateur de l'événement</strong>, ni à aucun autre participant.</p>
+<table>
+  <thead>
+    <tr><th>Données</th><th>Finalité</th><th>Base légale</th><th>Conservation</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Réponses au questionnaire (appréciation, difficultés rencontrées, commentaires libres)</td><td>amélioration du service et correction des dysfonctionnements</td><td>intérêt légitime</td><td>3 ans à compter de la réponse</td></tr>
+    <tr><td>Type d'appareil et navigateur utilisés</td><td>reproduire et corriger les difficultés techniques signalées</td><td>intérêt légitime</td><td>3 ans à compter de la réponse</td></tr>
+    <tr><td>Numéro de téléphone de l'Organisateur (facultatif)</td><td>entretien téléphonique de quelques minutes, uniquement s'il a été expressément accepté</td><td>consentement</td><td>supprimé après l'entretien, et au plus tard 6 mois après la réponse</td></tr>
+  </tbody>
+</table>
+<p>La participation à l'enquête est <strong>entièrement facultative</strong> et ne conditionne l'accès à aucune fonctionnalité : refuser d'y répondre, ou ne pas répondre du tout, n'a aucune conséquence sur le service rendu.</p>
+<p>Un questionnaire n'est envoyé par courrier électronique qu'<strong>une seule fois</strong>, et aucune relance ne suit. Chaque message comporte un lien permettant de ne plus recevoir de sollicitation de ce type, avec effet immédiat ; ce refus ne fait pas obstacle à l'envoi du lien de l'album, qui reste dû à l'Invité ayant laissé son adresse. Ces messages ne comportent aucune offre commerciale.</p>
+<p>Les réponses sont conservées après la suppression de l'événement auquel elles se rapportent, mais <strong>détachées de celui-ci</strong> : elles ne permettent alors plus d'identifier l'événement ni son organisateur, et ne servent qu'à mesurer l'évolution de la qualité du service dans le temps.</p>
 
 <h2>4. Destinataires et sous-traitants</h2>
 <p>Les données ne sont ni vendues, ni louées, ni communiquées à des tiers à des fins publicitaires ou commerciales.</p>

@@ -27,6 +27,20 @@ export async function GET(request) {
     contactsByEvent[g.event_id] = (contactsByEvent[g.event_id] || 0) + 1
   }
 
+  // Avis reçus, comptés par événement. On remonte trois choses seulement — le
+  // nombre, la note moyenne et l'existence d'un problème signalé — parce que
+  // c'est tout ce qu'une ligne de tableau peut dire d'utile : le reste se lit
+  // sur la page des avis, à un clic de là.
+  const avisRes = await selectRows('feedback', 'select=event_id,rating,issues')
+  const avisParEvent = {}
+  for (const a of Array.isArray(avisRes.data) ? avisRes.data : []) {
+    if (!a.event_id) continue // avis détaché : son événement a été supprimé
+    const acc = (avisParEvent[a.event_id] ||= { n: 0, somme: 0, notes: 0, soucis: 0 })
+    acc.n++
+    if (Number.isFinite(a.rating)) { acc.somme += a.rating; acc.notes++ }
+    if ((a.issues || []).some((i) => i !== 'ok')) acc.soucis++
+  }
+
   // Miniatures de couverture : URLs signées temporaires (le bucket est privé)
   const covers = rows.map((e) => e.cover_url).filter(Boolean)
   const signedCovers = covers.length ? await signPhotos(covers, 3600) : {}
@@ -51,6 +65,11 @@ export async function GET(request) {
     // Null pour les événements créés avant l'enregistrement du montant :
     // le tableau de bord retombe alors sur le prix du palier.
     paidCents: e.paid_cents,
+    avisCount: avisParEvent[e.id]?.n || 0,
+    avisMoyenne: avisParEvent[e.id]?.notes
+      ? avisParEvent[e.id].somme / avisParEvent[e.id].notes
+      : null,
+    avisSoucis: avisParEvent[e.id]?.soucis || 0,
   }))
 
   return Response.json({ events })

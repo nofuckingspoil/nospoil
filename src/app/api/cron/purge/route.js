@@ -159,6 +159,26 @@ async function purgeDemos(now) {
   return supprimes
 }
 
+// --- Étape 4 : les avis ---
+//
+// Ce que la politique de confidentialité (art. 3.3) promet, tenu par le code
+// plutôt que par la bonne volonté : le numéro de téléphone laissé pour un
+// entretien s'efface au bout de six mois, l'avis lui-même au bout de trois
+// ans. Sans cette étape, les deux durées ne seraient que des mots.
+async function purgeAvis(now) {
+  const sixMois = new Date(now.getTime() - 182 * DAY).toISOString()
+  const troisAns = new Date(now.getTime() - 3 * 365 * DAY).toISOString()
+
+  // Le numéro seul disparaît : la réponse, elle, garde tout son intérêt.
+  const tels = await updateRow(
+    'feedback',
+    `created_at=lte.${sixMois}&phone=not.is.null`,
+    { phone: null }
+  )
+  await deleteRows('feedback', `created_at=lte.${troisAns}`)
+  return { telsEffaces: tels.ok }
+}
+
 export async function GET(request) {
   if (!authorized(request)) {
     return Response.json({ error: 'Non autorisé.' }, { status: 401 })
@@ -171,7 +191,8 @@ export async function GET(request) {
     const warned = await sendWarnings(now)
     const purged = await purgeExpired(now)
     const demos = await purgeDemos(now)
-    return Response.json({ ok: true, at: now.toISOString(), warned, purged, demos: demos.length })
+    const avis = await purgeAvis(now)
+    return Response.json({ ok: true, at: now.toISOString(), warned, purged, demos: demos.length, avis })
   } catch (err) {
     console.error('cron/purge: erreur', err)
     return Response.json({ error: 'Erreur pendant le ménage.' }, { status: 500 })

@@ -14,6 +14,7 @@ import { selectRows, updateRow } from '../../../../lib/supabase'
 import { sendMail, eventDayEmail, afterPartyEmail, siteUrl } from '../../../../lib/mail'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { quotaExceeded } from '../../../../lib/phase'
+import { enqueteOrganisateurs, enqueteInvites, recapDuJour } from '../../../../lib/avis-envoi'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -163,5 +164,25 @@ export async function GET(request) {
   const lendemain = await nudgeAfterParty(now, base)
   const albums = await notifyRevealedEvents(now)
 
-  return Response.json({ ok: true, jourJ, lendemain, albums })
+  // L'enquête passe en dernier, et jamais avant les liens d'album : si le
+  // quota d'envois du jour doit être atteint, mieux vaut qu'il le soit sur des
+  // photos attendues que sur un questionnaire. Un échec ici n'a rien de grave
+  // et ne doit surtout pas faire tomber le reste de la tâche.
+  let avisOrga = 0
+  let avisInvites = { envoyes: 0, reportes: 0 }
+  let recap = 0
+  try { avisOrga = await enqueteOrganisateurs(now) } catch (err) { console.error('cron/nudge: enquête organisateurs', err) }
+  try { avisInvites = await enqueteInvites(now) } catch (err) { console.error('cron/nudge: enquête invités', err) }
+  try { recap = await recapDuJour() } catch (err) { console.error('cron/nudge: récap avis', err) }
+
+  return Response.json({
+    ok: true, jourJ, lendemain, albums,
+    avisOrga,
+    avisInvites: avisInvites.envoyes,
+    // Ce que le plafond du jour a laissé de côté : il repartira demain. On le
+    // dit plutôt que de le taire — un envoi tronqué en silence se lit comme
+    // un envoi complet.
+    avisReportes: avisInvites.reportes,
+    recap,
+  })
 }

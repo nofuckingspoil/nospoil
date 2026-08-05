@@ -10,7 +10,7 @@ export default function robots() {
         // /g/ (galeries) et /j/ (invitations) contiennent les photos et les
         // noms des invités : un lien partagé publiquement ne doit jamais
         // finir dans les résultats de recherche.
-        disallow: ['/admin', '/api/', '/event/', '/g/', '/j/', '/mes-photos', '/mes-evenements', '/create/paiement', '/connexion'],
+        disallow: ['/admin', '/api/', '/event/', '/g/', '/j/', '/mes-photos', '/mes-evenements', '/create/paiement', '/connexion', '/avis'],
       },
     ],
     sitemap: 'https://timetoflash.fr/sitemap.xml',

@@ -59,7 +59,10 @@ export async function sendMail({ to, subject, html }) {
 }
 
 // ---------- Gabarit commun (compatible clients mail : tableaux + styles en ligne) ----------
-function layout({ title, intro, body, footer }) {
+// Exporté pour les mails d'enquête (voir ./avis-mail), qui doivent avoir
+// exactement la même allure que les autres : un questionnaire qui ne ressemble
+// pas au reste passe pour un message d'un autre expéditeur.
+export function layout({ title, intro, body, footer }) {
   return `<!doctype html><html lang="fr"><body style="margin:0;padding:0;background:#E7E1D4;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E7E1D4;padding:32px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
     <tr><td align="center">
@@ -76,7 +79,7 @@ function layout({ title, intro, body, footer }) {
 </body></html>`
 }
 
-function bigButton(url, label) {
+export function bigButton(url, label) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr><td align="center">
     <a href="${url}" style="display:block;background:#EC5B33;color:#fff;text-decoration:none;font-size:16px;font-weight:700;padding:16px 24px;border-radius:14px;text-align:center;">${label}</a>
   </td></tr></table>`

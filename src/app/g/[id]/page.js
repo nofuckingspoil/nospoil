@@ -1,12 +1,14 @@
 'use client'
 
-import { use, useCallback, useEffect, useState } from 'react'
+import { use, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
 import { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, cssTeinte, tamponDate, cuirePhoto } from '../../../lib/film'
 import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
+import Avis from '../../../components/Avis'
+import { ACCROCHE } from '../../../lib/avis'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -305,6 +307,30 @@ export default function Gallery({ params }) {
   // Référence stable : sinon le minuteur du résumé repartirait à zéro à chaque
   // rendu de l'album.
   const fermerWrap = useCallback(() => setMontrerWrap(false), [])
+
+  // ---- Enquête de satisfaction ----
+  // Ouvrir l'album, c'est aussi ce qui nous dit qui est venu jusqu'ici : ceux
+  // qui ne viennent jamais sont relancés par mail, et ce sont eux qui ont le
+  // plus de chances d'avoir buté sur quelque chose.
+  //
+  // C'est le serveur qui décide d'afficher la question, pas le navigateur :
+  // quelqu'un qui a déjà répondu par mail ne doit pas la revoir ici, fût-ce
+  // depuis un autre téléphone.
+  const [montrerAvis, setMontrerAvis] = useState(false)
+  const [avisFerme, setAvisFerme] = useState(false)
+  const pingFait = useRef(false)
+  const peutRepondre = !!data?.revealed && !data?.ownerPreview && !data?.isOwner
+  useEffect(() => {
+    if (!peutRepondre || pingFait.current) return
+    pingFait.current = true
+    fetch('/api/feedback/ping', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken() }),
+    })
+      .then((r) => r.json())
+      .then((d) => setMontrerAvis(!!d.montrer))
+      .catch(() => {})
+  }, [id, peutRepondre])
 
   function toggleFav(photoId) {
     const aime = favs.has(photoId)
@@ -697,6 +723,21 @@ export default function Gallery({ params }) {
               </a>
             )
           })}
+        </div>
+      )}
+
+      {/* La question arrive après les photos, jamais avant : on laisse d'abord
+          découvrir l'album. Et pas pendant la sélection — on ne coupe pas
+          quelqu'un en train de choisir ce qu'il emporte. */}
+      {montrerAvis && !avisFerme && !selecting && photos.length > 0 && (
+        <div style={{ maxWidth: 520, margin: '10px auto 0' }}>
+          <p className="eyebrow" style={{ fontSize: 10.5, marginBottom: 6 }}>{ACCROCHE}</p>
+          <Avis
+            role="invite"
+            compact
+            payload={{ eventId: id, deviceToken: getDeviceToken() }}
+            onClose={() => setAvisFerme(true)}
+          />
         </div>
       )}
 

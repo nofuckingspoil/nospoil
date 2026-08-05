@@ -30,6 +30,17 @@ function IconePoubelle() {
   )
 }
 
+// Trois barres : l'avis se lit comme une mesure, pas comme un message.
+function IconeAvis() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+      <rect x="4" y="13" width="4" height="8" rx="1.2" />
+      <rect x="10" y="8" width="4" height="13" rx="1.2" />
+      <rect x="16" y="3" width="4" height="18" rx="1.2" />
+    </svg>
+  )
+}
+
 function fmtDate(iso) {
   try { return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: '2-digit' }) }
   catch { return iso }
@@ -194,6 +205,7 @@ export default function Admin() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, margin: '20px 0 18px', flexWrap: 'wrap' }}>
           <h1 className="h2" style={{ margin: 0 }}>Tableau de bord</h1>
           <Link href="/admin/codes" className="linklike" style={{ fontSize: 14 }}>Codes promo →</Link>
+          <Link href="/admin/avis" className="linklike" style={{ fontSize: 14 }}>Avis →</Link>
         </div>
 
         {/* Chiffres clés */}
@@ -276,6 +288,7 @@ export default function Admin() {
               <span>Numéros</span>
               <span>Révélation</span>
               <span>Statut</span>
+              <span>Avis</span>
               <span style={{ textAlign: 'right' }}>Actions</span>
             </div>
             {list.map((e) => {
@@ -321,6 +334,25 @@ export default function Admin() {
                         : e.revealed
                           ? <span className="badge badge-live"><span className="dot" />Révélé</span>
                           : <span className="badge badge-wait"><span className="dot" />En cours</span>}
+                  </span>
+                  {/* Les avis de cette soirée, à un clic. La pastille orange
+                      signale qu'au moins un problème technique a été coché :
+                      c'est la seule chose qu'on veut repérer en balayant la
+                      liste des yeux. */}
+                  <span data-label="Avis">
+                    {e.avisCount > 0 ? (
+                      <a className="ev-avis" href={`/admin/avis?event=${e.id}`}
+                        title={`${e.avisCount} avis${e.avisSoucis ? ` · ${e.avisSoucis} problème${e.avisSoucis > 1 ? 's' : ''} signalé${e.avisSoucis > 1 ? 's' : ''}` : ''}`}>
+                        <IconeAvis />
+                        <span className="n">{e.avisCount}</span>
+                        {e.avisMoyenne !== null && (
+                          <span className="moy">{e.avisMoyenne.toFixed(1)}/4</span>
+                        )}
+                        {e.avisSoucis > 0 && <span className="pastille" aria-hidden="true" />}
+                      </a>
+                    ) : (
+                      <span className="muted" style={{ fontSize: 13 }}>—</span>
+                    )}
                   </span>
                   {/* Deux gestes, deux icônes. Le nom de l'événement reste le
                       chemin pour l'ouvrir : un troisième bouton n'aurait fait
