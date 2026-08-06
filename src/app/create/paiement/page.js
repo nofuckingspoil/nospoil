@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Logo from '../../../components/Logo'
 import { rememberMyEvent, saveAccount } from '../../../lib/device'
+import { track } from '../../../lib/tracking'
 
 // Le tunnel long (/create) demande la couverture AVANT le paiement : il la met
 // de côté, compressée, le temps de l'aller-retour Stripe. Les tunnels courts ne
@@ -40,6 +41,21 @@ function PaiementInner() {
         if (done) return
 
         rememberMyEvent(data.id)
+
+        // Publicité : la vente. C'est CE signal que les campagnes apprennent à
+        // reproduire, d'où le vrai montant encaissé (remise déduite).
+        //
+        // La route est rappelable sans risque : rechargée, elle renvoie le même
+        // événement. L'identifiant transmis à Meta permet alors de reconnaître
+        // la vente déjà connue au lieu de la compter deux fois. Les événements
+        // de test (codes fondateur) ne sont pas déclarés — ils pollueraient
+        // l'apprentissage avec des ventes à 0 €.
+        if (!data.isTest && (data.paidCents || 0) > 0) {
+          track('Purchase', {
+            value: data.paidCents / 100,
+            currency: 'EUR',
+          }, { eventID: `purchase_${data.id}` })
+        }
 
         // L'adresse vient soit du tunnel (mise de côté avant le paiement), soit
         // de Stripe. On la retient pour permettre de se reconnecter depuis

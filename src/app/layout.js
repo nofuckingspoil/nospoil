@@ -3,6 +3,9 @@ import { Bricolage_Grotesque, Manrope, Space_Mono } from 'next/font/google'
 import { BRAND } from '../lib/brand'
 import PromoCapture from '../components/PromoCapture'
 import GuideBadge from '../components/GuideBadge'
+import MetaPixel from '../components/MetaPixel'
+import GoogleTag from '../components/GoogleTag'
+import ConsentBanner from '../components/ConsentBanner'
 
 // Polices auto-hébergées par Next (plus d'appel à fonts.googleapis.com, qui
 // bloquait l'affichage du texte pendant ~750 ms au premier chargement).
@@ -121,12 +124,20 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body>
+        {/* Mesure des publicités. Ces deux-là ne chargent rien tant que le
+            visiteur n'a pas accepté — et rien non plus si les identifiants de
+            src/lib/tracking.js sont vides. */}
+        <MetaPixel />
+        <GoogleTag />
         {/* Mémorise un éventuel ?promo=… dès la première page visitée. */}
         <PromoCapture />
         {children}
         {/* Carte permanente vers le guide, sur les pages vitrines uniquement.
             Écartable d'un clic, et jamais dans l'application. */}
         <GuideBadge />
+        {/* Demande de consentement. Passe au-dessus du reste tant qu'on n'a
+            pas répondu — d'où sa position en toute fin de page. */}
+        <ConsentBanner />
       </body>
     </html>
   )

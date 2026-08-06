@@ -74,7 +74,8 @@ const mentionsLegales = {
 
 <h2>7. Données personnelles et cookies</h2>
 <p>Le traitement des données personnelles est décrit dans la <a href="/politique-de-confidentialite">Politique de confidentialité</a>.</p>
-<p>Le site n'utilise <strong>aucun cookie de mesure d'audience, de publicité ou de traçage</strong>. Seuls sont déposés les cookies strictement nécessaires au fonctionnement du service (session, authentification, sécurité), qui ne requièrent pas de consentement préalable au titre de l'article 82 de la loi Informatique et Libertés.</p>
+<p>Les cookies strictement nécessaires au fonctionnement du service (session, authentification, sécurité) ne requièrent pas de consentement préalable au titre de l'article 82 de la loi Informatique et Libertés.</p>
+<p>Le site utilise en outre des <strong>traceurs de mesure d'audience et de publicité</strong> (Meta, Google), qui ne sont déposés qu'après votre <strong>consentement exprès</strong>, recueilli au moyen du bandeau affiché lors de votre première visite. Votre choix est modifiable à tout moment via le lien « Cookies » du pied de page. Le détail figure dans la <a href="/politique-de-confidentialite">Politique de confidentialité</a>.</p>
 
 <h2>8. Signalement d'un contenu illicite</h2>
 <p>Conformément au règlement (UE) 2022/2065 sur les services numériques et à la loi n° 2004-575 du 21 juin 2004, tout contenu illicite hébergé sur le service peut être signalé à l'adresse <a href="mailto:support@timetoflash.fr">support@timetoflash.fr</a>, en précisant l'URL ou l'identifiant de l'événement concerné, la nature du contenu litigieux et les motifs du signalement.</p>
@@ -378,8 +379,11 @@ const confidentialite = {
     <tr><td>Cloudflare, Inc.</td><td>stockage des fichiers (R2)</td><td>Europe de l'Ouest</td></tr>
     <tr><td>Stripe Payments Europe, Ltd.</td><td>traitement des paiements</td><td>Union européenne</td></tr>
     <tr><td>Brevo (Sendinblue SAS)</td><td>envoi des courriers électroniques transactionnels</td><td>Union européenne (France)</td></tr>
+    <tr><td>Meta Platforms Ireland Ltd.</td><td>mesure d'audience publicitaire — <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
+    <tr><td>Google Ireland Ltd.</td><td>mesure d'audience et publicité — <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
   </tbody>
 </table>
+<p>Meta et Google n'interviennent que sur les pages publiques du site, et jamais au sein d'un événement : <strong>les photographies déposées par les invités ne leur sont à aucun moment transmises</strong>. Voir l'article 10 pour le détail de ces traceurs et les moyens de les refuser.</p>
 <p>Les contenus déposés au sein d'un événement sont accessibles à l'Organisateur de cet événement et, après la révélation, aux autres invités de ce même événement.</p>
 
 <h2>5. Transferts hors de l'Union européenne</h2>
@@ -413,9 +417,13 @@ const confidentialite = {
 <p>BLACK BY C met en œuvre des mesures techniques et organisationnelles appropriées : chiffrement des communications (HTTPS/TLS), isolation des données entre événements, contrôle des accès, journalisation, sauvegardes, suppression automatisée à échéance.</p>
 <p>Aucun système n'étant infaillible, en cas de violation de données susceptible d'engendrer un risque élevé pour vos droits et libertés, vous en seriez informé dans les meilleurs délais, conformément à l'article 34 du RGPD.</p>
 
-<h2>10. Cookies</h2>
-<p>Le service n'utilise <strong>aucun cookie publicitaire, de mesure d'audience ou de traçage</strong>, et ne fait appel à aucun outil d'analytics.</p>
-<p>Seuls sont déposés les cookies strictement nécessaires au fonctionnement du service — session, authentification, sécurité. Conformément à l'article 82 de la loi Informatique et Libertés, ces cookies ne requièrent pas votre consentement préalable et ne peuvent être désactivés sans rendre le service inopérant.</p>
+<h2>10. Cookies et traceurs</h2>
+<p><strong>Cookies strictement nécessaires.</strong> Session, authentification, sécurité. Conformément à l'article 82 de la loi Informatique et Libertés, ils ne requièrent pas votre consentement préalable et ne peuvent être désactivés sans rendre le service inopérant.</p>
+<p><strong>Traceurs de mesure d'audience et de publicité.</strong> Le site fait appel au pixel Meta (Meta Platforms Ireland Limited) et aux services Google Analytics et Google Ads (Google Ireland Limited), afin de mesurer la fréquentation du site, d'évaluer l'efficacité de nos campagnes publicitaires et d'en améliorer le ciblage.</p>
+<p>Ces traceurs <strong>ne sont déposés qu'après votre consentement exprès</strong>, recueilli au moyen du bandeau affiché lors de votre première visite. Tant que vous n'avez pas accepté, aucun script de ces sociétés n'est chargé. Refuser est aussi simple qu'accepter et n'altère en rien le fonctionnement du service.</p>
+<p><strong>Retirer votre consentement.</strong> Votre choix est conservé six mois au maximum. Vous pouvez en changer à tout moment via le lien « Cookies » situé en pied de page, qui rouvre le bandeau.</p>
+<p><strong>Base légale :</strong> votre consentement (article 6.1.a du RGPD). <strong>Transferts hors Union européenne :</strong> ces prestataires étant susceptibles de transférer des données vers les États-Unis, ces transferts sont encadrés par le Data Privacy Framework auquel Meta et Google ont adhéré, complété par les clauses contractuelles types de la Commission européenne.</p>
+<p>Vous pouvez également vous opposer à ces traitements directement auprès des intéressés : <a href="https://www.facebook.com/settings?tab=ads" rel="nofollow noreferrer" target="_blank">paramètres publicitaires Meta</a> et <a href="https://adssettings.google.com" rel="nofollow noreferrer" target="_blank">paramètres publicitaires Google</a>.</p>
 
 <h2>11. Mineurs</h2>
 <p>Le service n'est pas destiné à être utilisé de manière autonome par des personnes de moins de quinze ans.</p>

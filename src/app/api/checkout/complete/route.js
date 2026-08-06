@@ -29,11 +29,18 @@ export async function POST(request) {
   // Déjà créé pour ce paiement ? On renvoie l'événement existant.
   const existing = await selectRows(
     'events',
-    `stripe_session_id=eq.${encodeURIComponent(sessionId)}&select=id,owner_token,owner_email`
+    `stripe_session_id=eq.${encodeURIComponent(sessionId)}&select=id,owner_token,owner_email,paid_cents,is_test`
   )
   const found = Array.isArray(existing.data) ? existing.data[0] : null
   if (found) {
-    return Response.json({ id: found.id, ownerToken: found.owner_token, ownerEmail: found.owner_email || null })
+    return Response.json({
+      id: found.id,
+      ownerToken: found.owner_token,
+      ownerEmail: found.owner_email || null,
+      // Montant encaissé : sert à déclarer la vente à la publicité.
+      paidCents: found.paid_cents ?? 0,
+      isTest: !!found.is_test,
+    })
   }
 
   const m = session.metadata || {}
@@ -104,5 +111,12 @@ export async function POST(request) {
     }
   }
 
-  return Response.json({ id: data.id, ownerToken: m.owner_token, ownerEmail })
+  return Response.json({
+    id: data.id,
+    ownerToken: m.owner_token,
+    ownerEmail,
+    // Montant encaissé : sert à déclarer la vente à la publicité.
+    paidCents: session.amount_total ?? 0,
+    isTest: m.is_test === '1',
+  })
 }

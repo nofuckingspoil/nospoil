@@ -22,6 +22,7 @@ import { purgeDate } from '../../../lib/retention'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
+import { track } from '../../../lib/tracking'
 import Bilan from '../../../components/Bilan'
 
 function formatDate(iso) {
@@ -190,7 +191,19 @@ export default function EventManage({ params }) {
         body: JSON.stringify({ sessionId: up }),
       })
         .then((r) => r.json())
-        .then((d) => { if (d.error) setUpgradeMsg(d.error); else setUpgradeMsg('ok') })
+        .then((d) => {
+          if (d.error) { setUpgradeMsg(d.error); return }
+          setUpgradeMsg('ok')
+          // Publicité : une montée en gamme est une vente comme une autre.
+          // `alreadyApplied` signale une page rechargée : rien de neuf à déclarer.
+          if (!d.alreadyApplied && (d.paidCents || 0) > 0) {
+            track('Purchase', {
+              value: d.paidCents / 100,
+              currency: 'EUR',
+              content_name: `Passage à ${d.maxGuests} invités`,
+            }, { eventID: `upgrade_${d.sessionId}` })
+          }
+        })
         .catch(() => setUpgradeMsg('La mise à niveau n’a pas pu être appliquée. Réessayez.'))
         .finally(reload)
     }

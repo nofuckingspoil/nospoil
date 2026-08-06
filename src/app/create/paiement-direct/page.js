@@ -8,6 +8,7 @@ import TierPicker from '../../../components/TierPicker'
 import PromoField from '../../../components/PromoField'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
+import { track } from '../../../lib/tracking'
 import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, atDay, nextSaturday } from '../../../lib/event-defaults'
 
 // ============================================================
@@ -84,6 +85,13 @@ function ExpressForm() {
 
     if (isPaid && PAYMENTS_ENABLED) {
       try {
+        // Publicité : départ vers le paiement.
+        track('InitiateCheckout', {
+          value: priceCents / 100,
+          currency: 'EUR',
+          content_name: `Formule ${tier.maxGuests} invités`,
+        })
+
         const res = await fetch('/api/checkout', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -104,6 +112,8 @@ function ExpressForm() {
       if (!res.ok) throw new Error(data.error || 'Erreur.')
       rememberMyEvent(data.id)
       saveAccount(email.trim().toLowerCase())
+      // Publicité : événement gratuit créé.
+      track('Lead', { content_name: `Formule ${tier.maxGuests} invités` }, { eventID: `lead_${data.id}` })
       router.push(`/event/${data.id}`)
     } catch (err) { setError(err.message); setLoading(false) }
   }

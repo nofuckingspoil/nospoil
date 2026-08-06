@@ -3,6 +3,7 @@ import { BRAND } from '../lib/brand'
 import Logo from '../components/Logo'
 import SiteNav from '../components/SiteNav'
 import TryQR from '../components/TryQR'
+import ConsentReset from '../components/ConsentReset'
 import { TIERS, TOP_TIER, formatPrice } from '../lib/pricing'
 
 export const metadata = {
@@ -240,6 +241,7 @@ export default function Home() {
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/cgv">CGV</Link>
             <Link href="/politique-de-confidentialite">Confidentialité</Link>
+            <ConsentReset />
           </nav>
           <span className="mono">© 2026 · Hébergé en UE · RGPD</span>
         </div>

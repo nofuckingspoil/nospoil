@@ -9,6 +9,7 @@
 
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
+import ConsentReset from '../../components/ConsentReset'
 import { BRAND } from '../../lib/brand'
 import Generateur from './Generateur'
 
@@ -235,6 +236,7 @@ export default function GenerateurPage() {
             <Link href="/aide">Aide</Link>
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/politique-de-confidentialite">Confidentialité</Link>
+            <ConsentReset />
           </nav>
           <span className="mono">© 2026 · Hébergé en UE · RGPD</span>
         </div>

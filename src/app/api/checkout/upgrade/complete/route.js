@@ -76,5 +76,8 @@ export async function POST(request) {
     maxGuests: applique.maxGuests,
     alreadyApplied: !!applique.deja,
     notified: applique.notified || null,
+    // Montant encaissé : sert à déclarer la vente à la publicité.
+    paidCents: session.amount_total ?? 0,
+    sessionId: session.id,
   })
 }

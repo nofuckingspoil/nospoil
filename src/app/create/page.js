@@ -7,6 +7,7 @@ import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
+import { track } from '../../lib/tracking'
 import TierPicker from '../../components/TierPicker'
 import PromoField from '../../components/PromoField'
 
@@ -227,6 +228,14 @@ function CreateForm() {
         }
         sessionStorage.setItem('declic_pending_email', email.trim().toLowerCase())
 
+        // Publicité : départ vers le paiement. C'est l'étape qui dit à Meta
+        // « celui-là était à deux doigts d'acheter ».
+        track('InitiateCheckout', {
+          value: priceCents / 100,
+          currency: 'EUR',
+          content_name: `Formule ${tier.maxGuests} invités`,
+        })
+
         const res = await fetch('/api/checkout', {
           method: 'POST', headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload),
@@ -247,6 +256,12 @@ function CreateForm() {
       if (!res.ok) throw new Error(data.error || 'Erreur.')
       rememberMyEvent(data.id)
       saveAccount(email.trim().toLowerCase())
+
+      // Publicité : événement gratuit créé. C'est la conversion à optimiser sur
+      // du trafic froid — l'inconnu vient de devenir utilisateur.
+      track('Lead', {
+        content_name: `Formule ${tier.maxGuests} invités`,
+      }, { eventID: `lead_${data.id}` })
 
       // Upload de la photo de couverture (facultative), compressée côté navigateur
       if (coverFile) {
