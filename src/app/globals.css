@@ -485,7 +485,7 @@ a.cam-pile:active { transform: scale(.94); }
 /* Le hero passe sur deux colonnes dès qu'il y a la place : le texte à gauche,
    l'appareil photo à droite. Sous 900 px l'appareil repasse sous le texte. */
 .hero-split { display: grid; grid-template-columns: 1fr; gap: 34px; align-items: center; }
-@media (min-width: 900px) { .hero-split { grid-template-columns: 1fr 300px; gap: 50px; } }
+@media (min-width: 900px) { .hero-split { grid-template-columns: 1fr 350px; gap: 50px; } }
 /* Sur téléphone l'appareil passe sous le texte : on le réduit pour qu'il
    reste une illustration et n'occupe pas un écran entier. */
 @media (max-width: 899px) { .hero-split .phone { max-width: 212px; } }
@@ -497,9 +497,18 @@ a.cam-pile:active { transform: scale(.94); }
 .phone img { display: block; width: 100%; height: auto; border-radius: 28px; }
 .phone-tilt { transform: rotate(-2.2deg); }
 
+/* Les deux écrans du hero : l'appareil devant, l'album révélé derrière. La
+   promesse tient alors en un coup d'œil — on photographie ici, on retrouve
+   tout là. Un viseur vide, lui, ne montrait rien du produit. */
+.hero-duo { position: relative; width: 100%; max-width: 350px; margin: 0 auto; aspect-ratio: 300 / 455; }
+.hero-duo .phone { position: absolute; margin: 0; max-width: none; width: 63%; }
+.hero-duo .phone-avant { left: 0; top: 0; z-index: 2; transform: rotate(-3deg); }
+.hero-duo .phone-arriere { right: 0; top: 13%; z-index: 1; transform: rotate(4.5deg); }
+@media (max-width: 899px) { .hero-duo { max-width: 268px; } }
+
 /* Vignettes des trois étapes : hauteur commune, l'image est recadrée dedans
    et s'estompe vers le fond de la carte pour que la coupe ne se voie pas. */
-.step-shot { position: relative; height: 188px; margin-bottom: 16px; border-radius: 14px;
+.step-shot { position: relative; height: 230px; margin-bottom: 16px; border-radius: 14px;
   overflow: hidden; background: var(--line-soft); border: 1px solid var(--line-soft); }
 .step-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .step-shot::after { content: ''; position: absolute; inset: auto 0 0 0; height: 60px;

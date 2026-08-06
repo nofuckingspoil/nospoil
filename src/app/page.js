@@ -14,8 +14,8 @@ export const metadata = {
 // pose sur les tables, le déclencheur, puis la galerie une fois révélée.
 const STEPS = [
   { img: '/accueil/affiche.webp', pos: 'center 38%', alt: "Affiche à imprimer avec le QR code de l'événement", title: 'Scannez le QR', sub: "Vos invités ouvrent l'appareil dans leur navigateur. Aucune appli à installer." },
-  { img: '/accueil/declencheur.webp', pos: 'center 38%', alt: "Le déclencheur de l'appareil photo et le compteur de poses restantes", title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte vraiment.' },
-  { img: '/accueil/galerie.webp', pos: 'center top', alt: "La galerie de l'événement une fois les photos révélées", title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde d\'un coup.' },
+  { img: '/accueil/declencheur.webp', pos: 'center center', alt: "L'appareil photo ouvert dans le navigateur : le viseur, le compteur de poses et le déclencheur", title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte vraiment.' },
+  { img: '/accueil/revelation.webp', pos: 'center center', alt: "La galerie de l'événement une fois les photos révélées", title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde d\'un coup.' },
 ]
 
 // Ce que l'organisateur garde sous contrôle. Deux testeurs ont posé la question
@@ -89,11 +89,19 @@ export default function Home() {
               Mariages · Anniversaires · Baptêmes · EVJF · Vacances · Séminaires
             </div>
           </div>
-          {/* Voir l'appareil vaut mieux que le décrire : c'est la seule image
-              chargée tout de suite, les autres attendent le défilement. */}
-          <div className="phone phone-tilt">
-            <img src="/accueil/appareil.webp" width="640" height="1385"
-              alt="L'appareil photo jetable ouvert dans le navigateur : viseur, compteur de poses et déclencheur." />
+          {/* Voir l'appareil vaut mieux que le décrire — et un viseur vide ne
+              vend rien : ces deux écrans montrent une vraie soirée, de la photo
+              prise jusqu'à l'album révélé. Seules images chargées tout de suite,
+              les autres attendent le défilement. */}
+          <div className="hero-duo">
+            <div className="phone phone-avant">
+              <img src="/accueil/appareil-photo.webp" width="640" height="1385"
+                alt="L'appareil photo jetable ouvert dans le navigateur : un groupe d'invités dans le viseur, le compteur de poses et le déclencheur." />
+            </div>
+            <div className="phone phone-arriere">
+              <img src="/accueil/galerie-photos.webp" width="640" height="1385"
+                alt="L'album révélé après la fête : les photos de tous les invités réunies dans une galerie." />
+            </div>
           </div>
         </section>
 
@@ -150,8 +158,8 @@ export default function Home() {
         <section className="section">
           <div className="split">
             <div className="phone phone-tilt">
-              <img src="/accueil/bilan.webp" width="640" height="1174" loading="lazy"
-                alt="Le bilan de l'événement : nombre de photos prises, premier et dernier cliché, photographe le plus rapide." />
+              <img src="/accueil/bilan.webp" width="640" height="1393" loading="lazy"
+                alt="Le bilan de l'événement : nombre de photos prises, photo préférée, premier et dernier cliché, photographe le plus rapide." />
             </div>
             <div className="split-text">
               <div className="eyebrow-mute" style={{ marginBottom: 10 }}>Et après la fête</div>
