@@ -2571,43 +2571,74 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* ============================================================
    Bandeau de consentement aux cookies publicitaires.
 
-   Posé en bas, au-dessus de tout — y compris du bouton flottant de
-   création sur téléphone, qu'il recouvre volontairement : on répond
-   d'abord, on navigue ensuite.
+   Une petite carte posée en bas à gauche, plutôt qu'une barre qui barre
+   l'écran : la question est mineure, elle ne mérite pas de couper la page
+   en deux. Bord supérieur perforé comme une pellicule, pastille orange en
+   guise d'obturateur — le bandeau appartient au site, il n'a pas l'air
+   collé par un prestataire.
 
    « Refuser » et « Accepter » ont exactement la même taille : la CNIL
    sanctionne les bandeaux qui rendent le refus plus laborieux.
    ============================================================ */
 .ck {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
-  background: #fff; border-top: 1px solid var(--line);
-  box-shadow: 0 -14px 44px rgba(20,22,31,.16);
-  padding: 18px 20px calc(18px + env(safe-area-inset-bottom));
-  animation: ck-monte .28s cubic-bezier(.2,.8,.3,1);
+  position: fixed; z-index: 60;
+  /* Au centre : les deux coins du bas sont déjà pris (le QR d'essai à gauche,
+     le guide à droite) et on ne recouvre ni l'un ni l'autre. */
+  left: 50%; transform: translateX(-50%);
+  bottom: calc(20px + env(safe-area-inset-bottom));
+  width: min(390px, calc(100vw - 40px));
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  box-shadow: 0 22px 54px rgba(34,26,18,.20), 0 3px 12px rgba(34,26,18,.08);
+  padding: 20px 20px 18px;
+  animation: ck-monte .42s cubic-bezier(.2,.9,.3,1) .35s backwards;
 }
-@keyframes ck-monte { from { transform: translateY(100%) } to { transform: none } }
+@keyframes ck-monte {
+  from { transform: translate(-50%, 18px) scale(.97); opacity: 0 }
+  to   { transform: translateX(-50%); opacity: 1 }
+}
 
-.ck-in {
-  max-width: 1080px; margin: 0 auto;
-  display: flex; align-items: center; gap: 26px;
+/* Le liseré perforé d'un bord de pellicule, en haut de la carte. */
+.ck::before {
+  content: ''; position: absolute; left: 18px; right: 18px; top: 9px; height: 5px;
+  background-image: repeating-linear-gradient(90deg, var(--line-soft) 0 8px, transparent 8px 16px);
 }
-.ck-txt { flex: 1; min-width: 0; }
+
+.ck-tag {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+}
+.ck-dot {
+  width: 15px; height: 15px; border-radius: 50%;
+  background: var(--accent); box-shadow: 0 0 0 3px rgba(236,91,51,.18);
+  flex-shrink: 0;
+}
+
 .ck-txt h2 {
-  font-family: var(--font-display); font-weight: 800; font-size: 17px;
-  letter-spacing: -.02em; margin: 0 0 5px; color: var(--ink);
+  font-family: var(--font-display); font-weight: 800; font-size: 19px;
+  letter-spacing: -.02em; margin: 0 0 7px; color: var(--ink);
 }
-.ck-txt p { margin: 0; font-size: 13.5px; line-height: 1.55; color: var(--text2); }
-.ck-txt a { color: var(--ink); text-underline-offset: 2px; }
+.ck-txt p { margin: 0; font-size: 13.5px; line-height: 1.6; color: var(--text2); }
+.ck-txt a { color: var(--accent-deep); text-underline-offset: 2px; }
 
-.ck-btns { display: flex; gap: 10px; flex-shrink: 0; }
-.ck-b { min-width: 132px; justify-content: center; cursor: pointer; }
+.ck-btns { display: flex; gap: 9px; margin-top: 16px; }
+.ck-b { flex: 1; justify-content: center; cursor: pointer; padding: 11px 14px; font-size: 14px; }
 
-@media (max-width: 760px) {
-  .ck-in { flex-direction: column; align-items: stretch; gap: 15px; }
+@media (max-width: 560px) {
+  .ck {
+    left: 12px; right: 12px; width: auto; transform: none;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    animation-name: ck-monte-mobile;
+  }
   .ck-txt p { font-size: 13px; }
-  .ck-btns > * { flex: 1; }
-  .ck-b { min-width: 0; }
 }
+@keyframes ck-monte-mobile {
+  from { transform: translateY(18px) scale(.97); opacity: 0 }
+  to   { transform: none; opacity: 1 }
+}
+@media (prefers-reduced-motion: reduce) { .ck { animation: none } }
 
 /* Lien « Cookies » du pied de page : un bouton, mais qui doit passer pour un
    lien parmi les autres. */

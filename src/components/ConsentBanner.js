@@ -52,25 +52,24 @@ export default function ConsentBanner() {
 
   return (
     <div className="ck" role="dialog" aria-modal="false" aria-labelledby="ck-t">
-      <div className="ck-in">
-        <div className="ck-txt">
-          <h2 id="ck-t">Un mot sur les cookies</h2>
-          <p>
-            Nous aimerions mesurer d'où viennent nos visiteurs, pour savoir quelles
-            publicités valent leur prix. Cela suppose de déposer des traceurs de Meta
-            et de Google sur votre appareil. C'est vous qui décidez — le site
-            fonctionne exactement pareil dans les deux cas.{' '}
-            <Link href="/politique-de-confidentialite">En savoir plus</Link>
-          </p>
-        </div>
-        <div className="ck-btns">
-          <button className="btn btn-ghost ck-b" onClick={() => ecrireConsentement('refuse')}>
-            Refuser
-          </button>
-          <button className="btn btn-accent ck-b" onClick={() => ecrireConsentement('accepte')}>
-            Accepter
-          </button>
-        </div>
+      <p className="ck-tag" aria-hidden="true"><span className="ck-dot" />Cookies</p>
+      <div className="ck-txt">
+        <h2 id="ck-t">Un mot sur les cookies</h2>
+        <p>
+          Nous aimerions savoir d'où viennent nos visiteurs, pour ne payer que les
+          publicités qui en valent la peine. Cela suppose de déposer des traceurs de
+          Meta et de Google sur votre appareil. Le site fonctionne exactement pareil
+          dans les deux cas.{' '}
+          <Link href="/politique-de-confidentialite">En savoir plus</Link>
+        </p>
+      </div>
+      <div className="ck-btns">
+        <button className="btn btn-ghost ck-b" onClick={() => ecrireConsentement('refuse')}>
+          Refuser
+        </button>
+        <button className="btn btn-accent ck-b" onClick={() => ecrireConsentement('accepte')}>
+          Accepter
+        </button>
       </div>
     </div>
   )
