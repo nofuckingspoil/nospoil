@@ -15,6 +15,8 @@ import { sendMail, eventDayEmail, afterPartyEmail, siteUrl } from '../../../../l
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { quotaExceeded } from '../../../../lib/phase'
 import { enqueteOrganisateurs, enqueteInvites, recapDuJour } from '../../../../lib/avis-envoi'
+import { equipeDe } from '../../../../lib/equipe'
+import { OWNER } from '../../../../lib/authz'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -60,16 +62,20 @@ async function nudgeEventDay(now, base) {
 
   let sent = 0
   for (const ev of data) {
-    const mail = eventDayEmail({
-      eventName: ev.name,
-      ownerUrl: `${base}/event/${ev.id}?k=${ev.owner_token}`,
-      shotsPerGuest: ev.shots_per_guest,
-    })
-    const res = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
+    // Toute l'équipe, chacun avec son propre lien : c'est le rappel qui compte
+    // le plus, et celui qui l'a créé n'est pas toujours celui qui sera là.
+    for (const p of await equipeDe(ev)) {
+      const mail = eventDayEmail({
+        eventName: ev.name,
+        ownerUrl: `${base}/event/${ev.id}?k=${p.token}`,
+        shotsPerGuest: ev.shots_per_guest,
+      })
+      const res = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
+      if (res?.ok) sent++
+    }
     // On marque même en cas d'échec : mieux vaut un rappel manqué qu'une
     // boucle qui renvoie le même mail tous les jours.
     await updateRow('events', `id=eq.${ev.id}`, { nudged_day_at: now.toISOString() })
-    if (res?.ok) sent++
   }
   return sent
 }
@@ -109,21 +115,26 @@ async function nudgeAfterParty(now, base) {
       continue
     }
 
-    const mail = afterPartyEmail({
-      eventName: ev.name,
-      ownerUrl: `${base}/event/${ev.id}?k=${ev.owner_token}`,
-      photoCount,
-      guestCount,
-      revealDate: frDate(ev.reveal_at),
-      // Formule dépassée : on l'annonce dans ce mail plutôt que dans un envoi
-      // séparé — il arrive pile au bon moment, entre la fête et la révélation.
-      quota: quotaExceeded({ maxGuests: ev.max_guests, guestCount })
-        ? { maxGuests: ev.max_guests }
-        : null,
-    })
-    const res = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
+    const depasse = quotaExceeded({ maxGuests: ev.max_guests, guestCount })
+    for (const p of await equipeDe(ev)) {
+      const mail = afterPartyEmail({
+        eventName: ev.name,
+        ownerUrl: `${base}/event/${ev.id}?k=${p.token}`,
+        photoCount,
+        guestCount,
+        revealDate: frDate(ev.reveal_at),
+        // Formule dépassée : on l'annonce dans ce mail plutôt que dans un envoi
+        // séparé — il arrive pile au bon moment, entre la fête et la révélation.
+        //
+        // Réservé au propriétaire : lui seul peut mettre la formule à niveau,
+        // et l'encart annonce un règlement que le co-organisateur ne pourrait
+        // pas faire. Ce dernier reçoit le mail utile — les photos à trier.
+        quota: depasse && p.role === OWNER ? { maxGuests: ev.max_guests } : null,
+      })
+      const res = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
+      if (res?.ok) sent++
+    }
     await updateRow('events', `id=eq.${ev.id}`, { nudged_after_at: now.toISOString() })
-    if (res?.ok) sent++
   }
   return sent
 }

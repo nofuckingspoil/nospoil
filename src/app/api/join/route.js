@@ -2,7 +2,8 @@ import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
 import { sendMail, guestAccessEmail, quotaEmail, siteUrl } from '../../../lib/mail'
 import { makeToken, ensureAccount } from '../../../lib/account'
-import { estSuspendu, MESSAGE_SUSPENDU } from '../../../lib/authz'
+import { estSuspendu, MESSAGE_SUSPENDU, ADMIN } from '../../../lib/authz'
+import { equipeDe } from '../../../lib/equipe'
 import { upgradeFor, formatPrice } from '../../../lib/pricing'
 
 // Un invité attend à la porte : on prévient l'organisateur tout de suite.
@@ -22,19 +23,33 @@ async function alerteQuota(ev, guestCount, prenom) {
   // celui qui attend en fait partie, et il en arrivera d'autres. `null` au
   // dernier palier : le mail bascule alors sur le tarif sur mesure.
   const cible = upgradeFor(ev.max_guests, guestCount + 1)
-  const mail = quotaEmail({
-    eventName: ev.name || 'votre événement',
-    ownerUrl: `${siteUrl()}/event/${ev.id}?k=${ev.owner_token}`,
-    guestCount,
-    maxGuests: ev.max_guests,
-    prenom,
-    upgradeMaxGuests: cible?.maxGuests,
-    upgradePrice: cible ? formatPrice(cible.priceCents) : null,
-  })
-  const sent = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
-  // Horodaté seulement si l'envoi a réussi : tant que l'alerte n'est pas
-  // partie, le prochain invité doit pouvoir la déclencher à nouveau.
-  if (sent?.ok) await updateRow('events', `id=eq.${ev.id}`, { quota_mailed_at: new Date().toISOString() })
+
+  // Les co-organisateurs aussi : c'est souvent l'un d'eux qui est près de la
+  // porte, pendant que le propriétaire danse. Leur message diffère — eux ne
+  // peuvent pas agrandir la formule, ils peuvent aller chercher celui qui le
+  // peut (voir quotaEmail).
+  const equipe = await equipeDe(ev)
+  let unEnvoiReussi = false
+  for (const p of equipe) {
+    const mail = quotaEmail({
+      eventName: ev.name || 'votre événement',
+      ownerUrl: `${siteUrl()}/event/${ev.id}?k=${p.token}`,
+      guestCount,
+      maxGuests: ev.max_guests,
+      prenom,
+      upgradeMaxGuests: cible?.maxGuests,
+      upgradePrice: cible ? formatPrice(cible.priceCents) : null,
+      coOrga: p.role === ADMIN
+        ? { ownerName: ev.owner_name, ownerEmail: ev.owner_email }
+        : null,
+    })
+    const sent = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
+    if (sent?.ok) unEnvoiReussi = true
+  }
+
+  // Horodaté seulement si quelque chose est parti : tant que personne n'a été
+  // prévenu, le prochain invité doit pouvoir déclencher l'alerte à nouveau.
+  if (unEnvoiReussi) await updateRow('events', `id=eq.${ev.id}`, { quota_mailed_at: new Date().toISOString() })
 }
 
 // Une même personne qui revient d'un autre téléphone (ou après avoir vidé son

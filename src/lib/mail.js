@@ -270,7 +270,13 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
 // faire entrer : il doit se lire d'un coup d'œil, au milieu d'une fête, et ne
 // demander qu'un seul geste. D'où le prénom dans l'objet — c'est quelqu'un de
 // précis qui attend, pas un compteur qui clignote.
-export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom, upgradeMaxGuests, upgradePrice }) {
+// `coOrga` : { ownerName, ownerEmail } quand le destinataire est un
+// co-organisateur. Seul le propriétaire peut agrandir la formule — lui
+// montrer un bouton « Passer à 100 invités » le mènerait droit à un refus.
+// On lui donne donc le seul geste qui marche : aller chercher la bonne
+// personne, nommée dans le message.
+export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom, upgradeMaxGuests, upgradePrice, coOrga }) {
+  if (coOrga) return quotaEmailCoOrga({ eventName, guestCount, maxGuests, prenom, coOrga })
   const qui = prenom ? `<strong>${prenom}</strong>` : `Un invité`
   // Pas de palier au-dessus : on est au plus grand format, le tarif se fait à la
   // main. Le bouton mène alors vers nous, pas vers un paiement qui n'existe pas.
@@ -299,6 +305,38 @@ export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom,
       footer: surMesure
         ? `Répondez simplement à ce message si c’est plus simple : nous vous recontactons vite.`
         : `Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.`,
+    }),
+  }
+}
+
+// Le même événement, vu du co-organisateur : il est souvent celui qui est
+// sur place, mais il n'a pas la main sur la formule. Le message doit donc
+// tenir en une action réalisable — prévenir la bonne personne — plutôt qu'en
+// un bouton qui lui serait refusé.
+function quotaEmailCoOrga({ eventName, guestCount, maxGuests, prenom, coOrga }) {
+  const qui = prenom ? `<strong>${prenom}</strong>` : `Un invité`
+  const nom = coOrga.ownerName || 'l’organisateur'
+  const mail = coOrga.ownerEmail
+  return {
+    subject: prenom
+      ? `${prenom} attend d’entrer — « ${eventName} »`
+      : `Un invité attend d’entrer — « ${eventName} »`,
+    html: layout({
+      title: prenom ? `${prenom} attend d’entrer` : `Un invité attend d’entrer`,
+      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais la formule est complète : elle couvre <strong>${maxGuests} invités</strong> et ils sont déjà ${guestCount}.`,
+      body: `<div style="font-size:15px;line-height:1.7;color:#5f5341;">
+          <strong style="color:#221A12;">Prévenez ${nom}</strong> : l’agrandissement de la formule
+          n’appartient qu’à la personne qui a créé l’événement. Un seul geste de sa part et
+          ${prenom ? 'elle' : 'la personne'} entre aussitôt, son écran s’ouvrira tout seul.
+        </div>
+        ${mail ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
+          Son adresse : <a href="mailto:${mail}" style="color:#C9431F;">${mail}</a>
+        </div>` : ''}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
+          <strong style="color:#221A12;">Vos autres invités continuent de photographier
+          normalement</strong> pendant ce temps : rien n’est bloqué pour eux.
+        </div>`,
+      footer: `Vous recevez ce message parce que vous co-organisez cet événement. ${nom} a été prévenu${mail ? ' en même temps que vous' : ''}.`,
     }),
   }
 }
