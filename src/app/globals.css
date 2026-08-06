@@ -2647,3 +2647,140 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   font-family: inherit; font-size: 12.5px; color: rgba(255,255,255,.68);
 }
 .ck-reset:hover { color: #fff; text-decoration: underline; }
+
+/* ============================================================
+   Page d'atterrissage publicitaire (mariage).
+
+   Elle réutilise tout le vocabulaire visuel de l'accueil — mêmes cartes,
+   mêmes téléphones, mêmes prix. Ce qui suit ne concerne que ce qui lui est
+   propre : l'en-tête muet, la barre du bas, et la comparaison.
+   ============================================================ */
+
+/* En-tête sans navigation : le logo, et la seule information qui fait rester. */
+.lp-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; padding: 16px 28px;
+  border-bottom: 1px solid var(--line-soft);
+}
+.lp-head-note { white-space: nowrap; }
+
+/* Le bouton flottant du bas occupe la même place que sur l'accueil : on rend
+   sa hauteur à la page pour qu'il ne recouvre jamais le pied de page. */
+.lp-hero { padding-top: 46px; }
+
+.lp-ticks {
+  list-style: none; padding: 0; margin: 22px 0 0;
+  display: flex; flex-wrap: wrap; gap: 8px 20px;
+}
+.lp-ticks li {
+  font-size: 13.5px; color: var(--text2);
+  display: flex; align-items: center; gap: 7px;
+}
+.lp-ticks li::before {
+  content: '✓'; color: var(--accent); font-weight: 800; font-size: 13px;
+}
+
+.lp-mid-cta { text-align: center; margin-top: 34px; }
+/* Les boutons du site sont pleine largeur par défaut (héritage des formulaires
+   de l'application). Isolé au milieu du texte, celui-ci reprend la largeur de
+   son libellé — sinon il barre la page comme un bandeau. */
+.lp-mid-cta .btn { width: auto; }
+
+/* Comparaison photobooth / nous. Deux colonnes qui se lisent en diagonale. */
+.lp-compare {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+  max-width: 860px; margin: 0 auto;
+}
+.lp-col {
+  background: var(--card); border: 1px solid var(--line-soft);
+  border-radius: 18px; padding: 24px 22px;
+}
+.lp-col-nous { border-color: var(--accent); box-shadow: 0 10px 30px rgba(236,91,51,.10); }
+.lp-col-h {
+  font-family: var(--font-display); font-weight: 800; font-size: 17px;
+  color: var(--ink); margin-bottom: 16px;
+}
+.lp-col ul { list-style: none; padding: 0; margin: 0; }
+.lp-col li {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 14px; line-height: 1.5; color: var(--text2);
+  padding: 9px 0; border-top: 1px solid var(--line-soft);
+}
+.lp-col li:first-child { border-top: none; }
+.lp-col li > span { flex-shrink: 0; font-weight: 800; color: var(--text3); }
+.lp-col-nous li > span { color: var(--accent); }
+
+.lp-prices { max-width: 900px; margin-inline: auto; }
+
+/* Bandeau de réassurance : une ligne, quatre certitudes, aucun ornement. */
+.lp-trust {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 28px;
+  font-family: var(--font-mono); font-size: 12px; color: var(--text3);
+}
+
+/* Barre collée en bas, téléphone uniquement — comme sur l'accueil, mais elle
+   mène ici toujours au même endroit que le reste de la page. */
+.lp-sticky { display: none; }
+
+@media (max-width: 900px) {
+  .lp-compare { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 680px) {
+  .lp-head { padding: 13px 18px; }
+  .lp-head-note { display: none; }
+  .lp-hero { padding-top: 26px; }
+
+  .lp-sticky {
+    position: fixed; left: 12px; right: 12px; z-index: 45;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    display: block; text-align: center; text-decoration: none;
+    background: var(--accent); color: #fff; border-radius: 999px;
+    padding: 15px 20px; font-family: var(--font-body); font-weight: 700; font-size: 15px;
+    box-shadow: 0 10px 30px rgba(236,91,51,.34);
+  }
+  .lp-sticky:active { transform: translateY(1px); }
+  /* La barre ne doit rien masquer : on rend sa hauteur au bas de la page. */
+  .lp .vfooter { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+}
+
+/* Les premiers retours, présentés comme la conversation dont ils sortent.
+   Volontairement dans les couleurs du site, et non dans celles d'une messagerie
+   connue : c'est une citation mise en forme, pas une fausse capture d'écran. */
+.lp-conv {
+  max-width: 560px; margin: 0 auto;
+  background: var(--card); border: 1px solid var(--line-soft);
+  border-radius: 22px; padding: 24px 22px;
+}
+.lp-conv-bloc { margin-top: 20px; }
+.lp-conv-bloc:first-child { margin-top: 0; }
+
+.lp-conv-qui {
+  display: block; margin: 0 0 6px 14px;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text3);
+}
+
+.lp-bulle {
+  /* La bulle épouse son texte : uniformisées, elles trahiraient la mise en
+     page et perdraient l'air d'une vraie conversation. */
+  position: relative; margin: 0 0 5px; width: fit-content; max-width: 88%;
+  background: #fff; border: 1px solid var(--line-soft);
+  border-radius: 20px; padding: 12px 17px;
+  font-size: 15.5px; line-height: 1.45; color: var(--ink);
+}
+/* Le dernier message d'un bloc pointe vers son auteur, comme dans une
+   messagerie : c'est ce petit angle qui fait lire « conversation ». */
+.lp-conv-bloc .lp-bulle:last-child { border-bottom-left-radius: 6px; margin-bottom: 0; }
+
+.lp-coeur {
+  position: absolute; right: -9px; bottom: -11px;
+  background: #fff; border: 1px solid var(--line-soft); border-radius: 999px;
+  padding: 2px 5px; font-size: 12px; line-height: 1;
+  box-shadow: 0 2px 6px rgba(34,26,18,.10);
+}
+
+@media (max-width: 560px) {
+  .lp-conv { padding: 20px 16px; border-radius: 18px; }
+  .lp-bulle { max-width: 92%; font-size: 15px; }
+}
