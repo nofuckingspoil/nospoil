@@ -1,10 +1,34 @@
 import { getStripe, paymentsLive } from '../../../../lib/stripe'
-import { selectRows } from '../../../../lib/supabase'
+import { selectRows, updateRow } from '../../../../lib/supabase'
 import { tierByGuests, upgradeCents } from '../../../../lib/pricing'
 import { siteUrl } from '../../../../lib/mail'
 import { membrePar } from '../../../../lib/equipe'
+import { appliquerAgrandissement } from '../../../../lib/upgrade'
 
 export const runtime = 'nodejs'
+
+// Au-delà, on considère que la page de paiement a été abandonnée. Stripe
+// laisse ses sessions ouvertes 24 h : s'aligner dessus bloquerait tout un
+// week-end à cause d'un onglet fermé, alors qu'un invité attend à la porte.
+const MINUTES_PAIEMENT = 20
+
+// L'état du dernier paiement ouvert pour cet événement.
+// Renvoie { paye, ouvert, session } — tout à faux si rien n'est en cours.
+async function paiementEnCours(stripe, ev) {
+  if (!ev.upgrade_pending_session || !stripe) return null
+  let session
+  try {
+    session = await stripe.checkout.sessions.retrieve(ev.upgrade_pending_session)
+  } catch {
+    return null // session inconnue de Stripe : on repart de zéro
+  }
+  if (session?.payment_status === 'paid') return { paye: true, session }
+
+  const depuis = ev.upgrade_pending_at ? Date.now() - new Date(ev.upgrade_pending_at).getTime() : Infinity
+  const frais = depuis < MINUTES_PAIEMENT * 60 * 1000
+  if (session?.status === 'open' && frais) return { ouvert: true, session }
+  return null
+}
 
 // Ouvre un paiement Stripe pour agrandir la formule d'un événement existant.
 // On ne facture que la différence : ce qui a déjà été réglé reste acquis.
@@ -19,7 +43,10 @@ export async function POST(request) {
   const { eventId, maxGuests } = await request.json().catch(() => ({}))
   if (!eventId) return Response.json({ error: 'Événement manquant.' }, { status: 400 })
 
-  const { data } = await selectRows('events', `id=eq.${eventId}&select=id,name,owner_token,owner_email,max_guests`)
+  const { data } = await selectRows(
+    'events',
+    `id=eq.${eventId}&select=id,name,owner_token,owner_email,max_guests,reveal_at,reveal_paused,upgrade_pending_session,upgrade_pending_at`
+  )
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
 
@@ -43,6 +70,31 @@ export async function POST(request) {
 
   const base = siteUrl()
   const stripe = getStripe()
+
+  // ---- Un paiement est-il déjà passé, ou en train de passer ? ----
+  //
+  // C'est ici que se joue le « ne pas payer deux fois ». Détecter le doublon
+  // après coup laissait une soirée avec deux règlements et un remboursement à
+  // faire ; on refuse maintenant d'ouvrir le second.
+  const enCours = await paiementEnCours(stripe, ev)
+  if (enCours?.paye) {
+    // Réglé, mais jamais appliqué : le payeur a fermé l'onglet avant de
+    // revenir. On le rattrape séance tenante plutôt que d'encaisser une
+    // seconde fois pour la même chose.
+    const applique = await appliquerAgrandissement(ev, enCours.session)
+    return Response.json({
+      alreadyPaid: true,
+      maxGuests: applique.maxGuests || ev.max_guests,
+      message: 'Cet agrandissement a déjà été réglé — il vient d’être appliqué.',
+    })
+  }
+  if (enCours?.ouvert) {
+    return Response.json({
+      error: 'Un paiement pour cet agrandissement est déjà en cours, ouvert il y a moins de ' +
+        `${MINUTES_PAIEMENT} minutes. Attendez qu’il aboutisse avant d’en lancer un autre — ` +
+        'inutile de régler deux fois.',
+    }, { status: 409 })
+  }
 
   try {
     const session = await stripe.checkout.sessions.create({
@@ -69,6 +121,12 @@ export async function POST(request) {
         max_guests: String(cible.maxGuests),
         from_max_guests: String(ev.max_guests || 0),
       },
+    })
+    // Retenu avant même que la personne n'ait payé : c'est ce qui permettra
+    // de refuser un second paiement pendant qu'elle saisit sa carte.
+    await updateRow('events', `id=eq.${ev.id}`, {
+      upgrade_pending_session: session.id,
+      upgrade_pending_at: new Date().toISOString(),
     })
     return Response.json({ url: session.url })
   } catch (err) {

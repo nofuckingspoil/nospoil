@@ -287,6 +287,15 @@ export default function EventManage({ params }) {
       })
       const d = await r.json()
       if (d.error) throw new Error(d.error)
+      // Déjà réglé par quelqu'un d'autre — ou par soi-même, dans un onglet
+      // fermé avant le retour : le serveur vient de l'appliquer. On ne
+      // renvoie personne vers un second paiement.
+      if (d.alreadyPaid) {
+        setUpgradeMsg('ok')
+        setUpgrading(false)
+        await reload()
+        return
+      }
       window.location.href = d.url
     } catch (err) {
       setUpgradeMsg(err.message)

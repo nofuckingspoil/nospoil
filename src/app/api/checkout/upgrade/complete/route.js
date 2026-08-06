@@ -1,16 +1,17 @@
 import { getStripe } from '../../../../../lib/stripe'
-import { selectRows, updateRow } from '../../../../../lib/supabase'
-import { notifyGuestsOfAlbum } from '../../../../../lib/notify-guests'
+import { selectRows } from '../../../../../lib/supabase'
 import { membrePar } from '../../../../../lib/equipe'
 import { alerterDoublePaiement } from '../../../../../lib/paiement-double'
+import { appliquerAgrandissement } from '../../../../../lib/upgrade'
 
 export const runtime = 'nodejs'
 
-// Applique une mise à niveau de formule après paiement.
+// Applique une mise à niveau de formule au retour du paiement.
 //
-// Volontairement idempotent sans colonne dédiée : la formule ne fait que monter.
-// Rappelé deux fois (page rechargée), le second appel ne trouve rien à relever
-// et se contente de confirmer.
+// Idempotent par nature : la formule ne fait que monter. Rappelée deux fois
+// (page rechargée), la route ne trouve rien à relever et se contente de
+// confirmer. Le vrai travail est fait par appliquerAgrandissement, partagé
+// avec l'ouverture d'un paiement — qui rattrape le cas de l'onglet fermé.
 export async function POST(request) {
   const stripe = getStripe()
   if (!stripe) return Response.json({ error: 'Paiement indisponible.' }, { status: 400 })
@@ -49,43 +50,31 @@ export async function POST(request) {
   const membre = await membrePar(ev.id, ownerToken)
   if (!membre) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
-  const cible = parseInt(m.max_guests, 10) || 0
+  const applique = await appliquerAgrandissement(ev, session)
+  if (!applique.ok) return Response.json({ error: 'Mise à niveau impossible.' }, { status: 500 })
 
-  // Déjà appliqué : le plus souvent une page rechargée, avec la même session.
-  // Une session différente veut dire que deux personnes ont payé la même mise
-  // à niveau — l'organisateur et un co-organisateur alertés en même temps. La
-  // formule ne monte qu'une fois : le second règlement est à rembourser, et
-  // personne ne le verrait si on n'en disait rien ici.
-  if (cible <= (ev.max_guests || 0)) {
-    if (ev.upgrade_session_id && ev.upgrade_session_id !== session.id) {
-      try {
-        await alerterDoublePaiement({
-          eventName: ev.name,
-          eventId: ev.id,
-          email: membre.email || session.customer_email,
-          montantCents: session.amount_total,
-          sessionId: session.id,
-        })
-      } catch (err) { console.error('alerte double paiement:', err) }
-    }
-    return Response.json({ ok: true, maxGuests: ev.max_guests, alreadyApplied: true })
+  // Rien à relever : le plus souvent une page rechargée, avec la même session.
+  // Une session différente veut dire que deux règlements ont abouti pour la
+  // même chose malgré le verrou posé à l'ouverture du paiement — il reste la
+  // fenêtre de quelques secondes où deux personnes cliquent en même temps. La
+  // formule ne monte qu'une fois : le second est à rembourser, et personne ne
+  // le verrait si on n'en disait rien ici.
+  if (applique.deja && ev.upgrade_session_id && ev.upgrade_session_id !== session.id) {
+    try {
+      await alerterDoublePaiement({
+        eventName: ev.name,
+        eventId: ev.id,
+        email: membre.email || session.customer_email,
+        montantCents: session.amount_total,
+        sessionId: session.id,
+      })
+    } catch (err) { console.error('alerte double paiement:', err) }
   }
 
-  const upd = await updateRow('events', `id=eq.${ev.id}`, {
-    max_guests: cible,
-    upgrade_session_id: session.id,
+  return Response.json({
+    ok: true,
+    maxGuests: applique.maxGuests,
+    alreadyApplied: !!applique.deja,
+    notified: applique.notified || null,
   })
-  if (!upd.ok) return Response.json({ error: 'Mise à niveau impossible.' }, { status: 500 })
-
-  // La formule était le seul frein : si l'heure de révélation est passée,
-  // l'album vient de s'ouvrir. Les invités inscrits reçoivent le lien tout de
-  // suite, sans attendre le passage de la tâche planifiée.
-  let notified = null
-  try {
-    notified = await notifyGuestsOfAlbum({ ...ev, max_guests: cible })
-  } catch (err) {
-    console.error('envoi du lien après mise à niveau:', err)
-  }
-
-  return Response.json({ ok: true, maxGuests: cible, notified })
 }
