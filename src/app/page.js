@@ -10,10 +10,12 @@ export const metadata = {
   description: BRAND.pitch,
 }
 
+// Chaque étape est illustrée par une vraie capture du produit : l'affiche qu'on
+// pose sur les tables, le déclencheur, puis la galerie une fois révélée.
 const STEPS = [
-  { ic: '🔳', title: 'Scannez le QR', sub: "Vos invités ouvrent l'appareil dans leur navigateur. Aucune appli à installer." },
-  { ic: '📸', title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte vraiment.' },
-  { ic: '🎞️', title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde d\'un coup.' },
+  { img: '/accueil/affiche.webp', pos: 'center 38%', alt: "Affiche à imprimer avec le QR code de l'événement", title: 'Scannez le QR', sub: "Vos invités ouvrent l'appareil dans leur navigateur. Aucune appli à installer." },
+  { img: '/accueil/declencheur.webp', pos: 'center 38%', alt: "Le déclencheur de l'appareil photo et le compteur de poses restantes", title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte vraiment.' },
+  { img: '/accueil/galerie.webp', pos: 'center top', alt: "La galerie de l'événement une fois les photos révélées", title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde d\'un coup.' },
 ]
 
 // Ce que l'organisateur garde sous contrôle. Deux testeurs ont posé la question
@@ -67,23 +69,31 @@ export default function Home() {
           au contenu principal, en passant la navigation. */}
       <main className="site-inner">
         {/* HERO */}
-        <section className="hero">
-          <div className="eyebrow">Appareil photo jetable · événements</div>
-          <h1>L'appareil photo<br />jetable de vos<br />événements.</h1>
-          <p>{BRAND.pitch}</p>
-          {/* Deux testeurs ont cru à une contrainte de 24 h : la durée se dit ici. */}
-          <p style={{ marginTop: 10 }}>Une soirée, un week-end ou une semaine entière : vous choisissez la durée et le nombre de clichés.</p>
-          <div className="hero-cta">
-            <Link href="#tarifs" className="btn btn-accent">Voir les formules →</Link>
-            <span className="mono small muted">Gratuit jusqu'à 5 invités</span>
+        <section className="hero hero-split">
+          <div>
+            <div className="eyebrow">Appareil photo jetable · événements</div>
+            <h1>L'appareil photo<br />jetable de vos<br />événements.</h1>
+            <p>{BRAND.pitch}</p>
+            {/* Deux testeurs ont cru à une contrainte de 24 h : la durée se dit ici. */}
+            <p style={{ marginTop: 10 }}>Une soirée, un week-end ou une semaine entière : vous choisissez la durée et le nombre de clichés.</p>
+            <div className="hero-cta">
+              <Link href="#tarifs" className="btn btn-accent">Voir les formules →</Link>
+              <span className="mono small muted">Gratuit jusqu'à 5 invités</span>
+            </div>
+            {/* Sur téléphone, la pastille flottante « Essayer » tombait pile sous
+                le bouton « Créer mon événement ». L'essai se propose donc ici,
+                dans la lecture, plutôt qu'en bas de l'écran. */}
+            <Link href="/essai" className="hero-try">✱ Essayer l'appareil photo tout de suite</Link>
+            {/* « Que pour les mariages ? » — la réponse tient sur une ligne. */}
+            <div className="mono small muted" style={{ marginTop: 20 }}>
+              Mariages · Anniversaires · Baptêmes · EVJF · Vacances · Séminaires
+            </div>
           </div>
-          {/* Sur téléphone, la pastille flottante « Essayer » tombait pile sous
-              le bouton « Créer mon événement ». L'essai se propose donc ici,
-              dans la lecture, plutôt qu'en bas de l'écran. */}
-          <Link href="/essai" className="hero-try">✱ Essayer l'appareil photo tout de suite</Link>
-          {/* « Que pour les mariages ? » — la réponse tient sur une ligne. */}
-          <div className="mono small muted" style={{ marginTop: 20 }}>
-            Mariages · Anniversaires · Baptêmes · EVJF · Vacances · Séminaires
+          {/* Voir l'appareil vaut mieux que le décrire : c'est la seule image
+              chargée tout de suite, les autres attendent le défilement. */}
+          <div className="phone phone-tilt">
+            <img src="/accueil/appareil.webp" width="640" height="1385"
+              alt="L'appareil photo jetable ouvert dans le navigateur : viseur, compteur de poses et déclencheur." />
           </div>
         </section>
 
@@ -95,7 +105,10 @@ export default function Home() {
           <div className="steps-grid">
             {STEPS.map((s, i) => (
               <div key={i} className="step-card">
-                <div className="step-ic">{s.ic}</div>
+                <div className="step-shot">
+                  <span className="step-num">{String(i + 1).padStart(2, '0')}</span>
+                  <img src={s.img} alt={s.alt} loading="lazy" style={{ objectPosition: s.pos }} />
+                </div>
                 <h3>{s.title}</h3>
                 <p>{s.sub}</p>
               </div>
@@ -130,6 +143,27 @@ export default function Home() {
           <p className="mono small muted" style={{ textAlign: 'center', marginTop: 18 }}>
             Plus de {TOP_TIER.maxGuests} invités ? Écrivez-nous.
           </p>
+        </section>
+
+        {/* APRÈS LA FÊTE — le bilan de l'événement existait déjà mais n'était
+            raconté nulle part. C'est pourtant ce qui fait sourire à la fin. */}
+        <section className="section">
+          <div className="split">
+            <div className="phone phone-tilt">
+              <img src="/accueil/bilan.webp" width="640" height="1174" loading="lazy"
+                alt="Le bilan de l'événement : nombre de photos prises, premier et dernier cliché, photographe le plus rapide." />
+            </div>
+            <div className="split-text">
+              <div className="eyebrow-mute" style={{ marginBottom: 10 }}>Et après la fête</div>
+              <h2>Votre événement en chiffres</h2>
+              <p>Quand la galerie s'ouvre, on vous raconte votre soirée. Qui a dégainé en premier, à quelle heure ça a le plus flashé, qui a été le photographe le plus prolifique.</p>
+              <ul className="split-list">
+                <li><span className="ic">🌅</span><div><b>Le premier et le dernier cliché</b> — souvent celui de 6 h du matin que personne n'assume.</div></li>
+                <li><span className="ic">🏆</span><div><b>Le photographe en chef</b> — celui qui a vidé sa pellicule en une heure.</div></li>
+                <li><span className="ic">📈</span><div><b>Le créneau le plus chargé</b> — le moment où la fête a vraiment démarré.</div></li>
+              </ul>
+            </div>
+          </div>
         </section>
 
         {/* RÉASSURANCE */}
