@@ -13,6 +13,11 @@ import { ACCROCHE } from '../../../lib/avis'
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
 
+// Diapo : combien de photos on tient prêtes de chaque côté de celle qu'on
+// regarde. Une seule suffisait à qui feuillette calmement, mais deux coups de
+// pouce rapides rattrapaient le chargement et laissaient un cadre vide.
+const PRECHARGE = 2
+
 const TEASER_GRADS = [
   'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)',
   'linear-gradient(160deg,#2B2540,#6E466C,#D08193)',
@@ -216,6 +221,130 @@ function enregistrer(blob, nom) {
   setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
 }
 
+// Regarder une photo, et passer à la suivante d'un doigt. Ouvrir le fichier
+// dans un onglet, c'était sortir de l'album : on perdait le nom, l'heure, le
+// cœur, et il fallait revenir en arrière pour voir la photo d'après.
+function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe }) {
+  const [dx, setDx] = useState(0)
+  const [glisse, setGlisse] = useState(false)
+  const geste = useRef(null)
+  const n = photos.length
+  const p = photos[index]
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') onClose()
+      else if (e.key === 'ArrowLeft') setIndex((i) => Math.max(0, i - 1))
+      else if (e.key === 'ArrowRight') setIndex((i) => Math.min(n - 1, i + 1))
+    }
+    window.addEventListener('keydown', onKey)
+    // La page derrière ne doit pas défiler sous la photo qu'on regarde.
+    const avant = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = avant }
+  }, [n, onClose, setIndex])
+
+  function debut(e) {
+    const t = e.touches[0]
+    geste.current = { x: t.clientX, y: t.clientY, axe: null }
+  }
+  function bouge(e) {
+    const g = geste.current
+    if (!g) return
+    const t = e.touches[0]
+    const ex = t.clientX - g.x
+    const ey = t.clientY - g.y
+    // L'axe se décide au premier centimètre : un doigt parti vers le bas ne
+    // doit pas faire sauter la photo suivante au passage.
+    if (!g.axe) {
+      if (Math.abs(ex) < 8 && Math.abs(ey) < 8) return
+      g.axe = Math.abs(ex) > Math.abs(ey) ? 'x' : 'y'
+      if (g.axe === 'x') setGlisse(true)
+    }
+    if (g.axe !== 'x') return
+    // Aux deux bouts, la photo résiste au lieu de partir dans le vide.
+    const bord = (ex > 0 && index === 0) || (ex < 0 && index === n - 1)
+    setDx(bord ? ex * 0.3 : ex)
+  }
+  function fin() {
+    const g = geste.current
+    geste.current = null
+    setGlisse(false)
+    if (!g || g.axe !== 'x') { setDx(0); return }
+    const seuil = Math.min(90, window.innerWidth * 0.18)
+    if (dx <= -seuil && index < n - 1) setIndex(index + 1)
+    else if (dx >= seuil && index > 0) setIndex(index - 1)
+    setDx(0)
+  }
+
+  return (
+    <div className="diapo" role="dialog" aria-modal="true" aria-label={`Photo ${index + 1} sur ${n}`}>
+      <div className="diapo-piste"
+        style={{
+          transform: `translate3d(calc(${-index * 100}% + ${dx}px), 0, 0)`,
+          transition: glisse ? 'none' : 'transform .3s cubic-bezier(.22,.61,.36,1)',
+        }}
+        onTouchStart={debut} onTouchMove={bouge} onTouchEnd={fin} onTouchCancel={fin}>
+        {photos.map((ph, j) => (
+          <div className="diapo-slide" key={ph.id || j}
+            onClick={(e) => { if (e.target === e.currentTarget) onClose() }}>
+            {/* On garde deux photos d'avance de chaque côté : un album de 300
+                photos ne doit pas tout télécharger d'un coup, mais qui feuillette
+                vite ne doit jamais tomber sur un cadre vide. */}
+            {Math.abs(j - index) <= PRECHARGE && (
+              <div className="diapo-media">
+                {/* La photo regardée passe devant les autres dans la file du
+                    navigateur : les voisines se chargent, mais jamais au prix
+                    de celle qu'on a sous les yeux. */}
+                <img src={ph.fullUrl || ph.url} alt={`Photo de ${ph.who}`} crossOrigin="anonymous" draggable={false}
+                  fetchPriority={j === index ? 'high' : 'low'}
+                  style={pelli.css ? { filter: pelli.css } : undefined} />
+                {pelli.teinte && <div className="film-teinte" style={{ background: cssTeinte(pelli) }} />}
+                {pelli.halo > 0 && <div className="film-halo" style={{ opacity: pelli.halo }} />}
+                {pelli.vignette > 0 && <div className="film-vignette" style={{ opacity: pelli.vignette }} />}
+                {pelli.grain > 0 && <div className="film-grain" style={{ opacity: pelli.grain }} />}
+                {avecDate && <span className="film-date">{tamponDate(ph.takenAt)}</span>}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="diapo-haut">
+        <span className="diapo-num">{index + 1} / {n}</span>
+        <button className="diapo-x" onClick={onClose} aria-label="Fermer">✕</button>
+      </div>
+
+      {/* Au doigt on fait glisser ; à la souris, on cherche une flèche. */}
+      <button className="diapo-fleche g" onClick={() => setIndex((i) => Math.max(0, i - 1))}
+        disabled={index === 0} aria-label="Photo précédente">‹</button>
+      <button className="diapo-fleche d" onClick={() => setIndex((i) => Math.min(n - 1, i + 1))}
+        disabled={index === n - 1} aria-label="Photo suivante">›</button>
+
+      <div className="diapo-bas">
+        <div className="diapo-qui">
+          <b>{p.who}</b>
+          <span>{formatStamp(p.takenAt)}</span>
+        </div>
+        <div className="diapo-act">
+          <button className={`diapo-b ${favs.has(p.id) ? 'on' : ''}`} onClick={() => onFav(p.id)}
+            aria-pressed={favs.has(p.id)} aria-label={favs.has(p.id) ? 'Retirer des favoris' : 'Mettre en favori'}>
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"
+              fill={favs.has(p.id) ? 'currentColor' : 'none'}
+              stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20.8 5.6a5.5 5.5 0 00-7.8 0L12 6.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 22l7.8-7.6 1-1a5.5 5.5 0 000-7.8z" />
+            </svg>
+            {p.favs > 0 && <span>{p.favs}</span>}
+          </button>
+          <button className="diapo-b" onClick={() => onDownload(p)} disabled={occupe}>
+            {occupe ? '…' : '⬇ Enregistrer'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Gallery({ params }) {
   const { id } = use(params)
   const [data, setData] = useState(null)
@@ -243,6 +372,8 @@ export default function Gallery({ params }) {
   // n'apparaissaient qu'après un long défilement. Ils tiennent maintenant dans
   // deux boutons, qui ouvrent chacun leur panneau. null | 'film' | 'qui'
   const [panneau, setPanneau] = useState(null)
+  // Photo ouverte en plein écran (son rang dans la liste affichée), ou null.
+  const [diapo, setDiapo] = useState(null)
 
   // Le goût de chacun tient d'un album à l'autre : on relit le choix précédent
   // après le premier rendu, pour ne pas fâcher le serveur avec le localStorage.
@@ -752,8 +883,11 @@ export default function Gallery({ params }) {
               <a key={p.id || i} className={`polaroid ${selecting && selected.has(p.id) ? 'pris' : ''}`}
                 href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
                 onClick={(e) => {
-                  if (!selecting) return
+                  // Ctrl/⌘ + clic garde son sens sur un ordinateur : ouvrir le
+                  // fichier dans un onglet à côté.
+                  if (!selecting && (e.metaKey || e.ctrlKey || e.shiftKey)) return
                   e.preventDefault()
+                  if (!selecting) { setDiapo(i); return }
                   setSelected((prev) => {
                     const n = new Set(prev)
                     n.has(p.id) ? n.delete(p.id) : n.add(p.id)
@@ -856,6 +990,21 @@ export default function Gallery({ params }) {
             </button>
           </div>
         </div>
+      )}
+
+      {diapo !== null && photos[diapo] && (
+        <Diapo
+          photos={photos}
+          index={diapo}
+          setIndex={setDiapo}
+          pelli={pelli}
+          avecDate={avecDate}
+          favs={favs}
+          onFav={toggleFav}
+          onClose={() => setDiapo(null)}
+          onDownload={(p) => downloadAll([p])}
+          occupe={!!zip}
+        />
       )}
 
     </main>
