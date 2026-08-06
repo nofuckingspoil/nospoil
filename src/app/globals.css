@@ -1693,7 +1693,8 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* Les pages à garder sous la main — discrètes, mais toujours au même endroit */
 .db-res { margin-top: 26px; padding: 16px 16px 8px; border-radius: 18px;
   background: #fff; border: 1px solid var(--line); }
-.db-res .db-eyebrow { display: block; margin-bottom: 10px; }
+/* Le surtitre est blanc ailleurs (bandeau sombre) : ici la carte est claire. */
+.db-res .db-eyebrow { display: block; margin-bottom: 10px; color: var(--text4); }
 .db-res-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0;
   text-decoration: none; color: inherit; }
 .db-res-row + .db-res-row { border-top: 1px solid var(--line); }
