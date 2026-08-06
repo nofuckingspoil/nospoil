@@ -170,6 +170,7 @@ export default function Home() {
         <div className="vfooter-inner">
           <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff', fontSize: 15 }}>{BRAND.name}</span>
           <nav className="vfooter-links">
+            <Link href="/generateur-qr-code-mariage">Générateur de QR code</Link>
             <Link href="/aide">Aide</Link>
             <Link href="/mentions-legales">Mentions légales</Link>
             <Link href="/cgv">CGV</Link>
