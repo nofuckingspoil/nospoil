@@ -83,22 +83,35 @@ export function Retours() {
 }
 
 // Le cœur émotionnel : l'attente, puis tout d'un coup.
-export function Revelation() {
+//
+// `cible` : à qui la page s'adresse. Aux mariés, l'album est le leur. Au
+// témoin qui l'offre, c'est le moment où il le leur tend qui compte — et ce
+// n'est pas la même phrase.
+export function Revelation({ cible = 'maries' }) {
+  const temoins = cible === 'temoins'
   return (
     <section className="section">
       <div className="split split-inverse">
         <div className="split-text">
           <div className="eyebrow-mute" style={{ marginBottom: 10 }}>Le moment qu'on n'oublie pas</div>
-          <h2>Tout arrive d'un coup, le lendemain</h2>
+          <h2>{temoins ? "Le cadeau s'ouvre le lendemain" : "Tout arrive d'un coup, le lendemain"}</h2>
           <p>
-            Pendant la fête, personne ne voit les photos des autres : un compte à
-            rebours retient tout le monde. Puis, à l'heure que vous avez choisie,
-            l'album s'ouvre pour tous en même temps.
+            {temoins
+              ? "Pendant la fête, personne ne voit rien — pas même les mariés. Puis, à l'heure que vous avez choisie, l'album s'ouvre d'un coup : leur journée vue par ceux qui l'ont vécue avec eux."
+              : "Pendant la fête, personne ne voit les photos des autres : un compte à rebours retient tout le monde. Puis, à l'heure que vous avez choisie, l'album s'ouvre pour tous en même temps."}
           </p>
           <ul className="split-list">
             <li><span className="ic">⏳</span><div><b>L'attente fait partie du cadeau</b> — comme une pellicule qu'on porte à développer.</div></li>
-            <li><span className="ic">👥</span><div><b>Tout le monde découvre ensemble</b> — vos invités reçoivent le même lien que vous.</div></li>
-            <li><span className="ic">📥</span><div><b>Vous téléchargez tout</b> — en pleine définition, d'un seul clic.</div></li>
+            <li><span className="ic">👥</span><div>
+              {temoins
+                ? <><b>Tout le monde découvre ensemble</b> — les mariés et leurs invités reçoivent le même lien.</>
+                : <><b>Tout le monde découvre ensemble</b> — vos invités reçoivent le même lien que vous.</>}
+            </div></li>
+            <li><span className="ic">📥</span><div>
+              {temoins
+                ? <><b>Ils gardent tout</b> — en pleine définition, téléchargeable d'un seul clic.</>
+                : <><b>Vous téléchargez tout</b> — en pleine définition, d'un seul clic.</>}
+            </div></li>
           </ul>
         </div>
         <div className="phone phone-tilt">
@@ -110,8 +123,11 @@ export function Revelation() {
   )
 }
 
-// L'objection numéro un d'un mariage : et si une photo me gêne ?
-export function Controle() {
+// L'objection numéro un d'un mariage : et si une photo me gêne ? Pour le
+// témoin, la même mécanique répond à une inquiétude différente — ne pas
+// offrir aux mariés une photo qui les embarrasse.
+export function Controle({ cible = 'maries' }) {
+  const temoins = cible === 'temoins'
   return (
     <section className="section">
       <div className="split">
@@ -120,16 +136,22 @@ export function Controle() {
             alt="Le bilan du mariage : nombre de photos prises, premier et dernier cliché, photographe le plus prolifique." />
         </div>
         <div className="split-text">
-          <div className="eyebrow-mute" style={{ marginBottom: 10 }}>Vous gardez la main</div>
-          <h2>Rien ne se montre sans votre accord</h2>
+          <div className="eyebrow-mute" style={{ marginBottom: 10 }}>
+            {temoins ? 'Vous maîtrisez la surprise' : 'Vous gardez la main'}
+          </div>
+          <h2>{temoins ? 'Rien ne leur arrive sans que vous l\'ayez vu' : 'Rien ne se montre sans votre accord'}</h2>
           <p>
-            C'est votre mariage : vous découvrez les photos en avant-première et
-            vous décidez de ce qui apparaît. Une photo ratée, un moment gênant ?
-            Vous le retirez avant que qui que ce soit ne le voie.
+            {temoins
+              ? "Avant la révélation, vous êtes seul à voir ce qui a été pris. Une photo ratée, un cliché qui les gênerait le jour de leur mariage ? Vous le retirez, et personne n'en saura jamais rien."
+              : "C'est votre mariage : vous découvrez les photos en avant-première et vous décidez de ce qui apparaît. Une photo ratée, un moment gênant ? Vous le retirez avant que qui que ce soit ne le voie."}
           </p>
           <ul className="split-list">
             <li><span className="ic">👀</span><div><b>Vous validez en premier</b> — et personne ne saura ce que vous avez masqué.</div></li>
-            <li><span className="ic">🤝</span><div><b>À plusieurs si vous voulez</b> — un témoin peut vous aider à trier.</div></li>
+            <li><span className="ic">🤝</span><div>
+              {temoins
+                ? <><b>À plusieurs si vous voulez</b> — invitez les autres témoins à trier avec vous.</>
+                : <><b>À plusieurs si vous voulez</b> — un témoin peut vous aider à trier.</>}
+            </div></li>
             <li><span className="ic">🔒</span><div><b>Jamais public</b> — l'album n'existe que pour ceux qui ont le lien.</div></li>
           </ul>
         </div>
@@ -138,11 +160,16 @@ export function Controle() {
   )
 }
 
-export function Tarifs() {
+export function Tarifs({ cible = 'maries' }) {
+  const temoins = cible === 'temoins'
   return (
     <section className="section" id="tarifs">
       <h2 className="section-title">Un prix, une fois</h2>
-      <div className="section-sub">Selon le nombre d'invités que vous attendez. Sans abonnement.</div>
+      <div className="section-sub">
+        {temoins
+          ? "Selon le nombre d'invités attendus. Sans abonnement — et facile à partager entre témoins."
+          : "Selon le nombre d'invités que vous attendez. Sans abonnement."}
+      </div>
       <div className="price-grid lp-prices">
         {FORMULES_MARIAGE.map((t) => (
           <div key={t.maxGuests} className={`price-card ${t.popular ? 'popular' : ''}`}>
@@ -160,7 +187,9 @@ export function Tarifs() {
         ))}
       </div>
       <p className="mono small muted" style={{ textAlign: 'center', marginTop: 18 }}>
-        Vous voulez d'abord essayer ? La formule 5 invités est gratuite, sans carte bancaire.
+        {temoins
+          ? "À ce prix, cotisez-vous à deux ou trois et le cadeau est réglé. La formule 5 invités reste gratuite pour l'essayer avant."
+          : "Vous voulez d'abord essayer ? La formule 5 invités est gratuite, sans carte bancaire."}
       </p>
     </section>
   )

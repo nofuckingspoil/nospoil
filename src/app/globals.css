@@ -2594,6 +2594,17 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   padding: 20px 20px 18px;
   animation: ck-monte .42s cubic-bezier(.2,.9,.3,1) .35s backwards;
 }
+/* Hors accueil, le coin gauche est libre : la carte s'y range au lieu de
+   barrer le milieu de l'écran. Le coin droit reste au badge du guide. */
+.ck--gauche {
+  left: 24px; transform: none;
+  animation-name: ck-monte-gauche;
+}
+@keyframes ck-monte-gauche {
+  from { transform: translateY(18px) scale(.97); opacity: 0 }
+  to   { transform: none; opacity: 1 }
+}
+
 @keyframes ck-monte {
   from { transform: translate(-50%, 18px) scale(.97); opacity: 0 }
   to   { transform: translateX(-50%); opacity: 1 }

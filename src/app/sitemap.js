@@ -12,6 +12,7 @@ export default function sitemap() {
     { url: `${BASE}/guide`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/generateur-qr-code-mariage`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/photos-mariage-invites`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE}/cadeau-mariage-temoins`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/create`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ]
   const articles = POSTS.map((p) => ({

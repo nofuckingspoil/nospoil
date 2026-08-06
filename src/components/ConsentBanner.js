@@ -50,8 +50,13 @@ export default function ConsentBanner() {
   if (etat === 'inconnu' || etat !== null) return null
   if (estExclu(chemin)) return null
 
+  // Le centre n'était justifié que sur l'accueil, où le QR d'essai occupe le
+  // coin gauche. Partout ailleurs celui-ci est libre, et une carte posée au
+  // milieu de l'écran barre la lecture au lieu de l'accompagner.
+  const auCentre = chemin === '/'
+
   return (
-    <div className="ck" role="dialog" aria-modal="false" aria-labelledby="ck-t">
+    <div className={`ck ${auCentre ? '' : 'ck--gauche'}`} role="dialog" aria-modal="false" aria-labelledby="ck-t">
       <p className="ck-tag" aria-hidden="true"><span className="ck-dot" />Cookies</p>
       <div className="ck-txt">
         <h2 id="ck-t">Un mot sur les cookies</h2>

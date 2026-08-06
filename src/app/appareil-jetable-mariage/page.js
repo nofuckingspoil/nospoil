@@ -12,6 +12,7 @@
 // ============================================================
 
 import { BRAND } from '../../lib/brand'
+import { formatPrice } from '../../lib/pricing'
 import {
   Entete, Bouton, Etapes, Retours, Revelation, Controle,
   Tarifs, Faq, Confiance, CtaFinal, PiedLp, Sticky,
@@ -52,6 +53,29 @@ const JETABLE = [
     s: "L'album reste scellé jusqu'à l'heure que vous fixez. L'attente fait partie du plaisir, exactement comme quand on rapportait la pellicule au labo.",
   },
 ]
+
+// Le vrai jetable posé sur les tables est la solution que beaucoup envisagent
+// avant nous. Elle a un charme réel, et une addition qu'on découvre tard :
+// l'appareil, puis le développement, puis la numérisation — à multiplier par
+// le nombre de tables, et à ramasser un par un le lendemain.
+const CONTRE_LE_VRAI = {
+  eux: [
+    "12 à 18 € l'appareil, autant pour le développement",
+    'À acheter, à poser, puis à récupérer un par un',
+    '27 poses pour une table entière',
+    'Deux semaines avant de voir quoi que ce soit',
+    'Les ratés se paient au même prix',
+    'Un appareil oublié, ce sont ses photos perdues',
+  ],
+  nous: [
+    `${formatPrice(1499)} pour tout le mariage, développement compris`,
+    'Rien à acheter, rien à ramasser',
+    'Le nombre de poses que vous fixez, pour chacun',
+    "L'album s'ouvre le lendemain",
+    'Une photo ratée se reprend sans en perdre une',
+    'Chaque cliché est à l\'abri dès le déclenchement',
+  ],
+}
 
 const FAQ_ANGLE = [
   {
@@ -115,6 +139,31 @@ export default function Page() {
               </div>
             ))}
           </div>
+        </section>
+
+        <section className="section">
+          <h2 className="section-title">Et de vrais jetables sur les tables ?</h2>
+          <div className="section-sub">
+            L'idée est belle. C'est l'addition, et le lendemain, qui déçoivent.
+          </div>
+          <div className="lp-compare">
+            <div className="lp-col">
+              <div className="lp-col-h">Dix jetables achetés</div>
+              <ul>
+                {CONTRE_LE_VRAI.eux.map((l, i) => <li key={i}><span>✕</span> {l}</li>)}
+              </ul>
+            </div>
+            <div className="lp-col lp-col-nous">
+              <div className="lp-col-h">{BRAND.name}</div>
+              <ul>
+                {CONTRE_LE_VRAI.nous.map((l, i) => <li key={i}><span>✓</span> {l}</li>)}
+              </ul>
+            </div>
+          </div>
+          <p className="mono small muted" style={{ textAlign: 'center', marginTop: 18 }}>
+            Dix appareils pour cinquante invités : entre 240 et 360 €, et 270 poses en tout.
+          </p>
+          <div className="lp-mid-cta"><Bouton /></div>
         </section>
 
         <Etapes
