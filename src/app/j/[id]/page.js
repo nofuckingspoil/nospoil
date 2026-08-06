@@ -757,7 +757,12 @@ export default function GuestCamera({ params }) {
             <button className="cam-pile" onClick={() => setShowAlbum(true)} aria-label="Voir l'album et mes photos">
               {roll.slice(0, 3).map((p, i) => (
                 <span key={p.tempId || p.id || i} className="pf" style={{ zIndex: 3 - i, transform: `rotate(${[-6, 7, 14][i] || 0}deg)` }}>
-                  <img src={p.url} alt="" loading="lazy" />
+                  {/* crossOrigin, ici aussi : la pile montre les 3 dernières photos,
+                      exactement celles que l'album réaffiche juste après. Sans lui, le
+                      navigateur gardait ces 3 images en cache « sans CORS », puis
+                      refusait de les resservir à l'album qui, lui, les demande avec —
+                      trois vignettes cassées, toujours les mêmes. */}
+                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
                 </span>
               ))}
               {roll.length >= 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
@@ -929,7 +934,7 @@ export default function GuestCamera({ params }) {
       {viewer && (
         <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setViewer(null) }}>
           <button className="viewer-close" onClick={() => setViewer(null)} aria-label="Fermer">×</button>
-          <img src={viewer.url} alt="Ta photo" />
+          <img src={viewer.url} alt="Ta photo" crossOrigin="anonymous" />
           {error && <div className="err" style={{ marginTop: 14, maxWidth: 360, width: '100%' }}>{error}</div>}
           <div className="viewer-actions">
             <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }} onClick={() => setViewer(null)}>Garder</button>
