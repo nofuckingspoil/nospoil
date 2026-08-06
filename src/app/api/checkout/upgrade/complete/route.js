@@ -1,6 +1,8 @@
 import { getStripe } from '../../../../../lib/stripe'
 import { selectRows, updateRow } from '../../../../../lib/supabase'
 import { notifyGuestsOfAlbum } from '../../../../../lib/notify-guests'
+import { membrePar } from '../../../../../lib/equipe'
+import { alerterDoublePaiement } from '../../../../../lib/paiement-double'
 
 export const runtime = 'nodejs'
 
@@ -36,20 +38,43 @@ export async function POST(request) {
 
   const { data } = await selectRows(
     'events',
-    `id=eq.${m.event_id}&select=id,name,owner_token,reveal_at,reveal_paused,max_guests`
+    `id=eq.${m.event_id}&select=id,name,owner_token,owner_email,reveal_at,reveal_paused,max_guests,upgrade_session_id`
   )
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
-  if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+
+  // Même porte que pour l'ouverture du paiement : un co-organisateur qui a
+  // réglé doit pouvoir finaliser. Lui refuser ici serait le pire des cas —
+  // l'argent prélevé, et la formule inchangée.
+  const membre = await membrePar(ev.id, ownerToken)
+  if (!membre) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
   const cible = parseInt(m.max_guests, 10) || 0
 
-  // Déjà appliqué (page rechargée) : rien à faire, ce n'est pas une erreur.
+  // Déjà appliqué : le plus souvent une page rechargée, avec la même session.
+  // Une session différente veut dire que deux personnes ont payé la même mise
+  // à niveau — l'organisateur et un co-organisateur alertés en même temps. La
+  // formule ne monte qu'une fois : le second règlement est à rembourser, et
+  // personne ne le verrait si on n'en disait rien ici.
   if (cible <= (ev.max_guests || 0)) {
+    if (ev.upgrade_session_id && ev.upgrade_session_id !== session.id) {
+      try {
+        await alerterDoublePaiement({
+          eventName: ev.name,
+          eventId: ev.id,
+          email: membre.email || session.customer_email,
+          montantCents: session.amount_total,
+          sessionId: session.id,
+        })
+      } catch (err) { console.error('alerte double paiement:', err) }
+    }
     return Response.json({ ok: true, maxGuests: ev.max_guests, alreadyApplied: true })
   }
 
-  const upd = await updateRow('events', `id=eq.${ev.id}`, { max_guests: cible })
+  const upd = await updateRow('events', `id=eq.${ev.id}`, {
+    max_guests: cible,
+    upgrade_session_id: session.id,
+  })
   if (!upd.ok) return Response.json({ error: 'Mise à niveau impossible.' }, { status: 500 })
 
   // La formule était le seul frein : si l'heure de révélation est passée,

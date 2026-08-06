@@ -16,7 +16,6 @@ import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { quotaExceeded } from '../../../../lib/phase'
 import { enqueteOrganisateurs, enqueteInvites, recapDuJour } from '../../../../lib/avis-envoi'
 import { equipeDe } from '../../../../lib/equipe'
-import { OWNER } from '../../../../lib/authz'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -125,11 +124,9 @@ async function nudgeAfterParty(now, base) {
         revealDate: frDate(ev.reveal_at),
         // Formule dépassée : on l'annonce dans ce mail plutôt que dans un envoi
         // séparé — il arrive pile au bon moment, entre la fête et la révélation.
-        //
-        // Réservé au propriétaire : lui seul peut mettre la formule à niveau,
-        // et l'encart annonce un règlement que le co-organisateur ne pourrait
-        // pas faire. Ce dernier reçoit le mail utile — les photos à trier.
-        quota: depasse && p.role === OWNER ? { maxGuests: ev.max_guests } : null,
+        // Les co-organisateurs le reçoivent aussi : ils peuvent régler, et
+        // l'album reste fermé pour tout le monde tant que personne ne l'a fait.
+        quota: depasse ? { maxGuests: ev.max_guests } : null,
       })
       const res = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
       if (res?.ok) sent++

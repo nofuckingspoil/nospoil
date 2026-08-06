@@ -16,6 +16,28 @@ import 'server-only'
 import { selectRows } from './supabase'
 import { OWNER, ADMIN } from './authz'
 
+// Qui présente ce jeton, et à quelle adresse le joindre.
+// Renvoie { role, email } ou null si le jeton n'a aucun droit sur l'événement.
+//
+// `roleFor` (voir ./authz) suffit à décider du droit ; ici on veut en plus
+// l'adresse, pour pré-remplir le paiement avec celle de la personne qui règle
+// — et non avec celle du propriétaire, qui dort peut-être.
+export async function membrePar(eventId, token) {
+  if (!eventId || !token) return null
+
+  const { data } = await selectRows('events', `id=eq.${eventId}&select=owner_token,owner_email`)
+  const ev = Array.isArray(data) ? data[0] : null
+  if (!ev) return null
+  if (ev.owner_token === token) return { role: OWNER, email: ev.owner_email || null }
+
+  const adm = await selectRows(
+    'event_admins',
+    `event_id=eq.${eventId}&token=eq.${encodeURIComponent(token)}&select=email&limit=1`
+  )
+  const a = Array.isArray(adm.data) ? adm.data[0] : null
+  return a ? { role: ADMIN, email: a.email || null } : null
+}
+
 // `ev` : ligne `events` brute, avec au moins id, owner_email et owner_token.
 // Renvoie [{ email, token, role }], l'organisateur d'abord.
 export async function equipeDe(ev) {

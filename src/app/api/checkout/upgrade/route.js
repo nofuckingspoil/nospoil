@@ -2,6 +2,7 @@ import { getStripe, paymentsLive } from '../../../../lib/stripe'
 import { selectRows } from '../../../../lib/supabase'
 import { tierByGuests, upgradeCents } from '../../../../lib/pricing'
 import { siteUrl } from '../../../../lib/mail'
+import { membrePar } from '../../../../lib/equipe'
 
 export const runtime = 'nodejs'
 
@@ -21,7 +22,14 @@ export async function POST(request) {
   const { data } = await selectRows('events', `id=eq.${eventId}&select=id,name,owner_token,owner_email,max_guests`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
-  if (ev.owner_token !== ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+
+  // Un co-organisateur peut régler l'agrandissement, et c'est voulu : la
+  // formule se remplit en pleine soirée, quand celui qui a créé l'événement
+  // danse ou dort. Lui réserver ce paiement, c'était laisser des invités à la
+  // porte jusqu'au lendemain matin — et le bouton lui était déjà montré, pour
+  // ne lui rendre qu'un refus.
+  const membre = await membrePar(eventId, ownerToken)
+  if (!membre) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
 
   const cible = tierByGuests(maxGuests)
   if (cible.maxGuests <= (ev.max_guests || 0)) {
@@ -39,7 +47,9 @@ export async function POST(request) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      customer_email: ev.owner_email || undefined,
+      // L'adresse de celui qui règle, pas celle du propriétaire : c'est lui
+      // qui recevra le reçu Stripe, et c'est sa carte.
+      customer_email: membre.email || ev.owner_email || undefined,
       line_items: [{
         quantity: 1,
         price_data: {

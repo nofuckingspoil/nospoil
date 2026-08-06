@@ -25,9 +25,9 @@ async function alerteQuota(ev, guestCount, prenom) {
   const cible = upgradeFor(ev.max_guests, guestCount + 1)
 
   // Les co-organisateurs aussi : c'est souvent l'un d'eux qui est près de la
-  // porte, pendant que le propriétaire danse. Leur message diffère — eux ne
-  // peuvent pas agrandir la formule, ils peuvent aller chercher celui qui le
-  // peut (voir quotaEmail).
+  // porte, pendant que le propriétaire danse. Ils ont le même bouton et
+  // peuvent régler eux-mêmes — on leur dit seulement qui d'autre a été
+  // prévenu, pour que deux personnes ne paient pas la même chose.
   const equipe = await equipeDe(ev)
   let unEnvoiReussi = false
   for (const p of equipe) {
@@ -39,9 +39,7 @@ async function alerteQuota(ev, guestCount, prenom) {
       prenom,
       upgradeMaxGuests: cible?.maxGuests,
       upgradePrice: cible ? formatPrice(cible.priceCents) : null,
-      coOrga: p.role === ADMIN
-        ? { ownerName: ev.owner_name, ownerEmail: ev.owner_email }
-        : null,
+      coOrga: p.role === ADMIN ? { ownerName: ev.owner_name } : null,
     })
     const sent = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
     if (sent?.ok) unEnvoiReussi = true

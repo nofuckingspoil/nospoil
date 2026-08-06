@@ -8,6 +8,17 @@ import { CONTACT_EMAIL } from './pricing'
 
 const API = 'https://api.brevo.com/v3/smtp/email'
 
+// Domaines réservés à la démonstration (RFC 2606 / 6761) : aucune boîte n'existe
+// derrière. Un envoi y revient en « hard bounce », et ces retours se comptent
+// contre la réputation du domaine expéditeur — quelques-uns suffisent à faire
+// tomber les vrais messages en spam. Les jeux d'essai laissés en base ne doivent
+// donc jamais atteindre l'API : on les arrête ici plutôt que chez Brevo.
+const DOMAINES_FICTIFS = /@(?:[^@]*\.)?(?:example\.(?:com|org|net)|test|invalid|localhost|local)$/i
+
+export function adresseFictive(email) {
+  return DOMAINES_FICTIFS.test(String(email || '').trim())
+}
+
 // Adresse du site telle qu'elle apparaît aux clients.
 const CANONIQUE = 'https://timetoflash.fr'
 
@@ -33,6 +44,10 @@ export async function sendMail({ to, subject, html }) {
   if (!key || !from) {
     console.error('mail: configuration Brevo manquante (BREVO_API_KEY / BREVO_SENDER_EMAIL)')
     return { ok: false, error: 'mail-not-configured' }
+  }
+  if (adresseFictive(to)) {
+    console.warn('mail: adresse de démonstration ignorée', to)
+    return { ok: false, error: 'test-address' }
   }
   try {
     const res = await fetch(API, {
@@ -270,13 +285,13 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
 // faire entrer : il doit se lire d'un coup d'œil, au milieu d'une fête, et ne
 // demander qu'un seul geste. D'où le prénom dans l'objet — c'est quelqu'un de
 // précis qui attend, pas un compteur qui clignote.
-// `coOrga` : { ownerName, ownerEmail } quand le destinataire est un
-// co-organisateur. Seul le propriétaire peut agrandir la formule — lui
-// montrer un bouton « Passer à 100 invités » le mènerait droit à un refus.
-// On lui donne donc le seul geste qui marche : aller chercher la bonne
-// personne, nommée dans le message.
+// `coOrga` : { ownerName } quand le destinataire est un co-organisateur. Il a
+// exactement le même bouton que le propriétaire — il peut régler, et c'est
+// heureux : la formule se remplit en pleine soirée, quand celui qui a créé
+// l'événement danse ou dort. Une seule chose change, en pied de message : on
+// lui dit qui d'autre a été prévenu, pour que deux personnes ne paient pas la
+// même chose en même temps.
 export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom, upgradeMaxGuests, upgradePrice, coOrga }) {
-  if (coOrga) return quotaEmailCoOrga({ eventName, guestCount, maxGuests, prenom, coOrga })
   const qui = prenom ? `<strong>${prenom}</strong>` : `Un invité`
   // Pas de palier au-dessus : on est au plus grand format, le tarif se fait à la
   // main. Le bouton mène alors vers nous, pas vers un paiement qui n'existe pas.
@@ -291,7 +306,7 @@ export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom,
       : `Un invité attend d’entrer — « ${eventName} »`,
     html: layout({
       title: prenom ? `${prenom} attend d’entrer` : `Un invité attend d’entrer`,
-      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais votre formule est complète : elle couvre <strong>${maxGuests} invités</strong> et ils sont déjà ${guestCount}.`,
+      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais la formule est complète : elle couvre <strong>${maxGuests} invités</strong> et ils sont déjà ${guestCount}.`,
       body: `${bigButton(lien, offre)}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           ${surMesure
@@ -301,42 +316,15 @@ export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom,
             : `Un seul geste et ${prenom ? 'elle' : 'la personne'} entre aussitôt : son écran s’ouvrira
                tout seul, elle n’a rien à refaire. <strong style="color:#221A12;">Vos autres invités
                continuent de photographier normalement</strong> pendant ce temps.`}
-        </div>`,
+        </div>
+        ${coOrga ? `<div style="margin-top:20px;padding:14px 16px;background:#FCF8F0;border:1px solid rgba(34,26,18,.12);border-radius:12px;font-size:13.5px;line-height:1.6;color:#5f5341;">
+          <strong style="color:#221A12;">${coOrga.ownerName || 'L’organisateur'} a reçu la même alerte.</strong>
+          Un seul de vous deux a besoin de régler — voyez avec ${coOrga.ownerName || 'lui'} si vous
+          êtes ensemble, sinon n’attendez pas : la personne est à la porte.
+        </div>` : ''}`,
       footer: surMesure
         ? `Répondez simplement à ce message si c’est plus simple : nous vous recontactons vite.`
-        : `Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.`,
-    }),
-  }
-}
-
-// Le même événement, vu du co-organisateur : il est souvent celui qui est
-// sur place, mais il n'a pas la main sur la formule. Le message doit donc
-// tenir en une action réalisable — prévenir la bonne personne — plutôt qu'en
-// un bouton qui lui serait refusé.
-function quotaEmailCoOrga({ eventName, guestCount, maxGuests, prenom, coOrga }) {
-  const qui = prenom ? `<strong>${prenom}</strong>` : `Un invité`
-  const nom = coOrga.ownerName || 'l’organisateur'
-  const mail = coOrga.ownerEmail
-  return {
-    subject: prenom
-      ? `${prenom} attend d’entrer — « ${eventName} »`
-      : `Un invité attend d’entrer — « ${eventName} »`,
-    html: layout({
-      title: prenom ? `${prenom} attend d’entrer` : `Un invité attend d’entrer`,
-      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais la formule est complète : elle couvre <strong>${maxGuests} invités</strong> et ils sont déjà ${guestCount}.`,
-      body: `<div style="font-size:15px;line-height:1.7;color:#5f5341;">
-          <strong style="color:#221A12;">Prévenez ${nom}</strong> : l’agrandissement de la formule
-          n’appartient qu’à la personne qui a créé l’événement. Un seul geste de sa part et
-          ${prenom ? 'elle' : 'la personne'} entre aussitôt, son écran s’ouvrira tout seul.
-        </div>
-        ${mail ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
-          Son adresse : <a href="mailto:${mail}" style="color:#C9431F;">${mail}</a>
-        </div>` : ''}
-        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
-          <strong style="color:#221A12;">Vos autres invités continuent de photographier
-          normalement</strong> pendant ce temps : rien n’est bloqué pour eux.
-        </div>`,
-      footer: `Vous recevez ce message parce que vous co-organisez cet événement. ${nom} a été prévenu${mail ? ' en même temps que vous' : ''}.`,
+        : `Vous ne réglez que la différence : ce qui a déjà été payé reste acquis.`,
     }),
   }
 }
