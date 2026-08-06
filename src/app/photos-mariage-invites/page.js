@@ -75,6 +75,16 @@ const CONVERSATIONS = [
       { qui: 'Claire', mots: ["C'est hilarant", 'Pour moi rien est à jeter ahhaha', 'Merci merci merci 🤩'], coeur: true },
     ],
   },
+  {
+    // Retours reçus après d'autres fêtes. Repris tels que rapportés, sans
+    // être rallongés : une phrase courte et vraie porte plus loin qu'un
+    // paragraphe bien tourné que personne n'a écrit.
+    blocs: [
+      { qui: 'Charlotte', mots: ["C'est une bête d'idée"] },
+      { qui: 'Maguelonne', mots: ['Trop bien pour ne pas avoir à courir après les photos'], coeur: true },
+      { qui: 'Marie-Céleste', mots: ["J'adore l'idée du jetable"] },
+    ],
+  },
 ]
 
 function Bouton({ children = 'Créer mon album — gratuit', className = '' }) {
