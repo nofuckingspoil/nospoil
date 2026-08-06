@@ -124,6 +124,29 @@ export default function Home() {
           </div>
         </section>
 
+        {/* PENDANT LA FÊTE — entre le déclencheur et la révélation, il y a
+            l'attente : l'album se remplit à plusieurs sans que personne ne
+            voie rien. C'est ce qui distingue le produit d'un dossier partagé,
+            et rien ne le montrait. */}
+        <section className="section">
+          <div className="split split-inverse">
+            <div className="split-text">
+              <div className="eyebrow-mute" style={{ marginBottom: 10 }}>Pendant la fête</div>
+              <h2>Un seul album, rempli par tout le monde</h2>
+              <p>Chacun scanne, prend ses clichés et voit le compteur grimper. Mais personne ne découvre les photos des autres : le compte à rebours retient tout le monde jusqu'à la révélation.</p>
+              <ul className="split-list">
+                <li><span className="ic">⏳</span><div><b>Le compte à rebours</b> — le même pour tous, à la seconde près.</div></li>
+                <li><span className="ic">👥</span><div><b>Le nombre de participants</b> — la fête se voit se rassembler en direct.</div></li>
+                <li><span className="ic">🎞️</span><div><b>Chacun sa pellicule</b> — ses propres photos, visibles de lui seul avant l'heure.</div></li>
+              </ul>
+            </div>
+            <div className="phone phone-tilt">
+              <img src="/accueil/album-partage.webp" width="640" height="1385" loading="lazy"
+                alt="L'album partagé pendant la soirée : compte à rebours avant la révélation, nombre de photos du groupe et de participants." />
+            </div>
+          </div>
+        </section>
+
         {/* VOUS GARDEZ LA MAIN */}
         <section className="section">
           <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>Vous gardez la main</div>

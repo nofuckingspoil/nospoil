@@ -377,21 +377,21 @@ a.cam-pile:active { transform: scale(.94); }
 
 /* Pellicules : les calques empilés au-dessus de la vignette. Le réglage vit
    dans src/lib/film.js — ici, seule la mécanique. */
-.polaroid .media > .film-teinte,
-.polaroid .media > .film-halo,
-.polaroid .media > .film-vignette,
-.polaroid .media > .film-grain { position: absolute; inset: 0; pointer-events: none; }
-.polaroid .media > .film-teinte { mix-blend-mode: multiply; }
-.polaroid .media > .film-halo { background: radial-gradient(ellipse at 50% 42%, rgba(255,240,205,1) 0%, rgba(255,240,205,0) 62%); }
-.polaroid .media > .film-vignette { background: radial-gradient(ellipse at 50% 50%, rgba(28,16,6,0) 45%, rgba(28,16,6,.75) 100%); }
+.polaroid .media > .film-teinte, .diapo-media > .film-teinte,
+.polaroid .media > .film-halo, .diapo-media > .film-halo,
+.polaroid .media > .film-vignette, .diapo-media > .film-vignette,
+.polaroid .media > .film-grain, .diapo-media > .film-grain { position: absolute; inset: 0; pointer-events: none; }
+.polaroid .media > .film-teinte, .diapo-media > .film-teinte { mix-blend-mode: multiply; }
+.polaroid .media > .film-halo, .diapo-media > .film-halo { background: radial-gradient(ellipse at 50% 42%, rgba(255,240,205,1) 0%, rgba(255,240,205,0) 62%); }
+.polaroid .media > .film-vignette, .diapo-media > .film-vignette { background: radial-gradient(ellipse at 50% 50%, rgba(28,16,6,0) 45%, rgba(28,16,6,.75) 100%); }
 /* Le grain : un bruit tramé, en SVG, pour éviter une image à télécharger. */
-.polaroid .media > .film-grain {
+.polaroid .media > .film-grain, .diapo-media > .film-grain {
   inset: -20%; mix-blend-mode: overlay; background-size: 170px 170px;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='170' height='170'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='170' height='170' filter='url(%23n)' opacity='.6'/></svg>");
 }
 /* La petite lampe orange du dos de l'appareil : la couleur ne suffit pas, c'est
    le halo qui fait reconnaître un date-back. */
-.polaroid .media > .film-date {
+.polaroid .media > .film-date, .diapo-media > .film-date {
   position: absolute; right: 7px; bottom: 5px; pointer-events: none;
   font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: .09em;
   color: #ff9a45;
@@ -399,6 +399,41 @@ a.cam-pile:active { transform: scale(.94); }
 }
 .film-note { font-size: 12px; color: var(--text4); line-height: 1.45; margin: 7px 0 0; }
 .film-chip-date { font-family: var(--font-mono); letter-spacing: .06em; }
+
+/* ---------- Diapo : une photo plein écran, qu'on feuillette ---------- */
+.diapo { position: fixed; inset: 0; z-index: 120; background: #0b0c10; overflow: hidden; overscroll-behavior: contain; touch-action: pinch-zoom; }
+.diapo-piste { position: absolute; inset: 0; display: flex; will-change: transform; }
+/* flex-basis 100 % + pas de rétrécissement : chaque photo occupe exactement un
+   écran, et la piste se décale d'un écran par photo. */
+.diapo-slide { flex: 0 0 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.diapo-media { position: relative; line-height: 0; border-radius: 5px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,.55); }
+/* La hauteur laisse la place aux deux bandeaux, sinon le nom du photographe
+   recouvre le bas de la photo. */
+.diapo-media img { display: block; max-width: calc(100vw - 24px); max-height: calc(100vh - 168px); max-height: calc(100dvh - 168px); width: auto; height: auto; user-select: none; -webkit-user-drag: none; }
+
+.diapo-haut { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px; background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,0)); pointer-events: none; }
+.diapo-haut > * { pointer-events: auto; }
+.diapo-num { font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em; color: rgba(255,255,255,.75); }
+.diapo-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; font-size: 19px; line-height: 1; cursor: pointer; }
+.diapo-x:hover { background: rgba(255,255,255,.26); }
+
+.diapo-bas { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 16px 14px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.62)); }
+.diapo-qui { flex: 1; min-width: 0; color: #fff; }
+.diapo-qui b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.diapo-qui span { font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,.6); }
+.diapo-act { flex: 0 0 auto; display: flex; gap: 8px; }
+.diapo-b { display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.12); color: #fff; border-radius: 999px; padding: 9px 14px; font-family: var(--font-body); font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; }
+.diapo-b:hover { background: rgba(255,255,255,.22); }
+.diapo-b.on { color: #ff7286; border-color: rgba(255,114,134,.45); }
+.diapo-b:disabled { opacity: .5; cursor: not-allowed; }
+
+/* Au doigt on fait glisser ; à la souris, on cherche une flèche. */
+.diapo-fleche { display: none; position: absolute; top: 50%; z-index: 3; transform: translateY(-50%); width: 46px; height: 46px; border-radius: 50%; border: 0; background: rgba(255,255,255,.12); color: #fff; font-size: 26px; line-height: 1; cursor: pointer; }
+.diapo-fleche:hover { background: rgba(255,255,255,.26); }
+.diapo-fleche:disabled { opacity: .25; cursor: default; }
+.diapo-fleche.g { left: 14px; }
+.diapo-fleche.d { right: 14px; }
+@media (hover: hover) and (min-width: 700px) { .diapo-fleche { display: block; } }
 
 .polaroid .cap { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 3px 9px; }
 .polaroid .cap .who { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--ink);
@@ -521,6 +556,10 @@ a.cam-pile:active { transform: scale(.94); }
 /* Section « image d'un côté, texte de l'autre ». */
 .split { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: center; }
 @media (min-width: 820px) { .split { grid-template-columns: 290px 1fr; gap: 48px; } }
+/* Variante en miroir : le texte d'abord, l'écran à droite. Deux sections
+   « texte + téléphone » qui se suivent du même côté donnaient une page qui
+   penche ; en alternant, la lecture repart de la gauche à chaque fois. */
+@media (min-width: 820px) { .split-inverse { grid-template-columns: 1fr 290px; } }
 .split-text h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: -.02em; margin-bottom: 10px; }
 .split-text > p { color: var(--text2); font-size: 15.5px; line-height: 1.55; }
 .split-list { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
