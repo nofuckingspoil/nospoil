@@ -77,6 +77,10 @@ export default function Home() {
             <Link href="#tarifs" className="btn btn-accent">Voir les formules →</Link>
             <span className="mono small muted">Gratuit jusqu'à 5 invités</span>
           </div>
+          {/* Sur téléphone, la pastille flottante « Essayer » tombait pile sous
+              le bouton « Créer mon événement ». L'essai se propose donc ici,
+              dans la lecture, plutôt qu'en bas de l'écran. */}
+          <Link href="/essai" className="hero-try">✱ Essayer l'appareil photo tout de suite</Link>
           {/* « Que pour les mariages ? » — la réponse tient sur une ligne. */}
           <div className="mono small muted" style={{ marginTop: 20 }}>
             Mariages · Anniversaires · Baptêmes · EVJF · Vacances · Séminaires
