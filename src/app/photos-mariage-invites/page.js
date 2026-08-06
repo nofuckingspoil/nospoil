@@ -51,13 +51,30 @@ const CTA = '/create?tier=50'
 // ------------------------------------------------------------
 const RETOURS_AUTORISES = true
 
-// Extraits recopiés des messages reçus après la fête. Les tournures parlées et
-// les fautes sont conservées : c'est précisément ce qu'un faux avis n'a jamais.
-// Seuls les surnoms affectueux ont été retirés — ils ne parlent qu'à eux.
-const RETOURS = [
-  { qui: 'Claire', mots: ['Merci pour tout ! Tu nous as regalé', 'Trop bonne idée la vache'], coeur: true },
-  { qui: 'Tintin', mots: ["T'es trop un ouf d'avoir fait ça, merci beaucoup"] },
-  { qui: 'Claire', mots: ["C'est hilarant", "Pour moi rien est à jeter ahhaha", 'Merci merci merci 🤩'], coeur: true },
+// ------------------------------------------------------------
+//  Les conversations affichées.
+//
+//  Chaque entrée est UNE conversation, avec ses blocs de messages. Pour en
+//  ajouter une, on recopie le bloc ci-dessous et on remplace le contenu :
+//  aucune autre ligne du fichier n'est à toucher.
+//
+//  Règle qui ne se négocie pas : ces phrases doivent avoir été réellement
+//  écrites ou dites. Inventer un témoignage client est une pratique
+//  commerciale trompeuse (article L121-2 du Code de la consommation), et
+//  c'est interdit par les règles publicitaires de Meta comme de Google.
+//  Les tournures parlées et les fautes se conservent — c'est exactement ce
+//  qu'un faux avis n'a jamais.
+// ------------------------------------------------------------
+const CONVERSATIONS = [
+  {
+    // Messages reçus le lendemain de la fête. Surnoms affectueux retirés :
+    // ils ne parlent qu'à eux, et brouillent la lecture d'un inconnu.
+    blocs: [
+      { qui: 'Claire', mots: ['Merci pour tout ! Tu nous as regalé', 'Trop bonne idée la vache'], coeur: true },
+      { qui: 'Tintin', mots: ["T'es trop un ouf d'avoir fait ça, merci beaucoup"] },
+      { qui: 'Claire', mots: ["C'est hilarant", 'Pour moi rien est à jeter ahhaha', 'Merci merci merci 🤩'], coeur: true },
+    ],
+  },
 ]
 
 function Bouton({ children = 'Créer mon album — gratuit', className = '' }) {
@@ -241,19 +258,23 @@ export default function PageMariage() {
             <div className="section-sub">
               Extraits des messages reçus après leur fête, une fois l'album ouvert.
             </div>
-            <div className="lp-conv">
-              {RETOURS.map((r, i) => (
-                <div key={i} className="lp-conv-bloc">
-                  <span className="lp-conv-qui">{r.qui}</span>
-                  {r.mots.map((m, j) => (
-                    <p key={j} className="lp-bulle">
-                      {m}
-                      {/* Le cœur ne se pose que sur le dernier message d'un bloc,
-                          là où il a été mis dans la vraie conversation. */}
-                      {r.coeur && j === r.mots.length - 1 && (
-                        <span className="lp-coeur" aria-hidden="true">❤️</span>
-                      )}
-                    </p>
+            <div className={`lp-convs ${CONVERSATIONS.length > 1 ? 'multi' : ''}`}>
+              {CONVERSATIONS.map((c, k) => (
+                <div key={k} className="lp-conv">
+                  {c.blocs.map((r, i) => (
+                    <div key={i} className="lp-conv-bloc">
+                      <span className="lp-conv-qui">{r.qui}</span>
+                      {r.mots.map((m, j) => (
+                        <p key={j} className="lp-bulle">
+                          {m}
+                          {/* Le cœur ne se pose que sur le dernier message d'un
+                              bloc, là où il l'a été dans la vraie conversation. */}
+                          {r.coeur && j === r.mots.length - 1 && (
+                            <span className="lp-coeur" aria-hidden="true">❤️</span>
+                          )}
+                        </p>
+                      ))}
+                    </div>
                   ))}
                 </div>
               ))}

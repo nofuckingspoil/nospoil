@@ -2747,8 +2747,16 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* Les premiers retours, présentés comme la conversation dont ils sortent.
    Volontairement dans les couleurs du site, et non dans celles d'une messagerie
    connue : c'est une citation mise en forme, pas une fausse capture d'écran. */
+/* Une seule conversation : centrée, elle occupe la largeur d'une lecture.
+   Plusieurs : elles se rangent côte à côte et se lisent en parallèle. */
+.lp-convs { max-width: 560px; margin: 0 auto; }
+.lp-convs.multi {
+  max-width: 1000px;
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 18px; align-items: start;
+}
+
 .lp-conv {
-  max-width: 560px; margin: 0 auto;
   background: var(--card); border: 1px solid var(--line-soft);
   border-radius: 22px; padding: 24px 22px;
 }
