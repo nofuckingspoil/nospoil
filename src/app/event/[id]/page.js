@@ -1450,6 +1450,27 @@ export default function EventManage({ params }) {
         </Section>
       )}
 
+      {/* Les deux pages qu'on cherche quand on ne sait plus quoi faire. Le guide
+          s'ouvre en entier depuis ici (`orga=1`) : on ne redemande pas son
+          adresse à quelqu'un qui organise déjà un événement. */}
+      <div className="db-res">
+        <span className="db-eyebrow">vos ressources</span>
+        <Link className="db-res-row" href="/guide?orga=1">
+          <span aria-hidden="true">📕</span>
+          <span>
+            <strong>Le guide de l'organisateur</strong>
+            <em>Combien de clichés donner, quand révéler, comment faire scanner tout le monde.</em>
+          </span>
+        </Link>
+        <Link className="db-res-row" href="/aide">
+          <span aria-hidden="true">🛟</span>
+          <span>
+            <strong>La page d'aide</strong>
+            <em>Les pannes du jour J, expliquées simplement. À transférer à un invité qui coince.</em>
+          </span>
+        </Link>
+      </div>
+
       <InstallPrompt label="Épinglez votre tableau de bord" />
 
       <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>

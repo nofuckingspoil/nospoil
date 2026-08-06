@@ -25,9 +25,15 @@ function Connexion() {
     if (known) setEmail(known)
   }, [])
 
-  // Connexion réussie : on garde les accès puis on file au tableau de bord.
+  // Connexion réussie : on garde les accès puis on file au tableau de bord —
+  // sauf si la personne venait d'ailleurs (le guide, par exemple) : `next` la
+  // ramène là où elle était. On n'accepte qu'un chemin interne, jamais une
+  // adresse complète : un lien de connexion ne doit pas pouvoir renvoyer
+  // ailleurs que sur le site.
   function onSuccess(data) {
     applyLogin(data.email, data.events)
+    const next = sp.get('next')
+    if (next && next.startsWith('/') && !next.startsWith('//')) { router.replace(next); return }
     if (data.events?.length === 1) router.replace(`/event/${data.events[0].id}`)
     else router.replace('/mes-evenements')
   }

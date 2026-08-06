@@ -1,12 +1,18 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { isOrganizer } from '../../lib/device'
 
 // Mémorise l'accès : un lecteur qui revient ne redonne pas son adresse.
 const KEY = 'ttf_guide_unlocked'
 
 export function isGuideUnlocked() {
   try { return localStorage.getItem(KEY) === '1' } catch { return false }
+}
+
+function ouvrir() {
+  try { localStorage.setItem(KEY, '1') } catch {}
 }
 
 // Porte d'accès au guide : le contenu est déjà rendu par le serveur (Google le
@@ -23,7 +29,18 @@ export default function GuideGate({ exchange, children }) {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    setUnlocked(isGuideUnlocked())
+    // Un organisateur ne repasse jamais par la porte : il a déjà laissé son
+    // adresse en créant son événement. On le reconnaît soit à cet appareil,
+    // soit au lien `?orga=1` que portent nos mails et le tableau de bord —
+    // indispensable quand il ouvre le guide depuis son téléphone.
+    let parLien = false
+    try { parLien = new URLSearchParams(window.location.search).get('orga') === '1' } catch {}
+    if (parLien || isOrganizer()) {
+      ouvrir()
+      setUnlocked(true)
+    } else {
+      setUnlocked(isGuideUnlocked())
+    }
     setReady(true)
   }, [])
 
@@ -40,7 +57,7 @@ export default function GuideGate({ exchange, children }) {
         body: JSON.stringify({ email: clean, source: 'guide' }),
       })
       if (!res.ok) { const d = await res.json().catch(() => ({})); throw new Error(d.error || 'Erreur.') }
-      try { localStorage.setItem(KEY, '1') } catch {}
+      ouvrir()
       setUnlocked(true)
     } catch (err) {
       setState('error')
@@ -70,6 +87,13 @@ export default function GuideGate({ exchange, children }) {
           {state === 'error' && <p className="gd-gate-err">{error}</p>}
           <p className="gd-gate-fine">
             Gratuit. Aucune carte bancaire. Votre adresse ne sera jamais transmise à un tiers.
+          </p>
+          {/* Sur un autre appareil que celui de la création, on ne peut pas
+              deviner qu'on a affaire à un organisateur : on lui laisse la porte
+              de service plutôt que de lui redemander son adresse. */}
+          <p className="gd-gate-deja">
+            Vous avez déjà créé un événement ? Le guide vous est ouvert —{' '}
+            <Link href="/connexion?next=/guide%3Forga%3D1">connectez-vous</Link>.
           </p>
         </div>
       )}

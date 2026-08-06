@@ -208,6 +208,10 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
             <a href="${siteUrl()}/journal/evenement-cree-et-maintenant" style="color:#C9431F;font-weight:700;font-size:14px;text-decoration:underline;">Lire le déroulé complet (6 min) →</a>
           </div>
           <div style="padding-top:10px;font-size:13px;color:#6E6252;">
+            Pour aller plus loin, <a href="${siteUrl()}/guide?orga=1" style="color:#6E6252;">le guide de l'organisateur</a>
+            vous est ouvert — sept chapitres, rien à redonner.
+          </div>
+          <div style="padding-top:10px;font-size:13px;color:#6E6252;">
             Un invité bloqué le jour J ? Gardez
             <a href="${siteUrl()}/aide" style="color:#6E6252;">la page d'aide</a>
             sous la main : elle se transfère telle quelle.

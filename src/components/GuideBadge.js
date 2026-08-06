@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { isOrganizer } from '../lib/device'
 
 // Écarté d'un clic : on ne repropose plus, quel que soit l'appareil.
 const ECARTE = 'ttf_guide_badge_off'
@@ -43,6 +44,9 @@ export default function GuideBadge() {
     setVisible(false)
     if (mobile === null) return
     if (!estEligible(chemin)) return
+    // Un organisateur a déjà le guide dans son tableau de bord : lui vendre un
+    // « guide gratuit » contre son adresse n'a plus aucun sens.
+    if (isOrganizer()) return
     try {
       if (localStorage.getItem(ECARTE) === '1') return
       if (localStorage.getItem(OUVERT) === '1') return

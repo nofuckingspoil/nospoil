@@ -70,6 +70,14 @@ export function getAccountEmail() {
   try { return localStorage.getItem('declic_email') } catch { return null }
 }
 
+// Cette personne organise (ou a organisé) un événement depuis cet appareil ?
+// Sert à ne rien lui redemander : elle a déjà donné son adresse en créant son
+// événement — le guide et les autres ressources lui sont dus.
+export function isOrganizer() {
+  if (typeof window === 'undefined') return false
+  return getMyEvents().length > 0 || !!getAccountEmail()
+}
+
 export function signOut() {
   if (typeof window === 'undefined') return
   try {

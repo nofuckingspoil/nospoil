@@ -7,7 +7,7 @@
 //  globals.css, section « Kit d'impression ».
 // ============================================================
 
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import Logo from '../../../../components/Logo'
@@ -53,6 +53,32 @@ export default function PrintKit({ params }) {
     const f = new URLSearchParams(window.location.search).get('f')
     if (FORMATS.some((x) => x.key === f)) setFormat(f)
   }, [])
+
+  // L'aperçu est une A4 réelle (210 × 297 mm) réduite à la taille de l'écran.
+  // Les tailles de texte du ticket sont en points, donc absolues : une feuille
+  // qu'on rétrécirait en CSS garderait un texte à sa taille d'impression, et
+  // le titre débordait alors de la page. On réduit donc la feuille entière.
+  const boxRef = useRef(null)
+  const [zoom, setZoom] = useState(0)
+
+  useEffect(() => {
+    const box = boxRef.current
+    if (!box) return
+    // 210 mm en pixels CSS, mesuré plutôt que codé en dur.
+    const regle = document.createElement('div')
+    regle.style.cssText = 'position:absolute;visibility:hidden;width:210mm'
+    document.body.appendChild(regle)
+    const largeurA4 = regle.offsetWidth
+    regle.remove()
+
+    const ajuster = () => setZoom(box.clientWidth / largeurA4)
+    ajuster()
+    const ro = new ResizeObserver(ajuster)
+    ro.observe(box)
+    return () => ro.disconnect()
+    // L'aperçu n'est monté qu'une fois l'événement chargé : sans cette
+    // dépendance, la mesure tomberait sur un aperçu encore absent.
+  }, [ev])
 
   function pickFormat(key) {
     setFormat(key)
@@ -221,11 +247,16 @@ export default function PrintKit({ params }) {
         {/* Aperçu à l'écran */}
         <div className="pk-preview">
           <div className="eyebrow-mute" style={{ marginBottom: 10 }}>Aperçu</div>
-          <div className={`pk-page pk-page-${format}`}>
-            {format === 'affiche' && <Ticket size="lg" />}
-            {format === 'chevalet' && (<><Ticket size="md" /><div className="pk-fold" /><Ticket size="md" /></>)}
-            {format === 'cartons' && Array.from({ length: 9 }, (_, i) => <Ticket key={i} size="sm" />)}
-            {format === 'qr' && <div className="pk-qronly">{qr && <img src={qr} alt="" />}</div>}
+          <div className="pk-sheetbox" ref={boxRef}
+            style={{ height: zoom ? `calc(297mm * ${zoom})` : undefined }}>
+            <div className="pk-sheet" style={{ transform: `scale(${zoom || 0})` }}>
+              <div className={`pk-page pk-page-${format}`}>
+                {format === 'affiche' && <Ticket size="lg" />}
+                {format === 'chevalet' && (<><Ticket size="md" /><div className="pk-fold" /><Ticket size="md" /></>)}
+                {format === 'cartons' && Array.from({ length: 9 }, (_, i) => <Ticket key={i} size="sm" />)}
+                {format === 'qr' && <div className="pk-qronly">{qr && <img src={qr} alt="" />}</div>}
+              </div>
+            </div>
           </div>
         </div>
 
