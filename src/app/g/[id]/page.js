@@ -201,25 +201,48 @@ function CodeGate({ data, value, onChange, onSubmit, err }) {
   )
 }
 
+// Enregistrer un fichier fabriqué dans le navigateur. Le lien doit être posé
+// dans la page (Firefox ignore un clic sur un lien hors document), et l'adresse
+// temporaire ne se libère qu'après coup : la libérer tout de suite interrompt
+// l'enregistrement d'un gros fichier sur Safari.
+function enregistrer(blob, nom) {
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = nom
+  a.style.display = 'none'
+  document.body.appendChild(a)
+  a.click()
+  setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
+}
+
 export default function Gallery({ params }) {
   const { id } = use(params)
   const [data, setData] = useState(null)
   const [error, setError] = useState('')
-  const [filter, setFilter] = useState('all')
+  // Plusieurs photographes à la fois : on veut souvent « les photos de la table
+  // des copains », pas celles d'une seule personne. Vide = tout le monde.
+  const [auteursChoisis, setAuteursChoisis] = useState(() => new Set())
   // La pellicule vaut pour l'écran comme pour le fichier emporté : ce que l'on
   // voit est ce que l'on enregistre.
   const [pelliculeId, setPelliculeId] = useState(PELLICULE_DEFAUT)
   const [avecDate, setAvecDate] = useState(false)
   const pelli = pelliculeParId(pelliculeId)
   const [zip, setZip] = useState(null) // null | {done, total}
+  // Un téléchargement raté se dit à côté du bouton : le signaler comme une
+  // erreur de page effaçait l'album entier, pour un zip manqué.
+  const [zipErr, setZipErr] = useState('')
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
   const [chercheQui, setChercheQui] = useState('')
   // Qui regarde : beaucoup s'inscrivent sous un surnom et ne le retrouvent pas.
   const [moiId, setMoiId] = useState(null)
-  const [tousLesAuteurs, setTousLesAuteurs] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
+  // Les réglages mangeaient l'écran entier d'un téléphone : les photos
+  // n'apparaissaient qu'après un long défilement. Ils tiennent maintenant dans
+  // deux boutons, qui ouvrent chacun leur panneau. null | 'film' | 'qui'
+  const [panneau, setPanneau] = useState(null)
 
   // Le goût de chacun tient d'un album à l'autre : on relit le choix précédent
   // après le premier rendu, pour ne pas fâcher le serveur avec le localStorage.
@@ -237,6 +260,7 @@ export default function Gallery({ params }) {
 
   async function downloadAll(photos) {
     if (zip) return
+    setZipErr('')
     // Qui emporte l'album, et combien de photos : c'est ce qui nourrit le bilan
     // montré à l'organisateur une fois la fête passée.
     fetch(`/api/gallery/${id}/track-download`, {
@@ -259,11 +283,8 @@ export default function Gallery({ params }) {
         const brut = await fetch(p.fullUrl || p.url).then((r) => r.blob())
         const blob = await cuire(brut, p)
         const qui = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
-        const url = URL.createObjectURL(blob)
-        const a = document.createElement('a')
-        a.href = url; a.download = `timetoflash-${qui}.jpg`; a.click()
-        URL.revokeObjectURL(url)
-      } catch { setError('Téléchargement impossible.') }
+        enregistrer(blob, `timetoflash-${qui}.jpg`)
+      } catch { setZipErr('Téléchargement impossible : les photos n\'ont pas pu être relues. Réessayez dans un instant.') }
       return
     }
 
@@ -271,22 +292,27 @@ export default function Gallery({ params }) {
     try {
       const z = new JSZip()
       let i = 0
+      let reussies = 0
       for (const p of photos) {
         try {
           const brut = await fetch(p.fullUrl || p.url).then((r) => r.blob())
           const blob = await cuire(brut, p)
           const safe = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
           z.file(`timetoflash-${String(++i).padStart(3, '0')}-${safe}.jpg`, blob)
+          reussies++
         } catch { i++ }
         setZip({ done: i, total: photos.length })
       }
+      // Une archive vide s'enregistre sans rien dire et ne s'ouvre nulle part :
+      // mieux vaut l'aveu d'échec que le fichier de 22 octets.
+      if (reussies === 0) {
+        setZipErr('Téléchargement impossible : aucune photo n\'a pu être relue. Réessayez dans un instant.')
+        return
+      }
       const out = await z.generateAsync({ type: 'blob' })
-      const url = URL.createObjectURL(out)
-      const a = document.createElement('a')
-      a.href = url; a.download = 'timetoflash-photos.zip'; a.click()
-      URL.revokeObjectURL(url)
+      enregistrer(out, 'timetoflash-photos.zip')
     } catch (e) {
-      setError('Téléchargement impossible.')
+      setZipErr('Téléchargement impossible.')
     } finally { setZip(null) }
   }
 
@@ -432,7 +458,7 @@ export default function Gallery({ params }) {
   const parCoeur = vueFav === 'miens' ? data.photos.filter((p) => favs.has(p.id))
     : vueFav === 'aimees' ? lesAimees
       : data.photos
-  const parAuteur = filter === 'all' ? parCoeur : parCoeur.filter((p) => p.guestId === filter)
+  const parAuteur = auteursChoisis.size === 0 ? parCoeur : parCoeur.filter((p) => auteursChoisis.has(p.guestId))
   // Le tri par visibilité n'a de sens que pour l'organisateur : lui seul voit
   // les photos masquées, et lui seul a besoin de les retrouver.
   const parVisibilite = !data.isOwner || vue === 'toutes' ? parAuteur
@@ -445,7 +471,12 @@ export default function Gallery({ params }) {
     : parVisibilite
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
-  const nomFiltre = data.guests.find((g) => g.id === filter)?.name || 'cette personne'
+  // Comment nommer le filtre en cours, du bouton au libellé de téléchargement :
+  // un prénom si c'est une seule personne, un compte au-delà.
+  const nomsChoisis = data.guests.filter((g) => auteursChoisis.has(g.id)).map((g) => g.name)
+  const nomFiltre = auteursChoisis.size === 0 ? 'tout le monde'
+    : nomsChoisis.length === 1 ? nomsChoisis[0]
+      : `${auteursChoisis.size} photographes`
 
   // « Tout cocher » s'ajoute à la sélection au lieu de la remplacer : sans quoi
   // passer de Pierre à Paul effaçait Pierre, et l'on ne pouvait pas emporter
@@ -464,9 +495,16 @@ export default function Gallery({ params }) {
     .map((g) => ({ ...g, n: data.photos.filter((p) => p.guestId === g.id).length }))
     .sort((a, b) => (b.id === moiId) - (a.id === moiId) || b.n - a.n)
   const sansAccent = (v) => (v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
-  const auteursMontres = !tousLesAuteurs
-    ? auteurs.slice(0, SEUIL_AUTEURS)
-    : auteurs.filter((g) => sansAccent(g.name).includes(sansAccent(chercheQui)))
+  // Dans le panneau, on cherche par le pr\u00e9nom ; les personnes d\u00e9j\u00e0 coch\u00e9es
+  // restent visibles, sinon on d\u00e9coche \u00e0 l'aveugle en tapant.
+  const auteursMontres = auteurs.filter((g) => auteursChoisis.has(g.id) || sansAccent(g.name).includes(sansAccent(chercheQui)))
+  function basculerAuteur(gid) {
+    setAuteursChoisis((prev) => {
+      const n = new Set(prev)
+      n.has(gid) ? n.delete(gid) : n.add(gid)
+      return n
+    })
+  }
   const hiddenCount = data.isOwner ? data.photos.filter((p) => p.hidden).length : 0
   const ovBtn = {
     width: 34, height: 34, borderRadius: '50%', border: 'none', cursor: 'pointer',
@@ -490,7 +528,7 @@ export default function Gallery({ params }) {
   }
 
   return (
-    <main className="screen screen-cream wide">
+    <main className="screen screen-cream wide gal-page">
       {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
           la page des invités, qui n'ont rien à y faire. Collé en haut, la page
           étant longue par nature. */}
@@ -524,75 +562,122 @@ export default function Gallery({ params }) {
           )}
         </div>
 
-        {/* Sans un mot, le cœur passe pour une décoration : on dit à quoi il
-            sert, et l'on offre le raccourci vers ce qu'il a mis de côté. */}
-        <div className="gal-favbar">
-          <p>Touchez le <span className="gal-favbar-ic" aria-hidden="true">♥</span> sur une photo pour la garder de côté.</p>
-          <div className="chips">
-            <button className={`chip ${vueFav === 'tous' ? 'active' : ''}`}
-              onClick={() => setVueFav('tous')}>Toutes · {data.photos.length}</button>
-            <button className={`chip ${vueFav === 'miens' ? 'active' : ''}`}
-              onClick={() => setVueFav('miens')} disabled={favs.size === 0}>
-              Mes favoris · {favs.size}
-            </button>
-            {/* Le palmarès de tout le monde, distinct de ses propres coups de
-                cœur : on veut savoir ce qui a plu aux autres. */}
-            <button className={`chip ${vueFav === 'aimees' ? 'active' : ''}`}
-              onClick={() => setVueFav('aimees')} disabled={lesAimees.length === 0}>
-              Les plus aimées · {lesAimees.length}
-            </button>
-          </div>
-        </div>
-
-        {/* La pellicule : d'abord parce qu'on aime ça, ensuite parce qu'elle
-            décide du fichier emporté. On le dit, sinon la surprise se découvre
-            à l'ouverture de la photo enregistrée. */}
-        <div className="gal-lbl" style={{ marginTop: 12 }}>Pellicule</div>
-        <div className="chips">
-          {PELLICULES.map((f) => (
-            <button key={f.id} className={`chip ${pelliculeId === f.id ? 'active' : ''}`}
-              title={f.resume} onClick={() => choisirPellicule(f.id, avecDate)}>
-              {f.nom}
-            </button>
-          ))}
-          <button className={`chip film-chip-date ${avecDate ? 'active' : ''}`}
-            title="Les chiffres orange dans le coin, comme sur un appareil jetable"
-            onClick={() => choisirPellicule(pelliculeId, !avecDate)}>
-            Date {avecDate ? '✓' : ''}
+        {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
+            occupaient le premier écran d'un téléphone, et les photos
+            commençaient hors champ. Chacun dit son état, et ouvre son panneau. */}
+        <div className="gal-filtres">
+          <button className={`gal-fbtn ${panneau === 'vue' ? 'ouvert' : ''} ${vueFav !== 'tous' ? 'actif' : ''}`}
+            aria-expanded={panneau === 'vue'}
+            onClick={() => setPanneau((p) => (p === 'vue' ? null : 'vue'))}>
+            <span className="gal-fbtn-l">♥ Afficher</span>
+            <span className="gal-fbtn-v">
+              {vueFav === 'miens' ? 'Mes favoris' : vueFav === 'aimees' ? 'Les plus aimées' : 'Toutes'}
+            </span>
           </button>
-        </div>
-        <p className="film-note">{pelli.resume}{avecDate && ' · la date s\'imprime dans le coin'}</p>
+          {/* Souligné seulement quand une pellicule change vraiment les photos :
+              « Original » est l'absence d'effet, pas un filtre appliqué. */}
+          <button className={`gal-fbtn ${panneau === 'film' ? 'ouvert' : ''} ${pelliculeId !== 'aucune' || avecDate ? 'actif' : ''}`}
+            aria-expanded={panneau === 'film'}
+            onClick={() => setPanneau((p) => (p === 'film' ? null : 'film'))}>
+            {/* « Pellicule » seul ne dit pas ce que le bouton fait à un invité
+                qui n'a jamais tenu de jetable : on nomme l'effet. */}
+            <span className="gal-fbtn-l">🎞️ Effet photo</span>
+            <span className="gal-fbtn-v">{pelli.nom}{avecDate && ' + date'}</span>
+          </button>
+          {data.guests.length > 1 && (
+            <button className={`gal-fbtn ${panneau === 'qui' ? 'ouvert' : ''} ${auteursChoisis.size > 0 ? 'actif' : ''}`}
+              aria-expanded={panneau === 'qui'}
+              onClick={() => setPanneau((p) => (p === 'qui' ? null : 'qui'))}>
+              <span className="gal-fbtn-l">📷 Photographe</span>
+              <span className="gal-fbtn-v">{auteursChoisis.size === 0 ? 'Tout le monde' : nomFiltre}</span>
+            </button>
+          )}
 
-        {/* Qui a pris quoi. À 170 participants, une rangée de pastilles devient
-            illisible : on montre d'abord les plus prolifiques, et l'on cherche
-            par le nom au-delà. */}
-        {data.guests.length > 1 && (
-          <>
-            <div className="gal-lbl">Photos de</div>
-            <div className="chips">
-              <button className={`chip ${filter === 'all' ? 'active' : ''}`} onClick={() => setFilter('all')}>
-                Tout le monde · {data.photos.length}
+        {/* Le panneau se pose par-dessus l'album au lieu de le repousser : ouvrir
+            un filtre ne doit pas coûter un écran de photos. On ferme en touchant
+            à côté, comme n'importe quel menu. */}
+        {panneau && <div className="gal-fond" onClick={() => setPanneau(null)} />}
+
+        {/* Le cœur passe pour une décoration tant qu'on n'a pas dit à quoi il
+            sert : ces trois vues sont l'endroit où l'expliquer. */}
+        {panneau === 'vue' && (
+          <div className="gal-panneau">
+            <div className="gal-liste">
+              <button className={`gal-opt ${vueFav === 'tous' ? 'on' : ''}`}
+                onClick={() => { setVueFav('tous'); setPanneau(null) }}>
+                <span className="gal-opt-t">Toutes les photos<em>{data.photos.length} souvenirs</em></span>
+                <span className="gal-opt-c" aria-hidden="true">{vueFav === 'tous' ? '✓' : ''}</span>
               </button>
-              {auteursMontres.map((g) => (
-                <button key={g.id} className={`chip ${filter === g.id ? 'active' : ''}`} onClick={() => setFilter(g.id)}>
-                  {g.name}{g.id === moiId ? ' (vous)' : ''} · {g.n}
+              <button className={`gal-opt ${vueFav === 'miens' ? 'on' : ''}`} disabled={favs.size === 0}
+                onClick={() => { setVueFav('miens'); setPanneau(null) }}>
+                <span className="gal-opt-t">Mes favoris<em>{favs.size === 0 ? 'Touchez le ♥ d\'une photo pour la garder de côté' : `${favs.size} photo${favs.size > 1 ? 's' : ''} mise${favs.size > 1 ? 's' : ''} de côté`}</em></span>
+                <span className="gal-opt-c" aria-hidden="true">{vueFav === 'miens' ? '✓' : ''}</span>
+              </button>
+              {/* Le palmarès de tout le monde, distinct de ses propres coups de
+                  cœur : on veut savoir ce qui a plu aux autres. */}
+              <button className={`gal-opt ${vueFav === 'aimees' ? 'on' : ''}`} disabled={lesAimees.length === 0}
+                onClick={() => { setVueFav('aimees'); setPanneau(null) }}>
+                <span className="gal-opt-t">Les plus aimées<em>{lesAimees.length === 0 ? 'Personne n\'a encore mis de ♥' : `Le palmarès des ${lesAimees.length} photos aimées`}</em></span>
+                <span className="gal-opt-c" aria-hidden="true">{vueFav === 'aimees' ? '✓' : ''}</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* La pellicule : une seule à la fois, puisqu'elle décide aussi du
+            fichier emporté. On donne à lire ce que chacune fait, sinon le nom
+            ne veut rien dire avant d'avoir essayé. */}
+        {panneau === 'film' && (
+          <div className="gal-panneau">
+            <div className="gal-liste">
+              {PELLICULES.map((f) => (
+                <button key={f.id} className={`gal-opt ${pelliculeId === f.id ? 'on' : ''}`}
+                  onClick={() => choisirPellicule(f.id, avecDate)}>
+                  <span className="gal-opt-t">{f.nom}<em>{f.resume}</em></span>
+                  <span className="gal-opt-c" aria-hidden="true">{pelliculeId === f.id ? '✓' : ''}</span>
                 </button>
               ))}
             </div>
-            {auteurs.length > SEUIL_AUTEURS && (
-              <>
-                <button className="gal-plus" onClick={() => setTousLesAuteurs((v) => !v)}>
-                  {tousLesAuteurs ? 'Réduire la liste' : `Chercher parmi les ${auteurs.length} participants`}
-                </button>
-                {tousLesAuteurs && (
-                  <input className="gal-cherche" type="search" value={chercheQui}
-                    onChange={(e) => setChercheQui(e.target.value)}
-                    placeholder="Prénom d'un participant" />
-                )}
-              </>
-            )}
-          </>
+            <button className={`gal-opt gal-opt-sep ${avecDate ? 'on' : ''}`}
+              onClick={() => choisirPellicule(pelliculeId, !avecDate)}>
+              <span className="gal-opt-t">Date incrustée<em>Les chiffres orange dans le coin, comme sur un jetable</em></span>
+              <span className="gal-opt-c" aria-hidden="true">{avecDate ? '✓' : ''}</span>
+            </button>
+            <button className="gal-panneau-ok" onClick={() => setPanneau(null)}>Voir les photos</button>
+          </div>
         )}
+
+        {/* Qui a pris quoi. Plusieurs cases à cocher, et non un choix unique :
+            on cherche souvent les photos d'un petit groupe. À 170 participants,
+            la liste ne se parcourt plus — on cherche par le prénom. */}
+        {panneau === 'qui' && (
+          <div className="gal-panneau">
+            {auteurs.length > SEUIL_AUTEURS && (
+              <input className="gal-cherche" type="search" value={chercheQui}
+                onChange={(e) => setChercheQui(e.target.value)}
+                placeholder={`Chercher parmi les ${auteurs.length} participants`} />
+            )}
+            <div className="gal-liste gal-liste-haute">
+              <button className={`gal-opt ${auteursChoisis.size === 0 ? 'on' : ''}`}
+                onClick={() => setAuteursChoisis(new Set())}>
+                <span className="gal-opt-t">Tout le monde<em>{data.photos.length} photos</em></span>
+                <span className="gal-opt-c" aria-hidden="true">{auteursChoisis.size === 0 ? '✓' : ''}</span>
+              </button>
+              {auteursMontres.map((g) => (
+                <button key={g.id} className={`gal-opt ${auteursChoisis.has(g.id) ? 'on' : ''}`}
+                  onClick={() => basculerAuteur(g.id)}>
+                  <span className="gal-opt-t">{g.name}{g.id === moiId ? ' (vous)' : ''}<em>{g.n} photo{g.n > 1 ? 's' : ''}</em></span>
+                  <span className="gal-opt-c" aria-hidden="true">{auteursChoisis.has(g.id) ? '✓' : ''}</span>
+                </button>
+              ))}
+              {auteursMontres.length === 0 && <p className="gal-vide">Aucun participant à ce nom.</p>}
+            </div>
+            <button className="gal-panneau-ok" onClick={() => setPanneau(null)}>
+              Voir les {photos.length} photo{photos.length > 1 ? 's' : ''}
+            </button>
+          </div>
+        )}
+        </div>
 
         {/* Ce que voient les invités, par opposition à ce que vous seul voyez.
             Inutile tant que rien n'est masqué : il n'y aurait rien à trier. */}
@@ -623,17 +708,27 @@ export default function Gallery({ params }) {
             {!selecting && (
               <button className="btn btn-dark" disabled={!!zip} onClick={() => downloadAll(photos)}>
                 {zip ? `Préparation… ${zip.done}/${zip.total}`
-                  : filter === 'all'
+                  : auteursChoisis.size === 0
                     ? `Tout télécharger (${photos.length})`
-                    : `Télécharger les ${photos.length} de ${nomFiltre}`}
+                    : auteursChoisis.size === 1
+                      ? `Télécharger les ${photos.length} de ${nomFiltre}`
+                      : `Télécharger ces ${photos.length} photos`}
               </button>
             )}
           </div>
         )}
+        {zipErr && (
+          <p className="notice small" style={{ marginTop: 10, background: '#fdeceb', borderColor: '#e5a29b' }}>
+            ⚠️ {zipErr}
+          </p>
+        )}
         {photos.length > 0 && (pelli.canaux || avecDate) && (
           <p className="film-note">
             🎞️ Vos photos seront enregistrées avec la pellicule <strong>{pelli.nom}</strong>
-            {avecDate && ' et la date'}. Choisissez <em>Original</em> sans la date pour les fichiers d'origine.
+            {avecDate && ' et la date'}.
+            {/* La précision est utile, mais pas au point de coûter deux lignes
+                sur le premier écran d'un téléphone. */}
+            <span className="sur-grand"> Choisissez <em>Original</em> sans la date pour les fichiers d'origine.</span>
           </p>
         )}
 
@@ -642,7 +737,7 @@ export default function Gallery({ params }) {
         {data.expiresAt && (
           <p className="gal-fin">
             🗓️ Album en ligne jusqu'au <strong>{formatJour(data.expiresAt)}</strong>.
-            Enregistrez ce que vous voulez garder avant cette date.
+            <span className="sur-grand"> Enregistrez ce que vous voulez garder avant cette date.</span>
           </p>
         )}
       </div>
@@ -667,7 +762,11 @@ export default function Gallery({ params }) {
                 }}
                 style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
-                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy"
+                  {/* crossOrigin est indispensable au téléchargement : sans lui
+                      le navigateur range la photo dans un coin de son cache où
+                      le JavaScript n'a pas le droit d'aller la relire, et le zip
+                      repartait vide. Avec, le zip réutilise ce qui est déjà là. */}
+                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" crossOrigin="anonymous"
                     style={pelli.css ? { filter: pelli.css } : undefined} />
                   {pelli.teinte && <div className="film-teinte" style={{ background: cssTeinte(pelli) }} />}
                   {pelli.halo > 0 && <div className="film-halo" style={{ opacity: pelli.halo }} />}
@@ -749,7 +848,7 @@ export default function Gallery({ params }) {
             </button>
             <span className="gal-bar-n">
               {selected.size} photo{selected.size > 1 ? 's' : ''}
-              {filter !== 'all' && <em className="gal-bar-note">La sélection se garde d'une personne à l'autre</em>}
+              {auteursChoisis.size > 0 && <em className="gal-bar-note">La sélection se garde d'une personne à l'autre</em>}
             </span>
             <button className="btn btn-accent gal-bar-dl" disabled={!!zip || selected.size === 0}
               onClick={() => downloadAll(aTelecharger)}>

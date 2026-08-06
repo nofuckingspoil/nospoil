@@ -363,7 +363,10 @@ a.cam-pile:active { transform: scale(.94); }
 .chip { flex: 0 0 auto; background: #fff; color: var(--text3); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
 .chip.active { background: var(--accent-btn); color: #fff; border-color: var(--accent); }
 
-.masonry { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: start; }
+/* minmax(0,1fr) et non 1fr : la légende ne se coupe pas en deux (« 26 juin ·
+   08:01 »), elle imposait donc sa largeur à la colonne, et la seconde photo
+   sortait de l'écran sur un téléphone. */
+.masonry { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
 .polaroid {
   background: var(--card); padding: 7px 7px 0;
   border-radius: 7px; box-shadow: 0 6px 16px rgba(34,26,18,.14); animation: dc-develop .8s ease both;
@@ -397,8 +400,9 @@ a.cam-pile:active { transform: scale(.94); }
 .film-note { font-size: 12px; color: var(--text4); line-height: 1.45; margin: 7px 0 0; }
 .film-chip-date { font-family: var(--font-mono); letter-spacing: .06em; }
 
-.polaroid .cap { display: flex; align-items: center; justify-content: space-between; padding: 7px 3px 9px; }
-.polaroid .cap .who { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--ink); }
+.polaroid .cap { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 3px 9px; }
+.polaroid .cap .who { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--ink);
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .polaroid .cap .time { font-family: var(--font-mono); font-size: 9.5px; color: var(--text4); text-align: right; white-space: nowrap; }
 
 /* ---------- Stat cards (organisateur) ---------- */
@@ -477,6 +481,43 @@ a.cam-pile:active { transform: scale(.94); }
 .hero p { font-size: clamp(16px, 2.4vw, 19px); color: var(--text2); line-height: 1.5; max-width: 540px; }
 .hero-cta { display: flex; flex-wrap: wrap; align-items: center; gap: 18px; margin-top: 26px; }
 .hero-cta .btn { width: auto; }
+
+/* Le hero passe sur deux colonnes dès qu'il y a la place : le texte à gauche,
+   l'appareil photo à droite. Sous 900 px l'appareil repasse sous le texte. */
+.hero-split { display: grid; grid-template-columns: 1fr; gap: 34px; align-items: center; }
+@media (min-width: 900px) { .hero-split { grid-template-columns: 1fr 300px; gap: 50px; } }
+/* Sur téléphone l'appareil passe sous le texte : on le réduit pour qu'il
+   reste une illustration et n'occupe pas un écran entier. */
+@media (max-width: 899px) { .hero-split .phone { max-width: 212px; } }
+
+/* Cadre de téléphone autour des captures d'écran. */
+.phone { width: 100%; max-width: 262px; margin: 0 auto; padding: 7px;
+  border-radius: 34px; background: linear-gradient(160deg, #3a3128, #16120e);
+  box-shadow: 0 24px 55px rgba(34,26,18,.26), 0 2px 6px rgba(34,26,18,.18); }
+.phone img { display: block; width: 100%; height: auto; border-radius: 28px; }
+.phone-tilt { transform: rotate(-2.2deg); }
+
+/* Vignettes des trois étapes : hauteur commune, l'image est recadrée dedans
+   et s'estompe vers le fond de la carte pour que la coupe ne se voie pas. */
+.step-shot { position: relative; height: 188px; margin-bottom: 16px; border-radius: 14px;
+  overflow: hidden; background: var(--line-soft); border: 1px solid var(--line-soft); }
+.step-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.step-shot::after { content: ''; position: absolute; inset: auto 0 0 0; height: 60px;
+  background: linear-gradient(to top, var(--card), transparent); pointer-events: none; }
+.step-num { position: absolute; top: 10px; left: 10px; z-index: 1;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; font-weight: 700;
+  color: #fff; background: var(--accent-btn); padding: 4px 9px; border-radius: 999px;
+  box-shadow: 0 3px 10px rgba(34,26,18,.25); }
+
+/* Section « image d'un côté, texte de l'autre ». */
+.split { display: grid; grid-template-columns: 1fr; gap: 30px; align-items: center; }
+@media (min-width: 820px) { .split { grid-template-columns: 290px 1fr; gap: 48px; } }
+.split-text h2 { font-family: var(--font-display); font-weight: 700; font-size: clamp(24px, 3.6vw, 30px); letter-spacing: -.02em; margin-bottom: 10px; }
+.split-text > p { color: var(--text2); font-size: 15.5px; line-height: 1.55; }
+.split-list { list-style: none; margin: 18px 0 0; padding: 0; display: grid; gap: 10px; }
+.split-list li { display: flex; gap: 10px; font-size: 14.5px; color: var(--text2); line-height: 1.45; }
+.split-list li b { color: var(--ink); font-weight: 700; }
+.split-list .ic { flex: 0 0 auto; }
 
 .section { padding: 46px 0; border-top: 1px solid var(--line-soft); }
 .section-title { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px, 4vw, 32px); letter-spacing: -.02em; text-align: center; margin-bottom: 8px; }
@@ -621,17 +662,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   background: rgba(244,193,78,.13); border: 1px solid rgba(244,193,78,.4);
   border-radius: 12px; padding: 10px 13px; }
 .gal-fin strong, .db-alb-fin strong { color: var(--ink); }
-
-/* Bandeau d'invitation aux favoris, au-dessus de l'album. */
-.gal-favbar { display: flex; align-items: center; justify-content: space-between; gap: 12px;
-  flex-wrap: wrap; margin: 0 0 14px; padding: 11px 14px; border-radius: 14px;
-  background: var(--card); border: 1px solid var(--line-soft); }
-.gal-favbar p { margin: 0; font-size: 13.5px; color: var(--text2); line-height: 1.45; }
-/* Sans min-width, une rangée d'onglets refuse de rétrécir et pousse toute la
-   page vers la droite sur un téléphone. */
-.gal-favbar .chips { flex: 1 1 220px; min-width: 0; max-width: 100%; }
-.gal-favbar-ic { color: #FF6B6B; font-size: 15px; }
-.gal-favbar .chip:disabled { opacity: .45; cursor: not-allowed; }
 
 /* Médaille du classement, dans le coin haut-gauche de la photo. */
 .gal-rang { position: absolute; top: 8px; left: 8px; z-index: 3; font-size: 20px;
@@ -1057,7 +1087,19 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   justify-content: center; text-align: center; min-height: 0;
 }
 .pk-eyebrow { font-family: var(--font-mono); text-transform: uppercase; color: var(--accent); }
-.pk-title { font-family: var(--font-display); font-weight: 800; letter-spacing: -.025em; line-height: 1.05; }
+/* Le titre reprend le nom de l'événement, qu'on ne maîtrise pas : on borne le
+   nombre de lignes et on autorise la coupure, sinon « Les 40 ans de… » suivi
+   d'une longue liste de prénoms repoussait le QR hors de la feuille. */
+.pk-title {
+  font-family: var(--font-display); font-weight: 800; letter-spacing: -.025em;
+  line-height: 1.05; max-width: 100%; overflow-wrap: anywhere;
+  display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden;
+  /* Sans cela, le titre — devenu compressible par son overflow — s'écrasait à
+     zéro dans la colonne du chevalet, où la place manque. */
+  flex: none;
+}
+.pk-lg .pk-title { -webkit-line-clamp: 3; }
+.pk-md .pk-title { -webkit-line-clamp: 2; }
 .pk-who { color: var(--text3); }
 .pk-punch { font-family: var(--font-display); font-weight: 700; color: var(--text2); font-style: italic; }
 
@@ -1095,18 +1137,22 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .pk-lg .pk-foot { font-size: 8.5pt; margin-top: 16pt; letter-spacing: .1em; }
 
 /* Moyenne (chevalet : moitié de page) */
+/* Demi-page : c'est le format le plus serré. Les écarts y sont calculés pour
+   qu'un titre sur deux lignes tienne encore entre les deux bandes. */
 .pk-md .pk-film { height: 5.5mm; }
-.pk-md .pk-body { padding: 4% 7%; }
+.pk-md .pk-body { padding: 2.4% 7%; }
 .pk-md .pk-eyebrow { font-size: 7.5pt; letter-spacing: .18em; }
-.pk-md .pk-title { font-size: 21pt; margin-top: 6pt; }
-.pk-md .pk-who { font-size: 9.5pt; margin-top: 3pt; }
-.pk-md .pk-punch { font-size: 10pt; margin-top: 6pt; }
-.pk-md .pk-viewfinder { width: 42%; padding: 9pt; margin: 9pt 0 8pt; }
+.pk-md .pk-title { font-size: 19pt; margin-top: 5pt; }
+.pk-md .pk-who { font-size: 9.5pt; margin-top: 2pt; }
+.pk-md .pk-punch { font-size: 10pt; margin-top: 5pt; }
+/* 36 % d'une A4 = 75 mm de QR : largement scannable à bout de bras, et le
+   chevalet ne fait que 148 mm de haut — un QR plus gros y chassait le reste. */
+.pk-md .pk-viewfinder { width: 36%; padding: 9pt; margin: 8pt 0 7pt; }
 .pk-md .pk-c { width: 15pt; height: 15pt; }
 .pk-md .pk-cta { font-size: 8pt; letter-spacing: .12em; }
-.pk-md .pk-badge { font-size: 10pt; padding: 5pt 14pt; margin-top: 8pt; }
-.pk-md .pk-reveal { font-size: 9.5pt; margin-top: 7pt; }
-.pk-md .pk-foot { font-size: 7pt; margin-top: 8pt; letter-spacing: .08em; }
+.pk-md .pk-badge { font-size: 10pt; padding: 5pt 14pt; margin-top: 7pt; }
+.pk-md .pk-reveal { font-size: 9.5pt; margin-top: 6pt; }
+.pk-md .pk-foot { font-size: 7pt; margin-top: 6pt; letter-spacing: .08em; }
 
 /* Petite (carton à découper) */
 .pk-sm .pk-film { height: 3mm; }
@@ -1128,7 +1174,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 /* Mise en page d'une feuille */
 .pk-page { background: #fff; box-shadow: 0 10px 30px rgba(34,26,18,.14); margin: 0 auto; }
+/* L'affiche occupe toute la feuille. Sans cette hauteur, le bloc s'arrêtait à
+   la fin de son contenu et laissait ~6 cm de blanc en bas de l'A4 : à l'œil,
+   l'affiche paraissait collée en haut de la page. */
 .pk-page-affiche { display: block; }
+.pk-page-affiche .pk-ticket { height: 100%; }
 .pk-page-chevalet { display: flex; flex-direction: column; }
 .pk-page-chevalet .pk-ticket { flex: 1; border-radius: 0; border: none; }
 /* Le haut est retourné : plié en deux, le chevalet se lit des deux côtés. */
@@ -1143,8 +1193,14 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .pk-page-cartons { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); }
 .pk-page-cartons .pk-ticket { border-radius: 0; border: 1px dashed rgba(34,26,18,.3); }
 
-/* Aperçu à l'écran : une A4 réduite (210×297 mm, ratio conservé) */
-.pk-preview .pk-page { width: 100%; max-width: 420px; aspect-ratio: 210 / 297; }
+/* Aperçu à l'écran : la feuille est dessinée à sa taille réelle (210 × 297 mm)
+   puis réduite d'un bloc. Une feuille simplement rétrécie en CSS aurait gardé
+   un texte à sa taille d'impression (les tickets sont chiffrés en points, donc
+   en unités absolues) et le titre débordait de la page. Le facteur de
+   réduction est posé par la page, qui mesure la place disponible. */
+.pk-sheetbox { width: 100%; max-width: 420px; margin: 0 auto; }
+.pk-sheet { width: 210mm; height: 297mm; transform-origin: top left; }
+.pk-preview .pk-page { width: 210mm; height: 297mm; }
 .pk-print { display: none; }
 
 /* Filtres et téléchargement, réunis en tête : le bouton dépend du filtre, il
@@ -1153,15 +1209,99 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   font-family: var(--font-mono); font-size: 10px; letter-spacing: .14em;
   text-transform: uppercase; color: var(--text3); margin-bottom: 6px;
 }
-.gal-plus {
-  display: inline-block; margin-top: 8px; background: none; border: none; padding: 0;
-  cursor: pointer; font-family: var(--font-body); font-size: 13px;
-  color: var(--accent-deep); text-decoration: underline;
+/* type="search" échappe au style commun des champs : sans cette règle, le
+   navigateur dessine son propre rectangle, étranger au reste de la page. */
+.gal-cherche {
+  width: 100%; margin-top: 8px; font-family: var(--font-body); font-size: 15px;
+  padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px;
+  background: var(--screen); color: var(--ink); outline: none;
+  -webkit-appearance: none; appearance: none;
 }
-.gal-cherche { width: 100%; margin-top: 8px; }
+.gal-cherche:focus { border-color: var(--accent); }
 
 .gal-actions { display: flex; gap: 8px; margin-top: 14px; }
 .gal-actions .btn { flex: 1 1 0; min-width: 0; width: auto; padding: 13px 12px; font-size: 14px; }
+
+/* Trois boutons côte à côte, chacun ouvrant son panneau : une ligne au lieu
+   des rangées de pastilles qui repoussaient l'album hors de l'écran. */
+.gal-filtres { position: relative; display: flex; gap: 7px; margin-top: 12px; }
+.gal-fbtn {
+  flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px;
+  padding: 9px 12px; border: 1px solid var(--line); border-radius: 14px;
+  background: var(--card); cursor: pointer; text-align: left;
+  font-family: var(--font-body);
+}
+.gal-fbtn-l { font-family: var(--font-mono); font-size: 9px; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--text3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Le réglage en cours se lit sans ouvrir : c'est tout l'intérêt du bouton. */
+.gal-fbtn-v { font-weight: 700; font-size: 13px; color: var(--ink);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gal-fbtn.actif { border-color: var(--accent); background: #fdf3e6; }
+.gal-fbtn.ouvert { border-color: var(--ink); }
+
+/* Le panneau flotte au-dessus de l'album : ouvrir un filtre ne doit pas
+   repousser les photos d'un écran entier. */
+.gal-fond { position: fixed; inset: 0; z-index: 24; }
+.gal-panneau {
+  position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 25;
+  padding: 8px; border-radius: 16px;
+  background: var(--card); border: 1px solid var(--line);
+  box-shadow: 0 18px 44px rgba(34,26,18,.22);
+}
+.gal-liste { display: flex; flex-direction: column; }
+/* La liste des participants peut compter 170 noms : elle défile chez elle,
+   plutôt que de repousser les photos d'un écran entier. */
+.gal-liste-haute { max-height: 46vh; overflow-y: auto; }
+.gal-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  width: 100%; padding: 10px 12px; border: none; border-radius: 11px;
+  background: none; cursor: pointer; text-align: left; font-family: var(--font-body);
+}
+.gal-opt:hover { background: rgba(0,0,0,.03); }
+.gal-opt.on { background: #fdf3e6; }
+.gal-opt:disabled { opacity: .45; cursor: not-allowed; }
+.gal-opt-t { display: flex; flex-direction: column; gap: 1px; min-width: 0;
+  font-weight: 700; font-size: 14px; color: var(--ink); }
+.gal-opt-t em { font-style: normal; font-weight: 400; font-size: 11.5px; color: var(--text4);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gal-opt-c { flex: none; width: 22px; height: 22px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  border: 1.5px solid var(--line); font-size: 12px; font-weight: 800; color: transparent; }
+.gal-opt.on .gal-opt-c { background: var(--accent-btn); border-color: var(--accent); color: #fff; }
+/* La date se coche en plus d'une pellicule : un trait la sépare des cinq
+   choix qui, eux, s'excluent. */
+.gal-opt-sep { margin-top: 4px; border-top: 1px solid var(--line-soft); border-radius: 0 0 11px 11px; }
+.gal-panneau-ok {
+  width: 100%; margin-top: 6px; padding: 12px; border: none; border-radius: 12px;
+  background: var(--ink); color: #fff; cursor: pointer;
+  font-family: var(--font-body); font-weight: 700; font-size: 14px;
+}
+.gal-vide { margin: 12px; font-size: 13px; color: var(--text4); }
+.gal-panneau .gal-cherche { margin: 4px 0 8px; }
+
+@media (max-width: 640px) {
+  /* Un en-tête plus haut que l'écran, collé en haut, ne libère jamais la vue :
+     il recouvrait l'album tout au long du défilement. Il redevient donc du
+     texte ordinaire, qui s'en va quand on descend. */
+  .gal-head { position: static; padding-bottom: 8px; }
+  .gal-head .h3 { font-size: 19px; line-height: 1.2; }
+
+  /* Ce qui compte sur un téléphone tient en une ligne ; le reste attend un
+     écran plus large. */
+  .sur-grand { display: none; }
+  .gal-fin { margin-top: 10px; padding: 8px 11px; font-size: 12px; }
+  .gal-actions { margin-top: 10px; }
+  .gal-actions .btn { padding: 12px 10px; font-size: 13.5px; }
+
+  /* Les photos gagnent la place rendue par les marges : deux colonnes, mais
+     plus larges, et un cadre moins épais. */
+  .gal-page { padding: 16px 12px 30px; }
+  .gal-page .gal-top { margin: -16px -12px 10px; padding: 10px 12px; }
+  .masonry { gap: 8px; }
+  .polaroid { padding: 5px 5px 0; border-radius: 6px; }
+  .polaroid .cap { padding: 5px 2px 7px; }
+}
 
 /* Barre de sélection : elle suit le doigt, plutôt que d'obliger à remonter et
    redescendre entre les photos qu'on coche et le bouton qui les emporte. */
@@ -1501,6 +1641,19 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-notif-txt strong { display: block; font-size: 14.5px; color: var(--ink); }
 .db-notif-txt span { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.4; color: var(--text3); }
 .db-notif-act { flex: 0 0 auto; padding: 10px 18px; }
+
+/* Les pages à garder sous la main — discrètes, mais toujours au même endroit */
+.db-res { margin-top: 26px; padding: 16px 16px 8px; border-radius: 18px;
+  background: #fff; border: 1px solid var(--line); }
+.db-res .db-eyebrow { display: block; margin-bottom: 10px; }
+.db-res-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0;
+  text-decoration: none; color: inherit; }
+.db-res-row + .db-res-row { border-top: 1px solid var(--line); }
+.db-res-row > span:first-child { font-size: 20px; line-height: 1.2; flex: 0 0 auto; }
+.db-res-row strong { display: block; font-size: 14.5px; color: var(--ink); }
+.db-res-row em { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.45;
+  font-style: normal; color: var(--text3); }
+.db-res-row:hover strong { color: var(--accent); }
 .db-hero-2nd-light { background: rgba(255,255,255,.16); border-color: rgba(255,255,255,.3); }
 
 /* --- Compteurs du jour J --- */
@@ -1829,6 +1982,9 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gd-gate .dj-btn { flex: 0 0 auto; }
 .gd-gate-err { color: #ffb4a1; font-size: 13px; margin: 12px 0 0; }
 .gd-gate-fine { font-size: 12px; color: rgba(255,255,255,.42); margin: 14px 0 0; }
+.gd-gate-deja { font-size: 13px; color: rgba(255,255,255,.62); margin: 16px 0 0;
+  padding-top: 14px; border-top: 1px solid rgba(255,255,255,.12); }
+.gd-gate-deja a { color: #F7A583; font-weight: 700; }
 
 /* Aide-mémoire en colonnes. */
 /* Quatre étapes : deux colonnes de deux, plutôt que trois + un orphelin. */

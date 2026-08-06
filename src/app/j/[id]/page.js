@@ -171,13 +171,27 @@ export default function GuestCamera({ params }) {
       const JSZip = (await import('jszip')).default
       const z = new JSZip()
       let i = 0
+      let reussies = 0
       for (const p of myPhotos) {
-        try { const blob = await fetch(p.url).then((r) => r.blob()); z.file(`timetoflash-${String(++i).padStart(2, '0')}.jpg`, blob) } catch { i++ }
+        try {
+          const blob = await fetch(p.url).then((r) => r.blob())
+          z.file(`timetoflash-${String(++i).padStart(2, '0')}.jpg`, blob)
+          reussies++
+        } catch { i++ }
+      }
+      // Sans ce garde-fou, l'échec s'enregistrait sous la forme d'une archive
+      // vide de 22 octets, que l'on ne découvrait qu'en essayant de l'ouvrir.
+      if (reussies === 0) {
+        setError('Téléchargement impossible : aucune photo n\'a pu être relue. Réessayez dans un instant.')
+        return
       }
       const out = await z.generateAsync({ type: 'blob' })
       const url = URL.createObjectURL(out)
-      const a = document.createElement('a'); a.href = url; a.download = 'mes-photos-timetoflash.zip'; a.click()
-      URL.revokeObjectURL(url)
+      const a = document.createElement('a')
+      a.href = url; a.download = 'mes-photos-timetoflash.zip'; a.style.display = 'none'
+      document.body.appendChild(a)
+      a.click()
+      setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
     } catch { setError('Téléchargement impossible.') } finally { setDownloading(false) }
   }
 
@@ -842,7 +856,9 @@ export default function GuestCamera({ params }) {
               roll.map((p, i) => (
                 <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
                   onClick={() => !p.pending && p.id && setViewer({ id: p.id, url: p.url })} aria-label="Voir la photo">
-                  <img src={p.url} alt="" loading="lazy" />
+                  {/* crossOrigin : sans lui, la photo mise en cache par cette
+                      vignette ne peut plus être relue pour le zip. */}
+                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
                 </button>
               ))
             )}
