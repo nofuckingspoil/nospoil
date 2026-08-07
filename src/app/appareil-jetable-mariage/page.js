@@ -80,7 +80,7 @@ const CONTRE_LE_VRAI = {
 const FAQ_ANGLE = [
   {
     q: 'Les photos ressemblent vraiment à du jetable ?',
-    a: "Oui, si vous le voulez. L'album propose cinq pellicules, dont une « Jetable » avec le grain, la dominante chaude et la date incrustée dans le coin. L'effet est cuit dans le fichier que vous téléchargez, ce n'est pas juste un filtre d'affichage.",
+    a: "Oui, si vous le voulez. L'album propose cinq ambiances, dont une « Jetable » bien chaude et grainée, avec la petite date orange dans le coin. Et ce n'est pas qu'à l'écran : l'effet reste sur vos photos une fois enregistrées sur votre téléphone.",
   },
   {
     q: 'Pourquoi pas de vrais appareils jetables ?',

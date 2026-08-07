@@ -4,6 +4,7 @@ import Logo from '../components/Logo'
 import SiteNav from '../components/SiteNav'
 import TryQR from '../components/TryQR'
 import ConsentReset from '../components/ConsentReset'
+import Pellicules from '../components/Pellicules'
 import { TIERS, TOP_TIER, formatPrice } from '../lib/pricing'
 
 export const metadata = {
@@ -147,6 +148,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* LA PELLICULE — on vient de raconter l'attente et l'ouverture de
+            l'album ; reste à montrer ce qui en sort. */}
+        <Pellicules />
 
         {/* VOUS GARDEZ LA MAIN */}
         <section className="section">
