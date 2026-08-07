@@ -3,7 +3,7 @@
 import Script from 'next/script'
 import { Suspense, useEffect, useState } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
-import { META_PIXEL_ID, pageMesurable } from '../lib/tracking'
+import { META_PIXEL_ID, pageMesurable, mesureExclue } from '../lib/tracking'
 import { lireConsentement, surConsentement } from '../lib/consent'
 
 // ============================================================
@@ -37,6 +37,7 @@ export default function MetaPixel() {
   const [autorise, setAutorise] = useState(false)
 
   useEffect(() => {
+    if (mesureExclue()) return // nos propres visites ne se comptent pas
     setAutorise(lireConsentement() === 'accepte')
     return surConsentement((choix) => setAutorise(choix === 'accepte'))
   }, [])

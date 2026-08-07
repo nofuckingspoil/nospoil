@@ -47,6 +47,44 @@ export function pageMesurable(chemin) {
 }
 
 // ------------------------------------------------------------
+//  Ne pas se compter soi-même.
+//
+//  Nos propres visites gonflent l'audience et brouillent les campagnes : elles
+//  ressemblent à des visiteurs qui reviennent sans jamais acheter. Ouvrir une
+//  fois https://timetoflash.fr/?nomesure=1 marque ce navigateur, et plus aucun
+//  traceur ne s'y charge, sur aucune page. ?nomesure=0 annule la marque.
+//
+//  Le marquage se fait par navigateur et par appareil (ordinateur, téléphone,
+//  navigation privée), et non par adresse IP : une IP change au gré de la box
+//  et du réseau mobile, ce marqueur non.
+// ------------------------------------------------------------
+const CLE_EXCLUSION = 'ttf_sans_mesure'
+
+let annonceFaite = false
+
+export function mesureExclue() {
+  if (typeof window === 'undefined') return false
+  try {
+    const demande = new URLSearchParams(window.location.search).get('nomesure')
+    if (demande === '1') localStorage.setItem(CLE_EXCLUSION, '1')
+    if (demande === '0') localStorage.removeItem(CLE_EXCLUSION)
+
+    // Sans retour visible, impossible de savoir si le réglage a bien pris.
+    if (demande && !annonceFaite) {
+      annonceFaite = true
+      alert(demande === '1'
+        ? 'Ce navigateur ne sera plus compté dans les statistiques.'
+        : 'Ce navigateur est de nouveau compté dans les statistiques.')
+    }
+
+    return localStorage.getItem(CLE_EXCLUSION) === '1'
+  } catch {
+    // Stockage bloqué par le navigateur : on mesure comme avant.
+    return false
+  }
+}
+
+// ------------------------------------------------------------
 //  Envoi d'un événement.
 //
 //  Un seul appel dans le code du site, deux destinataires. Si le visiteur n'a

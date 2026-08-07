@@ -53,6 +53,12 @@ export async function GET(request) {
       `&reveal_at=gte.${depuis.toISOString()}` +
       '&reveal_paused=is.false' +
       '&purged_at=is.null' +
+      // Les albums d'essai se révèlent en quelques minutes et se comptent par
+      // dizaines chaque jour : sans ce filtre ils occuperaient la file entière
+      // et pourraient repousser un vrai mariage au-delà de la limite, pour
+      // n'envoyer aucun mail — ils n'ont pas d'invités inscrits. Un événement
+      // marqué comme test qui en aurait reste rattrapé par le rappel quotidien.
+      '&is_test=is.false' +
       `&order=reveal_at.desc&limit=${BATCH}`
   )
   if (!ok || !Array.isArray(data)) {
