@@ -38,7 +38,8 @@ export function surveyOrgaEmail({ eventName, link }) {
       intro: `${ACCROCHE} On construit encore beaucoup de choses, et ce que vous direz après « <strong>${eventName}</strong> » pèse lourd à ce stade.`,
       body: `${bigButton(link, 'Répondre — 2 minutes →')}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          Six questions : ce qui vous a plu, ce qui a coincé, ce qui vous a manqué.
+          Ce qui vous a plu, ce qui a coincé, ce qui vous a manqué — et un
+          espace pour tout dire librement.
           Rien à créer, rien à installer — le lien vous reconnaît.
         </div>`,
       footer: `Vous ne recevrez ce message qu'une seule fois, et aucune relance ne suivra.`,
@@ -54,12 +55,12 @@ export function surveyInviteEmail({ eventName, link, stopLink }) {
   return {
     subject: `Vous faites partie des 1000 premiers — 30 secondes ?`,
     html: layout({
-      title: 'Trois questions, pas plus',
+      title: 'Dites-nous ce que vous en avez pensé',
       intro: `Vous avez participé à l'album de « <strong>${eventName}</strong> ». ${ACCROCHE} Votre avis nous aide à corriger ce qui ne va pas encore.`,
       body: `${bigButton(link, 'Répondre — 30 secondes →')}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          Trois questions : si vous avez aimé, si quelque chose a coincé,
-          et si vous l'utiliseriez pour votre propre fête.
+          Trois questions rapides, et un espace pour nous dire librement
+          ce que vous en avez pensé — c'est celui qu'on lit en premier.
         </div>`,
       footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement. C'est le seul message de ce type que nous vous enverrons, et aucune relance ne suivra. <a href="${stopLink}" style="color:#8a7c69;">Ne plus recevoir de message de ce type</a>.`,
     }),
@@ -102,7 +103,7 @@ export async function alerterAdmin({ avis, eventName, guestName }) {
     ${ligne('Problèmes', soucis)}
     ${ligne('Détail', avis.issue_detail)}
     ${ligne('Ce qui a plu', avis.favorite ? libelle(avis.favorite) : null)}
-    ${ligne('Ce qui a manqué', avis.suggestion)}
+    ${ligne('En toutes lettres', avis.suggestion)}
     ${ligne('Connu par', avis.source ? libelle(avis.source) : null)}
     ${ligne('Referait ?', avis.would_host)}
     ${ligne('Appareil', resumeAppareil(avis.device))}

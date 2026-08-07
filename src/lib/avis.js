@@ -12,8 +12,12 @@
 // Trois choses en face d'une case cochée : ce qu'on affiche, ce qu'on
 // redemande derrière, et un exemple. L'exemple n'est pas décoratif — sans lui
 // on récolte « ça marchait pas », avec lui on apprend où les gens ont cherché.
+//
+// La case « tout allait bien » n'est plus affichée : la question se pose
+// maintenant par oui ou par non, et cette liste n'apparaît qu'après un « oui ».
+// L'entrée reste ici pour que les réponses déjà enregistrées gardent un nom.
 export const SOUCIS_INVITE = [
-  { id: 'ok', label: "Non, c'était fluide", ok: true },
+  { id: 'ok', label: 'Tout a marché du premier coup', ok: true },
   {
     id: 'qr',
     label: "J'ai galéré à scanner le QR code",
@@ -41,7 +45,7 @@ export const SOUCIS_INVITE = [
 ]
 
 export const SOUCIS_ORGA = [
-  { id: 'ok', label: "Non, tout s'est bien passé", ok: true },
+  { id: 'ok', label: 'Tout a marché, personne ne m’a rien signalé', ok: true },
   {
     id: 'qr',
     label: "Des invités n'ont pas réussi à scanner le QR code",
@@ -105,6 +109,39 @@ export const NOTES = [
   { valeur: 4, emoji: '😍', mot: 'Génial' },
 ]
 
+// La grande question ouverte, reformulée selon la note qu'on vient de donner.
+//
+// « Un commentaire ? » posé à tout le monde ne récolte rien : la question est
+// trop vaste, on ne sait pas par quel bout la prendre. Reprendre la note dans
+// la question fait le travail à la place du répondant — quelqu'un qui vient de
+// cliquer « Bof » a déjà quelque chose sur le cœur, il suffit de lui ouvrir la
+// porte. Et le mécontent comme l'enthousiaste ne racontent pas la même chose :
+// à l'un on demande ce qui a raté, à l'autre ce qu'il ne faut pas casser.
+const REACTIONS_INVITE = {
+  1: { q: 'Qu’est-ce qui vous a déçu ?', ph: 'Dites-le franchement — c’est ce qui nous fait le plus avancer.' },
+  2: { q: 'Qu’est-ce qui aurait rendu ça vraiment bien ?', ph: 'Le détail qui manquait, le moment où c’est retombé…' },
+  3: { q: 'Qu’est-ce qui vous a plu, et qu’est-ce qui manquait pour que ce soit génial ?', ph: 'Les deux nous intéressent, même en une phrase.' },
+  4: { q: 'Qu’est-ce qui vous a le plus plu ?', ph: 'Le moment, le détail, la surprise… Racontez.' },
+}
+
+const REACTIONS_ORGA = {
+  1: { q: 'Qu’est-ce qui n’a pas marché ?', ph: 'Soyez direct, on préfère l’entendre de vous.' },
+  2: { q: 'Qu’est-ce qui vous a laissé sur votre faim ?', ph: 'Ce que vous attendiez et qui n’est pas venu…' },
+  3: { q: 'Qu’est-ce qui a bien marché, et qu’est-ce qui a manqué pour que ce soit génial ?', ph: 'Les deux nous intéressent, même en une phrase.' },
+  4: { q: 'Racontez-nous : qu’est-ce qui a le mieux marché ?', ph: 'Le moment où vous avez vu que ça prenait, la réaction des invités…' },
+}
+
+export function reactionA(role, note) {
+  const table = role === 'organisateur' ? REACTIONS_ORGA : REACTIONS_INVITE
+  return table[note] || null
+}
+
+// Le oui/non qui commande la liste des soucis.
+export const PROBLEME = [
+  { id: 'non', label: 'Non, tout a marché' },
+  { id: 'oui', label: 'Oui' },
+]
+
 export const REFERAIT = [
   { id: 'oui', label: 'Oui' },
   { id: 'peut-etre', label: 'Peut-être' },
@@ -119,6 +156,9 @@ export const ACCROCHE = 'Vous faites partie des 1000 premiers utilisateurs de Ti
 const par = (liste) => Object.fromEntries(liste.map((x) => [x.id, x.label]))
 const LIB = {
   ...par(SOUCIS_INVITE), ...par(SOUCIS_ORGA), ...par(PREFEREES), ...par(SOURCES),
+  // Répondu « oui, j'ai eu un problème » sans cocher lequel. Ça reste un
+  // problème : il doit compter dans les alertes comme dans les statistiques.
+  nonprecise: 'Un problème, sans plus de précision',
 }
 
 export function libelle(id) {

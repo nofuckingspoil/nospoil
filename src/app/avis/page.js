@@ -120,7 +120,7 @@ function AvisInner() {
       <div className="card">
         <p className="eyebrow" style={{ fontSize: 10.5, marginBottom: 8 }}>{ACCROCHE}</p>
         <h2 className="h3" style={{ marginBottom: 8 }}>
-          {orga ? 'Votre avis, vraiment' : 'Trois questions, pas plus'}
+          {orga ? 'Votre avis, vraiment' : 'Dites-nous ce que vous en avez pensé'}
         </h2>
         <p className="muted small" style={{ marginBottom: 20 }}>
           {info?.eventName

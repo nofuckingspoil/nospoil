@@ -182,17 +182,3 @@ export async function POST(request) {
 
   return Response.json({ ok: true, id: cree.data?.id || null })
 }
-
-// --- Complément écrit après l'envoi (« une dernière chose à nous dire ? ») ---
-// L'avis est déjà enregistré : ce mot en plus ne doit jamais pouvoir l'écraser
-// ni en créer un second, d'où la mise à jour ciblée sur l'identifiant rendu.
-export async function PATCH(request) {
-  const body = await request.json().catch(() => ({}))
-  const id = texte(body.id)
-  const suggestion = texte(body.suggestion)
-  if (!id || !suggestion) return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
-
-  const res = await updateRow('feedback', `id=eq.${id}&suggestion=is.null`, { suggestion })
-  if (!res.ok) return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
-  return Response.json({ ok: true })
-}

@@ -10,9 +10,16 @@
 //  cache son propre coût : on accepte de commencer sans savoir combien il en
 //  reste, et l'on abandonne au milieu. Ici on voit tout de suite ce qu'on
 //  s'engage à donner — et une seule question est obligatoire.
+//
+//  Deux choses s'ouvrent en cours de route, et seulement en cours de route :
+//  la grande question ouverte, reformulée d'après la note qu'on vient de
+//  donner, et la liste des soucis, qui n'apparaît qu'à celui qui a répondu
+//  « oui » à « avez-vous eu un problème ? ». Les afficher d'emblée reviendrait
+//  à demander à tout le monde de lire sept cases qui ne concernent qu'une
+//  personne sur cinq.
 // ============================================================
 import { useState } from 'react'
-import { NOTES, REFERAIT, PREFEREES, SOURCES, souciDe } from '../lib/avis'
+import { NOTES, REFERAIT, PREFEREES, SOURCES, PROBLEME, souciDe, reactionA } from '../lib/avis'
 
 function Choix({ options, valeur, onChange, cle = 'id' }) {
   return (
@@ -34,16 +41,19 @@ function Choix({ options, valeur, onChange, cle = 'id' }) {
 
 export default function Avis({ role = 'invite', payload = {}, onClose = null, compact = false }) {
   const orga = role === 'organisateur'
-  const SOUCIS = souciDe(role)
+  // La case « tout allait bien » a été remplacée par le oui/non : elle n'a plus
+  // à figurer dans la liste, qui ne s'ouvre déjà qu'en cas de « oui ».
+  const SOUCIS = souciDe(role).filter((s) => !s.ok)
 
   const [note, setNote] = useState(null)
+  const [reaction, setReaction] = useState('')
+  const [aEuProbleme, setAEuProbleme] = useState(null) // null | 'non' | 'oui'
   const [soucis, setSoucis] = useState(() => new Set())
   const [detail, setDetail] = useState('')
   const [referait, setReferait] = useState(null)
   const [nps, setNps] = useState(null)
   const [npsRaison, setNpsRaison] = useState('')
   const [preferee, setPreferee] = useState(null)
-  const [manque, setManque] = useState('')
   const [source, setSource] = useState(null)
   const [appel, setAppel] = useState(false)
   const [tel, setTel] = useState('')
@@ -51,28 +61,33 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
   const [envoi, setEnvoi] = useState(false)
   const [erreur, setErreur] = useState('')
   const [fini, setFini] = useState(false)
-  const [avisId, setAvisId] = useState(null)
-  const [motDeFin, setMotDeFin] = useState('')
-  const [motEnvoye, setMotEnvoye] = useState(false)
 
-  // Cocher « tout s'est bien passé » décoche les problèmes, et l'inverse :
-  // les deux réponses ensemble ne veulent rien dire, et laisser passer la
-  // contradiction fausserait le compte des problèmes.
   function basculerSouci(id) {
     setSoucis((prev) => {
       const n = new Set(prev)
-      const estOk = SOUCIS.find((s) => s.id === id)?.ok
       if (n.has(id)) n.delete(id)
-      else {
-        if (estOk) n.clear()
-        else for (const s of SOUCIS) if (s.ok) n.delete(s.id)
-        n.add(id)
-      }
+      else n.add(id)
       return n
     })
   }
 
-  const problemes = SOUCIS.filter((s) => !s.ok && soucis.has(s.id))
+  // Répondre « non » efface les cases éventuellement cochées avant de changer
+  // d'avis : les deux réponses ensemble ne veulent rien dire, et la
+  // contradiction fausserait le compte des problèmes.
+  function repondreProbleme(v) {
+    setAEuProbleme(v)
+    if (v !== 'oui') { setSoucis(new Set()); setDetail('') }
+  }
+
+  // Ce qui part vraiment. « Oui » sans aucune case cochée reste un problème :
+  // il compte dans les alertes, sous un nom qui dit qu'il n'a pas été précisé.
+  const issues = aEuProbleme === 'non'
+    ? ['ok']
+    : aEuProbleme === 'oui'
+      ? (soucis.size ? [...soucis] : ['nonprecise'])
+      : []
+
+  const problemes = SOUCIS.filter((s) => soucis.has(s.id))
   // Une seule relance, même si plusieurs cases sont cochées : trois champs
   // libres d'affilée et personne ne remplit le premier.
   const relance = problemes.length === 1
@@ -91,39 +106,24 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         body: JSON.stringify({
           ...payload,
           rating: note,
-          issues: [...soucis],
+          issues,
           issueDetail: detail,
+          suggestion: reaction,
           ...(orga
             ? {
                 nps, npsReason: npsRaison, favorite: preferee,
-                suggestion: manque, source, callOk: appel, phone: tel,
+                source, callOk: appel, phone: tel,
               }
             : { wouldHost: referait }),
         }),
       })
       const d = await r.json().catch(() => ({}))
       if (d.error) { setErreur(d.error); setEnvoi(false); return }
-      setAvisId(d.id || null)
       setFini(true)
     } catch {
       setErreur('Connexion impossible. Réessayez dans un instant.')
       setEnvoi(false)
     }
-  }
-
-  // Le mot de la fin arrive après coup : l'avis est déjà enregistré, ce champ
-  // ne fait que le compléter. Personne ne perd sa réponse s'il ferme ici.
-  async function envoyerMot() {
-    const v = motDeFin.trim()
-    if (!v || !avisId || motEnvoye) return
-    setMotEnvoye(true)
-    try {
-      await fetch('/api/feedback', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: avisId, suggestion: v }),
-      })
-    } catch {}
   }
 
   if (fini) {
@@ -138,17 +138,6 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
               : 'C’est avec ça qu’on corrige ce qui ne va pas encore.'}
           </p>
         </div>
-
-        {!orga && avisId && !motEnvoye && (
-          <div className="field" style={{ marginTop: 18, marginBottom: 0 }}>
-            <label>Une dernière chose à nous dire ? <span className="field-tag">facultatif</span></label>
-            <textarea rows={2} value={motDeFin} onChange={(e) => setMotDeFin(e.target.value)}
-              placeholder="Une idée, un détail, un reproche…" />
-            <button className="btn btn-ghost" style={{ marginTop: 10 }}
-              onClick={envoyerMot} disabled={!motDeFin.trim()}>Envoyer</button>
-          </div>
-        )}
-        {motEnvoye && <p className="muted small" style={{ textAlign: 'center', marginTop: 14 }}>C’est noté. Merci !</p>}
 
         {onClose && (
           <button className="btn btn-dark" style={{ marginTop: 18, width: '100%' }} onClick={onClose}>
@@ -182,7 +171,22 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         </div>
       </div>
 
-      {/* 2 — La recommandation, organisateur seulement. C'est la question qui
+      {/* 2 — La question ouverte, et de la place pour y répondre. Elle se
+          reformule d'après la note qui vient d'être donnée : c'est la même
+          case, mais on ne demande pas la même chose à quelqu'un qui a mis
+          « Bof » et à quelqu'un qui a mis « Génial ». */}
+      {note && (
+        <div className="avis-q avis-ouvert">
+          <div className="avis-lbl">{reactionA(role, note)?.q}</div>
+          <textarea rows={4} value={reaction} onChange={(e) => setReaction(e.target.value)}
+            placeholder={reactionA(role, note)?.ph} />
+          <div className="avis-sous" style={{ margin: '6px 0 0' }}>
+            Facultatif, mais c’est ce qu’on lit en premier.
+          </div>
+        </div>
+      )}
+
+      {/* 3 — La recommandation, organisateur seulement. C'est la question qui
           se compare d'un mois sur l'autre : elle ne changera plus. */}
       {orga && (
         <div className="avis-q">
@@ -201,42 +205,48 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         </div>
       )}
 
-      {/* 3 — Les difficultés. En cases à cocher, jamais en champ libre :
-          « avez-vous eu un problème ? » en texte libre ne récolte que des
-          « non ». La liste, elle, force à se souvenir. */}
+      {/* 4 — Les difficultés. Un oui/non d'abord, la liste seulement après :
+          celui qui n'a rien eu répond en un clic et passe à la suite, celui qui
+          a eu un souci se voit proposer des cases plutôt qu'une page blanche.
+
+          Les cases restent indispensables — « qu'est-ce qui a coincé ? » en
+          texte libre ne récolte que des « rien ». La liste, elle, force à se
+          souvenir. */}
       <div className="avis-q">
-        <div className="avis-lbl">{orga ? 'Y a-t-il eu un moment où quelque chose a coincé ?' : 'Quelque chose a coincé ?'}</div>
-        <div className="avis-choix">
-          {SOUCIS.map((s) => (
-            <button key={s.id} type="button"
-              className={`avis-opt ${soucis.has(s.id) ? 'on' : ''} ${s.ok ? 'avis-opt-ok' : ''}`}
-              aria-pressed={soucis.has(s.id)}
-              onClick={() => basculerSouci(s.id)}>
-              {s.label}
-            </button>
-          ))}
-        </div>
-        {relance && (
-          <div className="avis-relance">
-            <label>{relance.relance}</label>
-            <textarea rows={2} value={detail} onChange={(e) => setDetail(e.target.value)} />
-            <div className="hint">{relance.exemple}</div>
+        <div className="avis-lbl">{orga ? 'Avez-vous eu un problème technique, vous ou vos invités ?' : 'Avez-vous eu un problème technique ?'}</div>
+        <Choix options={PROBLEME} valeur={aEuProbleme} onChange={repondreProbleme} />
+
+        {aEuProbleme === 'oui' && (
+          <div className="avis-suite">
+            <div className="avis-lbl" style={{ fontSize: 14 }}>Lequel ?</div>
+            <div className="avis-sous">Plusieurs réponses possibles.</div>
+            <div className="avis-choix">
+              {SOUCIS.map((s) => (
+                <button key={s.id} type="button"
+                  className={`avis-opt ${soucis.has(s.id) ? 'on' : ''}`}
+                  aria-pressed={soucis.has(s.id)}
+                  onClick={() => basculerSouci(s.id)}>
+                  {s.label}
+                </button>
+              ))}
+            </div>
+            {relance && (
+              <div className="avis-relance">
+                <label>{relance.relance}</label>
+                <textarea rows={3} value={detail} onChange={(e) => setDetail(e.target.value)} />
+                <div className="hint">{relance.exemple}</div>
+              </div>
+            )}
           </div>
         )}
       </div>
 
       {orga ? (
         <>
-          {/* 4 — Ce qui a plu : sert à savoir ce qu'on ne doit surtout pas casser. */}
+          {/* 5 — Ce qui a plu : sert à savoir ce qu'on ne doit surtout pas casser. */}
           <div className="avis-q">
             <div className="avis-lbl">Qu’est-ce qui a le plus plu, chez vous ?</div>
             <Choix options={PREFEREES} valeur={preferee} onChange={setPreferee} />
-          </div>
-
-          <div className="avis-q">
-            <div className="avis-lbl">Qu’est-ce qui vous a manqué ?</div>
-            <textarea rows={2} value={manque} onChange={(e) => setManque(e.target.value)}
-              placeholder="Une fonction, une info, un détail… (facultatif)" />
           </div>
 
           <div className="avis-q">
@@ -263,7 +273,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           </div>
         </>
       ) : (
-        /* 3 bis — La question qui compte pour la suite : chaque invité est un
+        /* 5 bis — La question qui compte pour la suite : chaque invité est un
            organisateur en puissance, et c'est là que ça se joue. */
         <div className="avis-q">
           <div className="avis-lbl">Utiliseriez-vous Time to Flash pour votre propre fête ?</div>
