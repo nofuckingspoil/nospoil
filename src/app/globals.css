@@ -2803,3 +2803,31 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .lp-conv { padding: 20px 16px; border-radius: 18px; }
   .lp-bulle { max-width: 92%; font-size: 15px; }
 }
+
+/* Les cinq pellicules côte à côte. Cinq colonnes tant qu'elles restent
+   lisibles, puis on retombe à trois et à deux : une vignette de cent pixels
+   ne montre plus aucun grain, et c'est le grain qu'on vient voir. */
+.lp-films {
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+  max-width: 1080px; margin: 0 auto;
+}
+.lp-film { margin: 0; }
+.lp-film img {
+  display: block; width: 100%; height: auto; aspect-ratio: 3 / 4;
+  object-fit: cover; border-radius: 14px;
+  border: 1px solid var(--line-soft); background: var(--card);
+}
+.lp-film figcaption { margin-top: 10px; }
+.lp-film figcaption b {
+  display: block; font-family: var(--font-display); font-weight: 800;
+  font-size: 14.5px; color: var(--ink); margin-bottom: 3px;
+}
+.lp-film figcaption span {
+  display: block; font-size: 12.5px; line-height: 1.45; color: var(--text3);
+}
+
+@media (max-width: 900px) { .lp-films { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 560px) {
+  .lp-films { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .lp-film figcaption span { font-size: 12px; }
+}

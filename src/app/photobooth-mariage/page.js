@@ -15,7 +15,7 @@ import { BRAND } from '../../lib/brand'
 import { formatPrice } from '../../lib/pricing'
 import {
   Entete, Bouton, Etapes, Retours, Revelation, Controle,
-  Tarifs, Faq, Confiance, CtaFinal, PiedLp, Sticky,
+  Pellicules, Tarifs, Faq, Confiance, CtaFinal, PiedLp, Sticky,
 } from '../../components/lp/Blocs'
 
 const TITRE = 'Le photobooth de votre mariage coûte 500 €. Le nôtre, 14,99 €'
@@ -166,6 +166,7 @@ export default function Page() {
         />
         <Retours />
         <Revelation />
+        <Pellicules />
         <Controle />
         <Tarifs />
         <Faq enPlus={FAQ_ANGLE} />

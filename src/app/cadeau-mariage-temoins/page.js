@@ -16,7 +16,7 @@
 import { BRAND } from '../../lib/brand'
 import {
   Entete, Bouton, Etapes, Retours, Revelation, Controle,
-  Tarifs, Faq, Confiance, CtaFinal, PiedLp, Sticky,
+  Pellicules, Tarifs, Faq, Confiance, CtaFinal, PiedLp, Sticky,
 } from '../../components/lp/Blocs'
 
 const TITRE = 'Le cadeau de mariage auquel participent tous les invités'
@@ -140,6 +140,7 @@ export default function Page() {
         />
         <Retours />
         <Revelation cible="temoins" />
+        <Pellicules />
         <Controle cible="temoins" />
         <Tarifs cible="temoins" />
         <Faq enPlus={FAQ_ANGLE} />
