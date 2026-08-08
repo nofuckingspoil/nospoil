@@ -4,7 +4,7 @@ export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
 
 // ============================================================
-//  « Essayer Time to Flash » — le QR de la page d'accueil.
+//  « Essayer Time to Flash » : le QR de la page d'accueil.
 //
 //  Un événement de démonstration partagé aurait mêlé les photos
 //  d'inconnus dans un même album. Chaque visiteur repart donc avec

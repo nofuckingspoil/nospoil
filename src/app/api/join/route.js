@@ -6,11 +6,11 @@ import { estSuspendu, MESSAGE_SUSPENDU, ADMIN } from '../../../lib/authz'
 import { equipeDe } from '../../../lib/equipe'
 import { upgradeFor, formatPrice } from '../../../lib/pricing'
 
-// Un invité attend à la porte : on prévient l'organisateur tout de suite.
+// Un participant attend à la porte : on prévient l'organisateur tout de suite.
 //
 // Relancé au plus toutes les quinze minutes tant que la situation dure. Une
-// seule alerte suffirait si l'organisateur avait le nez sur son téléphone —
-// il est en train de faire la fête. Mais un mail par invité refusé serait du
+// seule alerte suffirait si l'organisateur avait le nez sur son téléphone ;
+// il est en train de faire la fête. Mais un mail par participant refusé serait du
 // harcèlement, et le ferait décrocher au pire moment.
 const RELANCE_MS = 15 * 60 * 1000
 
@@ -19,14 +19,14 @@ async function alerteQuota(ev, guestCount, prenom) {
   const dernier = ev.quota_mailed_at ? new Date(ev.quota_mailed_at).getTime() : 0
   if (Number.isFinite(dernier) && Date.now() - dernier < RELANCE_MS) return
 
-  // Le palier visé se calcule sur les invités attendus, pas sur les présents :
+  // Le palier visé se calcule sur les participants attendus, pas sur les présents :
   // celui qui attend en fait partie, et il en arrivera d'autres. `null` au
   // dernier palier : le mail bascule alors sur le tarif sur mesure.
   const cible = upgradeFor(ev.max_guests, guestCount + 1)
 
   // Les co-organisateurs aussi : c'est souvent l'un d'eux qui est près de la
   // porte, pendant que le propriétaire danse. Ils ont le même bouton et
-  // peuvent régler eux-mêmes — on leur dit seulement qui d'autre a été
+  // peuvent régler eux-mêmes : on leur dit seulement qui d'autre a été
   // prévenu, pour que deux personnes ne paient pas la même chose.
   const equipe = await equipeDe(ev)
   let unEnvoiReussi = false
@@ -46,7 +46,7 @@ async function alerteQuota(ev, guestCount, prenom) {
   }
 
   // Horodaté seulement si quelque chose est parti : tant que personne n'a été
-  // prévenu, le prochain invité doit pouvoir déclencher l'alerte à nouveau.
+  // prévenu, le prochain participant doit pouvoir déclencher l'alerte à nouveau.
   if (unEnvoiReussi) await updateRow('events', `id=eq.${ev.id}`, { quota_mailed_at: new Date().toISOString() })
 }
 
@@ -73,7 +73,7 @@ async function rattacherParMail(fiches, email, deviceToken) {
   return !!res?.ok
 }
 
-// Envoie à l'invité son lien d'accès permanent, une seule fois.
+// Envoie au participant son lien d'accès permanent, une seule fois.
 //
 // Rien ne part sur un événement déjà révélé : le lien sert à protéger des poses
 // et des photos en cours de soirée. Passé la révélation, l'album est ouvert et
@@ -114,7 +114,7 @@ export async function POST(request) {
   }
 
   // Dernier filet : le navigateur peut être contourné, pas le serveur.
-  // Une adresse mal formée n'est jamais enregistrée — mieux vaut aucun
+  // Une adresse mal formée n'est jamais enregistrée : mieux vaut aucun
   // contact qu'un contact qui ne recevra rien.
   const forme = checkEmailShape(body.email)
   const email = forme.ok && !forme.empty ? forme.email : ''
@@ -172,13 +172,13 @@ export async function POST(request) {
   }
 
   // Signe de vie (indicateur « joue en ce moment ») + adresse mail éventuelle.
-  // Une adresse vide n'écrase pas celle déjà enregistrée : un invité qui
+  // Une adresse vide n'écrase pas celle déjà enregistrée : un participant qui
   // revient sans la resaisir ne doit pas perdre son inscription à l'album.
   try {
     const patch = { last_active_at: new Date().toISOString() }
     if (email) {
       patch.email = email
-      // Un invité qui laisse son adresse est une personne comme une autre :
+      // Un participant qui laisse son adresse est une personne comme une autre :
       // c'est peut-être l'organisateur d'un autre événement. Et s'il vient de
       // l'essai du site, on le note : c'est quelqu'un qui a tenu l'appareil.
       const { data: evData } = await selectRows('events', `id=eq.${eventId}&select=is_demo`)
@@ -199,11 +199,11 @@ export async function POST(request) {
   } catch {}
 
   // Lien d'accès personnel : envoyé une seule fois, dès qu'une adresse est
-  // connue. Sans lui, l'identité de l'invité disparaît avec son navigateur.
+  // connue. Sans lui, l'identité du participant disparaît avec son navigateur.
   // Un échec d'envoi ne doit jamais empêcher quelqu'un de photographier.
   if (email) {
     try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at) }
-    catch (err) { console.error('mail accès invité:', err) }
+    catch (err) { console.error('mail accès participant:', err) }
   }
 
   return Response.json({

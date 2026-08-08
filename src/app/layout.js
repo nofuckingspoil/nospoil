@@ -2,7 +2,7 @@ import './globals.css'
 import { Bricolage_Grotesque, Manrope, Space_Mono } from 'next/font/google'
 import { BRAND } from '../lib/brand'
 import PromoCapture from '../components/PromoCapture'
-import GuideBadge from '../components/GuideBadge'
+import GuideBanner from '../components/GuideBanner'
 import MetaPixel from '../components/MetaPixel'
 import GoogleTag from '../components/GoogleTag'
 import ConsentBanner from '../components/ConsentBanner'
@@ -31,8 +31,8 @@ const SITE_URL = 'https://timetoflash.fr'
 export const metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${BRAND.name} — ${BRAND.tagline}`,
-    template: `%s — ${BRAND.name}`,
+    default: `${BRAND.name} | ${BRAND.tagline}`,
+    template: `%s | ${BRAND.name}`,
   },
   description: BRAND.pitch,
   applicationName: BRAND.name,
@@ -55,12 +55,12 @@ export const metadata = {
     locale: 'fr_FR',
     url: SITE_URL,
     siteName: BRAND.name,
-    title: `${BRAND.name} — ${BRAND.tagline}`,
+    title: `${BRAND.name} | ${BRAND.tagline}`,
     description: BRAND.pitch,
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${BRAND.name} — ${BRAND.tagline}`,
+    title: `${BRAND.name} | ${BRAND.tagline}`,
     description: BRAND.pitch,
   },
   appleWebApp: {
@@ -125,18 +125,18 @@ export default function RootLayout({ children }) {
       </head>
       <body>
         {/* Mesure des publicités. Ces deux-là ne chargent rien tant que le
-            visiteur n'a pas accepté — et rien non plus si les identifiants de
+            visiteur n'a pas accepté, et rien non plus si les identifiants de
             src/lib/tracking.js sont vides. */}
         <MetaPixel />
         <GoogleTag />
         {/* Mémorise un éventuel ?promo=… dès la première page visitée. */}
         <PromoCapture />
+        {/* Bandeau du guide : au-dessus de la barre du site, donc avant le
+            contenu. Pages vitrines uniquement, écartable d'un clic. */}
+        <GuideBanner />
         {children}
-        {/* Carte permanente vers le guide, sur les pages vitrines uniquement.
-            Écartable d'un clic, et jamais dans l'application. */}
-        <GuideBadge />
         {/* Demande de consentement. Passe au-dessus du reste tant qu'on n'a
-            pas répondu — d'où sa position en toute fin de page. */}
+            pas répondu, d'où sa position en toute fin de page. */}
         <ConsentBanner />
       </body>
     </html>

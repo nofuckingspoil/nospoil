@@ -12,7 +12,7 @@ import Logo from './Logo'
 //  vient faire, il n'a pas à remonter le chercher.
 //
 //  `large` aligne la barre sur les pages dont le contenu est plus large
-//  que l'accueil — sinon elle paraît rentrée de soixante-dix pixels.
+//  que l'accueil : sinon elle paraît rentrée de soixante-dix pixels.
 // ============================================================
 export default function SiteNav({ large = false }) {
   return (
@@ -24,7 +24,7 @@ export default function SiteNav({ large = false }) {
           </Link>
           <div className="vnav-links">
             <Link href="/journal" className="mono small">Blog</Link>
-            {/* « Mes événements » et « Connexion » servaient le même visiteur —
+            {/* « Mes événements » et « Connexion » servaient le même visiteur : 
                 celui qui revient. La page fusionnée propose déjà la connexion
                 quand elle ne trouve aucun événement. */}
             <Link href="/mes-evenements" className="mono small">Mon compte</Link>

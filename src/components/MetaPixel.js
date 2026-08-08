@@ -7,7 +7,7 @@ import { META_PIXEL_ID, pageMesurable, mesureExclue } from '../lib/tracking'
 import { lireConsentement, surConsentement } from '../lib/consent'
 
 // ============================================================
-//  Pixel Meta — le compteur qui permet aux publicités d'apprendre.
+//  Pixel Meta : le compteur qui permet aux publicités d'apprendre.
 //
 //  Sans lui, Meta encaisse le budget sans jamais savoir qui a créé un
 //  événement : impossible d'optimiser les diffusions, impossible de relancer
@@ -23,7 +23,7 @@ function VuesDePage() {
   const params = useSearchParams()
 
   // Le site étant une application (les pages changent sans recharger le
-  // navigateur), la visite est signalée à chaque changement d'adresse — sinon
+  // navigateur), la visite est signalée à chaque changement d'adresse, sinon
   // Meta n'en verrait qu'une seule, la première.
   useEffect(() => {
     if (typeof window.fbq === 'function') window.fbq('track', 'PageView')

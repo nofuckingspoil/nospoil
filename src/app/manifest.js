@@ -2,7 +2,7 @@ import { BRAND } from '../lib/brand'
 
 export default function manifest() {
   return {
-    name: `${BRAND.name} — ${BRAND.tagline}`,
+    name: `${BRAND.name} | ${BRAND.tagline}`,
     short_name: BRAND.name,
     description: BRAND.pitch,
     start_url: '/',

@@ -221,7 +221,7 @@ export default function AdminCodes() {
                   <span data-label="Avantage">
                     <span className="pc-strong">{c.label}</span>
                     <span className="pc-sub">
-                      {c.maxGuestsAllowed ? `≤ ${c.maxGuestsAllowed} invités` : 'toutes formules'}
+                      {c.maxGuestsAllowed ? `≤ ${c.maxGuestsAllowed} participants` : 'toutes formules'}
                     </span>
                   </span>
 
@@ -231,7 +231,7 @@ export default function AdminCodes() {
                           {c.partnerName}
                           <span className="pc-sub">commission {c.commissionPct} %</span>
                         </>
-                      : <span className="pc-sub">— code perso</span>}
+                      : <span className="pc-sub">code perso</span>}
                   </span>
 
                   <span data-label="Utilisations">
@@ -268,7 +268,7 @@ export default function AdminCodes() {
           <div style={{ marginTop: 18 }}>
             {codes.filter((c) => c.note).map((c) => (
               <p key={c.id} className="muted small" style={{ marginTop: 4 }}>
-                <strong>{c.code}</strong> — {c.note}
+                <strong>{c.code}</strong> : {c.note}
               </p>
             ))}
           </div>
@@ -333,7 +333,7 @@ export default function AdminCodes() {
                 {form.kind === 'free' && (
                   <p className="pc-hint">
                     6 caractères minimum : un code qui offre le service se devine à l'essai,
-                    et c'est la formule à 49,99 € qui part avec.
+                    et c'est la formule la plus chère qui part avec.
                   </p>
                 )}
               </div>
@@ -362,7 +362,7 @@ export default function AdminCodes() {
                       onChange={(e) => setForm({ ...form, maxGuestsAllowed: e.target.value })}>
                       <option value="">Toutes les formules</option>
                       {TIERS.filter((t) => t.priceCents > 0).map((t) => (
-                        <option key={t.maxGuests} value={t.maxGuests}>Jusqu'à {t.maxGuests} invités</option>
+                        <option key={t.maxGuests} value={t.maxGuests}>Jusqu'à {t.maxGuests} participants</option>
                       ))}
                     </select>
                   </div>
@@ -376,7 +376,7 @@ export default function AdminCodes() {
                     onChange={(e) => setForm({ ...form, maxGuestsAllowed: e.target.value })}>
                     <option value="">Toutes les formules</option>
                     {TIERS.filter((t) => t.priceCents > 0).map((t) => (
-                      <option key={t.maxGuests} value={t.maxGuests}>Jusqu'à {t.maxGuests} invités</option>
+                      <option key={t.maxGuests} value={t.maxGuests}>Jusqu'à {t.maxGuests} participants</option>
                     ))}
                   </select>
                 </div>
@@ -385,7 +385,7 @@ export default function AdminCodes() {
 
             {/* ---- 2. Le partenariat ---- */}
             <div className="pc-formblock">
-              <span className="lbl">Partenariat — facultatif</span>
+              <span className="lbl">Partenariat (facultatif)</span>
               <p className="pc-hint" style={{ marginTop: 0, marginBottom: 10 }}>
                 À remplir seulement si tu confies ce code à quelqu'un (influenceur, UGC) que tu
                 rémunères. La commission, c'est <strong>toi qui la décides ici</strong> : c'est le
@@ -394,7 +394,7 @@ export default function AdminCodes() {
               <div className="pc-two">
                 <div className="field">
                   <label>Nom du partenaire</label>
-                  <input type="text" value={form.partnerName} placeholder="Léa — Instagram" maxLength={80}
+                  <input type="text" value={form.partnerName} placeholder="Léa (Instagram)" maxLength={80}
                     onChange={(e) => setForm({ ...form, partnerName: e.target.value })} />
                 </div>
                 <div className="field">
@@ -419,7 +419,7 @@ export default function AdminCodes() {
 
             {/* ---- 3. Les limites ---- */}
             <div className="pc-formblock">
-              <span className="lbl">Limites — facultatif</span>
+              <span className="lbl">Limites (facultatif)</span>
               <div className="pc-two" style={{ marginTop: 10 }}>
                 <div className="field">
                   <label>Utilisations max.</label>

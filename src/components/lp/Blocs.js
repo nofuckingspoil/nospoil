@@ -2,8 +2,8 @@
 //  Les briques communes aux pages d'atterrissage publicitaires.
 //
 //  Une page d'angle n'écrit que ce qui la distingue : son titre, son constat
-//  de départ, sa question de fin. Tout le reste — le déroulé, la révélation,
-//  le contrôle, les prix, les retours — est le même produit décrit une fois.
+//  de départ, sa question de fin. Tout le reste (le déroulé, la révélation,
+//  le contrôle, les prix, les retours) est le même produit décrit une fois.
 // ============================================================
 
 import Link from 'next/link'
@@ -16,7 +16,7 @@ import { CTA, ETAPES, FORMULES_MARIAGE, CONVERSATIONS, RETOURS_AUTORISES, FAQ_CO
 // et transite ici pour que les pages d'atterrissage l'importent comme avant.
 export { default as Pellicules } from '../Pellicules'
 
-export function Bouton({ children = 'Créer mon album — gratuit' }) {
+export function Bouton({ children = 'Créer mon album (gratuit)' }) {
   return <Link href={CTA} className="btn btn-accent">{children}</Link>
 }
 
@@ -88,7 +88,7 @@ export function Retours() {
 // Le cœur émotionnel : l'attente, puis tout d'un coup.
 //
 // `cible` : à qui la page s'adresse. Aux mariés, l'album est le leur. Au
-// témoin qui l'offre, c'est le moment où il le leur tend qui compte — et ce
+// témoin qui l'offre, c'est le moment où il le leur tend qui compte, et ce
 // n'est pas la même phrase.
 export function Revelation({ cible = 'maries' }) {
   const temoins = cible === 'temoins'
@@ -100,26 +100,26 @@ export function Revelation({ cible = 'maries' }) {
           <h2>{temoins ? "Le cadeau s'ouvre le lendemain" : "Tout arrive d'un coup, le lendemain"}</h2>
           <p>
             {temoins
-              ? "Pendant la fête, personne ne voit rien — pas même les mariés. Puis, à l'heure que vous avez choisie, l'album s'ouvre d'un coup : leur journée vue par ceux qui l'ont vécue avec eux."
+              ? "Pendant la fête, personne ne voit rien, pas même les mariés. Puis, à l'heure que vous avez choisie, l'album s'ouvre d'un coup : leur journée vue par ceux qui l'ont vécue avec eux."
               : "Pendant la fête, personne ne voit les photos des autres : un compte à rebours retient tout le monde. Puis, à l'heure que vous avez choisie, l'album s'ouvre pour tous en même temps."}
           </p>
           <ul className="split-list">
-            <li><span className="ic">⏳</span><div><b>L'attente fait partie du cadeau</b> — comme une pellicule qu'on porte à développer.</div></li>
+            <li><span className="ic">⏳</span><div><b>L'attente fait partie du cadeau</b>, comme une pellicule qu'on porte à développer.</div></li>
             <li><span className="ic">👥</span><div>
               {temoins
-                ? <><b>Tout le monde découvre ensemble</b> — les mariés et leurs invités reçoivent le même lien.</>
-                : <><b>Tout le monde découvre ensemble</b> — vos invités reçoivent le même lien que vous.</>}
+                ? <><b>Tout le monde découvre ensemble</b> : les mariés et leurs invités reçoivent le même lien.</>
+                : <><b>Tout le monde découvre ensemble</b> : vos invités reçoivent le même lien que vous.</>}
             </div></li>
             <li><span className="ic">📥</span><div>
               {temoins
-                ? <><b>Ils gardent tout</b> — en pleine définition, téléchargeable d'un seul clic.</>
-                : <><b>Vous téléchargez tout</b> — en pleine définition, d'un seul clic.</>}
+                ? <><b>Ils gardent tout</b> : en pleine définition, téléchargeable d'un seul clic.</>
+                : <><b>Vous téléchargez tout</b> : en pleine définition, d'un seul clic.</>}
             </div></li>
           </ul>
         </div>
         <div className="phone phone-tilt">
           <img src="/accueil/album-partage.webp" width="640" height="1385" loading="lazy"
-            alt="L'album partagé pendant la soirée : le compte à rebours avant la révélation et le nombre de participants." />
+            alt="L'album partagé pendant la soirée : le compte à rebours avant la révélation et le nombre d'invités." />
         </div>
       </div>
     </section>
@@ -127,7 +127,7 @@ export function Revelation({ cible = 'maries' }) {
 }
 
 // L'objection numéro un d'un mariage : et si une photo me gêne ? Pour le
-// témoin, la même mécanique répond à une inquiétude différente — ne pas
+// témoin, la même mécanique répond à une inquiétude différente : ne pas
 // offrir aux mariés une photo qui les embarrasse.
 export function Controle({ cible = 'maries' }) {
   const temoins = cible === 'temoins'
@@ -149,13 +149,13 @@ export function Controle({ cible = 'maries' }) {
               : "C'est votre mariage : vous découvrez les photos en avant-première et vous décidez de ce qui apparaît. Une photo ratée, un moment gênant ? Vous le retirez avant que qui que ce soit ne le voie."}
           </p>
           <ul className="split-list">
-            <li><span className="ic">👀</span><div><b>Vous validez en premier</b> — et personne ne saura ce que vous avez masqué.</div></li>
+            <li><span className="ic">👀</span><div><b>Vous validez en premier</b>, et personne ne saura ce que vous avez masqué.</div></li>
             <li><span className="ic">🤝</span><div>
               {temoins
-                ? <><b>À plusieurs si vous voulez</b> — invitez les autres témoins à trier avec vous.</>
-                : <><b>À plusieurs si vous voulez</b> — un témoin peut vous aider à trier.</>}
+                ? <><b>À plusieurs si vous voulez</b> : invitez les autres témoins à trier avec vous.</>
+                : <><b>À plusieurs si vous voulez</b> : un témoin peut vous aider à trier.</>}
             </div></li>
-            <li><span className="ic">🔒</span><div><b>Jamais public</b> — l'album n'existe que pour ceux qui ont le lien.</div></li>
+            <li><span className="ic">🔒</span><div><b>Jamais public</b> : l'album n'existe que pour ceux qui ont le lien.</div></li>
           </ul>
         </div>
       </div>
@@ -170,7 +170,7 @@ export function Tarifs({ cible = 'maries' }) {
       <h2 className="section-title">Un prix, une fois</h2>
       <div className="section-sub">
         {temoins
-          ? "Selon le nombre d'invités attendus. Sans abonnement — et facile à partager entre témoins."
+          ? "Selon le nombre d'invités attendus. Sans abonnement, et facile à partager entre témoins."
           : "Selon le nombre d'invités que vous attendez. Sans abonnement."}
       </div>
       <div className="price-grid lp-prices">
@@ -259,6 +259,6 @@ export function PiedLp() {
 }
 
 // Téléphone : le geste reste sous le pouce, du début à la fin.
-export function Sticky({ children = 'Créer mon album — gratuit →' }) {
+export function Sticky({ children = 'Créer mon album (gratuit) →' }) {
   return <Link href={CTA} className="lp-sticky">{children}</Link>
 }

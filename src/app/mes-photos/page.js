@@ -7,7 +7,7 @@ import Logo from '../../components/Logo'
 import { getDeviceToken, saveGuest } from '../../lib/device'
 
 // ============================================================
-//  « Retrouver mes photos » — reconnexion d'un invité.
+//  « Retrouver mes photos » : reconnexion d'un participant.
 //
 //  Ouvre le lien reçu par mail, rattache ses participations à ce
 //  navigateur, et les liste : la même adresse peut avoir photographié

@@ -213,7 +213,7 @@ export default function PrintKit({ params }) {
 
         <h1 className="h2" style={{ marginTop: 22 }}>Kit d'impression</h1>
         <p className="lead" style={{ marginTop: 6 }}>
-          Choisissez un format, imprimez, posez. Vos invités n'ont plus qu'à scanner.
+          Choisissez un format, imprimez, posez. Vos participants n'ont plus qu'à scanner.
         </p>
 
         <div className="pk-formats">

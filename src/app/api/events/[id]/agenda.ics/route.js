@@ -1,5 +1,5 @@
 // ============================================================
-//  Fichier .ics « Ajouter à mon agenda » pour les invités.
+//  Fichier .ics « Ajouter à mon agenda » pour les participants.
 //  Un tap sur le lien ouvre directement l'appli Calendrier du
 //  téléphone (iPhone comme Android) avec la date de révélation
 //  et, surtout, le lien de l'événement gardé au chaud.
@@ -43,7 +43,7 @@ export async function GET(request, { params }) {
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return new Response('Événement introuvable.', { status: 404 })
 
-  // On repart du domaine sur lequel l'invité se trouve : le lien mis en
+  // On repart du domaine sur lequel le participant se trouve : le lien mis en
   // agenda est exactement celui qu'il utilise déjà.
   const origin = new URL(request.url).origin
   const joinUrl = `${origin}/j/${id}`
@@ -52,14 +52,14 @@ export async function GET(request, { params }) {
   const title = ev.host_names || ev.name || 'Time to Flash'
   const links = [
     `Mon appareil photo (et mes photos) : ${joinUrl}`,
-    `L'album de tous les invités : ${galleryUrl}`,
+    `L'album de tous les participants : ${galleryUrl}`,
   ].join('\n')
 
   const H = 60 * 60 * 1000
   const now = Date.now()
   const reveal = new Date(ev.reveal_at).getTime()
 
-  // La soirée n'est pas stockée en base : on part du principe que l'invité
+  // La soirée n'est pas stockée en base : on part du principe que le participant
   // scanne le QR en arrivant à la fête. Début = maintenant, fin 6 h plus tard
   // (jamais au-delà de la révélation, sinon les blocs se chevauchent).
   const shootStart = now
@@ -101,7 +101,7 @@ export async function GET(request, { params }) {
       uid: 'shoot',
       start: shootStart,
       end: shootEnd,
-      summary: `📸 Soirée photo — ${title}`,
+      summary: `📸 Soirée photo : ${title}`,
       description: `C'est parti ! Sortez votre appareil et immortalisez la soirée.\n\n${links}`,
     }),
 
@@ -120,7 +120,7 @@ export async function GET(request, { params }) {
       uid: 'reveal',
       start: reveal,
       end: reveal + 1 * H,
-      summary: `✨ Révélation des photos — ${title}`,
+      summary: `✨ Révélation des photos : ${title}`,
       description: `Les photos de « ${title} » se révèlent.\n\n${links}`,
       alarm: { trigger: '-PT15M', text: 'Vos photos se révèlent dans 15 minutes' },
     }),

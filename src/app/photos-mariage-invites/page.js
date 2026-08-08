@@ -1,12 +1,12 @@
 // ============================================================
-//  Page d'atterrissage publicitaire — angle « le photographe part à minuit ».
+//  Page d'atterrissage publicitaire : angle « le photographe part à minuit ».
 //
 //  L'accueil parle à tous les événements et travaille pour Google ; celle-ci
 //  ne parle qu'aux mariés, sans menu ni second geste, et n'existe que pour un
 //  clic. Les briques communes vivent dans components/lp/Blocs.js : ici, seul
 //  ce qui distingue cet angle.
 //
-//  Celle-ci reste indexable — son angle n'entre en concurrence avec aucun
+//  Celle-ci reste indexable : son angle n'entre en concurrence avec aucun
 //  article du journal. Ses deux sœurs, si.
 // ============================================================
 
@@ -25,7 +25,7 @@ export const metadata = {
   description: DESCRIPTION,
   alternates: { canonical: '/photos-mariage-invites' },
   openGraph: {
-    title: `${TITRE} — ${BRAND.name}`,
+    title: `${TITRE} | ${BRAND.name}`,
     description: DESCRIPTION,
     url: 'https://timetoflash.fr/photos-mariage-invites',
     type: 'website',
@@ -37,7 +37,7 @@ const MANQUE = [
   {
     ic: '🌙',
     t: 'Votre photographe part à minuit',
-    s: "Et la fête, elle, continue jusqu'à cinq heures. Les meilleures photos de la soirée sont prises après son départ — par vos invités.",
+    s: "Et la fête, elle, continue jusqu'à cinq heures. Les meilleures photos de la soirée sont prises après son départ, par vos invités.",
   },
   {
     ic: '📱',
@@ -74,7 +74,7 @@ export default function Page() {
             </p>
             <p style={{ marginTop: 10 }}>
               Un QR code sur les tables, un nombre de clichés compté par personne,
-              et tout qui se révèle le lendemain — dans un seul album.
+              et tout qui se révèle le lendemain, dans un seul album.
             </p>
             <div className="hero-cta"><Bouton /></div>
             <ul className="lp-ticks">

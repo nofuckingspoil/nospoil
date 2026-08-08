@@ -3,14 +3,14 @@
 //
 //  Les libellés servent trois écrans à la fois : l'encart dans l'album, la
 //  page d'enquête ouverte depuis un mail, et l'admin qui relit les réponses.
-//  Les garder ici évite qu'un intitulé change d'un côté et pas de l'autre —
+//  Les garder ici évite qu'un intitulé change d'un côté et pas de l'autre, 
 //  auquel cas les réponses d'avant et d'après ne se compareraient plus.
 //
 //  Aucune dépendance serveur : ce fichier est lu par le navigateur.
 // ============================================================
 
 // Trois choses en face d'une case cochée : ce qu'on affiche, ce qu'on
-// redemande derrière, et un exemple. L'exemple n'est pas décoratif — sans lui
+// redemande derrière, et un exemple. L'exemple n'est pas décoratif : sans lui
 // on récolte « ça marchait pas », avec lui on apprend où les gens ont cherché.
 //
 // La case « tout allait bien » n'est plus affichée : la question se pose
@@ -48,19 +48,19 @@ export const SOUCIS_ORGA = [
   { id: 'ok', label: 'Tout a marché, personne ne m’a rien signalé', ok: true },
   {
     id: 'qr',
-    label: "Des invités n'ont pas réussi à scanner le QR code",
+    label: "Des participants n'ont pas réussi à scanner le QR code",
     relance: 'Combien, à peu près, et avec quels téléphones ?',
     exemple: 'Ex. : deux ou trois personnes, plutôt des iPhone…',
   },
   {
     id: 'camera',
-    label: "Des invités n'ont pas réussi à ouvrir l'appareil photo",
+    label: "Des participants n'ont pas réussi à ouvrir l'appareil photo",
     relance: "Qu'est-ce qu'ils voyaient à l'écran ?",
     exemple: "Ex. : un écran noir, un message d'autorisation…",
   },
   {
     id: 'lien',
-    label: "Des invités n'ont pas retrouvé le lien de l'album",
+    label: "Des participants n'ont pas retrouvé le lien de l'album",
     relance: 'Comment ont-ils fini par le retrouver ?',
     exemple: 'Ex. : je leur ai renvoyé le lien moi-même…',
   },
@@ -97,7 +97,7 @@ export const SOURCES = [
   { id: 'google', label: 'Google' },
   { id: 'reseaux', label: 'Instagram / TikTok' },
   { id: 'bouche', label: 'Un ami m’en a parlé' },
-  { id: 'invite', label: 'J’étais invité à un événement Time to Flash' },
+  { id: 'invite', label: 'J’étais participant à un événement Time to Flash' },
   { id: 'article', label: 'Un article de blog' },
   { id: 'autre', label: 'Autre' },
 ]
@@ -113,12 +113,12 @@ export const NOTES = [
 //
 // « Un commentaire ? » posé à tout le monde ne récolte rien : la question est
 // trop vaste, on ne sait pas par quel bout la prendre. Reprendre la note dans
-// la question fait le travail à la place du répondant — quelqu'un qui vient de
+// la question fait le travail à la place du répondant : quelqu'un qui vient de
 // cliquer « Bof » a déjà quelque chose sur le cœur, il suffit de lui ouvrir la
 // porte. Et le mécontent comme l'enthousiaste ne racontent pas la même chose :
 // à l'un on demande ce qui a raté, à l'autre ce qu'il ne faut pas casser.
 const REACTIONS_INVITE = {
-  1: { q: 'Qu’est-ce qui vous a déçu ?', ph: 'Dites-le franchement — c’est ce qui nous fait le plus avancer.' },
+  1: { q: 'Qu’est-ce qui vous a déçu ?', ph: 'Dites-le franchement : c’est ce qui nous fait le plus avancer.' },
   2: { q: 'Qu’est-ce qui aurait rendu ça vraiment bien ?', ph: 'Le détail qui manquait, le moment où c’est retombé…' },
   3: { q: 'Qu’est-ce qui vous a plu, et qu’est-ce qui manquait pour que ce soit génial ?', ph: 'Les deux nous intéressent, même en une phrase.' },
   4: { q: 'Qu’est-ce qui vous a le plus plu ?', ph: 'Le moment, le détail, la surprise… Racontez.' },
@@ -128,7 +128,7 @@ const REACTIONS_ORGA = {
   1: { q: 'Qu’est-ce qui n’a pas marché ?', ph: 'Soyez direct, on préfère l’entendre de vous.' },
   2: { q: 'Qu’est-ce qui vous a laissé sur votre faim ?', ph: 'Ce que vous attendiez et qui n’est pas venu…' },
   3: { q: 'Qu’est-ce qui a bien marché, et qu’est-ce qui a manqué pour que ce soit génial ?', ph: 'Les deux nous intéressent, même en une phrase.' },
-  4: { q: 'Racontez-nous : qu’est-ce qui a le mieux marché ?', ph: 'Le moment où vous avez vu que ça prenait, la réaction des invités…' },
+  4: { q: 'Racontez-nous : qu’est-ce qui a le mieux marché ?', ph: 'Le moment où vous avez vu que ça prenait, la réaction des participants…' },
 }
 
 export function reactionA(role, note) {
@@ -150,7 +150,7 @@ export const REFERAIT = [
 
 // Le cadrage promis aux répondants : ils font partie des tout premiers, et
 // c'est vrai. C'est la seule raison pour laquelle on se permet de les
-// interrompre — autant le dire au même endroit partout.
+// interrompre : autant le dire au même endroit partout.
 export const ACCROCHE = 'Vous faites partie des 1000 premiers utilisateurs de Time to Flash.'
 
 const par = (liste) => Object.fromEntries(liste.map((x) => [x.id, x.label]))
@@ -170,7 +170,7 @@ export function souciDe(role) {
 }
 
 // L'identité technique brute est illisible : on en tire les deux seules
-// informations qui servent à reproduire une panne — la machine et le
+// informations qui servent à reproduire une panne : la machine et le
 // navigateur. C'est la combinaison des deux qui trahit un bug (« la caméra ne
 // s'ouvre pas dans le navigateur d'Instagram sur iPhone »), jamais l'une seule.
 export function resumeAppareil(ua) {

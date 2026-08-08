@@ -3,7 +3,7 @@
 //
 //  Trois portes d'entrée, une seule table :
 //   - l'encart de l'album           → { eventId, deviceToken }
-//   - le mail d'enquête invité      → { i: jeton d'invité }
+//   - le mail d'enquête participant      → { i: jeton de participant }
 //   - le mail d'enquête organisateur → { o: jeton organisateur }
 //
 //  Aucune n'exige de compte : le jeton du lien suffit à savoir qui parle, et
@@ -69,7 +69,7 @@ async function resoudre(body) {
   const g = Array.isArray(data) ? data[0] : null
   const ev = await evenement(eventId)
   if (!ev) return null
-  // Sans fiche d'invité (album ouvert depuis un appareil qui n'a jamais joué),
+  // Sans fiche de participant (album ouvert depuis un appareil qui n'a jamais joué),
   // l'avis compte quand même : c'est un regard sur l'album, il vaut d'être lu.
   return { role: 'invite', canal: 'album', ev, guest: g }
 }
@@ -111,7 +111,7 @@ export async function POST(request) {
   const qui = await resoudre(body)
   if (!qui) return Response.json({ error: 'Lien inconnu ou expiré.' }, { status: 404 })
 
-  // Anti-doublon. Côté invité il repose sur la fiche, pas sur le navigateur :
+  // Anti-doublon. Côté participant il repose sur la fiche, pas sur le navigateur :
   // quelqu'un qui a répondu par mail ne doit pas revoir la question en ouvrant
   // l'album depuis un autre téléphone, et réciproquement.
   if (qui.role === 'organisateur') {
@@ -173,7 +173,7 @@ export async function POST(request) {
   } catch (err) { console.error('avis : marquage', err) }
 
   // Ce qui brûle part tout de suite ; le reste attend le récap du lendemain.
-  // Sans ce tri, un mariage de cent invités rendrait la boîte inutilisable et
+  // Sans ce tri, un mariage de cent participants rendrait la boîte inutilisable et
   // l'alerte qui comptait passerait inaperçue.
   if (estUneAlerte({ ...ligne, rating: ligne.rating, nps: ligne.nps }) || qui.role === 'organisateur') {
     try { await alerterAdmin({ avis: { ...ligne, id: cree.data?.id }, eventName: qui.ev?.name, guestName: qui.guest?.display_name }) }

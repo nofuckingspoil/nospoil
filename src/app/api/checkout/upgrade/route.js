@@ -9,11 +9,11 @@ export const runtime = 'nodejs'
 
 // Au-delà, on considère que la page de paiement a été abandonnée. Stripe
 // laisse ses sessions ouvertes 24 h : s'aligner dessus bloquerait tout un
-// week-end à cause d'un onglet fermé, alors qu'un invité attend à la porte.
+// week-end à cause d'un onglet fermé, alors qu'un participant attend à la porte.
 const MINUTES_PAIEMENT = 20
 
 // L'état du dernier paiement ouvert pour cet événement.
-// Renvoie { paye, ouvert, session } — tout à faux si rien n'est en cours.
+// Renvoie { paye, ouvert, session } : tout à faux si rien n'est en cours.
 async function paiementEnCours(stripe, ev) {
   if (!ev.upgrade_pending_session || !stripe) return null
   let session
@@ -52,8 +52,8 @@ export async function POST(request) {
 
   // Un co-organisateur peut régler l'agrandissement, et c'est voulu : la
   // formule se remplit en pleine soirée, quand celui qui a créé l'événement
-  // danse ou dort. Lui réserver ce paiement, c'était laisser des invités à la
-  // porte jusqu'au lendemain matin — et le bouton lui était déjà montré, pour
+  // danse ou dort. Lui réserver ce paiement, c'était laisser des participants à la
+  // porte jusqu'au lendemain matin, et le bouton lui était déjà montré, pour
   // ne lui rendre qu'un refus.
   const membre = await membrePar(eventId, ownerToken)
   if (!membre) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
@@ -85,13 +85,13 @@ export async function POST(request) {
     return Response.json({
       alreadyPaid: true,
       maxGuests: applique.maxGuests || ev.max_guests,
-      message: 'Cet agrandissement a déjà été réglé — il vient d’être appliqué.',
+      message: 'Cet agrandissement a déjà été réglé : il vient d’être appliqué.',
     })
   }
   if (enCours?.ouvert) {
     return Response.json({
       error: 'Un paiement pour cet agrandissement est déjà en cours, ouvert il y a moins de ' +
-        `${MINUTES_PAIEMENT} minutes. Attendez qu’il aboutisse avant d’en lancer un autre — ` +
+        `${MINUTES_PAIEMENT} minutes. Attendez qu’il aboutisse avant d’en lancer un autre : ` +
         'inutile de régler deux fois.',
     }, { status: 409 })
   }
@@ -108,7 +108,7 @@ export async function POST(request) {
           currency: 'eur',
           unit_amount: montant,
           product_data: {
-            name: `Time to Flash — « ${ev.name} » : passage à ${cible.maxGuests} invités`,
+            name: `Time to Flash, « ${ev.name} » : passage à ${cible.maxGuests} participants`,
           },
         },
       }],

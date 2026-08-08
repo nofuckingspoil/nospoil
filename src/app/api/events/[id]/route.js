@@ -3,11 +3,11 @@ import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
 import { roleFor, canManage, canDelete, ADMIN, MESSAGE_SUSPENDU } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
-// (isRevealed sert aussi à figer les dates une fois l'album ouvert — voir PATCH)
+// (isRevealed sert aussi à figer les dates une fois l'album ouvert, voir PATCH)
 import { upgradeFor, SHOTS_MIN, SHOTS_MAX, BONUS_MAX, CONTACT_EMAIL } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 
-// Un invité est considéré « en train de jouer » si son appareil a donné signe
+// Un participant est considéré « en train de jouer » si son appareil a donné signe
 // de vie récemment (scan ou photo).
 const ACTIF_MS = 10 * 60 * 1000
 
@@ -41,8 +41,8 @@ export async function GET(request, { params }) {
     coverUrl = map[ev.cover_url] || null
   }
 
-  // Compteurs publics (participants + photos) — affichés sur l'écran d'album des
-  // invités. Comptés avant tout le reste : le nombre d'invités décide aussi si
+  // Compteurs publics (participants + photos), affichés sur l'écran d'album des
+  // participants. Comptés avant tout le reste : le nombre de participants décide aussi si
   // l'album peut s'ouvrir (formule dépassée = révélation en attente).
   const [guests, photos] = await Promise.all([
     selectRows('guests', `event_id=eq.${id}&select=id`),
@@ -50,11 +50,11 @@ export async function GET(request, { params }) {
   ])
   const guestCount = Array.isArray(guests.data) ? guests.data.length : 0
   const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
-  // Ce que les invités voient réellement : annoncer « 12 photos, visibles par
-  // tous vos invités » alors que trois sont masquées était faux.
+  // Ce que les participants voient réellement : annoncer « 12 photos, visibles par
+  // tous vos participants » alors que trois sont masquées était faux.
   const visibleCount = Array.isArray(photos.data) ? photos.data.filter((p) => !p.hidden).length : 0
 
-  // Infos publiques : nécessaires aux invités (nom, date, nb de clichés)
+  // Infos publiques : nécessaires aux participants (nom, date, nb de clichés)
   const dates = {
     startsAt: ev.starts_at,
     revealAt: ev.reveal_at,
@@ -83,9 +83,9 @@ export async function GET(request, { params }) {
 
   // Numéros collectés + liste des admins : réservés à l'organisateur
   if (isOwner) {
-    // Contacts laissés par les invités : les adresses mail (envoi automatique de
+    // Contacts laissés par les participants : les adresses mail (envoi automatique de
     // l'album) et les numéros recueillis avant le passage au mail.
-    // Tous les invités, adresse ou non : n'afficher que ceux qui en ont laissé
+    // Tous les participants, adresse ou non : n'afficher que ceux qui en ont laissé
     // une passait sous silence ceux qui ne recevront jamais rien.
     const list = await selectRows(
       'guests',
@@ -102,14 +102,14 @@ export async function GET(request, { params }) {
     const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,invited_at,joined_at&order=created_at.asc`)
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, invitedAt: a.invited_at, joinedAt: a.joined_at }))
 
-    payload.role = role // 'owner' | 'admin' — pilote l'accès à la suppression
+    payload.role = role // 'owner' | 'admin' : pilote l'accès à la suppression
     payload.ownerName = ev.owner_name || null
     payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
     payload.publishedAt = ev.published_at || null // album validé par l'organisateur
     payload.revealPaused = !!ev.reveal_paused // frein d'urgence
-    payload.quotaLocked = quotaLocked(dates) // le nb de photos/invité est-il figé ?
+    payload.quotaLocked = quotaLocked(dates) // le nb de photos/participant est-il figé ?
 
     // Formule souscrite et dépassement éventuel. Si la formule est trop petite,
     // on indique déjà celle qu'il faut viser et ce qu'il reste à régler : le
@@ -117,9 +117,9 @@ export async function GET(request, { params }) {
     payload.maxGuests = ev.max_guests || null
     payload.quotaExceeded = quotaExceeded(dates)
 
-    // Formule pleine, mais pas encore dépassée : le prochain invité restera à la
+    // Formule pleine, mais pas encore dépassée : le prochain participant restera à la
     // porte. Le lui dire maintenant vaut mieux que de le lui apprendre par un
-    // invité coincé devant un QR code — c'est la même somme, sans le moment de
+    // participant coincé devant un QR code : c'est la même somme, sans le moment de
     // gêne.
     const max = Number(ev.max_guests)
     payload.quotaFull = Number.isFinite(max) && max > 0 && guestCount >= max
@@ -135,7 +135,7 @@ export async function GET(request, { params }) {
     }
 
     // Pendant la soirée, l'organisateur veut voir que ça tourne : qui joue,
-    // et les dernières photos arrivées (lui seul — les invités ne voient rien).
+    // et les dernières photos arrivées (lui seul : les participants ne voient rien).
     if (payload.phase === JOUR_J) {
       const seuil = Date.now() - ACTIF_MS
       const roster = await selectRows(
@@ -209,7 +209,7 @@ export async function PATCH(request, { params }) {
     else return Response.json({ error: 'Cadrage invalide.' }, { status: 400 })
   }
 
-  // Nom de l'événement : s'affiche chez les invités, donc modifiable à tout moment
+  // Nom de l'événement : s'affiche chez les participants, donc modifiable à tout moment
   // (une faute de frappe ne doit pas rester figée jusqu'à la révélation).
   if (body.name !== undefined) {
     const clean = String(body.name).trim().slice(0, 80)
@@ -224,7 +224,7 @@ export async function PATCH(request, { params }) {
     patch.starts_at = start.toISOString()
   }
 
-  // Photos par invité : modifiable tant que la soirée n'a pas commencé.
+  // Photos par participant : modifiable tant que la soirée n'a pas commencé.
   // Après, tout le monde n'aurait pas joué au même jeu.
   if (body.shotsPerGuest !== undefined) {
     if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
@@ -308,9 +308,9 @@ export async function PATCH(request, { params }) {
   if (!upd.ok) return Response.json({ error: 'Modification impossible.' }, { status: 500 })
 
   // Si ce réglage vient d'ouvrir l'album (« révéler maintenant », reprise après
-  // suspension), les invités qui ont laissé leur adresse reçoivent le lien tout
-  // de suite — sans attendre le passage de la tâche planifiée. Sans effet si
-  // l'album n'est pas ouvert, et jamais deux fois pour le même invité.
+  // suspension), les participants qui ont laissé leur adresse reçoivent le lien tout
+  // de suite, sans attendre le passage de la tâche planifiée. Sans effet si
+  // l'album n'est pas ouvert, et jamais deux fois pour le même participant.
   let notified = null
   try {
     notified = await notifyGuestsOfAlbum(upd.data || { ...ev, ...patch, id })
@@ -321,7 +321,7 @@ export async function PATCH(request, { params }) {
   return Response.json({ ok: true, notified })
 }
 
-// Suppression d'un événement (réservée à l'organisateur) : photos, invités, fichiers et ligne
+// Suppression d'un événement (réservée à l'organisateur) : photos, participants, fichiers et ligne
 export async function DELETE(request, { params }) {
   const { id } = await params
 
@@ -333,7 +333,7 @@ export async function DELETE(request, { params }) {
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
 
   // Le seul geste réservé au propriétaire : il efface les photos de tous les
-  // invités, sans retour possible. Un co-admin ne doit pas pouvoir le faire.
+  // participants, sans retour possible. Un co-admin ne doit pas pouvoir le faire.
   const role = await roleFor(id, ownerToken)
   if (!canDelete(role)) {
     return Response.json({

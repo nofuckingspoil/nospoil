@@ -2,7 +2,7 @@ import { selectRows, updateRow } from '../../../../lib/supabase'
 import { normalizeEmail } from '../../../../lib/account'
 
 // ============================================================
-//  Reconnexion d'un invité depuis son lien personnel.
+//  Reconnexion d'un participant depuis son lien personnel.
 //
 //  Son identité tenait dans le stockage de son navigateur : changer de
 //  téléphone ou le nettoyer lui faisait perdre ses poses restantes et

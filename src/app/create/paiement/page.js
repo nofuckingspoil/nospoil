@@ -8,7 +8,7 @@ import { track } from '../../../lib/tracking'
 
 // Le tunnel long (/create) demande la couverture AVANT le paiement : il la met
 // de côté, compressée, le temps de l'aller-retour Stripe. Les tunnels courts ne
-// s'en servent pas — les clés sont alors simplement absentes.
+// s'en servent pas : les clés sont alors simplement absentes.
 const COVER_KEY = 'declic_pending_cover'
 const EMAIL_KEY = 'declic_pending_email'
 
@@ -48,7 +48,7 @@ function PaiementInner() {
         // La route est rappelable sans risque : rechargée, elle renvoie le même
         // événement. L'identifiant transmis à Meta permet alors de reconnaître
         // la vente déjà connue au lieu de la compter deux fois. Les événements
-        // de test (codes fondateur) ne sont pas déclarés — ils pollueraient
+        // de test (codes fondateur) ne sont pas déclarés : ils pollueraient
         // l'apprentissage avec des ventes à 0 €.
         if (!data.isTest && (data.paidCents || 0) > 0) {
           track('Purchase', {

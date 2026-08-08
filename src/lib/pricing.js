@@ -1,5 +1,5 @@
 // ============================================================
-//  Tarifs Time to Flash — paiement unique par événement, sans abonnement.
+//  Tarifs Time to Flash : paiement unique par événement, sans abonnement.
 //  Pour changer les prix : modifier UNIQUEMENT ce fichier.
 // ============================================================
 
@@ -12,24 +12,32 @@ export const PAYMENTS_ENABLED = true
 // (restriction d'IP). À repasser à true dès que l'envoi d'e-mails est fiable.
 export const EMAIL_VERIFICATION_ENABLED = false
 
-// Nombre de clichés par invité : bornes annoncées dans les CGV (article 4).
+// Nombre de clichés par participant : bornes annoncées dans les CGV (article 4).
 // Toute modification doit être répercutée dans src/lib/legal.js.
 export const SHOTS_MIN = 3
 export const SHOTS_MAX = 15
 
-// Recharge unique offerte à l'invité qui a épuisé son quota. 0 = pas de recharge.
+// Recharge unique offerte au participant qui a épuisé son quota. 0 = pas de recharge.
 export const BONUS_MAX = 5
 
+// Courbe alignée sur Once (07/08/2026), le leader du secteur : très bas marché
+// en bas (le petit événement est un produit d'appel, pas une source de revenu)
+// et nettement plus haut sur les grosses formules, là où l'on se compare à une
+// borne photo à 600 €. On reste sous eux sur le palier 150, le cœur du marché
+// du mariage : ils sont à 49,99 $, on est à 34,99 €.
 export const TIERS = [
   { maxGuests: 5,   priceCents: 0,    popular: false },
-  { maxGuests: 10,  priceCents: 499,  popular: false },
-  // Anniversaires, EVJF, petits mariages : la tranche 25-40 invités tombait
+  { maxGuests: 10,  priceCents: 199,  popular: false },
+  // Anniversaires, EVJF, petits mariages : la tranche 25-40 participants tombait
   // jusqu'ici sur la formule 50, trois fois plus chère que la formule 10.
-  { maxGuests: 30,  priceCents: 999,  popular: false },
+  { maxGuests: 30,  priceCents: 499,  popular: false },
   { maxGuests: 50,  priceCents: 1499, popular: true  },
-  { maxGuests: 100, priceCents: 2499, popular: false },
-  { maxGuests: 150, priceCents: 2999, popular: false },
-  { maxGuests: 300, priceCents: 4999, popular: false },
+  { maxGuests: 100, priceCents: 2999, popular: false },
+  { maxGuests: 150, priceCents: 3499, popular: false },
+  // Le palier 200 évite qu'un mariage de 160 participants saute directement à la
+  // formule 300 : cinq euros de plus plutôt que vingt-cinq.
+  { maxGuests: 200, priceCents: 3999, popular: false },
+  { maxGuests: 300, priceCents: 5999, popular: false },
 ]
 
 // Le plus grand palier s'annonce « jusqu'à 300 ». Il bloque comme les autres :
@@ -49,7 +57,7 @@ export function tierByGuests(n) {
   return TIERS.find((t) => t.maxGuests === v) || TIERS[0]
 }
 
-// Plus petite formule capable d'accueillir `count` invités.
+// Plus petite formule capable d'accueillir `count` participants.
 // Au-delà du dernier palier, on renvoie le dernier (il n'y a rien au-dessus).
 export function tierForCount(count) {
   const v = Number(count) || 0
@@ -64,7 +72,7 @@ export function upgradeCents(fromMaxGuests, toMaxGuests) {
   return Math.max(0, to.priceCents - from.priceCents)
 }
 
-// Que proposer à un organisateur qui a besoin de place pour `count` invités ?
+// Que proposer à un organisateur qui a besoin de place pour `count` participants ?
 //
 // Renvoie la formule à viser et ce qu'il reste à régler, ou `null` quand il est
 // déjà au plus grand palier : là, il n'y a plus rien à vendre en ligne, et c'est

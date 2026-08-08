@@ -3,8 +3,8 @@
 //  Pellicules : le rendu argentique de l'album
 // ============================================================
 // Une même recette sert deux fois : à l'écran (filtres CSS et calques) et à la
-// cuisson dans le pixel, quand l'invité emporte ses photos. Les deux doivent se
-// ressembler — d'où les réglages d'affichage et de cuisson côte à côte dans
+// cuisson dans le pixel, quand le participant emporte ses photos. Les deux doivent se
+// ressembler, d'où les réglages d'affichage et de cuisson côte à côte dans
 // chaque pellicule, plutôt que dispersés entre la feuille de style et le canvas.
 
 import { compressToBlob, decodeImage } from './camera'
@@ -16,7 +16,7 @@ import { compressToBlob, decodeImage } from './camera'
 //   vignette  assombrissement des coins (0 → 1)
 //   grain     opacité du calque de bruit à l'écran (0 → 1)
 //   contraste / canaux / sat / bruit   les mêmes effets, à la cuisson.
-//   canaux : [gamma, gain, délavé] par canal — le gamma donne la dominante,
+//   canaux : [gamma, gain, délavé] par canal ; le gamma donne la dominante,
 //   le délavé relève les noirs, ce qui fait tout le charme d'un tirage bon marché.
 export const PELLICULES = [
   {
@@ -193,7 +193,7 @@ function tampon(ctx, w, h, texte) {
   const y = h - Math.round(h * 0.045)
 
   // Trois passes. Sans la première, les chiffres disparaissent quand le coin
-  // de la photo est clair — un parquet au soleil, une nappe blanche.
+  // de la photo est clair : un parquet au soleil, une nappe blanche.
   ctx.shadowColor = 'rgba(50,12,0,.6)'
   ctx.shadowBlur = taille * 0.45
   ctx.fillStyle = 'rgba(150,35,0,.85)'

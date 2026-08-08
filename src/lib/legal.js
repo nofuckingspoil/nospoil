@@ -1,5 +1,5 @@
 // ============================================================
-//  Pages légales — Mentions légales, CGVU, Politique de confidentialité.
+//  Pages légales : Mentions légales, CGVU, Politique de confidentialité.
 //  Le contenu est du HTML simple, rendu par src/app/(legal)/…/page.js
 //  avec la classe .legal-prose (styles dans globals.css).
 //
@@ -7,7 +7,7 @@
 //  Pensez à mettre à jour `updated` à chaque changement de fond.
 // ============================================================
 
-export const LEGAL_UPDATED = '5 août 2026'
+export const LEGAL_UPDATED = '8 août 2026'
 
 export const COMPANY = {
   name: 'BLACK BY C',
@@ -55,8 +55,8 @@ const mentionsLegales = {
 </p>
 <p>Les données applicatives et les contenus déposés par les utilisateurs sont hébergés par :</p>
 <ul>
-  <li><strong>Supabase, Inc.</strong>, société de droit américain — base de données et authentification — <a href="https://supabase.com" rel="nofollow noreferrer" target="_blank">supabase.com</a></li>
-  <li><strong>Cloudflare, Inc.</strong> — stockage des fichiers (Cloudflare R2) — 101 Townsend St, San Francisco, CA 94107, États-Unis — <a href="https://www.cloudflare.com" rel="nofollow noreferrer" target="_blank">cloudflare.com</a></li>
+  <li><strong>Supabase, Inc.</strong>, société de droit américain, base de données et authentification (<a href="https://supabase.com" rel="nofollow noreferrer" target="_blank">supabase.com</a>)</li>
+  <li><strong>Cloudflare, Inc.</strong>, stockage des fichiers (Cloudflare R2), 101 Townsend St, San Francisco, CA 94107, États-Unis (<a href="https://www.cloudflare.com" rel="nofollow noreferrer" target="_blank">cloudflare.com</a>)</li>
 </ul>
 <p>Les données et contenus sont stockés dans la région <strong>Europe de l'Ouest</strong>.</p>
 
@@ -95,71 +95,72 @@ const cgv = {
   shortTitle: 'CGV',
   description: "Formules, prix, paiement, droit de rétractation, conservation des photos et responsabilités du service Time to Flash.",
   html: `
-<h2>Article 1 — Objet</h2>
+<h2>Article 1 : Objet</h2>
 <p>Les présentes Conditions Générales de Vente et d'Utilisation (les « <strong>CGVU</strong> ») régissent la vente et l'utilisation du service <strong>Time to Flash</strong>, accessible à l'adresse timetoflash.fr.</p>
 <p>Elles s'appliquent à toute création d'événement, gratuite ou payante, à l'exclusion de toute autre condition. Le fait de créer un événement emporte acceptation pleine et entière des présentes CGVU.</p>
 
-<h2>Article 2 — Identification du vendeur</h2>
+<h2>Article 2 : Identification du vendeur</h2>
 <p><strong>BLACK BY C</strong>, SASU au capital de 300 €, dont le siège social est situé 2 impasse des Ligures, 44840 Les Sorinières, immatriculée au RCS de Nantes sous le numéro 898 409 446, TVA intracommunautaire FR27898409446.</p>
 <p>Contact : <a href="mailto:support@timetoflash.fr">support@timetoflash.fr</a></p>
 
-<h2>Article 3 — Définitions</h2>
+<h2>Article 3 : Définitions</h2>
 <ul>
-  <li><strong>Service</strong> : la solution Time to Flash permettant de collecter les photographies prises par les invités d'un événement et de les révéler après celui-ci.</li>
+  <li><strong>Service</strong> : la solution Time to Flash permettant de collecter les photographies prises par les participants d'un événement et de les révéler après celui-ci.</li>
   <li><strong>Organisateur</strong> : la personne physique ou morale qui crée un Événement et, le cas échéant, règle le prix correspondant.</li>
-  <li><strong>Invité</strong> : toute personne accédant à un Événement au moyen du lien ou du QR code communiqué par l'Organisateur, et déposant des contenus.</li>
-  <li><strong>Événement</strong> : l'espace créé par l'Organisateur, associé à une Formule et à un nombre maximal d'Invités.</li>
-  <li><strong>Contenus</strong> : les photographies déposées par les Invités.</li>
-  <li><strong>Révélation</strong> : le moment, fixé par l'Organisateur lors de la création de l'Événement, à compter duquel les Contenus deviennent accessibles à l'Organisateur et aux Invités.</li>
+  <li><strong>Participant</strong> : toute personne accédant à un Événement au moyen du lien ou du QR code communiqué par l'Organisateur, et déposant des contenus.</li>
+  <li><strong>Événement</strong> : l'espace créé par l'Organisateur, associé à une Formule et à un nombre maximal de Participants.</li>
+  <li><strong>Contenus</strong> : les photographies déposées par les Participants.</li>
+  <li><strong>Révélation</strong> : le moment, fixé par l'Organisateur lors de la création de l'Événement, à compter duquel les Contenus deviennent accessibles à l'Organisateur et aux Participants.</li>
 </ul>
 
-<h2>Article 4 — Description du Service</h2>
+<h2>Article 4 : Description du Service</h2>
 <p>Le Service permet à l'Organisateur de créer un Événement, d'inviter des participants au moyen d'un lien ou d'un QR code, et de collecter les Contenus déposés par ces derniers.</p>
 <p>Les caractéristiques essentielles du Service sont les suivantes :</p>
 <ul>
-  <li><strong>Nombre de prises par Invité</strong> : fixé par l'Organisateur entre <strong>3 et 15 clichés</strong>, identique pour tous les Invités d'un même Événement. Il reste modifiable jusqu'au début de l'Événement, après quoi il est figé. L'Organisateur peut en outre autoriser une <strong>recharge unique</strong> de 1 à 5 clichés supplémentaires, que chaque Invité ayant épuisé ses prises peut demander une seule fois ; cette recharge peut être refusée par l'Organisateur.</li>
+  <li><strong>Nombre de prises par Participant</strong> : fixé par l'Organisateur entre <strong>3 et 15 clichés</strong>, identique pour tous les Participants d'un même Événement. Il reste modifiable jusqu'au début de l'Événement, après quoi il est figé. L'Organisateur peut en outre autoriser une <strong>recharge unique</strong> de 1 à 5 clichés supplémentaires, que chaque Participant ayant épuisé ses prises peut demander une seule fois ; cette recharge peut être refusée par l'Organisateur.</li>
   <li><strong>Formats acceptés</strong> : <strong>photographies uniquement</strong>, à l'exclusion des vidéos et des enregistrements sonores. Les images déposées sont automatiquement redimensionnées et compressées.</li>
-  <li><strong>Nombre maximal d'Invités</strong> : déterminé par la Formule choisie, selon le tableau de l'article 5.</li>
-  <li><strong>Accès</strong> : depuis un navigateur web, sans installation d'application, tant pour l'Organisateur que pour les Invités.</li>
+  <li><strong>Nombre maximal de Participants</strong> : déterminé par la Formule choisie, selon le tableau de l'article 5.</li>
+  <li><strong>Accès</strong> : depuis un navigateur web, sans installation d'application, tant pour l'Organisateur que pour les Participants.</li>
 </ul>
 <p>Les Contenus ne sont pas consultables pendant l'Événement : ils sont révélés à la date de Révélation choisie par l'Organisateur.</p>
-<p>L'utilisation du Service suppose un équipement compatible disposant d'un appareil photo et d'une connexion internet, dont l'Organisateur et les Invités font leur affaire personnelle.</p>
+<p>L'utilisation du Service suppose un équipement compatible disposant d'un appareil photo et d'une connexion internet, dont l'Organisateur et les Participants font leur affaire personnelle.</p>
 
-<h2>Article 5 — Formules et prix</h2>
+<h2>Article 5 : Formules et prix</h2>
 <table>
   <thead>
-    <tr><th>Formule</th><th>Nombre maximal d'Invités</th><th>Prix</th></tr>
+    <tr><th>Formule</th><th>Nombre maximal de Participants</th><th>Prix</th></tr>
   </thead>
   <tbody>
-    <tr><td>Découverte</td><td>5</td><td>Gratuit — sans carte bancaire</td></tr>
-    <tr><td>10 invités</td><td>10</td><td>4,99 €</td></tr>
-    <tr><td>30 invités</td><td>30</td><td>9,99 €</td></tr>
-    <tr><td>50 invités</td><td>50</td><td>14,99 €</td></tr>
-    <tr><td>100 invités</td><td>100</td><td>24,99 €</td></tr>
-    <tr><td>150 invités</td><td>150</td><td>29,99 €</td></tr>
-    <tr><td>300 invités</td><td>300 et au-delà</td><td>49,99 €</td></tr>
+    <tr><td>Découverte</td><td>5</td><td>Gratuit, sans carte bancaire</td></tr>
+    <tr><td>10 participants</td><td>10</td><td>1,99 €</td></tr>
+    <tr><td>30 participants</td><td>30</td><td>4,99 €</td></tr>
+    <tr><td>50 participants</td><td>50</td><td>14,99 €</td></tr>
+    <tr><td>100 participants</td><td>100</td><td>29,99 €</td></tr>
+    <tr><td>150 participants</td><td>150</td><td>34,99 €</td></tr>
+    <tr><td>200 participants</td><td>200</td><td>39,99 €</td></tr>
+    <tr><td>300 participants</td><td>300 et au-delà</td><td>59,99 €</td></tr>
   </tbody>
 </table>
 <p>Les prix sont indiqués <strong>en euros, toutes taxes comprises</strong>. Aucun abonnement n'est souscrit : chaque Formule donne lieu à un <strong>paiement unique</strong>, dû à la création de l'Événement.</p>
 <p>BLACK BY C se réserve le droit de modifier ses prix à tout moment. Le prix applicable est celui affiché au jour de la création de l'Événement.</p>
-<p><strong>Dépassement du nombre d'Invités.</strong> Le nombre maximal d'Invités de la Formule n'empêche jamais un Invité de rejoindre l'Événement ni de prendre des photographies : aucun blocage n'intervient pendant l'Événement, et toutes les photographies sont conservées. En revanche, lorsque le nombre d'Invités effectivement inscrits dépasse celui de la Formule souscrite, <strong>l'ouverture de l'album aux Invités (la « révélation ») est suspendue</strong> jusqu'à ce que l'Organisateur souscrive la Formule correspondant au nombre réel d'Invités. Cette mise à niveau ne donne lieu au règlement que de la <strong>différence de prix</strong> entre la Formule souscrite et la Formule requise, le montant déjà réglé restant acquis. L'Organisateur en est informé sur son tableau de bord ainsi que par courrier électronique. Aucune suspension n'est appliquée lorsque l'Organisateur a souscrit la Formule la plus élevée, qui n'est assortie d'aucune limite de nombre d'Invités.</p>
+<p><strong>Dépassement du nombre de Participants.</strong> Le nombre maximal de Participants de la Formule n'empêche jamais un Participant de rejoindre l'Événement ni de prendre des photographies : aucun blocage n'intervient pendant l'Événement, et toutes les photographies sont conservées. En revanche, lorsque le nombre de Participants effectivement inscrits dépasse celui de la Formule souscrite, <strong>l'ouverture de l'album aux Participants (la « révélation ») est suspendue</strong> jusqu'à ce que l'Organisateur souscrive la Formule correspondant au nombre réel de Participants. Cette mise à niveau ne donne lieu au règlement que de la <strong>différence de prix</strong> entre la Formule souscrite et la Formule requise, le montant déjà réglé restant acquis. L'Organisateur en est informé sur son tableau de bord ainsi que par courrier électronique. Aucune suspension n'est appliquée lorsque l'Organisateur a souscrit la Formule la plus élevée, qui n'est assortie d'aucune limite de nombre de Participants.</p>
 
-<h2>Article 6 — Commande et formation du contrat</h2>
+<h2>Article 6 : Commande et formation du contrat</h2>
 <p>La création d'un Événement suppose la saisie des informations demandées, la validation de la Formule choisie et, pour les Formules payantes, le règlement du prix.</p>
 <p>Avant toute validation, l'Organisateur a la possibilité de vérifier le détail de sa commande et d'en corriger les éventuelles erreurs. La validation de la commande, précédée de l'acceptation expresse des présentes CGVU, vaut conclusion du contrat.</p>
 <p>Un courrier électronique de confirmation récapitulant la commande est adressé à l'Organisateur.</p>
 
-<h2>Article 7 — Paiement</h2>
+<h2>Article 7 : Paiement</h2>
 <p>Le paiement s'effectue en ligne par carte bancaire, par l'intermédiaire du prestataire <strong>Stripe Payments Europe, Ltd.</strong></p>
 <p>BLACK BY C n'a accès à aucune donnée de carte bancaire, celles-ci étant collectées et traitées directement par Stripe selon ses propres conditions.</p>
 <p>L'Événement est activé dès l'encaissement effectif du paiement.</p>
 
-<h2>Article 8 — Durée et disponibilité de l'Événement</h2>
+<h2>Article 8 : Durée et disponibilité de l'Événement</h2>
 <p>L'Organisateur dispose d'un délai de <strong>douze (12) mois</strong> à compter du paiement pour organiser son Événement et l'utiliser. Passé ce délai, la Formule est réputée consommée et ne donne lieu à aucun remboursement ni report.</p>
 <p>Les Contenus sont conservés puis <strong>supprimés automatiquement six (6) mois après la date de l'Événement</strong>. Pour l'application des présentes, la date de l'Événement s'entend de la <strong>date de Révélation</strong> choisie par l'Organisateur lors de la création de l'Événement : c'est cette date qui fait courir le délai de six mois.</p>
 <p>Il appartient à l'Organisateur de télécharger les Contenus qu'il souhaite conserver avant l'expiration de ce délai. Cette suppression est définitive et irréversible.</p>
 
-<h2>Article 9 — Droit de rétractation</h2>
+<h2>Article 9 : Droit de rétractation</h2>
 <h3>9.1 Principe</h3>
 <p>Conformément à l'article L.221-18 du Code de la consommation, l'Organisateur consommateur dispose en principe d'un délai de quatorze (14) jours à compter de la conclusion du contrat pour exercer son droit de rétractation, sans avoir à motiver sa décision.</p>
 <h3>9.2 Renonciation expresse</h3>
@@ -171,67 +172,67 @@ const cgv = {
 <p>Lorsque l'Organisateur exerce son droit de rétractation alors que l'exécution du Service a commencé à sa demande expresse, il est redevable d'un montant proportionnel au service fourni jusqu'à la communication de sa décision, conformément à l'article L.221-25 du Code de la consommation.</p>
 <p>Le remboursement intervient dans un délai maximal de quatorze (14) jours à compter de la réception de la demande, par le même moyen de paiement que celui utilisé lors de la commande.</p>
 
-<h2>Article 10 — Remboursement</h2>
+<h2>Article 10 : Remboursement</h2>
 <p>En dehors des cas prévus à l'article 9 et des garanties légales visées à l'article 13, <strong>aucun remboursement n'est accordé</strong>.</p>
-<p>En particulier, aucun remboursement ne peut être demandé dès lors qu'au moins un Invité a déposé un Contenu au sein de l'Événement, le Service étant alors réputé exécuté.</p>
+<p>En particulier, aucun remboursement ne peut être demandé dès lors qu'au moins un Participant a déposé un Contenu au sein de l'Événement, le Service étant alors réputé exécuté.</p>
 <p>Ces stipulations ne font pas obstacle à la mise en œuvre des garanties légales, qui demeurent applicables en toute hypothèse.</p>
 
-<h2>Article 11 — Obligations de l'Organisateur</h2>
+<h2>Article 11 : Obligations de l'Organisateur</h2>
 <p>L'Organisateur garantit :</p>
 <ol>
-  <li><strong>Informer les Invités</strong>, préalablement à leur participation, de la finalité de la collecte, de la durée de conservation des Contenus et de leurs droits sur leurs données personnelles ;</li>
+  <li><strong>Informer les Participants</strong>, préalablement à leur participation, de la finalité de la collecte, de la durée de conservation des Contenus et de leurs droits sur leurs données personnelles ;</li>
   <li><strong>Recueillir les autorisations nécessaires au titre du droit à l'image</strong> (article 9 du Code civil) auprès des personnes figurant sur les Contenus, et notamment auprès des représentants légaux des mineurs ;</li>
   <li>Ne pas détourner le Service de son objet, ni l'utiliser à des fins illicites ;</li>
   <li>Ne pas diffuser les Contenus au-delà du cercle des personnes ayant consenti à leur diffusion.</li>
 </ol>
 <p>L'Organisateur est seul responsable de l'usage qu'il fait des Contenus après leur téléchargement. Il garantit BLACK BY C contre toute réclamation de tiers fondée sur les Contenus déposés au sein de son Événement.</p>
 
-<h2>Article 12 — Contenus et modération</h2>
+<h2>Article 12 : Contenus et modération</h2>
 <p>Sont strictement interdits les Contenus à caractère illicite, et notamment ceux présentant un caractère pédopornographique, violent, haineux, diffamatoire, portant atteinte à la vie privée ou au droit à l'image d'un tiers, ou contrefaisant.</p>
 <p>BLACK BY C agit en qualité d'hébergeur au sens de l'article 6 de la loi n° 2004-575 du 21 juin 2004. Elle n'exerce aucune surveillance générale des Contenus mais s'engage à retirer promptement tout Contenu manifestement illicite porté à sa connaissance à l'adresse support@timetoflash.fr.</p>
-<p>Chaque Invité peut supprimer ses propres Contenus avant la Révélation. L'Organisateur dispose également d'une faculté de retrait des Contenus déposés au sein de son Événement.</p>
+<p>Chaque Participant peut supprimer ses propres Contenus avant la Révélation. L'Organisateur dispose également d'une faculté de retrait des Contenus déposés au sein de son Événement.</p>
 <p>BLACK BY C se réserve le droit de suspendre ou de supprimer, sans préavis ni remboursement, tout Événement manifestement contraire aux présentes CGVU ou à la loi.</p>
 
-<h2>Article 13 — Garanties légales</h2>
+<h2>Article 13 : Garanties légales</h2>
 <p>BLACK BY C est tenue des défauts de conformité du contenu numérique et du service numérique dans les conditions prévues aux articles <strong>L.224-25-12 et suivants du Code de la consommation</strong>.</p>
 <p>Pour les services numériques fournis de manière continue, la garantie légale de conformité s'applique pendant toute la durée de la fourniture.</p>
 <p>L'Organisateur consommateur dispose d'un délai de deux ans à compter de la fourniture pour obtenir la mise en conformité du service. Il peut, dans les conditions légales, obtenir une réduction du prix ou la résolution du contrat.</p>
 <p>BLACK BY C est également tenue de la garantie contre les vices cachés dans les conditions des articles 1641 et suivants du Code civil.</p>
 <p>Aucune stipulation des présentes CGVU ne peut avoir pour effet de limiter ou d'exclure ces garanties.</p>
 
-<h2>Article 14 — Disponibilité et responsabilité</h2>
+<h2>Article 14 : Disponibilité et responsabilité</h2>
 <p>BLACK BY C met en œuvre les moyens raisonnables pour assurer la disponibilité et la continuité du Service, sans être tenue à une obligation de résultat.</p>
 <p>Le Service peut être interrompu pour des opérations de maintenance, en cas de défaillance d'un prestataire technique, ou en cas de force majeure. BLACK BY C s'efforce d'informer les Organisateurs de toute interruption programmée significative.</p>
-<p>BLACK BY C ne saurait être tenue responsable de la perte de Contenus résultant d'une suppression automatique à l'expiration des délais prévus à l'article 8, d'une manipulation de l'Organisateur ou d'un Invité, ou d'un défaut de téléchargement dans les délais.</p>
+<p>BLACK BY C ne saurait être tenue responsable de la perte de Contenus résultant d'une suppression automatique à l'expiration des délais prévus à l'article 8, d'une manipulation de l'Organisateur ou d'un Participant, ou d'un défaut de téléchargement dans les délais.</p>
 <p>En tout état de cause, la responsabilité de BLACK BY C, si elle venait à être engagée, est limitée au montant effectivement réglé par l'Organisateur au titre de l'Événement concerné, sauf faute lourde, dol ou dommage corporel.</p>
 
-<h2>Article 15 — Propriété intellectuelle et licence sur les Contenus</h2>
+<h2>Article 15 : Propriété intellectuelle et licence sur les Contenus</h2>
 <p>Les Contenus demeurent la propriété de leurs auteurs.</p>
-<p>L'Organisateur et les Invités concèdent à BLACK BY C une licence non exclusive, gratuite et limitée à la durée d'hébergement des Contenus, aux seules fins de stockage, de traitement technique et de mise à disposition au sein de l'Événement. Cette licence exclut toute exploitation commerciale, promotionnelle ou publicitaire.</p>
+<p>L'Organisateur et les Participants concèdent à BLACK BY C une licence non exclusive, gratuite et limitée à la durée d'hébergement des Contenus, aux seules fins de stockage, de traitement technique et de mise à disposition au sein de l'Événement. Cette licence exclut toute exploitation commerciale, promotionnelle ou publicitaire.</p>
 <p>Toute utilisation d'un Contenu à des fins de communication par BLACK BY C suppose l'accord écrit, préalable et spécifique de l'Organisateur et des personnes concernées.</p>
 
-<h2>Article 16 — Données personnelles</h2>
+<h2>Article 16 : Données personnelles</h2>
 <p>Le traitement des données personnelles est décrit dans la <a href="/politique-de-confidentialite">Politique de confidentialité</a>.</p>
 <p>Pour les Contenus déposés au sein d'un Événement, BLACK BY C agit en qualité de <strong>sous-traitant</strong> de l'Organisateur, dans les conditions définies à l'<strong>Annexe 2</strong> des présentes.</p>
 
-<h2>Article 17 — Modification des CGVU</h2>
+<h2>Article 17 : Modification des CGVU</h2>
 <p>BLACK BY C peut modifier les présentes CGVU à tout moment. La version applicable est celle en vigueur au jour de la création de l'Événement, dont une copie est adressée à l'Organisateur ou reste accessible sur le site.</p>
 
-<h2>Article 18 — Réclamations et médiation de la consommation</h2>
+<h2>Article 18 : Réclamations et médiation de la consommation</h2>
 <p>Toute réclamation doit être adressée en premier lieu à BLACK BY C, à l'adresse <a href="mailto:support@timetoflash.fr">support@timetoflash.fr</a>. BLACK BY C s'engage à y répondre dans un délai raisonnable.</p>
 <p>Conformément à l'article L.612-1 du Code de la consommation, l'Organisateur consommateur peut recourir gratuitement à un médiateur de la consommation en vue de la résolution amiable d'un litige, après avoir adressé une réclamation écrite préalable à BLACK BY C.</p>
 <p>Les coordonnées du médiateur de la consommation compétent seront publiées dans le présent article dès l'adhésion de BLACK BY C au dispositif de médiation, en cours de mise en place.</p>
 <p>L'Organisateur consommateur peut également recourir à la plateforme européenne de règlement en ligne des litiges, accessible à l'adresse <a href="https://ec.europa.eu/consumers/odr" rel="nofollow noreferrer" target="_blank">ec.europa.eu/consumers/odr</a>.</p>
 
-<h2>Article 19 — Droit applicable et juridiction</h2>
+<h2>Article 19 : Droit applicable et juridiction</h2>
 <p>Les présentes CGVU sont soumises au droit français.</p>
 <p>À défaut de résolution amiable, tout litige relève de la compétence des juridictions françaises. Le consommateur peut saisir, à son choix, la juridiction du lieu de son domicile ou celle du lieu du siège de BLACK BY C.</p>
 
 <hr />
 
-<h2>Annexe 1 — Formulaire type de rétractation</h2>
+<h2>Annexe 1 : Formulaire type de rétractation</h2>
 <blockquote>
-  <p>À l'attention de BLACK BY C, 2 impasse des Ligures, 44840 Les Sorinières — support@timetoflash.fr</p>
+  <p>À l'attention de BLACK BY C, 2 impasse des Ligures, 44840 Les Sorinières (support@timetoflash.fr)</p>
   <p>Je vous notifie par la présente ma rétractation du contrat portant sur la prestation de service ci-dessous :</p>
   <p>
     Commandé le : ……………………<br />
@@ -243,9 +244,9 @@ const cgv = {
   </p>
 </blockquote>
 
-<h2>Annexe 2 — Accord de sous-traitance (article 28 du RGPD)</h2>
+<h2>Annexe 2 : Accord de sous-traitance (article 28 du RGPD)</h2>
 <h3>1. Rôles</h3>
-<p>Pour les Contenus déposés par les Invités et les données associées, <strong>l'Organisateur agit en qualité de responsable de traitement</strong> et <strong>BLACK BY C en qualité de sous-traitant</strong>.</p>
+<p>Pour les Contenus déposés par les Participants et les données associées, <strong>l'Organisateur agit en qualité de responsable de traitement</strong> et <strong>BLACK BY C en qualité de sous-traitant</strong>.</p>
 <p>BLACK BY C demeure responsable de traitement pour les données relatives à la gestion de son propre compte client (identification de l'Organisateur, facturation, support).</p>
 
 <h3>2. Objet, durée et nature du traitement</h3>
@@ -253,10 +254,10 @@ const cgv = {
   <li><strong>Objet</strong> : collecte, hébergement, mise à disposition différée et suppression des Contenus déposés au sein d'un Événement.</li>
   <li><strong>Durée</strong> : durée de l'Événement, augmentée de la période de conservation prévue à l'article 8.</li>
   <li><strong>Nature des opérations</strong> : collecte, enregistrement, stockage, organisation, consultation, transmission, effacement.</li>
-  <li><strong>Catégories de personnes concernées</strong> : Organisateur, Invités, et toute personne figurant sur les Contenus.</li>
-  <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, adresse électronique facultative des Invités (accès à ses propres photographies et envoi du lien de l'album), numéros de téléphone recueillis avant l'abandon de cette collecte, données techniques de connexion.</li>
+  <li><strong>Catégories de personnes concernées</strong> : Organisateur, Participants, et toute personne figurant sur les Contenus.</li>
+  <li><strong>Catégories de données</strong> : images de personnes physiques, prénom ou pseudonyme, horodatage, adresse électronique de l'Organisateur, adresse électronique facultative des Participants (accès à ses propres photographies et envoi du lien de l'album), numéros de téléphone recueillis avant l'abandon de cette collecte, données techniques de connexion.</li>
 </ul>
-<p><strong>Hors du champ du présent accord</strong> : les réponses données par l'Organisateur ou par les Invités à l'enquête de satisfaction portant sur le Service lui-même. Ces réponses ne sont pas traitées pour le compte de l'Organisateur mais pour celui de BLACK BY C, qui en est responsable de traitement ; elles ne sont jamais communiquées à l'Organisateur. Les conditions en sont détaillées à l'article 3.3 de la politique de confidentialité.</p>
+<p><strong>Hors du champ du présent accord</strong> : les réponses données par l'Organisateur ou par les Participants à l'enquête de satisfaction portant sur le Service lui-même. Ces réponses ne sont pas traitées pour le compte de l'Organisateur mais pour celui de BLACK BY C, qui en est responsable de traitement ; elles ne sont jamais communiquées à l'Organisateur. Les conditions en sont détaillées à l'article 3.3 de la politique de confidentialité.</p>
 
 <h3>3. Obligations de BLACK BY C</h3>
 <p>BLACK BY C s'engage à :</p>
@@ -289,9 +290,9 @@ const cgv = {
 <h3>5. Transferts hors Union européenne</h3>
 <p>Certains des prestataires susvisés sont des sociétés de droit américain susceptibles d'accéder aux données depuis les États-Unis à des fins d'administration technique. Ces transferts sont encadrés par les clauses contractuelles types de la Commission européenne et, le cas échéant, par la certification au <em>Data Privacy Framework</em>.</p>
 
-<h3>6. Information des Invités</h3>
-<p>L'Organisateur reconnaît qu'il lui appartient d'informer les Invités et de disposer d'une base légale pour le traitement.</p>
-<p>BLACK BY C met à disposition, au sein de l'interface de dépôt, une mention d'information à destination des Invités, pour le compte et au nom de l'Organisateur.</p>
+<h3>6. Information des Participants</h3>
+<p>L'Organisateur reconnaît qu'il lui appartient d'informer les Participants et de disposer d'une base légale pour le traitement.</p>
+<p>BLACK BY C met à disposition, au sein de l'interface de dépôt, une mention d'information à destination des Participants, pour le compte et au nom de l'Organisateur.</p>
 `,
 }
 
@@ -304,17 +305,17 @@ const confidentialite = {
   title: 'Politique de confidentialité',
   description: "Quelles données Time to Flash traite, pourquoi, pendant combien de temps, et comment exercer vos droits.",
   html: `
-<p class="legal-lead">Time to Flash est un service qui collecte des photographies prises par les invités d'un événement et les révèle après celui-ci. Ce document explique quelles données sont traitées, pourquoi, pendant combien de temps, et quels sont vos droits.</p>
+<p class="legal-lead">Time to Flash est un service qui collecte des photographies prises par les participants d'un événement et les révèle après celui-ci. Ce document explique quelles données sont traitées, pourquoi, pendant combien de temps, et quels sont vos droits.</p>
 
 <h2>1. Qui traite vos données</h2>
-<p><strong>BLACK BY C</strong>, SASU au capital de 300 €, 2 impasse des Ligures, 44840 Les Sorinières — RCS Nantes 898 409 446.</p>
+<p><strong>BLACK BY C</strong>, SASU au capital de 300 €, 2 impasse des Ligures, 44840 Les Sorinières, RCS Nantes 898 409 446.</p>
 <p>Contact : <a href="mailto:support@timetoflash.fr">support@timetoflash.fr</a></p>
 <p>BLACK BY C n'a pas désigné de délégué à la protection des données, cette désignation n'étant pas obligatoire au regard de son activité. Toute question relative aux données personnelles peut être adressée à l'adresse ci-dessus.</p>
 
 <h2>2. Deux situations à distinguer</h2>
 <p><strong>Lorsque vous créez un événement</strong> (vous êtes « Organisateur »), BLACK BY C traite vos données pour son propre compte : elle est <strong>responsable de traitement</strong>.</p>
-<p><strong>Lorsque des invités déposent des photographies au sein d'un événement</strong>, c'est l'Organisateur qui décide de la collecte, invite les participants et détermine qui accède aux contenus. BLACK BY C n'intervient alors qu'en qualité de <strong>sous-traitant</strong>, sur instruction de l'Organisateur. Les demandes relatives à ces contenus doivent être adressées en priorité à l'Organisateur de l'événement concerné, BLACK BY C prêtant son assistance pour y répondre.</p>
-<p><strong>Une exception : les réponses à l'enquête de satisfaction.</strong> Lorsqu'un Organisateur ou un Invité donne son avis sur le service lui-même, il s'adresse à BLACK BY C et non à l'Organisateur de l'événement. BLACK BY C est alors <strong>responsable de traitement</strong>, et l'Organisateur de l'événement n'a jamais accès à ces réponses. Le détail figure à l'article 3.3.</p>
+<p><strong>Lorsque des participants déposent des photographies au sein d'un événement</strong>, c'est l'Organisateur qui décide de la collecte, invite les participants et détermine qui accède aux contenus. BLACK BY C n'intervient alors qu'en qualité de <strong>sous-traitant</strong>, sur instruction de l'Organisateur. Les demandes relatives à ces contenus doivent être adressées en priorité à l'Organisateur de l'événement concerné, BLACK BY C prêtant son assistance pour y répondre.</p>
+<p><strong>Une exception : les réponses à l'enquête de satisfaction.</strong> Lorsqu'un Organisateur ou un Participant donne son avis sur le service lui-même, il s'adresse à BLACK BY C et non à l'Organisateur de l'événement. BLACK BY C est alors <strong>responsable de traitement</strong>, et l'Organisateur de l'événement n'a jamais accès à ces réponses. Le détail figure à l'article 3.3.</p>
 
 <h2>3. Données traitées et finalités</h2>
 <h3>3.1 Organisateur</h3>
@@ -332,7 +333,7 @@ const confidentialite = {
 </table>
 <p>Les données de carte bancaire ne sont <strong>jamais</strong> collectées ni conservées par BLACK BY C. Elles sont traitées directement par Stripe.</p>
 
-<h3>3.2 Invités</h3>
+<h3>3.2 Participants</h3>
 <table>
   <thead>
     <tr><th>Données</th><th>Finalité</th><th>Conservation</th></tr>
@@ -340,18 +341,18 @@ const confidentialite = {
   <tbody>
     <tr><td>Photographies</td><td>constitution de la galerie de l'événement</td><td>6 mois après la date de révélation, puis suppression automatique</td></tr>
     <tr><td>Prénom ou pseudonyme saisi</td><td>identification des contributions au sein de l'événement</td><td>idem</td></tr>
-    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi, une seule fois, d'un lien d'accès personnel permettant à l'Invité de retrouver ses propres photographies et ses prises restantes depuis un autre appareil ; envoi du lien de l'album au moment de la révélation ; envoi, une seule fois et sans relance, d'un questionnaire de satisfaction (article 3.3)</td><td>idem</td></tr>
+    <tr><td><strong>Adresse électronique</strong> (facultative)</td><td>envoi, une seule fois, d'un lien d'accès personnel permettant au Participant de retrouver ses propres photographies et ses prises restantes depuis un autre appareil ; envoi du lien de l'album au moment de la révélation ; envoi, une seule fois et sans relance, d'un questionnaire de satisfaction (article 3.3)</td><td>idem</td></tr>
     <tr><td>Numéro de téléphone (facultatif, plus collecté)</td><td>transmission du lien de l'album par l'Organisateur</td><td>idem</td></tr>
     <tr><td>Horodatage, données techniques de connexion</td><td>fonctionnement et sécurité du service</td><td>12 mois</td></tr>
   </tbody>
 </table>
-<p>Aucun compte n'est requis pour déposer un contenu en tant qu'invité.</p>
-<p>La saisie d'une adresse électronique est <strong>facultative</strong> : l'invité peut participer sans la renseigner. Elle sert à lui adresser le lien de l'album lorsque les photographies sont révélées, ainsi que, le cas échéant, le questionnaire de satisfaction décrit à l'article 3.3. Elle n'est utilisée à <strong>aucune fin de prospection commerciale</strong>, n'est jamais transmise à un tiers, et est supprimée avec l'événement.</p>
-<p>La collecte du numéro de téléphone a été abandonnée. Les numéros recueillis avant ce changement restent soumis aux mêmes règles et sont supprimés avec l'événement auquel ils se rattachent. Cette collecte ne concernait que les Invités : un Organisateur peut, s'il le souhaite, communiquer son propre numéro dans le questionnaire de satisfaction, dans les conditions prévues à l'article 3.3.</p>
-<p>Les photographies sont susceptibles de révéler des informations sensibles — pratique religieuse lors d'une cérémonie, état de santé apparent, appartenance supposée à un groupe. BLACK BY C n'exploite jamais ces informations et n'opère aucune analyse du contenu des images, aucune reconnaissance faciale, aucun profilage.</p>
+<p>Aucun compte n'est requis pour déposer un contenu en tant que participant.</p>
+<p>La saisie d'une adresse électronique est <strong>facultative</strong> : le participant peut participer sans la renseigner. Elle sert à lui adresser le lien de l'album lorsque les photographies sont révélées, ainsi que, le cas échéant, le questionnaire de satisfaction décrit à l'article 3.3. Elle n'est utilisée à <strong>aucune fin de prospection commerciale</strong>, n'est jamais transmise à un tiers, et est supprimée avec l'événement.</p>
+<p>La collecte du numéro de téléphone a été abandonnée. Les numéros recueillis avant ce changement restent soumis aux mêmes règles et sont supprimés avec l'événement auquel ils se rattachent. Cette collecte ne concernait que les Participants : un Organisateur peut, s'il le souhaite, communiquer son propre numéro dans le questionnaire de satisfaction, dans les conditions prévues à l'article 3.3.</p>
+<p>Les photographies sont susceptibles de révéler des informations sensibles : pratique religieuse lors d'une cérémonie, état de santé apparent, appartenance supposée à un groupe. BLACK BY C n'exploite jamais ces informations et n'opère aucune analyse du contenu des images, aucune reconnaissance faciale, aucun profilage.</p>
 
 <h3>3.3 Enquête de satisfaction</h3>
-<p>BLACK BY C interroge les Organisateurs et les Invités sur leur expérience du service, afin de corriger ce qui ne fonctionne pas et d'orienter ses développements. Pour ce traitement, BLACK BY C agit en qualité de <strong>responsable de traitement</strong> : les réponses la concernent, elles ne sont <strong>jamais communiquées à l'Organisateur de l'événement</strong>, ni à aucun autre participant.</p>
+<p>BLACK BY C interroge les Organisateurs et les Participants sur leur expérience du service, afin de corriger ce qui ne fonctionne pas et d'orienter ses développements. Pour ce traitement, BLACK BY C agit en qualité de <strong>responsable de traitement</strong> : les réponses la concernent, elles ne sont <strong>jamais communiquées à l'Organisateur de l'événement</strong>, ni à aucun autre participant.</p>
 <table>
   <thead>
     <tr><th>Données</th><th>Finalité</th><th>Base légale</th><th>Conservation</th></tr>
@@ -363,7 +364,7 @@ const confidentialite = {
   </tbody>
 </table>
 <p>La participation à l'enquête est <strong>entièrement facultative</strong> et ne conditionne l'accès à aucune fonctionnalité : refuser d'y répondre, ou ne pas répondre du tout, n'a aucune conséquence sur le service rendu.</p>
-<p>Un questionnaire n'est envoyé par courrier électronique qu'<strong>une seule fois</strong>, et aucune relance ne suit. Chaque message comporte un lien permettant de ne plus recevoir de sollicitation de ce type, avec effet immédiat ; ce refus ne fait pas obstacle à l'envoi du lien de l'album, qui reste dû à l'Invité ayant laissé son adresse. Ces messages ne comportent aucune offre commerciale.</p>
+<p>Un questionnaire n'est envoyé par courrier électronique qu'<strong>une seule fois</strong>, et aucune relance ne suit. Chaque message comporte un lien permettant de ne plus recevoir de sollicitation de ce type, avec effet immédiat ; ce refus ne fait pas obstacle à l'envoi du lien de l'album, qui reste dû au Participant ayant laissé son adresse. Ces messages ne comportent aucune offre commerciale.</p>
 <p>Les réponses sont conservées après la suppression de l'événement auquel elles se rapportent, mais <strong>détachées de celui-ci</strong> : elles ne permettent alors plus d'identifier l'événement ni son organisateur, et ne servent qu'à mesurer l'évolution de la qualité du service dans le temps.</p>
 
 <h2>4. Destinataires et sous-traitants</h2>
@@ -379,12 +380,12 @@ const confidentialite = {
     <tr><td>Cloudflare, Inc.</td><td>stockage des fichiers (R2)</td><td>Europe de l'Ouest</td></tr>
     <tr><td>Stripe Payments Europe, Ltd.</td><td>traitement des paiements</td><td>Union européenne</td></tr>
     <tr><td>Brevo (Sendinblue SAS)</td><td>envoi des courriers électroniques transactionnels</td><td>Union européenne (France)</td></tr>
-    <tr><td>Meta Platforms Ireland Ltd.</td><td>mesure d'audience publicitaire — <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
-    <tr><td>Google Ireland Ltd.</td><td>mesure d'audience et publicité — <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
+    <tr><td>Meta Platforms Ireland Ltd.</td><td>mesure d'audience publicitaire, <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
+    <tr><td>Google Ireland Ltd.</td><td>mesure d'audience et publicité, <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
   </tbody>
 </table>
-<p>Meta et Google n'interviennent que sur les pages publiques du site, et jamais au sein d'un événement : <strong>les photographies déposées par les invités ne leur sont à aucun moment transmises</strong>. Voir l'article 10 pour le détail de ces traceurs et les moyens de les refuser.</p>
-<p>Les contenus déposés au sein d'un événement sont accessibles à l'Organisateur de cet événement et, après la révélation, aux autres invités de ce même événement.</p>
+<p>Meta et Google n'interviennent que sur les pages publiques du site, et jamais au sein d'un événement : <strong>les photographies déposées par les participants ne leur sont à aucun moment transmises</strong>. Voir l'article 10 pour le détail de ces traceurs et les moyens de les refuser.</p>
+<p>Les contenus déposés au sein d'un événement sont accessibles à l'Organisateur de cet événement et, après la révélation, aux autres participants de ce même événement.</p>
 
 <h2>5. Transferts hors de l'Union européenne</h2>
 <p>Les données et contenus sont stockés en <strong>Europe de l'Ouest</strong>.</p>
@@ -407,7 +408,7 @@ const confidentialite = {
 </ul>
 <p>Ces droits s'exercent à l'adresse <a href="mailto:support@timetoflash.fr">support@timetoflash.fr</a>. Une réponse vous sera apportée dans un délai d'un mois, susceptible d'être prolongé de deux mois en cas de demande complexe.</p>
 <p><strong>Si vous figurez sur une photographie déposée par un tiers</strong> et souhaitez qu'elle soit retirée, écrivez à support@timetoflash.fr en précisant l'identifiant de l'événement. Votre demande sera transmise à l'Organisateur et le contenu litigieux pourra être retiré sans attendre.</p>
-<p>Vous disposez enfin du droit d'introduire une réclamation auprès de la <strong>Commission Nationale de l'Informatique et des Libertés</strong> — 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07 — <a href="https://www.cnil.fr" rel="nofollow noreferrer" target="_blank">www.cnil.fr</a>.</p>
+<p>Vous disposez enfin du droit d'introduire une réclamation auprès de la <strong>Commission Nationale de l'Informatique et des Libertés</strong> : 3 place de Fontenoy, TSA 80715, 75334 Paris Cedex 07, <a href="https://www.cnil.fr" rel="nofollow noreferrer" target="_blank">www.cnil.fr</a>.</p>
 
 <h2>8. Droit à l'image</h2>
 <p>Le droit à l'image, fondé sur l'article 9 du Code civil, est distinct du droit à la protection des données. Toute personne dispose du droit de s'opposer à la captation et à la diffusion de son image.</p>

@@ -6,7 +6,7 @@ export async function generateMetadata({ params }) {
   const { id } = await params
   const nom = await nomEvenement(id)
   const titre = nom ? `L'album de ${nom}` : "L'album de la soirée"
-  const desc = 'Les photos prises par tous les invités, développées après la fête.'
+  const desc = 'Les photos prises par tous les participants, développées après la fête.'
   return {
     title: titre,
     description: desc,

@@ -7,6 +7,16 @@ import { tierByGuests, formatPrice } from '../../lib/pricing'
 
 const KEY_STORE = 'declic_admin_key'
 
+// Les pages de pub n'ont aucun lien depuis le site vitrine : on les rassemble
+// ici, sinon il faut retenir les adresses par cœur.
+const LANDINGS = [
+  ['/photos-mariage-invites', 'Le photographe'],
+  ['/appareil-jetable-mariage', "L'appareil jetable"],
+  ['/photobooth-mariage', 'Le prix'],
+  ['/revivez-votre-mariage', "L'émotion"],
+  ['/cadeau-mariage-temoins', 'Les témoins'],
+]
+
 function IconePause() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -100,7 +110,7 @@ export default function Admin() {
   const isWarn = (e) => e.revealed && e.photoCount === 0
 
   // Suspendre / réactiver : l'album se ferme et plus aucune photo n'entre,
-  // mais rien n'est détruit — c'est réversible.
+  // mais rien n'est détruit : c'est réversible.
   async function suspendre() {
     if (!aSuspendre) return
     setActionErr(''); setBusy(true)
@@ -117,7 +127,7 @@ export default function Admin() {
     } catch (err) { setActionErr(err.message) } finally { setBusy(false) }
   }
 
-  // Suppression définitive : photos, invités et fichiers partent avec.
+  // Suppression définitive : photos, participants et fichiers partent avec.
   async function supprimer() {
     if (!aSupprimer) return
     setActionErr(''); setBusy(true)
@@ -219,7 +229,7 @@ export default function Admin() {
             </div>
           </div>
           <div className="stat">
-            <div className="lbl">Invités</div>
+            <div className="lbl">Participants</div>
             <div className="val">{totals.guests}</div>
             <div className="note">≈ {avg(totals.guests)} / événement</div>
           </div>
@@ -245,6 +255,15 @@ export default function Admin() {
           </div>
         </div>
 
+        {/* Pages de pub : invisibles depuis le site, accessibles d'ici */}
+        <div className="notice" style={{ marginTop: 18, display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+          <strong style={{ color: 'var(--ink)' }}>Pages de pub</strong>
+          {LANDINGS.map(([href, label]) => (
+            <a key={href} className="chip" href={href} target="_blank" rel="noreferrer"
+              title={href} style={{ textDecoration: 'none' }}>{label} ↗</a>
+          ))}
+        </div>
+
         {/* Barre d'outils : recherche, filtres, tri */}
         <div className="adash-toolbar">
           <div className="adash-search">
@@ -267,7 +286,7 @@ export default function Admin() {
             <select value={sort} onChange={(e) => setSort(e.target.value)}>
               <option value="recent">Trier : plus récents</option>
               <option value="photos">Trier : plus de photos</option>
-              <option value="guests">Trier : plus d'invités</option>
+              <option value="guests">Trier : plus de participants</option>
               <option value="reveal">Trier : révélation</option>
             </select>
           </div>
@@ -351,7 +370,7 @@ export default function Admin() {
                         {e.avisSoucis > 0 && <span className="pastille" aria-hidden="true" />}
                       </a>
                     ) : (
-                      <span className="muted" style={{ fontSize: 13 }}>—</span>
+                      <span className="muted" style={{ fontSize: 13 }}>-</span>
                     )}
                   </span>
                   {/* Deux gestes, deux icônes. Le nom de l'événement reste le
@@ -386,7 +405,7 @@ export default function Admin() {
               <>
                 <h3 className="h3">Réactiver cet événement ?</h3>
                 <p className="muted small" style={{ lineHeight: 1.65 }}>
-                  <strong>{aSuspendre.name}</strong> redeviendra accessible : les invités
+                  <strong>{aSuspendre.name}</strong> redeviendra accessible : les participants
                   pourront à nouveau photographier, et l'album se rouvrira normalement.
                 </p>
               </>
@@ -399,7 +418,7 @@ export default function Admin() {
                   entre plus.
                 </p>
                 <p className="muted small" style={{ marginTop: 10, lineHeight: 1.65 }}>
-                  <strong>Rien n'est détruit</strong> — les {aSuspendre.photoCount} photos restent
+                  <strong>Rien n'est détruit</strong> : les {aSuspendre.photoCount} photos restent
                   en place, et tu peux réactiver à tout moment.
                 </p>
               </>
@@ -426,7 +445,7 @@ export default function Admin() {
             <h3 className="h3">Supprimer cet événement ?</h3>
             <p className="muted small" style={{ lineHeight: 1.65 }}>
               <strong>{aSupprimer.name}</strong>, ses <strong>{aSupprimer.photoCount} photos</strong> et
-              ses {aSupprimer.guestCount} invités seront effacés définitivement, fichiers compris.
+              ses {aSupprimer.guestCount} participants seront effacés définitivement, fichiers compris.
               C'est irréversible : personne ne pourra les récupérer, toi non plus.
             </p>
             <p className="muted small" style={{ marginTop: 10, lineHeight: 1.65 }}>

@@ -129,7 +129,7 @@ function ExpressForm() {
       <form className="card wiz-card" style={{ marginTop: 26 }} onSubmit={submit}>
         <h2 className="wiz-q">Créez votre événement</h2>
         <p className="wiz-sub">
-          Une seule chose à décider maintenant : le nombre d'invités.
+          Une seule chose à décider maintenant : le nombre de participants.
           Le nom, les dates et le moment de la révélation se règlent juste après.
         </p>
 

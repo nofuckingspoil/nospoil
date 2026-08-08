@@ -49,7 +49,7 @@ export async function POST(request) {
 
   // Cette route crée un événement sans passer par la caisse. Elle ne doit donc
   // ouvrir une formule payante que sur présentation d'un code qui l'offre :
-  // sans ce contrôle, il suffisait de demander 200 invités pour les obtenir.
+  // sans ce contrôle, il suffisait de demander 200 participants pour les obtenir.
   let promoCode = null
   let isTest = false
   if (tier.priceCents > 0) {

@@ -8,7 +8,7 @@
 //  Il partait jusqu'ici de deux endroits : le tableau de bord, quand
 //  l'organisateur l'ouvrait après la révélation, et le rappel quotidien en
 //  filet de sécurité. Un organisateur qui ne se connecte pas le jour même
-//  laissait donc ses invités attendre jusqu'au lendemain matin — pour un
+//  laissait donc ses participants attendre jusqu'au lendemain matin, pour un
 //  album révélé à midi, vingt-deux heures de silence.
 //
 //  Cette tâche-ci ne fait que cet envoi, et repasse toutes les dix minutes.
@@ -16,7 +16,7 @@
 //  qui puisse la ralentir ou la faire échouer pour autre chose.
 //
 //  Repasser sans cesse ne risque aucun doublon : seuls sont contactés les
-//  invités dont `notified_at` est encore vide, et l'envoi le renseigne.
+//  participants dont `notified_at` est encore vide, et l'envoi le renseigne.
 //
 //  Protégée par CRON_SECRET, comme les autres.
 // ============================================================
@@ -27,7 +27,7 @@ export const dynamic = 'force-dynamic'
 export const maxDuration = 60
 
 // Au-delà, c'est le rappel quotidien qui reprend la main. Sans cette fenêtre,
-// chaque passage relirait tous les événements déjà révélés du site — un
+// chaque passage relirait tous les événements déjà révélés du site, un
 // travail qui grossirait indéfiniment pour ne rien envoyer.
 const FENETRE_H = 48
 const BATCH = 50
@@ -56,7 +56,7 @@ export async function GET(request) {
       // Les albums d'essai se révèlent en quelques minutes et se comptent par
       // dizaines chaque jour : sans ce filtre ils occuperaient la file entière
       // et pourraient repousser un vrai mariage au-delà de la limite, pour
-      // n'envoyer aucun mail — ils n'ont pas d'invités inscrits. Un événement
+      // n'envoyer aucun mail : ils n'ont pas de participants inscrits. Un événement
       // marqué comme test qui en aurait reste rattrapé par le rappel quotidien.
       '&is_test=is.false' +
       `&order=reveal_at.desc&limit=${BATCH}`

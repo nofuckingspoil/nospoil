@@ -6,7 +6,7 @@ export const runtime = 'nodejs'
 // Met (ou retire) une photo en favori.
 //
 // Anonyme par construction : l'appareil sert uniquement à empêcher un même
-// invité de voter dix fois. Aucune route ne renvoie jamais qui a aimé quoi.
+// participant de voter dix fois. Aucune route ne renvoie jamais qui a aimé quoi.
 export async function POST(request, { params }) {
   const { id } = await params
   const { photoId, deviceToken, on } = await request.json().catch(() => ({}))
@@ -30,7 +30,7 @@ export async function POST(request, { params }) {
     await deleteRows('favorites', filtre)
   } else {
     // Deuxième clic sur un cœur déjà posé : la contrainte d'unicité refuse,
-    // et c'est très bien — le compte ne bouge pas.
+    // et c'est très bien : le compte ne bouge pas.
     await insertRow('favorites', { photo_id: photoId, event_id: id, device_token: deviceToken })
   }
 

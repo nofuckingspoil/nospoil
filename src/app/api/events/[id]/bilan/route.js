@@ -5,10 +5,10 @@ import { quotaExceeded } from '../../../../../lib/phase'
 export const runtime = 'nodejs'
 
 // ============================================================
-//  « La soirée en chiffres » — le bilan montré à l'organisateur
+//  « La soirée en chiffres » : le bilan montré à l'organisateur
 //  une fois l'album ouvert.
 //
-//  Réservé à l'organisateur : ces chiffres nomment des invités
+//  Réservé à l'organisateur : ces chiffres nomment des participants
 //  (le plus prolifique, l'auteur de la dernière photo), ce qui
 //  n'a rien à faire dans une page publique.
 // ============================================================
@@ -55,7 +55,7 @@ export async function GET(request, { params }) {
   const nbInvites = Array.isArray(invitesRes.data) ? invitesRes.data.length : 0
 
   // Formule dépassée : le bilan montre la photo la plus aimée et nomme les
-  // invités. C'est l'album par une autre porte — elle se ferme comme l'autre.
+  // participants. C'est l'album par une autre porte : elle se ferme comme l'autre.
   const evRes = await selectRows('events', `id=eq.${id}&select=max_guests`)
   const maxGuests = Array.isArray(evRes.data) ? evRes.data[0]?.max_guests : null
   if (quotaExceeded({ maxGuests, guestCount: nbInvites })) {
@@ -69,7 +69,7 @@ export async function GET(request, { params }) {
   for (const p of photos) {
     if (!p.guest_id) continue
     const t = new Date(p.taken_at).getTime()
-    const e = parInvite.get(p.guest_id) || { nom: p.guests?.display_name || 'Un invité', n: 0, debut: t, fin: t }
+    const e = parInvite.get(p.guest_id) || { nom: p.guests?.display_name || 'Un participant', n: 0, debut: t, fin: t }
     e.n++
     if (t < e.debut) e.debut = t
     if (t > e.fin) e.fin = t
@@ -145,7 +145,7 @@ export async function GET(request, { params }) {
     ] || null
     photoDeLaSoiree = {
       url,
-      nom: favorite.photo.guests?.display_name || 'Un invité',
+      nom: favorite.photo.guests?.display_name || 'Un participant',
       heure: heureCourte(favorite.photo.taken_at),
       coeurs: favorite.stats.n,
       // Le temps qu'il lui a fallu pour faire l'unanimité.
@@ -163,25 +163,25 @@ export async function GET(request, { params }) {
   return Response.json({
     photoCount: photos.length,
     guestCount: nbInvites,
-    // Nombre d'invités ayant réellement déclenché, souvent plus parlant que le
+    // Nombre de participants ayant réellement déclenché, souvent plus parlant que le
     // nombre de connectés : c'est le nombre de gens qui ont joué le jeu.
     photographes: parInvite.size,
     // Moyenne par photographe : le repère qui dit à chacun s'il est au-dessus
-    // ou en dessous. Comptée sur ceux qui ont déclenché, pas sur les inscrits —
+    // ou en dessous. Comptée sur ceux qui ont déclenché, pas sur les inscrits : 
     // diviser par des gens qui n'ont jamais sorti l'appareil ne veut rien dire.
     moyenne: parInvite.size ? Math.round((photos.length / parInvite.size) * 10) / 10 : 0,
     champion,
     heurePointe,
     premier: premierClic
       ? {
-          nom: premierClic.guests?.display_name || 'Un invité',
+          nom: premierClic.guests?.display_name || 'Un participant',
           heure: heureCourte(premierClic.taken_at),
           url: vignette(premierClic),
         }
       : null,
     dernier: dernierClic
       ? {
-          nom: dernierClic.guests?.display_name || 'Un invité',
+          nom: dernierClic.guests?.display_name || 'Un participant',
           heure: heureCourte(dernierClic.taken_at),
           url: vignette(dernierClic),
         }

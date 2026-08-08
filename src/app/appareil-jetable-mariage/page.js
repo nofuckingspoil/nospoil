@@ -1,5 +1,5 @@
 // ============================================================
-//  Page d'atterrissage publicitaire — angle « le téléphone devient jetable ».
+//  Page d'atterrissage publicitaire : angle « le téléphone devient jetable ».
 //
 //  L'angle ne vend pas un service photo, il vend une transformation : les
 //  cent téléphones déjà dans les poches de vos invités deviennent cent
@@ -25,10 +25,10 @@ const DESCRIPTION =
 export const metadata = {
   title: TITRE,
   description: DESCRIPTION,
-  // Page publicitaire : elle ne doit pas concurrencer l'article du journal.
-  robots: { index: false, follow: true },
+  // Indexable depuis le 07/08/2026 : « appareil jetable mariage » se cherche
+  // assez pour valoir la concurrence avec l'article du journal.
   openGraph: {
-    title: `${TITRE} — ${BRAND.name}`,
+    title: `${TITRE} | ${BRAND.name}`,
     description: DESCRIPTION,
     type: 'website',
   },
@@ -45,7 +45,7 @@ const JETABLE = [
   {
     ic: '🙈',
     t: 'Aucun aperçu, aucun tri',
-    s: "Personne ne revoit son cliché pour le refaire en mieux. Ce qui est pris est pris — avec les yeux fermés, le flou et le fou rire.",
+    s: "Personne ne revoit son cliché pour le refaire en mieux. Ce qui est pris est pris, avec les yeux fermés, le flou et le fou rire.",
   },
   {
     ic: '🌅',
@@ -56,7 +56,7 @@ const JETABLE = [
 
 // Le vrai jetable posé sur les tables est la solution que beaucoup envisagent
 // avant nous. Elle a un charme réel, et une addition qu'on découvre tard :
-// l'appareil, puis le développement, puis la numérisation — à multiplier par
+// l'appareil, puis le développement, puis la numérisation, à multiplier par
 // le nombre de tables, et à ramasser un par un le lendemain.
 const CONTRE_LE_VRAI = {
   eux: [
@@ -128,7 +128,7 @@ export default function Page() {
         <section className="section">
           <h2 className="section-title">Ce qui rendait un jetable irremplaçable</h2>
           <div className="section-sub">
-            Ce n'est pas la qualité d'image. C'est la contrainte — et elle se remet.
+            Ce n'est pas la qualité d'image. C'est la contrainte, et elle se remet.
           </div>
           <div className="steps-grid">
             {JETABLE.map((j, i) => (

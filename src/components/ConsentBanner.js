@@ -11,13 +11,13 @@ import { META_PIXEL_ID, GA4_ID, GOOGLE_ADS_ID, pageMesurable } from '../lib/trac
 //
 //  Exigences de la CNIL respectées ici :
 //    · rien n'est déposé avant la réponse (voir MetaPixel / GoogleTag) ;
-//    · « Refuser » est aussi visible et aussi rapide qu'« Accepter » —
+//    · « Refuser » est aussi visible et aussi rapide qu'« Accepter » : 
 //      un refus caché dans un sous-menu est justement ce que la CNIL
 //      sanctionne le plus ;
 //    · fermer sans choisir ne vaut pas acceptation : il n'y a pas de croix ;
 //    · l'avis peut être changé plus tard (lien « Cookies » du pied de page).
 //
-//  Le bandeau ne s'affiche pas là où il gênerait un geste en cours — pendant
+//  Le bandeau ne s'affiche pas là où il gênerait un geste en cours : pendant
 //  une prise de photo ou un paiement. Ces pages ne sont de toute façon pas
 //  celles où l'on arrive depuis une publicité.
 // ============================================================
@@ -50,13 +50,11 @@ export default function ConsentBanner() {
   if (etat === 'inconnu' || etat !== null) return null
   if (estExclu(chemin)) return null
 
-  // Le centre n'était justifié que sur l'accueil, où le QR d'essai occupe le
-  // coin gauche. Partout ailleurs celui-ci est libre, et une carte posée au
-  // milieu de l'écran barre la lecture au lieu de l'accompagner.
-  const auCentre = chemin === '/'
-
+  // Le coin bas-droit est libre depuis que le guide s'annonce en haut de page :
+  // c'est là qu'on attend une question de cookies, et le coin gauche reste au
+  // QR d'essai de l'accueil.
   return (
-    <div className={`ck ${auCentre ? '' : 'ck--gauche'}`} role="dialog" aria-modal="false" aria-labelledby="ck-t">
+    <div className="ck" role="dialog" aria-modal="false" aria-labelledby="ck-t">
       <p className="ck-tag" aria-hidden="true"><span className="ck-dot" />Cookies</p>
       <div className="ck-txt">
         <h2 id="ck-t">Un mot sur les cookies</h2>

@@ -4,7 +4,7 @@
 //  Elle est dessinée à la volée plutôt que reprise de la photo de couverture :
 //  celle-ci est servie par des adresses signées qui expirent en quelques
 //  heures, alors que les messageries gardent l'aperçu en cache bien plus
-//  longtemps. Et l'on ne veut pas rendre publiques les photos des invités.
+//  longtemps. Et l'on ne veut pas rendre publiques les photos des participants.
 // ============================================================
 import 'server-only'
 import { ImageResponse } from 'next/og'

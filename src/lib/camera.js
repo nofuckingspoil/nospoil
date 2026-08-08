@@ -4,7 +4,7 @@
 // ============================================================
 
 // Détecte les navigateurs intégrés aux messageries (Messenger, WhatsApp,
-// Instagram…). La plupart des invités arrivent par là : on ne les écarte pas,
+// Instagram…). La plupart des participants arrivent par là : on ne les écarte pas,
 // on adapte seulement le discours.
 export function isInAppBrowser() {
   if (typeof navigator === 'undefined') return false
@@ -44,7 +44,7 @@ export function compressToBlob(source, { maxSize = 1600, quality = 0.82 } = {}) 
     ctx.drawImage(source, 0, 0, w, h)
 
     // Repli : dans les navigateurs intégrés, toBlob rend parfois un résultat
-    // vide — ou ne rappelle jamais — quand la mémoire manque. toDataURL est
+    // vide (ou ne rappelle jamais) quand la mémoire manque. toDataURL est
     // synchrone et s'en sort là où toBlob renonce.
     let fini = false
     const parDataUrl = () => {
@@ -97,7 +97,7 @@ export async function decodeImage(file) {
   return fileToImage(file)
 }
 
-// Prépare la photo choisie par l'invité avant l'envoi.
+// Prépare la photo choisie par le participant avant l'envoi.
 // Une photo qui ne part pas est une photo perdue : on essaie donc plusieurs
 // fois, de plus en plus modestement, et en dernier recours on envoie le
 // fichier d'origine plutôt que d'abandonner.

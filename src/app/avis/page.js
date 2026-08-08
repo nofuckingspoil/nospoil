@@ -10,9 +10,9 @@ import { ACCROCHE } from '../../lib/avis'
 // ============================================================
 //  La page d'enquête, ouverte depuis un mail.
 //
-//  Deux publics, un seul écran : l'organisateur arrive avec ?o=…, l'invité
+//  Deux publics, un seul écran : l'organisateur arrive avec ?o=…, le participant
 //  qui n'est jamais allé jusqu'à l'album avec ?i=…. Le jeton du lien suffit à
-//  savoir qui parle — rien à créer, rien à retenir, aucune connexion.
+//  savoir qui parle : rien à créer, rien à retenir, aucune connexion.
 //
 //  ?i=…&stop=1 est le lien de désinscription du pied de mail. Il agit tout de
 //  suite : quelqu'un qui n'a jamais demandé à recevoir un questionnaire ne
@@ -107,7 +107,7 @@ function AvisInner() {
           <div style={{ fontSize: 38, marginBottom: 8 }}>🎞️</div>
           <h3 className="h3" style={{ marginBottom: 6 }}>Vous avez déjà répondu</h3>
           <p className="muted small" style={{ marginBottom: 0 }}>
-            Et c’était précieux — merci. On ne vous redemandera rien.
+            Et c’était précieux, merci. On ne vous redemandera rien.
           </p>
         </div>
       </Cadre>

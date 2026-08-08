@@ -13,6 +13,10 @@ export default function sitemap() {
     { url: `${BASE}/generateur-qr-code-mariage`, lastModified: now, changeFrequency: 'monthly', priority: 0.8 },
     { url: `${BASE}/photos-mariage-invites`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
     { url: `${BASE}/cadeau-mariage-temoins`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE}/appareil-jetable-mariage`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    { url: `${BASE}/photobooth-mariage`, lastModified: now, changeFrequency: 'monthly', priority: 0.9 },
+    // /revivez-votre-mariage reste en « noindex » : pure page de pub, personne
+    // ne tape cette phrase dans un moteur de recherche.
     { url: `${BASE}/create`, lastModified: now, changeFrequency: 'monthly', priority: 0.7 },
   ]
   const articles = POSTS.map((p) => ({

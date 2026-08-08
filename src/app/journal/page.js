@@ -9,7 +9,7 @@ export const metadata = {
   description: "Conseils photo, organisation et souvenirs pour ton mariage. Des articles courts, écrits avec des mariés et des photographes.",
   alternates: { canonical: '/journal' },
   openGraph: {
-    title: `Blog — ${BRAND.name}`,
+    title: `Blog | ${BRAND.name}`,
     description: "Conseils photo, organisation et souvenirs pour ton mariage.",
     url: 'https://timetoflash.fr/journal',
     type: 'website',

@@ -12,8 +12,8 @@ import { libelle, NOTES, estUneAlerte } from '../../../lib/avis'
 //  Deux lectures dans une seule page : tous les avis, ou ceux d'un seul
 //  événement (?event=…), en arrivant depuis la ligne du tableau de bord.
 //
-//  Ce qui est mis en avant n'est pas la note — elle rassure sans rien
-//  apprendre — mais le classement des problèmes signalés : c'est la liste des
+//  Ce qui est mis en avant n'est pas la note (elle rassure sans rien
+//  apprendre) mais le classement des problèmes signalés : c'est la liste des
 //  corrections à faire, triée par fréquence.
 // ============================================================
 
@@ -64,9 +64,9 @@ function Fiche({ a }) {
     <div className={`avis-fiche ${estUneAlerte(a) ? 'alerte' : ''}`}>
       <div className="avis-fiche-tete">
         <span className="qui">
-          {a.role === 'organisateur' ? 'Organisateur' : a.guestName || 'Invité'}
+          {a.role === 'organisateur' ? 'Organisateur' : a.guestName || 'Participant'}
         </span>
-        <span className="avis-etiq">{a.role === 'organisateur' ? 'orga' : 'invité'}</span>
+        <span className="avis-etiq">{a.role === 'organisateur' ? 'orga' : 'participant'}</span>
         {/* D'où vient la réponse : c'est ce qui permet de comparer ceux qui
             sont allés jusqu'à l'album et ceux qu'il a fallu relancer. */}
         <span className="avis-etiq">{a.canal === 'mail' ? 'par mail' : 'dans l’album'}</span>
@@ -99,7 +99,7 @@ function Fiche({ a }) {
 
       {a.callOk && (
         <p style={{ fontWeight: 600, color: 'var(--accent-deep)' }}>
-          📞 Accepte un appel de 5 min{a.phone ? ` — ${a.phone}` : ' (sans numéro laissé)'}
+          📞 Accepte un appel de 5 min{a.phone ? ` : ${a.phone}` : ' (sans numéro laissé)'}
           {a.contactEmail ? ` · ${a.contactEmail}` : ''}
         </p>
       )}
@@ -231,7 +231,7 @@ function AvisInner() {
     </main>
   )
 
-  const nb = (v) => (v === null ? '—' : v.toFixed(1))
+  const nb = (v) => (v === null ? '-' : v.toFixed(1))
 
   return (
     <div className="site">
@@ -251,13 +251,13 @@ function AvisInner() {
         <p className="muted small" style={{ marginBottom: 22 }}>
           {eventId
             ? <>Les avis de « <strong>{eventName || 'cet événement'}</strong> ». <Link href="/admin/avis" className="linklike">Voir tous les avis</Link></>
-            : 'Toutes les réponses reçues, organisateurs et invités confondus.'}
+            : 'Toutes les réponses reçues, organisateurs et participants confondus.'}
         </p>
 
         {avis.length === 0 ? (
           <div className="notice">
             Aucun avis pour l&apos;instant. Les questionnaires partent deux jours après
-            la révélation pour les organisateurs, trois jours pour les invités qui
+            la révélation pour les organisateurs, trois jours pour les participants qui
             ne sont jamais allés jusqu&apos;à l&apos;album.
           </div>
         ) : (
@@ -266,7 +266,7 @@ function AvisInner() {
               <div className="avis-carte">
                 <div className="lbl">Réponses</div>
                 <div className="val">{stats.total}</div>
-                <div className="note">{stats.orga.length} orga · {stats.invites.length} invités</div>
+                <div className="note">{stats.orga.length} orga · {stats.invites.length} participants</div>
               </div>
               <div className="avis-carte">
                 <div className="lbl">Note moyenne</div>
@@ -314,9 +314,9 @@ function AvisInner() {
                   neutre vide="Pas encore de réponse d'organisateur." />
                 <Classement titre="Comment ils nous ont connus" entrees={stats.sources} total={stats.orga.length}
                   neutre vide="Pas encore de réponse d'organisateur." />
-                <Classement titre="Les invités utiliseraient-ils Time to Flash pour leur propre fête ?"
+                <Classement titre="Les participants utiliseraient-ils Time to Flash pour leur propre fête ?"
                   entrees={stats.referait} total={stats.invites.length}
-                  neutre vide="Pas encore de réponse d'invité." />
+                  neutre vide="Pas encore de réponse de participant." />
               </>
             )}
 
@@ -325,7 +325,7 @@ function AvisInner() {
               {[
                 ['tous', `Tous (${avis.length})`],
                 ['orga', `Organisateurs (${stats.orga.length})`],
-                ['invite', `Invités (${stats.invites.length})`],
+                ['invite', `Participants (${stats.invites.length})`],
                 ['soucis', `Problèmes (${stats.total - stats.sansSouci})`],
                 ['rappels', `À rappeler (${stats.rappels.length})`],
               ].map(([val, label]) => (

@@ -1,7 +1,7 @@
 // ============================================================
 //  Matière commune aux pages d'atterrissage publicitaires.
 //
-//  Chaque page teste un angle différent — le photographe qui part, le
+//  Chaque page teste un angle différent : le photographe qui part, le
 //  téléphone transformé en jetable, le photobooth qu'on ne loue pas. Mais
 //  toutes vendent le même produit, au même prix, avec les mêmes garanties.
 //  Ce qui ne change pas vit ici ; ce qui distingue un angle vit dans sa page.
@@ -15,7 +15,7 @@ export const CTA = '/create?tier=50'
 
 // Les formules qui concernent un mariage. Les petites tranches existent, mais
 // les afficher ferait hésiter sur un choix qui n'est pas le sien.
-export const FORMULES_MARIAGE = TIERS.filter((t) => [50, 100, 150, 300].includes(t.maxGuests))
+export const FORMULES_MARIAGE = TIERS.filter((t) => [50, 100, 150, 200].includes(t.maxGuests))
 
 export const ETAPES = [
   {
@@ -24,7 +24,7 @@ export const ETAPES = [
     alt: 'Affiche à poser sur les tables, avec le QR code du mariage',
     n: '01',
     t: 'Une affiche sur les tables',
-    s: "Vos invités scannent le QR code. L'appareil photo s'ouvre dans leur navigateur — aucune application à installer, aucun compte à créer.",
+    s: "Vos invités scannent le QR code. L'appareil photo s'ouvre dans leur navigateur : aucune application à installer, aucun compte à créer.",
   },
   {
     img: '/accueil/declencheur.webp',
@@ -55,7 +55,7 @@ export const ETAPES = [
 //  commerciale trompeuse (article L121-2 du Code de la consommation), et
 //  c'est interdit par les règles publicitaires de Meta comme de Google.
 //
-//  Le parler se garde intact — « graaaave », « le rêve », la ponctuation
+//  Le parler se garde intact : « graaaave », « le rêve », la ponctuation
 //  emballée : c'est ce qu'un faux avis n'a jamais. Seuls les accents oubliés
 //  se corrigent, parce qu'à l'écran ils ne font pas vrai, ils font coquille.
 // ------------------------------------------------------------
@@ -74,7 +74,7 @@ export const CONVERSATIONS = [
   {
     // Une conversation de groupe : elles se répondent et se renchérissent, et
     // c'est ce qui la rend vivante. Le « Oui » et le « graaaave » ne tiennent
-    // que dans cet ordre — les isoler en trois citations séparées les tuerait.
+    // que dans cet ordre : les isoler en trois citations séparées les tuerait.
     blocs: [
       { qui: 'Charlotte', mots: ["C'était une bête d'idée, merci d'avoir organisé ça !"] },
       { qui: 'Maguelonne', mots: ['Oui, le rêve en plus pas besoin de courir après les photos, merci, merci 🙏'], coeur: true },
@@ -84,11 +84,11 @@ export const CONVERSATIONS = [
 ]
 
 // Questions posées sur toutes les pages. Chaque angle peut en ajouter une qui
-// lui est propre — celle que sa promesse fait naître.
+// lui est propre, celle que sa promesse fait naître.
 export const FAQ_COMMUNE = [
   {
     q: 'Mes invités doivent-ils installer une application ?',
-    a: "Non, et c'est tout l'intérêt. Ils scannent le QR code posé sur la table, la caméra s'ouvre dans leur navigateur. Aucun compte, aucun téléchargement, aucune explication à donner — même à votre grand-tante.",
+    a: "Non, et c'est tout l'intérêt. Ils scannent le QR code posé sur la table, la caméra s'ouvre dans leur navigateur. Aucun compte, aucun téléchargement, aucune explication à donner, même à votre grand-tante.",
   },
   {
     q: 'Et si une photo est gênante ?',

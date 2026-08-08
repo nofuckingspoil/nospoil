@@ -21,7 +21,7 @@ import QRCode from 'qrcode'
 
 // Polices volontairement génériques : le fichier PNG est rasterisé par le
 // navigateur et le SVG sera rouvert ailleurs (Canva, imprimeur). Une police
-// web ne survivrait ni à l'un ni à l'autre — une famille système, si.
+// web ne survivrait ni à l'un ni à l'autre ; une famille système, si.
 export const FONTS = [
   { key: 'didone', label: 'Chic', css: 'Didot, "Bodoni MT", "Playfair Display", Georgia, serif' },
   { key: 'serif', label: 'Classique', css: 'Georgia, "Times New Roman", serif' },
@@ -54,7 +54,7 @@ export const CENTERS = [
 
 // Ambiances prêtes à l'emploi. Trois couleurs : les pixels, les trois coins,
 // le fond. Ce sont les coins d'une couleur différente qui font le plus pour
-// l'allure — c'est le premier détail que l'œil attrape.
+// l'allure : c'est le premier détail que l'œil attrape.
 export const STYLES = [
   {
     key: 'minimal', label: 'Minimaliste', swatch: ['#14161F', '#14161F', '#FFFFFF'],
@@ -295,7 +295,7 @@ function esc(s) {
 }
 
 // Un groupe (translation + rotation + échelle) sert à poser un dessin fini
-// — le QR, une branche de feuillage — n'importe où sur une affiche.
+// (le QR, une branche de feuillage) n'importe où sur une affiche.
 function transform(s) {
   const t = []
   if (s.tx || s.ty) t.push(`translate(${s.tx || 0} ${s.ty || 0})`)

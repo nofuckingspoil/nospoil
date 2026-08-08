@@ -1,5 +1,5 @@
 // ============================================================
-//  Durée de conservation des photos — source de vérité unique.
+//  Durée de conservation des photos : source de vérité unique.
 //
 //  Les CGV (article 8) et la politique de confidentialité annoncent une
 //  suppression définitive 6 mois après la date de révélation. Toute

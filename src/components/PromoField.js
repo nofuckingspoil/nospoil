@@ -82,7 +82,7 @@ export default function PromoField({ maxGuests, applied, onApplied }) {
         borderRadius: 12, padding: '11px 14px' }}>
         <span style={{ fontSize: 15 }}>✅</span>
         <span style={{ fontWeight: 700, fontSize: 14.5 }}>
-          Code {applied.code} — {applied.free ? 'événement offert' : `${applied.label} appliqué`}
+          Code {applied.code} : {applied.free ? 'événement offert' : `${applied.label} appliqué`}
         </span>
         {!applied.free && (
           <span className="muted" style={{ fontSize: 13.5 }}>soit {formatPrice(applied.priceCents)}</span>

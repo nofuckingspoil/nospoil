@@ -18,7 +18,7 @@ export const ADMIN = 'admin'
 
 // Un événement suspendu par l'administration n'est plus accessible à personne :
 // ni album, ni participation, ni nouvelle photo. Le statut existait en base
-// mais n'était appliqué nulle part — le suspendre ne suspendait rien.
+// mais n'était appliqué nulle part : le suspendre ne suspendait rien.
 export const MESSAGE_SUSPENDU = 'Cet événement est momentanément suspendu.'
 
 export async function estSuspendu(eventId) {
@@ -44,7 +44,7 @@ export async function roleFor(eventId, token) {
   return Array.isArray(adm.data) && adm.data[0] ? ADMIN : null
 }
 
-// Peut gérer l'événement au quotidien : réglages, invités, album, impression.
+// Peut gérer l'événement au quotidien : réglages, participants, album, impression.
 export function canManage(role) {
   return role === OWNER || role === ADMIN
 }

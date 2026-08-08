@@ -1,5 +1,5 @@
 // ============================================================
-//  Page d'atterrissage publicitaire — angle « plutôt qu'un photobooth ».
+//  Page d'atterrissage publicitaire : angle « plutôt qu'un photobooth ».
 //
 //  L'angle attaque une dépense déjà budgétée. Quelqu'un qui cherche un
 //  photobooth a admis le principe (des photos par les invités) et le prix
@@ -25,10 +25,10 @@ const DESCRIPTION =
 export const metadata = {
   title: TITRE,
   description: DESCRIPTION,
-  // Page publicitaire : elle ne doit pas concurrencer les articles du journal.
-  robots: { index: false, follow: true },
+  // Indexable depuis le 07/08/2026 : « photobooth mariage » se cherche assez
+  // pour valoir la concurrence avec l'article du journal sur le même sujet.
   openGraph: {
-    title: `${TITRE} — ${BRAND.name}`,
+    title: `${TITRE} | ${BRAND.name}`,
     description: DESCRIPTION,
     type: 'website',
   },
@@ -45,7 +45,7 @@ const BORNE = [
   {
     ic: '⏰',
     t: 'Elle vit deux heures',
-    s: "La queue au début, puis plus personne. À une heure du matin — quand la fête commence vraiment — la borne clignote toute seule.",
+    s: "La queue au début, puis plus personne. À une heure du matin, quand la fête commence vraiment, la borne clignote toute seule.",
   },
   {
     ic: '🚚',
@@ -80,7 +80,7 @@ const FAQ_ANGLE = [
   },
   {
     q: 'Et les accessoires, les tirages papier ?',
-    a: "Nous ne fournissons ni perruques ni imprimante. En revanche vous récupérez tous les fichiers en pleine définition : de quoi faire tirer un album, un livre photo ou les quelques clichés que vous voudrez encadrer — pour bien moins que la location d'une borne.",
+    a: "Nous ne fournissons ni perruques ni imprimante. En revanche vous récupérez tous les fichiers en pleine définition : de quoi faire tirer un album, un livre photo ou les quelques clichés que vous voudrez encadrer, pour bien moins que la location d'une borne.",
   },
 ]
 
@@ -100,7 +100,7 @@ export default function Page() {
             </p>
             <p style={{ marginTop: 10 }}>
               Un QR code sur les tables, un nombre de clichés compté par personne,
-              et tout qui se révèle le lendemain — dans un seul album.
+              et tout qui se révèle le lendemain, dans un seul album.
             </p>
             <div className="hero-cta"><Bouton /></div>
             <ul className="lp-ticks">
@@ -140,7 +140,7 @@ export default function Page() {
         <section className="section">
           <h2 className="section-title">Point par point</h2>
           <div className="section-sub">
-            Le même besoin — des photos prises par ceux qui étaient là — traité de
+            Le même besoin (des photos prises par ceux qui étaient là) traité de
             deux façons.
           </div>
           <div className="lp-compare">

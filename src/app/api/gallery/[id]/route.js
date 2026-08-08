@@ -20,7 +20,7 @@ export async function GET(request, { params }) {
     return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
   }
 
-  // Le nombre d'invités décide aussi de l'ouverture : une formule dépassée
+  // Le nombre de participants décide aussi de l'ouverture : une formule dépassée
   // retient l'album jusqu'à ce que l'organisateur la mette à niveau.
   const guestRows = await selectRows('guests', `event_id=eq.${id}&select=id`)
   const etat = {
@@ -38,16 +38,16 @@ export async function GET(request, { params }) {
   // Une exception, et une seule : la formule dépassée le retient lui aussi.
   // L'aperçu organisateur existe pour vérifier l'album avant de l'ouvrir, pas
   // pour le récupérer sans passer par la formule qui correspond au nombre réel
-  // d'invités. Sans ce verrou, le dépassement ne coûtait rien : il suffisait de
+  // de participants. Sans ce verrou, le dépassement ne coûtait rien : il suffisait de
   // télécharger depuis l'appareil créateur.
   const ownerToken = request.headers.get('x-owner-token')
   const isOwner = !!ownerToken && ownerToken === ev.owner_token
   const canView = revealed || (isOwner && !overQuota)
 
   if (!canView) {
-    // Formule dépassée : l'invité n'y est pour rien, on reste neutre côté écran
+    // Formule dépassée : le participant n'y est pour rien, on reste neutre côté écran
     // (« bientôt »). L'organisateur, lui, a droit à la vraie raison et au moyen
-    // d'y remédier — un écran bloquant sans issue serait insupportable.
+    // d'y remédier : un écran bloquant sans issue serait insupportable.
     const quotaOwner = overQuota && isOwner
     // `null` au plus grand palier : il n'y a plus de formule à vendre, l'écran
     // proposera de nous écrire pour un tarif sur mesure.
@@ -72,7 +72,7 @@ export async function GET(request, { params }) {
     })
   }
 
-  // Galerie protégée par un code (facultatif) : exigé pour les invités, jamais pour l'organisateur/admin
+  // Galerie protégée par un code (facultatif) : exigé pour les participants, jamais pour l'organisateur/admin
   if (ev.gallery_code && !isOwner) {
     const given = (request.headers.get('x-gallery-code') || '').trim()
     if (given !== ev.gallery_code) {
@@ -93,7 +93,7 @@ export async function GET(request, { params }) {
   )
   let rows = Array.isArray(photosRes.data) ? photosRes.data : []
 
-  // Les invités ne voient jamais les photos masquées ; l'organisateur/admin voit tout.
+  // Les participants ne voient jamais les photos masquées ; l'organisateur/admin voit tout.
   if (!isOwner) rows = rows.filter((r) => !r.hidden)
 
   // On signe la pleine qualité ET les mini-versions en un seul appel
@@ -109,7 +109,7 @@ export async function GET(request, { params }) {
       id: r.id,
       url: signed[r.thumb_path] || signed[r.storage_path], // mini-version pour l'album (léger)
       fullUrl: signed[r.storage_path],                     // pleine qualité (ouverture / téléchargement)
-      who: r.guests?.display_name || 'Invité',
+      who: r.guests?.display_name || 'Participant',
       guestId: r.guest_id,
       takenAt: r.taken_at,
       hidden: !!r.hidden,
@@ -129,7 +129,7 @@ export async function GET(request, { params }) {
   }
   for (const p of photos) p.favs = compte[p.id] || 0
 
-  // Liste des invités (pour le filtre "point de vue")
+  // Liste des participants (pour le filtre "point de vue")
   const guestMap = {}
   for (const p of photos) guestMap[p.guestId] = p.who
   const guests = Object.entries(guestMap).map(([id, name]) => ({ id, name }))
@@ -144,7 +144,7 @@ export async function GET(request, { params }) {
     photos,
     guests,
     mesFavoris: miens,
-    // Jusqu'à quand l'album reste en ligne : l'invité qui remet à plus tard
+    // Jusqu'à quand l'album reste en ligne : le participant qui remet à plus tard
     // doit savoir combien de temps « plus tard » peut durer.
     expiresAt: ev.expires_at || null,
   })

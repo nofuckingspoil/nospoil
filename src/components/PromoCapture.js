@@ -7,7 +7,7 @@ import { PROMO_STORAGE_KEY } from './PromoField'
 //  Lien partenaire : timetoflash.fr/?promo=LEA20
 //
 //  Le code est mémorisé dès l'arrivée, quelle que soit la page, et se
-//  retrouvera pré-rempli au moment de payer — même si la personne visite
+//  retrouvera pré-rempli au moment de payer, même si la personne visite
 //  d'abord trois pages du site. La visite est comptée une seule fois, pour
 //  savoir ce qu'un partenaire amène avant même la première vente.
 // ============================================================

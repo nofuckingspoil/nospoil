@@ -10,7 +10,7 @@ const API = 'https://api.brevo.com/v3/smtp/email'
 
 // Domaines réservés à la démonstration (RFC 2606 / 6761) : aucune boîte n'existe
 // derrière. Un envoi y revient en « hard bounce », et ces retours se comptent
-// contre la réputation du domaine expéditeur — quelques-uns suffisent à faire
+// contre la réputation du domaine expéditeur : quelques-uns suffisent à faire
 // tomber les vrais messages en spam. Les jeux d'essai laissés en base ne doivent
 // donc jamais atteindre l'API : on les arrête ici plutôt que chez Brevo.
 const DOMAINES_FICTIFS = /@(?:[^@]*\.)?(?:example\.(?:com|org|net)|test|invalid|localhost|local)$/i
@@ -88,7 +88,7 @@ export function layout({ title, intro, body, footer }) {
         <tr><td>${body}</td></tr>
         <tr><td style="font-size:13px;line-height:1.6;color:#8a7c69;padding-top:26px;border-top:1px solid rgba(34,26,18,.1);margin-top:20px;">${footer}</td></tr>
       </table>
-      <div style="font-size:12px;color:#8a7c69;padding-top:18px;">${BRAND.name} — ${BRAND.tagline}</div>
+      <div style="font-size:12px;color:#8a7c69;padding-top:18px;">${BRAND.name} | ${BRAND.tagline}</div>
     </td></tr>
   </table>
 </body></html>`
@@ -104,7 +104,7 @@ export function bigButton(url, label) {
 export function loginEmail({ code, link }) {
   const spaced = String(code).replace(/(\d{3})(\d{3})/, '$1 $2')
   return {
-    subject: `${code} — votre code de connexion ${BRAND.name}`,
+    subject: `${code} : votre code de connexion ${BRAND.name}`,
     html: layout({
       title: 'Connexion à votre espace',
       intro: `Cliquez sur le bouton ci-dessous pour accéder à vos événements.`,
@@ -138,7 +138,7 @@ export function adminInviteEmail({ eventName, loginUrl }) {
 export function verifyEmail({ code }) {
   const spaced = String(code).replace(/(\d{3})(\d{3})/, '$1 $2')
   return {
-    subject: `${code} — votre code de vérification ${BRAND.name}`,
+    subject: `${code} : votre code de vérification ${BRAND.name}`,
     html: layout({
       title: 'Confirmez votre adresse',
       intro: `Saisissez ce code sur la page pour créer votre événement. Il confirme que cette adresse est bien la vôtre.`,
@@ -171,7 +171,7 @@ export function purgeWarningEmail({ eventName, galleryUrl, remaining, purgeDate,
         </div>`,
       footer: urgent
         ? `Passé le ${purgeDate}, la suppression est définitive et irréversible : nous ne pourrons pas récupérer ces photos.`
-        : `Cette suppression automatique protège la vie privée de vos invités (RGPD). Elle est définitive et irréversible.`,
+        : `Cette suppression automatique protège la vie privée de vos participants (RGPD). Elle est définitive et irréversible.`,
     }),
   }
 }
@@ -192,7 +192,7 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
       intro: `Gardez ce mail : c'est votre accès organisateur. Il vous permet de retrouver votre tableau de bord depuis n'importe quel appareil.`,
       body: `${bigButton(ownerUrl, 'Ouvrir mon tableau de bord →')}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          <strong style="color:#221A12;">Le lien à donner à vos invités :</strong><br>
+          <strong style="color:#221A12;">Le lien à donner à vos participants :</strong><br>
           <a href="${joinUrl}" style="color:#C9431F;word-break:break-all;">${joinUrl}</a>
         </div>
         ${date ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">Révélation des photos :</strong><br>${date}</div>` : ''}
@@ -201,7 +201,7 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
         <div style="margin-top:26px;padding:18px 20px;background:#FCF8F0;border:1px solid rgba(34,26,18,.12);border-radius:14px;">
           <div style="font-size:15px;font-weight:700;color:#221A12;margin-bottom:6px;">Et maintenant, comment ça se passe ?</div>
           <div style="font-size:14px;line-height:1.6;color:#5f5341;">
-            Où poser le QR code, quoi faire dire au micro, ce que voient vos invités
+            Où poser le QR code, quoi faire dire au micro, ce que voient vos participants
             pendant la soirée, et comment relire l'album avant la révélation.
           </div>
           <div style="padding-top:12px;">
@@ -209,15 +209,15 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt }) {
           </div>
           <div style="padding-top:10px;font-size:13px;color:#6E6252;">
             Pour aller plus loin, <a href="${siteUrl()}/guide?orga=1" style="color:#6E6252;">le guide de l'organisateur</a>
-            vous est ouvert — sept chapitres, rien à redonner.
+            vous est ouvert : sept chapitres, rien à redonner.
           </div>
           <div style="padding-top:10px;font-size:13px;color:#6E6252;">
-            Un invité bloqué le jour J ? Gardez
+            Un participant bloqué le jour J ? Gardez
             <a href="${siteUrl()}/aide" style="color:#6E6252;">la page d'aide</a>
             sous la main : elle se transfère telle quelle.
           </div>
         </div>`,
-      footer: `Ne transmettez pas le lien du tableau de bord à vos invités — il donne accès à la gestion de l'événement.`,
+      footer: `Ne transmettez pas le lien du tableau de bord à vos participants : il donne accès à la gestion de l'événement.`,
     }),
   }
 }
@@ -230,12 +230,12 @@ export function eventDayEmail({ eventName, ownerUrl, shotsPerGuest }) {
     subject: `C'est aujourd'hui : « ${eventName} » 📸`,
     html: layout({
       title: `C'est aujourd'hui`,
-      intro: `Vos invités vont pouvoir scanner. Chacun aura <strong>${shotsPerGuest} photos</strong>, pas une de plus — et personne ne verra rien avant la révélation.`,
+      intro: `Vos participants vont pouvoir scanner. Chacun aura <strong>${shotsPerGuest} photos</strong>, pas une de plus, et personne ne verra rien avant la révélation.`,
       body: `${bigButton(ownerUrl, 'Ouvrir mon tableau de bord →')}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           <strong style="color:#221A12;">Les deux choses à ne pas oublier :</strong><br>
           1. Poser les cartons QR là où on passe : l'entrée, le bar, les tables.<br>
-          2. Demander à quelqu'un d'annoncer le jeu au début du repas — c'est ce qui fait décoller la participation.
+          2. Demander à quelqu'un d'annoncer le jeu au début du repas : c'est ce qui fait décoller la participation.
         </div>
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
           Un retardataire ? Votre tableau de bord affiche le QR en plein écran, à faire scanner directement.
@@ -250,27 +250,27 @@ export function eventDayEmail({ eventName, ownerUrl, shotsPerGuest }) {
 // d'organisateurs ne reviennent jamais et l'album reste invisible.
 export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, revealDate, quota }) {
   // `quota` (facultatif) : { maxGuests } quand la formule souscrite est dépassée.
-  // On le dit ici, le lendemain de la fête — c'est le dernier moment où
+  // On le dit ici, le lendemain de la fête : c'est le dernier moment où
   // l'organisateur peut encore agir tranquillement avant la révélation.
   const alerte = quota ? `
     <div style="margin-top:22px;padding:16px;border:2px solid #EC5B33;border-radius:14px;background:#fff;">
       <div style="font-size:15px;font-weight:700;color:#221A12;">Votre formule est dépassée</div>
       <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:6px;">
-        Vous étiez <strong style="color:#221A12;">${guestCount} invités</strong> pour une formule
+        Vous étiez <strong style="color:#221A12;">${guestCount} participants</strong> pour une formule
         de <strong style="color:#221A12;">${quota.maxGuests}</strong>. Personne n'a été bloqué pendant
         la fête, et toutes les photos sont bien là. En revanche,
         <strong style="color:#221A12;">l'album ne s'ouvrira pas</strong> tant que votre formule
-        ne correspond pas au nombre réel d'invités. Vous ne réglerez que la différence.
+        ne correspond pas au nombre réel de participants. Vous ne réglerez que la différence.
       </div>
     </div>` : ''
 
   return {
     subject: quota
-      ? `Action requise avant la révélation — « ${eventName} »`
-      : `${photoCount} photos vous attendent — « ${eventName} »`,
+      ? `Action requise avant la révélation : « ${eventName} »`
+      : `${photoCount} photos vous attendent : « ${eventName} »`,
     html: layout({
       title: `${photoCount} photos vous attendent`,
-      intro: `${guestCount} invité${guestCount > 1 ? 's ont' : ' a'} joué le jeu hier soir. <strong>Vous seul pouvez déjà les voir</strong> — vos invités devront patienter jusqu'à la révélation.`,
+      intro: `${guestCount} participant${guestCount > 1 ? 's ont' : ' a'} joué le jeu hier soir. <strong>Vous seul pouvez déjà les voir</strong> : vos participants devront patienter jusqu'à la révélation.`,
       body: `${bigButton(ownerUrl, 'Voir les photos →')}
         ${alerte}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
@@ -278,52 +278,52 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
           dans l'album, un bouton sur chaque photo suffit.
         </div>
         ${revealDate ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">Révélation prévue :</strong><br>${revealDate}</div>` : ''}`,
-      footer: `Le jour de la révélation, votre tableau de bord vous proposera un message tout prêt à envoyer à vos invités.`,
+      footer: `Le jour de la révélation, votre tableau de bord vous proposera un message tout prêt à envoyer à vos participants.`,
     }),
   }
 }
 
 // ---------- Alerte immédiate : quelqu'un attend à la porte ----------
-// Part à la seconde où un invité de trop scanne le QR code. Ce mail est le seul
+// Part à la seconde où un participant de trop scanne le QR code. Ce mail est le seul
 // lien entre cette personne restée sur le pas de la porte et celui qui peut la
 // faire entrer : il doit se lire d'un coup d'œil, au milieu d'une fête, et ne
-// demander qu'un seul geste. D'où le prénom dans l'objet — c'est quelqu'un de
+// demander qu'un seul geste. D'où le prénom dans l'objet : c'est quelqu'un de
 // précis qui attend, pas un compteur qui clignote.
 // `coOrga` : { ownerName } quand le destinataire est un co-organisateur. Il a
-// exactement le même bouton que le propriétaire — il peut régler, et c'est
+// exactement le même bouton que le propriétaire : il peut régler, et c'est
 // heureux : la formule se remplit en pleine soirée, quand celui qui a créé
 // l'événement danse ou dort. Une seule chose change, en pied de message : on
 // lui dit qui d'autre a été prévenu, pour que deux personnes ne paient pas la
 // même chose en même temps.
 export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom, upgradeMaxGuests, upgradePrice, coOrga }) {
-  const qui = prenom ? `<strong>${prenom}</strong>` : `Un invité`
+  const qui = prenom ? `<strong>${prenom}</strong>` : `Un participant`
   // Pas de palier au-dessus : on est au plus grand format, le tarif se fait à la
   // main. Le bouton mène alors vers nous, pas vers un paiement qui n'existe pas.
   const surMesure = !upgradeMaxGuests
   const offre = surMesure
     ? 'Nous écrire pour agrandir →'
-    : `Passer à ${upgradeMaxGuests} invités${upgradePrice ? ` — ${upgradePrice}` : ''} →`
-  const lien = surMesure ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Plus de ${maxGuests} invités — ${eventName}`)}` : ownerUrl
+    : `Passer à ${upgradeMaxGuests} participants${upgradePrice ? ` (${upgradePrice})` : ''} →`
+  const lien = surMesure ? `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Plus de ${maxGuests} participants : ${eventName}`)}` : ownerUrl
   return {
     subject: prenom
-      ? `${prenom} attend d’entrer — « ${eventName} »`
-      : `Un invité attend d’entrer — « ${eventName} »`,
+      ? `${prenom} attend d’entrer : « ${eventName} »`
+      : `Un participant attend d’entrer : « ${eventName} »`,
     html: layout({
-      title: prenom ? `${prenom} attend d’entrer` : `Un invité attend d’entrer`,
-      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais la formule est complète : elle couvre <strong>${maxGuests} invités</strong> et ils sont déjà ${guestCount}.`,
+      title: prenom ? `${prenom} attend d’entrer` : `Un participant attend d’entrer`,
+      intro: `${qui} vient de scanner le QR code de « <strong>${eventName}</strong> », mais la formule est complète : elle couvre <strong>${maxGuests} participants</strong> et ils sont déjà ${guestCount}.`,
       body: `${bigButton(lien, offre)}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           ${surMesure
-            ? `Au-delà de ${maxGuests} invités, nous établissons un tarif sur mesure — écrivez-nous et
-               nous ouvrons l’accès dans la foulée. <strong style="color:#221A12;">Vos autres invités
+            ? `Au-delà de ${maxGuests} participants, nous établissons un tarif sur mesure : écrivez-nous et
+               nous ouvrons l’accès dans la foulée. <strong style="color:#221A12;">Vos autres participants
                continuent de photographier normalement</strong> pendant ce temps.`
             : `Un seul geste et ${prenom ? 'elle' : 'la personne'} entre aussitôt : son écran s’ouvrira
-               tout seul, elle n’a rien à refaire. <strong style="color:#221A12;">Vos autres invités
+               tout seul, elle n’a rien à refaire. <strong style="color:#221A12;">Vos autres participants
                continuent de photographier normalement</strong> pendant ce temps.`}
         </div>
         ${coOrga ? `<div style="margin-top:20px;padding:14px 16px;background:#FCF8F0;border:1px solid rgba(34,26,18,.12);border-radius:12px;font-size:13.5px;line-height:1.6;color:#5f5341;">
           <strong style="color:#221A12;">${coOrga.ownerName || 'L’organisateur'} a reçu la même alerte.</strong>
-          Un seul de vous deux a besoin de régler — voyez avec ${coOrga.ownerName || 'lui'} si vous
+          Un seul de vous deux a besoin de régler : voyez avec ${coOrga.ownerName || 'lui'} si vous
           êtes ensemble, sinon n’attendez pas : la personne est à la porte.
         </div>` : ''}`,
       footer: surMesure
@@ -333,7 +333,7 @@ export function quotaEmail({ eventName, ownerUrl, guestCount, maxGuests, prenom,
   }
 }
 
-// ---------- Lien d'accès personnel d'un invité ----------
+// ---------- Lien d'accès personnel d'un participant ----------
 // Part dès qu'il laisse son adresse, pendant la soirée. Son identité ne tenait
 // jusque-là que dans son navigateur : perdue avec un téléphone changé, elle
 // emportait ses poses restantes et l'accès à ses propres photos.
@@ -353,7 +353,7 @@ export function guestAccessEmail({ eventName, link, shotsPerGuest }) {
   }
 }
 
-// ---------- Envoi du lien de l'album aux invités qui ont laissé leur mail ----------
+// ---------- Envoi du lien de l'album aux participants qui ont laissé leur mail ----------
 // C'est la seule raison pour laquelle on demande leur adresse : le message
 // le dit, et le pied de page le rappelle.
 export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }) {
@@ -362,7 +362,7 @@ export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }
     subject: `Les photos de « ${eventName} » sont en ligne 📸`,
     html: layout({
       title: `Les photos sont sorties`,
-      intro: `${bonjour} l'album de « <strong>${eventName}</strong> » vient de s'ouvrir : <strong>${photoCount} photo${photoCount > 1 ? 's' : ''}</strong> prises par tous les invités, y compris les vôtres.`,
+      intro: `${bonjour} l'album de « <strong>${eventName}</strong> » vient de s'ouvrir : <strong>${photoCount} photo${photoCount > 1 ? 's' : ''}</strong> prises par tous les participants, y compris les vôtres.`,
       body: `${bigButton(galleryUrl, "Voir l'album →")}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           Vous pouvez les regarder, les télécharger, et retrouver celles que vous avez prises.

@@ -7,7 +7,7 @@
 //     calculée pour le partenaire).
 //
 //  Règle non négociable : le prix se décide ici, côté serveur. Le
-//  navigateur ne fait que proposer un code — s'il pouvait annoncer
+//  navigateur ne fait que proposer un code : s'il pouvait annoncer
 //  lui-même le montant, n'importe qui s'offrirait la plus grosse
 //  formule en modifiant la page.
 // ============================================================
@@ -65,7 +65,7 @@ export function promoLabel(promo) {
 
 // Vérification complète : ce code, sur cette formule, donne quoi ?
 // Utilisée par le champ « J'ai un code promo » ET rejouée à chaque étape
-// sensible — une vérification faite une fois ne protège de rien.
+// sensible : une vérification faite une fois ne protège de rien.
 export async function quotePromo(code, maxGuests) {
   const found = await findPromo(code)
   if (!found.ok) return { ok: false, error: found.error }
@@ -77,7 +77,7 @@ export async function quotePromo(code, maxGuests) {
     return { ok: false, error: 'Cette formule est déjà gratuite : garde ton code pour une autre fois.' }
   }
   if (p.max_guests_allowed != null && tier.maxGuests > p.max_guests_allowed) {
-    return { ok: false, error: `Ce code s'arrête à la formule « ${p.max_guests_allowed} invités ».` }
+    return { ok: false, error: `Ce code s'arrête à la formule « ${p.max_guests_allowed} participants ».` }
   }
 
   let priceCents = applyPromo(p, tier.priceCents)

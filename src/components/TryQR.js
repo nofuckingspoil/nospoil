@@ -24,7 +24,7 @@ export default function TryQR() {
   }, [])
 
   return (
-    <a className="tryqr" href={href} aria-label="Essayer Time to Flash — ouvrir l'appareil photo de démonstration">
+    <a className="tryqr" href={href} aria-label="Essayer Time to Flash, ouvrir l'appareil photo de démonstration">
       <div className="tryqr-head">
         <span className="tryqr-star">✱</span> ESSAYER TIME TO FLASH
       </div>

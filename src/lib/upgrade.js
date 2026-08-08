@@ -15,7 +15,7 @@ import { notifyGuestsOfAlbum } from './notify-guests'
 
 // `ev` : ligne `events` (id, name, reveal_at, reveal_paused, max_guests…).
 // `session` : la session Stripe payée, avec ses metadata.
-// Renvoie { ok, maxGuests, deja } — `deja` si la formule couvrait déjà ce palier.
+// Renvoie { ok, maxGuests, deja } : `deja` si la formule couvrait déjà ce palier.
 export async function appliquerAgrandissement(ev, session) {
   const cible = parseInt(session?.metadata?.max_guests, 10) || 0
   if (!cible) return { ok: false, error: 'palier-illisible' }
@@ -36,7 +36,7 @@ export async function appliquerAgrandissement(ev, session) {
   if (!upd.ok) return { ok: false, error: 'maj-impossible' }
 
   // La formule était le seul frein : si l'heure de révélation est passée,
-  // l'album vient de s'ouvrir. Les invités inscrits reçoivent le lien tout de
+  // l'album vient de s'ouvrir. Les participants inscrits reçoivent le lien tout de
   // suite, sans attendre le passage de la tâche planifiée.
   let notified = null
   try {

@@ -11,12 +11,12 @@
 // Time to Flash (et non celui d'Escape Game en Ligne, qui a le sien).
 export const META_PIXEL_ID = '902314949139850'
 
-// Google Analytics 4 — la mesure d'audience. Propriété « Time to Flash — Site
+// Google Analytics 4 : la mesure d'audience. Propriété « Time to Flash — Site
 // web », créée le 07/08/2026 dans un compte Analytics « Time to Flash » séparé
 // de celui d'Escape Game en Ligne.
 export const GA4_ID = 'G-KH7NP499E8'
 
-// Google Ads — le compte publicitaire. Format : AW-XXXXXXXXX
+// Google Ads : le compte publicitaire. Format : AW-XXXXXXXXX
 export const GOOGLE_ADS_ID = ''
 
 // Étiquettes de conversion Google Ads. Chaque conversion créée dans Google Ads
@@ -33,7 +33,7 @@ export const GOOGLE_ADS_CONVERSIONS = {
 //  Nulle part près des photos. Un album, une page d'invitation ou l'appareil
 //  photo sont des lieux privés : y charger un script publicitaire reviendrait
 //  à annoncer à Meta que telle personne assiste à tel mariage. Cela n'apporte
-//  rien aux campagnes — un invité n'achète pas — et c'est exactement ce que
+//  rien aux campagnes (un participant n'achète pas) et c'est exactement ce que
 //  la politique de confidentialité promet de ne pas faire.
 //
 //  Restent les pages vitrines et le tunnel de création : là où se trouvent
@@ -111,7 +111,7 @@ export function track(nom, params, options) {
         : nom === 'Lead' ? GOOGLE_ADS_CONVERSIONS.prospect
         : ''
 
-      // La conversion Google Ads — ce que les campagnes apprennent à répéter.
+      // La conversion Google Ads : ce que les campagnes apprennent à répéter.
       if (etiquette) {
         window.gtag('event', 'conversion', {
           send_to: etiquette,

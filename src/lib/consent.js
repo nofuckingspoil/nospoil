@@ -2,8 +2,8 @@
 //  Consentement aux traceurs publicitaires.
 //
 //  La loi (article 82 de la loi Informatique et Libertés, contrôlé par la
-//  CNIL) interdit de déposer un traceur publicitaire — pixel Meta, mesure
-//  Google — avant que le visiteur ait dit oui. Refuser doit être aussi
+//  CNIL) interdit de déposer un traceur publicitaire (pixel Meta, mesure
+//  Google) avant que le visiteur ait dit oui. Refuser doit être aussi
 //  simple qu'accepter, et l'avis doit pouvoir être changé plus tard.
 //
 //  Trois états possibles :

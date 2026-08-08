@@ -1,6 +1,6 @@
 // ============================================================
 //  Compte organisateur : retrouver ses événements à partir d'un mail.
-//  Pas de mot de passe — l'identité est prouvée par le mail (lien + code).
+//  Pas de mot de passe : l'identité est prouvée par le mail (lien + code).
 // ============================================================
 import 'server-only'
 import { selectRows, updateRow, insertRow } from './supabase'
@@ -42,15 +42,15 @@ export function normalizeEmail(v) {
 // ------------------------------------------------------------
 //  Comptes : une personne, une adresse.
 //
-//  Appelé dès qu'une adresse est connue, quel que soit le rôle — organisateur,
-//  co-organisateur ou invité. Une même personne peut être les trois, et c'est
+//  Appelé dès qu'une adresse est connue, quel que soit le rôle : organisateur,
+//  co-organisateur ou participant. Une même personne peut être les trois, et c'est
 //  précisément ce que l'adresse permet de recoller.
 //
 //  Ne fait jamais échouer l'appelant : un compte manquant n'empêche ni de créer
 //  un événement, ni de prendre une photo.
 // ------------------------------------------------------------
 // `demo` : la personne vient d'essayer l'appareil depuis le site. On horodate
-// ce premier contact — l'album d'essai, lui, disparaîtra le lendemain.
+// ce premier contact : l'album d'essai, lui, disparaîtra le lendemain.
 export async function ensureAccount(email, name, { demo = false } = {}) {
   const mail = normalizeEmail(email)
   if (!isValidEmail(mail)) return null

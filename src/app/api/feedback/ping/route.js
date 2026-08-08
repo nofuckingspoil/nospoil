@@ -1,9 +1,9 @@
 // ============================================================
-//  « J'ouvre l'album » — et faut-il me poser la question ?
+//  « J'ouvre l'album », et faut-il me poser la question ?
 //
 //  Deux choses en un aller-retour, appelé au chargement de la galerie :
-//   1. on note que cet invité est bien venu jusqu'à l'album. C'est ce qui
-//      permettra de ne relancer par mail que ceux qui ne sont jamais venus —
+//   1. on note que ce participant est bien venu jusqu'à l'album. C'est ce qui
+//      permettra de ne relancer par mail que ceux qui ne sont jamais venus, 
 //      précisément ceux que la question posée ici ne verra jamais ;
 //   2. on répond s'il faut afficher l'encart d'avis.
 //
@@ -28,7 +28,7 @@ export async function POST(request) {
     )
     const ev = Array.isArray(data) ? data[0] : null
     // L'organisateur reçoit son propre questionnaire par mail, plus complet.
-    // Lui poser en plus la question de l'invité fausserait les deux.
+    // Lui poser en plus la question du participant fausserait les deux.
     if (!ev || ev.owner_token === deviceToken) return Response.json({ montrer: false })
 
     const res = await selectRows(
@@ -37,7 +37,7 @@ export async function POST(request) {
         `&select=id,album_opened_at,feedback_at,survey_optout&limit=1`
     )
     const g = Array.isArray(res.data) ? res.data[0] : null
-    // Sans fiche d'invité, on ne sait ni qui c'est ni s'il a déjà répondu :
+    // Sans fiche de participant, on ne sait ni qui c'est ni s'il a déjà répondu :
     // mieux vaut se taire que redemander à quelqu'un qui a déjà donné son avis.
     if (!g) return Response.json({ montrer: false })
 

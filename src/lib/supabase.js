@@ -81,4 +81,4 @@ export async function deleteRows(table, query) {
   return { ok: res.status < 300, status: res.status }
 }
 
-// (Le stockage des photos est désormais géré par Cloudflare R2 — voir ./r2)
+// (Le stockage des photos est désormais géré par Cloudflare R2, voir ./r2)

@@ -3,7 +3,7 @@ import { GUIDE, CHAPTERS } from '../../lib/guide'
 
 // Aperçu du guide : c'est la page qu'on partage le plus en message privé,
 // elle mérite sa propre carte plutôt que celle de l'accueil.
-export const alt = `${GUIDE.title} — ${GUIDE.subtitle}`
+export const alt = `${GUIDE.title} : ${GUIDE.subtitle}`
 export const size = TAILLE_OG
 export const contentType = 'image/png'
 

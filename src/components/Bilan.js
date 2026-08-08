@@ -3,7 +3,7 @@
 import Link from 'next/link'
 
 // ============================================================
-//  « La soirée en chiffres » — le bilan de l'organisateur,
+//  « La soirée en chiffres » : le bilan de l'organisateur,
 //  affiché une fois l'album ouvert.
 //
 //  Jusqu'ici, la page se vidait au moment précis où l'organisateur
@@ -37,10 +37,10 @@ export default function Bilan({ bilan }) {
       // séminaire n'en sont pas.
       label: 'Photographe en chef',
       valeur: champion.nom,
-      // Départagé à la rapidité quand plusieurs invités sont à égalité : sans
+      // Départagé à la rapidité quand plusieurs participants sont à égalité : sans
       // ça, le titre revenait au hasard de l'ordre de lecture.
       detail: champion.rapidite
-        ? `${champion.photos} clichés, dégainés en ${champion.rapidite} — le plus rapide`
+        ? `${champion.photos} clichés, dégainés en ${champion.rapidite}, le plus rapide`
         : `${champion.photos} cliché${champion.photos > 1 ? 's' : ''}`,
     })
   }
@@ -109,7 +109,7 @@ export default function Bilan({ bilan }) {
             <b>{photoDeLaSoiree.coeurs} ❤</b>
             <em>
               par {photoDeLaSoiree.nom}, à {photoDeLaSoiree.heure}
-              {photoDeLaSoiree.rapidite ? ` — l'unanimité en ${photoDeLaSoiree.rapidite}` : ''}
+              {photoDeLaSoiree.rapidite ? `, l'unanimité en ${photoDeLaSoiree.rapidite}` : ''}
             </em>
           </div>
         </div>
@@ -153,7 +153,7 @@ export default function Bilan({ bilan }) {
       {telechargements && telechargements.photos > 0 && (
         <p className="bilan-note">
           {telechargements.photos} photo{telechargements.photos > 1 ? 's' : ''} déjà
-          enregistrée{telechargements.photos > 1 ? 's' : ''} par vos invités.
+          enregistrée{telechargements.photos > 1 ? 's' : ''} par vos participants.
         </p>
       )}
 

@@ -1,5 +1,5 @@
 // ============================================================
-//  Ménage automatique (tâche planifiée quotidienne — voir vercel.json).
+//  Ménage automatique (tâche planifiée quotidienne, voir vercel.json).
 //
 //  1. Prévient l'organisateur 1 mois puis 1 semaine avant la suppression.
 //  2. Supprime définitivement les photos 6 mois après la révélation
@@ -105,7 +105,7 @@ async function purgeExpired(now) {
     if (paths.length) await deletePhotos(paths)
     if (ev.cover_url) await deletePhoto(ev.cover_url)
 
-    // Lignes en base : les photos d'abord (elles référencent les invités).
+    // Lignes en base : les photos d'abord (elles référencent les participants).
     await deleteRows('photos', `event_id=eq.${ev.id}`)
     await deleteRows('guests', `event_id=eq.${ev.id}`)
 
@@ -124,7 +124,7 @@ async function purgeExpired(now) {
 // --- Étape 3 : les essais du site ---
 //
 // Chaque visiteur qui scanne le QR de l'accueil repart avec son propre album.
-// Ils ne sont pas conservés : passé un jour, il ne reste rien — ni ligne, ni
+// Ils ne sont pas conservés : passé un jour, il ne reste rien : ni ligne, ni
 // fichier. Les adresses laissées volontairement, elles, vivent dans `accounts`
 // et survivent à ce ménage.
 async function purgeDemos(now) {

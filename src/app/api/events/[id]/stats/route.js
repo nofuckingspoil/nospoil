@@ -1,7 +1,7 @@
 import { selectRows } from '../../../../../lib/supabase'
 
 // Compteurs publics légers (participants + photos), rafraîchis en temps réel
-// par l'écran album des invités. Volontairement minimal : pas de signature de
+// par l'écran album des participants. Volontairement minimal : pas de signature de
 // couverture ni d'infos privées, pour rester rapide même appelé souvent.
 export async function GET(request, { params }) {
   const { id } = await params

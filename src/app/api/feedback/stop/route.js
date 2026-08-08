@@ -1,10 +1,10 @@
 // ============================================================
 //  Désinscription des mails d'enquête.
 //
-//  Un invité n'a jamais demandé à recevoir un questionnaire : le lien qui
+//  Un participant n'a jamais demandé à recevoir un questionnaire : le lien qui
 //  permet de dire non doit donc marcher en un clic, sans page de confirmation
-//  ni compte à créer. Il ne touche qu'à l'enquête — le lien de l'album, lui,
-//  reste dû à l'invité, c'est la contrepartie de son adresse.
+//  ni compte à créer. Il ne touche qu'à l'enquête : le lien de l'album, lui,
+//  reste dû au participant, c'est la contrepartie de son adresse.
 // ============================================================
 import { selectRows, updateRow } from '../../../../lib/supabase'
 

@@ -9,6 +9,6 @@ export default async function Image({ params }) {
   const nom = await nomEvenement(id)
   return carteOG({
     titre: nom || 'Les photos sont là',
-    accroche: "L'album de la soirée, pris par tous les invités.",
+    accroche: "L'album de la soirée, pris par tous les participants.",
   })
 }

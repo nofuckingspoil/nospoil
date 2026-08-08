@@ -1,7 +1,7 @@
 'use client'
 // ============================================================
 //  Identité d'appareil sans compte (localStorage).
-//  Permet de reconnaître un invité / organisateur sur son tél.
+//  Permet de reconnaître un participant / organisateur sur son tél.
 // ============================================================
 
 function randomToken() {
@@ -20,7 +20,7 @@ function getOrCreate(key) {
   }
 }
 
-// Jeton unique de l'appareil (commun organisateur + invité)
+// Jeton unique de l'appareil (commun organisateur + participant)
 export function getDeviceToken() {
   return getOrCreate('pellicule_device')
 }
@@ -72,7 +72,7 @@ export function getAccountEmail() {
 
 // Cette personne organise (ou a organisé) un événement depuis cet appareil ?
 // Sert à ne rien lui redemander : elle a déjà donné son adresse en créant son
-// événement — le guide et les autres ressources lui sont dus.
+// événement : le guide et les autres ressources lui sont dus.
 export function isOrganizer() {
   if (typeof window === 'undefined') return false
   return getMyEvents().length > 0 || !!getAccountEmail()
@@ -108,7 +108,7 @@ export function forgetMyEvent(id) {
   } catch {}
 }
 
-// Mémorise l'identité d'invité par événement (id + prénom + téléphone éventuel)
+// Mémorise l'identité de participant par événement (id + prénom + téléphone éventuel)
 export function saveGuest(eventId, guestId, name, email) {
   if (typeof window === 'undefined') return
   try { localStorage.setItem(`pellicule_guest_${eventId}`, JSON.stringify({ guestId, name, email: email || '' })) } catch {}

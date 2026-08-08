@@ -1,6 +1,6 @@
 import { selectRows, updateRow } from '../../../../lib/supabase'
 
-// Accorde la recharge prévue par l'organisateur, UNE SEULE FOIS par invité
+// Accorde la recharge prévue par l'organisateur, UNE SEULE FOIS par participant
 // (vérifié par son device_token). À zéro, la recharge est refusée.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))

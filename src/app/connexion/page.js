@@ -25,7 +25,7 @@ function Connexion() {
     if (known) setEmail(known)
   }, [])
 
-  // Connexion réussie : on garde les accès puis on file au tableau de bord —
+  // Connexion réussie : on garde les accès puis on file au tableau de bord, 
   // sauf si la personne venait d'ailleurs (le guide, par exemple) : `next` la
   // ramène là où elle était. On n'accepte qu'un chemin interne, jamais une
   // adresse complète : un lien de connexion ne doit pas pouvoir renvoyer
@@ -105,7 +105,7 @@ function Connexion() {
           <>
             <h2 className="h3" style={{ marginBottom: 6 }}>Retrouver mes événements</h2>
             <p className="muted small" style={{ marginBottom: 18 }}>
-              Entrez le mail utilisé à la création. Vous recevrez un lien de connexion — aucun mot de passe à retenir.
+              Entrez le mail utilisé à la création. Vous recevrez un lien de connexion, aucun mot de passe à retenir.
             </p>
             <form onSubmit={requestCode}>
               <div className="field">

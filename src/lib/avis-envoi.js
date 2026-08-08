@@ -3,12 +3,12 @@
 //
 //  Trois choses, dans cet ordre :
 //   1. J+2 après la révélation → questionnaire à l'organisateur ;
-//   2. J+3 → questionnaire aux invités qui ne sont JAMAIS allés jusqu'à
+//   2. J+3 → questionnaire aux participants qui ne sont JAMAIS allés jusqu'à
 //      l'album, et à eux seuls ;
 //   3. le récap de ce qui est arrivé depuis la veille.
 //
 //  Le point 2 est le cœur du dispositif. La question posée dans l'album ne
-//  voit, par construction, que les gens qui y sont arrivés — c'est-à-dire pas
+//  voit, par construction, que les gens qui y sont arrivés : c'est-à-dire pas
 //  ceux qui ont buté sur le QR code, sur la caméra ou sur le lien perdu.
 //  Ceux-là sont exactement ceux qu'il faut entendre, et le seul moyen de les
 //  joindre est le mail. On marque leur réponse comme venue « par mail » : si
@@ -28,9 +28,9 @@ const JOUR = 24 * 60 * 60 * 1000
 
 // Combien d'événements on regarde par passage.
 const LOT = 40
-// Plafond d'envois aux invités par passage. Brevo laisse 300 mails par jour
+// Plafond d'envois aux participants par passage. Brevo laisse 300 mails par jour
 // sur l'offre gratuite, et l'enquête n'a aucune raison de passer devant les
-// liens d'album. Ce qui déborde attendra le lendemain — le compte est
+// liens d'album. Ce qui déborde attendra le lendemain : le compte est
 // retourné par la route pour que le report se voie.
 const PLAFOND_INVITES = 60
 
@@ -82,7 +82,7 @@ export async function enqueteOrganisateurs(now = new Date()) {
   return envoyes
 }
 
-// ---------- 2. Les invités qui ne sont jamais venus jusqu'à l'album ----------
+// ---------- 2. Les participants qui ne sont jamais venus jusqu'à l'album ----------
 // Un jour après le mail d'album, pour ne pas empiler deux messages le même
 // matin. Envoyé une seule fois, sans aucune relance.
 export async function enqueteInvites(now = new Date()) {
@@ -97,7 +97,7 @@ export async function enqueteInvites(now = new Date()) {
       `&order=reveal_at.desc&limit=${LOT}`
   )
   if (!ok || !Array.isArray(data)) {
-    console.error('avis : lecture événements invités impossible', data)
+    console.error('avis : lecture événements participants impossible', data)
     return { envoyes: 0, reportes: 0 }
   }
 
@@ -133,7 +133,7 @@ export async function enqueteInvites(now = new Date()) {
       if (envoyes >= PLAFOND_INVITES) { reportes++; continue }
 
       // Le jeton est celui du lien personnel « mes photos ». Il peut manquer
-      // si l'invité a rejoint après la révélation : on le crée alors ici.
+      // si le participant a rejoint après la révélation : on le crée alors ici.
       let token = g.token
       if (!token) {
         token = makeToken()

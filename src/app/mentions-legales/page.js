@@ -9,7 +9,7 @@ export const metadata = {
   description: doc.description,
   alternates: { canonical: '/mentions-legales' },
   openGraph: {
-    title: `${doc.title} — ${BRAND.name}`,
+    title: `${doc.title} | ${BRAND.name}`,
     description: doc.description,
     url: 'https://timetoflash.fr/mentions-legales',
     type: 'website',

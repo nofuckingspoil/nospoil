@@ -6,7 +6,7 @@
 //  Principe : un seul écran, toujours le même, dans le même ordre.
 //  Seule la GRANDE CARTE du haut change selon le moment (avant la
 //  fête / pendant / le lendemain). Tout le reste est toujours là,
-//  simplement replié — pour qu'on retrouve toujours ce qu'on cherche.
+//  simplement replié, pour qu'on retrouve toujours ce qu'on cherche.
 // ============================================================
 
 import { use, useCallback, useEffect, useRef, useState } from 'react'
@@ -84,7 +84,7 @@ const FAIT_KEY = (id) => `ttf_fait_${id}`
 
 // Repris du tunnel de création : la même explication doit accompagner le même choix.
 const SHOT_PRESETS = [
-  { n: 3, em: '💎', title: '3 clichés', sub: 'Très rare — chaque photo est un événement' },
+  { n: 3, em: '💎', title: '3 clichés', sub: 'Très rare : chaque photo est un événement' },
   { n: 5, em: '🎞️', title: '5 clichés', sub: 'Le bon équilibre, recommandé' },
   { n: 8, em: '📸', title: '8 clichés', sub: 'Plus généreux, pour les longues soirées' },
 ]
@@ -137,7 +137,7 @@ export default function EventManage({ params }) {
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
   // Recadrage : `pos` est la position en cours d'ajustement, `null` tant qu'on
-  // n'y a pas touché — on affiche alors celle enregistrée.
+  // n'y a pas touché : on affiche alors celle enregistrée.
   const [recadrage, setRecadrage] = useState(false)
   const [confirmCover, setConfirmCover] = useState(false)
   const [pos, setPos] = useState(null)
@@ -300,7 +300,7 @@ export default function EventManage({ params }) {
       })
       const d = await r.json()
       if (d.error) throw new Error(d.error)
-      // Déjà réglé par quelqu'un d'autre — ou par soi-même, dans un onglet
+      // Déjà réglé par quelqu'un d'autre, ou par soi-même, dans un onglet
       // fermé avant le retour : le serveur vient de l'appliquer. On ne
       // renvoie personne vers un second paiement.
       if (d.alreadyPaid) {
@@ -317,7 +317,7 @@ export default function EventManage({ params }) {
   }
 
   // Photo de couverture : réglée après paiement, pas avant. Compressée dans le
-  // navigateur — une photo de téléphone brute est bien trop lourde.
+  // navigateur : une photo de téléphone brute est bien trop lourde.
   async function uploadCover(file) {
     if (!file) return
     setSettingMsg('')
@@ -449,10 +449,10 @@ export default function EventManage({ params }) {
     const ics = [
       'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TimeToFlash//FR', 'CALSCALE:GREGORIAN',
       ...block(`${id}-start@timetoflash`, start, new Date(start.getTime() + 5 * 3600000),
-        `📸 ${ev.name} — appareil photo partagé`,
+        `📸 ${ev.name} : appareil photo partagé`,
         `Pensez à poser les cartons QR.\nVotre tableau de bord organisateur (à garder privé) : ${ownerUrl}`),
       ...block(`${id}-reveal@timetoflash`, reveal, new Date(reveal.getTime() + 3600000),
-        `📸 Révélation des photos — ${ev.name}`,
+        `📸 Révélation des photos : ${ev.name}`,
         `Les photos s'ouvrent aujourd'hui !\nTableau de bord : ${ownerUrl}`),
       'END:VCALENDAR',
     ].join('\r\n')
@@ -584,7 +584,7 @@ export default function EventManage({ params }) {
   const paused = !!ev.revealPaused
   const shotsLeft = Math.max(0, (ev.guestCount || 0) * (ev.shotsPerGuest || 0) - (ev.photoCount || 0))
   const finAlbum = purgeDate(ev.revealAt)
-  // Un album protégé dont le message tait le code laisse cent invités devant
+  // Un album protégé dont le message tait le code laisse cent participants devant
   // une porte fermée : le code fait partie du message par défaut.
   const messageDeBase = revealed
     ? `Les photos de ${ev.name} sont en ligne ! ${ev.visibleCount ?? ev.photoCount} clichés pris par vous tous. C'est ici : ${galleryUrl}\n\nL'album reste disponible jusqu'au ${finAlbum ? formatJour(finAlbum) : 'dans six mois'}.`
@@ -595,7 +595,7 @@ export default function EventManage({ params }) {
   const toggleSec = (k) => setOpenSec((s) => (s === k ? null : k))
 
   // Renvoi d'une section à une autre : l'ouvrir ne suffit pas si elle est
-  // ailleurs dans la page — on l'amène aussi sous les yeux.
+  // ailleurs dans la page : on l'amène aussi sous les yeux.
   function allerA(cle, ancre) {
     setOpenSec(cle)
     requestAnimationFrame(() => {
@@ -635,7 +635,7 @@ export default function EventManage({ params }) {
           </div>
           <h2 className="db-hero-title">Imprimez votre QR code</h2>
           <p className="db-hero-sub">
-            Vos invités scannent sur place le jour J. Rien à leur envoyer avant, rien à installer.
+            Vos participants scannent sur place le jour J. Rien à leur envoyer avant, rien à installer.
           </p>
           <Link href={`/event/${id}/imprimer`} className="btn btn-accent db-hero-cta">
             Choisir un format et imprimer →
@@ -662,14 +662,14 @@ export default function EventManage({ params }) {
             <span className="db-eyebrow">depuis {formatHour(ev.startsAt)}</span>
           </div>
           {/* Seul « photos prises » mène quelque part, et directement à l'album :
-              taper ce nombre, c'est vouloir les voir. « Invités connectés »
-              compte tout le monde, là où la section n'en liste qu'une partie —
+              taper ce nombre, c'est vouloir les voir. « Participants connectés »
+              compte tout le monde, là où la section n'en liste qu'une partie : 
               le lien aurait déçu. La flèche signale ce qui se touche : sur un
               fond sombre, un survol ne se voit pas, et sur téléphone il n'existe pas. */}
           <div className="db-stats">
             <button type="button" className="db-stats-go"
               onClick={() => allerA('contacts', 'sec-invites')} disabled={!ev.contacts?.length}>
-              <b>{ev.guestCount}</b><span>invités connectés <span aria-hidden="true">→</span></span>
+              <b>{ev.guestCount}</b><span>participants connectés <span aria-hidden="true">→</span></span>
             </button>
             <Link href={`/g/${id}`} className="db-stats-go">
               <b>{ev.photoCount}</b><span>photos prises <span aria-hidden="true">→</span></span>
@@ -707,7 +707,7 @@ export default function EventManage({ params }) {
                 </div>
               ))}
               {guests.length > 5 && (
-                <div className="db-roster-more">+ {guests.length - 5} autres invités</div>
+                <div className="db-roster-more">+ {guests.length - 5} autres participants</div>
               )}
             </div>
           )}
@@ -727,7 +727,7 @@ export default function EventManage({ params }) {
           <div className="db-hero-top"><span className="db-eyebrow">révélation suspendue</span></div>
           <h2 className="db-hero-title">L'album est en pause</h2>
           <p className="db-hero-sub">
-            Vos invités ne voient rien, même si l'heure de révélation est passée.
+            Vos participants ne voient rien, même si l'heure de révélation est passée.
             Prenez le temps de vérifier les photos, puis reprenez quand vous voulez.
           </p>
           <Link href={`/g/${id}`} className="btn btn-dark db-hero-cta">Vérifier les photos →</Link>
@@ -744,10 +744,10 @@ export default function EventManage({ params }) {
           <div className="db-hero db-hero-ink">
             <div className="db-hero-top"><span className="db-eyebrow">c'est ouvert</span></div>
             <h2 className="db-hero-title">Album révélé</h2>
-            {/* Le nombre annoncé est celui que les invités voient : les photos
+            {/* Le nombre annoncé est celui que les participants voient : les photos
                 masquées ne sont visibles de personne. */}
             <p className="db-hero-sub">
-              {ev.visibleCount ?? ev.photoCount} photos, visibles par tous vos invités.
+              {ev.visibleCount ?? ev.photoCount} photos, visibles par tous vos participants.
               À eux de découvrir.
             </p>
             <button className="btn btn-accent db-hero-cta" onClick={() => setSheet('message')}>
@@ -778,8 +778,8 @@ export default function EventManage({ params }) {
               <p className="db-hero-confirm-t">Ouvrir l'album maintenant ?</p>
               <p className="db-hero-confirm-s">
                 {ev.guestCount > 1
-                  ? `Vos ${ev.guestCount} invités pourront voir`
-                  : 'Votre invité pourra voir'}
+                  ? `Vos ${ev.guestCount} participants pourront voir`
+                  : 'Votre participant pourra voir'}
                 {ev.photoCount > 1 ? ` les ${ev.photoCount} photos` : ' la photo'} dans la seconde.
                 Vous pourrez refermer l'album, mais pas faire oublier ce qui aura été vu.
               </p>
@@ -820,7 +820,7 @@ export default function EventManage({ params }) {
         <h2 className="db-hero-title">{ev.photoCount} photos vous attendent</h2>
         <p className="db-hero-sub">
           Vous seul pouvez les voir. Jetez-y un œil : vous pouvez masquer celles qui gênent
-          avant que vos invités ne les découvrent.
+          avant que vos participants ne les découvrent.
         </p>
         {/* Valider ne fige rien : le tri reste possible, avant comme après. On
             le rappelle ici, faute de quoi on croit sceller l'album. */}
@@ -832,7 +832,7 @@ export default function EventManage({ params }) {
             <p className="db-hero-confirm-s">
               Valider n'ouvre rien : l'album s'ouvrira le {formatShort(ev.revealAt)}, comme prévu.
               Vous pourrez encore <strong>masquer ou supprimer</strong> une photo jusque-là,
-              et même après — filtrez par personne dans l'album pour aller plus vite.
+              et même après : filtrez par personne dans l'album pour aller plus vite.
             </p>
             <div className="db-hero-duo">
               <Link href={`/g/${id}`} className="btn db-hero-2nd">Vérifier d'abord</Link>
@@ -913,7 +913,7 @@ export default function EventManage({ params }) {
             <>
               {' · '}
               <span className={`db-head-plan ${ev.quotaExceeded ? 'over' : ''}`}>
-                Jusqu'à {ev.maxGuests} invités
+                Jusqu'à {ev.maxGuests} participants
               </span>
             </>
           )}
@@ -927,24 +927,24 @@ export default function EventManage({ params }) {
       </nav>
 
       {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque
-          soit refusé — c'est le message qu'on veut voir le plus souvent.
+          soit refusé : c'est le message qu'on veut voir le plus souvent.
           « Dépassée » ne concerne plus que les événements d'avant la porte. */}
       {(ev.quotaExceeded || ev.quotaFull) && (ev.upgrade || ev.surMesure) && (
         <div className="db-quota">
           <div className="db-quota-top">
             <span className="db-eyebrow">{ev.quotaExceeded ? 'formule dépassée' : 'formule complète'}</span>
-            <span className="db-quota-count">{ev.guestCount} / {ev.maxGuests} invités</span>
+            <span className="db-quota-count">{ev.guestCount} / {ev.maxGuests} participants</span>
           </div>
           <h2 className="db-quota-title">
             {ev.quotaExceeded
               ? (revealedTime ? "L'album attend votre formule" : 'Agrandissez votre formule avant la révélation')
-              : 'Le prochain invité devra attendre'}
+              : 'Le prochain participant devra attendre'}
           </h2>
           <p className="db-quota-sub">
             {ev.quotaExceeded ? (
               <>
                 Vous êtes <strong>{ev.guestCount}</strong> alors que votre formule en couvre{' '}
-                <strong>{ev.maxGuests}</strong>. Tout le monde a pu photographier normalement —
+                <strong>{ev.maxGuests}</strong>. Tout le monde a pu photographier normalement : 
                 rien n'a été bloqué pendant la fête.{' '}
                 {revealedTime
                   ? "Il ne reste qu'à passer à la formule supérieure pour ouvrir l'album."
@@ -964,7 +964,7 @@ export default function EventManage({ params }) {
           {ev.surMesure ? (
             <a
               className="btn btn-accent db-quota-cta"
-              href={`mailto:${ev.contactEmail || 'support@timetoflash.fr'}?subject=${encodeURIComponent(`Plus de ${ev.maxGuests} invités — ${ev.name || 'mon événement'}`)}`}
+              href={`mailto:${ev.contactEmail || 'support@timetoflash.fr'}?subject=${encodeURIComponent(`Plus de ${ev.maxGuests} participants : ${ev.name || 'mon événement'}`)}`}
             >
               Nous écrire pour agrandir →
             </a>
@@ -972,12 +972,12 @@ export default function EventManage({ params }) {
             <button className="btn btn-accent db-quota-cta" onClick={startUpgrade} disabled={upgrading}>
               {upgrading
                 ? 'Redirection vers le paiement…'
-                : `Passer à ${ev.upgrade.maxGuests} invités — ${formatPrice(ev.upgrade.priceCents)} →`}
+                : `Passer à ${ev.upgrade.maxGuests} participants (${formatPrice(ev.upgrade.priceCents)}) →`}
             </button>
           )}
           <p className="db-quota-foot">
             {ev.surMesure
-              ? `Au-delà de ${ev.maxGuests} invités, nous établissons un tarif sur mesure. Écrivez-nous, on ouvre l'accès dans la foulée.`
+              ? `Au-delà de ${ev.maxGuests} participants, nous établissons un tarif sur mesure. Écrivez-nous, on ouvre l'accès dans la foulée.`
               : 'Vous ne réglez que la différence : ce que vous avez déjà payé reste acquis.'}
           </p>
           {upgradeMsg && upgradeMsg !== 'ok' && <div className="err" style={{ marginTop: 10 }}>{upgradeMsg}</div>}
@@ -986,7 +986,7 @@ export default function EventManage({ params }) {
 
       {upgradeMsg === 'ok' && !ev.quotaExceeded && !ev.quotaFull && (
         <div className="notice" style={{ marginTop: 16 }}>
-          ✅ <strong>Formule agrandie</strong> — vous couvrez maintenant {ev.maxGuests} invités.
+          ✅ <strong>Formule agrandie</strong> : vous couvrez maintenant {ev.maxGuests} participants.
         </div>
       )}
 
@@ -1038,9 +1038,9 @@ export default function EventManage({ params }) {
         {/* Deux zones distinctes, et c'est volontaire : au-dessus un APERÇU,
             qu'on regarde ; en dessous des ACTIONS, qu'on touche. Rendre le titre
             lui-même cliquable le faisait lire comme un intitulé de rubrique du
-            tableau de bord, et non comme le titre vu par les invités. */}
+            tableau de bord, et non comme le titre vu par les participants. */}
         <div className="db-ident">
-          <span className="db-ident-eyebrow">Aperçu · ce que voient les invités</span>
+          <span className="db-ident-eyebrow">Aperçu · ce que voient les participants</span>
 
           <div className="db-ident-ecran">
             <div
@@ -1060,7 +1060,7 @@ export default function EventManage({ params }) {
               {confirmCover && (
                 <div className="db-ident-confirm">
                   <p>Retirer cette photo ?</p>
-                  <span>Vos invités retrouveront le dégradé d'origine.</span>
+                  <span>Vos participants retrouveront le dégradé d'origine.</span>
                   <div className="db-ident-confirm-duo">
                     <button className="btn btn-ghost" onClick={() => setConfirmCover(false)}
                       disabled={coverBusy}>Annuler</button>
@@ -1146,18 +1146,18 @@ export default function EventManage({ params }) {
           </>
         )}
 
-        {/* Photos par invité — se fige au début de la soirée */}
+        {/* Photos par participant : se fige au début de la soirée */}
         <div className="db-set">
           <div className="db-set-l">
             <span className="db-set-lbl">
-              Photos par invité {locked && <span className="db-frozen">figé</span>}
+              Photos par participant {locked && <span className="db-frozen">figé</span>}
             </span>
             <span className="db-set-val" style={locked ? { color: 'var(--text4)' } : undefined}>
               {ev.shotsPerGuest} photos
               {ev.bonusShots > 0 ? `, recharge gratuite de +${ev.bonusShots}` : ', sans recharge'}
               {locked
-                ? ' — la soirée a commencé, tout le monde joue au même jeu'
-                : ` — modifiable jusqu'au ${formatShort(ev.startsAt)}`}
+                ? ' ; la soirée a commencé, tout le monde joue au même jeu'
+                : `, modifiable jusqu'au ${formatShort(ev.startsAt)}`}
             </span>
           </div>
           {!locked && (
@@ -1209,8 +1209,8 @@ export default function EventManage({ params }) {
                 <span>
                   <strong>Surprise (gratuit)</strong><br />
                   {draftBonus > 0
-                    ? "Choisissez le nombre de photos supplémentaires (5 au maximum). Un invité qui n'en a plus pourra les demander, une seule fois."
-                    : 'Cochez pour offrir gratuitement des photos supplémentaires aux invités.'}
+                    ? "Choisissez le nombre de photos supplémentaires (5 au maximum). Un participant qui n'en a plus pourra les demander, une seule fois."
+                    : 'Cochez pour offrir gratuitement des photos supplémentaires aux participants.'}
                 </span>
               </label>
               {draftBonus > 0 && (
@@ -1267,11 +1267,11 @@ export default function EventManage({ params }) {
       </Section>
 
       {/* La date de suppression vit dans le sous-titre : visible sans déplier la
-          section — personne n'ouvre une section pour y chercher une date dont il
-          ignore l'existence — mais sans alourdir le titre. */}
+          section (personne n'ouvre une section pour y chercher une date dont il
+          ignore l'existence), mais sans alourdir le titre. */}
       <Section id="sec-album" title="L'album"
         hint={[
-          revealed ? 'Ouvert à vos invités' : 'Caché jusqu’à la révélation',
+          revealed ? 'Ouvert à vos participants' : 'Caché jusqu’à la révélation',
           finAlbum ? `disponible jusqu'au ${formatJour(finAlbum)}` : null,
         ].filter(Boolean).join(' · ')}
         badge={`${ev.photoCount} photo${ev.photoCount > 1 ? 's' : ''}`}
@@ -1283,7 +1283,7 @@ export default function EventManage({ params }) {
         <div className="db-alb-t">Vérifier et trier les photos</div>
         <p className="muted small" style={{ marginBottom: 10 }}>
           {revealed
-            ? "Vos invités voient les photos. Vous pouvez encore en masquer une d'un geste."
+            ? "Vos participants voient les photos. Vous pouvez encore en masquer une d'un geste."
             : `Vous seul y avez accès. Masquez d'un geste celles qui gênent, avant que tout le monde ne les découvre le ${formatDate(ev.revealAt)}.`}
         </p>
         <Link href={`/g/${id}`} className="btn btn-dark">
@@ -1295,7 +1295,7 @@ export default function EventManage({ params }) {
         {finAlbum && (
           <p className="db-alb-fin">
             🗓️ Album en ligne jusqu'au <strong>{formatJour(finAlbum)}</strong>. Passé cette
-            date, les photos sont supprimées — invitez vos convives à les enregistrer avant.
+            date, les photos sont supprimées : invitez vos convives à les enregistrer avant.
           </p>
         )}
 
@@ -1305,7 +1305,7 @@ export default function EventManage({ params }) {
           {paused ? (
             <>
               <p className="muted small">
-                🔒 L'album est <strong>fermé</strong> : vos invités ne voient rien, même si
+                🔒 L'album est <strong>fermé</strong> : vos participants ne voient rien, même si
                 l'heure de révélation est passée.
               </p>
               <button className="btn btn-ghost" onClick={() => patchEvent({ revealPaused: false })}>
@@ -1325,7 +1325,7 @@ export default function EventManage({ params }) {
           <p className="muted small" style={{ marginBottom: 10 }}>
             {revealed
               ? "Ceux qui ont laissé leur adresse l'ont déjà reçu. Pour les autres :"
-              : `Vos invités verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
+              : `Vos participants verront un compte à rebours jusqu'au ${formatDate(ev.revealAt)}, puis les photos s'ouvriront toutes seules.`}
           </p>
           {/* Une seule action : le lien seul obligeait à écrire soi-même de quoi
               il s'agit, et le message tout prêt le contenait déjà. */}
@@ -1338,12 +1338,12 @@ export default function EventManage({ params }) {
 
         <div className="db-alb-bloc">
           <div className="db-alb-t">Protéger par un code</div>
-          {/* Même silhouette dans les deux états — titre, une ligne, une action. */}
+          {/* Même silhouette dans les deux états : titre, une ligne, une action. */}
           <p className="muted small" style={{ marginBottom: 10 }}>
             {ev.galleryCode
-              ? <>Actif — vos invités doivent entrer <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>. Pensez à le leur donner.</>
+              ? <>Actif : vos participants doivent entrer <strong style={{ color: 'var(--ink)' }}>{ev.galleryCode}</strong>. Pensez à le leur donner.</>
               : <>Le lien de l'album est déjà secret. Un code n'est utile que si vous craignez
-                  qu'il circule au-delà de vos invités — transféré, ou posté dans un groupe.</>}
+                  qu'il circule au-delà de vos participants : transféré, ou posté dans un groupe.</>}
           </p>
           {ev.galleryCode ? (
             <div className="db-alb-actions">
@@ -1374,7 +1374,7 @@ export default function EventManage({ params }) {
         </p>
         <p className="muted small" style={{ marginBottom: 14 }}>
           Un co-organisateur voit les <strong>photos avant la révélation</strong> et peut en
-          faire le tri — masquer ou supprimer celles qui gênent. Il règle aussi les dates et
+          faire le tri : masquer ou supprimer celles qui gênent. Il règle aussi les dates et
           invite les convives. Il ne peut pas <strong>supprimer l'événement</strong>.
         </p>
 
@@ -1427,7 +1427,7 @@ export default function EventManage({ params }) {
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-        <Section id="sec-invites" title="Invités inscrits" badge={String(ev.contacts.length)}
+        <Section id="sec-invites" title="Participants inscrits" badge={String(ev.contacts.length)}
           hint="Tous les participants, avec ou sans adresse"
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
           <div className="notice small" style={{ marginBottom: 12 }}>
@@ -1442,7 +1442,7 @@ export default function EventManage({ params }) {
               <div key={i} className="db-contact">
                 <span className="db-contact-name">{c.name}</span>
                 <span className="db-contact-val">
-                  {/* Sans adresse, l'invité ne recevra rien : c'est justement ce
+                  {/* Sans adresse, le participant ne recevra rien : c'est justement ce
                       qu'il faut voir pour penser à le prévenir autrement. */}
                   {c.email || c.phone || <em className="db-contact-sans">à prévenir vous-même</em>}
                   {c.email && c.failed && <em className="db-contact-ko"> · non distribué</em>}
@@ -1453,7 +1453,7 @@ export default function EventManage({ params }) {
           </div>
           {ev.contacts.some((c) => c.failed) && (
             <div className="notice small" style={{ marginTop: 12, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
-              ⚠️ Une ou plusieurs adresses n'ont pas pu être livrées. Prévenez ces invités
+              ⚠️ Une ou plusieurs adresses n'ont pas pu être livrées. Prévenez ces participants
               autrement : le message et le lien sont dans{' '}
               <button type="button" className="linklike" onClick={() => allerA('album', 'sec-album')}>
                 la section L'album
@@ -1479,7 +1479,7 @@ export default function EventManage({ params }) {
           <span aria-hidden="true">🛟</span>
           <span>
             <strong>La page d'aide</strong>
-            <em>Les pannes du jour J, expliquées simplement. À transférer à un invité qui coince.</em>
+            <em>Les pannes du jour J, expliquées simplement. À transférer à un participant qui coince.</em>
           </span>
         </Link>
       </div>
@@ -1488,7 +1488,7 @@ export default function EventManage({ params }) {
 
       <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
         {error && <div className="err" style={{ marginBottom: 12 }}>{error}</div>}
-        {/* Effacer les photos de tous les invités reste au seul organisateur.
+        {/* Effacer les photos de tous les participants reste au seul organisateur.
             Le serveur le refuse de toute façon : on évite juste de proposer un
             geste qui échouerait. */}
         {ev.role === 'admin' ? (
@@ -1506,7 +1506,7 @@ export default function EventManage({ params }) {
             <p className="muted small" style={{ marginBottom: 6 }}>
               {ev.photoCount > 0
                 ? <><strong>{ev.photoCount} photo{ev.photoCount > 1 ? 's' : ''}</strong> prise{ev.photoCount > 1 ? 's' : ''} par
-                    {' '}<strong>{ev.guestCount} invité{ev.guestCount > 1 ? 's' : ''}</strong> seront effacées, chez eux comme chez vous.</>
+                    {' '}<strong>{ev.guestCount} participant{ev.guestCount > 1 ? 's' : ''}</strong> seront effacées, chez eux comme chez vous.</>
                 : <>L'événement et son lien d'invitation seront effacés.</>}
             </p>
             <p className="muted small" style={{ marginBottom: 16 }}>
@@ -1555,7 +1555,7 @@ export default function EventManage({ params }) {
             )}
             {sheet === 'message' && (
               <>
-                <h3 className="h3">{revealed ? 'Prévenir vos invités' : "Annoncer l'album"}</h3>
+                <h3 className="h3">{revealed ? 'Prévenir vos participants' : "Annoncer l'album"}</h3>
                 <p className="muted small">
                   Modifiez-le si vous voulez, puis envoyez-le par le canal de votre choix.
                 </p>
@@ -1574,7 +1574,7 @@ export default function EventManage({ params }) {
                   <span>
                     <strong>Protéger l'album par un code.</strong>{' '}
                     {ev.galleryCode
-                      ? 'Vos invités devront l’entrer. Il est ajouté au message ci-dessus.'
+                      ? 'Vos participants devront l’entrer. Il est ajouté au message ci-dessus.'
                       : 'Seuls ceux à qui vous envoyez ce message pourront ouvrir l’album.'}
                   </span>
                 </label>
@@ -1606,7 +1606,7 @@ export default function EventManage({ params }) {
                 </button>
                 {souhaiteCode && !ev.galleryCode && (
                   <p className="hint" style={{ marginTop: 6 }}>
-                    Entrez d'abord le code, sinon vos invités trouveront porte close.
+                    Entrez d'abord le code, sinon vos participants trouveront porte close.
                   </p>
                 )}
               </>

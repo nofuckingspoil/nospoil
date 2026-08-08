@@ -2081,89 +2081,60 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .adm-bar { flex: 1; width: auto; }
 }
 
-/* ===== Carte flottante « Le guide de l'organisateur » =====
-   Pendant du badge QR, à droite. Contrastes relevés : sur fond sombre, tout
-   texte sous 70 % d'opacité devient illisible en petit corps. */
-.gb {
-  --gb-w: clamp(268px, 24vw, 340px);
-  position: fixed; right: clamp(12px, 1.6vw, 20px); bottom: clamp(12px, 1.6vw, 20px);
-  z-index: 40; width: var(--gb-w); max-width: calc(100vw - 24px);
-  background: var(--dark); border: 1px solid rgba(255,255,255,.1);
-  border-radius: 22px; box-shadow: 0 20px 50px rgba(0,0,0,.4);
-  transition: transform .18s ease, box-shadow .18s ease;
-  animation: gb-in .35s cubic-bezier(.2,.8,.3,1);
+/* ===== Bandeau « Le guide de l'organisateur » =====
+   Une bande sombre posée tout en haut, avant la barre du site : elle ne
+   recouvre rien, et s'en va avec le défilement. Bord supérieur perforé
+   comme une amorce de pellicule : le bandeau appartient au site. */
+.gbn {
+  position: relative; z-index: 41;
+  background: var(--dark); color: #fff;
+  overflow: hidden;
+  animation: gbn-in .3s ease-out;
 }
-.gb:hover { transform: translateY(-3px); box-shadow: 0 26px 62px rgba(0,0,0,.48); }
-@keyframes gb-in { from { opacity: 0; transform: translateY(18px) } to { opacity: 1; transform: none } }
+@keyframes gbn-in { from { max-height: 0; opacity: 0 } to { max-height: 90px; opacity: 1 } }
+@media (prefers-reduced-motion: reduce) { .gbn { animation: none } }
 
-.gb-link {
-  display: flex; flex-direction: column; text-decoration: none;
-  padding: 22px 24px 20px;
-}
-/* Étiquette : orange vif sur sombre, en capitales espacées. */
-.gb-tag {
-  display: flex; align-items: center; gap: 7px;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em;
-  text-transform: uppercase; color: var(--amber);
-}
-.gb-t1 {
-  font-family: var(--font-display); font-weight: 800; font-size: 22px;
-  line-height: 1.18; letter-spacing: -.025em; color: #fff; margin-top: 12px;
-}
-/* Blanc à 78 % : le minimum lisible en 14 px sur ce fond. */
-.gb-sub {
-  font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.78); margin-top: 10px;
-}
-.gb-go {
-  font-weight: 700; font-size: 14.5px; color: var(--accent-lt); margin-top: 16px;
-}
-.gb:hover .gb-go { text-decoration: underline; }
-.gb-x {
-  position: absolute; top: 9px; right: 10px; z-index: 1;
-  background: none; border: none; cursor: pointer; padding: 4px 8px;
-  font-size: 20px; line-height: 1; color: rgba(255,255,255,.5);
-}
-.gb-x:hover { color: #fff; }
-
-/* Fenêtres peu hautes : on retire la phrase de détail pour que les deux
-   cartes du bas d'écran ne mangent pas la page. */
-@media (max-height: 760px) {
-  .gb { --gb-w: clamp(250px, 21vw, 300px); }
-  .gb-sub { display: none; }
-  .gb-link { padding: 18px 20px 17px; }
-  .gb-t1 { font-size: 19px; margin-top: 10px; }
-  .gb-go { margin-top: 12px; }
+/* Les perforations, discrètes : lisibles de près, invisibles de loin. */
+.gbn::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 4px; height: 4px;
+  background-image: repeating-linear-gradient(90deg, rgba(255,255,255,.16) 0 7px, transparent 7px 15px);
+  pointer-events: none;
 }
 
-/* ---- Mobile : panneau glissant, à la place de la carte ---- */
-.gs-veil {
-  position: fixed; inset: 0; z-index: 90; display: flex; align-items: flex-end;
-  background: rgba(20,22,31,.55); backdrop-filter: blur(2px);
-  animation: gs-fond .22s ease-out;
+.gbn-in {
+  display: flex; align-items: center; gap: 10px;
+  max-width: 1040px; margin: 0 auto; padding: 11px 22px 10px;
 }
-@keyframes gs-fond { from { opacity: 0 } to { opacity: 1 } }
-.gs {
-  width: 100%; background: #fff; border-radius: 26px 26px 0 0;
-  padding: 12px 22px calc(24px + env(safe-area-inset-bottom));
-  box-shadow: 0 -18px 50px rgba(20,22,31,.3);
-  animation: gs-monte .3s cubic-bezier(.2,.8,.3,1);
+/* Même largeur que la barre du site sur les pages larges (le journal). */
+.gbn-in.large { max-width: 1180px; }
+.gbn-link {
+  display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;
+  text-decoration: none; color: inherit;
 }
-@keyframes gs-monte { from { transform: translateY(100%) } to { transform: none } }
-.gs-grip {
-  width: 42px; height: 4px; border-radius: 999px; background: var(--line);
-  margin: 0 auto 18px;
+.gbn-ic { font-size: 15px; flex-shrink: 0; }
+/* Une seule ligne, quoi qu'il arrive : un bandeau qui se replie sur deux
+   lignes prend la place d'un encart et redevient envahissant. */
+.gbn-txt {
+  min-width: 0; font-size: 14px; line-height: 1.35;
+  color: rgba(255,255,255,.82);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.gs-ic { font-size: 30px; display: block; }
-.gs h2 {
-  font-family: var(--font-display); font-weight: 800; font-size: 22px;
-  letter-spacing: -.02em; margin: 10px 0 8px; color: var(--ink);
+.gbn-txt strong { font-weight: 700; color: #fff; }
+.gbn-go {
+  flex-shrink: 0; font-weight: 700; font-size: 14px; color: var(--accent-lt);
 }
-.gs p { margin: 0 0 20px; font-size: 14.5px; line-height: 1.55; color: var(--text2); }
-.gs-go { width: 100%; text-align: center; text-decoration: none; }
-.gs-no {
-  display: block; width: 100%; margin-top: 10px; padding: 12px 0;
-  background: none; border: none; cursor: pointer;
-  font: inherit; font-size: 14px; color: var(--text3);
+.gbn-link:hover .gbn-go { text-decoration: underline; }
+.gbn-x {
+  flex-shrink: 0; background: none; border: none; cursor: pointer;
+  padding: 2px 4px; font-size: 20px; line-height: 1; color: rgba(255,255,255,.45);
+}
+.gbn-x:hover { color: #fff; }
+
+@media (max-width: 680px) {
+  .gbn-in { padding: 10px 16px 9px; gap: 8px; }
+  .gbn-long { display: none; }
+  .gbn-txt { font-size: 13px; }
+  .gbn-go { font-size: 13px; }
 }
 
 /* ---- Encart guide en fin d'article de blog ---- */
@@ -2607,9 +2578,9 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
    ============================================================ */
 .ck {
   position: fixed; z-index: 60;
-  /* Au centre : les deux coins du bas sont déjà pris (le QR d'essai à gauche,
-     le guide à droite) et on ne recouvre ni l'un ni l'autre. */
-  left: 50%; transform: translateX(-50%);
+  /* En bas à droite : le coin gauche appartient au QR d'essai de l'accueil,
+     et le milieu de l'écran barrait la lecture au lieu de l'accompagner. */
+  right: 24px;
   bottom: calc(20px + env(safe-area-inset-bottom));
   width: min(390px, calc(100vw - 40px));
   background: var(--card);
@@ -2619,20 +2590,9 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   padding: 20px 20px 18px;
   animation: ck-monte .42s cubic-bezier(.2,.9,.3,1) .35s backwards;
 }
-/* Hors accueil, le coin gauche est libre : la carte s'y range au lieu de
-   barrer le milieu de l'écran. Le coin droit reste au badge du guide. */
-.ck--gauche {
-  left: 24px; transform: none;
-  animation-name: ck-monte-gauche;
-}
-@keyframes ck-monte-gauche {
+@keyframes ck-monte {
   from { transform: translateY(18px) scale(.97); opacity: 0 }
   to   { transform: none; opacity: 1 }
-}
-
-@keyframes ck-monte {
-  from { transform: translate(-50%, 18px) scale(.97); opacity: 0 }
-  to   { transform: translateX(-50%); opacity: 1 }
 }
 
 /* Le liseré perforé d'un bord de pellicule, en haut de la carte. */
@@ -2664,8 +2624,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 @media (max-width: 560px) {
   .ck {
-    left: 12px; right: 12px; width: auto; transform: none;
-    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 12px; right: 12px; width: auto;
+    /* Au-dessus du bouton « Créer mon événement » posé en bas de l'écran :
+       la question des cookies ne doit pas recouvrir le geste principal. */
+    bottom: calc(74px + env(safe-area-inset-bottom));
     animation-name: ck-monte-mobile;
   }
   .ck-txt p { font-size: 13px; }

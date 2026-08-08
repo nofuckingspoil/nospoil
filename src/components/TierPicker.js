@@ -19,20 +19,20 @@ export default function TierPicker({ value, onChange, inline = false, onClose })
     <div className={`wiz-tierpick ${inline ? 'wiz-tierpick-inline' : ''}`}>
       <div className="wiz-tierpick-q">Vous serez combien ?</div>
       <div className="wiz-tierpick-val">
-        {/* Le dernier palier disait « 300 invités ou plus » : il s'arrête pourtant
+        {/* Le dernier palier disait « 300 participants ou plus » : il s'arrête pourtant
             à 300 comme les autres, et le 301e resterait à la porte. On annonce la
             borne, et on renvoie vers nous pour ce qu'il y a au-dessus. */}
-        <span className="n">Jusqu&apos;à {tier.maxGuests} invités</span>
+        <span className="n">Jusqu&apos;à {tier.maxGuests} participants</span>
         <span className="p">{formatPrice(tier.priceCents)}</span>
       </div>
       <input
         type="range" min={0} max={TIERS.length - 1} step={1} value={idx < 0 ? 0 : idx}
         onChange={(e) => onChange(TIERS[Number(e.target.value)].maxGuests)}
-        className="wiz-tierrange" aria-label="Nombre d'invités"
+        className="wiz-tierrange" aria-label="Nombre de participants"
       />
       {/* La bille d'un curseur natif ne parcourt pas toute la largeur : elle
           s'arrête à un demi-diamètre de chaque bord. On place donc chaque nombre
-          sur sa position réelle, pas sur une répartition régulière — sinon les
+          sur sa position réelle, pas sur une répartition régulière : sinon les
           deux ne tombent jamais en face. */}
       <div className="wiz-tierticks">
         {TIERS.map((t, i) => (
@@ -48,11 +48,10 @@ export default function TierPicker({ value, onChange, inline = false, onClose })
           qu'il y a une suite, et par où elle passe. */}
       {isTop && (
         <p className="wiz-tierpick-more">
-          Plus de {TOP_TIER.maxGuests} invités ?{' '}
-          <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Plus de ${TOP_TIER.maxGuests} invités`)}`}>
+          Plus de {TOP_TIER.maxGuests} participants ?{' '}
+          <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent(`Plus de ${TOP_TIER.maxGuests} participants`)}`}>
             Écrivez-nous
-          </a>{' '}
-          — nous faisons un tarif sur mesure.
+          </a>, nous faisons un tarif sur mesure.
         </p>
       )}
       {!inline && (

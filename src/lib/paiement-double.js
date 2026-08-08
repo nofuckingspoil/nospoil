@@ -1,14 +1,14 @@
 // ============================================================
 //  Deux règlements pour un seul agrandissement.
 //
-//  Depuis qu'un co-organisateur peut payer, l'alerte « un invité attend à la
+//  Depuis qu'un co-organisateur peut payer, l'alerte « un participant attend à la
 //  porte » part à plusieurs personnes à la fois. Deux d'entre elles peuvent
 //  très bien régler en même temps, chacune croyant sauver la soirée. La
 //  formule, elle, ne monte qu'une fois.
 //
 //  Rien ne le signalerait : le second payeur voit un écran normal, et
 //  l'événement est bien à niveau. Seul un remboursement manuel répare la
-//  chose — encore faut-il savoir qu'il y a lieu de le faire.
+//  chose, encore faut-il savoir qu'il y a lieu de le faire.
 // ============================================================
 import 'server-only'
 import { sendMail, layout, siteUrl } from './mail'
@@ -32,8 +32,8 @@ export async function alerterDoublePaiement({ eventName, eventId, email, montant
         Le remboursement se fait depuis Stripe, sur la session ci-dessus. Prévenez la
         personne : de son côté, rien n'indique qu'elle a payé pour rien.
       </div>`,
-    footer: `Ce message n'est envoyé que dans ce cas précis — deux paiements pour un même agrandissement.`,
+    footer: `Ce message n'est envoyé que dans ce cas précis : deux paiements pour un même agrandissement.`,
   })
 
-  return sendMail({ to: adminEmail(), subject: `⚠️ Double paiement à rembourser — ${eventName || 'événement'}`, html })
+  return sendMail({ to: adminEmail(), subject: `⚠️ Double paiement à rembourser : ${eventName || 'événement'}`, html })
 }

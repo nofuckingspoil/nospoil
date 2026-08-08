@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../components/SiteNav'
 import { BRAND } from '../../lib/brand'
@@ -11,7 +12,7 @@ export const metadata = {
   description: GUIDE.promise,
   alternates: { canonical: '/guide' },
   openGraph: {
-    title: `${GUIDE.title} — ${BRAND.name}`,
+    title: `${GUIDE.title} | ${BRAND.name}`,
     description: GUIDE.promise,
     url: URL,
     type: 'article',
@@ -61,7 +62,7 @@ export default function GuidePage() {
 
       <div className="dj-wrap">
         <div className="dj-prose">
-          {/* SOMMAIRE — visible de tous : c'est lui qui donne envie de la suite. */}
+          {/* SOMMAIRE (visible de tous) : c'est lui qui donne envie de la suite. */}
           <section className="gd-toc">
             <h2>Au programme</h2>
             <ol>
@@ -78,7 +79,22 @@ export default function GuidePage() {
           <Chapter c={FIRST} />
 
           <GuideGate exchange={GUIDE.exchange}>
-            {REST.map((c) => <Chapter key={c.n} c={c} />)}
+            {/* Un rappel posé au milieu de la lecture, sur le ton du guide :
+                on rappelle que rien n'est figé, on ne presse personne. */}
+            {REST.map((c) => (
+              <Fragment key={c.n}>
+                <Chapter c={c} />
+                {c.n === 4 && (
+                  <div className="dj-cta">
+                    <div>
+                      <h3>Créer l'événement prend deux minutes</h3>
+                      <span>Les réglages vus dans les chapitres précédents se modifient jusqu'au jour J.</span>
+                    </div>
+                    <Link className="dj-btn dj-btn--dark" href="/create?tier=5">Créer mon événement</Link>
+                  </div>
+                )}
+              </Fragment>
+            ))}
 
             <section className="gd-chap">
               <span className="gd-chap-n">Aide-mémoire</span>
@@ -97,7 +113,7 @@ export default function GuidePage() {
           <div className="dj-cta">
             <div>
               <h3>Prêt à lancer votre événement ?</h3>
-              <span>Gratuit jusqu'à 5 invités, sans carte bancaire.</span>
+              <span>Gratuit jusqu'à 5 participants, sans carte bancaire.</span>
             </div>
             <Link className="dj-btn dj-btn--dark" href="/create?tier=5">Créer mon événement</Link>
           </div>

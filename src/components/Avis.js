@@ -9,7 +9,7 @@
 //  Tout est visible d'un coup, sans étapes. Un questionnaire découpé en pages
 //  cache son propre coût : on accepte de commencer sans savoir combien il en
 //  reste, et l'on abandonne au milieu. Ici on voit tout de suite ce qu'on
-//  s'engage à donner — et une seule question est obligatoire.
+//  s'engage à donner, et une seule question est obligatoire.
 //
 //  Deux choses s'ouvrent en cours de route, et seulement en cours de route :
 //  la grande question ouverte, reformulée d'après la note qu'on vient de
@@ -154,7 +154,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         <button className="avis-fermer" onClick={onClose} aria-label="Fermer">×</button>
       )}
 
-      {/* 1 — La note. La seule question obligatoire : celle à laquelle tout le
+      {/* 1. La note. La seule question obligatoire : celle à laquelle tout le
           monde répond, et qui suffit à mesurer la satisfaction dans le temps. */}
       <div className="avis-q">
         <div className="avis-lbl">{orga ? 'Dans l’ensemble, comment s’est passée votre soirée ?' : 'Vous avez aimé ?'}</div>
@@ -171,7 +171,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         </div>
       </div>
 
-      {/* 2 — La question ouverte, et de la place pour y répondre. Elle se
+      {/* 2. La question ouverte, et de la place pour y répondre. Elle se
           reformule d'après la note qui vient d'être donnée : c'est la même
           case, mais on ne demande pas la même chose à quelqu'un qui a mis
           « Bof » et à quelqu'un qui a mis « Génial ». */}
@@ -186,7 +186,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         </div>
       )}
 
-      {/* 3 — La recommandation, organisateur seulement. C'est la question qui
+      {/* 3. La recommandation, organisateur seulement. C'est la question qui
           se compare d'un mois sur l'autre : elle ne changera plus. */}
       {orga && (
         <div className="avis-q">
@@ -205,15 +205,15 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         </div>
       )}
 
-      {/* 4 — Les difficultés. Un oui/non d'abord, la liste seulement après :
+      {/* 4. Les difficultés. Un oui/non d'abord, la liste seulement après :
           celui qui n'a rien eu répond en un clic et passe à la suite, celui qui
           a eu un souci se voit proposer des cases plutôt qu'une page blanche.
 
-          Les cases restent indispensables — « qu'est-ce qui a coincé ? » en
+          Les cases restent indispensables : « qu'est-ce qui a coincé ? » en
           texte libre ne récolte que des « rien ». La liste, elle, force à se
           souvenir. */}
       <div className="avis-q">
-        <div className="avis-lbl">{orga ? 'Avez-vous eu un problème technique, vous ou vos invités ?' : 'Avez-vous eu un problème technique ?'}</div>
+        <div className="avis-lbl">{orga ? 'Avez-vous eu un problème technique, vous ou vos participants ?' : 'Avez-vous eu un problème technique ?'}</div>
         <Choix options={PROBLEME} valeur={aEuProbleme} onChange={repondreProbleme} />
 
         {aEuProbleme === 'oui' && (
@@ -243,7 +243,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
 
       {orga ? (
         <>
-          {/* 5 — Ce qui a plu : sert à savoir ce qu'on ne doit surtout pas casser. */}
+          {/* 5. Ce qui a plu : sert à savoir ce qu'on ne doit surtout pas casser. */}
           <div className="avis-q">
             <div className="avis-lbl">Qu’est-ce qui a le plus plu, chez vous ?</div>
             <Choix options={PREFEREES} valeur={preferee} onChange={setPreferee} />
@@ -273,7 +273,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           </div>
         </>
       ) : (
-        /* 5 bis — La question qui compte pour la suite : chaque invité est un
+        /* 5 bis. La question qui compte pour la suite : chaque participant est un
            organisateur en puissance, et c'est là que ça se joue. */
         <div className="avis-q">
           <div className="avis-lbl">Utiliseriez-vous Time to Flash pour votre propre fête ?</div>

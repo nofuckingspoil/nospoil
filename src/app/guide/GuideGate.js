@@ -31,7 +31,7 @@ export default function GuideGate({ exchange, children }) {
   useEffect(() => {
     // Un organisateur ne repasse jamais par la porte : il a déjà laissé son
     // adresse en créant son événement. On le reconnaît soit à cet appareil,
-    // soit au lien `?orga=1` que portent nos mails et le tableau de bord —
+    // soit au lien `?orga=1` que portent nos mails et le tableau de bord, 
     // indispensable quand il ouvre le guide depuis son téléphone.
     let parLien = false
     try { parLien = new URLSearchParams(window.location.search).get('orga') === '1' } catch {}
@@ -92,7 +92,7 @@ export default function GuideGate({ exchange, children }) {
               deviner qu'on a affaire à un organisateur : on lui laisse la porte
               de service plutôt que de lui redemander son adresse. */}
           <p className="gd-gate-deja">
-            Vous avez déjà créé un événement ? Le guide vous est ouvert —{' '}
+            Vous avez déjà créé un événement ? Le guide vous est ouvert :{' '}
             <Link href="/connexion?next=/guide%3Forga%3D1">connectez-vous</Link>.
           </p>
         </div>

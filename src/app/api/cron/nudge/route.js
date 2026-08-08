@@ -1,5 +1,5 @@
 // ============================================================
-//  Rappels à l'organisateur (tâche planifiée quotidienne — voir vercel.json).
+//  Rappels à l'organisateur (tâche planifiée quotidienne, voir vercel.json).
 //
 //  Le tableau de bord ne sert que si on l'ouvre au bon moment. Deux mails :
 //   1. Le matin de l'événement  → « c'est aujourd'hui », avec le QR.
@@ -123,7 +123,7 @@ async function nudgeAfterParty(now, base) {
         guestCount,
         revealDate: frDate(ev.reveal_at),
         // Formule dépassée : on l'annonce dans ce mail plutôt que dans un envoi
-        // séparé — il arrive pile au bon moment, entre la fête et la révélation.
+        // séparé : il arrive pile au bon moment, entre la fête et la révélation.
         // Les co-organisateurs le reçoivent aussi : ils peuvent régler, et
         // l'album reste fermé pour tout le monde tant que personne ne l'a fait.
         quota: depasse ? { maxGuests: ev.max_guests } : null,
@@ -136,7 +136,7 @@ async function nudgeAfterParty(now, base) {
   return sent
 }
 
-// --- 3. Le lien de l'album aux invités qui ont laissé leur adresse ---
+// --- 3. Le lien de l'album aux participants qui ont laissé leur adresse ---
 // Filet de sécurité : normalement l'envoi part dès la révélation, déclenché
 // par le tableau de bord. Ici on rattrape les événements révélés tout seuls.
 async function notifyRevealedEvents(now) {
@@ -180,7 +180,7 @@ export async function GET(request) {
   let avisInvites = { envoyes: 0, reportes: 0 }
   let recap = 0
   try { avisOrga = await enqueteOrganisateurs(now) } catch (err) { console.error('cron/nudge: enquête organisateurs', err) }
-  try { avisInvites = await enqueteInvites(now) } catch (err) { console.error('cron/nudge: enquête invités', err) }
+  try { avisInvites = await enqueteInvites(now) } catch (err) { console.error('cron/nudge: enquête participants', err) }
   try { recap = await recapDuJour() } catch (err) { console.error('cron/nudge: récap avis', err) }
 
   return Response.json({
@@ -188,7 +188,7 @@ export async function GET(request) {
     avisOrga,
     avisInvites: avisInvites.envoyes,
     // Ce que le plafond du jour a laissé de côté : il repartira demain. On le
-    // dit plutôt que de le taire — un envoi tronqué en silence se lit comme
+    // dit plutôt que de le taire : un envoi tronqué en silence se lit comme
     // un envoi complet.
     avisReportes: avisInvites.reportes,
     recap,

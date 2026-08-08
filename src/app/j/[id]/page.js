@@ -46,7 +46,7 @@ export default function GuestCamera({ params }) {
   const { id } = use(params)
 
   const [phase, setPhase] = useState('loading') // loading | cover | name | attente | camera | error
-  const [attente, setAttente] = useState(null)  // { eventName, maxGuests } — formule complète
+  const [attente, setAttente] = useState(null)  // { eventName, maxGuests } : formule complète
   const [mailRetour, setMailRetour] = useState('') // « j'ai déjà participé » : adresse d'alors
   const [meta, setMeta] = useState(null)
   const [name, setName] = useState('')
@@ -86,14 +86,14 @@ export default function GuestCamera({ params }) {
     setInApp(isInAppBrowser()) // au montage seulement : le serveur ne connaît pas le navigateur
     // Le jeton part avec la requête : l'organisateur qui prend ses propres photos
     // n'a pas à se présenter comme un inconnu. Sans jeton valable, le serveur ne
-    // renvoie rien de plus qu'à n'importe quel invité.
+    // renvoie rien de plus qu'à n'importe quel participant.
     fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getOwnerToken(id) } })
       .then((r) => r.json())
       .then((d) => {
         if (d.error) { setError(d.error); setPhase('error'); return }
         setMeta(d)
         // Album ouvert : la pellicule est finie, et les photos sont là. On y va
-        // directement — un écran intermédiaire n'aurait annoncé que ce que la
+        // directement : un écran intermédiaire n'aurait annoncé que ce que la
         // page suivante montre, animation d'ouverture comprise. `replace` pour
         // que le retour du navigateur ne ramène pas ici.
         if (d.revealed) { window.location.replace(`/g/${id}`); return }
@@ -102,7 +102,7 @@ export default function GuestCamera({ params }) {
         else {
           // Rien de saisi encore : on reprend ce que le serveur sait de cet
           // événement précis. Surtout pas l'adresse mémorisée par le navigateur :
-          // elle vient d'une autre connexion, et ce champ est facultatif — le
+          // elle vient d'une autre connexion, et ce champ est facultatif : le
           // pré-remplir changerait un consentement donné en consentement à retirer.
           if (d.ownerName) setName(String(d.ownerName).trim().split(/\s+/)[0])
           if (d.ownerEmail) setEmail(d.ownerEmail)
@@ -119,7 +119,7 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, liveCam, facingMode])
 
-  // À la 1re ouverture de la caméra (par appareil + événement), on rappelle à l'invité
+  // À la 1re ouverture de la caméra (par appareil + événement), on rappelle au participant
   // de garder son lien pour revenir finir ses photos. Affiché une seule fois.
   useEffect(() => {
     if (phase !== 'camera') return
@@ -147,7 +147,7 @@ export default function GuestCamera({ params }) {
     navigator.clipboard?.writeText(joinUrl).then(() => { setQrCopied(true); setTimeout(() => setQrCopied(false), 1800) })
   }
 
-  // Ouvre l'appli Messages du téléphone, pré-remplie avec le lien : l'invité se l'envoie
+  // Ouvre l'appli Messages du téléphone, pré-remplie avec le lien : le participant se l'envoie
   // à lui-même (gratuit) pour revenir prendre ses photos restantes plus tard.
   // Le destinataire est laissé vide : il choisit son propre numéro dans l'appli.
   function smsMyLink() {
@@ -241,7 +241,7 @@ export default function GuestCamera({ params }) {
     } catch {}
   }
 
-  // Vérifie l'adresse quand l'invité quitte le champ : la correction arrive
+  // Vérifie l'adresse quand le participant quitte le champ : la correction arrive
   // avant qu'il ait à revenir dessus. Ne bloque jamais : l'adresse est facultative.
   async function verifierMail(value) {
     const v = (value || '').trim()
@@ -287,7 +287,7 @@ export default function GuestCamera({ params }) {
     } finally { setBusy(false) }
   }
 
-  // À la porte : on retente tout seul. L'invité n'a rien à surveiller, et
+  // À la porte : on retente tout seul. Le participant n'a rien à surveiller, et
   // l'organisateur n'a personne à rappeler une fois qu'il a payé.
   useEffect(() => {
     if (phase !== 'attente') return
@@ -327,7 +327,7 @@ export default function GuestCamera({ params }) {
       return true
     } catch { return false }
   }
-  // Nouvelle tentative d'accès caméra (après que l'invité a réautorisé dans son navigateur)
+  // Nouvelle tentative d'accès caméra (après que le participant a réautorisé dans son navigateur)
   function retryCamera() {
     setCamBlocked(false)
     if (liveCam) startCamera()
@@ -341,7 +341,7 @@ export default function GuestCamera({ params }) {
     setPending((p) => [{ tempId, url }, ...p])
     setGuest((g) => (g ? { ...g, shotsTaken: Math.min(g.shotsPerGuest, g.shotsTaken + 1) } : g))
     try {
-      // Mini-version légère (~640px) pour l'affichage de l'album — économise la data
+      // Mini-version légère (~640px) pour l'affichage de l'album, économise la data
       let thumbBlob = null
       try {
         const im = await decodeImage(blob)
@@ -356,7 +356,7 @@ export default function GuestCamera({ params }) {
 
       // Les navigateurs des messageries suspendent la page pendant que
       // l'appareil photo est ouvert : la première requête au retour se perd
-      // parfois. On retente une fois avant de parler d'échec à l'invité.
+      // parfois. On retente une fois avant de parler d'échec au participant.
       let res = null
       for (let tentative = 0; tentative < 2 && !res; tentative++) {
         try { res = await fetch('/api/photo', { method: 'POST', body: fd }) }
@@ -366,7 +366,7 @@ export default function GuestCamera({ params }) {
         }
       }
       const d = await res.json().catch(() => ({}))
-      if (res.status === 409) { setError('Pellicule pleine — supprime une photo pour en reprendre une.') }
+      if (res.status === 409) { setError('Pellicule pleine : supprime une photo pour en reprendre une.') }
       else if (!res.ok) { throw new Error(d.error || "Échec de l'envoi.") }
     } catch (err) {
       setError(err.message || "Échec de l'envoi. Réessaie.")
@@ -386,7 +386,7 @@ export default function GuestCamera({ params }) {
   async function snap() {
     if (busy || !videoRef.current) return
     const remaining = guest.shotsPerGuest - guest.shotsTaken
-    if (remaining <= 0) { setError('Pellicule pleine — supprime une photo pour en reprendre une.'); return }
+    if (remaining <= 0) { setError('Pellicule pleine : supprime une photo pour en reprendre une.'); return }
     setBusy(true); setError('')
 
     // Flash : torche réelle si dispo (Android), sinon flash écran pour les selfies (caméra avant)
@@ -440,7 +440,7 @@ export default function GuestCamera({ params }) {
   async function onGalleryPicked(e) {
     const file = e.target.files?.[0]; e.target.value = ''
     if (!file) return
-    if (full) { setError('Pellicule pleine — supprime une photo pour en importer une.'); return }
+    if (full) { setError('Pellicule pleine : supprime une photo pour en importer une.'); return }
     setBusy(true); setError('')
     try { await capture(await prepareUpload(file)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
@@ -465,13 +465,13 @@ export default function GuestCamera({ params }) {
   const full = remaining <= 0
   const coupleLabel = meta?.hostNames || meta?.name || ''
 
-  // Bouton « agenda » — proposé tant que l'album n'est pas révélé.
+  // Bouton « agenda » : proposé tant que l'album n'est pas révélé.
   // Le lien de l'événement part avec le rendez-vous : impossible de le perdre.
   const agendaBlock = meta && !meta.revealed ? (
     <>
       <a className="btn btn-ghost" href={agendaUrl} style={{ width: '100%' }}>📅 Ajouter à mon agenda</a>
       <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 6px' }}>
-        La soirée, un rappel photo dans 1 h et la révélation — avec votre lien dans chaque.
+        La soirée, un rappel photo dans 1 h et la révélation, avec votre lien dans chaque.
       </p>
     </>
   ) : null
@@ -507,8 +507,8 @@ export default function GuestCamera({ params }) {
         Prenez <strong>{meta?.shotsPerGuest} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{meta && formatReveal(meta.revealAt)}</strong>.
       </p>
       <div className="spacer" />
-      {/* Quand on sait déjà qui c'est — l'organisateur, ou quelqu'un dont le
-          serveur connaît le nom — on ne redemande pas ce qu'on a sous la main.
+      {/* Quand on sait déjà qui c'est (l'organisateur, ou quelqu'un dont le
+          serveur connaît le nom), on ne redemande pas ce qu'on a sous la main.
           Le nom reste modifiable juste en dessous. */}
       {name.trim() ? (
         <>
@@ -528,7 +528,7 @@ export default function GuestCamera({ params }) {
   )
 
   // Formule complète : la seule porte fermée du site. On ne dit jamais que
-  // c'est une histoire d'argent — l'invité n'y est pour rien et n'a rien à
+  // c'est une histoire d'argent : le participant n'y est pour rien et n'a rien à
   // régler. On lui promet que ça s'ouvrira tout seul, et on tient la promesse
   // (relance toutes les 10 s). Et on lui laisse la sortie de secours : celui
   // qui revient d'un autre téléphone n'a pas à attendre pour rien.
@@ -539,7 +539,7 @@ export default function GuestCamera({ params }) {
         <h3 className="h3" style={{ marginBottom: 8 }}>Presque !</h3>
         <p className="lead small" style={{ marginBottom: 18 }}>
           L&apos;organisateur de {attente?.eventName ? `« ${attente.eventName} »` : 'l’événement'} finalise
-          votre accès. <strong>Cette page s&apos;ouvrira toute seule</strong> — gardez-la ouverte, il
+          votre accès. <strong>Cette page s&apos;ouvrira toute seule</strong> : gardez-la ouverte, il
           n&apos;y a rien à faire.
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
@@ -557,7 +557,7 @@ export default function GuestCamera({ params }) {
             photos, sans attendre.
           </p>
           <form
-            onSubmit={(e) => { e.preventDefault(); const v = mailRetour.trim().toLowerCase(); if (v) join(name || 'Invité', v) }}
+            onSubmit={(e) => { e.preventDefault(); const v = mailRetour.trim().toLowerCase(); if (v) join(name || 'Participant', v) }}
             style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
           >
             <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
@@ -695,7 +695,7 @@ export default function GuestCamera({ params }) {
                 : `Tes ${guest?.shotsPerGuest} photos sont en cours de développement.`}
             </p>
             {/* La recharge est réglée par l'organisateur : à zéro, on ne la
-                propose pas — la pellicule est vraiment finie. */}
+                propose pas : la pellicule est vraiment finie. */}
             {!bonusUsed && (meta?.bonusShots > 0) && (
               <button className="vf-full-btn" onClick={grantBonus}>
                 Recharger ma pellicule (+{meta.bonusShots}) →
@@ -706,7 +706,7 @@ export default function GuestCamera({ params }) {
       </div>
 
       {/* Ouvert depuis une messagerie, sans caméra en direct : la plupart des
-          invités arrivent ainsi. On ne les renvoie pas ailleurs, on leur dit
+          participants arrivent ainsi. On ne les renvoie pas ailleurs, on leur dit
           simplement que le bouton marche quand même. */}
       {inApp && !liveCam && !camBlocked && (
         <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.12)' }}>
@@ -748,7 +748,7 @@ export default function GuestCamera({ params }) {
 
       {/* Bas : pile de photos (gauche) · déclencheur (centre) · import galerie (droite) */}
       <div className="cam-bottom">
-        {/* Rien n'indiquait que cette pile s'ouvrait : les invités ne
+        {/* Rien n'indiquait que cette pile s'ouvrait : les participants ne
             trouvaient pas leurs photos. Le libellé lève le doute. */}
         <div className="cam-pilewrap">
           {roll.length === 0 ? (
@@ -760,7 +760,7 @@ export default function GuestCamera({ params }) {
                   {/* crossOrigin, ici aussi : la pile montre les 3 dernières photos,
                       exactement celles que l'album réaffiche juste après. Sans lui, le
                       navigateur gardait ces 3 images en cache « sans CORS », puis
-                      refusait de les resservir à l'album qui, lui, les demande avec —
+                      refusait de les resservir à l'album qui, lui, les demande avec : 
                       trois vignettes cassées, toujours les mêmes. */}
                   <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
                 </span>
@@ -870,7 +870,7 @@ export default function GuestCamera({ params }) {
           </div>
 
           {meta?.revealed && (
-            <a className="album-fulllink" href={`/g/${id}`}>🎞️ Voir l'album complet de tous les invités →</a>
+            <a className="album-fulllink" href={`/g/${id}`}>🎞️ Voir l'album complet de tous les participants →</a>
           )}
         </div>
       )}
@@ -903,7 +903,7 @@ export default function GuestCamera({ params }) {
         </div>
       )}
 
-      {/* Rappel "garde ton lien pour revenir" — affiché une seule fois à la 1re ouverture caméra */}
+      {/* Rappel "garde ton lien pour revenir", affiché une seule fois à la 1re ouverture caméra */}
       {showSaveTip && (
         <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setShowSaveTip(false) }} style={{ background: 'rgba(10,8,6,.72)' }}>
           <div style={{ position: 'relative', width: '100%', maxWidth: 340, background: '#F4EDDD', borderRadius: 22, padding: '26px 22px', boxShadow: '0 24px 60px rgba(0,0,0,.4)' }}>
@@ -923,7 +923,7 @@ export default function GuestCamera({ params }) {
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>
               </div>
               <button onClick={() => setShowSaveTip(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text3)', fontSize: 13, padding: '6px 0', marginTop: 2 }}>
-                Plus tard — commencer à photographier
+                Plus tard, commencer à photographier
               </button>
             </div>
           </div>

@@ -14,7 +14,7 @@ const FOND = 'linear-gradient(150deg,#F7C26B 0%,#EE7A45 45%,#A23D5C 100%)'
 
 // `etiquette` situe la page (ex. « Guide gratuit »), `pied` reprend les
 // arguments qui lèvent les objections les plus fréquentes.
-export function carteSite({ titre, accroche, etiquette = null, pied = 'Aucune appli · Gratuit jusqu\'à 5 invités' }) {
+export function carteSite({ titre, accroche, etiquette = null, pied = 'Aucune appli · Gratuit jusqu\'à 5 participants' }) {
   return new ImageResponse(
     (
       <div

@@ -20,15 +20,15 @@ export async function GET(request) {
   if (!ok) return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
   const rows = Array.isArray(data) ? data : []
 
-  // Numéros collectés (invités ayant laissé un téléphone), comptés par événement
+  // Numéros collectés (participants ayant laissé un téléphone), comptés par événement
   const contactsRes = await selectRows('guests', 'phone=not.is.null&select=event_id')
   const contactsByEvent = {}
   for (const g of Array.isArray(contactsRes.data) ? contactsRes.data : []) {
     contactsByEvent[g.event_id] = (contactsByEvent[g.event_id] || 0) + 1
   }
 
-  // Avis reçus, comptés par événement. On remonte trois choses seulement — le
-  // nombre, la note moyenne et l'existence d'un problème signalé — parce que
+  // Avis reçus, comptés par événement. On remonte trois choses seulement : le
+  // nombre, la note moyenne et l'existence d'un problème signalé, parce que
   // c'est tout ce qu'une ligne de tableau peut dire d'utile : le reste se lit
   // sur la page des avis, à un clic de là.
   const avisRes = await selectRows('feedback', 'select=event_id,rating,issues')

@@ -38,7 +38,7 @@ export function normalizeGuestEmail(value) {
   return String(value || '').trim().toLowerCase().replace(/\s+/g, '')
 }
 
-// Distance de Levenshtein — nombre de corrections pour passer d'un mot à l'autre.
+// Distance de Levenshtein : nombre de corrections pour passer d'un mot à l'autre.
 function distance(a, b) {
   if (a === b) return 0
   if (Math.abs(a.length - b.length) > 2) return 99
@@ -95,7 +95,7 @@ export function checkEmailShape(value) {
   const email = normalizeGuestEmail(value)
   if (!email) return { ok: true, empty: true } // facultatif : vide est valide
   if (email.length > 160) return { ok: false, reason: 'Cette adresse est trop longue.' }
-  if (!FORME.test(email)) return { ok: false, reason: "Il manque quelque chose — vérifiez le @ et le point." }
+  if (!FORME.test(email)) return { ok: false, reason: "Il manque quelque chose : vérifiez le @ et le point." }
   if (email.includes('..')) return { ok: false, reason: 'Il y a deux points de suite.' }
   const domaine = email.slice(email.lastIndexOf('@') + 1)
   const fin = domaine.split('.').pop()

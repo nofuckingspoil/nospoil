@@ -1,5 +1,5 @@
 // ============================================================
-//  Envoi du lien de l'album aux invités qui ont laissé leur adresse.
+//  Envoi du lien de l'album aux participants qui ont laissé leur adresse.
 //
 //  C'est la contrepartie de la collecte : ils ont donné leur mail pour ça,
 //  et pour rien d'autre. L'envoi part tout seul dès la révélation.
@@ -14,7 +14,7 @@ import { selectRows, updateRow } from './supabase'
 import { sendMail, albumReadyEmail, siteUrl } from './mail'
 import { isRevealed } from './phase'
 
-// On ne traite jamais plus de N invités par passage : le cron repasse,
+// On ne traite jamais plus de N participants par passage : le cron repasse,
 // et un gros mariage ne doit pas faire expirer la requête.
 const BATCH = 120
 
@@ -26,7 +26,7 @@ export async function notifyGuestsOfAlbum(ev) {
   // Rien ne part tant que les photos ne sont pas réellement ouvertes : ni avant
   // l'heure, ni pendant une suspension d'urgence, ni tant que la formule
   // souscrite est dépassée. Envoyer le lien d'un album encore fermé serait pire
-  // que de ne rien envoyer : l'invité cliquerait dans le vide.
+  // que de ne rien envoyer : le participant cliquerait dans le vide.
   const tous = await selectRows('guests', `event_id=eq.${ev.id}&select=id`)
   const guestCount = Array.isArray(tous.data) ? tous.data.length : 0
   if (!isRevealed({

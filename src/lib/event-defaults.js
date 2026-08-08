@@ -10,7 +10,7 @@
 // le tableau de bord sait qu'il reste à nommer.
 export const DEFAULT_EVENT_NAME = 'Mon événement'
 
-// Clichés par invité à la création — réglable jusqu'au jour J.
+// Clichés par participant à la création, réglable jusqu'au jour J.
 export const DEFAULT_SHOTS = 5
 
 export function atDay(daysAhead, hour, from = new Date()) {

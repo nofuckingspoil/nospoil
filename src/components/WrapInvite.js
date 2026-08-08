@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 // ============================================================
-//  Le résumé de soirée, montré à l'invité juste avant l'album.
+//  Le résumé de soirée, montré au participant juste avant l'album.
 //
 //  Il ouvre l'album en pleine attente : le faire patienter quelques
 //  secondes avec quelque chose qui le concerne ne l'agace pas, ça
@@ -70,7 +70,7 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
         titre: `cliché${mesPhotos.length > 1 ? 's' : ''} de toi`,
         sous: mesPhotos.length >= 5
           ? 'Tu n’as pas chômé.'
-          : 'Chacun compte — ils sont dans l’album.',
+          : 'Chacun compte : ils sont dans l’album.',
         vignettes: mesPhotos.slice(0, 4).map((p) => p.url),
       })
 

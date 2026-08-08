@@ -10,7 +10,7 @@ export const metadata = {
   description: AIDE.subtitle,
   alternates: { canonical: '/aide' },
   openGraph: {
-    title: `${AIDE.title} — ${BRAND.name}`,
+    title: `${AIDE.title} | ${BRAND.name}`,
     description: AIDE.subtitle,
     url: URL,
     type: 'article',

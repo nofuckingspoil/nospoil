@@ -15,7 +15,7 @@ import Generateur from './Generateur'
 
 const URL = 'https://timetoflash.fr/generateur-qr-code-mariage'
 const TITRE = "Générateur d'affiche QR code mariage"
-const PROMESSE = "Créez gratuitement l'affiche « scannez pour partager vos photos » aux couleurs de votre mariage : vos prénoms, votre date, vos teintes, six mises en page. Affiche A4, chevalets de table, petits cartons — à imprimer chez vous ou chez un imprimeur, sans compte ni filigrane."
+const PROMESSE = "Créez gratuitement l'affiche « scannez pour partager vos photos » aux couleurs de votre mariage : vos prénoms, votre date, vos teintes, six mises en page. Affiche A4, chevalets de table, petits cartons, à imprimer chez vous ou chez un imprimeur, sans compte ni filigrane."
 
 export const metadata = {
   title: `${TITRE} gratuit et personnalisé`,
@@ -32,7 +32,7 @@ export const metadata = {
   ],
   alternates: { canonical: '/generateur-qr-code-mariage' },
   openGraph: {
-    title: `${TITRE} — ${BRAND.name}`,
+    title: `${TITRE} | ${BRAND.name}`,
     description: PROMESSE,
     url: URL,
     type: 'website',
@@ -76,7 +76,7 @@ const USAGES = [
 const FAQ = [
   {
     q: 'L’affiche est-elle vraiment gratuite, sans compte ni filigrane ?',
-    r: "Oui. Tout est fabriqué dans votre navigateur, vous imprimez ou téléchargez, cela vous appartient. Pas de compte, pas de filigrane, pas d'abonnement, et pas de date d'expiration : le QR est statique, il fonctionnera toujours tant que l'adresse vers laquelle il pointe existe. Méfiez-vous des générateurs qui demandent un abonnement — leurs QR cessent souvent de fonctionner à la fin de l'essai.",
+    r: "Oui. Tout est fabriqué dans votre navigateur, vous imprimez ou téléchargez, cela vous appartient. Pas de compte, pas de filigrane, pas d'abonnement, et pas de date d'expiration : le QR est statique, il fonctionnera toujours tant que l'adresse vers laquelle il pointe existe. Méfiez-vous des générateurs qui demandent un abonnement : leurs QR cessent souvent de fonctionner à la fin de l'essai.",
   },
   {
     q: 'Quels formats puis-je imprimer ?',
@@ -92,7 +92,7 @@ const FAQ = [
   },
   {
     q: 'Quelle taille faut-il pour l’impression ?',
-    r: "Les formats proposés sont déjà calibrés : le code fait environ 9 cm sur l'affiche A4, 6 cm sur le chevalet et 3 cm sur les petits cartons — assez pour être lu à bonne distance. Si vous repartez du fichier pour le retravailler, gardez au minimum 3 cm de côté pour un carton en main et 10 cm pour une affiche qu'on scanne à un mètre. Le SVG reste net à n'importe quelle taille, c'est celui que réclament les imprimeurs ; le PNG convient pour Canva ou un écran.",
+    r: "Les formats proposés sont déjà calibrés : le code fait environ 9 cm sur l'affiche A4, 6 cm sur le chevalet et 3 cm sur les petits cartons, assez pour être lu à bonne distance. Si vous repartez du fichier pour le retravailler, gardez au minimum 3 cm de côté pour un carton en main et 10 cm pour une affiche qu'on scanne à un mètre. Le SVG reste net à n'importe quelle taille, c'est celui que réclament les imprimeurs ; le PNG convient pour Canva ou un écran.",
   },
   {
     q: 'Puis-je mettre notre logo ou nos initiales au centre ?',
@@ -183,7 +183,7 @@ export default function GenerateurPage() {
               <li>
                 <strong>Trop pâle.</strong> Un QR beige sur fond ivoire ne se scanne pas dans une
                 salle en lumière tamisée. Gardez un vrai écart entre la couleur des pixels et
-                celle du fond — l’outil vous alerte quand l’écart devient trop faible.
+                celle du fond : l’outil vous alerte quand l’écart devient trop faible.
               </li>
               <li>
                 <strong>Trop petit.</strong> En dessous de 3 cm, un téléphone met dix secondes à
@@ -192,7 +192,7 @@ export default function GenerateurPage() {
               </li>
               <li>
                 <strong>Sans marge.</strong> Un QR collé au bord d’un carton ou posé sur une photo
-                chargée devient invisible pour l’appareil. Il lui faut une zone calme tout autour —
+                chargée devient invisible pour l’appareil. Il lui faut une zone calme tout autour ;
                 elle est comprise dans les fichiers téléchargés ici, ne la rognez pas.
               </li>
             </ol>

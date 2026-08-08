@@ -7,7 +7,7 @@ import { GA4_ID, GOOGLE_ADS_ID, pageMesurable, mesureExclue } from '../lib/track
 import { lireConsentement, surConsentement } from '../lib/consent'
 
 // ============================================================
-//  Balise Google — Analytics (mesure d'audience) et Google Ads (conversions).
+//  Balise Google : Analytics (mesure d'audience) et Google Ads (conversions).
 //
 //  Les deux partagent une seule et même balise : on la charge une fois, puis
 //  on lui déclare les comptes à alimenter. Comme pour Meta, rien n'est chargé

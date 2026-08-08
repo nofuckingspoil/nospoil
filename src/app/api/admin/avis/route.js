@@ -1,9 +1,9 @@
 // ============================================================
 //  Les avis, pour l'admin du site.
 //
-//  Réservé à vous : ni l'organisateur ni les invités n'y ont accès. C'est la
-//  contrepartie de la promesse faite dans le questionnaire — « l'organisateur
-//  ne verra jamais votre réponse » —, et c'est ce qui fait qu'on y écrit des
+//  Réservé à vous : ni l'organisateur ni les participants n'y ont accès. C'est la
+//  contrepartie de la promesse faite dans le questionnaire (« l'organisateur
+//  ne verra jamais votre réponse »), et c'est ce qui fait qu'on y écrit des
 //  choses vraies.
 //
 //  Protégé par la clé ADMIN_KEY (en-tête x-admin-key), comme les autres
@@ -62,7 +62,7 @@ export async function GET(request) {
     phone: r.phone,
     contactEmail: r.contact_email,
     // L'identité technique brute ne sert à rien à l'écran : on n'envoie que
-    // ce qui se lit — « iPhone · dans Instagram ».
+    // ce qui se lit : « iPhone · dans Instagram ».
     appareil: resumeAppareil(r.device),
   }))
 

@@ -4,7 +4,7 @@ export const runtime = 'nodejs'
 
 // D'où vient le contact, et dans quelle liste Brevo il atterrit. Séparer les
 // deux compte : le lecteur du guide prépare un événement, l'abonné du blog
-// passait par là — on ne leur écrira pas la même chose.
+// passait par là : on ne leur écrira pas la même chose.
 //
 // Les identifiants correspondent aux listes créées dans le compte Brevo
 // (CRM › Contacts › Listes). Une variable d'environnement peut les remplacer

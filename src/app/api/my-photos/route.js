@@ -1,6 +1,6 @@
 import { selectRows, signPhotos } from '../../../lib/supabase'
 
-// Renvoie les photos prises par CET invité (identifié par son appareil),
+// Renvoie les photos prises par CET participant (identifié par son appareil),
 // avec leur identifiant (pour pouvoir les supprimer) + le compteur de clichés.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))

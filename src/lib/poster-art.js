@@ -2,12 +2,12 @@
 //  Moteur d'affiche.
 //
 //  Le QR n'est qu'un élément : ce qu'on fabrique ici, c'est le support qu'on
-//  pose sur les tables — une affiche aux couleurs du mariage, avec les
+//  pose sur les tables : une affiche aux couleurs du mariage, avec les
 //  prénoms, la date, la consigne, et le code au milieu.
 //
 //  Tout est dessiné dans la même liste de formes que le QR (voir qr-art.js),
 //  ce qui donne trois sorties fidèles à l'aperçu : le PNG, le SVG, et
-//  l'impression navigateur. Les distances sont en millimètres — un A4 fait
+//  l'impression navigateur. Les distances sont en millimètres : un A4 fait
 //  210 × 297, un SVG en millimètres sort à la bonne taille chez l'imprimeur.
 // ============================================================
 
@@ -133,7 +133,7 @@ function pan(x, y, w, h, c) {
 }
 
 // Une branche : une tige fine et des feuilles alternées, dessinée plutôt
-// qu'importée — une image aurait été prisonnière de ses propres couleurs.
+// qu'importée : une image aurait été prisonnière de ses propres couleurs.
 // Les feuilles restent petites : grossies, elles tournent au serpentin.
 function branche(len, couleur) {
   const cx = len * 0.55
@@ -216,7 +216,7 @@ export function buildPoster(o) {
     const vert = mix(accent, papier, 0.15)
     // Coin haut-gauche et coin bas-droit : les seules zones qu'aucun texte
     // n'occupe, quelle que soit la longueur des prénoms. Les branches restent
-    // à l'intérieur du format — rien ne les rognerait à l'impression.
+    // à l'intérieur du format : rien ne les rognerait à l'impression.
     shapes.push({ t: 'g', tx: W * 0.035, ty: H * 0.05, rot: 32, shapes: branche(len, vert) })
     shapes.push({ t: 'g', tx: W * 0.965, ty: H * 0.95, rot: 212, shapes: branche(len, vert) })
   }

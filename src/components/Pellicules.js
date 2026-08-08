@@ -14,7 +14,7 @@
 // navigateur pour cinq bouts de texte.
 //
 // « Original » vient en premier : sans point de comparaison, un rendu ne se
-// voit pas — on croit juste que la photo était comme ça.
+// voit pas : on croit juste que la photo était comme ça.
 const PELLICULES_APERCU = [
   { id: 'original', nom: 'Original', dit: "La photo telle qu'elle a été prise" },
   { id: 'jetable', nom: 'Jetable', dit: 'Le Kodak des soirées : chaud, contrasté, granuleux' },

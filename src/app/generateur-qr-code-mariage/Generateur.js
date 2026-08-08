@@ -4,7 +4,7 @@
 //  Générateur d'affiche « scannez pour partager vos photos ».
 //
 //  Écran en deux colonnes : les réglages à gauche, l'affiche à droite qui se
-//  redessine à chaque clic. Tout se passe dans le navigateur — aucune donnée
+//  redessine à chaque clic. Tout se passe dans le navigateur : aucune donnée
 //  ne part sur un serveur.
 //
 //  Le dessin vit dans lib/poster-art.js (l'affiche) et lib/qr-art.js (le code).
@@ -105,7 +105,7 @@ export default function Generateur() {
 
   const unit = fmt.bare ? '' : 'mm'
   const svg = useMemo(
-    () => (plan ? toSVG(plan, { title: `Affiche mariage — ${o.titre || ''}`, unit }) : ''),
+    () => (plan ? toSVG(plan, { title: `Affiche mariage : ${o.titre || ''}`, unit }) : ''),
     [plan, o.titre, unit],
   )
   const svgPrint = useMemo(
@@ -257,13 +257,13 @@ export default function Generateur() {
             <label className="qg-switch">
               <input type="checkbox" checked={o.transparent}
                 onChange={(e) => set({ transparent: e.target.checked })} />
-              <span>Fond transparent <em>— pour poser le code sur une photo</em></span>
+              <span>Fond transparent <em>(pour poser le code sur une photo)</em></span>
             </label>
           ) : (
             <label className="qg-switch">
               <input type="checkbox" checked={o.plaque}
                 onChange={(e) => set({ plaque: e.target.checked })} />
-              <span>Pastille claire derrière le code <em>— indispensable sur un fond foncé</em></span>
+              <span>Pastille claire derrière le code <em>(indispensable sur un fond foncé)</em></span>
             </label>
           )}
         </section>
@@ -317,7 +317,7 @@ export default function Generateur() {
 
       {/* ---------- Colonne aperçu ----------
           Deux blocs séparés : sur téléphone, seul le premier reste collé en
-          haut pendant qu'on règle. Le second redescend sous les réglages —
+          haut pendant qu'on règle. Le second redescend sous les réglages :
           coller les boutons de téléchargement mangerait la moitié de l'écran. */}
       <div className="qg-side">
         <div className="qg-sticky">

@@ -7,16 +7,21 @@ import ConsentReset from '../components/ConsentReset'
 import Pellicules from '../components/Pellicules'
 import { TIERS, TOP_TIER, formatPrice } from '../lib/pricing'
 
+// Le titre lu par Google vise « application photo mariage » : la marque seule
+// ne se cherche pas. Le titre visible à l'écran, lui, reste évocateur.
 export const metadata = {
-  title: `${BRAND.name} — ${BRAND.tagline}`,
-  description: BRAND.pitch,
+  title: {
+    absolute: `Application photo de mariage sans installation | ${BRAND.name}`,
+  },
+  description:
+    "L'application photo de mariage qui récupère les clichés de tous vos participants : un QR code, aucune appli à installer, un nombre de photos limité par personne, et un album qui se révèle le lendemain.",
 }
 
 // Chaque étape est illustrée par une vraie capture du produit : l'affiche qu'on
 // pose sur les tables, le déclencheur, puis la galerie une fois révélée.
 const STEPS = [
-  { img: '/accueil/affiche.webp', pos: 'center 38%', alt: "Affiche à imprimer avec le QR code de l'événement", title: 'Scannez le QR', sub: "Vos invités ouvrent l'appareil dans leur navigateur. Aucune appli à installer." },
-  { img: '/accueil/declencheur.webp', pos: 'center center', alt: "L'appareil photo ouvert dans le navigateur : le viseur, le compteur de poses et le déclencheur", title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par invité. Chaque cliché compte vraiment.' },
+  { img: '/accueil/affiche.webp', pos: 'center 38%', alt: "Affiche à imprimer avec le QR code de l'événement", title: 'Scannez le QR', sub: "Vos participants ouvrent l'appareil dans leur navigateur. Aucune appli à installer." },
+  { img: '/accueil/declencheur.webp', pos: 'center center', alt: "L'appareil photo ouvert dans le navigateur : le viseur, le compteur de poses et le déclencheur", title: 'Prenez vos clichés', sub: 'Un nombre limité de photos par participant. Chaque cliché compte vraiment.' },
   { img: '/accueil/revelation.webp', pos: 'center center', alt: "La galerie de l'événement une fois les photos révélées", title: 'La révélation', sub: 'Tout se développe et se révèle après la fête, pour tout le monde d\'un coup.' },
 ]
 
@@ -24,26 +29,26 @@ const STEPS = [
 // spontanément : la fonction existait déjà, elle n'était juste écrite nulle part.
 const CONTROL = [
   { ic: '👀', title: 'Vous validez avant la révélation', sub: 'Vous découvrez les photos en avant-première et masquez celles que vous ne voulez pas voir apparaître. Personne ne le saura.' },
-  { ic: '🤝', title: 'À plusieurs si besoin', sub: 'Invitez des co-organisateurs — les mariés, un témoin — pour gérer la galerie et faire le tri ensemble.' },
-  { ic: '🎞️', title: 'Chacun maîtrise ses clichés', sub: 'Un invité peut supprimer une photo ratée et en reprendre une. Sans jamais dépasser la limite que vous avez fixée.' },
+  { ic: '🤝', title: 'À plusieurs si besoin', sub: 'Invitez des co-organisateurs (les mariés, un témoin) pour gérer la galerie et faire le tri ensemble.' },
+  { ic: '🎞️', title: 'Chacun maîtrise ses clichés', sub: 'Un participant peut supprimer une photo ratée et en reprendre une. Sans jamais dépasser la limite que vous avez fixée.' },
 ]
 
 const REASSURE = [
   { ic: '🇪🇺', title: 'Hébergé en Europe', sub: 'Vos photos restent sur des serveurs européens.' },
-  { ic: '🔒', title: 'Personne d\'autre que vos invités', sub: 'Votre galerie n\'est accessible que par votre lien privé. Elle n\'est jamais publique.' },
-  { ic: '📱', title: 'Aucune appli', sub: 'Tout se passe dans le navigateur, même pour vos invités.' },
+  { ic: '🔒', title: 'Personne d\'autre que vos participants', sub: 'Votre galerie n\'est accessible que par votre lien privé. Elle n\'est jamais publique.' },
+  { ic: '📱', title: 'Aucune appli', sub: 'Tout se passe dans le navigateur, même pour vos participants.' },
   { ic: '🗓️', title: 'Suppression auto', sub: 'Photos effacées 6 mois après la révélation. On vous prévient avant.' },
 ]
 
 const FAQ = [
-  { q: 'Mes invités doivent-ils installer une application ?', a: 'Non. Ils scannent le QR code et la caméra s\'ouvre directement dans leur navigateur. Aucun compte, aucune installation.' },
+  { q: 'Mes participants doivent-ils installer une application ?', a: 'Non. Ils scannent le QR code et la caméra s\'ouvre directement dans leur navigateur. Aucun compte, aucune installation.' },
   { q: 'Combien de temps dure un événement ?', a: 'Aussi longtemps que vous voulez. Vous choisissez la date de début et la date de révélation : une soirée, un week-end, ou une semaine entière de vacances.' },
-  { q: 'C\'est réservé aux mariages ?', a: 'Non. Anniversaires, baptêmes, EVJF, vacances entre amis, séminaires — tout événement où les gens sortent leur téléphone pour prendre des photos.' },
-  { q: 'Combien de photos chacun peut-il prendre ?', a: 'Vous fixez la limite entre 3 et 15 clichés par invité. Vous pouvez aussi prévoir une recharge de 1 à 5 photos, offerte à ceux qui ont épuisé leur quota — soit 20 photos maximum. C\'est la contrainte « argentique » qui rend chaque cliché précieux.' },
-  { q: 'Un invité peut-il supprimer une photo ratée ?', a: 'Oui. La photo supprimée libère une place, il peut en reprendre une autre. En revanche, il ne dépassera jamais la limite que vous avez fixée.' },
+  { q: 'C\'est réservé aux mariages ?', a: 'Non. Anniversaires, baptêmes, EVJF, vacances entre amis, séminaires : tout événement où les gens sortent leur téléphone pour prendre des photos.' },
+  { q: 'Combien de photos chacun peut-il prendre ?', a: 'Vous fixez la limite entre 3 et 15 clichés par participant. Vous pouvez aussi prévoir une recharge de 1 à 5 photos, offerte à ceux qui ont épuisé leur quota, soit 20 photos maximum. C\'est la contrainte « argentique » qui rend chaque cliché précieux.' },
+  { q: 'Un participant peut-il supprimer une photo ratée ?', a: 'Oui. La photo supprimée libère une place, il peut en reprendre une autre. En revanche, il ne dépassera jamais la limite que vous avez fixée.' },
   { q: 'Puis-je retirer une photo avant que tout le monde la voie ?', a: 'Oui. Avant la révélation, vous êtes seul à voir les photos et vous pouvez en masquer autant que vous le souhaitez. Vous pouvez aussi inviter des co-organisateurs pour faire ce tri à plusieurs.' },
-  { q: 'Quand les photos sont-elles visibles ?', a: 'Elles restent cachées jusqu\'à la date de révélation que vous choisissez — comme une pellicule qu\'on développe. Ensuite, la galerie s\'ouvre pour tout le monde.' },
-  { q: 'C\'est un abonnement ?', a: 'Non. Vous payez une seule fois pour votre événement, selon le nombre d\'invités. Sans renouvellement.' },
+  { q: 'Quand les photos sont-elles visibles ?', a: 'Elles restent cachées jusqu\'à la date de révélation que vous choisissez, comme une pellicule qu\'on développe. Ensuite, la galerie s\'ouvre pour tout le monde.' },
+  { q: 'C\'est un abonnement ?', a: 'Non. Vous payez une seule fois pour votre événement, selon le nombre de participants. Sans renouvellement.' },
 ]
 
 function PriceCard({ tier }) {
@@ -52,7 +57,7 @@ function PriceCard({ tier }) {
     <div className={`price-card ${tier.popular ? 'popular' : ''}`}>
       {tier.popular && <span className="price-pop">LE PLUS CHOISI</span>}
       <div className="price-guests">{isFree ? 'Pour tester' : 'Jusqu\'à'}</div>
-      <div className="price-amount">{tier.maxGuests}<span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text3)' }}> invités</span></div>
+      <div className="price-amount">{tier.maxGuests}<span style={{ fontSize: 16, fontWeight: 600, color: 'var(--text3)' }}> participants</span></div>
       <div className="price-unit">{isFree ? 'Gratuit · sans carte' : `${formatPrice(tier.priceCents)} · paiement unique`}</div>
       <Link href={`/create?tier=${tier.maxGuests}`} className={`btn ${tier.popular ? 'btn-accent' : 'btn-ghost'}`}>
         {isFree ? 'Essayer gratuitement' : 'Choisir cette formule'}
@@ -74,35 +79,35 @@ export default function Home() {
         <section className="hero hero-split">
           <div>
             <div className="eyebrow">Appareil photo jetable · événements</div>
-            <h1>L'appareil photo<br />jetable de vos<br />événements.</h1>
+            <h1>L'appareil photo<br />jetable de votre<br />mariage.</h1>
             <p>{BRAND.pitch}</p>
             {/* Deux testeurs ont cru à une contrainte de 24 h : la durée se dit ici. */}
             <p style={{ marginTop: 10 }}>Une soirée, un week-end ou une semaine entière : vous choisissez la durée et le nombre de clichés.</p>
             <div className="hero-cta">
               <Link href="#tarifs" className="btn btn-accent">Voir les formules →</Link>
-              <span className="mono small muted">Gratuit jusqu'à 5 invités</span>
+              <span className="mono small muted">Gratuit jusqu'à 5 participants</span>
             </div>
             {/* Sur téléphone, la pastille flottante « Essayer » tombait pile sous
                 le bouton « Créer mon événement ». L'essai se propose donc ici,
                 dans la lecture, plutôt qu'en bas de l'écran. */}
             <Link href="/essai" className="hero-try">✱ Essayer l'appareil photo tout de suite</Link>
-            {/* « Que pour les mariages ? » — la réponse tient sur une ligne. */}
+            {/* « Que pour les mariages ? » : la réponse tient sur une ligne. */}
             <div className="mono small muted" style={{ marginTop: 20 }}>
               Mariages · Anniversaires · Baptêmes · EVJF · Vacances · Séminaires
             </div>
           </div>
-          {/* Voir l'appareil vaut mieux que le décrire — et un viseur vide ne
+          {/* Voir l'appareil vaut mieux que le décrire, et un viseur vide ne
               vend rien : ces deux écrans montrent une vraie soirée, de la photo
               prise jusqu'à l'album révélé. Seules images chargées tout de suite,
               les autres attendent le défilement. */}
           <div className="hero-duo">
             <div className="phone phone-avant">
               <img src="/accueil/appareil-photo.webp" width="640" height="1385"
-                alt="L'appareil photo jetable ouvert dans le navigateur : un groupe d'invités dans le viseur, le compteur de poses et le déclencheur." />
+                alt="L'appareil photo jetable ouvert dans le navigateur : un groupe de participants dans le viseur, le compteur de poses et le déclencheur." />
             </div>
             <div className="phone phone-arriere">
               <img src="/accueil/galerie-photos.webp" width="640" height="1385"
-                alt="L'album révélé après la fête : les photos de tous les invités réunies dans une galerie." />
+                alt="L'album révélé après la fête : les photos de tous les participants réunies dans une galerie." />
             </div>
           </div>
         </section>
@@ -111,7 +116,7 @@ export default function Home() {
         <section className="section">
           <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>Comment ça marche</div>
           <h2 className="section-title">Trois étapes, zéro friction</h2>
-          <div className="section-sub">Vous créez l'événement, vos invités scannent, et la magie opère après la fête.</div>
+          <div className="section-sub">Vous créez l'événement, vos participants scannent, et la magie opère après la fête.</div>
           <div className="steps-grid">
             {STEPS.map((s, i) => (
               <div key={i} className="step-card">
@@ -126,7 +131,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* PENDANT LA FÊTE — entre le déclencheur et la révélation, il y a
+        {/* PENDANT LA FÊTE : entre le déclencheur et la révélation, il y a
             l'attente : l'album se remplit à plusieurs sans que personne ne
             voie rien. C'est ce qui distingue le produit d'un dossier partagé,
             et rien ne le montrait. */}
@@ -137,9 +142,9 @@ export default function Home() {
               <h2>Un seul album, rempli par tout le monde</h2>
               <p>Chacun scanne, prend ses clichés et voit le compteur grimper. Mais personne ne découvre les photos des autres : le compte à rebours retient tout le monde jusqu'à la révélation.</p>
               <ul className="split-list">
-                <li><span className="ic">⏳</span><div><b>Le compte à rebours</b> — le même pour tous, à la seconde près.</div></li>
-                <li><span className="ic">👥</span><div><b>Le nombre de participants</b> — la fête se voit se rassembler en direct.</div></li>
-                <li><span className="ic">🎞️</span><div><b>Chacun sa pellicule</b> — ses propres photos, visibles de lui seul avant l'heure.</div></li>
+                <li><span className="ic">⏳</span><div><b>Le compte à rebours</b> : le même pour tous, à la seconde près.</div></li>
+                <li><span className="ic">👥</span><div><b>Le nombre de participants</b> : la fête se voit se rassembler en direct.</div></li>
+                <li><span className="ic">🎞️</span><div><b>Chacun sa pellicule</b> : ses propres photos, visibles de lui seul avant l'heure.</div></li>
               </ul>
             </div>
             <div className="phone phone-tilt">
@@ -149,7 +154,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* LA PELLICULE — on vient de raconter l'attente et l'ouverture de
+        {/* LA PELLICULE : on vient de raconter l'attente et l'ouverture de
             l'album ; reste à montrer ce qui en sort. */}
         <Pellicules />
 
@@ -173,16 +178,16 @@ export default function Home() {
         <section className="section" id="tarifs">
           <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>Tarifs</div>
           <h2 className="section-title">Un prix unique par événement</h2>
-          <div className="section-sub">Pas d'abonnement. Vous choisissez selon le nombre d'invités, vous payez une fois.</div>
+          <div className="section-sub">Pas d'abonnement. Vous choisissez selon le nombre de participants, vous payez une fois.</div>
           <div className="price-grid">
             {TIERS.map((t) => <PriceCard key={t.maxGuests} tier={t} />)}
           </div>
           <p className="mono small muted" style={{ textAlign: 'center', marginTop: 18 }}>
-            Plus de {TOP_TIER.maxGuests} invités ? Écrivez-nous.
+            Plus de {TOP_TIER.maxGuests} participants ? Écrivez-nous.
           </p>
         </section>
 
-        {/* APRÈS LA FÊTE — le bilan de l'événement existait déjà mais n'était
+        {/* APRÈS LA FÊTE : le bilan de l'événement existait déjà mais n'était
             raconté nulle part. C'est pourtant ce qui fait sourire à la fin. */}
         <section className="section">
           <div className="split">
@@ -195,9 +200,9 @@ export default function Home() {
               <h2>Votre événement en chiffres</h2>
               <p>Quand la galerie s'ouvre, on vous raconte votre soirée. Qui a dégainé en premier, à quelle heure ça a le plus flashé, qui a été le photographe le plus prolifique.</p>
               <ul className="split-list">
-                <li><span className="ic">🌅</span><div><b>Le premier et le dernier cliché</b> — souvent celui de 6 h du matin que personne n'assume.</div></li>
-                <li><span className="ic">🏆</span><div><b>Le photographe en chef</b> — celui qui a vidé sa pellicule en une heure.</div></li>
-                <li><span className="ic">📈</span><div><b>Le créneau le plus chargé</b> — le moment où la fête a vraiment démarré.</div></li>
+                <li><span className="ic">🌅</span><div><b>Le premier et le dernier cliché</b> : souvent celui de 6 h du matin que personne n'assume.</div></li>
+                <li><span className="ic">🏆</span><div><b>Le photographe en chef</b> : celui qui a vidé sa pellicule en une heure.</div></li>
+                <li><span className="ic">📈</span><div><b>Le créneau le plus chargé</b> : le moment où la fête a vraiment démarré.</div></li>
               </ul>
             </div>
           </div>

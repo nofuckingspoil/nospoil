@@ -1,12 +1,12 @@
 // ============================================================
-//  Vérification d'une adresse mail saisie par un invité.
+//  Vérification d'une adresse mail saisie par un participant.
 //
-//  Appelée pendant la saisie (quand l'invité quitte le champ), pas au
+//  Appelée pendant la saisie (quand le participant quitte le champ), pas au
 //  moment de valider : la correction arrive avant qu'il ait à y revenir.
 //
 //  Le contrôle le plus utile est le dernier : on demande au DNS si le
 //  domaine accepte du courrier. « gmail.co » ou un domaine inventé
-//  n'ont aucun serveur de messagerie — c'est imparable, et gratuit.
+//  n'ont aucun serveur de messagerie : c'est imparable, et gratuit.
 // ============================================================
 import { resolveMx } from 'node:dns/promises'
 import { checkEmailShape, normalizeGuestEmail } from '../../../../lib/email-check'

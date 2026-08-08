@@ -19,7 +19,7 @@ export async function GET(request, { params }) {
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
 
-  // Tous les invités, du plus récemment actif au plus ancien : c'est la vue
+  // Tous les participants, du plus récemment actif au plus ancien : c'est la vue
   // qui permet de comprendre en un coup d'œil qui a joué le jeu.
   const guestsRes = await selectRows(
     'guests',
@@ -32,7 +32,7 @@ export async function GET(request, { params }) {
     phone: g.phone || null,
     email: g.email || null,
     shotsTaken: g.shots_taken || 0,
-    // Quota réel de cet invité : la base de l'événement plus sa recharge à lui.
+    // Quota réel de ce participant : la base de l'événement plus sa recharge à lui.
     shotsTotal: (ev.shots_per_guest || 0) + (g.bonus_shots || 0),
     bonusUsed: (g.bonus_shots || 0) > 0,
     joinedAt: g.created_at,
@@ -41,7 +41,7 @@ export async function GET(request, { params }) {
     notifyFailed: !!g.notify_failed,
   }))
 
-  // Numéros collectés (invités ayant laissé un téléphone)
+  // Numéros collectés (participants ayant laissé un téléphone)
   const contacts = guestRows
     .filter((g) => g.phone)
     .map((g) => ({ name: g.display_name, phone: g.phone }))
@@ -61,7 +61,7 @@ export async function GET(request, { params }) {
       id: r.id,
       url: signed[r.thumb_path] || signed[r.storage_path],
       fullUrl: signed[r.storage_path],
-      who: r.guests?.display_name || 'Invité',
+      who: r.guests?.display_name || 'Participant',
       takenAt: r.taken_at,
       hidden: !!r.hidden,
     }))
@@ -100,7 +100,7 @@ export async function GET(request, { params }) {
 // --- Suspension immédiate d'un événement ---
 // Sert aux demandes urgentes (signalement, contenu problématique) : l'album
 // devient inaccessible et plus aucune photo ne peut être prise, mais rien
-// n'est détruit — on peut réactiver une fois la situation éclaircie.
+// n'est détruit : on peut réactiver une fois la situation éclaircie.
 export async function PATCH(request, { params }) {
   if (!authed(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
   const { id } = await params
@@ -115,7 +115,7 @@ export async function PATCH(request, { params }) {
   return Response.json({ ok: true, status })
 }
 
-// --- Suppression complète d'un événement (photos, invités, fichiers) ---
+// --- Suppression complète d'un événement (photos, participants, fichiers) ---
 export async function DELETE(request, { params }) {
   if (!authed(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
   const { id } = await params

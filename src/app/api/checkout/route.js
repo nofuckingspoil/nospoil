@@ -112,7 +112,7 @@ export async function POST(request) {
         price_data: {
           currency: 'eur',
           unit_amount: unitAmount,
-          product_data: { name: `Time to Flash — « ${cleanName} » (jusqu'à ${tier.maxGuests} invités)` },
+          product_data: { name: `Time to Flash, « ${cleanName} » (jusqu'à ${tier.maxGuests} participants)` },
         },
       }],
       success_url: `${base}/create/paiement?session_id={CHECKOUT_SESSION_ID}`,

@@ -1,9 +1,9 @@
 // ============================================================
-//  Page d'atterrissage publicitaire — angle « revivez votre mariage ».
+//  Page d'atterrissage publicitaire : angle « revivez votre mariage ».
 //
 //  Reprise du one-pager d'origine, et volontairement l'exact opposé de
 //  /photos-mariage-invites : celle-ci promet quelque chose, l'autre constate
-//  un manque. Même cible, même produit, même prix — seul le cadrage change.
+//  un manque. Même cible, même produit, même prix : seul le cadrage change.
 //
 //  C'est le test le plus classique en publicité, et le plus instructif :
 //  selon l'audience, la promesse et le regret ne coûtent pas le même clic.
@@ -21,7 +21,7 @@ import {
 
 const TITRE = 'Revivez votre mariage, sous un autre angle'
 const DESCRIPTION =
-  "Les fous rires à table, la piste de danse, les moments volés. Vos invités scannent un QR code, photographient, et tout se développe à la date que vous choisissez — comme une vraie pellicule."
+  "Les fous rires à table, la piste de danse, les moments volés. Vos invités scannent un QR code, photographient, et tout se développe à la date que vous choisissez, comme une vraie pellicule."
 
 export const metadata = {
   title: TITRE,
@@ -29,7 +29,7 @@ export const metadata = {
   // Variante publicitaire d'une page déjà indexée : on ne se dédouble pas.
   robots: { index: false, follow: true },
   openGraph: {
-    title: `${TITRE} — ${BRAND.name}`,
+    title: `${TITRE} | ${BRAND.name}`,
     description: DESCRIPTION,
     type: 'website',
   },
@@ -56,7 +56,7 @@ const ADORER = [
   {
     ic: '🎛️',
     t: 'Votre tableau de bord privé',
-    s: "Le suivi des invités, la photo de couverture, le choix de la pellicule, et tout l'album en un fichier — d'un seul clic, quand vous voulez.",
+    s: "Le suivi des invités, la photo de couverture, le choix de la pellicule, et tout l'album en un fichier, d'un seul clic, quand vous voulez.",
   },
 ]
 
@@ -67,7 +67,7 @@ const FAQ_ANGLE = [
   },
   {
     q: 'Ça marche aussi pour le brunch du lendemain ?',
-    a: "Oui : vous choisissez la date de début et celle de la révélation. Une soirée, un week-end entier, ou du vin d'honneur au brunch — c'est le même album, et tout s'y ajoute.",
+    a: "Oui : vous choisissez la date de début et celle de la révélation. Une soirée, un week-end entier, ou du vin d'honneur au brunch : c'est le même album, et tout s'y ajoute.",
   },
 ]
 
@@ -84,7 +84,7 @@ export default function Page() {
             <p>
               Les fous rires à table, la piste de danse, les moments volés. Vos
               invités scannent, photographient, et tout se développe à la date de
-              révélation — comme une vraie pellicule.
+              révélation, comme une vraie pellicule.
             </p>
             <p style={{ marginTop: 10 }}>
               Un QR code sur chaque table, un nombre de clichés compté par invité,

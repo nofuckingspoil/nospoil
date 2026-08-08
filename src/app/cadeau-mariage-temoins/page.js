@@ -1,5 +1,5 @@
 // ============================================================
-//  Page d'atterrissage publicitaire — angle « le cadeau des témoins ».
+//  Page d'atterrissage publicitaire : angle « le cadeau des témoins ».
 //
 //  Reprend l'angle du one-pager « spécial témoins & proches ». La cible n'est
 //  pas la même que les autres pages : ce n'est pas quelqu'un qui organise son
@@ -28,7 +28,7 @@ export const metadata = {
   description: DESCRIPTION,
   alternates: { canonical: '/cadeau-mariage-temoins' },
   openGraph: {
-    title: `${TITRE} — ${BRAND.name}`,
+    title: `${TITRE} | ${BRAND.name}`,
     description: DESCRIPTION,
     url: 'https://timetoflash.fr/cadeau-mariage-temoins',
     type: 'website',
@@ -51,7 +51,7 @@ const CADEAU = [
   {
     ic: '🤫',
     t: 'Vous maîtrisez la surprise',
-    s: "L'album reste scellé jusqu'à la date que vous fixez. Vous choisissez le moment où vous leur envoyez le lien — et vous voyez tout avant eux.",
+    s: "L'album reste scellé jusqu'à la date que vous fixez. Vous choisissez le moment où vous leur envoyez le lien, et vous voyez tout avant eux.",
   },
   {
     ic: '🤝',
@@ -71,7 +71,7 @@ const FAQ_ANGLE = [
   },
   {
     q: 'Et si je m\'y prends au dernier moment ?',
-    a: "L'album se crée en deux minutes, et l'affiche à imprimer se génère dans la foulée. Vous pouvez très bien le mettre en place la veille — ou le matin même.",
+    a: "L'album se crée en deux minutes, et l'affiche à imprimer se génère dans la foulée. Vous pouvez très bien le mettre en place la veille, ou le matin même.",
   },
   {
     q: 'Qui garde les photos à la fin ?',
@@ -97,7 +97,7 @@ export default function Page() {
               Ils ont couru toute la journée. Offrez-leur ce qu'ils n'ont pas eu le
               temps de voir.
             </p>
-            <div className="hero-cta"><Bouton>Préparer la surprise — gratuit</Bouton></div>
+            <div className="hero-cta"><Bouton>Préparer la surprise (gratuit)</Bouton></div>
             <ul className="lp-ticks">
               <li>Prêt en deux minutes</li>
               <li>Aucune application, même pour mamie</li>
@@ -131,7 +131,7 @@ export default function Page() {
               </div>
             ))}
           </div>
-          <div className="lp-mid-cta"><Bouton>Préparer la surprise — gratuit</Bouton></div>
+          <div className="lp-mid-cta"><Bouton>Préparer la surprise (gratuit)</Bouton></div>
         </section>
 
         <Etapes
@@ -152,7 +152,7 @@ export default function Page() {
       </main>
 
       <PiedLp />
-      <Sticky>Préparer la surprise — gratuit →</Sticky>
+      <Sticky>Préparer la surprise (gratuit) →</Sticky>
     </div>
   )
 }

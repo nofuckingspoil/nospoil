@@ -20,8 +20,8 @@ import { OWNER, ADMIN } from './authz'
 // Renvoie { role, email } ou null si le jeton n'a aucun droit sur l'événement.
 //
 // `roleFor` (voir ./authz) suffit à décider du droit ; ici on veut en plus
-// l'adresse, pour pré-remplir le paiement avec celle de la personne qui règle
-// — et non avec celle du propriétaire, qui dort peut-être.
+// l'adresse, pour pré-remplir le paiement avec celle de la personne qui règle,
+// et non avec celle du propriétaire, qui dort peut-être.
 export async function membrePar(eventId, token) {
   if (!eventId || !token) return null
 

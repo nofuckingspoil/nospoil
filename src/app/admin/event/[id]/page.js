@@ -100,7 +100,7 @@ export default function AdminEvent() {
 
             {/* Chiffres essentiels */}
             <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px,1fr))', marginTop: 16 }}>
-              <div className="stat"><div className="lbl">Invités</div><div className="val">{data.event.guestCount}<span style={{ fontSize: 16, color: 'var(--text3)' }}>/{data.event.maxGuests}</span></div></div>
+              <div className="stat"><div className="lbl">Participants</div><div className="val">{data.event.guestCount}<span style={{ fontSize: 16, color: 'var(--text3)' }}>/{data.event.maxGuests}</span></div></div>
               <div className="stat"><div className="lbl">Photos</div><div className="val" style={{ color: 'var(--accent)' }}>{data.event.photoCount}</div></div>
               <div className="stat"><div className="lbl">Téléchargements</div><div className="val">{data.event.downloadCount}</div></div>
               <div className="stat"><div className="lbl">Numéros</div><div className="val">{data.contacts.length}</div></div>
@@ -121,7 +121,7 @@ export default function AdminEvent() {
               <a href={`/g/${data.event.id}`} target="_blank" rel="noreferrer">Voir l'album public ↗</a>
             </div>
 
-            {/* Preuve du consentement — utile en cas de litige */}
+            {/* Preuve du consentement, utile en cas de litige */}
             <div className="ev-meta" style={{ marginTop: 8 }}>
               {data.event.cgvAcceptedAt ? (
                 <span>✅ CGV acceptées le <strong>{fmtDate(data.event.cgvAcceptedAt)}</strong>
@@ -136,7 +136,7 @@ export default function AdminEvent() {
             </div>
 
             {/* Avis de cette soirée. Placés juste au-dessus de la liste des
-                invités : « Marie n'a pas retrouvé le lien » se lit à côté de
+                participants : « Marie n'a pas retrouvé le lien » se lit à côté de
                 la ligne de Marie, ce qu'aucun tableur ne saurait faire. */}
             {avis.length > 0 && (
               <>
@@ -157,7 +157,7 @@ export default function AdminEvent() {
                   return (
                     <div className={`avis-fiche ${estUneAlerte(a) ? 'alerte' : ''}`} key={a.id}>
                       <div className="avis-fiche-tete">
-                        <span className="qui">{a.role === 'organisateur' ? 'Organisateur' : a.guestName || 'Invité'}</span>
+                        <span className="qui">{a.role === 'organisateur' ? 'Organisateur' : a.guestName || 'Participant'}</span>
                         <span className="avis-etiq">{a.canal === 'mail' ? 'par mail' : 'dans l’album'}</span>
                         <span style={{ marginLeft: 'auto' }}>{fmtDate(a.createdAt)}</span>
                       </div>
@@ -172,7 +172,7 @@ export default function AdminEvent() {
                       {a.suggestion && <p className="cite">« {a.suggestion} »</p>}
                       {a.callOk && (
                         <p style={{ fontWeight: 600, color: 'var(--accent-deep)' }}>
-                          📞 Accepte un appel de 5 min{a.phone ? ` — ${a.phone}` : ' (sans numéro laissé)'}
+                          📞 Accepte un appel de 5 min{a.phone ? ` : ${a.phone}` : ' (sans numéro laissé)'}
                         </p>
                       )}
                       {a.appareil && <div className="meta">{a.appareil}</div>}
@@ -185,9 +185,9 @@ export default function AdminEvent() {
               </>
             )}
 
-            {/* Invités — qui a scanné, qui a joué le jeu, qui n'a rien pris */}
+            {/* Participants : qui a scanné, qui a joué le jeu, qui n'a rien pris */}
             <h3 className="h3" style={{ margin: '28px 0 10px' }}>
-              Invités ({data.guests?.length || 0})
+              Participants ({data.guests?.length || 0})
               <span className="muted small" style={{ fontWeight: 400, marginLeft: 8 }}>
                 {data.event.shotsPerGuest} clichés
                 {data.event.bonusShots > 0 ? ` + ${data.event.bonusShots} de recharge` : ' · sans recharge'}
@@ -200,7 +200,7 @@ export default function AdminEvent() {
                 {data.guests.map((g) => (
                   <div className="adm-guest" key={g.id}>
                     <div className="adm-guest-id">
-                      <strong>{g.name || 'Invité sans nom'}</strong>
+                      <strong>{g.name || 'Participant sans nom'}</strong>
                       <span className="muted small">
                         Arrivé {relTime(g.joinedAt)}
                         {g.lastActiveAt ? ` · vu ${relTime(g.lastActiveAt)}` : ' · jamais revenu'}
@@ -233,7 +233,7 @@ export default function AdminEvent() {
                 <div className="contacts-grid">
                   {data.contacts.map((c, i) => (
                     <div className="contact-item" key={i}>
-                      <span>{c.name || 'Invité'}</span>
+                      <span>{c.name || 'Participant'}</span>
                       <a href={`tel:${c.phone}`} className="mono">{c.phone}</a>
                     </div>
                   ))}
@@ -260,7 +260,7 @@ export default function AdminEvent() {
             <div className="danger-zone">
               <div>
                 <strong>Supprimer cet événement</strong>
-                <p className="muted small">Efface définitivement l'événement, ses {data.event.photoCount} photos et ses invités. Irréversible.</p>
+                <p className="muted small">Efface définitivement l'événement, ses {data.event.photoCount} photos et ses participants. Irréversible.</p>
               </div>
               {error ? <div className="err" style={{ marginBottom: 10 }}>{error}</div> : null}
               {!confirm ? (

@@ -11,7 +11,7 @@ export const runtime = 'nodejs'
 // Idempotent par nature : la formule ne fait que monter. Rappelée deux fois
 // (page rechargée), la route ne trouve rien à relever et se contente de
 // confirmer. Le vrai travail est fait par appliquerAgrandissement, partagé
-// avec l'ouverture d'un paiement — qui rattrape le cas de l'onglet fermé.
+// avec l'ouverture d'un paiement, qui rattrape le cas de l'onglet fermé.
 export async function POST(request) {
   const stripe = getStripe()
   if (!stripe) return Response.json({ error: 'Paiement indisponible.' }, { status: 400 })
@@ -45,7 +45,7 @@ export async function POST(request) {
   if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
 
   // Même porte que pour l'ouverture du paiement : un co-organisateur qui a
-  // réglé doit pouvoir finaliser. Lui refuser ici serait le pire des cas —
+  // réglé doit pouvoir finaliser. Lui refuser ici serait le pire des cas : 
   // l'argent prélevé, et la formule inchangée.
   const membre = await membrePar(ev.id, ownerToken)
   if (!membre) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
@@ -55,7 +55,7 @@ export async function POST(request) {
 
   // Rien à relever : le plus souvent une page rechargée, avec la même session.
   // Une session différente veut dire que deux règlements ont abouti pour la
-  // même chose malgré le verrou posé à l'ouverture du paiement — il reste la
+  // même chose malgré le verrou posé à l'ouverture du paiement : il reste la
   // fenêtre de quelques secondes où deux personnes cliquent en même temps. La
   // formule ne monte qu'une fois : le second est à rembourser, et personne ne
   // le verrait si on n'en disait rien ici.

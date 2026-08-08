@@ -1,6 +1,6 @@
 import { rpc, deletePhoto } from '../../../../lib/supabase'
 
-// Supprime une photo de l'invité (vérifiée par device_token) et libère un cliché.
+// Supprime une photo du participant (vérifiée par device_token) et libère un cliché.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const { photoId, deviceToken } = body

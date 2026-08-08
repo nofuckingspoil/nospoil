@@ -35,7 +35,7 @@ function toInputValue(d) {
 
 function frDate(iso) {
   const d = new Date(iso)
-  if (isNaN(d)) return '—'
+  if (isNaN(d)) return '-'
   return d.toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
 }
 
@@ -51,7 +51,7 @@ const REVEAL_PRESETS = [
 ]
 
 const SHOT_PRESETS = [
-  { n: 3, em: '💎', title: '3 clichés', sub: 'Très rare — chaque photo est un événement' },
+  { n: 3, em: '💎', title: '3 clichés', sub: 'Très rare : chaque photo est un événement' },
   { n: 5, em: '🎞️', title: '5 clichés', sub: 'Le bon équilibre, recommandé' },
   { n: 8, em: '📸', title: '8 clichés', sub: 'Plus généreux, pour les longues soirées' },
 ]
@@ -93,7 +93,7 @@ function CreateForm() {
   const [error, setError] = useState('')
   const [code, setCode] = useState('')
 
-  // Cases à cocher légales (jamais pré-cochées) — cf. CGV art. 6 et 9.2.
+  // Cases à cocher légales (jamais pré-cochées), cf. CGV art. 6 et 9.2.
   const [cgvOk, setCgvOk] = useState(false)
   const [waiverOk, setWaiverOk] = useState(false)
 
@@ -258,7 +258,7 @@ function CreateForm() {
       saveAccount(email.trim().toLowerCase())
 
       // Publicité : événement gratuit créé. C'est la conversion à optimiser sur
-      // du trafic froid — l'inconnu vient de devenir utilisateur.
+      // du trafic froid : l'inconnu vient de devenir utilisateur.
       track('Lead', {
         content_name: `Formule ${tier.maxGuests} invités`,
       }, { eventID: `lead_${data.id}` })
@@ -303,11 +303,11 @@ function CreateForm() {
         <div className="wiz-headline">
           <span className="wiz-count">Étape {stepNum} sur {TOTAL}</span>
           {/* Inutile sur l'étape 1 : le sélecteur y est posé à demeure. Ailleurs,
-              il s'ouvre sur place — l'ancien lien vers la grille de tarifs
+              il s'ouvre sur place : l'ancien lien vers la grille de tarifs
               quittait la page et faisait perdre toute la saisie. */}
           {step !== 1 && (
             <span className="wiz-tier">
-              {tier.maxGuests} invités · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
+              {tier.maxGuests} participants · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
               <button type="button" className="linklike" onClick={() => setTierOpen(!tierOpen)}>
                 {tierOpen ? 'fermer' : 'changer'}
               </button>
@@ -321,16 +321,16 @@ function CreateForm() {
 
       {isPaid && !PAYMENTS_ENABLED && (
         <div className="notice" style={{ marginTop: 12 }}>
-          🎁 <strong>Offert pendant le lancement</strong> — le paiement en ligne arrive bientôt. Votre événement est créé sans frais pour l'instant.
+          🎁 <strong>Offert pendant le lancement</strong> : le paiement en ligne arrive bientôt. Votre événement est créé sans frais pour l'instant.
         </div>
       )}
 
-      {/* ÉTAPE 1 — Nom */}
+      {/* ÉTAPE 1 : Nom */}
       {step === 1 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">C'est quoi l'occasion ?</h2>
           <p className="wiz-sub">
-            Ce nom s'affichera en grand sur l'écran d'accueil de vos invités.
+            Ce nom s'affichera en grand sur l'écran d'accueil de vos participants.
             Vous pourrez le changer plus tard.
           </p>
           <div className="field">
@@ -339,7 +339,7 @@ function CreateForm() {
               onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
           </div>
 
-          {/* Le nombre d'invités se demande, il ne se devine pas : la plupart des
+          {/* Le nombre de participants se demande, il ne se devine pas : la plupart des
               points d'entrée n'en portent aucun et retombaient sur la formule
               gratuite sans que personne ne l'ait choisie. */}
           <TierPicker value={maxGuests} onChange={pickTier} inline />
@@ -351,11 +351,11 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE 2 — Photo de couverture */}
+      {/* ÉTAPE 2 : Photo de couverture */}
       {step === 2 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">Une photo de couverture ?</h2>
-          <p className="wiz-sub">Elle habille l'écran d'accueil que voient vos invités. Vous pourrez l'ajouter ou la changer plus tard.</p>
+          <p className="wiz-sub">Elle habille l'écran d'accueil que voient vos participants. Vous pourrez l'ajouter ou la changer plus tard.</p>
           {coverPreview ? (
             <>
               <img src={coverPreview} alt="Aperçu de la couverture" className="wiz-coverimg" />
@@ -382,10 +382,10 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE 3 — Clichés par invité */}
+      {/* ÉTAPE 3 : Clichés par participant */}
       {step === 3 && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Combien de clichés par invité ?</h2>
+          <h2 className="wiz-q">Combien de clichés par participant ?</h2>
           <p className="wiz-sub">La contrainte argentique : moins de poses, et chaque photo compte davantage.</p>
           <div className="wiz-opts">
             {SHOT_PRESETS.map((p) => (
@@ -418,7 +418,7 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE 4 — Révélation */}
+      {/* ÉTAPE 4 : Révélation */}
       {step === 4 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">Quand a lieu votre événement ?</h2>
@@ -433,8 +433,8 @@ function CreateForm() {
 
           <h2 className="wiz-q" style={{ marginTop: 0 }}>Et quand révéler les photos ?</h2>
           <p className="wiz-sub">
-            Jusqu'à cette date, tout reste caché — comme une pellicule qu'on développe.
-            Ensuite, les photos deviennent visibles par <strong>tous les invités</strong>.
+            Jusqu'à cette date, tout reste caché, comme une pellicule qu'on développe.
+            Ensuite, les photos deviennent visibles par <strong>tous les participants</strong>.
           </p>
           <div className="wiz-opts">
             {REVEAL_PRESETS.map((p) => (
@@ -461,7 +461,7 @@ function CreateForm() {
           </div>
           <div className="notice" style={{ marginTop: 16 }}>
             💡 Laissez-leur le temps. Avant la révélation, chacun peut revoir ses clichés et supprimer
-            ceux qu'il ne veut pas montrer — après, c'est visible par tout le monde.
+            ceux qu'il ne veut pas montrer ; après, c'est visible par tout le monde.
           </div>
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
@@ -471,7 +471,7 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE 5 — Mail + récapitulatif */}
+      {/* ÉTAPE 5 : Mail + récapitulatif */}
       {step === 5 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">Où vous envoyer votre accès ?</h2>
@@ -493,7 +493,7 @@ function CreateForm() {
               <span>{coverPreview ? 'Ajoutée' : 'Aucune'} <button type="button" className="linklike" onClick={() => goTo(2)}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
-              <span>Clichés / invité</span>
+              <span>Clichés / participant</span>
               <span>{shots} <button type="button" className="linklike" onClick={() => goTo(3)}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
@@ -506,7 +506,7 @@ function CreateForm() {
             </div>
             <div className="wiz-recap-row">
               <span>Formule</span>
-              <span>{tier.maxGuests} invités · {formatPrice(tier.priceCents)}</span>
+              <span>{tier.maxGuests} participants · {formatPrice(tier.priceCents)}</span>
             </div>
             {tier.priceCents > 0 && (
               <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
@@ -540,7 +540,7 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE bonus — Code reçu par mail */}
+      {/* ÉTAPE bonus : Code reçu par mail */}
       {step === 'code' && (
         <form className="card wiz-card" onSubmit={handleCreate}>
           <h2 className="wiz-q">Vérifiez votre adresse</h2>
