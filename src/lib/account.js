@@ -95,6 +95,16 @@ export function isValidEmail(v) {
 
 const FIELDS = 'id,name,host_names,reveal_at,created_at,owner_token'
 
+// L'adresse de l'équipe : en se connectant avec elle, on retrouve tous les
+// événements du site, pas seulement les siens. Sert au dépannage : quand un
+// organisateur décrit un souci, on regarde son album depuis son propre point de vue.
+// La connexion reste protégée comme les autres : il faut recevoir le code sur cette boîte.
+const SUPER_ADMIN = 'clement@timetoflash.fr'
+
+export function estSuperAdmin(email) {
+  return normalizeEmail(email) === SUPER_ADMIN
+}
+
 // Tous les événements liés à ce mail : ceux qu'il a créés + ceux où il est co-organisateur.
 //
 // Le jeton renvoyé dépend du lien : le propriétaire reçoit celui de l'événement,
@@ -104,6 +114,23 @@ export async function eventsForEmail(email) {
   const enc = encodeURIComponent(email)
   // Se connecter, c'est se manifester : le compte existe au plus tard ici.
   await ensureAccount(email)
+
+  // L'équipe voit tout. Les albums d'essai du site sont écartés : ils
+  // s'effacent le lendemain et noieraient les vrais événements.
+  if (estSuperAdmin(email)) {
+    const tous = await selectRows(
+      'events',
+      `status=eq.active&is_demo=is.false&order=created_at.desc&limit=200&select=${FIELDS}`
+    )
+    return (Array.isArray(tous.data) ? tous.data : []).map((e) => ({
+      id: e.id,
+      name: e.name,
+      hostNames: e.host_names,
+      revealAt: e.reveal_at,
+      ownerToken: e.owner_token,
+    }))
+  }
+
   const owned = await selectRows('events', `owner_email=eq.${enc}&status=eq.active&select=${FIELDS}`)
   const list = (Array.isArray(owned.data) ? owned.data : []).map((e) => ({ ...e, _token: e.owner_token }))
 

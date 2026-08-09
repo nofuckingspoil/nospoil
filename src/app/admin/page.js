@@ -31,6 +31,16 @@ function IconePlay() {
     </svg>
   )
 }
+// Une flèche qui sort du cadre : on quitte l'admin pour aller voir l'album
+// avec les yeux de l'organisateur.
+function IconeOuvrir() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M14 4h6v6M20 4l-8.5 8.5M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5" />
+    </svg>
+  )
+}
 function IconePoubelle() {
   return (
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -373,10 +383,18 @@ export default function Admin() {
                       <span className="muted" style={{ fontSize: 13 }}>-</span>
                     )}
                   </span>
-                  {/* Deux gestes, deux icônes. Le nom de l'événement reste le
-                      chemin pour l'ouvrir : un troisième bouton n'aurait fait
-                      que répéter ce lien. */}
+                  {/* Le nom de l'événement mène à sa fiche admin ; la flèche,
+                      elle, ouvre le vrai tableau de bord de l'organisateur, avec
+                      son jeton : c'est le seul moyen de voir ce qu'il voit quand
+                      il appelle à l'aide. */}
                   <span className="pc-actions">
+                    {e.ownerToken && (
+                      <a className="pc-icon" href={`/event/${e.id}?k=${e.ownerToken}`}
+                        target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}
+                        title="Ouvrir comme l'organisateur" aria-label="Ouvrir comme l'organisateur">
+                        <IconeOuvrir />
+                      </a>
+                    )}
                     <button className="pc-icon" type="button"
                       title={suspendu ? 'Réactiver cet événement' : 'Suspendre cet événement'}
                       aria-label={suspendu ? 'Réactiver cet événement' : 'Suspendre cet événement'}

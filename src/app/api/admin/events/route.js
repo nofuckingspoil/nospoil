@@ -12,7 +12,7 @@ export async function GET(request) {
 
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,download_count,promo_code,paid_cents,is_test,guests(count),photos(count)' +
+    'select=id,name,host_names,owner_email,owner_token,cover_url,created_at,reveal_at,status,max_guests,download_count,promo_code,paid_cents,is_test,guests(count),photos(count)' +
       // Les essais du site ne sont pas des événements : ils encombreraient la
       // liste sans rien apprendre, et s'effacent d'eux-mêmes le lendemain.
       '&is_demo=is.false&order=created_at.desc'
@@ -50,6 +50,9 @@ export async function GET(request) {
     name: e.name,
     hostNames: e.host_names,
     ownerEmail: e.owner_email || null,
+    // Le jeton privé de l'organisateur : il ouvre son tableau de bord tel qu'il
+    // le voit. Réservé à cette réponse, elle-même derrière la clé admin.
+    ownerToken: e.owner_token || null,
     coverUrl: e.cover_url ? signedCovers[e.cover_url] || null : null,
     createdAt: e.created_at,
     revealAt: e.reveal_at,
