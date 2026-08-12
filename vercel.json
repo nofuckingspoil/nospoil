@@ -15,7 +15,6 @@
   ],
   "headers": [
     {
-      "comment": "Le fichier qui prouve à Apple que ce domaine et l'application vont ensemble. Sans extension, il serait servi en texte brut : Apple exige du JSON, et refuse silencieusement sinon.",
       "source": "/.well-known/apple-app-site-association",
       "headers": [
         { "key": "Content-Type", "value": "application/json" }
