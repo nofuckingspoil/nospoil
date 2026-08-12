@@ -1,0 +1,19 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["L83FG88N3L.fr.timetoflash.app"],
+        "components": [
+          { "/": "/j/*", "comment": "Rejoindre une soiree : ouvre l app installee" },
+          { "/": "/g/*", "comment": "L album revele" },
+          { "/": "/event/*", "comment": "Le tableau de bord de l organisateur" },
+          { "/": "/connexion*", "comment": "Le lien de connexion recu par mail" },
+          { "/": "/mes-photos*", "comment": "Retrouver ses photos" }
+        ]
+      }
+    ]
+  },
+  "appclips": {
+    "apps": ["L83FG88N3L.fr.timetoflash.app.Clip"]
+  }
+}
