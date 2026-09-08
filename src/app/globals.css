@@ -1666,6 +1666,17 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-opt:hover { background: rgba(0,0,0,.03); }
 .gal-opt.on { background: #fdf3e6; }
 .gal-opt:disabled { opacity: .45; cursor: not-allowed; }
+/* L'aperçu d'une pellicule, dans son menu : le rendu appliqué à une vraie
+   photo de la soirée, parce qu'un nom ne dit rien avant d'avoir essayé. */
+.gal-opt-vig {
+  position: relative; flex: 0 0 auto; width: 46px; height: 46px;
+  border-radius: 9px; overflow: hidden; background: var(--line);
+}
+.gal-opt-vig img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gal-opt-vig > .film-teinte, .gal-opt-vig > .film-vignette { position: absolute; inset: 0; }
+.gal-opt-vig > .film-teinte { mix-blend-mode: multiply; }
+.gal-opt-vig > .film-vignette { background: radial-gradient(ellipse at 50% 50%, rgba(28,16,6,0) 45%, rgba(28,16,6,.75) 100%); }
+.gal-opt.on .gal-opt-vig { box-shadow: 0 0 0 2px var(--accent); }
 .gal-opt-t { display: flex; flex-direction: column; gap: 1px; min-width: 0;
   font-weight: 700; font-size: 14px; color: var(--ink); }
 .gal-opt-t em { font-style: normal; font-weight: 400; font-size: 11.5px; color: var(--text4);
@@ -3254,6 +3265,12 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .col-aide strong { color: var(--accent-deep); }
 
 /* Le bouton qui ouvre tout ça, posé dans l'en-tête de l'album. */
+.gal-rejouer {
+  display: block; margin: 26px auto 0; padding: 11px 18px; border-radius: 999px;
+  background: none; border: 1px solid var(--line); color: var(--text3); cursor: pointer;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .08em;
+}
+.gal-rejouer:hover { border-color: var(--accent); color: var(--accent-deep); }
 .gal-partage {
   display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
   border-radius: 999px; border: 1px solid var(--accent); background: #fdf3e6;

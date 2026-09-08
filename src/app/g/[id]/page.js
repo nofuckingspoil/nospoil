@@ -268,6 +268,7 @@ async function enregistrer(blob, nom) {
 function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
   const [dx, setDx] = useState(0)
   const [glisse, setGlisse] = useState(false)
+  const [dy, setDy] = useState(0)   // le doigt qui chasse la photo vers le haut ou le bas
   const geste = useRef(null)
   const n = photos.length
   const p = photos[index]
@@ -279,10 +280,22 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
       else if (e.key === 'ArrowRight') setIndex((i) => Math.min(n - 1, i + 1))
     }
     window.addEventListener('keydown', onKey)
+    // Le retour d'Android referme la photo. Sans cette entrée d'historique, il
+    // sortait de l'album entier : on croyait revenir à la grille et on se
+    // retrouvait sur la page d'avant.
+    window.history.pushState({ diapo: true }, '')
+    const onPop = () => onClose()
+    window.addEventListener('popstate', onPop)
     // La page derrière ne doit pas défiler sous la photo qu'on regarde.
     const avant = document.body.style.overflow
     document.body.style.overflow = 'hidden'
-    return () => { window.removeEventListener('keydown', onKey); document.body.style.overflow = avant }
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener('popstate', onPop)
+      // Si la fermeture ne vient pas du retour, on retire l'entrée qu'on a posée.
+      if (window.history.state && window.history.state.diapo) window.history.back()
+      document.body.style.overflow = avant
+    }
   }, [n, onClose, setIndex])
 
   function debut(e) {
@@ -302,7 +315,10 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
       g.axe = Math.abs(ex) > Math.abs(ey) ? 'x' : 'y'
       if (g.axe === 'x') setGlisse(true)
     }
-    if (g.axe !== 'x') return
+    // Le doigt parti à la verticale chasse la photo : c'est devenu le geste de
+    // tout le monde pour refermer une image, et chercher une croix en haut d'un
+    // grand écran, une main occupée, ne va pas de soi.
+    if (g.axe === 'y') { setDy(ey); return }
     // Aux deux bouts, la photo résiste au lieu de partir dans le vide.
     const bord = (ex > 0 && index === 0) || (ex < 0 && index === n - 1)
     setDx(bord ? ex * 0.3 : ex)
@@ -311,7 +327,13 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
     const g = geste.current
     geste.current = null
     setGlisse(false)
-    if (!g || g.axe !== 'x') { setDx(0); return }
+    if (g && g.axe === 'y') {
+      // Au-delà du seuil on ferme, en dessous la photo revient en place.
+      if (Math.abs(dy) > Math.min(120, window.innerHeight * 0.16)) onClose()
+      setDy(0)
+      return
+    }
+    if (!g || g.axe !== 'x') { setDx(0); setDy(0); return }
     const seuil = Math.min(90, window.innerWidth * 0.18)
     if (dx <= -seuil && index < n - 1) setIndex(index + 1)
     else if (dx >= seuil && index > 0) setIndex(index - 1)
@@ -319,11 +341,12 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
   }
 
   return (
-    <div className="diapo" role="dialog" aria-modal="true" aria-label={`Photo ${index + 1} sur ${n}`}>
+    <div className="diapo" role="dialog" aria-modal="true" aria-label={`Photo ${index + 1} sur ${n}`}
+      style={dy ? { background: `rgba(6,7,11,${Math.max(0.35, 1 - Math.abs(dy) / 420)})` } : undefined}>
       <div className="diapo-piste"
         style={{
-          transform: `translate3d(calc(${-index * 100}% + ${dx}px), 0, 0)`,
-          transition: glisse ? 'none' : 'transform .3s cubic-bezier(.22,.61,.36,1)',
+          transform: `translate3d(calc(${-index * 100}% + ${dx}px), ${dy}px, 0)`,
+          transition: glisse || dy ? 'none' : 'transform .3s cubic-bezier(.22,.61,.36,1)',
         }}
         onTouchStart={debut} onTouchMove={bouge} onTouchEnd={fin} onTouchCancel={fin}>
         {photos.map((ph, j) => (
@@ -550,6 +573,7 @@ export default function Gallery({ params }) {
   // depuis un autre téléphone.
   // L'image à emporter sur Instagram : un écran plein, ouvert depuis l'album.
   const [montrerCollage, setMontrerCollage] = useState(false)
+  const [rejoue, setRejoue] = useState(0) // remonter la grille relance le développement
   const [montrerAvis, setMontrerAvis] = useState(false)
   const [avisFerme, setAvisFerme] = useState(false)
   const pingFait = useRef(false)
@@ -753,6 +777,10 @@ export default function Gallery({ params }) {
     : parVisibilite
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
+  // L'aperçu des pellicules : la première photo visible de la soirée. Sur ses
+  // propres souvenirs, un rendu se juge en une seconde.
+  const apercuUrl = (data?.photos || []).find((x) => !x.hidden)?.url || ''
+
   // Comment nommer le filtre en cours, du bouton au libellé de téléchargement :
   // un prénom si c'est une seule personne, un compte au-delà.
   const nomsChoisis = data.guests.filter((g) => auteursChoisis.has(g.id)).map((g) => g.name)
@@ -938,6 +966,14 @@ export default function Gallery({ params }) {
               {PELLICULES.map((f) => (
                 <button key={f.id} className={`gal-opt ${pelliculeId === f.id ? 'on' : ''}`}
                   onClick={() => choisirPellicule(f.id, avecDate)}>
+                  {apercuUrl && (
+                    <span className="gal-opt-vig" aria-hidden="true">
+                      <img src={apercuUrl} alt="" crossOrigin="anonymous"
+                        style={f.css ? { filter: f.css } : undefined} />
+                      {f.teinte && <span className="film-teinte" style={{ background: cssTeinte(f) }} />}
+                      {f.vignette > 0 && <span className="film-vignette" style={{ opacity: f.vignette }} />}
+                    </span>
+                  )}
                   <span className="gal-opt-t">{f.nom}<em>{f.resume}</em></span>
                   <span className="gal-opt-c" aria-hidden="true">{pelliculeId === f.id ? '✓' : ''}</span>
                 </button>
@@ -1045,7 +1081,7 @@ export default function Gallery({ params }) {
       {photos.length === 0 ? (
         <div className="notice" style={{ marginTop: 16 }}>Aucune photo pour ce filtre.</div>
       ) : (
-        <div className="masonry" style={{ marginTop: 8 }}>
+        <div className="masonry" key={rejoue} style={{ marginTop: 8 }}>
           {photos.map((p, i) => {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
@@ -1126,6 +1162,18 @@ export default function Gallery({ params }) {
             )
           })}
         </div>
+      )}
+
+      {/* Revoir la révélation : les photos se redéveloppent, comme au premier
+          matin. C'est rare, et tranquille, donc c'est ici, après la dernière
+          photo, et non en haut de l'écran où ce serait un bouton de plus. */}
+      {photos.length > 0 && !selecting && (
+        <button className="gal-rejouer" onClick={() => {
+          setRejoue((n) => n + 1)
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        }}>
+          ↺ Revoir la révélation
+        </button>
       )}
 
       {/* La question arrive après les photos, jamais avant : on laisse d'abord
