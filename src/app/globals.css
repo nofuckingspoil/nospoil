@@ -744,6 +744,9 @@ a.cam-pile:active { transform: scale(.94); }
   background: linear-gradient(180deg, rgba(11,13,20,.3) 0 34%, rgba(11,13,20,.62) 60%, rgba(11,13,20,.9) 86%);
 }
 .gal-hero-corps { position: relative; z-index: 2; padding: 20px 18px 22px; color: #fff; }
+/* Le bandeau et les deux boutons ronds, repris du viseur : ils vivent au-dessus
+   de la couverture, qui reprend donc sa marge en dessous d'eux. */
+.gal-hero-corps .album-nav { margin-bottom: 18px; }
 .gal-cadre {
   position: relative; display: block; width: fit-content; max-width: 100%; margin: 0 auto;
   border-radius: 14px; overflow: hidden; line-height: 0;
@@ -1976,6 +1979,13 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .gal-page { padding: 16px 12px 30px; }
   .gal-page .gal-top { margin: -16px -12px 10px; padding: 10px 12px; }
   .masonry { gap: 8px; }
+  /* Sur un téléphone, une photo verticale pleine hauteur mangeait la moitié de
+     l'écran : on n'en voyait que deux d'un coup. Les tirages sont ramenés à un
+     format commun, légèrement recadré, pour en poser six par écran. Le recadrage
+     est celui de l'aperçu seulement : la photo ouverte et le fichier téléchargé
+     restent entiers. */
+  .gal-page .polaroid .media { aspect-ratio: 4 / 5; }
+  .gal-page .polaroid .media img { height: 100%; object-fit: cover; }
   .polaroid { padding: 5px 5px 0; border-radius: 6px; }
   .polaroid .cap { padding: 5px 2px 7px; }
 }

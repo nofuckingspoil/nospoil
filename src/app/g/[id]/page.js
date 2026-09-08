@@ -519,6 +519,12 @@ export default function Gallery({ params }) {
   }
   // Qui regarde : beaucoup s'inscrivent sous un surnom et ne le retrouvent pas.
   const [moiId, setMoiId] = useState(null)
+  // Le participant reconnu sur cet appareil : son prénom nourrit la fenêtre
+  // « Profil », et son absence retire le bouton (un organisateur venu du
+  // tableau de bord n'a pas de profil de participant).
+  const [moi, setMoi] = useState(null)
+  const [showProfil, setShowProfil] = useState(false)
+  const [lienCopie, setLienCopie] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
   // Les réglages mangeaient l'écran entier d'un téléphone : les photos
@@ -607,7 +613,25 @@ export default function Gallery({ params }) {
   const [codeInput, setCodeInput] = useState('')
   const [codeErr, setCodeErr] = useState('')
 
-  useEffect(() => { setMoiId(getGuest(id)?.guestId || null) }, [id])
+  useEffect(() => {
+    const g = getGuest(id)
+    setMoi(g || null)
+    setMoiId(g?.guestId || null)
+  }, [id])
+
+  // Partager l'album : le lien public de la galerie, pas le lien personnel du
+  // viseur, qui rouvrirait l'appareil de celui qui l'a envoyé.
+  async function partagerAlbum() {
+    const url = typeof window !== 'undefined' ? `${window.location.origin}/g/${id}` : ''
+    if (!url) return
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try { await navigator.share({ title: data?.hostNames || data?.name || 'Time to Flash', text: 'Les photos de la soirée 📸', url }); return } catch {}
+    }
+    try {
+      await navigator.clipboard.writeText(url)
+      setLienCopie(true); setTimeout(() => setLienCopie(false), 2000)
+    } catch {}
+  }
 
   // Favoris posés par cet appareil. Le compte, lui, vit sur la photo elle-même.
   const [favs, setFavs] = useState(() => new Set())
@@ -914,16 +938,6 @@ export default function Gallery({ params }) {
 
   return (
     <main className={`screen wide gal-page ${panneau ? 'panneau-ouvert' : ''} ${selecting ? 'en-selection' : ''}`}>
-      {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
-          la page des participants, qui n'ont rien à y faire. Collé en haut, la page
-          étant longue par nature. */}
-      {data.isOwner && (
-        <div className="gal-top">
-          <Link href={`/event/${id}`} className="gal-back">
-            <span aria-hidden="true">←</span> Tableau de bord
-          </Link>
-        </div>
-      )}
       {data.ownerPreview && (
         <div className="notice notice-orga" style={{ marginBottom: 14 }}>
           👁️ <strong>Aperçu organisateur</strong> : vous voyez les photos en avant-première. Vos participants ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt)}.
@@ -948,6 +962,30 @@ export default function Gallery({ params }) {
           : <div className="gal-hero-fond gal-hero-motif" />}
         <div className="gal-hero-voile" />
         <div className="gal-hero-corps">
+          {/* Le bandeau de l'organisateur et les deux boutons ronds : les mêmes
+              qu'au-dessus du viseur et de l'album d'attente. Passer de l'un à
+              l'autre ne doit pas donner l'impression de changer d'application. */}
+          {data.isOwner && (
+            <Link href={`/event/${id}`} className="album-orga">
+              <span>Vous organisez cette soirée</span><b>Tableau de bord →</b>
+            </Link>
+          )}
+          <div className="album-nav">
+            <button className="album-navbtn" onClick={() => setShowProfil(true)}>
+              <span className="ic">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
+              </span>
+              <em>Profil</em>
+            </button>
+            <span className="album-navspace" />
+            <button className="album-navbtn" onClick={partagerAlbum}>
+              <span className="ic">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 16V4m0 0L8 8m4-4l4 4" /><path d="M5 14v5a2 2 0 002 2h10a2 2 0 002-2v-5" /></svg>
+              </span>
+              <em>{lienCopie ? 'Copié' : 'Partager'}</em>
+            </button>
+          </div>
+
           {data.coverUrl ? (
             <div className="gal-cadre"><img src={data.coverUrl} alt="" /></div>
           ) : (
@@ -968,11 +1006,14 @@ export default function Gallery({ params }) {
             {data.photos.length} photo{data.photos.length > 1 ? 's' : ''} · {data.guests.length} participant{data.guests.length > 1 ? 's' : ''}
           </div>
           <div className="gal-hero-actions">
-            <button className="gal-hero-dl" disabled={!!zip} onClick={() => downloadAll(photos)}>
+            {/* En haut, c'est l'album entier : ce bouton vit au-dessus des
+                filtres, avant qu'on ait trié quoi que ce soit. Celui du bas,
+                lui, suit le filtre en cours. */}
+            <button className="gal-hero-dl" disabled={!!zip} onClick={() => downloadAll(data.photos)}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
               </svg>
-              {zip ? `Préparation… ${zip.done}/${zip.total}` : `Tout télécharger · ${photos.length}`}
+              {zip ? `Préparation… ${zip.done}/${zip.total}` : `Tout télécharger (${data.photos.length})`}
             </button>
             {data.photos.length > 1 && (
               <button className="gal-hero-revoir" onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
@@ -1176,7 +1217,7 @@ export default function Gallery({ params }) {
               <button className="btn btn-dark" disabled={!!zip} onClick={() => downloadAll(photos)}>
                 {zip ? `Préparation… ${zip.done}/${zip.total}`
                   : auteursChoisis.size === 0
-                    ? `Tout télécharger · ${photos.length}`
+                    ? `Tout télécharger (${photos.length})`
                     : auteursChoisis.size === 1
                       ? `Télécharger les ${photos.length} de ${nomFiltre}`
                       : `Télécharger ces ${photos.length} photos`}
@@ -1281,6 +1322,25 @@ export default function Gallery({ params }) {
         </div>
       )}
 
+      {/* Le profil : son prénom, et le chemin vers ses propres photos. Les mêmes
+          deux lignes que sur le viseur, sans le lien personnel : la soirée est
+          passée, il n'y a plus d'appareil à rouvrir. */}
+      {showProfil && (
+        <div className="modal-fond" onClick={() => setShowProfil(false)}>
+          <div className="modal-carte" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-titre">Mon profil</div>
+            <p className="modal-nom">{moi?.name || 'Cet appareil'}</p>
+            <p className="modal-sous">
+              {moi?.name
+                ? 'Vos photos de la soirée sont signées de ce prénom.'
+                : "Cet appareil n'a pas participé à cette soirée. Retrouvez vos propres photos ci-dessous."}
+            </p>
+            <a className="modal-btn" href="/mes-photos">📷 Retrouver mes photos</a>
+            <button className="modal-btn modal-btn-clair" onClick={() => setShowProfil(false)}>Fermer</button>
+          </div>
+        </div>
+      )}
+
       {selecting && (
         <div className="gal-bar">
           <div className="gal-bar-in">
@@ -1291,7 +1351,9 @@ export default function Gallery({ params }) {
               ✕
             </button>
             <button className="gal-bar-tout" onClick={basculerTout}>
-              {tousCoches ? 'Décocher ces photos' : 'Cocher ces photos'}
+              {/* Le nombre dit combien le filtre en cours en montre : on sait ce
+                  qu'on coche avant de cliquer. */}
+              {tousCoches ? `Décocher ces ${photos.length} photos` : `Cocher ces ${photos.length} photos`}
             </button>
             <span className="gal-bar-n">
               {aTelecharger.length} photo{aTelecharger.length > 1 ? 's' : ''}
