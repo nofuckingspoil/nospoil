@@ -78,7 +78,7 @@ function ligne(cle, valeur) {
 
 function noteLisible(n) {
   const trouve = NOTES.find((x) => x.valeur === n)
-  return trouve ? `${trouve.emoji} ${trouve.mot}` : null
+  return trouve ? `${n}/5 ${trouve.mot}` : null
 }
 
 function soucisLisibles(issues) {

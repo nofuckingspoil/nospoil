@@ -31,9 +31,12 @@ function moyenne(liste) {
   return n.reduce((s, v) => s + v, 0) / n.length
 }
 
+// Attention en relisant les anciennes réponses : la note est passée de quatre
+// crans à émojis à cinq étoiles le 9 septembre 2026. Un « 4 » d'avant cette
+// date valait la note maximale, un « 4 » d'après vaut quatre étoiles sur cinq.
 function noteLisible(n) {
   const t = NOTES.find((x) => x.valeur === n)
-  return t ? `${t.emoji} ${t.mot}` : null
+  return t ? `${'★'.repeat(n)} ${t.mot}` : null
 }
 
 // Classement décroissant d'une valeur (problème, source, envie de refaire).

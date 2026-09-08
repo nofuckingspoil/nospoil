@@ -39,13 +39,16 @@ function Choix({ options, valeur, onChange, cle = 'id' }) {
   )
 }
 
-export default function Avis({ role = 'invite', payload = {}, onClose = null, compact = false }) {
+export default function Avis({ role = 'invite', payload = {}, onClose = null, compact = false, accroche = null }) {
   const orga = role === 'organisateur'
   // La case « tout allait bien » a été remplacée par le oui/non : elle n'a plus
   // à figurer dans la liste, qui ne s'ouvre déjà qu'en cas de « oui ».
   const SOUCIS = souciDe(role).filter((s) => !s.ok)
 
   const [note, setNote] = useState(null)
+  // L'identifiant de la ligne créée dès la première étoile, en mode pop-up.
+  // Le questionnaire complet viendra la compléter au lieu d'en créer une autre.
+  const [ligneId, setLigneId] = useState(null)
   const [reaction, setReaction] = useState('')
   const [aEuProbleme, setAEuProbleme] = useState(null) // null | 'non' | 'oui'
   const [soucis, setSoucis] = useState(() => new Set())
@@ -96,6 +99,24 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
       ? { relance: "Racontez-nous en une phrase ce qui s'est passé.", exemple: 'Le plus concret possible, même approximatif.' }
       : null
 
+  // La note part dès la première étoile, sans attendre le reste. Celui qui
+  // referme la pop-up juste après a quand même répondu à la seule question
+  // obligatoire : ne rien garder reviendrait à perdre l'essentiel pour avoir
+  // réclamé le détail.
+  async function poserLaNote(v) {
+    setNote(v)
+    if (!compact || ligneId) return
+    try {
+      const r = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...payload, rating: v }),
+      })
+      const d = await r.json().catch(() => ({}))
+      if (d.id) setLigneId(d.id)
+    } catch {}
+  }
+
   async function envoyer() {
     if (!note || envoi) return
     setEnvoi(true); setErreur('')
@@ -105,6 +126,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...payload,
+          ...(ligneId ? { feedbackId: ligneId } : null),
           rating: note,
           issues,
           issueDetail: detail,
@@ -153,28 +175,43 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
       {onClose && compact && (
         <button className="avis-fermer" onClick={onClose} aria-label="Fermer">×</button>
       )}
+      {/* La raison pour laquelle on se permet d'interrompre, écrite avant la
+          question et non après : « vous faites partie des mille premiers ». */}
+      {accroche && <p className="avis-pop-accroche">{accroche}</p>}
 
       {/* 1. La note. La seule question obligatoire : celle à laquelle tout le
           monde répond, et qui suffit à mesurer la satisfaction dans le temps. */}
       <div className="avis-q">
         <div className="avis-lbl">{orga ? 'Dans l’ensemble, comment s’est passée votre soirée ?' : 'Vous avez aimé ?'}</div>
-        <div className="avis-notes">
+        {/* Cinq étoiles : le geste se fait sans rien lire. Elles s'allument
+            jusqu'à celle qu'on touche, comme partout ailleurs, et le mot
+            correspondant s'affiche dessous une fois le choix fait. */}
+        <div className="avis-etoiles" role="radiogroup"
+          aria-label={orga ? 'Note de votre soirée' : 'Votre note'}>
           {NOTES.map((n) => (
             <button key={n.valeur} type="button"
-              className={`avis-note ${note === n.valeur ? 'on' : ''}`}
-              aria-pressed={note === n.valeur} title={n.mot}
-              onClick={() => setNote(n.valeur)}>
-              <span aria-hidden="true">{n.emoji}</span>
-              <em>{n.mot}</em>
+              className={`avis-etoile ${note >= n.valeur ? 'on' : ''}`}
+              role="radio" aria-checked={note === n.valeur}
+              aria-label={`${n.valeur} étoile${n.valeur > 1 ? 's' : ''} sur 5 : ${n.mot}`}
+              onClick={() => poserLaNote(n.valeur)}>
+              <span aria-hidden="true">★</span>
             </button>
           ))}
         </div>
+        <div className="avis-etoiles-mot">{note ? NOTES.find((n) => n.valeur === note)?.mot : 'Touchez une étoile'}</div>
       </div>
+
+      {/* En pop-up, tout ce qui suit reste plié tant qu'aucune étoile n'est
+          touchée. Le questionnaire entier posé d'un coup sur l'album, c'est un
+          mur : on voit ce que ça coûte avant de voir ce que ça demande, et on
+          referme. Une seule étoile à toucher, et la suite se déplie pour qui
+          veut bien continuer. La note, elle, est déjà enregistrée. */}
+      {(!compact || note) && (<>
 
       {/* 2. La question ouverte, et de la place pour y répondre. Elle se
           reformule d'après la note qui vient d'être donnée : c'est la même
           case, mais on ne demande pas la même chose à quelqu'un qui a mis
-          « Bof » et à quelqu'un qui a mis « Génial ». */}
+          une étoile et à quelqu'un qui en a mis cinq. */}
       {note && (
         <div className="avis-q avis-ouvert">
           <div className="avis-lbl">{reactionA(role, note)?.q}</div>
@@ -291,6 +328,17 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           ? 'Une seule question est obligatoire, les autres sont libres.'
           : 'Anonyme pour l’organisateur : lui ne verra jamais votre réponse.'}
       </p>
+
+      </>)}
+
+      {/* Tant que rien n'est touché, une seule ligne sous les étoiles : elle dit
+          que ça s'arrête là si on le veut. C'est ce qui rend le premier geste
+          gratuit, et donc faisable. */}
+      {compact && !note && (
+        <p className="avis-pied" style={{ marginTop: 4 }}>
+          Une étoile suffit. Le reste est facultatif.
+        </p>
+      )}
     </div>
   )
 }

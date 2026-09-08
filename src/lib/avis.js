@@ -102,12 +102,23 @@ export const SOURCES = [
   { id: 'autre', label: 'Autre' },
 ]
 
+// Cinq étoiles, depuis le 9 septembre 2026. Avant, c'étaient quatre crans à
+// émojis (Bof, Moyen, Bien, Génial) : les réponses d'avant cette date sont sur
+// l'ancienne échelle et ne se comparent pas aux nouvelles, l'admin le rappelle.
+//
+// Cinq étoiles parce que c'est le geste que tout le monde a déjà fait cent
+// fois, et qu'il ne demande aucune lecture : on tape la troisième étoile sans
+// avoir lu un seul mot. Quatre libellés à comparer, c'était déjà un effort.
 export const NOTES = [
-  { valeur: 1, emoji: '😞', mot: 'Bof' },
-  { valeur: 2, emoji: '😐', mot: 'Moyen' },
-  { valeur: 3, emoji: '🙂', mot: 'Bien' },
-  { valeur: 4, emoji: '😍', mot: 'Génial' },
+  { valeur: 1, emoji: '★', mot: 'Décevant' },
+  { valeur: 2, emoji: '★', mot: 'Moyen' },
+  { valeur: 3, emoji: '★', mot: 'Bien' },
+  { valeur: 4, emoji: '★', mot: 'Très bien' },
+  { valeur: 5, emoji: '★', mot: 'Génial' },
 ]
+
+/** La date du passage aux cinq étoiles, pour que l'admin sache lire les vieux avis. */
+export const NOTES_DEPUIS = '2026-09-09'
 
 // La grande question ouverte, reformulée selon la note qu'on vient de donner.
 //
@@ -121,14 +132,16 @@ const REACTIONS_INVITE = {
   1: { q: 'Qu’est-ce qui vous a déçu ?', ph: 'Dites-le franchement : c’est ce qui nous fait le plus avancer.' },
   2: { q: 'Qu’est-ce qui aurait rendu ça vraiment bien ?', ph: 'Le détail qui manquait, le moment où c’est retombé…' },
   3: { q: 'Qu’est-ce qui vous a plu, et qu’est-ce qui manquait pour que ce soit génial ?', ph: 'Les deux nous intéressent, même en une phrase.' },
-  4: { q: 'Qu’est-ce qui vous a le plus plu ?', ph: 'Le moment, le détail, la surprise… Racontez.' },
+  4: { q: 'Qu’est-ce qui vous a plu, et qu’est-ce qui manquait pour la cinquième étoile ?', ph: 'Les deux nous intéressent, même en une phrase.' },
+  5: { q: 'Qu’est-ce qui vous a le plus plu ?', ph: 'Le moment, le détail, la surprise… Racontez.' },
 }
 
 const REACTIONS_ORGA = {
   1: { q: 'Qu’est-ce qui n’a pas marché ?', ph: 'Soyez direct, on préfère l’entendre de vous.' },
   2: { q: 'Qu’est-ce qui vous a laissé sur votre faim ?', ph: 'Ce que vous attendiez et qui n’est pas venu…' },
   3: { q: 'Qu’est-ce qui a bien marché, et qu’est-ce qui a manqué pour que ce soit génial ?', ph: 'Les deux nous intéressent, même en une phrase.' },
-  4: { q: 'Racontez-nous : qu’est-ce qui a le mieux marché ?', ph: 'Le moment où vous avez vu que ça prenait, la réaction des participants…' },
+  4: { q: 'Qu’est-ce qui a bien marché, et qu’est-ce qui manquait pour la cinquième étoile ?', ph: 'Les deux nous intéressent, même en une phrase.' },
+  5: { q: 'Racontez-nous : qu’est-ce qui a le mieux marché ?', ph: 'Le moment où vous avez vu que ça prenait, la réaction des participants…' },
 }
 
 export function reactionA(role, note) {

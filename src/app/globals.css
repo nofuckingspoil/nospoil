@@ -2873,18 +2873,50 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
    pour la seule réponse permise et les autres soucis ne remontent jamais. */
 .avis-sous { font-size: 12.5px; color: var(--text4); margin: -6px 0 10px; line-height: 1.45; }
 
-/* Les quatre visages : assez larges pour le pouce, et le mot sous l'emoji —
-   une frimousse seule s'interprète mal d'une personne à l'autre. */
-.avis-notes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-.avis-note {
-  background: #fff; border: 1px solid var(--line); border-radius: 14px;
-  padding: 12px 4px; cursor: pointer; font: inherit;
-  display: flex; flex-direction: column; align-items: center; gap: 4px;
+/* Cinq étoiles, larges pour le pouce. Elles s'allument jusqu'à celle qu'on
+   touche : c'est le seul geste de tout le questionnaire qui se fait sans lire
+   un mot, et le libellé se contente de confirmer dessous. */
+.avis-etoiles { display: flex; justify-content: center; gap: 4px; }
+.avis-etoile {
+  background: none; border: none; cursor: pointer; padding: 4px 5px; line-height: 1;
+  font-size: 36px; color: var(--line); transition: color .12s ease, transform .12s ease;
 }
-.avis-note span { font-size: 26px; line-height: 1; }
-.avis-note em { font-style: normal; font-size: 11.5px; color: var(--text3); font-weight: 600; }
-.avis-note.on { border-color: var(--accent); background: #fdf3e6; box-shadow: 0 0 0 2px rgba(236,91,51,.18); }
-.avis-note.on em { color: var(--accent-deep); }
+.avis-etoile:hover { transform: scale(1.08); }
+.avis-etoile.on { color: #F4C14E; }
+.avis-etoile:focus { outline: none; }
+.avis-etoile:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+.avis-etoiles-mot {
+  text-align: center; margin-top: 6px; font-family: var(--font-mono);
+  font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text4);
+}
+
+/* ---- La pop-up posée sur l'album ----
+   Elle arrive après une dizaine de photos, quand on a vu de quoi il retourne
+   et pas avant. Elle monte du bas, comme une feuille : sur un téléphone c'est
+   le seul endroit que le pouce atteint sans se replier. */
+.avis-pop {
+  position: fixed; inset: 0; z-index: 130;
+  background: rgba(8,10,16,.66); backdrop-filter: blur(3px);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 10px calc(10px + env(safe-area-inset-bottom));
+  animation: dc-fade .25s ease both;
+}
+.avis-pop-carte {
+  width: 100%; max-width: 460px; max-height: 88vh; overflow-y: auto;
+  border-radius: 20px; background: var(--card);
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  animation: dc-monte .3s cubic-bezier(.2,.8,.3,1) both;
+}
+.avis-pop .avis-compact { margin: 0; border: none; }
+.avis-pop-accroche {
+  margin: 0 0 14px; padding-right: 26px;
+  font-size: 12.5px; color: var(--text3); line-height: 1.45;
+}
+@keyframes dc-fade { from { opacity: 0 } to { opacity: 1 } }
+@keyframes dc-monte { from { transform: translateY(26px); opacity: .4 } to { transform: none; opacity: 1 } }
+@media (prefers-reduced-motion: reduce) {
+  .avis-pop, .avis-pop-carte { animation: none; }
+}
 
 /* Contrairement à .chips, la liste passe à la ligne : ces libellés sont des
    phrases, un défilement horizontal en cacherait la moitié. */

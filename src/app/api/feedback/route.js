@@ -112,6 +112,14 @@ export async function POST(request) {
   const qui = await resoudre(body)
   if (!qui) return Response.json({ error: 'Lien inconnu ou expiré.' }, { status: 404 })
 
+  // Compléter un avis commencé. La pop-up de l'album enregistre la note dès la
+  // première étoile : sans ça, celui qui referme juste après ne compte pour
+  // rien, alors qu'il vient de répondre à la seule question obligatoire. Le
+  // reste du questionnaire vient ensuite compléter cette même ligne, au lieu
+  // d'en créer une seconde (l'anti-doublon la refuserait, et on perdrait tout).
+  const aCompleter = (body.feedbackId || '').toString().trim()
+  if (aCompleter) return completer(request, body, qui, aCompleter)
+
   // Anti-doublon. Côté participant il repose sur la fiche, pas sur le navigateur :
   // quelqu'un qui a répondu par mail ne doit pas revoir la question en ouvrant
   // l'album depuis un autre téléphone, et réciproquement.
@@ -131,7 +139,7 @@ export async function POST(request) {
     guest_id: qui.guest?.id || null,
     role: qui.role,
     canal: qui.canal,
-    rating: entier(body.rating, 1, 4),
+    rating: entier(body.rating, 1, 5),
     issues: soucis,
     issue_detail: texte(body.issueDetail),
     suggestion: texte(body.suggestion),
@@ -182,4 +190,59 @@ export async function POST(request) {
   }
 
   return Response.json({ ok: true, id: cree.data?.id || null })
+}
+
+// ============================================================
+//  Compléter la ligne ouverte par la première étoile.
+//
+//  On ne fait confiance à personne sur l'identifiant reçu : la ligne doit être
+//  celle de ce participant (ou de cet événement pour l'organisateur), sinon on
+//  refuse. Sans cette vérification, connaître un identifiant suffirait à
+//  réécrire l'avis de quelqu'un d'autre.
+// ============================================================
+async function completer(request, body, qui, id) {
+  if (!estUuid(id)) return Response.json({ error: 'Avis inconnu.' }, { status: 404 })
+
+  const { data } = await selectRows('feedback', `id=eq.${id}&select=id,guest_id,event_id,role,rating,issues,nps&limit=1`)
+  const avant = Array.isArray(data) ? data[0] : null
+  const aLui = avant && avant.role === qui.role && (
+    qui.role === 'organisateur' ? avant.event_id === qui.ev?.id : avant.guest_id === qui.guest?.id
+  )
+  if (!aLui) return Response.json({ error: 'Avis inconnu.' }, { status: 404 })
+
+  const soucis = listeDeSoucis(body.issues)
+  const suite = {
+    rating: entier(body.rating, 1, 5) ?? avant.rating,
+    issues: soucis,
+    issue_detail: texte(body.issueDetail),
+    suggestion: texte(body.suggestion),
+  }
+  if (qui.role === 'organisateur') {
+    suite.nps = entier(body.nps, 0, 10)
+    suite.nps_reason = texte(body.npsReason)
+    suite.favorite = texte(body.favorite)
+    suite.source = texte(body.source)
+    suite.call_ok = !!body.callOk
+    suite.phone = body.callOk ? texte(body.phone) : null
+  } else {
+    const veut = (body.wouldHost || '').toString()
+    suite.would_host = ['oui', 'peut-etre', 'non'].includes(veut) ? veut : null
+  }
+
+  const maj = await updateRow('feedback', `id=eq.${id}`, suite)
+  if (!maj.ok) {
+    console.error('avis : complément impossible', maj.data)
+    return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
+  }
+
+  // L'alerte n'est envoyée qu'une fois : si la note seule avait déjà sonné,
+  // le complément ne resonne pas. C'est le détail ajouté après coup qui peut
+  // faire basculer un avis tiède en alerte, pas l'inverse.
+  const apres = { ...avant, ...suite }
+  if (!estUneAlerte(avant) && estUneAlerte(apres)) {
+    try { await alerterAdmin({ avis: { ...apres, id }, eventName: qui.ev?.name, guestName: qui.guest?.display_name }) }
+    catch (err) { console.error('avis : alerte admin', err) }
+  }
+
+  return Response.json({ ok: true, id })
 }

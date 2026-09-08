@@ -659,6 +659,9 @@ export default function Gallery({ params }) {
   const [rejoue, setRejoue] = useState(0) // remonter la grille relance le développement
   const [montrerAvis, setMontrerAvis] = useState(false)
   const [avisFerme, setAvisFerme] = useState(false)
+  // La question ne surgit qu'une fois dix tirages passés sous les yeux. Avant,
+  // on demande son avis à quelqu'un qui n'a encore rien vu.
+  const [assezVu, setAssezVu] = useState(false)
   const pingFait = useRef(false)
   const peutRepondre = !!data?.revealed && !data?.ownerPreview && !data?.isOwner
   useEffect(() => {
@@ -672,6 +675,35 @@ export default function Gallery({ params }) {
       .then((d) => setMontrerAvis(!!d.montrer))
       .catch(() => {})
   }, [id, peutRepondre])
+
+  // Dix photos dépassées, c'est l'affaire de deux ou trois glissements de
+  // pouce : assez pour avoir un avis, assez peu pour ne pas manquer ceux qui
+  // referment l'onglet en chemin. On regarde le repère posé sous la dixième
+  // vignette, plutôt que de compter des pixels : la hauteur d'une photo change
+  // d'un téléphone à l'autre, le rang de la dixième non.
+  const repereDixieme = useRef(null)
+  useEffect(() => {
+    if (!montrerAvis || assezVu || avisFerme) return
+    // On regarde à chaque défilement plutôt qu'avec un guetteur d'intersection :
+    // celui-ci ne prévient qu'au moment où l'élément traverse l'écran, et
+    // quelqu'un qui descend d'un grand coup de pouce le manque complètement.
+    // Ici, la question se pose aussi bien en passant lentement qu'en arrivant
+    // déjà plus bas.
+    const verifier = () => {
+      const cible = repereDixieme.current
+      if (!cible) return
+      if (cible.getBoundingClientRect().top < window.innerHeight * 0.55) {
+        setAssezVu(true)
+        window.removeEventListener('scroll', verifier)
+      }
+    }
+    verifier()
+    window.addEventListener('scroll', verifier, { passive: true })
+    return () => window.removeEventListener('scroll', verifier)
+    // On dépend de la liste brute et non de la liste filtrée : celle-ci n'est
+    // calculée que plus bas, après les écrans d'attente, et un crochet ne peut
+    // pas vivre après eux.
+  }, [montrerAvis, assezVu, avisFerme, data?.photos?.length])
 
   function toggleFav(photoId) {
     const aime = favs.has(photoId)
@@ -1249,6 +1281,7 @@ export default function Gallery({ params }) {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
               <a key={p.id || i} className={`polaroid ${selecting && selected.has(p.id) ? 'pris' : ''}`}
+                ref={i === 9 ? repereDixieme : null}
                 href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
                 onClick={(e) => {
                   // Ctrl/⌘ + clic garde son sens sur un ordinateur : ouvrir le
@@ -1322,18 +1355,22 @@ export default function Gallery({ params }) {
         </div>
       )}
 
-      {/* La question arrive après les photos, jamais avant : on laisse d'abord
-          découvrir l'album. Et pas pendant la sélection : on ne coupe pas
-          quelqu'un en train de choisir ce qu'il emporte. */}
-      {montrerAvis && !avisFerme && !selecting && photos.length > 0 && (
-        <div style={{ maxWidth: 520, margin: '10px auto 0' }}>
-          <p className="eyebrow" style={{ fontSize: 10.5, marginBottom: 6 }}>{ACCROCHE}</p>
-          <Avis
-            role="invite"
-            compact
-            payload={{ eventId: id, deviceToken: getDeviceToken() }}
-            onClose={() => setAvisFerme(true)}
-          />
+      {/* La question monte du bas une fois dix photos dépassées. Elle était
+          posée en fin de page : au bout de cent dix-sept tirages, personne n'y
+          arrivait jamais. Pas pendant la sélection ni la visionneuse, en
+          revanche : on ne coupe pas quelqu'un en train de choisir ou de
+          regarder. */}
+      {montrerAvis && assezVu && !avisFerme && !selecting && diapo === null && !montrerCollage && photos.length > 0 && (
+        <div className="avis-pop" onClick={(e) => { if (e.target === e.currentTarget) setAvisFerme(true) }}>
+          <div className="avis-pop-carte">
+            <Avis
+              role="invite"
+              compact
+              accroche={ACCROCHE}
+              payload={{ eventId: id, deviceToken: getDeviceToken() }}
+              onClose={() => setAvisFerme(true)}
+            />
+          </div>
         </div>
       )}
 
