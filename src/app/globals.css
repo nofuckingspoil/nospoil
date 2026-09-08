@@ -833,7 +833,10 @@ a.cam-pile:active { transform: scale(.94); }
 .gal-page .notice-orga {
   background: rgba(236,91,51,.12); border-color: rgba(236,91,51,.4); color: rgba(231,225,212,.86);
 }
-/* Le retour au tableau de bord : il était blanc sur blanc, donc invisible. */
+/* Le retour au tableau de bord : il était blanc sur blanc, donc invisible.
+   Sa bande collante gardait le fond crème du site clair : elle passe en sombre,
+   sinon elle dessine un bandeau clair au-dessus de l'album. */
+.gal-page .gal-top { background: var(--dark); }
 .gal-page .gal-back {
   background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); color: #fff;
 }
@@ -1985,6 +1988,12 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
 }
 .gal-bar-in { display: flex; align-items: center; gap: 12px; max-width: 980px; margin: 0 auto; }
+.gal-bar-fin {
+  flex: none; width: 36px; height: 36px; border-radius: 999px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+  color: #fff; font-size: 15px; cursor: pointer;
+}
+.gal-bar-fin:hover { background: rgba(255,255,255,.18); }
 .gal-bar-tout {
   flex: none; background: none; border: none; cursor: pointer;
   font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.75);

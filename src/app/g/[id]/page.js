@@ -859,10 +859,12 @@ export default function Gallery({ params }) {
     })
   }
 
-  // Les plus prolifiques d'abord : c'est presque toujours eux qu'on cherche.
+  // Par ordre alphabétique : on cherche un prénom, pas un palmarès. Soi-même
+  // reste en tête, c'est la seule ligne qu'on ouvre les yeux fermés.
   const auteurs = data.guests
     .map((g) => ({ ...g, n: data.photos.filter((p) => p.guestId === g.id).length }))
-    .sort((a, b) => (b.id === moiId) - (a.id === moiId) || b.n - a.n)
+    .sort((a, b) => (b.id === moiId) - (a.id === moiId)
+      || (a.name || '').localeCompare(b.name || '', 'fr', { sensitivity: 'base' }))
   const sansAccent = (v) => (v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
   // Dans le panneau, on cherche par le pr\u00e9nom ; les personnes d\u00e9j\u00e0 coch\u00e9es
   // restent visibles, sinon on d\u00e9coche \u00e0 l'aveugle en tapant.
@@ -1282,6 +1284,12 @@ export default function Gallery({ params }) {
       {selecting && (
         <div className="gal-bar">
           <div className="gal-bar-in">
+            {/* La sortie de la sélection : sans elle, on reste coincé, la barre
+                du bas ayant pris la place du bouton « Sélectionner ». */}
+            <button className="gal-bar-fin" aria-label="Quitter la sélection"
+              onClick={() => { setSelecting(false); setSelected(new Set()) }}>
+              ✕
+            </button>
             <button className="gal-bar-tout" onClick={basculerTout}>
               {tousCoches ? 'Décocher ces photos' : 'Cocher ces photos'}
             </button>
