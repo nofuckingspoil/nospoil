@@ -858,6 +858,12 @@ a.cam-pile:active { transform: scale(.94); }
 }
 
 /* Les trois réglages, dans l'ambiance de la page. */
+.gal-page .gal-filtres {
+  position: sticky; top: 55px; z-index: 19;
+  margin: 0 -22px; padding: 10px 22px 11px;
+  background: rgba(20,22,31,.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.07);
+}
 .gal-page .gal-fbtn {
   background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.13); color: #fff;
 }

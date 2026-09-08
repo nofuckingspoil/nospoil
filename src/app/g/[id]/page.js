@@ -978,7 +978,6 @@ export default function Gallery({ params }) {
         )}
       </div>
 
-      <div className="gal-head">
 
         {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
             occupaient le premier écran d'un téléphone, et les photos
@@ -1132,37 +1131,20 @@ export default function Gallery({ params }) {
         {photos.length > 0 && (
           <div className="gal-actions gal-actions-bas">
             <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
-              {selecting ? 'Annuler' : 'Choisir des photos'}
+              {selecting ? 'Annuler' : 'Sélectionner'}
             </button>
-            {!selecting && auteursChoisis.size > 0 && (
+            {!selecting && (
               <button className="btn btn-dark" disabled={!!zip} onClick={() => downloadAll(photos)}>
                 {zip ? `Préparation… ${zip.done}/${zip.total}`
-                  : auteursChoisis.size === 1
-                    ? `Télécharger les ${photos.length} de ${nomFiltre}`
-                    : `Télécharger ces ${photos.length} photos`}
+                  : auteursChoisis.size === 0
+                    ? `Tout télécharger · ${photos.length}`
+                    : auteursChoisis.size === 1
+                      ? `Télécharger les ${photos.length} de ${nomFiltre}`
+                      : `Télécharger ces ${photos.length} photos`}
               </button>
             )}
           </div>
         )}
-        {photos.length > 0 && (pelli.canaux || avecDate) && (
-          <p className="film-note">
-            🎞️ Vos photos seront enregistrées avec la pellicule <strong>{pelli.nom}</strong>
-            {avecDate && ' et la date'}.
-            {/* La précision est utile, mais pas au point de coûter deux lignes
-                sur le premier écran d'un téléphone. */}
-            <span className="sur-grand"> Choisissez <em>Original</em> sans la date pour les fichiers d'origine.</span>
-          </p>
-        )}
-
-        {/* Combien de temps « plus tard » peut durer : sans cette date, on
-            remet à demain un album qui finira par disparaître. */}
-        {data.expiresAt && (
-          <p className="gal-fin">
-            🗓️ Album en ligne jusqu'au <strong>{formatJour(data.expiresAt)}</strong>.
-            <span className="sur-grand"> Enregistrez ce que vous voulez garder avant cette date.</span>
-          </p>
-        )}
-      </div>
 
       {photos.length === 0 ? (
         <div className="notice" style={{ marginTop: 16 }}>Aucune photo pour ce filtre.</div>
