@@ -202,6 +202,18 @@ input::placeholder, textarea::placeholder { color: var(--text4); font-weight: 50
   background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
   font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; color: #fff;
 }
+/* La porte de l'album, à la place de l'ancienne flèche de retour : elle dit où
+   elle mène, et porte le seul chiffre du groupe. Le compteur de vues, lui, est
+   resté en bas à gauche : deux chiffres aux deux bouts de l'écran, jamais
+   habillés pareil, jamais confondus. */
+.cam-albumbtn {
+  display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto;
+  padding: 6px 10px; border-radius: 999px; cursor: pointer;
+  background: rgba(255,255,255,.11); border: 1px solid rgba(255,255,255,.16); color: #fff;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .1em; text-transform: uppercase;
+}
+.cam-albumbtn b { color: var(--amber); font-weight: 700; }
+.cam-albumbtn:active { transform: scale(.96); }
 .cam-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
 .cam-chip {
   display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,.08);
@@ -374,9 +386,31 @@ a.cam-pile:active { transform: scale(.94); }
   display: flex; align-items: center; justify-content: center;
 }
 .vf-reticle div { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.85); }
-.vf-counter { position: absolute; left: 16px; bottom: 14px; display: flex; align-items: baseline; gap: 6px; }
-.vf-counter .n { font-family: var(--font-mono); font-weight: 700; font-size: 30px; line-height: 1; color: #fff; text-shadow: 0 1px 8px rgba(0,0,0,.5); }
-.vf-counter .t { font-family: var(--font-mono); font-size: 11px; color: rgba(255,255,255,.7); }
+/* La molette de vues : elle a quitté le viseur pour le boîtier, comme sur un
+   vrai jetable. On voit le chiffre qu'on vient de brûler et celui qui attend,
+   estompés par le masque, et la bande tourne d'un cran à chaque déclic.
+   Le cran (22 px) et le décalage (14 px) sont repris dans le composant. */
+.cam-vues { flex: 0 0 70px; width: 70px; display: flex; justify-content: center; align-items: center; }
+.cam-fenetre {
+  padding: 5px 13px; border-radius: 12px;
+  background: rgba(0,0,0,.42); border: 1px solid rgba(255,255,255,.16);
+}
+/* Le masque vit sur la fenêtre intérieure : posé sur la boîte, il aurait effacé
+   son propre fond et sa bordure en haut et en bas. */
+.cam-roue {
+  position: relative; width: 30px; height: 55px; overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 34%, #000 66%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 34%, #000 66%, transparent);
+}
+.cam-roue-bande {
+  position: absolute; left: 0; right: 0; top: 0;
+  transition: transform .34s cubic-bezier(.22,.9,.28,1);
+}
+.cam-roue-bande span {
+  display: block; height: 22px; line-height: 22px; text-align: center;
+  font-family: var(--font-mono); font-weight: 700; font-size: 17px; color: #fff;
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+}
 
 .cam-bottom { display: flex; align-items: center; gap: 12px; margin-top: 18px; }
 .cam-roll { flex: 1; display: flex; gap: 7px; overflow-x: auto; min-height: 46px; align-items: center; }
@@ -410,63 +444,232 @@ a.cam-pile:active { transform: scale(.94); }
 .vf-full-btn:active { transform: scale(.96); }
 
 /* ---------- Écran Album ---------- */
+/* ============================================================
+   L'album du participant, pendant la soirée.
+   La couverture est posée dans un cadre, jamais étirée : une photo verticale,
+   une photo couchée, un logo carré ou rien du tout se présentent tous de la
+   même façon. Le fond de l'écran est tiré de la couverture elle-même, floutée
+   et assombrie, ce qui habille l'écran aux couleurs de la soirée sans jamais
+   poser le texte sur du détail.
+   ============================================================ */
 .album-screen {
   position: fixed; inset: 0; z-index: 90; background: var(--dark); color: #fff;
   overflow-y: auto; -webkit-overflow-scrolling: touch;
   width: 100%; max-width: 460px; margin: 0 auto;
-  padding: calc(16px + env(safe-area-inset-top)) 18px calc(24px + env(safe-area-inset-bottom));
 }
-.album-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-.album-eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: rgba(255,255,255,.5); }
-.album-header { display: flex; align-items: center; gap: 14px; }
-.album-headtext { flex: 1; min-width: 0; }
-.album-name { font-family: var(--font-display); font-weight: 800; font-size: 28px; line-height: 1.05; color: #fff; margin: 0; }
-.album-cover { flex: 0 0 auto; width: 76px; height: 76px; border-radius: 16px; object-fit: cover; box-shadow: 0 8px 22px rgba(0,0,0,.4); }
-.album-countdown { margin-top: 18px; display: flex; flex-direction: column; align-items: center; gap: 9px; }
-.cd-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .16em; text-transform: uppercase; color: rgba(255,255,255,.45); }
-.cd-blocks { display: flex; gap: 8px; }
-.cd-b { min-width: 56px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 13px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.cd-b b { font-family: var(--font-display); font-weight: 800; font-size: 24px; color: #fff; line-height: 1; font-variant-numeric: tabular-nums; }
-.cd-b i { font-style: normal; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-lt); }
-.cd-open { font-family: var(--font-display); font-weight: 800; font-size: 19px; color: var(--accent-lt); }
-.album-bigstats { display: flex; gap: 12px; margin-top: 12px; }
-.album-bstat { flex: 1; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); border-radius: 16px; padding: 16px 12px; text-align: center; }
-.album-bstat .v { font-family: var(--font-display); font-weight: 800; font-size: 30px; color: #fff; line-height: 1; }
-.album-bstat .l { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: rgba(255,255,255,.55); margin-top: 7px; }
-.album-actions { display: flex; gap: 10px; margin-top: 16px; }
-.album-btn {
-  flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); color: #fff;
-  border-radius: 14px; padding: 13px; font-family: var(--font-body); font-weight: 600; font-size: 14.5px; cursor: pointer;
+.album-fond {
+  position: fixed; inset: 0; max-width: 460px; margin: 0 auto; z-index: 0;
+  background-size: cover; background-position: center;
+  filter: blur(26px) brightness(.42) saturate(1.3); transform: scale(1.25);
 }
-.album-btn:active { transform: scale(.97); }
-.album-btn-accent { background: var(--accent-btn); border-color: var(--accent); box-shadow: 0 8px 20px rgba(236,91,51,.28); }
-.album-icon {
-  flex: 0 0 auto; width: 50px; border-radius: 14px;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); color: #fff;
-  display: flex; align-items: center; justify-content: center; cursor: pointer;
+.album-fond-motif {
+  filter: none; transform: none;
+  background:
+    repeating-linear-gradient(90deg, rgba(255,255,255,.05) 0 3px, transparent 3px 11px),
+    linear-gradient(180deg, #242A3B, #0E1017 74%);
 }
-.album-icon:active { transform: scale(.94); }
-.album-icon:disabled { opacity: .4; cursor: not-allowed; }
-.album-divider { height: 1px; background: rgba(255,255,255,.1); margin: 22px 0 14px; }
-.album-mine-label { font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: rgba(255,255,255,.5); margin-bottom: 12px; }
+.album-voile {
+  position: fixed; inset: 0; max-width: 460px; margin: 0 auto; z-index: 1;
+  background: linear-gradient(180deg, rgba(11,13,20,.34) 0 30%, rgba(11,13,20,.66) 56%, rgba(11,13,20,.92) 82%, var(--dark) 100%);
+}
+.album-corps {
+  position: relative; z-index: 2; display: flex; flex-direction: column;
+  padding: calc(10px + env(safe-area-inset-top)) 16px calc(24px + env(safe-area-inset-bottom));
+}
+.album-orga {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  align-self: stretch; margin-bottom: 12px; font-size: 12px;
+}
+.album-orga b { color: var(--accent-lt); white-space: nowrap; }
+
+/* Deux boutons de même taille, chacun nommé : le titre du dessous retombe au
+   milieu, et personne ne se demande à quoi sert l'icône. */
+.album-nav { display: flex; align-items: flex-start; justify-content: space-between; }
+.album-navspace { flex: 1; }
+.album-navbtn {
+  display: flex; flex-direction: column; align-items: center; gap: 5px;
+  background: none; border: 0; padding: 0; cursor: pointer; color: #fff;
+}
+.album-navbtn .ic {
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255,255,255,.11); border: 1px solid rgba(255,255,255,.14);
+}
+.album-navbtn em {
+  font-style: normal; font-family: var(--font-mono); font-size: 8.5px;
+  letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.55);
+}
+
+/* Le cadre épouse le format de l'image et sa hauteur est plafonnée : c'est la
+   photo qui décide de sa taille, pas la place que les autres blocs laissent. */
+.album-cadre {
+  position: relative; align-self: center; flex: 0 0 auto; margin: 22px 0 0;
+  max-width: 100%; border-radius: 14px; overflow: hidden; line-height: 0;
+  border: 1px solid rgba(255,255,255,.16); box-shadow: 0 18px 42px rgba(0,0,0,.55);
+}
+.album-cadre img { display: block; width: auto; height: auto; max-width: 100%; max-height: 46vh; }
+
+/* Sans couverture, une carte dessinée plutôt qu'un rectangle vide : les
+   initiales de la soirée, sa date, et deux rangées de perforations. */
+.album-carte {
+  width: 100%; aspect-ratio: 4 / 3; line-height: normal;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px;
+  border-color: rgba(244,193,78,.34);
+  background:
+    radial-gradient(120% 90% at 50% 12%, rgba(236,91,51,.32), transparent 62%),
+    linear-gradient(165deg, #2A1E20, #12131B 68%);
+}
+.album-carte .perf {
+  position: absolute; left: 12px; right: 12px; top: 12px; height: 9px;
+  background-image: radial-gradient(circle, rgba(255,255,255,.24) 0 3px, transparent 3.4px);
+  background-size: 17px 9px; background-repeat: repeat-x;
+}
+.album-carte .perf.bas { top: auto; bottom: 12px; }
+.album-carte .obturateur {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid rgba(244,193,78,.6);
+  box-shadow: 0 0 0 5px rgba(244,193,78,.1);
+}
+.album-carte .ini {
+  font-family: var(--font-display); font-weight: 800; font-size: 38px;
+  letter-spacing: -.04em; line-height: 1; color: #fff;
+}
+.album-carte .jour {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .28em; color: var(--amber);
+}
+
+.album-bloc { margin-top: 24px; }
+.album-date {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--amber);
+}
+.album-name {
+  font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1;
+  letter-spacing: -.03em; color: #fff; margin: 4px 0 0; text-wrap: balance;
+  text-shadow: 0 2px 14px rgba(8,10,16,.6);
+}
+/* Le décompte tient sur une ligne : en quatre cartes encadrées, il ajoutait
+   quatre objets à un écran qui en comptait déjà six. */
+.album-cd { display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; margin: 14px 0 16px; }
+.album-cd .cd-label {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .16em;
+  text-transform: uppercase; color: rgba(255,255,255,.5);
+}
+.album-cd .cd-row { display: flex; align-items: baseline; gap: 9px; }
+.album-cd .cd-b { display: inline-flex; align-items: baseline; gap: 2px; background: none; border: 0; padding: 0; min-width: 0; }
+.album-cd .cd-b b {
+  font-family: var(--font-mono); font-weight: 700; font-size: 19px; color: var(--amber);
+  font-variant-numeric: tabular-nums; line-height: 1; text-shadow: 0 1px 8px rgba(8,10,16,.75);
+}
+.album-cd .cd-b i {
+  font-style: normal; font-family: var(--font-mono); font-size: 9.5px;
+  color: rgba(255,255,255,.6); letter-spacing: .04em; text-transform: none;
+}
+.album-revele {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
+  color: var(--amber); margin: 14px 0 16px;
+}
+.album-cta {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; padding: 13px 0; border: 0; border-radius: 14px; cursor: pointer;
+  background: var(--accent); color: #fff; text-decoration: none;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px; letter-spacing: -.01em;
+  box-shadow: 0 8px 20px rgba(236,91,51,.28);
+}
+.album-cta .ring { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #fff; flex: none; }
+.album-cta:active { transform: scale(.99); }
+
+/* Le bloc de fin de pellicule : le même que sur le viseur, au mot près. */
+.pellicule-pleine {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+  padding: 15px 14px 16px; border-radius: 14px;
+  background: rgba(8,10,16,.7); border: 1px solid rgba(255,255,255,.14);
+}
+.pellicule-pleine .em { font-size: 22px; line-height: 1; }
+.pellicule-pleine h5 { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -.02em; }
+.pellicule-pleine p { font-size: 12.5px; color: rgba(255,255,255,.7); line-height: 1.5; }
+.pellicule-pleine button {
+  margin-top: 10px; padding: 10px 16px; border-radius: 11px; border: 0; cursor: pointer;
+  background: var(--accent); color: #fff; font-family: inherit; font-weight: 700; font-size: 13px;
+}
+
+/* Début de soirée : un mur vide dirait « personne ne joue ». On le retourne
+   en invitation, et le bloc disparaît dès la première photo. */
+.album-vierge {
+  margin-top: 22px; padding: 22px 18px; text-align: center;
+  border: 1px dashed rgba(255,255,255,.2); border-radius: 16px; background: rgba(255,255,255,.03);
+}
+.album-vierge .em { font-size: 26px; }
+.album-vierge h5 { font-family: var(--font-display); font-weight: 700; font-size: 18px; margin: 8px 0 5px; }
+.album-vierge p { font-size: 13px; color: rgba(255,255,255,.62); line-height: 1.5; }
+
+/* Le mur : la soirée en train de se faire, juste amorcée sous le bouton. */
+.album-mur { margin-top: 22px; }
+.mur-lab {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 11px;
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
+  text-transform: uppercase; color: rgba(255,255,255,.6);
+}
+.mur-lab .pt {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none;
+  box-shadow: 0 0 0 0 rgba(236,91,51,.5); animation: dc-pulse 2.4s ease-out infinite;
+}
+@keyframes dc-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(236,91,51,.5) }
+  70% { box-shadow: 0 0 0 8px rgba(236,91,51,0) }
+  100% { box-shadow: 0 0 0 0 rgba(236,91,51,0) }
+}
+.mur-plus {
+  width: 100%; margin-top: 12px; padding: 11px 0; border-radius: 12px; cursor: pointer;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #fff;
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em;
+}
+.mur-plus:disabled { opacity: .5; }
+
+/* Le panneau du participant */
+.modal-fond {
+  position: fixed; inset: 0; z-index: 120; background: rgba(8,10,16,.72);
+  display: flex; align-items: flex-end; justify-content: center;
+  padding: 0 12px calc(14px + env(safe-area-inset-bottom));
+}
+.modal-carte {
+  width: 100%; max-width: 420px; border-radius: 20px; padding: 20px 18px 16px;
+  background: #171A25; border: 1px solid rgba(255,255,255,.14); color: #fff;
+}
+.modal-titre {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .2em;
+  text-transform: uppercase; color: rgba(255,255,255,.5);
+}
+.modal-nom { font-family: var(--font-display); font-weight: 800; font-size: 24px; margin-top: 6px; }
+.modal-sous { font-size: 12.5px; color: rgba(255,255,255,.6); margin: 4px 0 16px; }
+.modal-btn {
+  display: block; width: 100%; margin-top: 9px; padding: 12px 14px; border-radius: 12px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #fff;
+  font-family: inherit; font-size: 14px; text-align: left; text-decoration: none; cursor: pointer;
+}
+.modal-btn-clair { text-align: center; background: none; border-color: rgba(255,255,255,.24); }
 .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .album-thumb { position: relative; padding: 0; border: none; background: #000; border-radius: 14px; overflow: hidden; aspect-ratio: 3/4; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
 .album-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .album-thumb.pending { opacity: .55; }
-.album-empty { grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,.45); font-family: var(--font-mono); font-size: 12.5px; padding: 30px 0; }
-.album-fulllink { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; padding: 14px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
 /* Le mur du groupe : les photos de tous les participants pendant la soirée, floutées.
    Le flou est un effet d'affichage : la photo descend entière sur le téléphone.
    C'est assumé. Ce qu'on cherche ici, c'est que l'attente vive, pas un coffre-fort. */
-.mur-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-.mur-thumb { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #000; }
+.mur-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.mur-thumb { position: relative; aspect-ratio: 1.06; border-radius: 10px; overflow: hidden; background: #000; }
+/* Le prénom est ce qui donne envie de jouer le jeu : sans lui, le mur n'est
+   qu'une suite de taches ; avec lui, c'est la soirée qui se raconte. */
+.mur-qui {
+  position: absolute; left: 8px; bottom: 7px; z-index: 2;
+  font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,.92);
+  text-shadow: 0 1px 5px rgba(0,0,0,.8);
+}
+.mur-thumb.moi { box-shadow: inset 0 0 0 2px var(--accent); }
+.mur-thumb.moi .mur-qui { color: var(--accent-lt); font-weight: 700; }
 .mur-thumb img {
   width: 100%; height: 100%; object-fit: cover; display: block;
   /* Agrandi juste ce qu'il faut : sans cela, le flou laisse un halo transparent
      sur les quatre bords de la vignette. */
-  transform: scale(1.18);
-  filter: blur(9px);
+  transform: scale(1.16);
+  filter: blur(7px);
   /* Ni appui long, ni glisser-déposer : la photo n'est pas encore à prendre. */
   pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }

@@ -30,6 +30,39 @@ function countdownToReveal(iso, now) {
   return `révélation dans ${m} min`
 }
 
+// Le sur-titre de l'album : la date, jamais le type d'événement. La base ne
+// sait pas si c'est un mariage ou un anniversaire, mais elle sait quel jour
+// c'était, et c'est vrai dans tous les cas.
+function formatLong(iso) {
+  try {
+    const d = new Date(iso)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+  } catch { return '' }
+}
+
+function formatCourt(iso) {
+  try {
+    const d = new Date(iso)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, ' · ')
+  } catch { return '' }
+}
+
+// « Claire & Martin » donne « C&M ». Un nom d'un seul tenant garde sa première
+// lettre : mieux vaut une initiale seule qu'un carton vide.
+function initialesDe(nom) {
+  const mots = String(nom || '').split(/[\s&+]+/).filter(Boolean)
+  if (!mots.length) return '✳'
+  return mots.slice(0, 2).map((m) => m[0].toUpperCase()).join('&')
+}
+
+// La molette de vues : un cran de 22 px, une fenêtre de deux crans et demi.
+// Le décalage place le chiffre en cours au centre de la fenêtre ; les deux
+// mêmes valeurs vivent dans la feuille de style (.cam-roue), elles se suivent.
+const CRAN = 22
+const CRAN_OFFSET = 17
+
 // Décompose le temps restant en jours / heures / minutes / secondes
 function breakdownToReveal(iso, now) {
   let diff = new Date(iso).getTime() - now
@@ -89,7 +122,9 @@ export default function GuestCamera({ params }) {
   const [chromeRate, setChromeRate] = useState(false)     // la bascule vers Chrome n'a pas pris
   const [facingMode, setFacingMode] = useState('environment')
   const [myPhotos, setMyPhotos] = useState([])   // [{id, url}] confirmées (serveur)
-  const [mur, setMur] = useState([])             // [{id, url}] photos du groupe, floutées avant la révélation
+  const [mur, setMur] = useState([])             // [{id, url, qui, moi}] photos du groupe, floutées avant la révélation
+  const [murTotal, setMurTotal] = useState(0)    // combien il y en a en tout, pour savoir s'il en reste
+  const [murN, setMurN] = useState(12)           // combien on en demande : 12, puis la suite au défilement
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [aConfirmer, setAConfirmer] = useState(null) // {blob, url} cliché montré une fois, à garder ou à reprendre
@@ -98,7 +133,8 @@ export default function GuestCamera({ params }) {
   const [showSaveTip, setShowSaveTip] = useState(false) // rappel "garde ton lien pour revenir" (une seule fois)
   const [showPushTip, setShowPushTip] = useState(false) // proposition des notifications, après la 1re photo
   const [pushBusy, setPushBusy] = useState(false)
-  const [showAlbum, setShowAlbum] = useState(false) // écran album (mes photos)
+  const [showAlbum, setShowAlbum] = useState(false) // écran album (la soirée en cours)
+  const [showProfil, setShowProfil] = useState(false) // panneau du participant
   const [downloading, setDownloading] = useState(false)
   const [bonusUsed, setBonusUsed] = useState(false) // +5 photos déjà réclamées ?
   const [qrUrl, setQrUrl] = useState('')
@@ -342,12 +378,16 @@ export default function GuestCamera({ params }) {
   // temps réel tant que l'écran album est ouvert : un appel immédiat, puis
   // toutes les 4 s. Les jetons partent avec : le serveur ne confie le mur qu'à
   // quelqu'un de la soirée.
+  // Deux régimes : l'album ouvert veut les vignettes, toutes les 4 s ; le
+  // viseur ne veut que les chiffres, toutes les 20 s, parce que son bouton
+  // « Album » affiche le compte du groupe en permanence.
   useEffect(() => {
-    if (!showAlbum) return
+    if (phase !== 'camera') return
     let alive = true
     const refresh = async () => {
       try {
-        const d = await fetch(`/api/events/${id}/stats`, {
+        const n = showAlbum ? murN : 0
+        const d = await fetch(`/api/events/${id}/stats?n=${n}`, {
           headers: { 'x-device-token': getDeviceToken(), 'x-owner-token': getOwnerToken(id) },
         }).then((r) => r.json())
         if (!alive || !d) return
@@ -356,14 +396,29 @@ export default function GuestCamera({ params }) {
           guestCount: typeof d.guestCount === 'number' ? d.guestCount : m.guestCount,
           photoCount: typeof d.photoCount === 'number' ? d.photoCount : m.photoCount,
         } : m))
-        if (Array.isArray(d.mur)) setMur(d.mur)
+        if (typeof d.murTotal === 'number') setMurTotal(d.murTotal)
+        if (showAlbum && Array.isArray(d.mur)) setMur(d.mur)
       } catch {}
     }
     refresh()
-    const t = setInterval(refresh, 4000)
+    const t = setInterval(refresh, showAlbum ? 4000 : 20000)
     return () => { alive = false; clearInterval(t) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAlbum, id])
+  }, [showAlbum, murN, phase, id])
+
+  // Où l'on atterrit. Le viseur tant qu'il reste des vues et que la soirée
+  // court ; l'album dans tous les autres cas, parce qu'il n'y a alors plus rien
+  // à déclencher : pellicule finie, événement pas encore commencé, ou album
+  // déjà révélé. Une seule fois par arrivée, pour ne jamais reprendre la main
+  // sur quelqu'un qui vient de fermer l'album.
+  const atterrissageFait = useRef(false)
+  useEffect(() => {
+    if (phase !== 'camera' || !guest || !meta || atterrissageFait.current) return
+    atterrissageFait.current = true
+    const pasCommence = meta.startsAt && new Date(meta.startsAt).getTime() > Date.now()
+    if (full || meta.revealed || pasCommence) setShowAlbum(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, guest, meta])
 
   // Charge mes photos confirmées + synchronise le compteur depuis le serveur
   async function loadMyPhotos() {
@@ -519,6 +574,8 @@ export default function GuestCamera({ params }) {
   const jeuEnCours = !!meta && !meta.revealed
   const flouterMesPhotos = jeuEnCours && !revoitSesPhotos(mode)
   const suppressionOuverte = !jeuEnCours || peutSupprimer(mode)
+  // Le vrai jetable ne connaît que ce qu'il a déclenché : pas de photothèque.
+  const importAutorise = !jeuEnCours || mode !== 'jetable'
 
   const PLEINE = () => (suppressionOuverte
     ? 'Pellicule pleine : supprime une photo pour en reprendre une.'
@@ -914,9 +971,19 @@ export default function GuestCamera({ params }) {
       {meta?.isOwner && (
         <Link href={`/event/${id}`} className="cam-retour">← Tableau de bord</Link>
       )}
+      {/* La flèche de retour menait à l'écran « participer à l'événement », qui
+          n'a plus rien à dire une fois qu'on a accepté. Elle devient la porte de
+          l'album, et elle porte le seul chiffre du groupe : à l'opposé exact du
+          compteur de vues, resté en bas à gauche, pour qu'on ne les confonde
+          jamais. */}
       <div className="cam-top">
-        <button className="cam-iconbtn" onClick={() => setPhase('cover')} aria-label="Retour">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
+        <button className="cam-albumbtn" onClick={() => setShowAlbum(true)} aria-label="Voir l'album du groupe">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+            <rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="8" rx="1.5" />
+            <rect x="3" y="13" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" />
+          </svg>
+          <span>Album</span>
+          {(meta?.photoCount || 0) > 0 && <b>{meta.photoCount}</b>}
         </button>
         <div className="cam-titlebar">
           <div className="nm">{coupleLabel}</div>
@@ -939,10 +1006,6 @@ export default function GuestCamera({ params }) {
         <div className="vf-frame">№ {frameNo}</div>
         <div className="vf-corner tl" /><div className="vf-corner tr" /><div className="vf-corner bl" /><div className="vf-corner br" />
         <div className="vf-reticle"><div /></div>
-        <div className="vf-counter">
-          <span className="n">{String(Math.max(0, remaining)).padStart(2, '0')}</span>
-          <span className="t">/ {guest?.shotsPerGuest} restants</span>
-        </div>
         {shutterFx && <div className="cam-shutter-fx" />}
         {flashFx && <div className="cam-flash" />}
 
@@ -1047,34 +1110,24 @@ export default function GuestCamera({ params }) {
         )}
       </div>
 
-      {/* Bas : pile de photos (gauche) · déclencheur (centre) · import galerie (droite) */}
+      {/* Bas : la molette de vues (gauche) · déclencheur (centre) · le vide qui
+          garde le déclencheur au centre optique (droite). Le compteur a quitté
+          l'image : sur un vrai jetable, il est sur le boîtier, jamais dans le
+          viseur, et il ne se dispute plus l'oeil avec le décor du cadre. */}
       <div className="cam-bottom">
-        {/* Rien n'indiquait que cette pile s'ouvrait : les participants ne
-            trouvaient pas leurs photos. Le libellé lève le doute. */}
-        <div className="cam-pilewrap">
-          {roll.length === 0 ? (
-            <div className="cam-pile"><span className="pf-empty" /></div>
-          ) : (
-            <button className="cam-pile" onClick={() => setShowAlbum(true)} aria-label="Voir l'album et mes photos">
-              {roll.slice(0, 3).map((p, i) => (
-                <span key={p.tempId || p.id || i} className="pf" style={{ zIndex: 3 - i, transform: `rotate(${[-6, 7, 14][i] || 0}deg)` }}>
-                  {/* crossOrigin, ici aussi : la pile montre les 3 dernières photos,
-                      exactement celles que l'album réaffiche juste après. Sans lui, le
-                      navigateur gardait ces 3 images en cache « sans CORS », puis
-                      refusait de les resservir à l'album qui, lui, les demande avec : 
-                      trois vignettes cassées, toujours les mêmes. */}
-                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous"
-                    className={flouterMesPhotos ? 'photo-scellee' : undefined} />
-                </span>
-              ))}
-              {roll.length >= 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
-            </button>
-          )}
-          {roll.length > 0 && (
-            <button type="button" className="cam-pilelabel" onClick={() => setShowAlbum(true)}>
-              Mon album
-            </button>
-          )}
+        <div className="cam-vues">
+          <div className="cam-fenetre" role="img"
+            aria-label={`${Math.max(0, remaining)} photos restantes sur ${guest?.shotsPerGuest}`}>
+            {/* La bande porte tous les chiffres et se décale d'un cran à chaque
+                déclic : on voit celui qu'on vient de brûler partir vers le haut. */}
+            <div className="cam-roue">
+              <div className="cam-roue-bande" style={{ transform: `translateY(${CRAN_OFFSET - CRAN * (guest?.shotsTaken || 0)}px)` }}>
+                {Array.from({ length: (guest?.shotsPerGuest || 0) + 1 }, (_, i) => (
+                  <span key={i}>{String(Math.max(0, (guest?.shotsPerGuest || 0) - i)).padStart(2, '0')}</span>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           {liveCam ? (
@@ -1086,124 +1139,200 @@ export default function GuestCamera({ params }) {
             </>
           )}
         </div>
-        <div className="cam-pilewrap" aria-hidden="true" style={{ pointerEvents: 'none' }} />
+        <div className="cam-vues" aria-hidden="true" style={{ pointerEvents: 'none' }} />
       </div>
 
-      <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
-      <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full}>
-        🖼️ Importer une photo de ma galerie
-      </button>
+      {/* L'import depuis la photothèque n'existe que dans l'album ouvert. En
+          vrai jetable, verser une image prise ailleurs, retouchée, ou trouvée
+          sur Internet, contredit toute la promesse : la pellicule ne contient
+          que ce que cet appareil a déclenché ce soir-là. */}
+      {importAutorise && (
+        <>
+          <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
+          <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full}>
+            🖼️ Importer une photo de ma galerie
+          </button>
+        </>
+      )}
 
 
       {screenFlash && <div className="screen-flash" />}
 
-      {/* Écran "Album" (ouvert en touchant la pile de photos) */}
+      {/* ============================================================
+          L'album : l'écran d'attente de la soirée. La couverture est posée
+          dans un cadre, jamais étirée, et le fond est tiré d'elle-même. Une
+          seule règle pour toutes les images, y compris celles qui n'en sont
+          pas (un logo, une photo couchée), et une carte dessinée quand il n'y
+          a pas de couverture du tout.
+          ============================================================ */}
       {showAlbum && (
         <div className="album-screen">
-          <div className="album-top">
-            <button className="cam-iconbtn" onClick={() => setShowAlbum(false)} aria-label="Retour à la caméra">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
-            </button>
-            <span className="album-eyebrow">Album partagé</span>
-            <span style={{ width: 42 }} />
-          </div>
+          {meta?.coverUrl
+            ? <div className="album-fond" style={{ backgroundImage: `url(${meta.coverUrl})` }} />
+            : <div className="album-fond album-fond-motif" />}
+          <div className="album-voile" />
 
-          <div className="album-header">
-            <div className="album-headtext"><h2 className="album-name">{coupleLabel}</h2></div>
-            {meta?.coverUrl && <img className="album-cover" src={meta.coverUrl} alt="" />}
-          </div>
+          <div className="album-corps">
+            {meta?.isOwner && (
+              <Link href={`/event/${id}`} className="cam-retour album-orga">
+                <span>Vous organisez cette soirée</span><b>Tableau de bord →</b>
+              </Link>
+            )}
 
-          {(() => {
-            const cd = breakdownToReveal(meta?.revealAt, now)
-            return (
-              <div className="album-countdown">
-                {cd.done ? (
-                  <span className="cd-open">🎉 L'album est révélé !</span>
-                ) : (
-                  <>
-                    <span className="cd-label">Révélation dans</span>
-                    <div className="cd-blocks">
-                      <div className="cd-b"><b>{cd.d}</b><i>jours</i></div>
-                      <div className="cd-b"><b>{String(cd.h).padStart(2, '0')}</b><i>h</i></div>
-                      <div className="cd-b"><b>{String(cd.m).padStart(2, '0')}</b><i>min</i></div>
-                      <div className="cd-b"><b>{String(cd.s).padStart(2, '0')}</b><i>sec</i></div>
-                    </div>
-                  </>
-                )}
-              </div>
-            )
-          })()}
+            <div className="album-nav">
+              <button className="album-navbtn" onClick={() => setShowProfil(true)}>
+                <span className="ic">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
+                </span>
+                <em>Profil</em>
+              </button>
+              <span className="album-navspace" />
+              <button className="album-navbtn" onClick={() => setShowQR(true)}>
+                <span className="ic">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM21 14v7M14 21h7" /></svg>
+                </span>
+                <em>Inviter</em>
+              </button>
+            </div>
 
-          <div className="album-bigstats">
-            <div className="album-bstat"><div className="v">{meta?.photoCount ?? roll.length}</div><div className="l">Photos du groupe</div></div>
-            <div className="album-bstat"><div className="v">{meta?.guestCount ?? 1}</div><div className="l">Participant{(meta?.guestCount || 0) > 1 ? 's' : ''}</div></div>
-          </div>
-
-          <div className="album-actions">
-            <button className="album-btn album-btn-accent" onClick={() => setShowAlbum(false)}>
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
-              Caméra
-            </button>
-            <button className="album-btn" onClick={() => setShowQR(true)}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM21 14v7M14 21h7" /></svg>
-              Inviter
-            </button>
-            <button className="album-icon" onClick={downloadMine} disabled={downloading || !myPhotos.length} aria-label="Télécharger mes photos">
-              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" /></svg>
-            </button>
-          </div>
-
-          {/* Le mur du groupe : ce que les autres ont pris, flouté jusqu'à la
-              révélation. Rien n'est cliquable, il n'y a rien à ouvrir : c'est
-              une rumeur d'images, pas un album. */}
-          {!meta?.revealed && mur.length > 0 && (
-            <>
-              <div className="album-divider" />
-              <div className="album-mine-label">Le mur du groupe · flouté</div>
-              <div className="mur-grid">
-                {mur.map((p) => (
-                  <div className="mur-thumb" key={p.id}>
-                    <img src={p.url} alt="" loading="lazy" draggable="false" />
-                  </div>
-                ))}
-              </div>
-              <p className="mur-note">Les photos des autres, à mesure qu'elles arrivent. Elles se dévoilent à la révélation.</p>
-            </>
-          )}
-
-          <div className="album-divider" />
-          <div className="album-mine-label">
-            Mes photos · {myPhotos.length}/{guest?.shotsPerGuest}{flouterMesPhotos ? ' · scellées' : ''}
-          </div>
-
-          <div className="album-grid">
-            {roll.length === 0 ? (
-              <p className="album-empty">Tes photos apparaîtront ici.</p>
+            {meta?.coverUrl ? (
+              <div className="album-cadre"><img src={meta.coverUrl} alt="" /></div>
             ) : (
-              roll.map((p, i) => (
-                <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
-                  onClick={() => { if (!p.pending && p.id && !flouterMesPhotos) setViewer({ id: p.id, url: p.url }) }}
-                  aria-label={flouterMesPhotos ? 'Photo scellée jusqu’à la révélation' : 'Voir la photo'}>
-                  {/* crossOrigin : sans lui, la photo mise en cache par cette
-                      vignette ne peut plus être relue pour le zip. */}
-                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous"
-                    className={flouterMesPhotos ? 'photo-scellee' : undefined} />
+              // Pas de couverture : on ne bricole pas avec du flou, on dessine.
+              // Les initiales de la soirée et sa date, sur un carton à nos
+              // couleurs, valent mieux qu'un rectangle vide.
+              <div className="album-cadre album-carte">
+                <span className="perf" /><span className="perf bas" />
+                <span className="obturateur" />
+                <span className="ini">{initialesDe(coupleLabel)}</span>
+                <span className="jour">{formatCourt(meta?.startsAt)}</span>
+              </div>
+            )}
+
+            <div className="album-bloc">
+              <div className="album-date">{formatLong(meta?.startsAt)}</div>
+              <h2 className="album-name">{coupleLabel}</h2>
+
+              {(() => {
+                const cd = breakdownToReveal(meta?.revealAt, now)
+                if (cd.done) return <div className="album-revele">🎉 L&apos;album est révélé</div>
+                return (
+                  <div className="album-cd">
+                    <span className="cd-label">Révélation dans</span>
+                    <span className="cd-row">
+                      <span className="cd-b"><b>{String(cd.d).padStart(2, '0')}</b><i>j</i></span>
+                      <span className="cd-b"><b>{String(cd.h).padStart(2, '0')}</b><i>h</i></span>
+                      <span className="cd-b"><b>{String(cd.m).padStart(2, '0')}</b><i>min</i></span>
+                      <span className="cd-b"><b>{String(cd.s).padStart(2, '0')}</b><i>sec</i></span>
+                    </span>
+                  </div>
+                )
+              })()}
+
+              {meta?.revealed ? (
+                <a className="album-cta" href={`/g/${id}`}>
+                  <span className="ring" /> Voir l&apos;album complet
+                </a>
+              ) : full ? (
+                // Le même bloc que sur le viseur, au mot près : c'est un seul
+                // objet, il n'a pas à se raconter de deux façons.
+                <div className="pellicule-pleine">
+                  <div className="em">🎞️</div>
+                  <h5>Pellicule pleine !</h5>
+                  <p>Tes {guest?.shotsPerGuest} photos sont en cours de développement.</p>
+                  {!bonusUsed && (meta?.bonusShots > 0) && (
+                    <button onClick={grantBonus}>Recharger ma pellicule (+{meta.bonusShots}) →</button>
+                  )}
+                </div>
+              ) : (
+                <button className="album-cta" onClick={() => setShowAlbum(false)}>
+                  <span className="ring" /> Prendre une photo
                 </button>
-              ))
+              )}
+            </div>
+
+            {/* Le mur : la soirée en train de se faire. Ses propres photos y
+                sont mêlées aux autres, floutées comme elles, signalées par
+                « Toi ». Rien n'est cliquable : c'est une rumeur d'images. */}
+            {!meta?.revealed && mur.length === 0 && (
+              <div className="album-vierge">
+                <div className="em">🎞️</div>
+                <h5>La pellicule est vierge</h5>
+                <p>Personne n&apos;a encore déclenché. La première photo de la soirée est à toi.</p>
+              </div>
+            )}
+
+            {!meta?.revealed && mur.length > 0 && (
+              <div className="album-mur">
+                <div className="mur-lab">
+                  <span className="pt" />
+                  {meta?.photoCount ?? mur.length} photo{(meta?.photoCount ?? mur.length) > 1 ? 's' : ''}
+                  {' · '}{meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
+                </div>
+                <div className="mur-grid">
+                  {mur.map((p) => (
+                    <div className={`mur-thumb${p.moi ? ' moi' : ''}`} key={p.id}>
+                      <img src={p.url} alt="" loading="lazy" draggable="false" />
+                      {p.qui && <span className="mur-qui">{p.moi ? 'Toi' : p.qui}</span>}
+                    </div>
+                  ))}
+                </div>
+                {murTotal > mur.length && (
+                  <button className="mur-plus" onClick={() => setMurN((n) => n + 12)}>
+                    Voir plus de photos ({murTotal - mur.length})
+                  </button>
+                )}
+                <p className="mur-note">
+                  {flouterMesPhotos
+                    ? 'Toutes les photos de la soirée, y compris les tiennes. Elles se dévoilent à la révélation.'
+                    : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
+                </p>
+              </div>
+            )}
+
+            {/* L'album ouvert : ses propres photos restent consultables et
+                supprimables, c'est ce que l'organisateur a choisi. Dans les
+                deux autres modes, elles vivent dans le mur, floutées. */}
+            {!flouterMesPhotos && roll.length > 0 && (
+              <div className="album-mur">
+                <div className="mur-lab">
+                  <span className="pt" />Mes photos · {myPhotos.length}/{guest?.shotsPerGuest}
+                </div>
+                <div className="album-grid">
+                  {roll.map((p, i) => (
+                    <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
+                      onClick={() => { if (!p.pending && p.id) setViewer({ id: p.id, url: p.url }) }}
+                      aria-label="Voir la photo">
+                      {/* crossOrigin : sans lui, la photo mise en cache par cette
+                          vignette ne peut plus être relue pour le zip. */}
+                      <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
+                    </button>
+                  ))}
+                </div>
+                <button className="mur-plus" onClick={downloadMine} disabled={downloading || !myPhotos.length}>
+                  {downloading ? 'Préparation…' : 'Télécharger mes photos'}
+                </button>
+              </div>
             )}
           </div>
+        </div>
+      )}
 
-          {flouterMesPhotos && roll.length > 0 && (
-            <p className="mur-note">
-              {demandeConfirmation(mode)
-                ? 'Vous les avez vues au moment du déclic. Elles se redécouvrent à la révélation.'
-                : 'Comme dans un appareil jetable : vous les découvrirez à la révélation.'}
-            </p>
-          )}
 
-          {meta?.revealed && (
-            <a className="album-fulllink" href={`/g/${id}`}>🎞️ Voir l'album complet de tous les participants →</a>
-          )}
+      {/* Le profil du participant : son prénom, son lien pour revenir, et les
+          rappels. Trois choses rares, mais qui n'avaient nulle part où vivre. */}
+      {showProfil && (
+        <div className="modal-fond" onClick={() => setShowProfil(false)}>
+          <div className="modal-carte" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-titre">Mon profil</div>
+            <p className="modal-nom">{name || guest?.displayName || 'Participant'}</p>
+            <p className="modal-sous">Vos photos partent sous ce prénom.</p>
+            <button className="modal-btn" onClick={copierMonLien}>
+              🔗 Copier mon lien pour revenir
+            </button>
+            <a className="modal-btn" href="/mes-photos">📷 Retrouver mes photos</a>
+            <button className="modal-btn modal-btn-clair" onClick={() => setShowProfil(false)}>Fermer</button>
+          </div>
         </div>
       )}
 
