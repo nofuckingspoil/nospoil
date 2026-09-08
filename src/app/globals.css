@@ -807,7 +807,94 @@ a.cam-pile:active { transform: scale(.94); }
   .gal-hero-nom { font-size: 26px; }
   .gal-hero-revoir { flex: 1; text-align: center; }
 }
-.gal-head { padding: 4px 0 12px; position: sticky; top: 0; z-index: 5; background: var(--screen); }
+
+/* ============================================================
+   La galerie, en entier, dans l'ambiance de la soirée.
+   L'écran d'attente est sombre : l'album qui lui succède l'est aussi, sinon on
+   croit changer d'application entre le samedi soir et le dimanche matin. Les
+   tirages, eux, restent en carton crème : c'est le contraste qui les fait
+   ressembler à des photos posées sur une table.
+   ============================================================ */
+.gal-page { background: var(--dark); color: var(--cream); padding-bottom: 96px; }
+.gal-page .h3, .gal-page h1, .gal-page h2, .gal-page h3 { color: #fff; }
+.gal-page .eyebrow { color: var(--amber); }
+.gal-page .muted, .gal-page .lead { color: rgba(231,225,212,.6); }
+.gal-page .gal-back { color: rgba(255,255,255,.75); }
+.gal-page .notice {
+  background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: rgba(231,225,212,.82);
+}
+.gal-page .notice strong { color: #fff; }
+.gal-page .gal-fin {
+  background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: rgba(231,225,212,.7);
+}
+.gal-page .gal-fin strong { color: var(--amber); }
+
+/* La barre compacte : elle colle en haut pendant qu'on descend. */
+.gal-compact {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 11px;
+  margin: 0 -22px 12px; padding: 10px 22px;
+  background: rgba(20,22,31,.92); backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.gal-compact-vig { flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; overflow: hidden; }
+.gal-compact-vig img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gal-compact-txt { flex: 1; min-width: 0; }
+.gal-compact-nom {
+  display: block; font-family: var(--font-body); font-weight: 700; font-size: 14px;
+  color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.gal-compact-sous {
+  display: block; font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .08em;
+  color: rgba(255,255,255,.5); margin-top: 2px;
+}
+.gal-creer {
+  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background: none; border: 0; cursor: pointer; color: var(--accent-lt); font-size: 15px;
+}
+.gal-creer i {
+  font-style: normal; font-family: var(--font-mono); font-size: 8.5px;
+  letter-spacing: .12em; text-transform: uppercase;
+}
+
+/* Les trois réglages, dans l'ambiance de la page. */
+.gal-page .gal-fbtn {
+  background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.13); color: #fff;
+}
+.gal-page .gal-fbtn-l { color: rgba(255,255,255,.5); }
+.gal-page .gal-fbtn-v { color: #fff; }
+.gal-page .gal-fbtn.actif { background: rgba(244,193,78,.14); border-color: rgba(244,193,78,.5); }
+.gal-page .gal-fbtn.actif .gal-fbtn-v { color: var(--amber); }
+.gal-page .gal-fbtn.ouvert { background: rgba(244,193,78,.2); border-color: var(--amber); }
+.gal-page .gal-panneau {
+  background: #171A25; border-color: rgba(255,255,255,.14); color: var(--cream);
+}
+.gal-page .gal-opt { color: var(--cream); }
+.gal-page .gal-opt-t { color: #fff; }
+.gal-page .gal-opt-t em { color: rgba(231,225,212,.5); }
+.gal-page .gal-opt.on { background: rgba(255,255,255,.07); }
+.gal-page .gal-opt-c { color: var(--accent-lt); }
+.gal-page .gal-cherche {
+  background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14); color: #fff;
+}
+.gal-page .chip { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14); color: rgba(255,255,255,.8); }
+.gal-page .chip.active { background: var(--accent-btn); color: #fff; border-color: var(--accent); }
+.gal-page .gal-lbl { color: rgba(255,255,255,.5); }
+
+/* Les actions sous le pouce, collées en bas, quoi qu'on fasse défiler. */
+.gal-actions-bas {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+  display: flex; align-items: center; gap: 10px;
+  max-width: 980px; margin: 0 auto;
+  padding: 11px 22px calc(14px + env(safe-area-inset-bottom));
+  background: rgba(20,22,31,.94); backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,.09);
+}
+.gal-actions-bas .btn { flex: 1; }
+.gal-actions-bas .btn-ghost { background: none; border: 1px solid rgba(255,255,255,.24); color: #fff; }
+.gal-actions-bas .btn-dark { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.gal-head { padding: 0 0 12px; position: relative; z-index: 5; }
 .chips { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 4px; }
 .chip { flex: 0 0 auto; background: #fff; color: var(--text3); border: 1px solid var(--line); border-radius: 999px; padding: 8px 14px; cursor: pointer; font-family: var(--font-body); font-weight: 600; font-size: 12.5px; white-space: nowrap; }
 .chip.active { background: var(--accent-btn); color: #fff; border-color: var(--accent); }

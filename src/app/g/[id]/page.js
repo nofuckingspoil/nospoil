@@ -60,12 +60,20 @@ function formatCourt(iso) {
   } catch { return '' }
 }
 
-// « Claire & Martin » donne « C&M » : la carte de repli, quand la soirée n'a
-// pas de couverture.
+// Les initiales de la carte de repli, quand la soirée n'a pas de couverture.
+//
+// « Claire & Martin » donne « C&M », mais « Banc d'essai » ne doit pas donner
+// « B&D » : l'esperluette annoncerait un couple là où il n'y a qu'un nom. On
+// ne la met donc que si le nom en porte vraiment une, ou un « et » entre deux
+// mots. Sinon, une seule lettre suffit.
 function initialesDe(nom) {
-  const mots = String(nom || '').split(/[\s&+]+/).filter(Boolean)
-  if (!mots.length) return '✳'
-  return mots.slice(0, 2).map((m) => m[0].toUpperCase()).join('&')
+  const brut = String(nom || '').trim()
+  if (!brut) return '✳'
+  const couple = brut.split(/\s*(?:&|\+|\bet\b)\s*/i).filter(Boolean)
+  if (couple.length >= 2) {
+    return couple.slice(0, 2).map((m) => m.trim()[0].toUpperCase()).join('&')
+  }
+  return brut[0].toUpperCase()
 }
 
 function formatStamp(iso) {
@@ -878,7 +886,7 @@ export default function Gallery({ params }) {
   }
 
   return (
-    <main className="screen screen-cream wide gal-page">
+    <main className="screen wide gal-page">
       {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
           la page des participants, qui n'ont rien à y faire. Collé en haut, la page
           étant longue par nature. */}
@@ -934,7 +942,10 @@ export default function Gallery({ params }) {
           </div>
           <div className="gal-hero-actions">
             <button className="gal-hero-dl" disabled={!!zip} onClick={() => downloadAll(photos)}>
-              <span className="dl" /> {zip ? `Préparation… ${zip.done}/${zip.total}` : `Tout télécharger · ${photos.length}`}
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
+              </svg>
+              {zip ? `Préparation… ${zip.done}/${zip.total}` : `Tout télécharger · ${photos.length}`}
             </button>
             {data.photos.length > 1 && (
               <button className="gal-hero-revoir" onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
@@ -945,16 +956,29 @@ export default function Gallery({ params }) {
         </div>
       </div>
 
-      <div className="gal-head">
-
-        {/* Une image, un enregistrement, une publication : le chemin le plus
-            court entre l'album et Instagram. Le bouton se voit, sans occuper
-            la place des photos. */}
+      {/* La barre compacte : la couverture se replie en vignette, le nom et les
+          compteurs restent, et « Créer » se tient à droite. Elle colle en haut
+          pendant qu'on descend dans les photos, on sait donc toujours où l'on
+          est sans que la façade prenne la moitié de l'écran.
+          Elle est fille de la page, et non de l'en-tête : un élément collant ne
+          dépasse jamais les bornes de son conteneur, et elle serait partie avec
+          lui au premier défilement. */}
+      <div className="gal-compact">
+        {data.coverUrl && <span className="gal-compact-vig"><img src={data.coverUrl} alt="" /></span>}
+        <span className="gal-compact-txt">
+          <span className="gal-compact-nom">{data.hostNames || data.name}</span>
+          <span className="gal-compact-sous">
+            {data.photos.length} photo{data.photos.length > 1 ? 's' : ''} · {data.guests.length} participant{data.guests.length > 1 ? 's' : ''}
+          </span>
+        </span>
         {data.photos.length > 0 && (
-          <button className="gal-partage" onClick={() => setMontrerCollage(true)}>
-            <span aria-hidden="true">✦</span> Créer une image à partager
+          <button className="gal-creer" onClick={() => setMontrerCollage(true)}>
+            <span aria-hidden="true">✦</span><i>Créer</i>
           </button>
         )}
+      </div>
+
+      <div className="gal-head">
 
         {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
             occupaient le premier écran d'un téléphone, et les photos
@@ -1106,7 +1130,7 @@ export default function Gallery({ params }) {
             quand aucun filtre n'est posé : il dirait la même chose que celui
             du haut, deux fois. */}
         {photos.length > 0 && (
-          <div className="gal-actions">
+          <div className="gal-actions gal-actions-bas">
             <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
               {selecting ? 'Annuler' : 'Choisir des photos'}
             </button>
