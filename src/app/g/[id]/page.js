@@ -490,6 +490,33 @@ export default function Gallery({ params }) {
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
   const [chercheQui, setChercheQui] = useState('')
+  const filtresRef = useRef(null)
+
+  // Un panneau qui s'ouvre amène sa rangée de boutons sous la barre compacte :
+  // ouvert depuis le haut de la page, il descendait au-delà de l'écran et son
+  // bouton de validation devenait introuvable.
+  const filtreActif = () => vueFav !== 'tous' || auteursChoisis.size > 0 || vue !== 'toutes'
+  const toutMontrer = () => {
+    setVueFav('tous')
+    setAuteursChoisis(new Set())
+    setVue('toutes')
+    setChercheQui('')
+    setPanneau(null)
+  }
+
+  const ouvrirPanneau = (cle) => {
+    setPanneau((p) => {
+      const suivant = p === cle ? null : cle
+      // On quitte la recherche de participants : on la vide. Sinon elle
+      // attendait, invisible, et la liste rouverte paraissait amputée.
+      if (p === 'qui' && suivant !== 'qui') setChercheQui('')
+      if (suivant && filtresRef.current) {
+        const y = window.scrollY + filtresRef.current.getBoundingClientRect().top - 58
+        window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' })
+      }
+      return suivant
+    })
+  }
   // Qui regarde : beaucoup s'inscrivent sous un surnom et ne le retrouvent pas.
   const [moiId, setMoiId] = useState(null)
   const [selecting, setSelecting] = useState(false)
@@ -884,7 +911,7 @@ export default function Gallery({ params }) {
   }
 
   return (
-    <main className="screen wide gal-page">
+    <main className={`screen wide gal-page ${panneau ? 'panneau-ouvert' : ''}`}>
       {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
           la page des participants, qui n'ont rien à y faire. Collé en haut, la page
           étant longue par nature. */}
@@ -980,29 +1007,29 @@ export default function Gallery({ params }) {
         {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
             occupaient le premier écran d'un téléphone, et les photos
             commençaient hors champ. Chacun dit son état, et ouvre son panneau. */}
-        <div className="gal-filtres">
-          <button className={`gal-fbtn ${panneau === 'vue' ? 'ouvert' : ''} ${vueFav !== 'tous' ? 'actif' : ''}`}
-            aria-expanded={panneau === 'vue'}
-            onClick={() => setPanneau((p) => (p === 'vue' ? null : 'vue'))}>
-            <span className="gal-fbtn-l">♥ Afficher</span>
-            <span className="gal-fbtn-v">
-              {vueFav === 'miens' ? 'Mes favoris' : vueFav === 'aimees' ? 'Les plus aimées' : 'Toutes'}
-            </span>
-          </button>
+        <div className="gal-filtres" ref={filtresRef}>
           {/* Souligné seulement quand une pellicule change vraiment les photos :
               « Original » est l'absence d'effet, pas un filtre appliqué. */}
           <button className={`gal-fbtn ${panneau === 'film' ? 'ouvert' : ''} ${pelliculeId !== 'aucune' || avecDate ? 'actif' : ''}`}
             aria-expanded={panneau === 'film'}
-            onClick={() => setPanneau((p) => (p === 'film' ? null : 'film'))}>
+            onClick={() => ouvrirPanneau('film')}>
             {/* « Pellicule » seul ne dit pas ce que le bouton fait à un participant
                 qui n'a jamais tenu de jetable : on nomme l'effet. */}
             <span className="gal-fbtn-l">🎞️ Effet photo</span>
             <span className="gal-fbtn-v">{pelli.nom}{avecDate && ' + date'}</span>
           </button>
+          <button className={`gal-fbtn ${panneau === 'vue' ? 'ouvert' : ''} ${vueFav !== 'tous' ? 'actif' : ''}`}
+            aria-expanded={panneau === 'vue'}
+            onClick={() => ouvrirPanneau('vue')}>
+            <span className="gal-fbtn-l">♥ Afficher</span>
+            <span className="gal-fbtn-v">
+              {vueFav === 'miens' ? 'Mes favoris' : vueFav === 'aimees' ? 'Les plus aimées' : 'Toutes'}
+            </span>
+          </button>
           {data.guests.length > 1 && (
             <button className={`gal-fbtn ${panneau === 'qui' ? 'ouvert' : ''} ${auteursChoisis.size > 0 ? 'actif' : ''}`}
               aria-expanded={panneau === 'qui'}
-              onClick={() => setPanneau((p) => (p === 'qui' ? null : 'qui'))}>
+              onClick={() => ouvrirPanneau('qui')}>
               <span className="gal-fbtn-l">📷 Photographe</span>
               <span className="gal-fbtn-v">{auteursChoisis.size === 0 ? 'Tout le monde' : nomFiltre}</span>
             </button>
@@ -1011,7 +1038,7 @@ export default function Gallery({ params }) {
         {/* Le panneau se pose par-dessus l'album au lieu de le repousser : ouvrir
             un filtre ne doit pas coûter un écran de photos. On ferme en touchant
             à côté, comme n'importe quel menu. */}
-        {panneau && <div className="gal-fond" onClick={() => setPanneau(null)} />}
+        {panneau && <div className="gal-fond" onClick={() => { if (panneau === 'qui') setChercheQui(''); setPanneau(null) }} />}
 
         {/* Le cœur passe pour une décoration tant qu'on n'a pas dit à quoi il
             sert : ces trois vues sont l'endroit où l'expliquer. */}
@@ -1066,9 +1093,10 @@ export default function Gallery({ params }) {
               ))}
             </div>
             <button className={`gal-opt gal-opt-sep ${avecDate ? 'on' : ''}`}
+              role="checkbox" aria-checked={avecDate}
               onClick={() => choisirPellicule(pelliculeId, !avecDate)}>
+              <span className={`gal-case ${avecDate ? 'on' : ''}`} aria-hidden="true">{avecDate ? '✓' : ''}</span>
               <span className="gal-opt-t">Date incrustée<em>Les chiffres orange dans le coin, comme sur un jetable</em></span>
-              <span className="gal-opt-c" aria-hidden="true">{avecDate ? '✓' : ''}</span>
             </button>
             <button className="gal-panneau-ok" onClick={() => setPanneau(null)}>Voir les photos</button>
           </div>
@@ -1099,12 +1127,18 @@ export default function Gallery({ params }) {
               ))}
               {auteursMontres.length === 0 && <p className="gal-vide">Aucun participant à ce nom.</p>}
             </div>
-            <button className="gal-panneau-ok" onClick={() => setPanneau(null)}>
+            <button className="gal-panneau-ok" onClick={() => { setChercheQui(''); setPanneau(null) }}>
               Voir les {photos.length} photo{photos.length > 1 ? 's' : ''}
             </button>
           </div>
         )}
         </div>
+
+        {filtreActif() && !panneau && (
+          <button className="gal-reinit" onClick={toutMontrer}>
+            ✕ Tout montrer
+          </button>
+        )}
 
         {/* Ce que voient les participants, par opposition à ce que vous seul voyez.
             Inutile tant que rien n'est masqué : il n'y aurait rien à trier. */}

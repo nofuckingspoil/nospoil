@@ -876,10 +876,20 @@ a.cam-pile:active { transform: scale(.94); }
 .gal-page .gal-fbtn.actif { background: rgba(244,193,78,.14); border-color: rgba(244,193,78,.5); }
 .gal-page .gal-fbtn.actif .gal-fbtn-v { color: var(--amber); }
 .gal-page .gal-fbtn.ouvert { background: rgba(244,193,78,.2); border-color: var(--amber); }
+.gal-page .gal-fbtn:focus { outline: none; }
+.gal-page .gal-fbtn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
 .gal-page .gal-panneau {
   background: #171A25; border-color: rgba(255,255,255,.14); color: var(--cream);
-  max-width: 460px;
+  display: flex; flex-direction: column; max-height: calc(100vh - 150px);
 }
+/* La case à cocher de la date : un carré qui se voit vide, sinon rien
+   n'annonçait qu'il y avait quelque chose à cocher. */
+.gal-case {
+  flex: 0 0 auto; width: 20px; height: 20px; border-radius: 6px;
+  border: 1.5px solid rgba(255,255,255,.3); display: grid; place-items: center;
+  font-size: 12px; color: transparent;
+}
+.gal-case.on { background: var(--accent); border-color: var(--accent); color: #fff; }
 /* Les cinq pellicules en rangée : on les compare d'un coup d'oeil, sur une
    vraie photo de la soirée. En liste, chaque nom se retrouvait seul au milieu
    d'un écran d'ordinateur, et le rendu ne se voyait plus. */
@@ -918,7 +928,9 @@ a.cam-pile:active { transform: scale(.94); }
 .gal-page .gal-lbl { color: rgba(255,255,255,.5); }
 
 /* Les actions sous le pouce, collées en bas, quoi qu'on fasse défiler. */
+.gal-page.panneau-ouvert .gal-actions-bas { opacity: 0; pointer-events: none; }
 .gal-actions-bas {
+  transition: opacity .18s ease;
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
   display: flex; align-items: center; gap: 10px;
   max-width: 980px; margin: 0 auto;
@@ -944,6 +956,11 @@ a.cam-pile:active { transform: scale(.94); }
    ramènent à une taille qu'on embrasse d'un regard, sans les recadrer. */
 @media (min-width: 700px) {
   .masonry { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+}
+/* Au-delà, une quatrième colonne : la page ne s'élargit plus (980 px), donc
+   chaque tirage descend vers 225 px, la taille d'une vraie photo posée. */
+@media (min-width: 1040px) {
+  .masonry { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 }
 .polaroid {
   background: var(--card); padding: 7px 7px 0;
@@ -1868,17 +1885,30 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 /* Le panneau flotte au-dessus de l'album : ouvrir un filtre ne doit pas
    repousser les photos d'un écran entier. */
-.gal-fond { position: fixed; inset: 0; z-index: 24; }
+/* Retirer tous les filtres d'un geste : discret, et présent seulement quand
+   il y a vraiment quelque chose à retirer. */
+.gal-reinit {
+  display: block; margin: 10px auto 0; padding: 7px 14px; border-radius: 999px;
+  background: none; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7);
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; cursor: pointer;
+}
+.gal-reinit:hover { border-color: var(--accent); color: var(--accent-lt); }
+.gal-fond {
+  position: fixed; inset: 0; z-index: 24;
+  background: rgba(8,10,16,.55); backdrop-filter: blur(2px);
+  animation: dc-voile .18s ease both;
+}
+@keyframes dc-voile { from { opacity: 0 } to { opacity: 1 } }
 .gal-panneau {
   position: absolute; top: calc(100% + 7px); left: 0; right: 0; z-index: 25;
   padding: 8px; border-radius: 16px;
   background: var(--card); border: 1px solid var(--line);
   box-shadow: 0 18px 44px rgba(34,26,18,.22);
 }
-.gal-liste { display: flex; flex-direction: column; }
+.gal-liste { display: flex; flex-direction: column; max-height: 38vh; overflow-y: auto; }
 /* La liste des participants peut compter 170 noms : elle défile chez elle,
    plutôt que de repousser les photos d'un écran entier. */
-.gal-liste-haute { max-height: 46vh; overflow-y: auto; }
+.gal-liste-haute { max-height: 38vh; overflow-y: auto; }
 .gal-opt {
   display: flex; align-items: center; justify-content: space-between; gap: 10px;
   width: 100%; padding: 10px 12px; border: none; border-radius: 11px;
@@ -1897,12 +1927,17 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-opt.on .gal-opt-c { background: var(--accent-btn); border-color: var(--accent); color: #fff; }
 /* La date se coche en plus d'une pellicule : un trait la sépare des cinq
    choix qui, eux, s'excluent. */
-.gal-opt-sep { margin-top: 4px; border-top: 1px solid var(--line-soft); border-radius: 0 0 11px 11px; }
-.gal-panneau-ok {
-  width: 100%; margin-top: 6px; padding: 12px; border: none; border-radius: 12px;
-  background: var(--ink); color: #fff; cursor: pointer;
-  font-family: var(--font-body); font-weight: 700; font-size: 14px;
+.gal-opt-sep {
+  margin-top: 4px; border-top: 1px solid var(--line-soft); border-radius: 0 0 11px 11px;
+  justify-content: flex-start; gap: 12px;
 }
+.gal-panneau-ok {
+  width: 100%; margin-top: 8px; padding: 13px; border: none; border-radius: 12px;
+  background: var(--accent); color: #fff; cursor: pointer;
+  font-family: var(--font-body); font-weight: 700; font-size: 14.5px;
+  box-shadow: 0 6px 16px rgba(236,91,51,.24);
+}
+.gal-panneau-ok:hover { background: var(--accent-lt); }
 .gal-vide { margin: 12px; font-size: 13px; color: var(--text4); }
 .gal-panneau .gal-cherche { margin: 4px 0 8px; }
 
