@@ -125,6 +125,7 @@ export default function GuestCamera({ params }) {
   const [mur, setMur] = useState([])             // [{id, url, qui, moi}] photos du groupe, floutées avant la révélation
   const [murTotal, setMurTotal] = useState(0)    // combien il y en a en tout, pour savoir s'il en reste
   const [murN, setMurN] = useState(12)           // combien on en demande : 12, puis la suite au défilement
+  const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [aConfirmer, setAConfirmer] = useState(null) // {blob, url} cliché montré une fois, à garder ou à reprendre
@@ -397,7 +398,7 @@ export default function GuestCamera({ params }) {
           photoCount: typeof d.photoCount === 'number' ? d.photoCount : m.photoCount,
         } : m))
         if (typeof d.murTotal === 'number') setMurTotal(d.murTotal)
-        if (showAlbum && Array.isArray(d.mur)) setMur(d.mur)
+        if (showAlbum && Array.isArray(d.mur)) { setMur(d.mur); setMurCharge(true) }
       } catch {}
     }
     refresh()
@@ -1254,7 +1255,7 @@ export default function GuestCamera({ params }) {
             {/* Le mur : la soirée en train de se faire. Ses propres photos y
                 sont mêlées aux autres, floutées comme elles, signalées par
                 « Toi ». Rien n'est cliquable : c'est une rumeur d'images. */}
-            {!meta?.revealed && mur.length === 0 && (
+            {!meta?.revealed && murCharge && mur.length === 0 && (
               <div className="album-vierge">
                 <div className="em">🎞️</div>
                 <h5>La pellicule est vierge</h5>

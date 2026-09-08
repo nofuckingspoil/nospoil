@@ -10,7 +10,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status,expires_at`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status,expires_at,cover_url,starts_at`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -132,6 +132,10 @@ export async function GET(request, { params }) {
   //
   // Ce n'est pas un affaiblissement : l'album est déjà accessible à quiconque
   // possède le lien de l'événement.
+  // La couverture voyage avec l'album : c'est elle qui ouvre l'écran, comme
+  // pendant la soirée. Signée à part, elle ne vit pas dans le même dossier.
+  const couverture = ev.cover_url ? (await signPhotos([ev.cover_url], 6 * 3600))[ev.cover_url] || null : null
+
   const signed = await signPhotos(allPaths, 6 * 3600)
 
   const photos = rows
@@ -170,6 +174,8 @@ export async function GET(request, { params }) {
     ownerPreview: isOwner && !revealed, // aperçu organisateur avant révélation
     name: ev.name,
     hostNames: ev.host_names,
+    coverUrl: couverture,
+    startsAt: ev.starts_at,
     revealAt: ev.reveal_at,
     photos,
     guests,

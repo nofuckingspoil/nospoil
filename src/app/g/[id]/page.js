@@ -42,6 +42,32 @@ function formatTime(iso) {
   catch { return '' }
 }
 // Date courte + heure, ex : « 12 juin · 14:32 »
+// Le sur-titre de l'album : la date, jamais le type d'événement. La base ne
+// sait pas si c'est un mariage ou un anniversaire, mais elle sait quel jour.
+function formatLong(iso) {
+  try {
+    const d = new Date(iso)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+  } catch { return '' }
+}
+
+function formatCourt(iso) {
+  try {
+    const d = new Date(iso)
+    if (isNaN(d.getTime())) return ''
+    return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, ' · ')
+  } catch { return '' }
+}
+
+// « Claire & Martin » donne « C&M » : la carte de repli, quand la soirée n'a
+// pas de couverture.
+function initialesDe(nom) {
+  const mots = String(nom || '').split(/[\s&+]+/).filter(Boolean)
+  if (!mots.length) return '✳'
+  return mots.slice(0, 2).map((m) => m[0].toUpperCase()).join('&')
+}
+
 function formatStamp(iso) {
   try {
     const d = new Date(iso)
@@ -874,17 +900,52 @@ export default function Gallery({ params }) {
           {hiddenCount > 0 && <> {hiddenCount} photo{hiddenCount > 1 ? 's' : ''} actuellement masquée{hiddenCount > 1 ? 's' : ''}.</>}
         </div>
       )}
-      <div className="gal-head">
-        <div className="eyebrow" style={{ fontSize: 10.5, marginBottom: 4 }}>Révélé · {data.photos.length} souvenirs</div>
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap', margin: '2px 0 12px' }}>
-          <h3 className="h3" style={{ margin: 0 }}>Les souvenirs de {data.hostNames || data.name}</h3>
-          {data.photos.length > 1 && (
-            <button className="linklike" style={{ fontSize: 13 }}
-              onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
-              ↺ Revoir le résumé
-            </button>
+      {/* ============================================================
+          L'en-tête de l'album révélé, jumeau de celui de la soirée : la
+          couverture posée dans son cadre, le fond tiré d'elle-même, la date en
+          sur-titre. Trois choses seulement changent une fois la révélation
+          passée : le décompte laisse la place au verdict, le bouton n'invite
+          plus à photographier mais à tout emporter, et le mur devient l'album.
+          ============================================================ */}
+      <div className="gal-hero">
+        {data.coverUrl
+          ? <div className="gal-hero-fond" style={{ backgroundImage: `url(${data.coverUrl})` }} />
+          : <div className="gal-hero-fond gal-hero-motif" />}
+        <div className="gal-hero-voile" />
+        <div className="gal-hero-corps">
+          {data.coverUrl ? (
+            <div className="gal-cadre"><img src={data.coverUrl} alt="" /></div>
+          ) : (
+            <div className="gal-cadre gal-carte">
+              <span className="perf" /><span className="perf bas" />
+              <span className="obturateur" />
+              <span className="ini">{initialesDe(data.hostNames || data.name)}</span>
+              <span className="jour">{formatCourt(data.startsAt)}</span>
+            </div>
           )}
+          <div className="gal-etat">
+            🎉 Album révélé
+            {data.expiresAt && <> · en ligne jusqu&apos;au {formatJour(data.expiresAt)}</>}
+          </div>
+          <div className="gal-hero-date">{formatLong(data.startsAt)}</div>
+          <h1 className="gal-hero-nom">{data.hostNames || data.name}</h1>
+          <div className="gal-hero-stats">
+            {data.photos.length} photo{data.photos.length > 1 ? 's' : ''} · {data.guests.length} participant{data.guests.length > 1 ? 's' : ''}
+          </div>
+          <div className="gal-hero-actions">
+            <button className="gal-hero-dl" disabled={!!zip} onClick={() => downloadAll(photos)}>
+              <span className="dl" /> {zip ? `Préparation… ${zip.done}/${zip.total}` : `Tout télécharger · ${photos.length}`}
+            </button>
+            {data.photos.length > 1 && (
+              <button className="gal-hero-revoir" onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
+                ↺ Revoir la révélation
+              </button>
+            )}
+          </div>
         </div>
+      </div>
+
+      <div className="gal-head">
 
         {/* Une image, un enregistrement, une publication : le chemin le plus
             court entre l'album et Instagram. Le bouton se voit, sans occuper
@@ -1039,21 +1100,22 @@ export default function Gallery({ params }) {
           </>
         )}
 
-        {/* Emporter : à côté des filtres, dont il dépend, et non à l'autre bout
-            de la page. Le libellé nomme ce qu'il va réellement télécharger. */}
+        {/* Emporter tout l'album se fait depuis l'en-tête, en un appui. Ici ne
+            reste que ce qui dépend des filtres : choisir quelques photos, ou
+            emporter le tri en cours (« les 12 de Rose »). Le bouton disparaît
+            quand aucun filtre n'est posé : il dirait la même chose que celui
+            du haut, deux fois. */}
         {photos.length > 0 && (
           <div className="gal-actions">
             <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
               {selecting ? 'Annuler' : 'Choisir des photos'}
             </button>
-            {!selecting && (
+            {!selecting && auteursChoisis.size > 0 && (
               <button className="btn btn-dark" disabled={!!zip} onClick={() => downloadAll(photos)}>
                 {zip ? `Préparation… ${zip.done}/${zip.total}`
-                  : auteursChoisis.size === 0
-                    ? `Tout télécharger (${photos.length})`
-                    : auteursChoisis.size === 1
-                      ? `Télécharger les ${photos.length} de ${nomFiltre}`
-                      : `Télécharger ces ${photos.length} photos`}
+                  : auteursChoisis.size === 1
+                    ? `Télécharger les ${photos.length} de ${nomFiltre}`
+                    : `Télécharger ces ${photos.length} photos`}
               </button>
             )}
           </div>
@@ -1162,18 +1224,6 @@ export default function Gallery({ params }) {
             )
           })}
         </div>
-      )}
-
-      {/* Revoir la révélation : les photos se redéveloppent, comme au premier
-          matin. C'est rare, et tranquille, donc c'est ici, après la dernière
-          photo, et non en haut de l'écran où ce serait un bouton de plus. */}
-      {photos.length > 0 && !selecting && (
-        <button className="gal-rejouer" onClick={() => {
-          setRejoue((n) => n + 1)
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        }}>
-          ↺ Revoir la révélation
-        </button>
       )}
 
       {/* La question arrive après les photos, jamais avant : on laisse d'abord
