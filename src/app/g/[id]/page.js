@@ -1046,20 +1046,24 @@ export default function Gallery({ params }) {
             ne veut rien dire avant d'avoir essayé. */}
         {panneau === 'film' && (
           <div className="gal-panneau">
-            <div className="gal-liste">
+            {/* Une rangée d'aperçus plutôt qu'une liste : la pellicule se
+                choisit à l'oeil, et une liste s'étalait sur toute la largeur
+                d'un écran d'ordinateur, chaque nom perdu au milieu du vide. */}
+            <div className="gal-films">
               {PELLICULES.map((f) => (
-                <button key={f.id} className={`gal-opt ${pelliculeId === f.id ? 'on' : ''}`}
+                <button key={f.id} className={`gal-film ${pelliculeId === f.id ? 'on' : ''}`}
                   onClick={() => choisirPellicule(f.id, avecDate)}>
-                  {apercuUrl && (
-                    <span className="gal-opt-vig" aria-hidden="true">
-                      <img src={apercuUrl} alt="" crossOrigin="anonymous"
-                        style={f.css ? { filter: f.css } : undefined} />
-                      {f.teinte && <span className="film-teinte" style={{ background: cssTeinte(f) }} />}
-                      {f.vignette > 0 && <span className="film-vignette" style={{ opacity: f.vignette }} />}
-                    </span>
-                  )}
-                  <span className="gal-opt-t">{f.nom}<em>{f.resume}</em></span>
-                  <span className="gal-opt-c" aria-hidden="true">{pelliculeId === f.id ? '✓' : ''}</span>
+                  <span className="gal-film-vig">
+                    {apercuUrl && (
+                      <>
+                        <img src={apercuUrl} alt="" crossOrigin="anonymous"
+                          style={f.css ? { filter: f.css } : undefined} />
+                        {f.teinte && <span className="film-teinte" style={{ background: cssTeinte(f) }} />}
+                        {f.vignette > 0 && <span className="film-vignette" style={{ opacity: f.vignette }} />}
+                      </>
+                    )}
+                  </span>
+                  <em>{f.nom}</em>
                 </button>
               ))}
             </div>

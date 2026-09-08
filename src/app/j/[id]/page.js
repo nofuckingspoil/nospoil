@@ -970,7 +970,9 @@ export default function GuestCamera({ params }) {
       {/* L'organisateur qui photographie doit pouvoir repartir d'ici même :
           la barre du haut est pleine, ce rappel se pose donc en dessous. */}
       {meta?.isOwner && (
-        <Link href={`/event/${id}`} className="cam-retour">← Tableau de bord</Link>
+        <Link href={`/event/${id}`} className="album-orga">
+          <span>Vous organisez cette soirée</span><b>Tableau de bord →</b>
+        </Link>
       )}
       {/* La flèche de retour menait à l'écran « participer à l'événement », qui
           n'a plus rien à dire une fois qu'on a accepté. Elle devient la porte de
@@ -978,23 +980,28 @@ export default function GuestCamera({ params }) {
           compteur de vues, resté en bas à gauche, pour qu'on ne les confonde
           jamais. */}
       <div className="cam-top">
-        <button className="cam-albumbtn" onClick={() => setShowAlbum(true)} aria-label="Voir l'album du groupe">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
-            <rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="8" rx="1.5" />
-            <rect x="3" y="13" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" />
-          </svg>
-          <span>Album</span>
-          {(meta?.photoCount || 0) > 0 && <b>{meta.photoCount}</b>}
+        <button className="album-navbtn" onClick={() => setShowAlbum(true)} aria-label="Voir l'album du groupe">
+          <span className="ic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+              <rect x="3" y="3" width="8" height="8" rx="1.5" /><rect x="13" y="3" width="8" height="8" rx="1.5" />
+              <rect x="3" y="13" width="8" height="8" rx="1.5" /><rect x="13" y="13" width="8" height="8" rx="1.5" />
+            </svg>
+            {(meta?.photoCount || 0) > 0 && <b className="n">{meta.photoCount}</b>}
+          </span>
+          <em>Album</em>
         </button>
         <div className="cam-titlebar">
           <div className="nm">{coupleLabel}</div>
           <div className="sub">{countdownToReveal(meta?.revealAt, now)}</div>
         </div>
-        <button className="cam-iconbtn" onClick={() => setShowQR(true)} aria-label="Inviter un proche (QR code)">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
-            <path d="M14 14h3v3h-3zM21 14v7M14 21h7" />
-          </svg>
+        <button className="album-navbtn" onClick={() => setShowQR(true)} aria-label="Inviter un proche (QR code)">
+          <span className="ic">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" />
+              <path d="M14 14h3v3h-3zM21 14v7M14 21h7" />
+            </svg>
+          </span>
+          <em>Inviter</em>
         </button>
       </div>
 
@@ -1175,7 +1182,7 @@ export default function GuestCamera({ params }) {
 
           <div className="album-corps">
             {meta?.isOwner && (
-              <Link href={`/event/${id}`} className="cam-retour album-orga">
+              <Link href={`/event/${id}`} className="album-orga">
                 <span>Vous organisez cette soirée</span><b>Tableau de bord →</b>
               </Link>
             )}
@@ -1247,7 +1254,11 @@ export default function GuestCamera({ params }) {
                 </div>
               ) : (
                 <button className="album-cta" onClick={() => setShowAlbum(false)}>
-                  <span className="ring" /> Prendre une photo
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+                    <circle cx="12" cy="13" r="4" />
+                  </svg>
+                  Prendre une photo
                 </button>
               )}
             </div>
