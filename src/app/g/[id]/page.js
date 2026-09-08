@@ -1039,6 +1039,17 @@ export default function Gallery({ params }) {
             {data.photos.length} photo{data.photos.length > 1 ? 's' : ''} · {data.guests.length} participant{data.guests.length > 1 ? 's' : ''}
           </span>
         </span>
+        {/* « Sélectionner » a rejoint la barre collante : la barre du bas d'où
+            il venait ne sort plus que sur un filtre, et il doit rester joignable
+            à tout moment, y compris en bas de l'album. */}
+        {data.photos.length > 0 && (
+          <button className="gal-creer" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+            </svg>
+            <i>{selecting ? 'Annuler' : 'Choisir'}</i>
+          </button>
+        )}
         {data.photos.length > 0 && (
           <button className="gal-creer" onClick={() => setMontrerCollage(true)}>
             <span aria-hidden="true">✦</span><i>Créer</i>
@@ -1208,7 +1219,11 @@ export default function Gallery({ params }) {
             emporter le tri en cours (« les 12 de Rose »). Le bouton disparaît
             quand aucun filtre n'est posé : il dirait la même chose que celui
             du haut, deux fois. */}
-        {photos.length > 0 && (
+        {/* La barre du bas ne sort que quand un filtre est posé : sans filtre,
+            elle répétait mot pour mot le bouton de l'en-tête et volait 70 px de
+            photos sur un téléphone. Le tri, lui, mérite son propre bouton :
+            « Télécharger les 14 de Julien » ne se lit nulle part ailleurs. */}
+        {photos.length > 0 && filtreActif() && (
           <div className="gal-actions gal-actions-bas">
             <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
               {selecting ? 'Annuler' : 'Sélectionner'}

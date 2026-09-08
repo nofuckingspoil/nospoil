@@ -687,6 +687,9 @@ export default function GuestCamera({ params }) {
       if (!res.ok) throw new Error(d.error || 'Erreur.')
       if (typeof d.shotsPerGuest === 'number') setGuest((g) => (g ? { ...g, shotsPerGuest: d.shotsPerGuest } : g))
       setBonusUsed(true)
+      // Recharger sa pellicule, c'est vouloir photographier : on rend la main à
+      // l'appareil au lieu de laisser un deuxième bouton à trouver.
+      setShowAlbum(false)
     } catch (err) { setError(err.message || 'Erreur.') }
   }
 

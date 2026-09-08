@@ -872,6 +872,7 @@ a.cam-pile:active { transform: scale(.94); }
   flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: none; border: 0; cursor: pointer; color: var(--accent-lt); font-size: 15px;
 }
+.gal-creer svg { display: block; }
 .gal-creer i {
   font-style: normal; font-family: var(--font-mono); font-size: 8.5px;
   letter-spacing: .12em; text-transform: uppercase;
@@ -1984,7 +1985,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
      format commun, légèrement recadré, pour en poser six par écran. Le recadrage
      est celui de l'aperçu seulement : la photo ouverte et le fichier téléchargé
      restent entiers. */
-  .gal-page .polaroid .media { aspect-ratio: 4 / 5; }
+  .gal-page .polaroid .media { aspect-ratio: 1 / 1; }
   .gal-page .polaroid .media img { height: 100%; object-fit: cover; }
   .polaroid { padding: 5px 5px 0; border-radius: 6px; }
   .polaroid .cap { padding: 5px 2px 7px; }
