@@ -1,4 +1,5 @@
 import { selectRows, updateRow } from '../../../../lib/supabase'
+import { estUuid, identifiantInvalide } from '../../../../lib/params'
 
 // Accorde la recharge prévue par l'organisateur, UNE SEULE FOIS par participant
 // (vérifié par son device_token). À zéro, la recharge est refusée.
@@ -8,10 +9,11 @@ export async function POST(request) {
   if (!eventId || !guestId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
   }
+  if (!estUuid(eventId) || !estUuid(guestId)) return identifiantInvalide()
 
   const { ok, data } = await selectRows(
     'guests',
-    `id=eq.${guestId}&event_id=eq.${eventId}&device_token=eq.${deviceToken}&select=id,bonus_shots`
+    `id=eq.${guestId}&event_id=eq.${eventId}&device_token=eq.${encodeURIComponent(deviceToken)}&select=id,bonus_shots`
   )
   const g = Array.isArray(data) ? data[0] : null
   if (!ok || !g) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })

@@ -1,5 +1,7 @@
 import { rpc, uploadPhoto, deletePhoto, updateRow } from '../../../lib/supabase'
 import { estSuspendu, MESSAGE_SUSPENDU } from '../../../lib/authz'
+import { estUuid, identifiantInvalide } from '../../../lib/params'
+import { estImage, miniature } from '../../../lib/image'
 
 export const runtime = 'nodejs'
 // Autorise des images compressées jusqu'à ~8 Mo
@@ -18,6 +20,10 @@ export async function POST(request) {
   if (!file || typeof file === 'string' || !eventId || !guestId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
   }
+  // Les deux identifiants composent le chemin du fichier dans le stockage :
+  // mal formés, ils ne désignent plus seulement une ligne de la base, ils
+  // choisissent un emplacement sur le disque. On les contrôle avant tout.
+  if (!estUuid(eventId) || !estUuid(guestId)) return identifiantInvalide()
 
   // Suspendu par l'administration : plus aucune photo n'entre. Vérifié avant
   // de lire le fichier, pour ne pas transférer des octets qu'on jettera.
@@ -28,6 +34,9 @@ export async function POST(request) {
   const bytes = Buffer.from(await file.arrayBuffer())
   if (bytes.length > 8 * 1024 * 1024) {
     return Response.json({ error: 'Photo trop lourde.' }, { status: 413 })
+  }
+  if (!estImage(bytes)) {
+    return Response.json({ error: "Ce fichier n'est pas une image." }, { status: 415 })
   }
 
   // Chemin : eventId/guestId/horodatage-aléatoire.jpg
@@ -40,17 +49,26 @@ export async function POST(request) {
     return Response.json({ error: "Échec de l'envoi de la photo." }, { status: 500 })
   }
 
-  // Mini-version : on l'envoie à côté (échec silencieux → on retombera sur la pleine qualité)
+  // Mini-version : celle du navigateur si elle est là, sinon fabriquée ici.
+  //
+  // L'app native ne peut poster qu'un fichier à la fois : ses photos arrivaient
+  // seules, et c'est l'originale qui redescendait ensuite sur les téléphones.
+  // On la taille donc côté serveur, une fois pour toutes.
+  //
+  // Échec silencieux dans les deux cas : on retombera sur la pleine qualité.
   let thumbPath = null
+  let tbytes = null
   if (thumb && typeof thumb !== 'string') {
     try {
-      const tbytes = Buffer.from(await thumb.arrayBuffer())
-      if (tbytes.length > 0 && tbytes.length < 2 * 1024 * 1024) {
-        const tp = path.replace(/\.jpg$/, '_thumb.jpg')
-        const tup = await uploadPhoto(tp, tbytes, 'image/jpeg')
-        if (tup.ok) thumbPath = tp
-      }
+      const recu = Buffer.from(await thumb.arrayBuffer())
+      if (recu.length > 0 && recu.length < 2 * 1024 * 1024) tbytes = recu
     } catch {}
+  }
+  if (!tbytes) tbytes = await miniature(bytes)
+  if (tbytes) {
+    const tp = path.replace(/\.jpg$/, '_thumb.jpg')
+    const tup = await uploadPhoto(tp, tbytes, 'image/jpeg')
+    if (tup.ok) thumbPath = tp
   }
 
   // Réserve le cliché (atomique) + enregistre la ligne photo

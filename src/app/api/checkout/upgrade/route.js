@@ -4,6 +4,7 @@ import { tierByGuests, upgradeCents } from '../../../../lib/pricing'
 import { siteUrl } from '../../../../lib/mail'
 import { membrePar } from '../../../../lib/equipe'
 import { appliquerAgrandissement } from '../../../../lib/upgrade'
+import { estUuid, identifiantInvalide } from '../../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -42,6 +43,7 @@ export async function POST(request) {
 
   const { eventId, maxGuests } = await request.json().catch(() => ({}))
   if (!eventId) return Response.json({ error: 'Événement manquant.' }, { status: 400 })
+  if (!estUuid(eventId)) return identifiantInvalide()
 
   const { data } = await selectRows(
     'events',

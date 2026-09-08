@@ -9,15 +9,18 @@ const MAX_ATTEMPTS = 6
 
 // Vérifie un code à 6 chiffres pour un mail, et le consomme s'il est correct.
 // Renvoie { ok:true } ou { ok:false, status, error }.
-export async function verifyAndConsumeCode(email, code) {
+export async function verifyAndConsumeCode(email, code, purpose = 'connexion') {
   const clean = (code || '').toString().replace(/\D/g, '')
   if (!isValidEmail(email) || clean.length !== 6) {
     return { ok: false, status: 400, error: 'Mail ou code manquant.' }
   }
   const enc = encodeURIComponent(email)
+  // Le motif compte : un code reçu pour se connecter ne doit pas pouvoir
+  // effacer un compte. Les deux vivent dans la même table, seule cette
+  // colonne les distingue.
   const { data } = await selectRows(
     'login_codes',
-    `email=eq.${enc}&used_at=is.null&order=created_at.desc&limit=1&select=*`
+    `email=eq.${enc}&purpose=eq.${encodeURIComponent(purpose)}&used_at=is.null&order=created_at.desc&limit=1&select=*`
   )
   const row = Array.isArray(data) ? data[0] : null
   if (!row || row.used_at || new Date(row.expires_at).getTime() < Date.now()) {
@@ -105,6 +108,22 @@ export function estSuperAdmin(email) {
   return normalizeEmail(email) === SUPER_ADMIN
 }
 
+// Y a-t-il quelque chose derrière cette adresse ? Simple constat, sans aucun
+// effet de bord : contrairement à eventsForEmail, cette fonction ne crée pas de
+// compte au passage. La page de connexion ne doit rien laisser voir de celui
+// qui s'y présente, pas même une ligne apparue en base.
+export async function aDesEvenements(email) {
+  if (!isValidEmail(email)) return false
+  if (estSuperAdmin(email)) return true
+  const enc = encodeURIComponent(email)
+
+  const owned = await selectRows('events', `owner_email=eq.${enc}&status=eq.active&select=id&limit=1`)
+  if (Array.isArray(owned.data) && owned.data.length) return true
+
+  const admin = await selectRows('event_admins', `email=eq.${enc}&select=id&limit=1`)
+  return Array.isArray(admin.data) && admin.data.length > 0
+}
+
 // Tous les événements liés à ce mail : ceux qu'il a créés + ceux où il est co-organisateur.
 //
 // Le jeton renvoyé dépend du lien : le propriétaire reçoit celui de l'événement,
@@ -175,4 +194,57 @@ export function makeCode() {
 
 export function makeToken() {
   return crypto.randomUUID().replace(/-/g, '') + crypto.randomUUID().replace(/-/g, '').slice(0, 8)
+}
+
+// ------------------------------------------------------------
+//  Participant qui cherche ses photos.
+//
+//  La page de connexion ne connaissait que les organisateurs : un invité qui
+//  avait perdu le lien de l'album (nouveau téléphone, mail effacé) tapait son
+//  adresse, voyait « vérifiez vos mails », et n'a jamais rien reçu. Il n'avait
+//  alors plus aucun chemin vers ses propres photos.
+//
+//  On regarde donc aussi du côté des participations. Le jeton renvoyé est celui
+//  de la fiche invité : c'est la clé de /mes-photos, qui rattache d'un coup
+//  toutes les participations de l'adresse au téléphone du moment.
+//
+//  Renvoie null si l'adresse n'a participé à rien de vivant.
+// ------------------------------------------------------------
+export async function participationsDe(email) {
+  if (!isValidEmail(email)) return null
+  const enc = encodeURIComponent(email)
+
+  const { data } = await selectRows('guests', `email=eq.${enc}&select=id,token,event_id&order=created_at.asc`)
+  const fiches = Array.isArray(data) ? data : []
+  if (!fiches.length) return null
+
+  // Un événement supprimé ou dont les photos ont été purgées ne mène nulle part :
+  // mieux vaut ne pas écrire du tout que d'envoyer vers une page vide.
+  const ids = [...new Set(fiches.map((g) => g.event_id).filter(Boolean))]
+  if (!ids.length) return null
+  const evRes = await selectRows(
+    'events',
+    `id=in.(${ids.join(',')})&status=eq.active&purged_at=is.null&select=id,name,reveal_at`
+  )
+  const vivants = new Map((Array.isArray(evRes.data) ? evRes.data : []).map((e) => [e.id, e]))
+
+  const utiles = fiches.filter((g) => vivants.has(g.event_id))
+  if (!utiles.length) return null
+
+  // Le jeton est posé à la première demande d'accès : les participations les
+  // plus anciennes n'en ont pas toujours un. On en fabrique un au besoin.
+  const porteuse = utiles.find((g) => g.token) || utiles[0]
+  let token = porteuse.token
+  if (!token) {
+    token = makeToken()
+    const res = await updateRow('guests', `id=eq.${porteuse.id}`, { token })
+    if (!res?.ok) return null
+  }
+
+  const albums = [...new Set(utiles.map((g) => g.event_id))]
+    .map((id) => vivants.get(id))
+    .sort((a, b) => new Date(b.reveal_at || 0) - new Date(a.reveal_at || 0))
+    .map((e) => ({ name: e.name, revele: new Date(e.reveal_at || 0).getTime() <= Date.now() }))
+
+  return { token, albums }
 }

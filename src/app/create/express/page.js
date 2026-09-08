@@ -5,9 +5,11 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise } from '../../../lib/pricing'
+import { MODE_PROPOSE } from '../../../lib/photo-mode'
 import { track } from '../../../lib/tracking'
 import TierPicker from '../../../components/TierPicker'
+import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
 
 // ---------- Petits utilitaires de date ----------
@@ -75,7 +77,7 @@ function CreateForm() {
   // Sur une formule payante, Stripe collecte déjà l'adresse pendant le paiement :
   // la demander en plus ferait saisir deux fois la même chose. On ne la demande
   // donc que quand personne d'autre ne le fera.
-  const needEmail = !PAYMENTS_ENABLED || !isPaid || EMAIL_VERIFICATION_ENABLED
+  const needEmail = !PAYMENTS_ENABLED || !isPaid || verificationRequise(priceCents)
 
   // Étapes : 1 nom · 2 dates + révélation · 3 récap · 'code'
   //
@@ -157,7 +159,7 @@ function CreateForm() {
       setError('Merci de cocher la demande d\'exécution immédiate pour finaliser votre commande.')
       return
     }
-    if (!EMAIL_VERIFICATION_ENABLED) return handleCreate()
+    if (!verificationRequise(priceCents)) return handleCreate()
     setLoading(true)
     try {
       const res = await fetch('/api/auth/send-code', {
@@ -187,7 +189,7 @@ function CreateForm() {
   async function handleCreate(e) {
     if (e) e.preventDefault()
     setError('')
-    if (EMAIL_VERIFICATION_ENABLED && code.replace(/\D/g, '').length !== 6) { setError('Entrez le code à 6 chiffres reçu par mail.'); return }
+    if (verificationRequise(priceCents) && code.replace(/\D/g, '').length !== 6) { setError('Entrez le code à 6 chiffres reçu par mail.'); return }
     setLoading(true)
 
     const payload = {
@@ -195,6 +197,10 @@ function CreateForm() {
       code: code.replace(/\D/g, ''),
       startsAt: new Date(startsAt).toISOString(),
       revealAt: new Date(revealAt).toISOString(), shotsPerGuest: DEFAULT_SHOTS,
+      // Même promesse que le tunnel long, dite explicitement : sans ce champ,
+      // le serveur retomberait sur « album ouvert », qui n'est que le repli des
+      // événements d'avant le réglage.
+      photoMode: MODE_PROPOSE,
       maxGuests: tier.maxGuests,
       flow: 'court', // variante d'où l'on vient (retour d'annulation Stripe)
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
@@ -243,7 +249,7 @@ function CreateForm() {
     ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
-  const lastStepLabel = EMAIL_VERIFICATION_ENABLED
+  const lastStepLabel = verificationRequise(priceCents)
     ? (loading ? 'Envoi du code…' : 'Continuer →')
     : finalLabel
 
@@ -316,14 +322,11 @@ function CreateForm() {
       {step === 2 && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">Quand a lieu votre événement ?</h2>
-          {/* Pas de sous-titre : l'étiquette du champ dit déjà tout. */}
-          <div className="field" style={{ marginTop: 18, marginBottom: 24 }}>
-            <label>
-              Date et heure de l'événement{' '}
-              <span className="lbl-soft">(modifiable plus tard)</span>
-            </label>
-            <input type="datetime-local" value={startsAt} onChange={(e) => pickStart(e.target.value)} />
-          </div>
+          <p className="wiz-sub">Modifiable plus tard, à tout moment.</p>
+          {/* Le mois entier plutôt que la roulette du téléphone, et les jours
+              passés éteints : c'est l'écran où l'on abandonne le plus. */}
+          <SelecteurDate value={startsAt} onChange={pickStart} min={toInputValue(new Date())} />
+          <div style={{ height: 20 }} />
 
           <h2 className="wiz-q" style={{ marginTop: 0 }}>Et quand révéler les photos ?</h2>
           <p className="wiz-sub">
@@ -341,10 +344,7 @@ function CreateForm() {
             ))}
           </div>
           {revealKey === 'custom' && (
-            <div className="field" style={{ marginTop: 16, marginBottom: 0 }}>
-              <label>Date et heure</label>
-              <input type="datetime-local" value={revealAt} onChange={(e) => setRevealAt(e.target.value)} />
-            </div>
+            <SelecteurDate value={revealAt} onChange={setRevealAt} min={startsAt} />
           )}
           {/* Le résultat du choix, et le moment que l'organisateur se figure :
               il mérite mieux qu'une ligne grise. Affiché aussi en date libre,
@@ -463,7 +463,7 @@ function CreateForm() {
             <label>Code reçu par mail</label>
             <input type="text" inputMode="numeric" autoComplete="one-time-code" placeholder="000000"
               value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              maxLength={6} autoFocus
+              autoFocus
               style={{ fontFamily: 'var(--font-mono)', fontSize: 24, letterSpacing: '.3em', textAlign: 'center' }} />
           </div>
           {error && <div className="err">{error}</div>}

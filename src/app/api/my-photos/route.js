@@ -1,4 +1,5 @@
 import { selectRows, signPhotos } from '../../../lib/supabase'
+import { estUuid, identifiantInvalide } from '../../../lib/params'
 
 // Renvoie les photos prises par CET participant (identifié par son appareil),
 // avec leur identifiant (pour pouvoir les supprimer) + le compteur de clichés.
@@ -8,10 +9,11 @@ export async function POST(request) {
   if (!eventId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
   }
+  if (!estUuid(eventId)) return identifiantInvalide()
 
   const guestRes = await selectRows(
     'guests',
-    `event_id=eq.${eventId}&device_token=eq.${deviceToken}&select=id,shots_taken,bonus_shots,events(shots_per_guest)`
+    `event_id=eq.${eventId}&device_token=eq.${encodeURIComponent(deviceToken)}&select=id,shots_taken,bonus_shots,events(shots_per_guest)`
   )
   const guest = Array.isArray(guestRes.data) ? guestRes.data[0] : null
   if (!guest) return Response.json({ photos: [], shotsTaken: 0 })

@@ -5,6 +5,8 @@
 //  et, surtout, le lien de l'événement gardé au chaud.
 // ============================================================
 import { selectRows } from '../../../../../lib/supabase'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { finDe, momentsRappels } from '../../../../../lib/rappels'
 
 // Échappement des textes selon la norme iCalendar
 function esc(s = '') {
@@ -38,8 +40,9 @@ function fold(line) {
 
 export async function GET(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
 
-  const { ok, data } = await selectRows('events', `id=eq.${id}&select=id,name,host_names,reveal_at`)
+  const { ok, data } = await selectRows('events', `id=eq.${id}&select=id,name,host_names,starts_at,ends_at,reveal_at,reminder_offsets`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return new Response('Événement introuvable.', { status: 404 })
 
@@ -59,16 +62,27 @@ export async function GET(request, { params }) {
   const now = Date.now()
   const reveal = new Date(ev.reveal_at).getTime()
 
-  // La soirée n'est pas stockée en base : on part du principe que le participant
-  // scanne le QR en arrivant à la fête. Début = maintenant, fin 6 h plus tard
-  // (jamais au-delà de la révélation, sinon les blocs se chevauchent).
-  const shootStart = now
-  const shootEnd = Math.min(now + 6 * H, reveal > now ? reveal : now + 6 * H)
+  // Les vraies dates de la fête, désormais connues. À défaut (événement d'avant
+  // le champ « début »), on retombe sur l'ancienne estimation : le participant
+  // scanne le QR en arrivant.
+  const dates = {
+    startsAt: ev.starts_at,
+    endsAt: ev.ends_at,
+    revealAt: ev.reveal_at,
+    rappels: ev.reminder_offsets,
+  }
+  const debut = ev.starts_at ? new Date(ev.starts_at).getTime() : now
+  const shootStart = Number.isFinite(debut) ? debut : now
+  const finConnue = finDe(dates)
+  const shootEnd = Number.isFinite(finConnue) && finConnue > shootStart
+    ? finConnue
+    : Math.min(shootStart + 6 * H, reveal > shootStart ? reveal : shootStart + 6 * H)
 
-  // Petit coup de pouce 1 h après l'arrivée : « pense à shooter ».
-  // Inutile si la révélation tombe avant : on le saute.
-  const nudgeAt = now + 1 * H
-  const withNudge = !(reveal > now) || nudgeAt < reveal
+  // Les rappels « pense à shooter », aux moments prévus pour cet événement.
+  // `g` (l'identifiant du participant, facultatif) lui donne son propre
+  // décalage de quelques minutes : deux agendas ne sonnent pas ensemble.
+  const cle = new URL(request.url).searchParams.get('g')
+  const rappels = momentsRappels(dates, cle, now)
 
   // Un VEVENT = un rendez-vous dans l'agenda.
   const vevent = ({ uid, start, end, summary, description, alarm }) => [
@@ -105,15 +119,15 @@ export async function GET(request, { params }) {
       description: `C'est parti ! Sortez votre appareil et immortalisez la soirée.\n\n${links}`,
     }),
 
-    // 2 · Le rappel « pense à shooter », 1 h après l'arrivée
-    ...(withNudge ? vevent({
-      uid: 'nudge',
-      start: nudgeAt,
-      end: nudgeAt + 15 * 60 * 1000,
+    // 2 · Les rappels « pense à shooter », répartis dans la fête
+    ...rappels.flatMap((quand, i) => vevent({
+      uid: `nudge${i + 1}`,
+      start: quand,
+      end: quand + 15 * 60 * 1000,
       summary: "🔔 N'oubliez pas de prendre des photos !",
       description: `Il vous reste des clichés à croquer.\n\n${links}`,
       alarm: { trigger: '-PT0S', text: "N'oubliez pas de prendre des photos !" },
-    }) : []),
+    })),
 
     // 3 · La révélation de l'album
     ...vevent({

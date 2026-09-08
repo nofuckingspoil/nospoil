@@ -243,3 +243,13 @@ export async function cuirePhoto(blob, { pellicule, date } = {}) {
     try { source?.close?.() } catch {}
   }
 }
+
+// Développer ce qui est déjà dessiné sur un contexte : même recette que la
+// cuisson d'une photo, mais sur un canvas qu'on garde en main. C'est ce dont
+// le collage a besoin, chaque tirage étant traité avant d'être posé sur le
+// fond.
+export function developperContexte(ctx, w, h, pellicule, date) {
+  const f = typeof pellicule === 'string' ? pelliculeParId(pellicule) : pellicule
+  if (f && f.canaux) { developpe(ctx, w, h, f); voile(ctx, w, h, f) }
+  if (date) tampon(ctx, w, h, date)
+}

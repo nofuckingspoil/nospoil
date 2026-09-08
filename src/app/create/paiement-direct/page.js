@@ -7,9 +7,10 @@ import Logo from '../../../components/Logo'
 import TierPicker from '../../../components/TierPicker'
 import PromoField from '../../../components/PromoField'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED } from '../../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise } from '../../../lib/pricing'
 import { track } from '../../../lib/tracking'
 import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, atDay, nextSaturday } from '../../../lib/event-defaults'
+import { MODE_PROPOSE } from '../../../lib/photo-mode'
 
 // ============================================================
 //  Variante « express » du tunnel de création.
@@ -36,13 +37,19 @@ function ExpressForm() {
   const isPaid = priceCents > 0
 
   // Sur une formule payante, Stripe collecte l'adresse pendant le paiement.
-  const needEmail = !PAYMENTS_ENABLED || !isPaid || EMAIL_VERIFICATION_ENABLED
+  const needEmail = !PAYMENTS_ENABLED || !isPaid || verificationRequise(priceCents)
 
   const [email, setEmail] = useState('')
   const [cgvOk, setCgvOk] = useState(false)
   const [waiverOk, setWaiverOk] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  // Formule gratuite : personne ne passe par la caisse, donc rien ne prouve
+  // l'adresse. On la fait vérifier par un code à 6 chiffres, comme les autres
+  // tunnels. L'écran du code ne s'affiche que dans ce cas précis.
+  const [code, setCode] = useState('')
+  const [ecran, setEcran] = useState('formulaire') // 'formulaire' | 'code'
 
   function pickTier(n) {
     setMaxGuests(n)
@@ -64,6 +71,34 @@ function ExpressForm() {
       return
     }
 
+    // Détour par la vérification de l'adresse avant de créer quoi que ce soit.
+    if (verificationRequise(priceCents)) return envoyerCode()
+
+    return creer()
+  }
+
+  // Envoie le code à 6 chiffres, puis bascule sur l'écran de saisie.
+  async function envoyerCode() {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/send-code', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email.trim() }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Erreur.')
+      setCode(''); setEcran('code')
+    } catch (err) { setError(err.message) } finally { setLoading(false) }
+  }
+
+  async function creer(e) {
+    if (e) e.preventDefault()
+    setError('')
+    if (verificationRequise(priceCents) && code.replace(/\D/g, '').length !== 6) {
+      setError('Entrez le code à 6 chiffres reçu par mail.')
+      return
+    }
+
     setLoading(true)
 
     // Valeurs de départ : l'organisateur les reprendra depuis son tableau de bord.
@@ -73,9 +108,12 @@ function ExpressForm() {
       ownerToken: getDeviceToken(),
       name: DEFAULT_EVENT_NAME,
       ownerEmail: email.trim(),
+      code: code.replace(/\D/g, ''),
       startsAt: start.toISOString(),
       revealAt: reveal.toISOString(),
       shotsPerGuest: DEFAULT_SHOTS,
+      // Même promesse que le tunnel long (voir /create) : le vrai jetable.
+      photoMode: MODE_PROPOSE,
       maxGuests: tier.maxGuests,
       flow: 'express', // variante d'où l'on vient (retour d'annulation Stripe)
       cgvAccepted: cgvOk,
@@ -122,10 +160,44 @@ function ExpressForm() {
     ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
+  // Sur la formule gratuite, le bouton du formulaire n'achève plus rien : il
+  // envoie le code. Le libellé doit le dire, sinon on promet une création qui
+  // n'arrive pas tout de suite.
+  const labelFormulaire = verificationRequise(priceCents)
+    ? (loading ? 'Envoi du code…' : 'Continuer →')
+    : label
+
   return (
     <main className="screen screen-cream">
       <Link href="/" style={{ alignSelf: 'flex-start', textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
 
+      {ecran === 'code' ? (
+        <form className="card wiz-card" style={{ marginTop: 26 }} onSubmit={creer}>
+          <h2 className="wiz-q">Vérifiez votre adresse</h2>
+          <p className="wiz-sub">
+            On vient d'envoyer un code à 6 chiffres à <strong>{email.trim()}</strong>. Saisissez-le pour créer votre événement.
+          </p>
+          <div className="field">
+            <label>Code reçu par mail</label>
+            <input type="text" inputMode="numeric" autoComplete="one-time-code" placeholder="000000"
+              value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+              autoFocus
+              style={{ fontFamily: 'var(--font-mono)', fontSize: 24, letterSpacing: '.3em', textAlign: 'center' }} />
+          </div>
+          {error && <div className="err">{error}</div>}
+          <div className="wiz-nav">
+            <button className="btn btn-accent" type="submit" disabled={loading}>{label}</button>
+          </div>
+          <div className="hint" style={{ marginTop: 14, textAlign: 'center' }}>
+            Pas reçu ?{' '}
+            <button type="button" onClick={envoyerCode} className="linklike">Renvoyer le code</button>
+            {' · '}
+            <button type="button" onClick={() => { setEcran('formulaire'); setError('') }} className="linklike">
+              Changer d'adresse
+            </button>
+          </div>
+        </form>
+      ) : (
       <form className="card wiz-card" style={{ marginTop: 26 }} onSubmit={submit}>
         <h2 className="wiz-q">Créez votre événement</h2>
         <p className="wiz-sub">
@@ -169,9 +241,10 @@ function ExpressForm() {
         {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
 
         <div className="wiz-nav">
-          <button className="btn btn-accent" type="submit" disabled={loading}>{label}</button>
+          <button className="btn btn-accent" type="submit" disabled={loading}>{labelFormulaire}</button>
         </div>
       </form>
+      )}
 
       <div className="footer-note" style={{ marginTop: 24 }}>PAIEMENT UNIQUE · SANS ABONNEMENT</div>
     </main>

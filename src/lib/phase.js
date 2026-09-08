@@ -11,9 +11,10 @@ export const APRES = 'apres'
 
 // Une soirée ne dure pas éternellement : passé ce délai après l'heure de début,
 // on considère qu'on est « le lendemain », même si la révélation est plus loin.
+// Ce n'est qu'un filet : l'organisateur donne maintenant l'heure de fin.
 const DUREE_SOIREE_MS = 12 * 60 * 60 * 1000
 
-// ev : { startsAt, revealAt }, dates ISO. `now` injectable pour les tests.
+// ev : { startsAt, endsAt, revealAt }, dates ISO. `now` injectable pour les tests.
 export function eventPhase(ev, now = Date.now()) {
   const reveal = new Date(ev?.revealAt || 0).getTime()
   const start = ev?.startsAt ? new Date(ev.startsAt).getTime() : null
@@ -21,7 +22,13 @@ export function eventPhase(ev, now = Date.now()) {
   // Événement d'avant l'ajout du champ « début » : on se rabat sur la révélation.
   if (!start || isNaN(start)) return now >= reveal ? APRES : AVANT
 
-  const fin = Math.min(reveal, start + DUREE_SOIREE_MS)
+  // Heure de fin annoncée, sinon l'estimation. Dans tous les cas, la révélation
+  // ferme la parenthèse : la fête ne peut pas déborder sur l'album.
+  const declaree = ev?.endsAt ? new Date(ev.endsAt).getTime() : null
+  const brute = declaree && !isNaN(declaree) && declaree > start
+    ? declaree
+    : start + DUREE_SOIREE_MS
+  const fin = Math.min(reveal, brute)
   if (now < start) return AVANT
   if (now < fin) return JOUR_J
   return APRES

@@ -1,10 +1,12 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
 import { isRevealed, quotaExceeded } from '../../../../lib/phase'
 import { upgradeFor, CONTACT_EMAIL } from '../../../../lib/pricing'
-import { MESSAGE_SUSPENDU } from '../../../../lib/authz'
+import { MESSAGE_SUSPENDU, accesExpire } from '../../../../lib/authz'
+import { estUuid, identifiantInvalide } from '../../../../lib/params'
 
 export async function GET(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
 
   const { ok, data } = await selectRows(
     'events',
@@ -22,7 +24,7 @@ export async function GET(request, { params }) {
 
   // Le nombre de participants décide aussi de l'ouverture : une formule dépassée
   // retient l'album jusqu'à ce que l'organisateur la mette à niveau.
-  const guestRows = await selectRows('guests', `event_id=eq.${id}&select=id`)
+  const guestRows = await selectRows('guests', `event_id=eq.${id}&blocked=is.false&select=id`)
   const etat = {
     revealAt: ev.reveal_at,
     revealPaused: ev.reveal_paused,
@@ -41,7 +43,7 @@ export async function GET(request, { params }) {
   // de participants. Sans ce verrou, le dépassement ne coûtait rien : il suffisait de
   // télécharger depuis l'appareil créateur.
   const ownerToken = request.headers.get('x-owner-token')
-  const isOwner = !!ownerToken && ownerToken === ev.owner_token
+  const isOwner = !!ownerToken && ownerToken === ev.owner_token && !accesExpire(ev)
   const canView = revealed || (isOwner && !overQuota)
 
   if (!canView) {
@@ -96,13 +98,41 @@ export async function GET(request, { params }) {
   // Les participants ne voient jamais les photos masquées ; l'organisateur/admin voit tout.
   if (!isOwner) rows = rows.filter((r) => !r.hidden)
 
+  // Quelles photos ont été prises par CET appareil.
+  //
+  // Sans ça, une personne qui regrette son cliché n'avait aucun recours une fois
+  // la soirée finie : la suppression n'existait que dans la seconde qui suit la
+  // prise de vue. Signaler sa propre photo, comme si elle venait d'un autre,
+  // était un détour absurde.
+  //
+  // Un même appareil peut avoir plusieurs fiches sur le même événement (le
+  // prénom saisi deux fois, par exemple), d'où la liste plutôt qu'un seul id.
+  const monJeton = request.headers.get('x-device-token') || ''
+  let mesFiches = []
+  if (monJeton) {
+    const r = await selectRows(
+      'guests',
+      `event_id=eq.${id}&device_token=eq.${encodeURIComponent(monJeton)}&select=id`
+    )
+    mesFiches = Array.isArray(r.data) ? r.data.map((g) => g.id) : []
+  }
+
   // On signe la pleine qualité ET les mini-versions en un seul appel
   const allPaths = []
   for (const r of rows) {
     allPaths.push(r.storage_path)
     if (r.thumb_path) allPaths.push(r.thumb_path)
   }
-  const signed = await signPhotos(allPaths, 3600)
+  // Six heures, et non une.
+  //
+  // On regarde un album longtemps : on l'ouvre, on le montre, on y revient. Une
+  // heure de validité faisait casser toutes les images d'un coup chez qui
+  // laissait l'onglet ouvert. La page sait maintenant se rattraper toute seule
+  // (voir `adresseCassee`), mais mieux vaut ne pas avoir à se rattraper.
+  //
+  // Ce n'est pas un affaiblissement : l'album est déjà accessible à quiconque
+  // possède le lien de l'événement.
+  const signed = await signPhotos(allPaths, 6 * 3600)
 
   const photos = rows
     .map((r) => ({
@@ -113,6 +143,7 @@ export async function GET(request, { params }) {
       guestId: r.guest_id,
       takenAt: r.taken_at,
       hidden: !!r.hidden,
+      mine: mesFiches.includes(r.guest_id), // son auteur peut la retirer
     }))
     .filter((p) => p.fullUrl)
 
@@ -120,7 +151,6 @@ export async function GET(request, { params }) {
   // cœur reste allumé au retour). Jamais qui a aimé quoi.
   const favRes = await selectRows('favorites', `event_id=eq.${id}&select=photo_id,device_token`)
   const favs = Array.isArray(favRes.data) ? favRes.data : []
-  const monJeton = request.headers.get('x-device-token') || ''
   const compte = {}
   const miens = []
   for (const f of favs) {

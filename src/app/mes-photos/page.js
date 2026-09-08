@@ -68,6 +68,9 @@ function MesPhotosInner() {
               ? error
               : "Ouvrez le lien que vous avez reçu par mail en rejoignant l'événement : il rattache vos photos à ce téléphone."}
           </p>
+          <Link href="/connexion" className="btn btn-accent" style={{ marginTop: 16 }}>
+            Me renvoyer mon lien par mail →
+          </Link>
           <div className="notice" style={{ marginTop: 16 }}>
             ✉️ Vous n'avez pas laissé votre adresse ? Demandez le lien de l'événement
             à son organisateur : vos photos y sont toujours.

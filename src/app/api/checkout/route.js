@@ -1,6 +1,7 @@
 import { getStripe, paymentsLive } from '../../../lib/stripe'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib/account'
-import { tierByGuests, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { tierByGuests, EMAIL_VERIFICATION_PAID, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { modeValide } from '../../../lib/photo-mode'
 import { siteUrl } from '../../../lib/mail'
 import { LEGAL_UPDATED } from '../../../lib/legal'
 import { quotePromo } from '../../../lib/promo'
@@ -23,7 +24,7 @@ export async function POST(request) {
   // L'adresse est facultative ici : Stripe la demande de toute façon pendant le
   // paiement, et on la récupère au retour. On l'exige seulement si elle doit
   // être vérifiée par code en amont, ou si elle a été fournie mais mal formée.
-  if (EMAIL_VERIFICATION_ENABLED && !isValidEmail(ownerEmail)) {
+  if (EMAIL_VERIFICATION_PAID && !isValidEmail(ownerEmail)) {
     return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
   }
   if (ownerEmail && !isValidEmail(ownerEmail)) {
@@ -38,6 +39,16 @@ export async function POST(request) {
   // Date de la fête : à défaut, estimée à la veille au soir de la révélation.
   const startRaw = body.startsAt ? new Date(body.startsAt) : null
   const startsAt = startRaw && !isNaN(startRaw.getTime()) ? startRaw : new Date(reveal.getTime() - 13 * 3600 * 1000)
+
+  // Heure de fin de la fête : elle règle les rappels aux participants. Elle
+  // voyage avec le paiement comme les autres dates, et n'est retenue que si
+  // elle tient entre le début et la révélation.
+  const endRaw = body.endsAt ? new Date(body.endsAt) : null
+  const endsAt = endRaw && !isNaN(endRaw.getTime())
+    && endRaw.getTime() > startsAt.getTime()
+    && endRaw.getTime() <= reveal.getTime()
+    ? endRaw
+    : null
 
   const tier = tierByGuests(maxGuests)
   if (tier.priceCents <= 0) {
@@ -57,8 +68,8 @@ export async function POST(request) {
   }
 
   // L'adresse doit être vérifiée (code à 6 chiffres) avant d'aller au paiement.
-  // (Désactivable via EMAIL_VERIFICATION_ENABLED tant que l'envoi d'e-mails n'est pas fiable.)
-  if (EMAIL_VERIFICATION_ENABLED) {
+  // (Éteint par défaut : Stripe vérifie déjà l'adresse pendant le paiement.)
+  if (EMAIL_VERIFICATION_PAID) {
     const check = await verifyAndConsumeCode(ownerEmail, body.code)
     if (!check.ok) return Response.json({ error: check.error }, { status: check.status })
   }
@@ -127,7 +138,12 @@ export async function POST(request) {
         host_names: hostNames ? String(hostNames).trim().slice(0, 80) : '',
         shots_per_guest: String(shots),
         max_guests: String(tier.maxGuests),
+        // Le mode photo voyage avec le paiement comme le reste : sans lui, un
+        // événement payé retombait sur « album ouvert » alors que l'organisateur
+        // avait choisi le vrai jetable.
+        photo_mode: modeValide(body.photoMode),
         starts_at: startsAt.toISOString(),
+        ends_at: endsAt ? endsAt.toISOString() : '',
         reveal_at: reveal.toISOString(),
         // Preuve du consentement, horodatée par le serveur avant le paiement.
         cgv_accepted_at: consentAt,

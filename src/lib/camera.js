@@ -15,6 +15,25 @@ export function isInAppBrowser() {
   return /iPhone|iPad|iPod/i.test(ua) && /AppleWebKit/i.test(ua) && !/Safari|CriOS|FxiOS/i.test(ua)
 }
 
+// Android + mini-navigateur : le cas des applis de scan de QR code.
+// Elles ouvrent la page à l'intérieur d'elles-mêmes, dans un navigateur au
+// rabais qui ne sait ni demander la caméra, ni ouvrir l'appareil photo du
+// téléphone. Le déclencheur reste alors muet, sans le moindre message.
+// L'appareil photo natif, lui, confie le lien à Chrome : tout fonctionne.
+export function isAndroidInApp() {
+  if (typeof navigator === 'undefined') return false
+  return /Android/i.test(navigator.userAgent || '') && isInAppBrowser()
+}
+
+// Adresse « intent » : elle demande à Android de rouvrir le lien dans Chrome.
+// browser_fallback_url sert de filet quand Chrome n'est pas installé.
+export function lienChrome(url) {
+  try {
+    const u = new URL(url)
+    return `intent://${u.host}${u.pathname}${u.search}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(url)};end`
+  } catch { return null }
+}
+
 // La caméra live (getUserMedia) est-elle envisageable ?
 // On ne présume plus de l'issue d'après le nom du navigateur : certains
 // navigateurs intégrés l'autorisent. On tente, et l'échec fait basculer sur
@@ -146,4 +165,50 @@ export function playShutter() {
     click(0, 0.55, 1700, 0.05)
     click(0.07, 0.3, 1200, 0.06)
   } catch {}
+}
+
+// ============================================================
+//  Autorisation caméra : refus passager ou refus définitif ?
+// ============================================================
+// Un « Refuser » cliqué par réflexe se rattrape : le navigateur reposera la
+// question au clic suivant. Mais après deux refus (ou un « Ne plus demander »),
+// il enregistre le blocage et ne demande plus rien : le bouton « Autoriser ma
+// caméra » devient alors un bouton qui ne fait rien, et le participant
+// abandonne. On cherche donc à savoir dans quel cas on se trouve.
+//
+// Chrome et Firefox savent répondre (Permissions API). Safari, non : il rend
+// alors `null`, et l'appelant tranche autrement (deux échecs d'affilée).
+export async function etatPermissionCamera() {
+  try {
+    if (typeof navigator === 'undefined' || !navigator.permissions?.query) return null
+    const p = await navigator.permissions.query({ name: 'camera' })
+    return p?.state || null
+  } catch { return null }
+}
+
+// Prévient dès que l'autorisation change dans les réglages du navigateur.
+// Le participant qui vient d'autoriser retrouve son viseur sans rien recharger.
+// Rend la fonction qui arrête la surveillance (ou null si le navigateur ne sait pas).
+export function surveillerPermissionCamera(auChangement) {
+  try {
+    if (typeof navigator === 'undefined' || !navigator.permissions?.query) return null
+    let statut = null
+    const ecoute = () => auChangement(statut?.state)
+    navigator.permissions.query({ name: 'camera' }).then((s) => {
+      statut = s
+      statut.addEventListener?.('change', ecoute)
+    }).catch(() => {})
+    return () => { try { statut?.removeEventListener?.('change', ecoute) } catch {} }
+  } catch { return null }
+}
+
+// Quel mode d'emploi montrer pour réautoriser la caméra : la manipulation
+// n'est pas la même sur iPhone (le « aA » de Safari), sur Android (le cadenas
+// de Chrome) et sur ordinateur.
+export function familleNavigateur() {
+  if (typeof navigator === 'undefined') return 'ordinateur'
+  const ua = navigator.userAgent || ''
+  if (/iPhone|iPad|iPod/i.test(ua)) return 'ios'
+  if (/Android/i.test(ua)) return 'android'
+  return 'ordinateur'
 }

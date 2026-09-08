@@ -1,6 +1,7 @@
 import { selectRows, signPhotos } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
 import { quotaExceeded } from '../../../../../lib/phase'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -39,6 +40,7 @@ function duree(msA, msB) {
 
 export async function GET(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
 
   const role = await roleFor(id, request.headers.get('x-owner-token'))
   if (!canManage(role)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
@@ -51,7 +53,7 @@ export async function GET(request, { params }) {
   // peser sur aucun chiffre du bilan, pas même le total.
   const photos = (Array.isArray(data) ? data : []).filter((p) => !p.hidden)
 
-  const invitesRes = await selectRows('guests', `event_id=eq.${id}&select=id`)
+  const invitesRes = await selectRows('guests', `event_id=eq.${id}&blocked=is.false&select=id`)
   const nbInvites = Array.isArray(invitesRes.data) ? invitesRes.data.length : 0
 
   // Formule dépassée : le bilan montre la photo la plus aimée et nomme les

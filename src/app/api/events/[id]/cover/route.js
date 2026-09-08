@@ -1,5 +1,7 @@
 import { selectRows, updateRow, uploadPhoto, deletePhoto } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { estImage } from '../../../../../lib/image'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -7,6 +9,7 @@ export const maxDuration = 30
 // Upload de la photo de couverture (réservé à l'organisateur de l'événement)
 export async function POST(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
 
   let form
   try { form = await request.formData() } catch { return Response.json({ error: 'Requête invalide.' }, { status: 400 }) }
@@ -26,6 +29,7 @@ export async function POST(request, { params }) {
 
   const bytes = Buffer.from(await file.arrayBuffer())
   if (bytes.length > 8 * 1024 * 1024) return Response.json({ error: 'Image trop lourde.' }, { status: 413 })
+  if (!estImage(bytes)) return Response.json({ error: "Ce fichier n'est pas une image." }, { status: 415 })
 
   const path = `${id}/cover.jpg`
   const up = await uploadPhoto(path, bytes, 'image/jpeg')
@@ -44,6 +48,7 @@ export async function POST(request, { params }) {
 // Retire la photo de couverture : l'écran d'accueil retrouve son dégradé.
 export async function DELETE(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   const ownerToken = request.headers.get('x-owner-token')
   if (!canManage(await roleFor(id, ownerToken))) {
     return Response.json({ error: 'Action non autorisée.' }, { status: 403 })

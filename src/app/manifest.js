@@ -13,6 +13,9 @@ export default function manifest() {
     lang: 'fr',
     icons: [
       { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png', purpose: 'any' },
+      // Le 192 est le format qu'Android attend, pour l'écran d'accueil comme
+      // pour l'icône des notifications de soirée (voir public/sw.js).
+      { src: '/icone-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
       { src: '/favicon.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
       { src: '/favicon.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
     ],

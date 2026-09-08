@@ -7,10 +7,26 @@
 // après paiement, l'organisateur arrive directement sur son tableau de bord.
 export const PAYMENTS_ENABLED = true
 
-// Vérification de l'e-mail par code à la création.
-// Désactivé temporairement : l'envoi d'e-mails depuis Vercel est bloqué par Brevo
-// (restriction d'IP). À repasser à true dès que l'envoi d'e-mails est fiable.
-export const EMAIL_VERIFICATION_ENABLED = false
+// Vérification de l'adresse par code à 6 chiffres, au moment de la création.
+//
+// La règle dépend de la formule, parce que la preuve, elle, en dépend :
+//
+//  - Formule GRATUITE : exigée. Rien ne prouve autrement que l'adresse saisie
+//    appartient bien à celui qui la saisit, et sans preuve n'importe qui peut
+//    créer un album au nom d'un autre.
+//  - Formule PAYANTE : inutile. Stripe recueille et vérifie déjà l'adresse
+//    pendant le paiement. La redemander ajouterait une étape au seul tunnel
+//    qui encaisse, pour une certitude qu'on a déjà.
+//
+// En cas de souci d'envoi de mails, repasser EMAIL_VERIFICATION_FREE à false
+// rouvre immédiatement la création gratuite sans code.
+export const EMAIL_VERIFICATION_FREE = true
+export const EMAIL_VERIFICATION_PAID = false
+
+// Faut-il un code pour cette création ? Le prix réellement dû décide.
+export function verificationRequise(priceCents) {
+  return priceCents > 0 ? EMAIL_VERIFICATION_PAID : EMAIL_VERIFICATION_FREE
+}
 
 // Nombre de clichés par participant : bornes annoncées dans les CGV (article 4).
 // Toute modification doit être répercutée dans src/lib/legal.js.

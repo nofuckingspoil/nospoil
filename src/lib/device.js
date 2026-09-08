@@ -90,11 +90,18 @@ export function signOut() {
 // Après une connexion réussie : on garde les accès aux événements retrouvés.
 export function applyLogin(email, events) {
   saveAccount(email)
-  for (const ev of events || []) {
-    if (!ev?.id) continue
-    saveOwnerToken(ev.id, ev.ownerToken)
-    rememberMyEvent(ev.id)
-  }
+  const recus = (events || []).filter((ev) => ev?.id)
+  for (const ev of recus) saveOwnerToken(ev.id, ev.ownerToken)
+  // L'ordre du serveur va du plus récent au plus ancien, et c'est celui que la
+  // liste doit garder. En les ajoutant un par un, chacun passait devant le
+  // précédent : la liste ressortait à l'envers. Invisible avec deux mariages,
+  // pénible avec quarante.
+  if (typeof window === 'undefined') return
+  try {
+    const ids = recus.map((ev) => ev.id)
+    const connus = getMyEvents().filter((id) => !ids.includes(id))
+    localStorage.setItem('pellicule_my_events', JSON.stringify([...ids, ...connus]))
+  } catch {}
 }
 
 // Retire un événement de la liste locale (après suppression)

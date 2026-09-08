@@ -14,6 +14,7 @@ import { selectRows, updateRow } from '../../../../lib/supabase'
 import { sendMail, eventDayEmail, afterPartyEmail, siteUrl } from '../../../../lib/mail'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { quotaExceeded } from '../../../../lib/phase'
+import { finDe } from '../../../../lib/rappels'
 import { enqueteOrganisateurs, enqueteInvites, recapDuJour } from '../../../../lib/avis-envoi'
 import { equipeDe } from '../../../../lib/equipe'
 
@@ -37,7 +38,7 @@ function frDate(iso) {
   } catch { return '' }
 }
 
-const champs = 'id,name,owner_email,owner_token,starts_at,reveal_at,shots_per_guest,max_guests'
+const champs = 'id,name,owner_email,owner_token,starts_at,ends_at,reveal_at,shots_per_guest,max_guests'
 
 // --- 1. Le matin de l'événement ---
 // On vise les événements qui commencent dans les 24 h à venir : le cron
@@ -80,10 +81,14 @@ async function nudgeEventDay(now, base) {
 }
 
 // --- 2. Le lendemain de la fête ---
-// L'événement est terminé (plus de 12 h après le début) mais pas encore révélé :
-// c'est le moment où l'organisateur peut encore vérifier et masquer.
+// L'événement est terminé mais pas encore révélé : c'est le moment où
+// l'organisateur peut encore vérifier et masquer.
+//
+// « Terminé » se lit maintenant sur l'heure de fin qu'il a donnée. La requête
+// ne sait pas la calculer (elle peut être absente, et se déduit alors du
+// début), on ratisse donc large et on trie ici même.
 async function nudgeAfterParty(now, base) {
-  const fini = new Date(now.getTime() - 12 * HOUR).toISOString()
+  const fini = new Date(now.getTime() - 2 * HOUR).toISOString()
   const { ok, data } = await selectRows(
     'events',
     `select=${champs}` +
@@ -92,7 +97,10 @@ async function nudgeAfterParty(now, base) {
       `&nudged_after_at=is.null` +
       `&owner_email=not.is.null` +
       `&purged_at=is.null` +
-      `&order=starts_at.desc&limit=${BATCH}`
+      // Les plus anciens d'abord : ce sont les fêtes sûrement terminées. Trier
+      // à l'envers remplirait le lot d'événements encore en cours, et le mail
+      // des autres attendrait un jour de plus.
+      `&order=starts_at.asc&limit=${BATCH}`
   )
   if (!ok || !Array.isArray(data)) {
     console.error('cron/nudge: lecture "lendemain" impossible', data)
@@ -101,9 +109,13 @@ async function nudgeAfterParty(now, base) {
 
   let sent = 0
   for (const ev of data) {
+    // La fête n'est pas finie : on repassera demain.
+    const fin = finDe({ startsAt: ev.starts_at, endsAt: ev.ends_at, revealAt: ev.reveal_at })
+    if (fin && fin > now.getTime()) continue
+
     const [photos, guests] = await Promise.all([
       selectRows('photos', `select=id&event_id=eq.${ev.id}`),
-      selectRows('guests', `select=id&event_id=eq.${ev.id}`),
+      selectRows('guests', `select=id&event_id=eq.${ev.id}&blocked=is.false`),
     ])
     const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
     const guestCount = Array.isArray(guests.data) ? guests.data.length : 0

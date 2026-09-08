@@ -1,5 +1,6 @@
 import { selectRows, updateRow, deleteRows, deletePhoto } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 // Masquer une photo gênante fait partie de la gestion courante : l'organisateur
 // comme les co-admins peuvent le faire.
@@ -10,6 +11,7 @@ async function requireOwner(id, request) {
 // Masquer / réafficher une photo (hidden true|false)
 export async function PATCH(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   if (!(await requireOwner(id, request))) {
     return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
   }
@@ -25,6 +27,7 @@ export async function PATCH(request, { params }) {
 // Supprimer définitivement une photo (fichier + ligne)
 export async function DELETE(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   if (!(await requireOwner(id, request))) {
     return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
   }

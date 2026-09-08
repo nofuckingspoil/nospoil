@@ -5,6 +5,7 @@ import { makeToken, ensureAccount } from '../../../lib/account'
 import { estSuspendu, MESSAGE_SUSPENDU, ADMIN } from '../../../lib/authz'
 import { equipeDe } from '../../../lib/equipe'
 import { upgradeFor, formatPrice } from '../../../lib/pricing'
+import { estUuid, identifiantInvalide } from '../../../lib/params'
 
 // Un participant attend à la porte : on prévient l'organisateur tout de suite.
 //
@@ -78,16 +79,31 @@ async function rattacherParMail(fiches, email, deviceToken) {
 // Rien ne part sur un événement déjà révélé : le lien sert à protéger des poses
 // et des photos en cours de soirée. Passé la révélation, l'album est ouvert et
 // c'est le mail d'album qui prend le relais.
-async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealAt) {
+// Le jeton personnel du participant, fabriqué à la première demande.
+//
+// C'est la seule chose qui survive à un changement de navigateur : l'empreinte
+// d'appareil, elle, ne sort pas de celui qui l'a écrite. Or le SMS que le
+// participant s'envoie s'ouvre presque toujours ailleurs que là où il
+// photographiait (un lien tapé dans Messages part chez Safari, pas dans le
+// navigateur intégré d'Instagram ou d'une appli de QR code). Sans ce jeton, le
+// lien qu'il se laisse pour revenir ne le reconnaît pas.
+async function jetonPersonnel(guestId) {
+  const { data } = await selectRows('guests', `id=eq.${guestId}&select=token`)
+  const g = Array.isArray(data) ? data[0] : null
+  if (!g) return null
+  if (g.token) return g.token
+  const token = makeToken()
+  const maj = await updateRow('guests', `id=eq.${guestId}`, { token })
+  return maj.ok ? token : null
+}
+
+async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealAt, token) {
   const reveal = revealAt ? new Date(revealAt).getTime() : NaN
   if (Number.isFinite(reveal) && reveal <= Date.now()) return
 
-  const { data } = await selectRows('guests', `id=eq.${guestId}&select=token,access_mailed_at`)
+  const { data } = await selectRows('guests', `id=eq.${guestId}&select=access_mailed_at`)
   const g = Array.isArray(data) ? data[0] : null
-  if (!g || g.access_mailed_at) return // déjà envoyé : on ne le harcèle pas
-
-  const token = g.token || makeToken()
-  if (!g.token) await updateRow('guests', `id=eq.${guestId}`, { token })
+  if (!g || g.access_mailed_at || !token) return // déjà envoyé : on ne le harcèle pas
 
   const mail = guestAccessEmail({
     eventName: eventName || 'votre événement',
@@ -104,6 +120,7 @@ export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const { eventId, deviceToken, displayName } = body
 
+  if (eventId && !estUuid(eventId)) return identifiantInvalide()
   if (!eventId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
   }
@@ -130,8 +147,23 @@ export async function POST(request) {
   )
   const ev = Array.isArray(evRes.data) ? evRes.data[0] : null
 
-  const fichesRes = await selectRows('guests', `event_id=eq.${eventId}&select=id,device_token,email&order=created_at.asc`)
+  const fichesRes = await selectRows('guests', `event_id=eq.${eventId}&select=id,device_token,email,blocked&order=created_at.asc`)
   const fiches = Array.isArray(fichesRes.data) ? fichesRes.data : []
+
+  // Un participant retiré par l'organisateur ne revient pas.
+  //
+  // Exigé par Apple, règle 1.2 : « the ability to block abusive users from the
+  // service ». Sans cette porte fermée, « retirer » ne voudrait rien dire : la
+  // personne rescannerait le QR code et recommencerait dans la minute.
+  //
+  // Le contrôle est ici, dans la route, et non dans la fonction `join_event` :
+  // on ferme la porte sans toucher à la mécanique d'entrée, qui marche.
+  if (fiches.some((g) => g.device_token === deviceToken && g.blocked)) {
+    return Response.json(
+      { error: "L'organisateur de cet événement vous en a retiré l'accès." },
+      { status: 403 }
+    )
+  }
 
   // Déjà dedans ? Cet appareil, ou la même adresse sur un appareil précédent.
   let dedans = fiches.some((g) => g.device_token === deviceToken)
@@ -145,8 +177,11 @@ export async function POST(request) {
     // L'organisateur entre toujours : lui fermer la porte de son propre
     // événement, alors qu'il est le seul à pouvoir la rouvrir, serait absurde.
     const estOrga = deviceToken === ev.owner_token
-    if (plafonne && !estOrga && fiches.length >= max) {
-      try { await alerteQuota(ev, fiches.length, (displayName || '').toString().trim()) }
+    // Les participants retirés ne comptent plus dans le quota : leur place est
+    // rendue, sinon retirer quelqu'un laisserait un siège vide et payé.
+    const presents = fiches.filter((g) => !g.blocked).length
+    if (plafonne && !estOrga && presents >= max) {
+      try { await alerteQuota(ev, presents, (displayName || '').toString().trim()) }
       catch (err) { console.error('alerte quota:', err) }
       return Response.json({
         waiting: true,
@@ -201,13 +236,20 @@ export async function POST(request) {
   // Lien d'accès personnel : envoyé une seule fois, dès qu'une adresse est
   // connue. Sans lui, l'identité du participant disparaît avec son navigateur.
   // Un échec d'envoi ne doit jamais empêcher quelqu'un de photographier.
+  // Fabriqué pour tout le monde, adresse ou pas : c'est ce jeton que le
+  // participant emporte dans le SMS qu'il s'envoie.
+  let token = null
+  try { token = await jetonPersonnel(data.guest_id) }
+  catch (err) { console.error('jeton participant:', err) }
+
   if (email) {
-    try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at) }
+    try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at, token) }
     catch (err) { console.error('mail accès participant:', err) }
   }
 
   return Response.json({
     email,
+    token,
     guestId: data.guest_id,
     displayName: data.display_name,
     shotsTaken: data.shots_taken,

@@ -14,11 +14,13 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import { BRAND, avatarColor } from '../../../lib/brand'
+import { MODE_OPTIONS, modeValide } from '../../../lib/photo-mode'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J, APRES } from '../../../lib/phase'
 import { formatPrice, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
 import { purgeDate } from '../../../lib/retention'
+import { rappelsAutomatiques, heureDuRappel, jourDuRappel, autreJourQueLeDebut, minutesDepuisHeure, dureeMin } from '../../../lib/rappels'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
 import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
@@ -78,9 +80,6 @@ function Section({ id, title, hint, badge, children, open, onToggle }) {
 // la compilation, donc rien de tout cela n'existe dans la version en ligne.
 const DEV = process.env.NODE_ENV !== 'production'
 
-// Gestes qu'on ne pose qu'une fois (mettre au calendrier). Simple aide-mémoire
-// d'affichage, propre à l'appareil : rien de critique, donc pas de colonne en base.
-const FAIT_KEY = (id) => `ttf_fait_${id}`
 
 // Repris du tunnel de création : la même explication doit accompagner le même choix.
 const SHOT_PRESETS = [
@@ -127,12 +126,15 @@ export default function EventManage({ params }) {
   const [adminEmail, setAdminEmail] = useState('')
   const [adminMsg, setAdminMsg] = useState('')
   const [addingAdmin, setAddingAdmin] = useState(false)
-  const [editing, setEditing] = useState('') // 'name' | 'start' | 'reveal' | 'shots' | ''
+  const [editing, setEditing] = useState('') // 'name' | 'start' | 'fin' | 'reveal' | 'shots' | 'rappels' | ''
   const [draftName, setDraftName] = useState('')
   const [draftDate, setDraftDate] = useState('')
   const [draftShots, setDraftShots] = useState(5)
+  // Moments de rappel en cours d'édition, en minutes après le début.
+  const [draftRappels, setDraftRappels] = useState([])
   const [shotsLibre, setShotsLibre] = useState(false) // palier « Plus » sélectionné
   const [draftBonus, setDraftBonus] = useState(5)
+  const [draftMode, setDraftMode] = useState('libre')
   const [settingMsg, setSettingMsg] = useState('')
   const [forceMoment, setForceMoment] = useState('')
   const [coverBusy, setCoverBusy] = useState(false)
@@ -142,9 +144,6 @@ export default function EventManage({ params }) {
   const [confirmCover, setConfirmCover] = useState(false)
   const [pos, setPos] = useState(null)
   const glisseRef = useRef(null)
-  const [fait, setFait] = useState({})
-  // Rappel « mettez-le à votre agenda » : passe une fois, puis plus jamais.
-  const [notifCal, setNotifCal] = useState(false)
   const [upgradeMsg, setUpgradeMsg] = useState('')
   const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
@@ -209,7 +208,6 @@ export default function EventManage({ params }) {
     }
     const m = sp.get('moment')
     if (DEV && MOMENTS.some((x) => x.key === m)) setForceMoment(m)
-    try { setFait(JSON.parse(localStorage.getItem(FAIT_KEY(id)) || '{}')) } catch {}
     const origin = window.location.origin
     setJoinUrl(`${origin}/j/${id}`)
     setGalleryUrl(`${origin}/g/${id}`)
@@ -264,13 +262,6 @@ export default function EventManage({ params }) {
       .catch(() => {})
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ev, id])
-
-  useEffect(() => {
-    if (!ev || phase !== AVANT || fait.calVue) return
-    setNotifCal(true)      // visible pour toute cette visite
-    marquerFait('calVue')  // et plus jamais aux suivantes
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ev, phase])
 
   // --- Actions ---
   async function patchEvent(patch) {
@@ -409,6 +400,7 @@ export default function EventManage({ params }) {
     if (Number.isFinite(ecart) && ecart > 0) {
       patch.revealAt = new Date(nouveau.getTime() + ecart).toISOString()
     }
+    // La fin suit toute seule : le serveur lui garde sa durée (voir PATCH).
     if (await patchEvent(patch)) setEditing('')
   }
 
@@ -420,49 +412,6 @@ export default function EventManage({ params }) {
       try { await navigator.share({ title, text, url }); return } catch {}
     }
     copy(url || text, key)
-  }
-
-  function pad(n) { return String(n).padStart(2, '0') }
-  function icsStamp(d) {
-    return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}${pad(d.getUTCSeconds())}Z`
-  }
-  function marquerFait(k) {
-    setFait((f) => {
-      const suite = { ...f, [k]: true }
-      try { localStorage.setItem(FAIT_KEY(id), JSON.stringify(suite)) } catch {}
-      return suite
-    })
-  }
-
-  function addToCalendar() {
-    // Deux rendez-vous : la fête elle-même (avec le QR à montrer) et la révélation.
-    const esc = (s) => String(s).replace(/([,;\\])/g, '\\$1').replace(/\n/g, '\\n')
-    const block = (uid, start, end, summary, description) => [
-      'BEGIN:VEVENT', `UID:${uid}`, `DTSTAMP:${icsStamp(new Date())}`,
-      `DTSTART:${icsStamp(start)}`, `DTEND:${icsStamp(end)}`,
-      `SUMMARY:${esc(summary)}`, `DESCRIPTION:${esc(description)}`,
-      'BEGIN:VALARM', 'TRIGGER:-PT2H', 'ACTION:DISPLAY', `DESCRIPTION:${esc(ev.name)}`, 'END:VALARM',
-      'END:VEVENT',
-    ]
-    const start = new Date(ev.startsAt || ev.revealAt)
-    const reveal = new Date(ev.revealAt)
-    const ics = [
-      'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//TimeToFlash//FR', 'CALSCALE:GREGORIAN',
-      ...block(`${id}-start@timetoflash`, start, new Date(start.getTime() + 5 * 3600000),
-        `📸 ${ev.name} : appareil photo partagé`,
-        `Pensez à poser les cartons QR.\nVotre tableau de bord organisateur (à garder privé) : ${ownerUrl}`),
-      ...block(`${id}-reveal@timetoflash`, reveal, new Date(reveal.getTime() + 3600000),
-        `📸 Révélation des photos : ${ev.name}`,
-        `Les photos s'ouvrent aujourd'hui !\nTableau de bord : ${ownerUrl}`),
-      'END:VCALENDAR',
-    ].join('\r\n')
-    const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = `${ev.name.replace(/[^\w\s-]/g, '')}.ics`
-    a.click()
-    URL.revokeObjectURL(a.href)
-    ping('cal')
   }
 
   // Protéger l'album depuis la feuille de partage. Le code n'a de valeur que
@@ -579,6 +528,14 @@ export default function EventManage({ params }) {
   // aussi compte de la formule dépassée : c'est ce qui permet de dire à
   // l'organisateur « l'album attend » plutôt que « c'est prévu pour plus tard ».
   const revealedTime = !!ev.revealAt && new Date(ev.revealAt).getTime() <= now
+  // Les moments de rappel effectifs, calculés par le serveur : ceux de
+  // l'organisateur s'il en a choisi, sinon la répartition automatique.
+  const rappels = Array.isArray(ev.rappels) ? ev.rappels : []
+  // « 22:55 » suffit tant qu'on reste le même soir. Passé minuit, l'heure seule
+  // ment : on précise le jour.
+  const libelleRappel = (m) => (autreJourQueLeDebut(ev.startsAt, m)
+    ? `${heureDuRappel(ev.startsAt, m)} (${jourDuRappel(ev.startsAt, m, true)})`
+    : heureDuRappel(ev.startsAt, m))
   const locked = quotaLocked(ev, now)
   const published = !!ev.publishedAt
   const paused = !!ev.revealPaused
@@ -645,10 +602,6 @@ export default function EventManage({ params }) {
           <button type="button" className="db-hero-alt" onClick={telechargerQRSeul}>
             ou télécharger le QR code seul (PNG)
           </button>
-          {/* L'agenda a quitté cette carte : il fait l'objet d'un rappel qui
-              passe une fois (voir plus haut), puis reste dans « Votre accès ».
-              On ne peut pas savoir si le fichier a été ouvert, donc on ne
-              prétend rien : on cesse simplement d'insister. */}
         </div>
       )
     }
@@ -990,18 +943,6 @@ export default function EventManage({ params }) {
         </div>
       )}
 
-      {notifCal && (
-        <div className="db-notif">
-          <div className="db-notif-txt">
-            <strong>🗓️ Mettez l'événement à votre agenda</strong>
-            <span>Le rendez-vous contient votre lien organisateur : vous le retrouverez sans rien noter.</span>
-          </div>
-          <button className="btn btn-ghost db-notif-act" onClick={addToCalendar}>
-            {flash === 'cal' ? '✓ Ajouté' : 'Ajouter'}
-          </button>
-        </div>
-      )}
-
       <Hero />
 
       {/* ---------- Tout le reste, toujours au même endroit ---------- */}
@@ -1146,6 +1087,130 @@ export default function EventManage({ params }) {
           </>
         )}
 
+        {/* Fin de l'événement : nouvelle venue, et pas seulement décorative.
+            C'est elle qui donne sa durée à la fête, et donc sa cadence aux
+            rappels envoyés aux participants. */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">
+              Fin de l'événement {revealedTime && <span className="db-frozen">figée</span>}
+            </span>
+            <span className="db-set-val">
+              {formatDate(ev.endsAt)}
+              {ev.endsAtSet ? '' : ' (estimée, faute de mieux)'}
+            </span>
+          </div>
+          {!revealedTime && (
+            <button className="db-set-act" onClick={() => { setEditing(editing === 'fin' ? '' : 'fin'); setDraftDate(toLocalInput(ev.endsAt)) }}>
+              {editing === 'fin' ? 'Annuler' : 'Modifier'}
+            </button>
+          )}
+        </div>
+        {editing === 'fin' && (
+          <>
+            <div className="db-set-edit">
+              <input type="datetime-local" value={draftDate} onChange={(e) => setDraftDate(e.target.value)} />
+              <button className="btn btn-accent" onClick={async () => {
+                const fin = new Date(draftDate)
+                if (isNaN(fin.getTime())) { setSettingMsg('Heure de fin invalide.'); return }
+                if (await patchEvent({ endsAt: fin.toISOString() })) setEditing('')
+              }}>Enregistrer</button>
+            </div>
+            <p className="hint" style={{ marginTop: -4, marginBottom: 12 }}>
+              Les rappels automatiques se répartissent entre le début et cette heure.
+            </p>
+          </>
+        )}
+
+        {/* Rappels aux participants */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">
+              Rappels aux participants {revealedTime && <span className="db-frozen">figés</span>}
+            </span>
+            <span className="db-set-val">
+              {rappels.length === 0
+                ? 'Aucun rappel pendant la fête'
+                : `${rappels.length} rappel${rappels.length > 1 ? 's' : ''} : ${rappels.map(libelleRappel).join(', ')}`}
+              {ev.rappelsAuto && rappels.length > 0 ? ' (calculés d\'après la durée)' : ''}
+            </span>
+          </div>
+          {!revealedTime && (
+            <button className="db-set-act" onClick={() => {
+              setEditing(editing === 'rappels' ? '' : 'rappels')
+              setDraftRappels(rappels)
+            }}>
+              {editing === 'rappels' ? 'Annuler' : 'Modifier'}
+            </button>
+          )}
+        </div>
+        {/* Le décalage n'est pas un détail à cacher : c'est ce qui évite que
+            cinquante téléphones sonnent à la même seconde. On le dit. */}
+        {editing !== 'rappels' && rappels.length > 0 && (
+          <p className="hint" style={{ marginTop: 2, marginBottom: 12 }}>
+            Chaque participant le reçoit à quelques minutes près : les téléphones ne
+            sonnent pas tous en même temps.
+          </p>
+        )}
+        {editing === 'rappels' && (
+          <div className="db-shots">
+            <p className="hint" style={{ marginTop: 0 }}>
+              Le téléphone de chaque participant l'invite à sortir son appareil, s'il lui
+              reste des photos. Choisissez vos moments, ou laissez-nous les répartir.
+            </p>
+            {draftRappels.map((m, i) => (
+              <div className="db-rappel" key={i}>
+                {/* Le jour, écrit au-dessus : une soirée qui passe minuit
+                    relance ses participants le lendemain, et l'heure seule
+                    ne le disait pas. */}
+                <span className="jour">Rappel {i + 1} · {jourDuRappel(ev.startsAt, m)}</span>
+                <div className="ligne">
+                  <input type="time" value={heureDuRappel(ev.startsAt, m)}
+                    onChange={(e) => {
+                      const min = minutesDepuisHeure(ev.startsAt, e.target.value)
+                      if (min === null) return
+                      setDraftRappels((l) => l.map((v, j) => (j === i ? min : v)))
+                    }} />
+                  <button className="btn btn-ghost" onClick={() => setDraftRappels((l) => l.filter((_, j) => j !== i))}>
+                    Retirer
+                  </button>
+                </div>
+              </div>
+            ))}
+            {draftRappels.length === 0 && (
+              <p className="hint">Aucun rappel : les participants ne seront pas relancés.</p>
+            )}
+            {draftRappels.length < 6 && (
+              <button className="btn btn-ghost" style={{ marginTop: 6 }} onClick={() => {
+                // Le rappel suivant se pose une heure après le dernier, sans
+                // jamais déborder de la fête : on propose quelque chose de
+                // sensé plutôt qu'un champ vide.
+                const duree = dureeMin(ev)
+                const dernier = draftRappels.length ? Math.max(...draftRappels) : 0
+                const propose = Math.min(dernier + 60, Math.max(15, duree - 15))
+                if (draftRappels.includes(propose)) return
+                setDraftRappels((l) => [...l, propose].sort((a, b) => a - b))
+              }}>+ Ajouter un rappel</button>
+            )}
+            <div className="db-rappels-actions">
+              <button className="btn btn-accent" onClick={async () => {
+                if (await patchEvent({ rappels: draftRappels })) setEditing('')
+              }}>Enregistrer</button>
+              {!ev.rappelsAuto && (
+                <button className="btn btn-ghost" onClick={async () => {
+                  if (await patchEvent({ rappels: null })) setEditing('')
+                }}>Revenir à l'automatique</button>
+              )}
+            </div>
+            {!ev.rappelsAuto && (
+              <p className="hint" style={{ marginTop: 8 }}>
+                Pour information, la répartition automatique donnerait :{' '}
+                {rappelsAutomatiques(ev).map(libelleRappel).join(', ') || 'aucun rappel'}.
+              </p>
+            )}
+          </div>
+        )}
+
         {/* Photos par participant : se fige au début de la soirée */}
         <div className="db-set">
           <div className="db-set-l">
@@ -1233,6 +1298,56 @@ export default function EventManage({ params }) {
             }}>Enregistrer</button>
           </div>
         )}
+
+        {/* Ce que les participants revoient de leurs propres photos. Ne se fige
+            pas au début de la soirée, contrairement au nombre de clichés : ce
+            réglage ne reprend rien à personne, il change ce qui s'affiche. Un
+            organisateur dont les invités s'agacent doit pouvoir rouvrir. */}
+        {(() => {
+          const actuel = MODE_OPTIONS.find((o) => o.key === modeValide(ev.photoMode)) || MODE_OPTIONS[0]
+          return (
+            <>
+              <div className="db-set">
+                <div className="db-set-l">
+                  <span className="db-set-lbl">Ce que vos participants revoient</span>
+                  <span className="db-set-val">
+                    {actuel.em} {actuel.title} : {actuel.court}
+                    {revealedTime ? " ; l'album est ouvert, chacun retrouve ses photos" : ''}
+                  </span>
+                </div>
+                {!revealedTime && (
+                  <button className="db-set-act" onClick={() => {
+                    setEditing(editing === 'mode' ? '' : 'mode')
+                    setDraftMode(modeValide(ev.photoMode))
+                  }}>
+                    {editing === 'mode' ? 'Annuler' : 'Modifier'}
+                  </button>
+                )}
+              </div>
+              {editing === 'mode' && !revealedTime && (
+                <div className="db-shots">
+                  <div className="wiz-opts">
+                    {MODE_OPTIONS.map((o) => (
+                      <button key={o.key} type="button"
+                        className={`wiz-opt ${draftMode === o.key ? 'on' : ''}`}
+                        onClick={() => setDraftMode(o.key)}>
+                        <span className="em">{o.em}</span>
+                        <span><span className="tt">{o.title}</span><span className="ss">{o.sub}</span></span>
+                      </button>
+                    ))}
+                  </div>
+                  <p className="db-quota-foot" style={{ textAlign: 'left' }}>
+                    Le mur du groupe, où l'on devine les photos des autres en flou, reste affiché dans les trois cas.
+                    Modifiable jusqu'à la révélation : le changement s'applique aussitôt sur les téléphones.
+                  </p>
+                  <button className="btn btn-accent" style={{ marginTop: 16 }} onClick={async () => {
+                    if (await patchEvent({ photoMode: draftMode })) setEditing('')
+                  }}>Enregistrer</button>
+                </div>
+              )}
+            </>
+          )
+        })()}
 
         {/* Date de révélation */}
         <div className="db-set">

@@ -103,9 +103,14 @@ function Connexion() {
       <div className="card" style={{ marginTop: 24, width: '100%' }}>
         {step === 'email' ? (
           <>
-            <h2 className="h3" style={{ marginBottom: 6 }}>Retrouver mes événements</h2>
+            <h2 className="h3" style={{ marginBottom: 6 }}>Retrouver mes photos</h2>
+            {/* Deux publics sur la même page, et c'est voulu : l'organisateur
+                qui revient sur son tableau de bord, et le participant qui a
+                perdu le lien de l'album. Le texte doit parler aux deux, sinon
+                le second croit s'être trompé d'endroit et repart. */}
             <p className="muted small" style={{ marginBottom: 18 }}>
-              Entrez le mail utilisé à la création. Vous recevrez un lien de connexion, aucun mot de passe à retenir.
+              Entrez votre adresse mail. Que vous ayez créé l'événement ou simplement
+              photographié la soirée, vous recevrez le lien qui vous y ramène. Aucun mot de passe à retenir.
             </p>
             <form onSubmit={requestCode}>
               <div className="field">
@@ -122,14 +127,21 @@ function Connexion() {
         ) : (
           <>
             <h2 className="h3" style={{ marginBottom: 6 }}>Vérifiez vos mails</h2>
+            {/* Formulation prudente : le site ne dit jamais si l'adresse saisie
+                correspond à un organisateur. Sinon, en essayant des adresses
+                une par une, on reconstituerait la liste des clients. */}
             <p className="muted small" style={{ marginBottom: 18 }}>
-              Un mail vient de partir à <strong>{email}</strong>. Cliquez sur le bouton qu'il contient,
-              ou saisissez ici le code à 6 chiffres.
+              Si un événement est associé à <strong>{email}</strong>, un mail vient de partir.
+              Cliquez sur le bouton qu'il contient, ou saisissez ici le code à 6 chiffres.
+            </p>
+            <p className="muted small" style={{ marginBottom: 18 }}>
+              Vous étiez simplement invité à la soirée ? Votre mail contient un lien direct
+              vers vos photos : il n'y a pas de code à saisir ici.
             </p>
             <form onSubmit={submitCode}>
               <div className="field">
                 <label>Code à 6 chiffres</label>
-                <input type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={6}
+                <input type="text" inputMode="numeric" autoComplete="one-time-code"
                   placeholder="000000" value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   autoFocus

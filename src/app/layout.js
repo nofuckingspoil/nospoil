@@ -19,10 +19,15 @@ const fontBody = Manrope({
   display: 'swap',
   variable: '--f-body',
 })
+// Space Mono ne sert qu'aux petites étiquettes (surtitres, compteurs, pied de
+// page). Préchargée, elle prenait 19 Ko de bande passante en priorité haute et
+// passait devant la police du titre : le grand titre de l'accueil attendait
+// donc son tour. Elle se charge maintenant en second rideau.
 const fontMono = Space_Mono({
   subsets: ['latin'],
   weight: ['400', '700'],
   display: 'swap',
+  preload: false,
   variable: '--f-mono',
 })
 

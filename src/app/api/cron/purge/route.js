@@ -11,6 +11,7 @@
 import { selectRows, updateRow, deleteRows, deletePhotos, deletePhoto } from '../../../../lib/supabase'
 import { sendMail, purgeWarningEmail, siteUrl } from '../../../../lib/mail'
 import { WARNINGS, formatPurgeDate } from '../../../../lib/retention'
+import { purgerCompteurs } from '../../../../lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -192,6 +193,9 @@ export async function GET(request) {
     const purged = await purgeExpired(now)
     const demos = await purgeDemos(now)
     const avis = await purgeAvis(now)
+    // Les compteurs anti-abus : ils ne servent qu'à compter sur une heure
+    // glissante, rien ne justifie de garder les adresses IP au-delà d'un jour.
+    await purgerCompteurs(now)
     return Response.json({ ok: true, at: now.toISOString(), warned, purged, demos: demos.length, avis })
   } catch (err) {
     console.error('cron/purge: erreur', err)

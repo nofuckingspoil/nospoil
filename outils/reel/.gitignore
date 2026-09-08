@@ -1,0 +1,6 @@
+# Vignettes du studio : refabriquées à la demande.
+.cache/
+# Sons fabriqués sur place par faire_declencheur.py et faire_musique.py.
+assets/*.wav
+assets/*.mp3
+__pycache__/

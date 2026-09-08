@@ -10,6 +10,7 @@ import { track } from '../../../lib/tracking'
 // de côté, compressée, le temps de l'aller-retour Stripe. Les tunnels courts ne
 // s'en servent pas : les clés sont alors simplement absentes.
 const COVER_KEY = 'declic_pending_cover'
+const COVERPOS_KEY = 'declic_pending_coverpos'
 const EMAIL_KEY = 'declic_pending_email'
 
 function dataUrlToBlob(dataUrl) {
@@ -71,9 +72,19 @@ function PaiementInner() {
             fd.append('file', dataUrlToBlob(cover), 'cover.jpg')
             fd.append('ownerToken', data.ownerToken)
             await fetch(`/api/events/${data.id}/cover`, { method: 'POST', body: fd })
+            // Le cadrage réglé dans l'assistant, mis de côté avec la photo.
+            const pos = sessionStorage.getItem(COVERPOS_KEY)
+            if (pos && pos !== '50% 50%') {
+              await fetch(`/api/events/${data.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'x-owner-token': data.ownerToken },
+                body: JSON.stringify({ coverPos: pos }),
+              })
+            }
           } catch {}
         }
         sessionStorage.removeItem(COVER_KEY)
+        sessionStorage.removeItem(COVERPOS_KEY)
         sessionStorage.removeItem(EMAIL_KEY)
 
         router.replace(`/event/${data.id}`)

@@ -71,14 +71,37 @@ export async function deletePhotos(paths) {
 
 // --- Génère des URLs signées temporaires pour afficher les photos ---
 // Renvoie une map { chemin: url }. Signature locale (pas d'appel réseau).
+//
+// L'HORODATAGE EST ARRONDI, ET C'EST TOUT L'INTÉRÊT.
+//
+// Une signature contient l'instant où elle a été produite. Signée à la
+// milliseconde, l'adresse d'une photo changeait donc à CHAQUE chargement de
+// l'album, alors que l'image, elle, était la même. Or un navigateur comme un
+// téléphone rangent leurs images sous leur adresse : une adresse neuve est une
+// image inconnue, et les mêmes photos étaient retéléchargées à chaque visite.
+// C'est ce qui rendait l'album lent à rouvrir, sur mobile en particulier.
+//
+// En arrondissant l'instant au début d'une tranche de trente minutes, deux
+// appels rapprochés produisent des adresses IDENTIQUES au caractère près, et
+// l'image déjà téléchargée ressort du cache instantanément.
+//
+// La tranche est AJOUTÉE à la durée demandée, elle ne la rogne pas. Sans cela,
+// une adresse signée à la fin d'une tranche aurait perdu jusqu'à trente minutes
+// de validité au passage, et un appelant qui demande une heure n'en aurait
+// obtenu qu'une demie. Chacun garde donc exactement ce qu'il a demandé.
+const TRANCHE_S = 30 * 60
+
 export async function signPhotos(paths, expiresIn = 3600) {
   assertConfig()
   if (!paths.length) return {}
+  const debutDeTranche = Math.floor(Date.now() / (TRANCHE_S * 1000)) * TRANCHE_S * 1000
+  const datetime = new Date(debutDeTranche).toISOString().replace(/[:-]|\.\d{3}/g, '')
+  const validite = expiresIn + TRANCHE_S
   const map = {}
   await Promise.all(
     paths.map(async (path) => {
-      const url = `${keyToUrl(path)}?X-Amz-Expires=${expiresIn}`
-      const signed = await client().sign(url, { method: 'GET', aws: { signQuery: true } })
+      const url = `${keyToUrl(path)}?X-Amz-Expires=${validite}`
+      const signed = await client().sign(url, { method: 'GET', aws: { signQuery: true, datetime } })
       map[path] = signed.url
     })
   )

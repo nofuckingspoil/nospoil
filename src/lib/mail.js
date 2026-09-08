@@ -38,7 +38,7 @@ export function siteUrl() {
 }
 
 // Envoie un mail. Ne fait jamais planter l'appelant : renvoie { ok, error }.
-export async function sendMail({ to, subject, html }) {
+export async function sendMail({ to, subject, html, text }) {
   const key = process.env.BREVO_API_KEY
   const from = process.env.BREVO_SENDER_EMAIL
   if (!key || !from) {
@@ -58,6 +58,10 @@ export async function sendMail({ to, subject, html }) {
         to: [{ email: to }],
         subject,
         htmlContent: html,
+        // Version texte : elle sert aux clients qui n'affichent pas le HTML,
+        // et surtout aux téléphones, qui y lisent le code sans se battre avec
+        // la mise en page pour proposer « Saisir le code » au-dessus du clavier.
+        ...(text ? { textContent: text } : {}),
       }),
       cache: 'no-store',
     })
@@ -100,17 +104,29 @@ export function bigButton(url, label) {
   </td></tr></table>`
 }
 
+// Version texte des mails qui portent un code.
+//
+// L'iPhone (Mail + Safari) sait proposer « Saisir le code » au-dessus du
+// clavier, comme pour un SMS, à condition de reconnaître le code dans le
+// message. Il le cherche à côté des mots « code de vérification », en début de
+// message, et sans rien qui le coupe : d'où cette phrase, toujours la même,
+// placée en tête.
+function codeEnTexte(code, suite) {
+  return `Votre code de vérification ${BRAND.name} est ${code}.\n${suite}\n\n` +
+    `Ce code est valable 15 minutes et ne sert qu'une fois.`
+}
+
 // ---------- Mail de connexion : bouton + code, les deux marchent ----------
 export function loginEmail({ code, link }) {
-  const spaced = String(code).replace(/(\d{3})(\d{3})/, '$1 $2')
   return {
     subject: `${code} : votre code de connexion ${BRAND.name}`,
+    text: codeEnTexte(code, 'Saisissez-le sur la page ouverte pour accéder à vos événements.'),
     html: layout({
       title: 'Connexion à votre espace',
-      intro: `Cliquez sur le bouton ci-dessous pour accéder à vos événements.`,
+      intro: `Votre code de vérification est <strong>${code}</strong>. Ou cliquez sur le bouton ci-dessous pour accéder directement à vos événements.`,
       body: `${bigButton(link, 'Me connecter →')}
         <div style="text-align:center;font-size:14px;color:#8a7c69;padding:22px 0 10px;">ou saisissez ce code sur la page ouverte :</div>
-        <div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.14em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${spaced}</div>`,
+        <div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.2em;text-indent:.2em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${code}</div>`,
       footer: `Ce lien et ce code sont valables 15 minutes et ne servent qu'une fois.<br>Si vous n'avez pas demandé cette connexion, ignorez ce message.`,
     }),
   }
@@ -136,14 +152,65 @@ export function adminInviteEmail({ eventName, loginUrl }) {
 
 // ---------- Mail de vérification à la création (code seul, avant création) ----------
 export function verifyEmail({ code }) {
-  const spaced = String(code).replace(/(\d{3})(\d{3})/, '$1 $2')
   return {
     subject: `${code} : votre code de vérification ${BRAND.name}`,
+    text: codeEnTexte(code, 'Saisissez-le sur la page pour créer votre événement.'),
     html: layout({
       title: 'Confirmez votre adresse',
-      intro: `Saisissez ce code sur la page pour créer votre événement. Il confirme que cette adresse est bien la vôtre.`,
-      body: `<div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.14em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${spaced}</div>`,
+      intro: `Votre code de vérification est <strong>${code}</strong>. Saisissez-le sur la page pour créer votre événement : il confirme que cette adresse est bien la vôtre.`,
+      body: `<div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.2em;text-indent:.2em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${code}</div>`,
       footer: `Ce code est valable 15 minutes et ne sert qu'une fois.<br>Si vous n'êtes pas à l'origine de cette demande, ignorez ce message.`,
+    }),
+  }
+}
+
+// ---------- Une photo vient d'être signalée ----------
+//
+// Apple l'exige (règle 1.2) : il faut un moyen de signaler un contenu choquant
+// ET une réponse rapide. La réponse rapide, ici, c'est que la photo est retirée
+// de l'album SANS ATTENDRE. Ce mail prévient l'organisateur de ce qui a été
+// fait, et lui dit comment revenir dessus : c'est lui qui tranche au final,
+// c'est sa soirée.
+export function photoSignaleeEmail({ eventName, galleryUrl, motif }) {
+  return {
+    subject: `Une photo a été signalée : ${eventName}`,
+    html: layout({
+      title: 'Une photo a été signalée',
+      intro:
+        `Un participant de « ${eventName} » a signalé une photo de l'album. ` +
+        'Elle a été <strong>masquée immédiatement</strong>, le temps que vous la regardiez.',
+      body:
+        (motif ? `<p style="margin:0 0 14px"><strong>Motif indiqué :</strong> ${motif}</p>` : '') +
+        `<p style="margin:0 0 14px">Vous seul la voyez désormais. Depuis votre album, vous pouvez la ` +
+        `<strong>rétablir</strong> si le signalement n'était pas fondé, ou la <strong>supprimer</strong> ` +
+        `définitivement.</p>` +
+        `<p style="margin:0"><a href="${galleryUrl}">Ouvrir l'album</a></p>`,
+      footer:
+        'Vous recevez ce message parce que vous organisez cet événement. ' +
+        'Un doute, une question ? Écrivez-nous à support@timetoflash.fr.',
+    }),
+  }
+}
+
+// ---------- Code de confirmation pour supprimer un compte ----------
+//
+// Un code à part, avec ses propres mots : celui de la vérification d'adresse
+// annonce « pour créer votre événement », ce qui serait trompeur ici, et même
+// inquiétant. Un mail qui ne dit pas ce qu'il autorise est un mauvais mail.
+export function deleteAccountEmail({ code }) {
+  return {
+    subject: `${code} : confirmer la suppression de votre compte ${BRAND.name}`,
+    text: codeEnTexte(code, 'Saisissez-le dans l\'application pour confirmer la suppression de votre compte.'),
+    html: layout({
+      title: 'Supprimer votre compte',
+      intro:
+        `Votre code de vérification est <strong>${code}</strong>. Saisissez-le dans l'application ` +
+        'pour confirmer la suppression de votre compte. Cette opération est définitive.',
+      body: `<div style="text-align:center;font-size:34px;font-weight:800;letter-spacing:.2em;text-indent:.2em;color:#221A12;font-family:ui-monospace,Menlo,monospace;">${code}</div>`,
+      footer:
+        'Ce code est valable 15 minutes et ne sert qu\'une fois.<br>' +
+        '<strong>Si vous n\'êtes pas à l\'origine de cette demande, ignorez ce message :</strong> ' +
+        'sans ce code, rien ne sera supprimé.',
     }),
   }
 }
@@ -368,6 +435,37 @@ export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }
           Vous pouvez les regarder, les télécharger, et retrouver celles que vous avez prises.
         </div>`,
       footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, uniquement pour cela. Elle n'est utilisée pour rien d'autre et sera supprimée avec l'album.`,
+    }),
+  }
+}
+
+// ---------- Le participant a demandé à retrouver ses photos ----------
+// Répond à la page de connexion quand l'adresse n'est pas celle d'un
+// organisateur, mais celle de quelqu'un qui a photographié une soirée.
+// Pas de code à saisir ici : un seul lien, qui rattache toutes ses
+// participations au téléphone sur lequel il l'ouvre.
+export function retrouverPhotosEmail({ albums, link }) {
+  const liste = albums
+    .map((a) => `<li style="margin-bottom:6px;"><strong style="color:#221A12;">${a.name}</strong>${a.revele ? '' : ' (album pas encore ouvert)'}</li>`)
+    .join('')
+  const pluriel = albums.length > 1
+  return {
+    subject: 'Retrouvez vos photos 📸',
+    text:
+      `Voici votre lien pour retrouver vos photos : ${link}\n\n` +
+      `Ouvrez-le sur le téléphone avec lequel vous voulez voir vos photos : il y rattache vos participations.`,
+    html: layout({
+      title: 'Vos photos vous attendent',
+      intro: pluriel
+        ? `Vous avez participé à ces albums :<ul style="margin:12px 0 0;padding-left:18px;">${liste}</ul>`
+        : `Vous avez participé à l'album de :<ul style="margin:12px 0 0;padding-left:18px;">${liste}</ul>`,
+      body: `${bigButton(link, 'Retrouver mes photos →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Ouvrez ce lien sur le téléphone où vous voulez voir vos photos : il y rattache
+          ${pluriel ? 'vos participations' : 'votre participation'}, vos poses restantes comprises.
+          Aucun code à saisir.
+        </div>`,
+      footer: `Vous recevez ce message parce que quelqu'un a demandé à retrouver les photos liées à cette adresse. Si ce n'est pas vous, ignorez ce mail : il ne donne accès qu'aux albums auxquels vous avez participé. Ce lien vous est personnel, ne le transférez pas.`,
     }),
   }
 }

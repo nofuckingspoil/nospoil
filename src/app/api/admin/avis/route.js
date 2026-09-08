@@ -11,6 +11,7 @@
 // ============================================================
 import { selectRows } from '../../../../lib/supabase'
 import { resumeAppareil } from '../../../../lib/avis'
+import { estUuid, identifiantInvalide } from '../../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -23,6 +24,7 @@ export async function GET(request) {
   }
 
   const eventId = new URL(request.url).searchParams.get('event')
+  if (eventId && !estUuid(eventId)) return identifiantInvalide()
   const filtre = eventId ? `event_id=eq.${eventId}&` : ''
 
   const { ok, data } = await selectRows(

@@ -1,10 +1,11 @@
 import { insertRow } from '../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode, ensureAccount } from '../../../lib/account'
-import { EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX, tierByGuests } from '../../../lib/pricing'
+import { EMAIL_VERIFICATION_FREE, SHOTS_MIN, SHOTS_MAX, tierByGuests } from '../../../lib/pricing'
 import { quotePromo, consumePromo } from '../../../lib/promo'
 import { purgeDate } from '../../../lib/retention'
 import { LEGAL_UPDATED } from '../../../lib/legal'
+import { modeValide } from '../../../lib/photo-mode'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
@@ -26,9 +27,11 @@ export async function POST(request) {
     return Response.json({ error: 'Vous devez accepter les conditions générales.' }, { status: 400 })
   }
 
-  // L'adresse doit être vérifiée : on exige le code à 6 chiffres envoyé par mail.
-  // (Désactivable via EMAIL_VERIFICATION_ENABLED tant que l'envoi d'e-mails n'est pas fiable.)
-  if (EMAIL_VERIFICATION_ENABLED) {
+  // Cette route crée sans passer par la caisse : personne d'autre ne vérifiera
+  // l'adresse. On exige donc le code à 6 chiffres envoyé par mail, y compris
+  // quand un code promo rend gratuite une formule normalement payante.
+  // (Repasser EMAIL_VERIFICATION_FREE à false rouvre la création sans code.)
+  if (EMAIL_VERIFICATION_FREE) {
     const check = await verifyAndConsumeCode(ownerEmail, body.code)
     if (!check.ok) {
       return Response.json({ error: check.error }, { status: check.status })
@@ -74,6 +77,18 @@ export async function POST(request) {
   // Date de la fête : pilote l'affichage du tableau de bord. À défaut, on
   // l'estime à la veille au soir de la révélation.
   const start = body.startsAt ? new Date(body.startsAt) : new Date(reveal.getTime() - 13 * 3600 * 1000)
+  const debut = isNaN(start.getTime()) ? new Date(reveal.getTime() - 13 * 3600 * 1000) : start
+
+  // Heure de fin : elle règle la cadence des rappels aux participants. Non
+  // renseignée, elle sera estimée à la lecture (voir lib/rappels.js). Une fin
+  // absurde (avant le début, après la révélation) est ignorée plutôt que
+  // refusée : rien ici ne mérite de bloquer une création.
+  const finBrute = body.endsAt ? new Date(body.endsAt) : null
+  const fin = finBrute && !isNaN(finBrute.getTime())
+    && finBrute.getTime() > debut.getTime()
+    && finBrute.getTime() <= reveal.getTime()
+    ? finBrute
+    : null
 
   // Une adresse connue, c'est une personne : son compte existe dès maintenant.
   const compte = await ensureAccount(ownerEmail)
@@ -85,8 +100,12 @@ export async function POST(request) {
     name: name.trim().slice(0, 80),
     host_names: hostNames ? hostNames.trim().slice(0, 80) : null,
     shots_per_guest: shots,
+    // Une valeur inconnue retombe sur « libre » : un mode photo mal transmis ne
+    // doit pas priver les participants de leurs propres photos par surprise.
+    photo_mode: modeValide(body.photoMode),
     max_guests: guests,
-    starts_at: (isNaN(start.getTime()) ? new Date(reveal.getTime() - 13 * 3600 * 1000) : start).toISOString(),
+    starts_at: debut.toISOString(),
+    ends_at: fin ? fin.toISOString() : null,
     reveal_at: reveal.toISOString(),
     expires_at: expires.toISOString(),
     status: 'active',

@@ -12,9 +12,24 @@
 // ============================================================
 import 'server-only'
 import { selectRows } from './supabase'
+import { estUuid } from './params'
 
 export const OWNER = 'owner'
 export const ADMIN = 'admin'
+
+// Un lien de gestion ne vaut pas éternellement. Il cesse d'ouvrir la porte le
+// jour où les photos sont supprimées : passé cette date, l'album n'existe plus,
+// mais la fiche de l'événement, elle, est conservée (historique, facturation).
+// Sans cette limite, un mail d'accès transféré par erreur ou un téléphone perdu
+// donnait la main sur les réglages et sur les coordonnées des participants
+// pour toujours.
+export const MESSAGE_EXPIRE = "Ce lien d'accès a expiré."
+
+export function accesExpire(ev) {
+  if (!ev?.expires_at) return false // aucune date connue : on ne ferme rien
+  const fin = new Date(ev.expires_at).getTime()
+  return Number.isFinite(fin) && fin < Date.now()
+}
 
 // Un événement suspendu par l'administration n'est plus accessible à personne :
 // ni album, ni participation, ni nouvelle photo. Le statut existait en base
@@ -22,7 +37,7 @@ export const ADMIN = 'admin'
 export const MESSAGE_SUSPENDU = 'Cet événement est momentanément suspendu.'
 
 export async function estSuspendu(eventId) {
-  if (!eventId) return false
+  if (!estUuid(eventId)) return false
   const { data } = await selectRows('events', `id=eq.${eventId}&select=status`)
   const ev = Array.isArray(data) ? data[0] : null
   return !!ev && ev.status === 'suspended'
@@ -30,11 +45,14 @@ export async function estSuspendu(eventId) {
 
 // Rôle du porteur de ce jeton sur cet événement, ou null s'il n'en a aucun.
 export async function roleFor(eventId, token) {
-  if (!eventId || !token) return null
+  if (!estUuid(eventId) || !token) return null
 
-  const { data } = await selectRows('events', `id=eq.${eventId}&select=owner_token`)
+  const { data } = await selectRows('events', `id=eq.${eventId}&select=owner_token,expires_at`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return null
+  // Passé la date de suppression, plus personne ne gère : ni l'organisateur,
+  // ni ses co-organisateurs.
+  if (accesExpire(ev)) return null
   if (ev.owner_token === token) return OWNER
 
   const adm = await selectRows(

@@ -2,6 +2,7 @@ import { selectRows, insertRow, deleteRows, updateRow } from '../../../../../lib
 import { roleFor, canDelete } from '../../../../../lib/authz'
 import { makeToken, normalizeEmail, isValidEmail, ensureAccount } from '../../../../../lib/account'
 import { sendMail, adminInviteEmail, siteUrl } from '../../../../../lib/mail'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 // Gérer la liste des co-admins reste au propriétaire seul : sinon un co-admin
 // pourrait s'en ajouter d'autres, ou évincer celui qui l'a invité.
@@ -14,6 +15,7 @@ async function requireOwner(id, request) {
 // connectera par mail, comme l'organisateur.
 export async function POST(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   if (!(await requireOwner(id, request))) {
     return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
   }
@@ -74,6 +76,7 @@ export async function POST(request, { params }) {
 // Retire un admin (via ?adminId=…)
 export async function DELETE(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   if (!(await requireOwner(id, request))) {
     return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
   }

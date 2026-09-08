@@ -1,5 +1,6 @@
 import { selectRows, insertRow, deleteRows } from '../../../../../lib/supabase'
 import { estSuspendu, MESSAGE_SUSPENDU } from '../../../../../lib/authz'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -9,11 +10,13 @@ export const runtime = 'nodejs'
 // participant de voter dix fois. Aucune route ne renvoie jamais qui a aimé quoi.
 export async function POST(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   const { photoId, deviceToken, on } = await request.json().catch(() => ({}))
 
   if (!id || !photoId || !deviceToken) {
     return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
   }
+  if (!estUuid(photoId)) return identifiantInvalide()
   if (await estSuspendu(id)) {
     return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
   }

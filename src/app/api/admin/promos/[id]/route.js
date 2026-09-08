@@ -1,4 +1,5 @@
 import { updateRow, deleteRows, selectRows } from '../../../../../lib/supabase'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -13,6 +14,7 @@ export async function PATCH(request, { params }) {
   if (refuse(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
 
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   const b = await request.json().catch(() => ({}))
   const patch = {}
   if (typeof b.active === 'boolean') patch.active = b.active
@@ -30,6 +32,7 @@ export async function DELETE(request, { params }) {
   if (refuse(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
 
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   const { data } = await selectRows('promo_codes', `id=eq.${id}&select=uses`)
   const p = Array.isArray(data) ? data[0] : null
   if (!p) return Response.json({ error: 'Code introuvable.' }, { status: 404 })

@@ -105,8 +105,13 @@ export default function Home() {
               <img src="/accueil/appareil-photo.webp" width="640" height="1385"
                 alt="L'appareil photo jetable ouvert dans le navigateur : un groupe de participants dans le viseur, le compteur de poses et le déclencheur." />
             </div>
+            {/* Priorité basse : c'est le plus gros fichier de la page (107 Ko)
+                pour l'écran du fond, à moitié caché derrière l'autre. Chargé en
+                priorité haute, il retardait la police du titre et la feuille de
+                style. Il arrive maintenant juste après, sans se faire attendre
+                puisqu'il reste dans le premier écran. */}
             <div className="phone phone-arriere">
-              <img src="/accueil/galerie-photos.webp" width="640" height="1385"
+              <img src="/accueil/galerie-photos.webp" width="640" height="1385" fetchPriority="low"
                 alt="L'album révélé après la fête : les photos de tous les participants réunies dans une galerie." />
             </div>
           </div>

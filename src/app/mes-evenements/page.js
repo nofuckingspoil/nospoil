@@ -18,12 +18,16 @@ export default function MyEvents() {
     setEmail(getAccountEmail() || '')
     const ids = getMyEvents()
     if (!ids.length) { setEvents([]); return }
-    Promise.all(ids.map((id) =>
-      fetch(`/api/events/${id}`, { headers: { 'x-owner-token': getOwnerToken(id) } })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((d) => (d && !d.error ? d : null))
-        .catch(() => null)
-    )).then((list) => setEvents(list.filter(Boolean)))
+    // Un seul appel, quel que soit le nombre d'événements. Il y en avait un par
+    // événement : deux pour un particulier, quarante-cinq pour l'équipe.
+    fetch('/api/mes-evenements', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ acces: ids.map((id) => ({ id, token: getOwnerToken(id) })) }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => setEvents(Array.isArray(d?.events) ? d.events : []))
+      .catch(() => setEvents([]))
   }, [])
 
   function disconnect() {

@@ -4,7 +4,10 @@ import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
 import { getDeviceToken, saveGuest, getGuest, getOwnerToken } from '../../../lib/device'
-import { supportsLiveCamera, isInAppBrowser, compressToBlob, decodeImage, prepareUpload, playShutter } from '../../../lib/camera'
+import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera } from '../../../lib/camera'
+import CameraBloquee from '../../../components/CameraBloquee'
+import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../lib/photo-mode'
+import { pushPossible, pushEtat, dejaPropose, marquerPropose, activerPush } from '../../../lib/push'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
@@ -42,6 +45,20 @@ function breakdownToReveal(iso, now) {
 
 let _tmp = 0
 
+// Le navigateur d'une messagerie met la page en veille dès qu'on la quitte :
+// la première requête au retour se perd parfois, et le navigateur répond alors
+// un « Load failed » que personne ne comprend. On retente une fois en silence,
+// et on ne parle d'échec qu'ensuite, avec des mots clairs.
+async function envoyer(url, options, messageEchec = 'Connexion perdue. Vérifie ta connexion et réessaie.') {
+  for (let tentative = 0; tentative < 2; tentative++) {
+    try { return await fetch(url, options) }
+    catch {
+      if (tentative) throw new Error(messageEchec)
+      await new Promise((r) => setTimeout(r, 900))
+    }
+  }
+}
+
 export default function GuestCamera({ params }) {
   const { id } = use(params)
 
@@ -52,6 +69,9 @@ export default function GuestCamera({ params }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [mailCheck, setMailCheck] = useState(null) // {status, suggestion?, reason?}
+  const [monJeton, setMonJeton] = useState('')     // clé personnelle, pour le lien qu'on se garde
+  const [confirmSansMail, setConfirmSansMail] = useState(false) // question posée une fois, champ vide
+  const mailRef = useRef(null)
   const [checkingMail, setCheckingMail] = useState(false)
   const [guest, setGuest] = useState(null)       // { guestId, shotsTaken, shotsPerGuest }
   const [error, setError] = useState('')
@@ -62,14 +82,22 @@ export default function GuestCamera({ params }) {
   const [screenFlash, setScreenFlash] = useState(false) // flash écran (selfie) pendant la capture
   const [liveCam, setLiveCam] = useState(false)
   const [camBlocked, setCamBlocked] = useState(false)
+  const [camDenied, setCamDenied] = useState(false) // refus enregistré : le navigateur ne redemandera plus
   const [inApp, setInApp] = useState(false)      // page ouverte depuis une messagerie
+  const [androidInApp, setAndroidInApp] = useState(false) // Android + mini-navigateur (appli de scan de QR code)
+  const [declencheurMuet, setDeclencheurMuet] = useState(false) // le bouton n'ouvre rien : mini-navigateur trop limité
+  const [chromeRate, setChromeRate] = useState(false)     // la bascule vers Chrome n'a pas pris
   const [facingMode, setFacingMode] = useState('environment')
   const [myPhotos, setMyPhotos] = useState([])   // [{id, url}] confirmées (serveur)
+  const [mur, setMur] = useState([])             // [{id, url}] photos du groupe, floutées avant la révélation
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
+  const [aConfirmer, setAConfirmer] = useState(null) // {blob, url} cliché montré une fois, à garder ou à reprendre
   const [deleting, setDeleting] = useState(false)
   const [showQR, setShowQR] = useState(false)    // pop-up "inviter un proche"
   const [showSaveTip, setShowSaveTip] = useState(false) // rappel "garde ton lien pour revenir" (une seule fois)
+  const [showPushTip, setShowPushTip] = useState(false) // proposition des notifications, après la 1re photo
+  const [pushBusy, setPushBusy] = useState(false)
   const [showAlbum, setShowAlbum] = useState(false) // écran album (mes photos)
   const [downloading, setDownloading] = useState(false)
   const [bonusUsed, setBonusUsed] = useState(false) // +5 photos déjà réclamées ?
@@ -77,13 +105,52 @@ export default function GuestCamera({ params }) {
   const [qrCopied, setQrCopied] = useState(false)
   const [now, setNow] = useState(() => Date.now())  // pour le compte à rebours
 
+  const refusRef = useRef(0)  // refus d'affilée : au deuxième, le blocage est durable
   const videoRef = useRef(null)
   const streamRef = useRef(null)
   const fileInputRef = useRef(null)
   const galleryInputRef = useRef(null)
 
+  // Retour par son propre lien (?t=…) : ce navigateur n'est pas forcément celui
+  // qui a photographié, un lien tapé dans Messages s'ouvrant chez Safari. Le
+  // jeton rattache la participation ici avant que la page ne demande quoi que
+  // ce soit, sinon on redemanderait son prénom à quelqu'un qu'on connaît.
+  const [rattachement, setRattachement] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return !!new URLSearchParams(window.location.search).get('t')
+  })
+
   useEffect(() => {
+    if (!rattachement) return
+    const t = new URLSearchParams(window.location.search).get('t')
+    let annule = false
+    fetch('/api/guest/restore', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: t, deviceToken: getDeviceToken() }),
+    })
+      .then((r) => r.json())
+      .then((d) => {
+        if (annule || d.error) return
+        // On ne garde que la participation à CET événement : le lien ramène ici.
+        for (const e of d.events || []) saveGuest(e.eventId, e.guestId, e.displayName, d.email)
+        setMonJeton(t)
+      })
+      .catch(() => {})
+      // Un jeton périmé ne bloque personne : la page reprend son cours normal et
+      // redemande un prénom, comme avant.
+      .finally(() => {
+        if (annule) return
+        window.history.replaceState(null, '', `/j/${id}`)
+        setRattachement(false)
+      })
+    return () => { annule = true }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rattachement, id])
+
+  useEffect(() => {
+    if (rattachement) return // on attend d'avoir rattaché : sinon on se présente en inconnu
     setInApp(isInAppBrowser()) // au montage seulement : le serveur ne connaît pas le navigateur
+    setAndroidInApp(isAndroidInApp())
     // Le jeton part avec la requête : l'organisateur qui prend ses propres photos
     // n'a pas à se présenter comme un inconnu. Sans jeton valable, le serveur ne
     // renvoie rien de plus qu'à n'importe quel participant.
@@ -111,7 +178,33 @@ export default function GuestCamera({ params }) {
       })
       .catch(() => { setError('Connexion impossible.'); setPhase('error') })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [id, rattachement])
+
+  // La révélation qui tombe pendant qu'on tient l'appareil.
+  //
+  // Le renvoi vers l'album ne se faisait qu'au chargement de la page : qui
+  // restait sur le viseur continuait de photographier une pellicule déjà
+  // développée, et ses clichés apparaissaient aussitôt dans un album censé
+  // être une surprise. On arme donc une minuterie sur l'heure exacte, et on
+  // revérifie au retour sur l'onglet : un navigateur endormi ne fait pas
+  // tourner ses minuteries, et au delà de vingt-quatre jours elles débordent.
+  useEffect(() => {
+    if (!meta?.revealAt) return
+    const cible = new Date(meta.revealAt).getTime()
+    if (!Number.isFinite(cible)) return
+
+    const filer = () => window.location.replace(`/g/${id}`)
+    if (cible <= Date.now()) { filer(); return }
+
+    const attente = cible - Date.now()
+    const minuteur = attente < 2 ** 31 - 1 ? setTimeout(filer, attente) : null
+    const reveil = () => { if (!document.hidden && Date.now() >= cible) filer() }
+    document.addEventListener('visibilitychange', reveil)
+    return () => {
+      if (minuteur) clearTimeout(minuteur)
+      document.removeEventListener('visibilitychange', reveil)
+    }
+  }, [meta?.revealAt, id])
 
   useEffect(() => {
     if (phase === 'camera' && liveCam) startCamera()
@@ -133,10 +226,47 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, id])
 
+  // LES NOTIFICATIONS DE SOIRÉE, PROPOSÉES APRÈS LA PREMIÈRE PHOTO.
+  //
+  // Jamais à l'arrivée : une fenêtre d'autorisation posée avant qu'on ait
+  // compris à quoi sert la page se refuse par réflexe, et un refus est
+  // définitif. Après le premier déclic, la question a un sens.
+  //
+  // Ne concerne en pratique qu'Android : sur iPhone, les notifications web
+  // exigent d'avoir ajouté le site à l'écran d'accueil, et ceux qui scannent le
+  // QR code ont déjà les rappels de l'extrait d'app. Les mini-navigateurs des
+  // messageries en sont incapables, on ne leur demande donc rien.
+  useEffect(() => {
+    if (phase !== 'camera' || !guest || !guest.guestId) return
+    if (!guest.shotsTaken || showSaveTip || aConfirmer) return
+    if (!pushPossible() || inApp) return
+
+    const etat = pushEtat()
+    // Déjà accepté ailleurs (une soirée précédente, ce même téléphone) : on
+    // rebranche sans rien montrer, pour que les rappels de CETTE soirée partent.
+    if (etat === 'granted') {
+      activerPush({ eventId: id, guestId: guest.guestId, demander: false })
+      return
+    }
+    if (etat !== 'default' || dejaPropose(id)) return
+    setShowPushTip(true)
+    marquerPropose(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phase, guest?.guestId, guest?.shotsTaken, showSaveTip, aConfirmer, inApp, id])
+
+  async function accepterNotifications() {
+    if (pushBusy || !guest?.guestId) return
+    setPushBusy(true)
+    // Le résultat n'est pas affiché : un refus n'est pas une erreur, et une
+    // confirmation de plus au milieu d'une fête n'apporte rien. La fenêtre du
+    // navigateur a déjà tout dit.
+    await activerPush({ eventId: id, guestId: guest.guestId })
+    setPushBusy(false)
+    setShowPushTip(false)
+  }
+
   // Génère le QR code d'invitation à l'ouverture de la pop-up
   const joinUrl = typeof window !== 'undefined' ? `${window.location.origin}/j/${id}` : ''
-  // Fichier agenda : un tap ouvre le Calendrier du téléphone, le lien y reste au chaud
-  const agendaUrl = `/api/events/${id}/agenda.ics`
   useEffect(() => {
     if (!showQR || qrUrl || !joinUrl) return
     QRCode.toDataURL(joinUrl, { width: 440, margin: 1, color: { dark: '#221A12', light: '#FCF8F0' } })
@@ -150,15 +280,22 @@ export default function GuestCamera({ params }) {
   // Ouvre l'appli Messages du téléphone, pré-remplie avec le lien : le participant se l'envoie
   // à lui-même (gratuit) pour revenir prendre ses photos restantes plus tard.
   // Le destinataire est laissé vide : il choisit son propre numéro dans l'appli.
+  // Le lien qu'on se garde n'est pas celui qu'on partage. Celui-ci porte la clé
+  // personnelle : il rouvre l'appareil sur le bon compte depuis n'importe quel
+  // navigateur, et c'est justement pour ça qu'il ne se transmet pas.
+  const monLien = monJeton ? `${joinUrl}?t=${monJeton}` : joinUrl
+
   function smsMyLink() {
-    const body = `Mon lien pour reprendre mes photos 📸 : ${joinUrl}`
+    const body = monJeton
+      ? `Mon lien personnel pour reprendre mes photos 📸 (à garder pour moi) : ${monLien}`
+      : `Mon lien pour reprendre mes photos 📸 : ${joinUrl}`
     window.location.href = `sms:?&body=${encodeURIComponent(body)}`
   }
 
   // Partage natif (Notes, WhatsApp, Mail…) ; repli sur copie si indisponible.
   async function shareMyLink() {
     if (typeof navigator !== 'undefined' && navigator.share) {
-      try { await navigator.share({ title: meta?.name || 'Time to Flash', text: 'Mon lien pour reprendre mes photos 📸', url: joinUrl }); return } catch {}
+      try { await navigator.share({ title: meta?.name || 'Time to Flash', text: 'Prends des photos avec nous 📸', url: joinUrl }); return } catch {}
     }
     copyJoinLink()
   }
@@ -201,20 +338,25 @@ export default function GuestCamera({ params }) {
     return () => clearInterval(t)
   }, [])
 
-  // Met à jour les compteurs (photos / participants) en temps réel
-  // tant que l'écran album est ouvert : un appel immédiat, puis toutes les 4 s.
+  // Met à jour les compteurs (photos / participants) et le mur du groupe en
+  // temps réel tant que l'écran album est ouvert : un appel immédiat, puis
+  // toutes les 4 s. Les jetons partent avec : le serveur ne confie le mur qu'à
+  // quelqu'un de la soirée.
   useEffect(() => {
     if (!showAlbum) return
     let alive = true
     const refresh = async () => {
       try {
-        const d = await fetch(`/api/events/${id}/stats`).then((r) => r.json())
+        const d = await fetch(`/api/events/${id}/stats`, {
+          headers: { 'x-device-token': getDeviceToken(), 'x-owner-token': getOwnerToken(id) },
+        }).then((r) => r.json())
         if (!alive || !d) return
         setMeta((m) => (m ? {
           ...m,
           guestCount: typeof d.guestCount === 'number' ? d.guestCount : m.guestCount,
           photoCount: typeof d.photoCount === 'number' ? d.photoCount : m.photoCount,
         } : m))
+        if (Array.isArray(d.mur)) setMur(d.mur)
       } catch {}
     }
     refresh()
@@ -262,15 +404,25 @@ export default function GuestCamera({ params }) {
     verifierMail(mailCheck.suggestion)
   }
 
+  // Le champ mail vide n'est presque jamais un refus : c'est une ligne sautée
+  // par vitesse, dans une soirée. On montre une fois ce qu'elle coûte, puis on
+  // laisse passer : l'adresse reste facultative, et le dire est une obligation.
+  function soumettreArrivee(e) {
+    e.preventDefault()
+    if (!name.trim()) return
+    if (!email.trim() && !confirmSansMail) { setConfirmSansMail(true); return }
+    join(name.trim(), email)
+  }
+
   async function join(displayName, emailArg) {
     setBusy(true); setError('')
     // emailArg : utilisé à la reconnexion (adresse mémorisée) ; sinon, le champ du formulaire.
     const emailVal = ((emailArg !== undefined ? emailArg : email) || '').trim().toLowerCase()
     try {
-      const res = await fetch('/api/join', {
+      const res = await envoyer('/api/join', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, email: emailVal }),
-      })
+      }, 'Connexion perdue. Vérifie ta connexion et réessaie.')
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
       // Formule complète : on reste à la porte. L'organisateur vient d'être
@@ -278,12 +430,13 @@ export default function GuestCamera({ params }) {
       if (d.waiting) { setAttente(d); setPhase('attente'); return }
       setAttente(null)
       saveGuest(id, d.guestId, d.displayName, d.email ?? emailVal)
+      if (d.token) setMonJeton(d.token)
       setGuest({ guestId: d.guestId, shotsTaken: d.shotsTaken, shotsPerGuest: d.shotsPerGuest })
       setLiveCam(supportsLiveCamera())
       loadMyPhotos()
       setPhase('camera')
     } catch (err) {
-      setError(err.message); setPhase('name')
+      setError(err.message || 'Connexion impossible. Réessaie.'); setPhase('name')
     } finally { setBusy(false) }
   }
 
@@ -296,6 +449,18 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, name, email])
 
+  // Le participant part réautoriser dans les réglages de son navigateur : dès
+  // qu'il revient, la caméra repart toute seule. Rien à recharger, rien à toucher.
+  useEffect(() => {
+    if (!camBlocked) return
+    const stop = surveillerPermissionCamera((etat) => {
+      if (etat !== 'granted') return
+      refusRef.current = 0
+      setCamDenied(false); setCamBlocked(false); setLiveCam(true)
+    })
+    return () => { if (stop) stop() }
+  }, [camBlocked])
+
   async function startCamera() {
     stopCamera()
     try {
@@ -303,12 +468,23 @@ export default function GuestCamera({ params }) {
         video: { facingMode, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false,
       })
       streamRef.current = stream
+      refusRef.current = 0
       setCamBlocked(false)
+      setCamDenied(false)
       if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play().catch(() => {}) }
     } catch (err) {
       setLiveCam(false)
       // Accès refusé (par réflexe ?) : on le signale pour proposer de réautoriser
-      if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) setCamBlocked(true)
+      if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
+        setCamBlocked(true)
+        refusRef.current += 1
+        // Reste à savoir si le navigateur reposera la question. S'il a enregistré
+        // le refus, le bouton « Autoriser ma caméra » ne produirait plus rien :
+        // il faut alors montrer la manipulation tout de suite. Safari ne sait pas
+        // répondre : le deuxième refus d'affilée en tient lieu de preuve.
+        const etat = await etatPermissionCamera()
+        if (etat === 'denied' || refusRef.current >= 2) setCamDenied(true)
+      }
     }
   }
   function stopCamera() {
@@ -330,11 +506,49 @@ export default function GuestCamera({ params }) {
   // Nouvelle tentative d'accès caméra (après que le participant a réautorisé dans son navigateur)
   function retryCamera() {
     setCamBlocked(false)
+    setCamDenied(false)
     if (liveCam) startCamera()
     else setLiveCam(true)
   }
 
   // Capture optimiste : on affiche tout de suite, on envoie en arrière-plan.
+  // Ce que l'organisateur a choisi pour sa soirée. Tant que la révélation n'a
+  // pas eu lieu, ce réglage commande ce que le participant revoit de ses propres
+  // photos. Après, tout le monde retrouve son album : le jeu est fini.
+  const mode = meta?.photoMode || 'libre'
+  const jeuEnCours = !!meta && !meta.revealed
+  const flouterMesPhotos = jeuEnCours && !revoitSesPhotos(mode)
+  const suppressionOuverte = !jeuEnCours || peutSupprimer(mode)
+
+  const PLEINE = () => (suppressionOuverte
+    ? 'Pellicule pleine : supprime une photo pour en reprendre une.'
+    : 'Pellicule pleine : tes photos t’attendent à la révélation.')
+
+  // Un cliché de plus, à confirmer ou à envoyer selon le mode. Le compteur ne
+  // bouge qu'à l'envoi : une photo reprise n'a jamais existé.
+  async function proposer(blob) {
+    if (jeuEnCours && demandeConfirmation(mode)) {
+      setAConfirmer((v) => { if (v) URL.revokeObjectURL(v.url); return { blob, url: URL.createObjectURL(blob) } })
+      return
+    }
+    await capture(blob)
+  }
+
+  function garderLeCliche() {
+    const v = aConfirmer
+    if (!v) return
+    setAConfirmer(null)
+    URL.revokeObjectURL(v.url)
+    capture(v.blob)
+  }
+
+  function reprendreLeCliche() {
+    const v = aConfirmer
+    if (!v) return
+    setAConfirmer(null)
+    URL.revokeObjectURL(v.url)
+  }
+
   async function capture(blob) {
     const tempId = `tmp-${++_tmp}`
     const url = URL.createObjectURL(blob)
@@ -354,19 +568,10 @@ export default function GuestCamera({ params }) {
       if (thumbBlob) fd.append('thumb', thumbBlob, 'thumb.jpg')
       fd.append('eventId', id); fd.append('guestId', guest.guestId); fd.append('deviceToken', getDeviceToken())
 
-      // Les navigateurs des messageries suspendent la page pendant que
-      // l'appareil photo est ouvert : la première requête au retour se perd
-      // parfois. On retente une fois avant de parler d'échec au participant.
-      let res = null
-      for (let tentative = 0; tentative < 2 && !res; tentative++) {
-        try { res = await fetch('/api/photo', { method: 'POST', body: fd }) }
-        catch (reseau) {
-          if (tentative) throw new Error('Connexion perdue pendant l’envoi. Vérifie ta connexion et réessaie.')
-          await new Promise((r) => setTimeout(r, 900))
-        }
-      }
+      const res = await envoyer('/api/photo', { method: 'POST', body: fd },
+        'Connexion perdue pendant l’envoi. Vérifie ta connexion et réessaie.')
       const d = await res.json().catch(() => ({}))
-      if (res.status === 409) { setError('Pellicule pleine : supprime une photo pour en reprendre une.') }
+      if (res.status === 409) { setError(PLEINE()) }
       else if (!res.ok) { throw new Error(d.error || "Échec de l'envoi.") }
     } catch (err) {
       setError(err.message || "Échec de l'envoi. Réessaie.")
@@ -386,7 +591,7 @@ export default function GuestCamera({ params }) {
   async function snap() {
     if (busy || !videoRef.current) return
     const remaining = guest.shotsPerGuest - guest.shotsTaken
-    if (remaining <= 0) { setError('Pellicule pleine : supprime une photo pour en reprendre une.'); return }
+    if (remaining <= 0) { setError(PLEINE()); return }
     setBusy(true); setError('')
 
     // Flash : torche réelle si dispo (Android), sinon flash écran pour les selfies (caméra avant)
@@ -402,7 +607,7 @@ export default function GuestCamera({ params }) {
     setShutterFx(true); setTimeout(() => setShutterFx(false), 240)
     if (flashOn && !useScreenFlash) { setFlashFx(true); setTimeout(() => setFlashFx(false), 420) }
 
-    try { await capture(await compressToBlob(videoRef.current)) }
+    try { await proposer(await compressToBlob(videoRef.current)) }
     catch (err) { setError(err.message || 'Erreur.') }
     finally {
       setBusy(false)
@@ -416,10 +621,10 @@ export default function GuestCamera({ params }) {
     if (!guest) return
     setError('')
     try {
-      const res = await fetch('/api/guest/bonus', {
+      const res = await envoyer('/api/guest/bonus', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId: id, guestId: guest.guestId, deviceToken: getDeviceToken() }),
-      })
+      }, 'Connexion perdue pendant la recharge. Vérifie ta connexion et réessaie.')
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Erreur.')
       if (typeof d.shotsPerGuest === 'number') setGuest((g) => (g ? { ...g, shotsPerGuest: d.shotsPerGuest } : g))
@@ -427,12 +632,71 @@ export default function GuestCamera({ params }) {
     } catch (err) { setError(err.message || 'Erreur.') }
   }
 
+  // Le déclencheur de secours ouvre l'appareil photo du téléphone. Dans le
+  // mini-navigateur d'une appli de scan de QR code, il n'ouvre rien du tout :
+  // ni refus, ni message, rien. On le repère à ce silence (l'écran n'a pas
+  // bougé), et on propose alors de repasser par un vrai navigateur.
+  function ouvrirAppareilPhoto() {
+    const champ = fileInputRef.current
+    if (!champ) return
+    let parti = false
+    const vuPartir = () => { parti = true }
+    window.addEventListener('blur', vuPartir)
+    document.addEventListener('visibilitychange', vuPartir)
+    champ.click()
+    setTimeout(() => {
+      window.removeEventListener('blur', vuPartir)
+      document.removeEventListener('visibilitychange', vuPartir)
+      if (!parti && androidInApp) setDeclencheurMuet(true)
+    }, 1600)
+  }
+
+  // Rouvre la page dans Chrome. Tous les mini-navigateurs ne savent pas
+  // répondre à cette demande : on la lance dans un cadre invisible, pour ne
+  // pas remplacer la page par une erreur en cas d'échec. Si rien ne bouge, on
+  // bascule sur la copie du lien, qui marche partout.
+  function basculerVersChrome() {
+    const cible = lienChrome(monLien)
+    if (!cible) { setChromeRate(true); return }
+    try {
+      const cadre = document.createElement('iframe')
+      cadre.style.display = 'none'
+      cadre.src = cible
+      document.body.appendChild(cadre)
+      setTimeout(() => { try { cadre.remove() } catch {} }, 1500)
+    } catch { setChromeRate(true) }
+    setTimeout(() => { if (!document.hidden) setChromeRate(true) }, 1700)
+  }
+
+  // Copie du lien : dernier recours, à coller dans Chrome à la main. Le lien
+  // personnel, comme juste au-dessus : on arrive dans Chrome en étant reconnu.
+  function copierMonLien() {
+    const fait = () => { setQrCopied(true); setTimeout(() => setQrCopied(false), 2200) }
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(monLien).then(fait).catch(() => copieAncienne(monLien, fait))
+    } else copieAncienne(monLien, fait)
+  }
+  function copieAncienne(texte, fait) {
+    try {
+      const zone = document.createElement('textarea')
+      zone.value = texte
+      zone.style.position = 'fixed'; zone.style.opacity = '0'
+      document.body.appendChild(zone); zone.select()
+      document.execCommand('copy'); zone.remove(); fait()
+    } catch { setError('Copie impossible. Note le lien : ' + texte) }
+  }
+
+  const boutonChrome = {
+    display: 'block', width: '100%', marginTop: 10, background: '#fff', color: '#1a1410',
+    border: 'none', borderRadius: 999, padding: '11px 18px', fontWeight: 700, fontSize: 14, cursor: 'pointer',
+  }
+
   async function onFilePicked(e) {
     const file = e.target.files?.[0]; e.target.value = ''
     if (!file) return
     setBusy(true); setError('')
     fireShutterFeedback()
-    try { await capture(await prepareUpload(file)) }
+    try { await proposer(await prepareUpload(file)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
 
@@ -440,9 +704,9 @@ export default function GuestCamera({ params }) {
   async function onGalleryPicked(e) {
     const file = e.target.files?.[0]; e.target.value = ''
     if (!file) return
-    if (full) { setError('Pellicule pleine : supprime une photo pour en importer une.'); return }
+    if (full) { setError(suppressionOuverte ? 'Pellicule pleine : supprime une photo pour en importer une.' : PLEINE()); return }
     setBusy(true); setError('')
-    try { await capture(await prepareUpload(file)) }
+    try { await proposer(await prepareUpload(file)) }
     catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
   }
 
@@ -450,31 +714,20 @@ export default function GuestCamera({ params }) {
     if (!viewer || deleting) return
     setDeleting(true); setError('')
     try {
-      const res = await fetch('/api/photo/delete', {
+      const res = await envoyer('/api/photo/delete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photoId: viewer.id, deviceToken: getDeviceToken() }),
-      })
+      }, 'Connexion perdue pendant la suppression. Vérifie ta connexion et réessaie.')
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || 'Suppression impossible.')
       setViewer(null)
       await loadMyPhotos()
-    } catch (err) { setError(err.message) } finally { setDeleting(false) }
+    } catch (err) { setError(err.message || 'Suppression impossible.') } finally { setDeleting(false) }
   }
 
   const remaining = guest ? guest.shotsPerGuest - guest.shotsTaken : 0
   const full = remaining <= 0
   const coupleLabel = meta?.hostNames || meta?.name || ''
-
-  // Bouton « agenda » : proposé tant que l'album n'est pas révélé.
-  // Le lien de l'événement part avec le rendez-vous : impossible de le perdre.
-  const agendaBlock = meta && !meta.revealed ? (
-    <>
-      <a className="btn btn-ghost" href={agendaUrl} style={{ width: '100%' }}>📅 Ajouter à mon agenda</a>
-      <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 6px' }}>
-        La soirée, un rappel photo dans 1 h et la révélation, avec votre lien dans chaque.
-      </p>
-    </>
-  ) : null
 
   // ---------- Écrans ----------
   if (phase === 'loading') return <main className="center-screen"><p className="muted">Chargement…</p></main>
@@ -586,21 +839,23 @@ export default function GuestCamera({ params }) {
       <div className="eyebrow" style={{ marginBottom: 12 }}>Étape 1 / 1</div>
       <h3 className="h3" style={{ marginBottom: 10 }}>Comment vous<br />appelez-vous ?</h3>
       <p className="lead small" style={{ marginBottom: 26 }}>Pour qu'on sache qui a pris quelle photo dans la galerie finale.</p>
-      <form onSubmit={(e) => { e.preventDefault(); if (name.trim()) join(name.trim()) }}>
+      <form onSubmit={soumettreArrivee}>
         <div className="input-icon">
           <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" /></svg>
           <input type="text" placeholder="Votre prénom" value={name} onChange={(e) => setName(e.target.value)} maxLength={40} autoFocus />
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', margin: '20px 2px 8px' }}>
-          <span style={{ fontWeight: 600, fontSize: 14 }}>Votre adresse mail</span>
-          <span className="field-tag">facultatif</span>
+        {/* L'intitulé porte la raison, pas la catégorie. « Votre adresse mail »
+            flanqué d'une étiquette « facultatif » se lisait comme une invitation
+            à passer, et ceux qui passaient ne revenaient jamais voir l'album. */}
+        <div style={{ margin: '20px 2px 8px' }}>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>Pour recevoir les photos quand l&apos;album s&apos;ouvre</span>
         </div>
         <div className="input-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>
           <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
-            autoCorrect="off" spellCheck="false" placeholder="vous@exemple.fr" value={email}
-            onChange={(e) => { setEmail(e.target.value); setMailCheck(null) }}
+            autoCorrect="off" spellCheck="false" placeholder="vous@exemple.fr" value={email} ref={mailRef}
+            onChange={(e) => { setEmail(e.target.value); setMailCheck(null); setConfirmSansMail(false) }}
             onBlur={(e) => verifierMail(e.target.value)} maxLength={160} />
         </div>
 
@@ -619,13 +874,31 @@ export default function GuestCamera({ params }) {
         )}
 
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
-          ✉️ Uniquement pour recevoir le lien de l'album quand les photos sortent.
-          Rien d'autre, jamais.
+          ✉️ Rien d'autre, jamais : ni publicité, ni transmission à qui que ce soit.
+          Elle disparaît avec l'événement.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
-        <button className="btn btn-dark" type="submit" disabled={busy || !name.trim()} style={{ marginTop: 20 }}>
-          {busy ? 'Un instant…' : "Ouvrir l'appareil →"}
-        </button>
+        {confirmSansMail ? (
+          <div className="mail-stop">
+            <strong>Continuer sans adresse ?</strong>
+            <span>
+              Vous ne serez pas prévenu quand les photos arrivent, et vous ne pourrez plus
+              les retrouver depuis un autre téléphone.
+            </span>
+            <button type="button" className="btn btn-dark" style={{ marginTop: 12 }}
+              onClick={() => { setConfirmSansMail(false); mailRef.current?.focus() }}>
+              Ajouter mon adresse
+            </button>
+            <button type="button" className="linklike" style={{ marginTop: 10, fontSize: 13.5 }}
+              onClick={() => join(name.trim(), '')} disabled={busy}>
+              {busy ? 'Un instant…' : 'Continuer sans'}
+            </button>
+          </div>
+        ) : (
+          <button className="btn btn-dark" type="submit" disabled={busy || !name.trim()} style={{ marginTop: 20 }}>
+            {busy ? 'Un instant…' : "Ouvrir l'appareil →"}
+          </button>
+        )}
       </form>
     </main>
   )
@@ -673,15 +946,19 @@ export default function GuestCamera({ params }) {
         {shutterFx && <div className="cam-shutter-fx" />}
         {flashFx && <div className="cam-flash" />}
 
+        {/* Le message part dans la feuille de style : téléphone couché, il se
+            redresse pour rester lisible sans avoir à tourner l'appareil. */}
         {camBlocked && (
-          <div style={{ position: 'absolute', inset: 0, zIndex: 5, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', gap: 14, padding: 24, background: 'rgba(10,8,6,.8)', backdropFilter: 'blur(3px)', WebkitBackdropFilter: 'blur(3px)' }}>
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M1 1l22 22" /><path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m4-3h4l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56" />
-            </svg>
-            <p style={{ color: '#fff', fontWeight: 700, fontSize: 15, margin: 0, maxWidth: 250, lineHeight: 1.4 }}>Vous n'avez pas autorisé votre caméra</p>
-            <button onClick={retryCamera} style={{ background: '#fff', color: '#1a1410', border: 'none', borderRadius: 999, padding: '11px 22px', fontWeight: 700, fontSize: 14.5, cursor: 'pointer' }}>
-              Autoriser ma caméra
-            </button>
+          <div className="vf-bloque">
+            <div className="vf-bloque-in">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M1 1l22 22" /><path d="M21 21H3a2 2 0 01-2-2V8a2 2 0 012-2h3m4-3h4l2 3h4a2 2 0 012 2v9.34m-7.72-2.06a4 4 0 11-5.56-5.56" />
+              </svg>
+              <p>{camDenied ? 'Ta caméra est bloquée' : "Vous n'avez pas autorisé votre caméra"}</p>
+              {camDenied
+                ? <p className="vf-bloque-sub">La marche à suivre est juste en dessous 👇</p>
+                : <button onClick={retryCamera}>Autoriser ma caméra</button>}
+            </div>
           </div>
         )}
 
@@ -706,28 +983,52 @@ export default function GuestCamera({ params }) {
       </div>
 
       {/* Ouvert depuis une messagerie, sans caméra en direct : la plupart des
-          participants arrivent ainsi. On ne les renvoie pas ailleurs, on leur dit
-          simplement que le bouton marche quand même. */}
-      {inApp && !liveCam && !camBlocked && (
+          participants arrivent ainsi. Sur iPhone, le bouton marche quand même :
+          on se contente de le dire. */}
+      {inApp && !androidInApp && !liveCam && !camBlocked && (
         <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.12)' }}>
           📸 Touche le déclencheur : l’appareil photo de ton téléphone s’ouvre, et ta photo rejoint l’album.
         </div>
       )}
 
-      {camBlocked && (
+      {/* Android + mini-navigateur (le cas des applis de scan de QR code) :
+          ni la caméra, ni le déclencheur de secours ne répondent. Inutile de
+          rassurer : il faut sortir de là. */}
+      {androidInApp && !liveCam && !camBlocked && (
+        <div className="notice" style={{ marginTop: 12, background: 'rgba(255,196,120,.14)', color: 'rgba(255,255,255,.92)', border: '1px solid rgba(255,196,120,.34)', textAlign: 'left' }}>
+          <p style={{ margin: 0, fontWeight: 700, fontSize: 14 }}>
+            {declencheurMuet ? 'Le déclencheur ne répond pas ici' : 'Ouvre la page dans ton navigateur'}
+          </p>
+          <p style={{ margin: '6px 0 0', fontSize: 13, lineHeight: 1.5, opacity: .88 }}>
+            Ton appli de scan affiche la page dans sa propre fenêtre, qui n’a pas le droit d’ouvrir l’appareil photo.
+          </p>
+          <button type="button" onClick={basculerVersChrome} style={boutonChrome}>
+            Ouvrir dans Chrome →
+          </button>
+          {chromeRate && (
+            <div style={{ marginTop: 10, fontSize: 12.5, lineHeight: 1.6, opacity: .85 }}>
+              Ça n’a pas marché ? Copie le lien, ouvre Chrome, et colle-le dans la barre d’adresse.
+              <button type="button" onClick={copierMonLien} style={{ ...boutonChrome, background: 'transparent', color: '#fff', border: '1px solid rgba(255,255,255,.4)' }}>
+                {qrCopied ? '✓ Lien copié' : 'Copier le lien'}
+              </button>
+              <span style={{ display: 'block', marginTop: 8, opacity: .8 }}>
+                La prochaine fois, scanne le QR code avec l’appareil photo de ton téléphone : il ouvre le bon navigateur tout seul.
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Refus enregistré par le navigateur : le mode d'emploi s'affiche en clair,
+          sans rien à déplier. Refus passager : le bouton du viseur suffit, on
+          garde la manipulation sous le coude pour ceux qu'il n'a pas dépannés. */}
+      {camDenied && <CameraBloquee onReessayer={retryCamera} />}
+
+      {camBlocked && !camDenied && (
         <details style={{ marginTop: 10, color: 'rgba(255,255,255,.6)', fontSize: 12.5 }}>
           <summary style={{ cursor: 'pointer' }}>Toujours bloquée après avoir cliqué ?</summary>
-          <div style={{ marginTop: 8, lineHeight: 1.6 }}>
-            • <strong>iPhone (Safari)</strong> : touche « aA » à gauche de l'adresse → Réglages du site → Caméra → Autoriser.<br />
-            • <strong>Android (Chrome)</strong> : touche le cadenas 🔒 → Autorisations → Caméra.<br />
-            <span style={{ opacity: .8 }}>En attendant, le gros bouton ouvre l'appareil photo de ton téléphone.</span>
-            {/* Dernier recours : la page d'aide couvre les autres causes
-                (mini-navigateur, réseau, téléphone partagé…). */}
-            <br />
-            <a href="/aide" target="_blank" rel="noreferrer"
-              style={{ color: '#fff', textDecoration: 'underline', display: 'inline-block', marginTop: 6 }}>
-              Voir les autres solutions →
-            </a>
+          <div style={{ marginTop: 8 }}>
+            <CameraBloquee onReessayer={retryCamera} />
           </div>
         </details>
       )}
@@ -762,7 +1063,8 @@ export default function GuestCamera({ params }) {
                       navigateur gardait ces 3 images en cache « sans CORS », puis
                       refusait de les resservir à l'album qui, lui, les demande avec : 
                       trois vignettes cassées, toujours les mêmes. */}
-                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
+                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous"
+                    className={flouterMesPhotos ? 'photo-scellee' : undefined} />
                 </span>
               ))}
               {roll.length >= 1 && <span className="pf-count">{Math.min(roll.length, guest?.shotsPerGuest || roll.length)}</span>}
@@ -780,7 +1082,7 @@ export default function GuestCamera({ params }) {
           ) : (
             <>
               <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFilePicked} style={{ display: 'none' }} />
-              <button className="shutter" disabled={busy || full} onClick={() => fileInputRef.current?.click()} aria-label="Prendre une photo"><span /></button>
+              <button className="shutter" disabled={busy || full} onClick={ouvrirAppareilPhoto} aria-label="Prendre une photo"><span /></button>
             </>
           )}
         </div>
@@ -851,8 +1153,28 @@ export default function GuestCamera({ params }) {
             </button>
           </div>
 
+          {/* Le mur du groupe : ce que les autres ont pris, flouté jusqu'à la
+              révélation. Rien n'est cliquable, il n'y a rien à ouvrir : c'est
+              une rumeur d'images, pas un album. */}
+          {!meta?.revealed && mur.length > 0 && (
+            <>
+              <div className="album-divider" />
+              <div className="album-mine-label">Le mur du groupe · flouté</div>
+              <div className="mur-grid">
+                {mur.map((p) => (
+                  <div className="mur-thumb" key={p.id}>
+                    <img src={p.url} alt="" loading="lazy" draggable="false" />
+                  </div>
+                ))}
+              </div>
+              <p className="mur-note">Les photos des autres, à mesure qu'elles arrivent. Elles se dévoilent à la révélation.</p>
+            </>
+          )}
+
           <div className="album-divider" />
-          <div className="album-mine-label">Mes photos · {myPhotos.length}/{guest?.shotsPerGuest}</div>
+          <div className="album-mine-label">
+            Mes photos · {myPhotos.length}/{guest?.shotsPerGuest}{flouterMesPhotos ? ' · scellées' : ''}
+          </div>
 
           <div className="album-grid">
             {roll.length === 0 ? (
@@ -860,14 +1182,24 @@ export default function GuestCamera({ params }) {
             ) : (
               roll.map((p, i) => (
                 <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
-                  onClick={() => !p.pending && p.id && setViewer({ id: p.id, url: p.url })} aria-label="Voir la photo">
+                  onClick={() => { if (!p.pending && p.id && !flouterMesPhotos) setViewer({ id: p.id, url: p.url }) }}
+                  aria-label={flouterMesPhotos ? 'Photo scellée jusqu’à la révélation' : 'Voir la photo'}>
                   {/* crossOrigin : sans lui, la photo mise en cache par cette
                       vignette ne peut plus être relue pour le zip. */}
-                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
+                  <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous"
+                    className={flouterMesPhotos ? 'photo-scellee' : undefined} />
                 </button>
               ))
             )}
           </div>
+
+          {flouterMesPhotos && roll.length > 0 && (
+            <p className="mur-note">
+              {demandeConfirmation(mode)
+                ? 'Vous les avez vues au moment du déclic. Elles se redécouvrent à la révélation.'
+                : 'Comme dans un appareil jetable : vous les découvrirez à la révélation.'}
+            </p>
+          )}
 
           {meta?.revealed && (
             <a className="album-fulllink" href={`/g/${id}`}>🎞️ Voir l'album complet de tous les participants →</a>
@@ -891,9 +1223,12 @@ export default function GuestCamera({ params }) {
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <button className="btn btn-accent" style={{ width: '100%' }} onClick={smsMyLink}>📲 M'envoyer le lien par SMS</button>
               <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
+                <strong>Strictement personnel</strong> : ce lien rouvre votre appareil et vos photos.
+                Pour inviter quelqu'un, montrez le QR code ou utilisez « Partager ».
+              </p>
+              <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
                 Au tarif d'un SMS classique vers un numéro non surtaxé, généralement inclus dans votre forfait.
               </p>
-              {agendaBlock}
               <div style={{ display: 'flex', gap: 8 }}>
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyJoinLink}>{qrCopied ? '✓ Copié' : 'Copier le lien'}</button>
                 <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>
@@ -912,20 +1247,66 @@ export default function GuestCamera({ params }) {
             <p className="muted small" style={{ textAlign: 'center', margin: '0 0 18px' }}>
               Vous pourrez rouvrir votre appareil et finir vos {guest?.shotsPerGuest} photos quand vous voulez. Envoyez-vous le lien pour le retrouver facilement.
             </p>
+            {/* Une seule proposition, et une seule sortie. Copier le lien et le
+                partager vivent déjà derrière le bouton QR code, l'agenda faisait
+                doublon avec les mails : les empiler ici noyait la sortie, qui
+                n'était qu'un texte gris et ne se voyait pas comme un bouton. */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               <button className="btn btn-accent" style={{ width: '100%' }} onClick={smsMyLink}>📲 M'envoyer le lien par SMS</button>
               <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 0' }}>
+                <strong>Strictement personnel</strong> : ce lien rouvre votre appareil et vos photos. Ne le transmettez pas.
+              </p>
+              <p style={{ textAlign: 'center', fontSize: 11.5, color: 'var(--text3)', margin: '2px 0 6px' }}>
                 Au tarif d'un SMS classique vers un numéro non surtaxé, généralement inclus dans votre forfait.
               </p>
-              {agendaBlock}
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={copyJoinLink}>{qrCopied ? '✓ Copié' : 'Copier le lien'}</button>
-                <button className="btn btn-ghost" style={{ flex: 1 }} onClick={shareMyLink}>Partager</button>
-              </div>
-              <button onClick={() => setShowSaveTip(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text3)', fontSize: 13, padding: '6px 0', marginTop: 2 }}>
-                Plus tard, commencer à photographier
+              <button className="btn btn-ghost" style={{ width: '100%' }} onClick={() => setShowSaveTip(false)}>
+                Commencer à photographier
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Les notifications de soirée. Posée une seule fois, après la première
+          photo. Pas de fermeture au clic sur le fond : deux boutons, deux
+          réponses, et la question ne revient plus. */}
+      {showPushTip && (
+        <div className="viewer" style={{ background: 'rgba(10,8,6,.72)' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: 340, background: '#F4EDDD', borderRadius: 22, padding: '26px 22px', boxShadow: '0 24px 60px rgba(0,0,0,.4)' }}>
+            <div style={{ textAlign: 'center', fontSize: 34, marginBottom: 8 }}>🔔</div>
+            <h3 className="h3" style={{ textAlign: 'center', margin: '0 0 8px', color: '#1a1410' }}>Vous prévenir s'il vous reste des photos ?</h3>
+            <p className="muted small" style={{ textAlign: 'center', margin: '0 0 18px' }}>
+              Un ou deux rappels pendant la soirée, puis le lien de l'album dès qu'il s'ouvre. Rien d'autre, et vous pouvez couper à tout moment depuis votre navigateur.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button className="btn btn-accent" style={{ width: '100%' }} onClick={accepterNotifications} disabled={pushBusy}>
+                {pushBusy ? 'Un instant…' : 'Oui, me prévenir'}
+              </button>
+              <button className="btn btn-ghost" style={{ width: '100%' }} onClick={() => setShowPushTip(false)} disabled={pushBusy}>
+                Non merci
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Le seul regard autorisé en mode « Une seule chance » : le cliché
+          s'affiche une fois, à l'instant du déclic. On le garde, ou on le
+          reprend, et alors il n'aura jamais existé (le compteur ne bouge qu'à
+          l'envoi). Pas de fermeture au clic sur le fond : laisser sortir sans
+          choisir perdrait la photo sans le dire. */}
+      {aConfirmer && (
+        <div className="viewer">
+          <img src={aConfirmer.url} alt="Le cliché que vous venez de prendre" />
+          <p className="confirm-note">Vous ne la reverrez qu'à la révélation.</p>
+          <div className="viewer-actions">
+            <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }}
+              onClick={reprendreLeCliche} disabled={busy}>
+              Reprendre
+            </button>
+            <button className="btn btn-accent" onClick={garderLeCliche} disabled={busy}>
+              Garder
+            </button>
           </div>
         </div>
       )}

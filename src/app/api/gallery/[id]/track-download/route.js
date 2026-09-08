@@ -1,4 +1,5 @@
 import { rpc, insertRow } from '../../../../../lib/supabase'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 // Enregistre un téléchargement d'album (bouton « Tout télécharger »).
 //
@@ -8,6 +9,7 @@ import { rpc, insertRow } from '../../../../../lib/supabase'
 // même personne peut gonfler à elle seule.
 export async function POST(request, { params }) {
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   if (!id) return Response.json({ error: 'Événement non précisé.' }, { status: 400 })
 
   const body = await request.json().catch(() => ({}))

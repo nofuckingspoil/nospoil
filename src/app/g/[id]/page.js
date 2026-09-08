@@ -6,6 +6,7 @@ import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
 import { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, cssTeinte, tamponDate, cuirePhoto } from '../../../lib/film'
+import Collage from '../../../components/Collage'
 import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
 import Avis from '../../../components/Avis'
 import { ACCROCHE } from '../../../lib/avis'
@@ -210,7 +211,40 @@ function CodeGate({ data, value, onChange, onSubmit, err }) {
 // dans la page (Firefox ignore un clic sur un lien hors document), et l'adresse
 // temporaire ne se libère qu'après coup : la libérer tout de suite interrompt
 // l'enregistrement d'un gros fichier sur Safari.
-function enregistrer(blob, nom) {
+/**
+ * Remettre le fichier à la personne.
+ *
+ * Sur ordinateur, un lien invisible avec l'attribut `download` suffit. Sur
+ * iPhone, non : Safari ignore cet attribut quand l'adresse est un blob. Le
+ * bouton semblait alors ne rien faire, sans le moindre message.
+ *
+ * On tente donc d'abord la feuille de partage du système, celle qui propose
+ * « Enregistrer dans Photos ». Elle exige un geste récent : après plusieurs
+ * secondes de préparation, iOS peut la refuser. Le lien classique reste alors
+ * en secours, et l'on rend `false` si rien n'a pu aboutir, pour que l'appelant
+ * puisse le dire au lieu de laisser croire à une réussite.
+ */
+/** iPad compris, qui se présente comme un Mac mais répond au doigt. */
+function estIOS() {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent || ''
+  return /iPad|iPhone|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)
+}
+
+async function enregistrer(blob, nom) {
+  const fichier = new File([blob], nom, { type: blob.type || 'image/jpeg' })
+  // Réservé à iOS : ailleurs le téléchargement classique marche très bien, et
+  // ouvrir une feuille de partage sur un ordinateur serait une régression.
+  if (estIOS() && navigator.canShare?.({ files: [fichier] })) {
+    try {
+      await navigator.share({ files: [fichier] })
+      return true
+    } catch (err) {
+      // La personne a fermé la feuille : c'est un choix, pas une panne.
+      if (err?.name === 'AbortError') return true
+    }
+  }
+
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
   a.href = url
@@ -219,12 +253,19 @@ function enregistrer(blob, nom) {
   document.body.appendChild(a)
   a.click()
   setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
+  // Safari sur iPhone n'honore pas `download` : on ne peut pas le vérifier,
+  // seulement le signaler.
+  return !estIOS()
 }
 
 // Regarder une photo, et passer à la suivante d'un doigt. Ouvrir le fichier
 // dans un onglet, c'était sortir de l'album : on perdait le nom, l'heure, le
 // cœur, et il fallait revenir en arrière pour voir la photo d'après.
-function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe }) {
+// `onImageCassee` vient de la galerie et doit être passé en propriété : la
+// visionneuse est un composant à part, elle n'a pas accès aux fonctions
+// définies dans `Gallery`. L'oublier faisait planter la page à l'ouverture
+// d'une photo, avec un « adresseCassee is not defined » que rien ne rattrapait.
+function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
   const [dx, setDx] = useState(0)
   const [glisse, setGlisse] = useState(false)
   const geste = useRef(null)
@@ -297,6 +338,7 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
                     navigateur : les voisines se chargent, mais jamais au prix
                     de celle qu'on a sous les yeux. */}
                 <img src={ph.fullUrl || ph.url} alt={`Photo de ${ph.who}`} crossOrigin="anonymous" draggable={false}
+                  onError={onImageCassee}
                   fetchPriority={j === index ? 'high' : 'low'}
                   style={pelli.css ? { filter: pelli.css } : undefined} />
                 {pelli.teinte && <div className="film-teinte" style={{ background: cssTeinte(pelli) }} />}
@@ -339,6 +381,22 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
           <button className="diapo-b" onClick={() => onDownload(p)} disabled={occupe}>
             {occupe ? '…' : '⬇ Enregistrer'}
           </button>
+          {/* Sa propre photo se retire ; celle des autres se signale. Jamais les
+              deux à la fois : on ne supprime pas le cliché d'autrui, et signaler
+              le sien serait un détour absurde pour arriver au même endroit. */}
+          {p.mine ? (
+            onRetirer && (
+              <button className="diapo-b" onClick={() => onRetirer(p)} aria-label="Retirer ma photo de l'album">
+                🗑 Retirer ma photo
+              </button>
+            )
+          ) : (
+            onSignaler && (
+              <button className="diapo-b" onClick={() => onSignaler(p)} aria-label="Signaler cette photo">
+                ⚑ Signaler
+              </button>
+            )
+          )}
         </div>
       </div>
     </div>
@@ -361,6 +419,19 @@ export default function Gallery({ params }) {
   // Un téléchargement raté se dit à côté du bouton : le signaler comme une
   // erreur de page effaçait l'album entier, pour un zip manqué.
   const [zipErr, setZipErr] = useState('')
+  // Un enregistrement réussi ne disait rien. Sur un téléphone, le fichier part
+  // sans bruit ni fenêtre : on croyait le bouton mort. Le message se pose
+  // par-dessus tout, y compris la photo en plein écran, sinon il resterait
+  // caché derrière elle, ce qui était déjà le cas des messages d'erreur.
+  const [zipOk, setZipOk] = useState('')
+  const minuteur = useRef(null)
+  function annoncer(texte) {
+    setZipErr('')
+    setZipOk(texte)
+    clearTimeout(minuteur.current)
+    minuteur.current = setTimeout(() => setZipOk(''), 4000)
+  }
+  useEffect(() => () => clearTimeout(minuteur.current), [])
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
   const [chercheQui, setChercheQui] = useState('')
@@ -414,7 +485,9 @@ export default function Gallery({ params }) {
         const brut = await fetch(p.fullUrl || p.url).then((r) => r.blob())
         const blob = await cuire(brut, p)
         const qui = (p.who || 'invite').normalize('NFD').replace(/[^a-zA-Z0-9]/g, '')
-        enregistrer(blob, `timetoflash-${qui}.jpg`)
+        const ok = await enregistrer(blob, `timetoflash-${qui}.jpg`)
+        if (ok) annoncer('Photo enregistrée')
+        else setZipErr('Sur iPhone, appuyez longuement sur la photo puis choisissez « Ajouter aux photos ».')
       } catch { setZipErr('Téléchargement impossible : les photos n\'ont pas pu être relues. Réessayez dans un instant.') }
       return
     }
@@ -441,7 +514,9 @@ export default function Gallery({ params }) {
         return
       }
       const out = await z.generateAsync({ type: 'blob' })
-      enregistrer(out, 'timetoflash-photos.zip')
+      const ok = await enregistrer(out, 'timetoflash-photos.zip')
+      if (ok) annoncer(reussies > 1 ? `${reussies} photos enregistrées` : 'Photo enregistrée')
+      else setZipErr('Sur iPhone, l\'archive s\'ouvre dans l\'application Fichiers.')
     } catch (e) {
       setZipErr('Téléchargement impossible.')
     } finally { setZip(null) }
@@ -473,6 +548,8 @@ export default function Gallery({ params }) {
   // C'est le serveur qui décide d'afficher la question, pas le navigateur :
   // quelqu'un qui a déjà répondu par mail ne doit pas la revoir ici, fût-ce
   // depuis un autre téléphone.
+  // L'image à emporter sur Instagram : un écran plein, ouvert depuis l'album.
+  const [montrerCollage, setMontrerCollage] = useState(false)
   const [montrerAvis, setMontrerAvis] = useState(false)
   const [avisFerme, setAvisFerme] = useState(false)
   const pingFait = useRef(false)
@@ -538,6 +615,29 @@ export default function Gallery({ params }) {
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ------------------------------------------------------------------
+  //  Quand une image casse, on redemande des adresses fraîches.
+  //
+  //  Les photos sont servies par des adresses SIGNÉES, valables un temps
+  //  limité. Un album laissé ouvert plus longtemps que ça voyait donc toutes
+  //  ses images se transformer en petits cadres cassés, d'un coup, sans que
+  //  rien ne l'explique : les adresses étaient périmées, et la page n'avait
+  //  aucun moyen de s'en apercevoir ni de s'en remettre.
+  //
+  //  Une seule reprise suffit : elle rapporte des adresses neuves pour TOUTES
+  //  les photos. On la déclenche au premier échec, et on la verrouille pendant
+  //  quelques secondes, sinon deux cents images cassées lanceraient deux cents
+  //  requêtes en même temps.
+  const reprise = useRef(0)
+  function adresseCassee() {
+    const maintenant = Date.now()
+    if (maintenant - reprise.current < 10000) return
+    reprise.current = maintenant
+    fetchGallery()
+      .then((d) => { if (!d.error && Array.isArray(d.photos)) setData(d) })
+      .catch(() => {})
+  }
+
   // Le participant saisit le code d'accès à l'album privé
   function submitCode(e) {
     e.preventDefault()
@@ -571,6 +671,57 @@ export default function Gallery({ params }) {
     await fetch(`/api/events/${id}/photo?photoId=${photoId}`, {
       method: 'DELETE', headers: { 'x-owner-token': getOwnerToken(id) },
     }).catch(() => {})
+  }
+
+  // Signaler la photo d'un autre. Elle est masquée sur-le-champ, jamais
+  // supprimée : l'organisateur la voit toujours et peut la rétablir si le
+  // signalement n'était pas fondé.
+  async function signalerPhoto(p) {
+    const ok = window.confirm(
+      "Signaler cette photo ?\n\n"
+        + "Elle sera masquée immédiatement pour tout le monde, et l'organisateur en sera informé. "
+        + "Elle n'est pas supprimée : il pourra la rétablir si le signalement n'était pas fondé."
+    )
+    if (!ok) return
+    setDiapo(null)
+    setData((d) => ({ ...d, photos: d.photos.filter((x) => x.id !== p.id) }))
+    const r = await fetch(`/api/gallery/${id}/report`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-device-token': getDeviceToken() },
+      body: JSON.stringify({ photoId: p.id }),
+    }).catch(() => null)
+    if (!r || !r.ok) {
+      window.alert("Le signalement n'a pas pu être envoyé. Réessaie dans un instant.")
+      load()
+      return
+    }
+    window.alert("C'est fait. La photo est masquée, et l'organisateur vient d'être prévenu.")
+  }
+
+  // Retirer sa propre photo, longtemps après la soirée.
+  //
+  // La suppression n'existait que dans la seconde qui suit la prise de vue :
+  // qui regrettait son cliché le lendemain n'avait plus aucun recours. La photo
+  // appartient à qui l'a prise, elle part donc pour de bon, y compris pour
+  // l'organisateur, et c'est dit avant de valider.
+  async function retirerMaPhoto(p) {
+    const ok = window.confirm(
+      "Retirer définitivement cette photo ?\n\n"
+        + "Elle disparaîtra de l'album pour tout le monde, et les organisateurs n'y auront plus accès. "
+        + "Cette action est irréversible."
+    )
+    if (!ok) return
+    setDiapo(null)
+    setData((d) => ({ ...d, photos: d.photos.filter((x) => x.id !== p.id) }))
+    const r = await fetch('/api/photo/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ photoId: p.id, deviceToken: getDeviceToken() }),
+    }).catch(() => null)
+    if (!r || !r.ok) {
+      window.alert("La photo n'a pas pu être retirée. Réessaie dans un instant.")
+      load()
+    }
   }
 
   if (error) return <main className="screen screen-cream center"><div className="card">{error}</div></main>
@@ -658,6 +809,20 @@ export default function Gallery({ params }) {
     )
   }
 
+  if (montrerCollage) {
+    return (
+      <Collage
+        photos={data.photos}
+        nom={data.hostNames || data.name}
+        favs={favs}
+        pelliculeId={pelliculeId}
+        avecDate={avecDate}
+        onFermer={() => setMontrerCollage(false)}
+        onEnregistrer={enregistrer}
+      />
+    )
+  }
+
   return (
     <main className="screen screen-cream wide gal-page">
       {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
@@ -692,6 +857,15 @@ export default function Gallery({ params }) {
             </button>
           )}
         </div>
+
+        {/* Une image, un enregistrement, une publication : le chemin le plus
+            court entre l'album et Instagram. Le bouton se voit, sans occuper
+            la place des photos. */}
+        {data.photos.length > 0 && (
+          <button className="gal-partage" onClick={() => setMontrerCollage(true)}>
+            <span aria-hidden="true">✦</span> Créer une image à partager
+          </button>
+        )}
 
         {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
             occupaient le premier écran d'un téléphone, et les photos
@@ -848,11 +1022,6 @@ export default function Gallery({ params }) {
             )}
           </div>
         )}
-        {zipErr && (
-          <p className="notice small" style={{ marginTop: 10, background: '#fdeceb', borderColor: '#e5a29b' }}>
-            ⚠️ {zipErr}
-          </p>
-        )}
         {photos.length > 0 && (pelli.canaux || avecDate) && (
           <p className="film-note">
             🎞️ Vos photos seront enregistrées avec la pellicule <strong>{pelli.nom}</strong>
@@ -900,7 +1069,7 @@ export default function Gallery({ params }) {
                       le navigateur range la photo dans un coin de son cache où
                       le JavaScript n'a pas le droit d'aller la relire, et le zip
                       repartait vide. Avec, le zip réutilise ce qui est déjà là. */}
-                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" crossOrigin="anonymous"
+                  <img src={p.url} alt={`Photo de ${p.who}`} loading="lazy" crossOrigin="anonymous" onError={adresseCassee}
                     style={pelli.css ? { filter: pelli.css } : undefined} />
                   {pelli.teinte && <div className="film-teinte" style={{ background: cssTeinte(pelli) }} />}
                   {pelli.halo > 0 && <div className="film-halo" style={{ opacity: pelli.halo }} />}
@@ -992,6 +1161,35 @@ export default function Gallery({ params }) {
         </div>
       )}
 
+      {/* Le message flotte au-dessus de tout, y compris de la photo en plein
+          écran, qui occupe l'écran entier. Posé dans le corps de la page, il
+          serait resté invisible au moment précis où l'on en a besoin. */}
+      {(zipOk || zipErr) && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: 'fixed',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            bottom: 'calc(96px + env(safe-area-inset-bottom))',
+            zIndex: 200,
+            maxWidth: 'min(92vw, 420px)',
+            padding: '12px 18px',
+            borderRadius: 999,
+            background: zipErr ? '#fdeceb' : 'rgba(20,22,31,.94)',
+            color: zipErr ? '#7a2018' : '#F6F1E7',
+            border: zipErr ? '1px solid #e5a29b' : '1px solid rgba(255,255,255,.14)',
+            boxShadow: '0 12px 32px rgba(0,0,0,.28)',
+            fontSize: 15,
+            fontWeight: 600,
+            textAlign: 'center',
+          }}
+        >
+          {zipErr ? `⚠️ ${zipErr}` : `✓ ${zipOk}`}
+        </div>
+      )}
+
       {diapo !== null && photos[diapo] && (
         <Diapo
           photos={photos}
@@ -1004,6 +1202,9 @@ export default function Gallery({ params }) {
           onClose={() => setDiapo(null)}
           onDownload={(p) => downloadAll([p])}
           occupe={!!zip}
+          onSignaler={data.isOwner ? undefined : signalerPhoto}
+          onRetirer={data.isOwner ? undefined : retirerMaPhoto}
+          onImageCassee={adresseCassee}
         />
       )}
 

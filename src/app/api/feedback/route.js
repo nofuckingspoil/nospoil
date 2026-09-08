@@ -12,6 +12,7 @@
 import { selectRows, insertRow, updateRow } from '../../../lib/supabase'
 import { estUneAlerte } from '../../../lib/avis'
 import { alerterAdmin } from '../../../lib/avis-mail'
+import { estUuid } from '../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -61,7 +62,7 @@ async function resoudre(body) {
 
   const eventId = texte(body.eventId)
   const deviceToken = texte(body.deviceToken)
-  if (!eventId || !deviceToken) return null
+  if (!eventId || !deviceToken || !estUuid(eventId)) return null
   const { data } = await selectRows(
     'guests',
     `event_id=eq.${eventId}&device_token=eq.${encodeURIComponent(deviceToken)}&select=id,event_id,display_name,feedback_at&limit=1`
@@ -75,7 +76,7 @@ async function resoudre(body) {
 }
 
 async function evenement(id) {
-  if (!id) return null
+  if (!estUuid(id)) return null
   const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_email&limit=1`)
   return Array.isArray(data) ? data[0] : null
 }

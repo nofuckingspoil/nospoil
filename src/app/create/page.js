@@ -1,14 +1,17 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, EMAIL_VERIFICATION_ENABLED, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
+import { MODE_OPTIONS, MODE_PROPOSE } from '../../lib/photo-mode'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
+import { DUREE_PROPOSEE_MIN } from '../../lib/rappels'
 import { track } from '../../lib/tracking'
 import TierPicker from '../../components/TierPicker'
+import SelecteurDate from '../../components/SelecteurDate'
 import PromoField from '../../components/PromoField'
 
 // ---------- Petits utilitaires de date ----------
@@ -28,9 +31,36 @@ function nextSaturday() {
   return d
 }
 
+// « Le lendemain à midi » n'a de sens que si la fête est finie : une soirée qui
+// se termine à 14 h le lendemain repousse la proposition d'un jour de plus.
+function apresLaFete(daysAhead, hour, debut, fin) {
+  let d = atDay(daysAhead, hour, new Date(debut))
+  const finMs = new Date(fin).getTime()
+  let garde = 0
+  while (Number.isFinite(finMs) && d.getTime() <= finMs && garde++ < 14) {
+    d = new Date(d.getTime() + 24 * 3600 * 1000)
+  }
+  return d
+}
+
+// Minuit du jour d'une valeur de champ : pour comparer des jours, jamais des
+// instants. « Le lendemain » se juge sur la date, pas sur les 24 heures.
+function jourDe(v) {
+  const d = new Date(v)
+  if (isNaN(d.getTime())) return null
+  return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+}
+
 function toInputValue(d) {
   const pad = (n) => String(n).padStart(2, '0')
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+// « le dim. 13 sept. à 20:00 » : assez court pour tenir dans une pastille.
+function frCourt(iso) {
+  const d = new Date(iso)
+  if (isNaN(d)) return ''
+  return `le ${d.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })} à ${d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}`
 }
 
 function frDate(iso) {
@@ -38,6 +68,11 @@ function frDate(iso) {
   if (isNaN(d)) return '-'
   return d.toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
 }
+
+// Photo montrée tant que l'organisateur n'a pas choisi la sienne. Une vraie
+// photo de soirée : une capture d'écran de l'application ne dit pas ce qu'est
+// une couverture.
+const COUVERTURE_EXEMPLE = '/journal/photos-invites-mariage-moments-spontanes.webp'
 
 // ---------- Choix proposés ----------
 
@@ -57,6 +92,30 @@ const SHOT_PRESETS = [
 ]
 
 
+// L'ORDRE DES ÉCRANS TIENT DANS CETTE LISTE.
+//
+// Une question par écran, et rien de plus. L'ordre n'est pas neutre : les trois
+// premiers écrans ne demandent aucune réflexion (le nom, la date, la
+// révélation sont ce que l'organisateur avait déjà en tête), la couverture
+// arrive quand elle devient une récompense plutôt qu'une corvée, et le prix
+// se pose en avant-dernier, une fois la personne investie. Il n'est pas caché
+// pour autant : la ligne « X participants · tarif » reste affichée en haut de
+// tous les écrans.
+//
+// Déplacer une question, c'est déplacer une ligne ici : plus aucun numéro
+// d'étape n'est écrit ailleurs dans le fichier.
+const ETAPES = [
+  'nom',
+  'debut',
+  'fin',
+  'revelation',
+  'cliches',
+  'revoir',
+  'couverture',
+  'formule',
+  'final',
+]
+
 // ---------- Assistant ----------
 
 function CreateForm() {
@@ -75,19 +134,34 @@ function CreateForm() {
   const priceCents = promo ? promo.priceCents : tier.priceCents
   const isPaid = priceCents > 0
 
-  // Étapes : 1 nom · 2 couverture · 3 clichés · 4 révélation · 5 mail + récap · 'code'
+  // Neuf écrans plutôt que cinq, et pourtant l'assistant paraît plus court :
+  // ce qui fatigue n'est pas le nombre d'écrans, c'est le nombre de décisions
+  // par écran. Le numéro d'étape a disparu pour la même raison : la barre suffit
+  // à situer, elle n'annonce pas la longueur du chemin.
+  //
+  // `step` est le rang dans ETAPES (1 = le premier écran), plus 'code' pour la
+  // vérification par mail, qui vit en dehors du parcours.
   const [step, setStep] = useState(1)
-  const TOTAL = 5
+  const TOTAL = ETAPES.length
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [shots, setShots] = useState(5)
   const [shotsCustom, setShotsCustom] = useState(false)
+  const [photoMode, setPhotoMode] = useState(MODE_PROPOSE)
   const [startsAt, setStartsAt] = useState(toInputValue(nextSaturday()))
+  // Fin de la fête : proposée six heures après le début, et modifiable. C'est
+  // elle qui règle la cadence des rappels envoyés aux participants.
+  const [endsAt, setEndsAt] = useState(toInputValue(new Date(nextSaturday().getTime() + DUREE_PROPOSEE_MIN * 60000)))
   const [revealKey, setRevealKey] = useState('d1-20')
   const [revealAt, setRevealAt] = useState(toInputValue(atDay(1, 20, nextSaturday())))
   const [coverFile, setCoverFile] = useState(null)
   const [coverPreview, setCoverPreview] = useState('')
+  // Cadrage de la couverture, au format CSS « 50% 50% », et l'aperçu en grand.
+  const [coverPos, setCoverPos] = useState('50% 50%')
+  const [recadrage, setRecadrage] = useState(false)
+  const [apercu, setApercu] = useState(false)
+  const glisseRef = useRef(null)
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -99,6 +173,14 @@ function CreateForm() {
 
   function goTo(n) { setError(''); setStep(n) }
 
+  // L'écran affiché, et le moyen d'en désigner un par son nom : « allerA(
+  // 'cliches') » survit à un changement d'ordre, « goTo(4) » non.
+  const ecran = ETAPES[step - 1] || 'final'
+  const estEcran = (cle) => ecran === cle
+  const allerA = (cle) => goTo(ETAPES.indexOf(cle) + 1)
+  const suivant = () => goTo(step + 1)
+  const precedent = () => goTo(Math.max(1, step - 1))
+
   // Changement de formule : on garde l'adresse à jour pour que le retour depuis
   // Stripe (ou un rafraîchissement) retombe sur la bonne formule.
   function pickTier(n) {
@@ -107,26 +189,62 @@ function CreateForm() {
     try { window.history.replaceState(null, '', `/create?tier=${n}`) } catch {}
   }
 
+  // --- Recadrage : on déplace la photo dans son cadre, en pourcentages.
+  // Même geste que dans le tableau de bord : glisser vers la droite fait
+  // apparaître ce qui est à gauche, le point de cadrage suit l'inverse du doigt.
+  function debutGlisse(e) {
+    e.currentTarget.setPointerCapture?.(e.pointerId)
+    const [x, y] = coverPos.split(' ').map((v) => parseInt(v, 10))
+    glisseRef.current = { x0: e.clientX, y0: e.clientY, x, y, w: e.currentTarget.offsetWidth, h: e.currentTarget.offsetHeight }
+  }
+  function glisse(e) {
+    const g = glisseRef.current
+    if (!g) return
+    const borne = (v) => Math.max(0, Math.min(100, Math.round(v)))
+    setCoverPos(`${borne(g.x - ((e.clientX - g.x0) / g.w) * 100)}% ${borne(g.y - ((e.clientY - g.y0) / g.h) * 100)}%`)
+  }
+  function finGlisse() { glisseRef.current = null }
+
   function onCoverPick(e) {
     const f = e.target.files?.[0]
     if (!f) return
     setCoverFile(f)
     setCoverPreview(URL.createObjectURL(f))
+    // Une nouvelle photo repart d'un cadrage centré : garder celui d'avant
+    // reviendrait à recadrer une image qu'on n'a jamais vue.
+    setCoverPos('50% 50%')
   }
 
-  function pickReveal(p, base = startsAt) {
+  function pickReveal(p, debut = startsAt, fin = endsAt) {
     setRevealKey(p.key)
-    if (p.key !== 'custom') setRevealAt(toInputValue(atDay(p.days, p.hour, new Date(base))))
+    if (p.key !== 'custom') setRevealAt(toInputValue(apresLaFete(p.days, p.hour, debut, fin)))
   }
 
-  // Changer la date de la soirée recale la révélation choisie (« le lendemain »
-  // doit rester le lendemain de la fête).
+  // Changer la fin peut déplacer la révélation : « le lendemain » doit rester
+  // le lendemain de la fête.
+  function pickFin(value) {
+    setEndsAt(value)
+    recalerRevelation(startsAt, value)
+  }
+
+  function recalerRevelation(debut, fin) {
+    const preset = REVEAL_PRESETS.find((p) => p.key === revealKey)
+    if (preset && preset.key !== 'custom' && !isNaN(new Date(debut))) {
+      setRevealAt(toInputValue(apresLaFete(preset.days, preset.hour, debut, fin)))
+    }
+  }
+
+  // Changer la date de la soirée emmène la fin avec elle (la fête garde sa
+  // durée), et recale la révélation choisie (« le lendemain » doit rester le
+  // lendemain de la fête).
   function pickStart(value) {
     setStartsAt(value)
-    const preset = REVEAL_PRESETS.find((p) => p.key === revealKey)
-    if (preset && preset.key !== 'custom' && !isNaN(new Date(value))) {
-      setRevealAt(toInputValue(atDay(preset.days, preset.hour, new Date(value))))
-    }
+    if (isNaN(new Date(value))) return
+    const ecart = Math.round((new Date(endsAt).getTime() - new Date(startsAt).getTime()) / 60000)
+    const minutes = Number.isFinite(ecart) && ecart > 0 ? ecart : DUREE_PROPOSEE_MIN
+    const fin = toInputValue(new Date(new Date(value).getTime() + minutes * 60000))
+    setEndsAt(fin)
+    recalerRevelation(value, fin)
   }
 
   function pickShots(n) {
@@ -134,25 +252,37 @@ function CreateForm() {
     setShotsCustom(false)
   }
 
-  // Validation + passage à l'étape suivante.
+  // Validation + passage à l'écran suivant. Chaque écran ne contrôle que sa
+  // propre question : les jours impossibles étant déjà éteints dans les
+  // calendriers, il ne reste ici que les cas qu'un calendrier ne peut pas
+  // couvrir (une heure de fin plus tôt que le début, le même jour).
   function nextStep(e) {
     e.preventDefault()
     setError('')
-    if (step === 1) {
+    if (estEcran('nom')) {
       if (!name.trim()) { setError('Donnez un nom à votre événement.'); return }
-      return goTo(2)
+      return suivant()
     }
-    if (step === 2) return goTo(3)
-    if (step === 3) return goTo(4)
-    if (step === 4) {
-      if (!startsAt || isNaN(new Date(startsAt))) { setError('Indiquez la date de votre événement.'); return }
-      if (!revealAt || isNaN(new Date(revealAt))) { setError('Choisissez une date de révélation.'); return }
-      if (new Date(revealAt) <= new Date(startsAt)) {
-        setError('La révélation doit venir après le début de votre événement.'); return
+    if (estEcran('debut')) {
+      if (!startsAt || isNaN(new Date(startsAt))) { setError('Indiquez la date de début de votre événement.'); return }
+      return suivant()
+    }
+    if (estEcran('fin')) {
+      if (!endsAt || isNaN(new Date(endsAt))) { setError('Indiquez la date de fin de votre événement.'); return }
+      if (new Date(endsAt) <= new Date(startsAt)) {
+        setError('La fin doit venir après le début de votre événement.'); return
       }
-      return goTo(5)
+      return suivant()
     }
-    if (step === 5) return submitEmail()
+    if (estEcran('revelation')) {
+      if (!revealAt || isNaN(new Date(revealAt))) { setError('Choisissez une date de révélation.'); return }
+      if (new Date(revealAt) <= new Date(endsAt)) {
+        setError('La révélation doit venir après la fin de votre événement.'); return
+      }
+      return suivant()
+    }
+    if (estEcran('final')) return submitEmail()
+    return suivant()
   }
 
   // Étape 5 : on valide le mail, puis code de vérification (si activé) ou création directe.
@@ -167,7 +297,7 @@ function CreateForm() {
       setError('Merci de cocher la demande d\'exécution immédiate pour finaliser votre commande.')
       return
     }
-    if (!EMAIL_VERIFICATION_ENABLED) return handleCreate()
+    if (!verificationRequise(priceCents)) return handleCreate()
     setLoading(true)
     try {
       const res = await fetch('/api/auth/send-code', {
@@ -197,14 +327,15 @@ function CreateForm() {
   async function handleCreate(e) {
     if (e) e.preventDefault()
     setError('')
-    if (EMAIL_VERIFICATION_ENABLED && code.replace(/\D/g, '').length !== 6) { setError('Entrez le code à 6 chiffres reçu par mail.'); return }
+    if (verificationRequise(priceCents) && code.replace(/\D/g, '').length !== 6) { setError('Entrez le code à 6 chiffres reçu par mail.'); return }
     setLoading(true)
 
     const payload = {
       ownerToken: getDeviceToken(), name, ownerEmail: email.trim(),
       code: code.replace(/\D/g, ''),
       startsAt: new Date(startsAt).toISOString(),
-      revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots,
+      endsAt: new Date(endsAt).toISOString(),
+      revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots, photoMode,
       maxGuests: tier.maxGuests,
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
       cgvAccepted: cgvOk,
@@ -224,6 +355,7 @@ function CreateForm() {
               const r = new FileReader(); r.onload = () => resolve(r.result); r.readAsDataURL(blob)
             })
             sessionStorage.setItem('declic_pending_cover', dataUrl)
+            sessionStorage.setItem('declic_pending_coverpos', coverPos)
           } catch {}
         }
         sessionStorage.setItem('declic_pending_email', email.trim().toLowerCase())
@@ -272,6 +404,16 @@ function CreateForm() {
           fd.append('file', blob, 'cover.jpg')
           fd.append('ownerToken', getDeviceToken())
           await fetch(`/api/events/${data.id}/cover`, { method: 'POST', body: fd })
+          // Le cadrage choisi dans l'assistant, posé juste après la photo :
+          // sans lui, l'image reviendrait centrée et le recadrage n'aurait
+          // servi à rien.
+          if (coverPos !== '50% 50%') {
+            await fetch(`/api/events/${data.id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json', 'x-owner-token': getDeviceToken() },
+              body: JSON.stringify({ coverPos }),
+            })
+          }
         } catch {}
       }
 
@@ -283,7 +425,7 @@ function CreateForm() {
     ? (loading ? 'Redirection vers le paiement…' : `Payer ${formatPrice(priceCents)} →`)
     : (loading ? 'Création…' : 'Créer mon événement →')
 
-  const step5Label = EMAIL_VERIFICATION_ENABLED
+  const finalStepLabel = verificationRequise(priceCents)
     ? (loading ? 'Envoi du code…' : 'Continuer →')
     : finalLabel
 
@@ -300,12 +442,13 @@ function CreateForm() {
             <i key={i} className={i < stepNum ? 'done' : ''} />
           ))}
         </div>
+        {/* Pas de « étape 4 sur 9 » : la barre situe déjà, et le compte
+            décourage avant d'avoir commencé. */}
         <div className="wiz-headline">
-          <span className="wiz-count">Étape {stepNum} sur {TOTAL}</span>
-          {/* Inutile sur l'étape 1 : le sélecteur y est posé à demeure. Ailleurs,
-              il s'ouvre sur place : l'ancien lien vers la grille de tarifs
-              quittait la page et faisait perdre toute la saisie. */}
-          {step !== 1 && (
+          {/* Inutile sur l'écran de la formule, où le sélecteur est posé à
+              demeure. Ailleurs, il s'ouvre sur place : l'ancien lien vers la
+              grille de tarifs quittait la page et faisait perdre la saisie. */}
+          {!estEcran('formule') && (
             <span className="wiz-tier">
               {tier.maxGuests} participants · <strong>{formatPrice(tier.priceCents)}</strong>{' '}
               <button type="button" className="linklike" onClick={() => setTierOpen(!tierOpen)}>
@@ -314,7 +457,7 @@ function CreateForm() {
             </span>
           )}
         </div>
-        {step !== 1 && tierOpen && (
+        {!estEcran('formule') && tierOpen && (
           <TierPicker value={maxGuests} onChange={pickTier} onClose={() => setTierOpen(false)} />
         )}
       </div>
@@ -325,10 +468,10 @@ function CreateForm() {
         </div>
       )}
 
-      {/* ÉTAPE 1 : Nom */}
-      {step === 1 && (
+      {/* Le nom */}
+      {estEcran('nom') && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">C'est quoi l'occasion ?</h2>
+          <h2 className="wiz-q">Quelle est l'occasion ?</h2>
           <p className="wiz-sub">
             Ce nom s'affichera en grand sur l'écran d'accueil de vos participants.
             Vous pourrez le changer plus tard.
@@ -339,11 +482,6 @@ function CreateForm() {
               onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
           </div>
 
-          {/* Le nombre de participants se demande, il ne se devine pas : la plupart des
-              points d'entrée n'en portent aucun et retombaient sur la formule
-              gratuite sans que personne ne l'ait choisie. */}
-          <TierPicker value={maxGuests} onChange={pickTier} inline />
-
           {error && <div className="err">{error}</div>}
           <div className="wiz-nav">
             <button className="btn btn-accent" type="submit">Continuer →</button>
@@ -351,41 +489,83 @@ function CreateForm() {
         </form>
       )}
 
-      {/* ÉTAPE 2 : Photo de couverture */}
-      {step === 2 && (
+      {/* Le début de la fête */}
+      {estEcran('debut') && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Une photo de couverture ?</h2>
-          <p className="wiz-sub">Elle habille l'écran d'accueil que voient vos participants. Vous pourrez l'ajouter ou la changer plus tard.</p>
-          {coverPreview ? (
-            <>
-              <img src={coverPreview} alt="Aperçu de la couverture" className="wiz-coverimg" />
-              <label className="btn btn-ghost wiz-coverchange">
-                Changer la photo
-                <input type="file" accept="image/*" onChange={onCoverPick} hidden />
-              </label>
-            </>
-          ) : (
-            <label className="wiz-coverpick">
-              <span className="em">🖼️</span>
-              <span className="tt">Choisir une photo</span>
-              <span className="ss">JPG ou PNG, depuis votre téléphone</span>
-              <input type="file" accept="image/*" onChange={onCoverPick} hidden />
-            </label>
-          )}
+          <h2 className="wiz-q">Quand commence votre événement ?</h2>
+          <p className="wiz-sub">L'appareil photo s'ouvre à cette heure-là. Modifiable plus tard.</p>
+          {/* Le mois entier plutôt que la roulette du téléphone, et les jours
+              passés éteints : on ne crée pas un événement pour samedi dernier. */}
+          <SelecteurDate value={startsAt} onChange={pickStart} min={toInputValue(new Date())} />
+          {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(1)} aria-label="Retour">←</button>
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
             <button className="btn btn-accent" type="submit">Continuer →</button>
           </div>
-          {!coverPreview && (
-            <button type="button" className="linklike wiz-skip" onClick={() => goTo(3)}>Passer cette étape</button>
-          )}
         </form>
       )}
 
-      {/* ÉTAPE 3 : Clichés par participant */}
-      {step === 3 && (
+      {/* La fin de la fête : même calendrier que le début, borné à celui-ci.
+          Elle sert aussi, en coulisses, à répartir les rappels envoyés aux
+          participants (voir lib/rappels.js), mais ce n'est pas une question
+          qu'on pose ici : c'est notre affaire, pas la sienne. */}
+      {estEcran('fin') && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Combien de clichés par participant ?</h2>
+          <h2 className="wiz-q">Quand se termine votre événement ?</h2>
+          <p className="wiz-sub">L'appareil photo se referme, plus personne ne photographie.</p>
+          <SelecteurDate value={endsAt} onChange={pickFin} min={startsAt} />
+          {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
+            <button className="btn btn-accent" type="submit">Continuer →</button>
+          </div>
+        </form>
+      )}
+
+      {/* Quand l'album s'ouvre pour tout le monde */}
+      {estEcran('revelation') && (
+        <form className="card wiz-card" onSubmit={nextStep}>
+          <h2 className="wiz-q">Quand souhaitez-vous révéler les photos ?</h2>
+          {/* Montrer plutôt que décrire : l'album tel qu'il restera jusqu'à la
+              date choisie. Posé avant les propositions, il donne son sens à
+              tout ce qui suit. */}
+          <div className="wiz-revele" aria-hidden="true">
+            <div className="wiz-revele-grille">
+              <span className="wiz-revele-cache"><img src="/accueil/galerie-photos.webp" alt="" /></span>
+              <span className="wiz-revele-cache"><img src="/accueil/album-partage.webp" alt="" /></span>
+            </div>
+            <span className="wiz-revele-badge">🕒 Révélation {frCourt(revealAt)}</span>
+          </div>
+          <div className="wiz-opts">
+            {REVEAL_PRESETS.filter((p) => p.key !== 'custom').map((p) => (
+              <button key={p.key} type="button"
+                className={`wiz-opt ${revealKey === p.key ? 'on' : ''}`}
+                onClick={() => pickReveal(p)}>
+                <span className="em">{p.em}</span>
+                <span><span className="tt">{p.title}</span><span className="ss">{p.sub}</span></span>
+              </button>
+            ))}
+          </div>
+          {revealKey === 'custom' ? (
+            <SelecteurDate value={revealAt} onChange={setRevealAt} min={endsAt} />
+          ) : (
+            <button type="button" className="linklike wiz-skip"
+              onClick={() => pickReveal(REVEAL_PRESETS.find((p) => p.key === 'custom'))}>
+              Choisir une autre date
+            </button>
+          )}
+          {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
+            <button className="btn btn-accent" type="submit">Continuer →</button>
+          </div>
+        </form>
+      )}
+
+      {/* Combien de clichés par participant */}
+      {estEcran('cliches') && (
+        <form className="card wiz-card" onSubmit={nextStep}>
+          <h2 className="wiz-q">Combien de clichés par participant ?</h2>
           <p className="wiz-sub">La contrainte argentique : moins de poses, et chaque photo compte davantage.</p>
           <div className="wiz-opts">
             {SHOT_PRESETS.map((p) => (
@@ -412,73 +592,159 @@ function CreateForm() {
             </div>
           )}
           <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(2)} aria-label="Retour">←</button>
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
             <button className="btn btn-accent" type="submit">Continuer →</button>
           </div>
         </form>
       )}
 
-      {/* ÉTAPE 4 : Révélation */}
-      {step === 4 && (
+      {/* Ce que chacun revoit de ses propres photos */}
+      {estEcran('revoir') && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Quand a lieu votre événement ?</h2>
-          {/* Pas de sous-titre : l'étiquette du champ dit déjà tout. */}
-          <div className="field" style={{ marginTop: 18, marginBottom: 24 }}>
-            <label>
-              Date et heure de l'événement{' '}
-              <span className="lbl-soft">(modifiable plus tard)</span>
-            </label>
-            <input type="datetime-local" value={startsAt} onChange={(e) => pickStart(e.target.value)} />
-          </div>
-
-          <h2 className="wiz-q" style={{ marginTop: 0 }}>Et quand révéler les photos ?</h2>
+          <h2 className="wiz-q">Peuvent-ils revoir leurs propres photos pendant la fête ?</h2>
           <p className="wiz-sub">
-            Jusqu'à cette date, tout reste caché, comme une pellicule qu'on développe.
-            Ensuite, les photos deviennent visibles par <strong>tous les participants</strong>.
+            Ce que chacun pourra faire de ses propres clichés pendant la fête. Ceux des
+            autres restent cachés jusqu'à la révélation dans les trois cas.
           </p>
           <div className="wiz-opts">
-            {REVEAL_PRESETS.map((p) => (
-              <button key={p.key} type="button"
-                className={`wiz-opt ${revealKey === p.key ? 'on' : ''}`}
-                onClick={() => pickReveal(p)}>
-                <span className="em">{p.em}</span>
-                <span><span className="tt">{p.title}</span><span className="ss">{p.sub}</span></span>
+            {MODE_OPTIONS.map((o) => (
+              <button key={o.key} type="button"
+                className={`wiz-opt ${photoMode === o.key ? 'on' : ''}`}
+                onClick={() => setPhotoMode(o.key)}>
+                <span className="em">{o.em}</span>
+                <span><span className="tt">{o.title}</span><span className="ss">{o.court}</span></span>
               </button>
             ))}
           </div>
-          {revealKey === 'custom' && (
-            <div className="field" style={{ marginTop: 16, marginBottom: 0 }}>
-              <label>Date et heure</label>
-              <input type="datetime-local" value={revealAt} onChange={(e) => setRevealAt(e.target.value)} />
-            </div>
-          )}
-          {/* Le résultat du choix, et le moment que l'organisateur se figure :
-              il mérite mieux qu'une ligne grise. Affiché aussi en date libre,
-              où il traduit la saisie brute en quelque chose de lisible. */}
-          <div className="wiz-reveal-echo">
-            <span className="lbl">Révélation</span>
-            <strong className="val">{frDate(revealAt)}</strong>
-          </div>
-          <div className="notice" style={{ marginTop: 16 }}>
-            💡 Laissez-leur le temps. Avant la révélation, chacun peut revoir ses clichés et supprimer
-            ceux qu'il ne veut pas montrer ; après, c'est visible par tout le monde.
-          </div>
-          {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(3)} aria-label="Retour">←</button>
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
             <button className="btn btn-accent" type="submit">Continuer →</button>
           </div>
         </form>
       )}
 
-      {/* ÉTAPE 5 : Mail + récapitulatif */}
-      {step === 5 && (
+      {/* La photo de couverture (facultative).
+          On ne montre plus un cadre de téléversement vide surmonté d'un aperçu
+          minuscule : c'est la carte d'invitation qui occupe l'écran, en grand,
+          avec ses actions posées dessous. On voit ce qu'on fabrique, pas le
+          formulaire qui le fabrique. */}
+      {estEcran('couverture') && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">Où vous envoyer votre accès ?</h2>
+          <h2 className="wiz-q">Une photo de couverture ?</h2>
+
+
+          <div className="wiz-carte">
+            {/* L'écran du jour J, en entier et à l'identique : mêmes classes que
+                /j/[id] (.cover, .h3, .lead, .btn-accent, la mention du bas),
+                simplement mis à l'échelle. Rien n'est redessiné ici, donc rien
+                ne peut diverger de ce que verront les participants. */}
+            <div className={`wiz-vraie ${recadrage ? 'on' : ''}`}>
+              <div className="wiz-vraie-ecran">
+                <div className="cover"
+                  onPointerDown={recadrage ? debutGlisse : undefined}
+                  onPointerMove={recadrage ? glisse : undefined}
+                  onPointerUp={recadrage ? finGlisse : undefined}
+                  onPointerCancel={recadrage ? finGlisse : undefined}>
+                  <img src={coverPreview || COUVERTURE_EXEMPLE} alt=""
+                    style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: coverPos }}
+                    draggable={false} />
+                  {recadrage && <span className="wiz-tel-guide">Faites glisser pour recadrer</span>}
+                  {!coverPreview && !recadrage && <span className="wiz-exemple">Exemple</span>}
+                </div>
+                <h3 className="h3" style={{ margin: '22px 0 8px' }}>
+                  Participez à l'événement {name.trim() || 'Votre événement'}
+                </h3>
+                <p className="lead small" style={{ marginBottom: 16 }}>
+                  Prenez <strong>{shots} photos</strong> pendant la soirée. Elles resteront
+                  cachées jusqu'à la révélation, le <strong>{frDate(revealAt)}</strong>.
+                </p>
+                <span className="btn btn-accent">Participer à l'album collectif →</span>
+                <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
+              </div>
+            </div>
+
+            <div className="wiz-carte-actions">
+              <label className="btn btn-ghost">
+                {coverPreview ? 'Changer' : 'Choisir une photo'}
+                <input type="file" accept="image/*" onChange={onCoverPick} hidden />
+              </label>
+              {coverPreview && (
+                <button type="button" className={`btn btn-ghost ${recadrage ? 'on' : ''}`}
+                  onClick={() => setRecadrage(!recadrage)}>
+                  {recadrage ? 'Terminer' : 'Recadrer'}
+                </button>
+              )}
+              <button type="button" className="btn btn-ghost" onClick={() => setApercu(true)}>
+                Agrandir
+              </button>
+            </div>
+          </div>
+
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
+            <button className="btn btn-accent" type="submit">Continuer →</button>
+          </div>
+          {!coverPreview && (
+            <button type="button" className="linklike wiz-skip" onClick={suivant}>Passer cette étape</button>
+          )}
+        </form>
+      )}
+
+      {/* L'aperçu en grand : la même réplique, à sa taille réelle. */}
+      {apercu && (
+        <div className="wiz-apercu-plein" role="dialog" aria-label="Aperçu participant"
+          onClick={() => setApercu(false)}>
+          <div className="wiz-vraie wiz-vraie-plein" onClick={(e) => e.stopPropagation()}>
+            <div className="wiz-vraie-ecran">
+              <div className="cover">
+                <img src={coverPreview || COUVERTURE_EXEMPLE} alt=""
+                  style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: coverPos }} />
+              </div>
+              <h3 className="h3" style={{ margin: '22px 0 8px' }}>
+                Participez à l'événement {name.trim() || 'Votre événement'}
+              </h3>
+              <p className="lead small" style={{ marginBottom: 16 }}>
+                Prenez <strong>{shots} photos</strong> pendant la soirée. Elles resteront
+                cachées jusqu'à la révélation, le <strong>{frDate(revealAt)}</strong>.
+              </p>
+              <span className="btn btn-accent">Participer à l'album collectif →</span>
+              <div className="footer-note">AUCUNE APPLI · DEPUIS LE NAVIGATEUR</div>
+            </div>
+          </div>
+          <button type="button" className="btn btn-ghost wiz-apercu-fermer" onClick={() => setApercu(false)}>
+            Fermer
+          </button>
+        </div>
+      )}
+
+      {/* La formule : combien de participants */}
+      {estEcran('formule') && (
+        <form className="card wiz-card" onSubmit={nextStep}>
+          <h2 className="wiz-q">Combien serez-vous ?</h2>
+          <p className="wiz-sub">
+            C'est ce nombre qui fixe la formule. Une place de plus s'ajoute à tout
+            moment, sans refaire l'événement.
+          </p>
+          {/* Le nombre de participants se demande, il ne se devine pas : la plupart
+              des points d'entrée n'en portent aucun et retombaient sur la formule
+              gratuite sans que personne ne l'ait choisie. */}
+          <TierPicker value={maxGuests} onChange={pickTier} inline />
+          {error && <div className="err">{error}</div>}
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
+            <button className="btn btn-accent" type="submit">Continuer →</button>
+          </div>
+        </form>
+      )}
+
+      {/* Le mail et le récapitulatif */}
+      {estEcran('final') && (
+        <form className="card wiz-card" onSubmit={nextStep}>
+          <h2 className="wiz-q">Où vous envoyer votre accès ?</h2>
           <p className="wiz-sub">Votre adresse mail vous permet de retrouver votre tableau de bord, même en changeant de téléphone.</p>
           <div className="field">
-            <label>Votre adresse mail</label>
-            <input type="email" inputMode="email" autoComplete="email" placeholder="vous@exemple.fr"
+            <label htmlFor="mail-orga">Votre adresse mail</label>
+            <input type="email" id="mail-orga" name="email" inputMode="email" autoComplete="email" placeholder="vous@exemple.fr"
               value={email} onChange={(e) => setEmail(e.target.value)} maxLength={120} autoFocus />
           </div>
 
@@ -486,27 +752,41 @@ function CreateForm() {
             <div className="wiz-recap-title">Récapitulatif</div>
             <div className="wiz-recap-row">
               <span>Événement</span>
-              <span>{name} <button type="button" className="linklike" onClick={() => goTo(1)}>modifier</button></span>
-            </div>
-            <div className="wiz-recap-row">
-              <span>Couverture</span>
-              <span>{coverPreview ? 'Ajoutée' : 'Aucune'} <button type="button" className="linklike" onClick={() => goTo(2)}>modifier</button></span>
-            </div>
-            <div className="wiz-recap-row">
-              <span>Clichés / participant</span>
-              <span>{shots} <button type="button" className="linklike" onClick={() => goTo(3)}>modifier</button></span>
-            </div>
-            <div className="wiz-recap-row">
-              <span>Événement le</span>
-              <span>{frDate(startsAt)} <button type="button" className="linklike" onClick={() => goTo(4)}>modifier</button></span>
-            </div>
-            <div className="wiz-recap-row">
-              <span>Révélation</span>
-              <span>{frDate(revealAt)} <button type="button" className="linklike" onClick={() => goTo(4)}>modifier</button></span>
+              <span>{name} <button type="button" className="linklike" onClick={() => allerA('nom')}>modifier</button></span>
             </div>
             <div className="wiz-recap-row">
               <span>Formule</span>
-              <span>{tier.maxGuests} participants · {formatPrice(tier.priceCents)}</span>
+              <span>
+                {tier.maxGuests} participants · {formatPrice(tier.priceCents)}{' '}
+                <button type="button" className="linklike" onClick={() => allerA('formule')}>modifier</button>
+              </span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Début</span>
+              <span>{frDate(startsAt)} <button type="button" className="linklike" onClick={() => allerA('debut')}>modifier</button></span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Fin</span>
+              <span>{frDate(endsAt)} <button type="button" className="linklike" onClick={() => allerA('fin')}>modifier</button></span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Révélation</span>
+              <span>{frDate(revealAt)} <button type="button" className="linklike" onClick={() => allerA('revelation')}>modifier</button></span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Clichés / participant</span>
+              <span>{shots} <button type="button" className="linklike" onClick={() => allerA('cliches')}>modifier</button></span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Revoir ses photos</span>
+              <span>
+                {(MODE_OPTIONS.find((o) => o.key === photoMode) || MODE_OPTIONS[0]).title}{' '}
+                <button type="button" className="linklike" onClick={() => allerA('revoir')}>modifier</button>
+              </span>
+            </div>
+            <div className="wiz-recap-row">
+              <span>Couverture</span>
+              <span>{coverPreview ? 'Ajoutée' : 'Aucune'} <button type="button" className="linklike" onClick={() => allerA('couverture')}>modifier</button></span>
             </div>
             {tier.priceCents > 0 && (
               <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
@@ -515,7 +795,7 @@ function CreateForm() {
 
           <div className="wiz-legal">
             <label className="wiz-check">
-              <input type="checkbox" checked={cgvOk} onChange={(e) => setCgvOk(e.target.checked)} />
+              <input type="checkbox" name="cgv" checked={cgvOk} onChange={(e) => setCgvOk(e.target.checked)} />
               <span>
                 J'accepte les <Link href="/cgv" target="_blank">conditions générales de vente</Link> et
                 la <Link href="/politique-de-confidentialite" target="_blank">politique de confidentialité</Link>.
@@ -523,7 +803,7 @@ function CreateForm() {
             </label>
             {isPaid && PAYMENTS_ENABLED && (
               <label className="wiz-check">
-                <input type="checkbox" checked={waiverOk} onChange={(e) => setWaiverOk(e.target.checked)} />
+                <input type="checkbox" name="renonciation" checked={waiverOk} onChange={(e) => setWaiverOk(e.target.checked)} />
                 <span>
                   Je demande la création immédiate de mon événement et je renonce à mon
                   droit de rétractation de 14 jours.
@@ -534,8 +814,8 @@ function CreateForm() {
 
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={() => goTo(4)} aria-label="Retour">←</button>
-            <button className="btn btn-accent" type="submit" disabled={loading}>{step5Label}</button>
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label="Retour">←</button>
+            <button className="btn btn-accent" type="submit" disabled={loading}>{finalStepLabel}</button>
           </div>
         </form>
       )}
@@ -551,7 +831,7 @@ function CreateForm() {
             <label>Code reçu par mail</label>
             <input type="text" inputMode="numeric" autoComplete="one-time-code" placeholder="000000"
               value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-              maxLength={6} autoFocus
+              autoFocus
               style={{ fontFamily: 'var(--font-mono)', fontSize: 24, letterSpacing: '.3em', textAlign: 'center' }} />
           </div>
           {error && <div className="err">{error}</div>}
@@ -562,12 +842,14 @@ function CreateForm() {
             Pas reçu ?{' '}
             <button type="button" onClick={resendCode} className="linklike">Renvoyer le code</button>
             {' · '}
-            <button type="button" onClick={() => goTo(5)} className="linklike">Changer d'adresse</button>
+            <button type="button" onClick={() => allerA('final')} className="linklike">Changer d'adresse</button>
           </div>
         </form>
       )}
 
-      <div className="footer-note" style={{ marginTop: 24 }}>PAIEMENT UNIQUE · SANS ABONNEMENT</div>
+      {(estEcran('nom') || estEcran('formule') || estEcran('final')) && (
+        <div className="footer-note" style={{ marginTop: 24 }}>PAIEMENT UNIQUE · SANS ABONNEMENT</div>
+      )}
     </main>
   )
 }

@@ -7,3 +7,10 @@ node_modules/
 
 # Dossiers de travail temporaires
 .claude/worktrees/
+
+# Réglages personnels de Claude Code : les permissions accordées sur CE Mac,
+# qui n'ont rien à faire dans un dépôt partagé.
+.claude/settings.local.json
+
+# Cache de Python (outils/reel)
+__pycache__/

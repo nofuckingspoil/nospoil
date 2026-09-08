@@ -108,12 +108,42 @@ a { color: inherit; }
 .lbl-soft { font-weight: 500; color: var(--text3); }
 .field .hint { color: var(--text4); font-size: 12.5px; margin-top: 7px; line-height: 1.45; }
 
-input:not([type]), input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], input[type=datetime-local], input[type=number], select, textarea {
+input:not([type]), input[type=text], input[type=tel], input[type=email], input[type=password], input[type=date], input[type=datetime-local], input[type=time], input[type=number], select, textarea {
   width: 100%; font-family: var(--font-body); font-size: 17px; font-weight: 600;
   padding: 16px 17px; border: 2px solid var(--line); border-radius: 16px;
   background: var(--card); color: var(--ink); outline: none; transition: border-color .15s;
 }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); }
+/* Champs de date et d'heure. Safari sur iPhone leur donne une largeur calculée
+   sur le texte natif (« 12/09/2026 19:00 » en gras, plus ses marges internes) :
+   le champ déborde alors de la carte sur la droite. On lui interdit de gonfler,
+   on rend son contenu élastique, et on lui laisse un peu plus de place en
+   allégeant le texte et les marges intérieures. */
+input[type=date], input[type=datetime-local], input[type=time] {
+  -webkit-appearance: none; appearance: none;
+  display: block; width: 100%; min-width: 0; max-width: 100%; overflow: hidden;
+  min-height: 56px; padding-left: 14px; padding-right: 14px;
+  font-size: 16px; font-weight: 600; line-height: 1.25; text-align: left;
+}
+input[type=date]::-webkit-datetime-edit,
+input[type=datetime-local]::-webkit-datetime-edit,
+input[type=time]::-webkit-datetime-edit { padding: 0; width: 100%; line-height: 1.25; }
+input[type=date]::-webkit-date-and-time-value,
+input[type=datetime-local]::-webkit-date-and-time-value,
+input[type=time]::-webkit-date-and-time-value {
+  display: block; width: 100%; text-align: left; margin: 0;
+  min-height: 21px; line-height: 21px;
+}
+/* Le petit calendrier cliquable n'existe que sur ordinateur : sur iPhone, c'est
+   le champ entier qui ouvre la roulette. */
+input[type=date]::-webkit-calendar-picker-indicator,
+input[type=datetime-local]::-webkit-calendar-picker-indicator { opacity: .5; cursor: pointer; flex: none; }
+
+/* Un champ en cours de saisie doit sauter aux yeux : la bordure orange seule
+   passait inaperçue au milieu d'un formulaire. On lui ajoute un halo. */
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(236, 91, 51, .18);
+}
 
 /* Un champ de texte long n'est pas un champ court en plus grand : on écrit une
    phrase dedans, pas un prénom. D'où le poids allégé, l'interligne aéré, et la
@@ -228,18 +258,102 @@ a.cam-pile:active { transform: scale(.94); }
 }
 
 /* Verrouillage visuel en portrait : si le téléphone est tourné en paysage,
-   on fait pivoter l'écran caméra à l'inverse pour qu'il reste droit. */
-@media screen and (orientation: landscape) and (max-width: 1000px) {
-  .force-portrait {
+   on fait pivoter l'écran caméra à l'inverse pour qu'il reste droit.
+   Deux précautions :
+   1. le sélecteur reprend les deux classes de la règle du dessus, sinon sa
+      hauteur (100dvh) l'emporte et l'écran tourné ne remplit qu'une bande ;
+   2. la hauteur maximale réserve la rotation aux téléphones : une fenêtre
+      d'ordinateur étroite est en paysage elle aussi, et n'a rien à pivoter. */
+@media screen and (orientation: landscape) and (max-width: 1000px) and (max-height: 560px) {
+  .screen-dark.force-portrait {
     position: fixed;
-    top: 100vh; left: 0;
-    width: 100vh; height: 100vw;
+    top: 100dvh; left: 0;
+    width: 100dvh; height: 100dvw;
     transform: rotate(-90deg);
     transform-origin: left top;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+    overflow: hidden;
   }
+
+  /* Trois éléments se redressent dans l'écran pivoté, pour rester lisibles et
+     cliquables sans tourner le téléphone : le message de caméra refusée, le
+     bouton flash et le bouton qui retourne la caméra. Le quart de tour annule
+     celui de l'écran. Les repères du viseur (FLASH 400, le compteur de poses)
+     restent solidaires du cadre : ils font partie du décor de l'appareil. */
+  .vf-bloque-in { width: 300px; transform: rotate(90deg); }
+  .cam-controls { min-height: 84px; }
+  .cam-flashchip, .cam-flipchip { transform: rotate(90deg); }
+  .cam-pilewrap { transform: rotate(90deg); }
 }
+/* Caméra refusée : le message qui remplace l'image du viseur. */
+.vf-bloque {
+  position: absolute; inset: 0; z-index: 5; display: flex;
+  align-items: center; justify-content: center;
+  background: rgba(10,8,6,.8); backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px);
+}
+.vf-bloque-in {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; gap: 14px; padding: 24px;
+}
+.vf-bloque-in p { color: #fff; font-weight: 700; font-size: 15px; margin: 0; max-width: 250px; line-height: 1.4; }
+.vf-bloque-in .vf-bloque-sub { font-weight: 500; font-size: 13px; color: rgba(255,255,255,.75); }
+.vf-bloque-in button {
+  background: #fff; color: #1a1410; border: none; border-radius: 999px;
+  padding: 11px 22px; font-weight: 700; font-size: 14.5px; cursor: pointer;
+}
+
+/* Caméra refusée pour de bon : le mode d'emploi qui remplace le bouton inutile.
+   Le navigateur ne repose plus la question, et aucune page web n'a le droit
+   d'ouvrir ses réglages : il ne reste que le dessin de la barre d'adresse. */
+.camfix {
+  margin-top: 12px; text-align: left;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 16px; padding: 16px;
+}
+.camfix-title { color: #fff; font-weight: 700; font-size: 15px; line-height: 1.35; }
+.camfix-sub { margin: 6px 0 0; color: rgba(255,255,255,.72); font-size: 13px; line-height: 1.5; }
+/* La barre d'adresse en miniature : la pastille à toucher respire pour attirer l'oeil. */
+.camfix-bar {
+  margin-top: 14px; display: flex; align-items: center; gap: 9px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16);
+  border-radius: 999px; padding: 7px 13px;
+}
+.camfix-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 27px; height: 27px; padding: 0 7px; border-radius: 8px;
+  background: #fff; color: #1a1410; font-weight: 700; font-size: 12.5px;
+  animation: camfix-pulse 1.9s ease-out infinite;
+}
+.camfix-aa { letter-spacing: -.02em; }
+@keyframes camfix-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(255,255,255,.55) }
+  70% { box-shadow: 0 0 0 11px rgba(255,255,255,0) }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0) }
+}
+@media (prefers-reduced-motion: reduce) { .camfix-chip { animation: none } }
+.camfix-url { flex: 1; color: rgba(255,255,255,.8); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.camfix-dots { color: rgba(255,255,255,.5); font-size: 15px; }
+.camfix-hint { margin-top: 7px; text-align: center; font-size: 12px; color: rgba(255,255,255,.55); }
+.camfix-steps { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-direction: column; gap: 11px; }
+.camfix-steps li { display: flex; align-items: flex-start; gap: 10px; color: rgba(255,255,255,.9); font-size: 13.5px; line-height: 1.5; }
+.camfix-num {
+  flex: 0 0 auto; width: 22px; height: 22px; border-radius: 50%;
+  background: #fff; color: #1a1410; font-family: var(--font-mono);
+  font-size: 12px; font-weight: 700; display: inline-flex;
+  align-items: center; justify-content: center;
+}
+.camfix-inline {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 21px; height: 21px; border-radius: 6px;
+  background: rgba(255,255,255,.18); color: #fff; vertical-align: -5px;
+}
+.camfix-btn {
+  margin-top: 15px; width: 100%; background: #fff; color: #1a1410; border: none;
+  border-radius: 999px; padding: 12px 18px; font-family: var(--font-body);
+  font-weight: 700; font-size: 14.5px; cursor: pointer;
+}
+.camfix-foot { margin: 12px 0 0; color: rgba(255,255,255,.62); font-size: 12.5px; line-height: 1.5; }
+.camfix-aide { display: inline-block; margin-top: 8px; color: #fff; font-size: 12.5px; text-decoration: underline; }
+
 .viewfinder video, .viewfinder .vf-fallback { width: 100%; height: 100%; object-fit: cover; display: block; }
 .viewfinder .vf-anim {
   position: absolute; inset: 0;
@@ -342,6 +456,36 @@ a.cam-pile:active { transform: scale(.94); }
 .album-thumb.pending { opacity: .55; }
 .album-empty { grid-column: 1 / -1; text-align: center; color: rgba(255,255,255,.45); font-family: var(--font-mono); font-size: 12.5px; padding: 30px 0; }
 .album-fulllink { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 18px; padding: 14px; border-radius: 14px; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1); color: #fff; text-decoration: none; font-weight: 600; font-size: 14px; }
+/* Le mur du groupe : les photos de tous les participants pendant la soirée, floutées.
+   Le flou est un effet d'affichage : la photo descend entière sur le téléphone.
+   C'est assumé. Ce qu'on cherche ici, c'est que l'attente vive, pas un coffre-fort. */
+.mur-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.mur-thumb { position: relative; aspect-ratio: 1; border-radius: 10px; overflow: hidden; background: #000; }
+.mur-thumb img {
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  /* Agrandi juste ce qu'il faut : sans cela, le flou laisse un halo transparent
+     sur les quatre bords de la vignette. */
+  transform: scale(1.18);
+  filter: blur(9px);
+  /* Ni appui long, ni glisser-déposer : la photo n'est pas encore à prendre. */
+  pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
+}
+.mur-note { font-family: var(--font-mono); font-size: 11px; line-height: 1.6; color: rgba(255,255,255,.4); margin: 12px 0 0; text-align: center; }
+
+/* Photo scellée : la sienne, dans les modes où l'organisateur a fermé l'album
+   avant la révélation. Même traitement que le mur du groupe, pour que les deux
+   se lisent comme une seule et même attente. */
+.photo-scellee {
+  transform: scale(1.18);
+  filter: blur(9px);
+  pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
+}
+/* Le mot qui accompagne le seul regard autorisé, sous le cliché à confirmer. */
+.confirm-note {
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .03em;
+  color: rgba(255,255,255,.55); text-align: center; margin: 14px 0 0;
+}
+
 /* Effet d'obturateur (volet noir qui se ferme/ouvre) */
 .cam-shutter-fx { position: absolute; inset: 0; background: #0a0b0e; z-index: 79; pointer-events: none; transform-origin: center; animation: dc-shutter .22s ease forwards; }
 .roll-frame { border: none; cursor: pointer; }
@@ -1535,10 +1679,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .wiz-tierpick-more { margin-top: 14px; font-size: 12.5px; line-height: 1.5; color: var(--text3); text-align: center; }
 .wiz-tierpick-more a { color: var(--accent); font-weight: 600; }
 
-.wiz-card { margin-top: 14px; animation: wiz-in .22s ease both; }
+.wiz-card { margin-top: 12px; padding: 18px; animation: wiz-in .22s ease both; }
 @keyframes wiz-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
-.wiz-q { font-family: var(--font-display); font-weight: 800; font-size: 26px; line-height: 1.12; letter-spacing: -.02em; margin-bottom: 8px; }
+.wiz-q { font-family: var(--font-display); font-weight: 800; font-size: 25px; line-height: 1.1; letter-spacing: -.02em; margin-bottom: 6px; }
 .wiz-sub { color: var(--text2); font-size: 14.5px; line-height: 1.5; margin-bottom: 20px; }
 /* Confirmation du moment choisi — c'est le point d'orgue de l'écran */
 .wiz-reveal-echo {
@@ -1555,17 +1699,19 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   font-weight: 800; font-size: 19px; line-height: 1.2; color: var(--ink);
 }
 
-.wiz-opts { display: flex; flex-direction: column; gap: 10px; }
+.wiz-opts { display: flex; flex-direction: column; gap: 7px; }
 .wiz-opt {
   display: flex; align-items: center; gap: 13px; width: 100%; text-align: left;
-  background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 14px 16px;
+  background: #fff; border: 2px solid var(--line); border-radius: 16px; padding: 12px 15px;
   cursor: pointer; font-family: var(--font-body); transition: border-color .15s, background .15s;
 }
 .wiz-opt:hover { border-color: var(--accent); }
-.wiz-opt.on { border-color: var(--accent); background: rgba(236,91,51,.07); }
+.wiz-opt.on { border-color: var(--accent); background: rgba(236,91,51,.09); box-shadow: 0 0 0 3px rgba(236,91,51,.15); }
 .wiz-opt .em { font-size: 22px; line-height: 1; flex: none; }
 .wiz-opt .tt { display: block; font-weight: 700; font-size: 15px; color: var(--ink); }
-.wiz-opt .ss { display: block; font-size: 12.5px; color: var(--text3); margin-top: 2px; line-height: 1.35; }
+.wiz-opt .ss { display: block; font-size: 12px; color: var(--text3); margin-top: 1px; line-height: 1.3; }
+/* Deux questions sur une même étape : le trait dit qu'on change de sujet. */
+.wiz-sep { height: 1px; background: var(--line); margin: 26px 0 22px; }
 
 .wiz-coverpick {
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
@@ -1689,17 +1835,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   display: block; margin: 10px auto 0; background: none; border: none; cursor: pointer;
   font-family: var(--font-body); font-size: 13px; color: rgba(255,255,255,.6); text-decoration: underline;
 }
-/* Rappel qui passe une fois — ni carte, ni tâche : une simple bande */
-.db-notif {
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  margin-top: 16px; padding: 13px 15px; border-radius: 16px;
-  background: #fff; border: 1px solid var(--line);
-}
-.db-notif-txt { flex: 1; min-width: 180px; }
-.db-notif-txt strong { display: block; font-size: 14.5px; color: var(--ink); }
-.db-notif-txt span { display: block; margin-top: 2px; font-size: 12.5px; line-height: 1.4; color: var(--text3); }
-.db-notif-act { flex: 0 0 auto; padding: 10px 18px; }
-
 /* Les pages à garder sous la main — discrètes, mais toujours au même endroit */
 .db-res { margin-top: 26px; padding: 16px 16px 8px; border-radius: 18px;
   background: #fff; border: 1px solid var(--line); }
@@ -1930,6 +2065,20 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* Les boutons sont en largeur pleine par défaut : dans cette rangée ils
    écraseraient le champ de saisie, qui est pourtant l'essentiel. */
 .db-set-edit input { flex: 1 1 auto; min-width: 0; }
+
+/* Les rappels de la soirée : une ligne par rappel, son jour écrit au-dessus.
+   Le champ d'heure et le bouton « Retirer » se partagent la largeur, sans
+   jamais sortir de la carte, même sur un petit écran. */
+.db-rappel { margin-bottom: 12px; }
+.db-rappel .jour {
+  display: block; font-size: 12.5px; font-weight: 700; letter-spacing: .02em;
+  color: var(--text3); margin-bottom: 6px;
+}
+.db-rappel .ligne { display: flex; align-items: center; gap: 8px; }
+.db-rappel .ligne input { flex: 1 1 auto; min-width: 0; }
+.db-rappel .ligne .btn { flex: 0 0 auto; width: auto; padding: 13px 16px; font-size: 14px; }
+.db-rappels-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.db-rappels-actions .btn { width: auto; flex: 1 1 auto; padding: 14px 16px; font-size: 15px; }
 .db-set-edit .btn { flex: 0 0 auto; width: auto; padding: 14px 20px; font-size: 15px; }
 .db-frozen { display: inline-block; margin-left: 6px; font-family: var(--font-mono); font-size: 9px;
   letter-spacing: .1em; text-transform: uppercase; background: var(--screen); color: var(--text3);
@@ -1968,6 +2117,16 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 }
 .mail-tip-warn { background: #fdf3e6; border-color: rgba(236,91,51,.35); color: var(--accent-deep); }
 .mail-tip-ok { background: rgba(31,138,91,.08); border-color: rgba(31,138,91,.3); color: var(--ok); }
+
+/* La question posée une fois quand l'adresse manque : une carte, pas une alerte.
+   Le bouton qui ramène au champ est le premier, et le seul mis en avant. */
+.mail-stop {
+  display: flex; flex-direction: column; margin-top: 20px; padding: 16px 16px 14px;
+  border-radius: 16px; background: var(--card); border: 1px solid var(--line);
+}
+.mail-stop strong { font-size: 15px; color: var(--ink); }
+.mail-stop span { margin-top: 5px; font-size: 13px; line-height: 1.5; color: var(--text3); }
+.mail-stop .btn { margin-top: 12px; }
 
 /* --- Liste des invités à prévenir --- */
 .db-contact { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
@@ -2091,7 +2250,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   overflow: hidden;
   animation: gbn-in .3s ease-out;
 }
-@keyframes gbn-in { from { max-height: 0; opacity: 0 } to { max-height: 90px; opacity: 1 } }
+/* L'ancienne version animait la hauteur du bandeau (0 → 90 px) : le navigateur
+   devait recalculer la mise en page de toute la page à chaque image, en plein
+   chargement. Opacité et glissement font le même effet à l'œil, mais se jouent
+   sur la carte graphique, sans rien recalculer. */
+@keyframes gbn-in { from { opacity: 0; transform: translateY(-6px) } to { opacity: 1; transform: none } }
 @media (prefers-reduced-motion: reduce) { .gbn { animation: none } }
 
 /* Les perforations, discrètes : lisibles de près, invisibles de loin. */
@@ -2817,4 +2980,276 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 @media (max-width: 560px) {
   .lp-films { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .lp-film figcaption span { font-size: 12px; }
+}
+
+/* ============================================================
+   Partager la soirée : l'image qu'on emporte sur Instagram.
+   Un écran plein, comme la visionneuse : on y entre pour une seule
+   chose, et la moindre distraction ferait renoncer.
+   ============================================================ */
+.col-ecran {
+  position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column;
+  background: var(--screen); overflow-y: auto; overscroll-behavior: contain;
+}
+.col-barre {
+  position: sticky; top: 0; z-index: 2; display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; background: var(--screen); border-bottom: 1px solid var(--line-soft);
+}
+.col-fermer {
+  flex: none; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink); font-size: 15px; cursor: pointer; line-height: 1;
+}
+.col-fermer:hover { border-color: var(--accent); }
+.col-titre { font-family: var(--font-display); font-weight: 800; font-size: 17px; }
+.col-corps { width: 100%; max-width: 460px; margin: 0 auto; padding: 14px 16px 40px; }
+
+.col-scene { display: flex; justify-content: center; }
+.col-apercu {
+  max-height: 46vh; max-width: 100%; height: auto; border-radius: 10px;
+  box-shadow: 0 14px 34px rgba(34,26,18,.2); background: var(--cream);
+}
+.col-compte, .col-vide {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .04em;
+  color: var(--text4); text-align: center; margin-top: 10px;
+}
+.col-vide { font-family: var(--font-body); font-size: 13.5px; letter-spacing: 0; line-height: 1.5; }
+
+.col-reglages { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+.col-l {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--text4); margin-bottom: 6px;
+}
+.col-seg { display: flex; gap: 7px; }
+.col-o {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  padding: 9px 6px; border-radius: 11px; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink); cursor: pointer;
+  font-family: var(--font-body); font-weight: 700; font-size: 13px; text-align: center;
+}
+.col-o em {
+  font-style: normal; font-weight: 400; font-size: 10.5px; color: var(--text4);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+}
+.col-o:hover:not(:disabled) { border-color: var(--accent); }
+.col-o.on { border-color: var(--accent); background: #fdf3e6; }
+.col-o:disabled { opacity: .4; cursor: not-allowed; }
+.col-pastille { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--line); }
+
+.col-melange {
+  width: 100%; margin-top: 14px; padding: 10px; border-radius: 11px;
+  border: 1px dashed var(--line); background: transparent; color: var(--text3);
+  font-family: var(--font-body); font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.col-melange:hover { border-color: var(--accent); color: var(--accent-deep); }
+.col-go { margin-top: 14px; }
+.col-ok {
+  margin-top: 10px; padding: 10px 12px; border-radius: 10px;
+  background: #e8f5ee; border: 1px solid rgba(31,138,91,.3);
+  color: #14603f; font-size: 13.5px; line-height: 1.45;
+}
+.col-aide { margin-top: 10px; font-size: 12.5px; line-height: 1.5; color: var(--text4); text-align: center; }
+.col-aide strong { color: var(--accent-deep); }
+
+/* Le bouton qui ouvre tout ça, posé dans l'en-tête de l'album. */
+.gal-partage {
+  display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px;
+  border-radius: 999px; border: 1px solid var(--accent); background: #fdf3e6;
+  color: var(--accent-deep); font-family: var(--font-body); font-weight: 800;
+  font-size: 13px; cursor: pointer;
+}
+.gal-partage:hover { background: var(--accent-btn); border-color: var(--accent-btn); color: #fff; }
+
+@media (max-width: 400px) {
+  .col-o { font-size: 12px; padding: 8px 4px; }
+  .col-apercu { max-height: 40vh; }
+}
+
+/* ---------- Calendrier de l'assistant (composant SelecteurDate) ----------
+   Le mois entier, plutôt que la roulette du téléphone. Les jours impossibles
+   sont éteints : l'erreur ne peut pas se produire, on n'a donc rien à
+   signaler. */
+.cal {
+  border: 2px solid var(--line); border-radius: 18px; background: var(--card);
+  padding: 8px 12px 6px; margin-top: 2px;
+}
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+.cal-mois {
+  font-family: var(--font-title); font-size: 17px; font-weight: 700; color: var(--ink);
+  text-transform: capitalize;
+}
+.cal-nav {
+  width: 34px; height: 34px; border-radius: 50%; border: 0; background: transparent;
+  color: var(--ink); font-size: 17px; cursor: pointer; flex: none;
+}
+.cal-nav:hover:not(:disabled) { background: rgba(34, 26, 18, .06); }
+.cal-nav:disabled { color: var(--text4); opacity: .4; cursor: default; }
+.cal-jours, .cal-grille { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-jours { margin-bottom: 2px; }
+.cal-jours span {
+  text-align: center; font-size: 11.5px; font-weight: 700; letter-spacing: .04em;
+  color: var(--text4); text-transform: uppercase;
+}
+.cal-grille { gap: 1px; }
+.cal-case {
+  /* Hauteur fixe plutôt qu'une case carrée : sur un téléphone large, le carré
+     donnait des cases de 46 px et l'écran ne tenait plus d'une seule pièce. */
+  height: 34px; border: 0; background: transparent; cursor: pointer;
+  border-radius: 50%; font-family: var(--font-body); font-size: 15px; font-weight: 600;
+  color: var(--ink); transition: background-color .12s, color .12s;
+}
+.cal-case.hors { color: var(--text4); }
+.cal-case:hover:not(:disabled) { background: rgba(236, 91, 51, .12); }
+.cal-case.on { background: var(--accent); color: #fff; font-weight: 800; }
+/* Un jour impossible ne se signale pas, il ne se touche pas. */
+.cal-case:disabled { color: var(--text4); opacity: .3; cursor: default; }
+.cal-heure {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-top: 8px; padding-top: 10px; border-top: 1px solid var(--line);
+}
+.cal-heure .lbl {
+  font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+  color: var(--text3);
+}
+.cal-heure input[type=time] {
+  width: auto; flex: 0 0 auto; min-height: 40px; padding: 6px 14px; border-radius: 999px;
+  text-align: center; font-size: 16px;
+}
+
+/* Choix courts, en pastilles : « Le soir même », « Le lendemain ». */
+.wiz-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 12px; }
+.wiz-chip {
+  flex: 1 1 auto; padding: 12px 8px; border-radius: 999px; cursor: pointer;
+  border: 2px solid var(--line); background: var(--card); color: var(--ink);
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 700; white-space: nowrap;
+  transition: border-color .15s, background-color .15s;
+}
+.wiz-chip:hover { border-color: var(--accent); }
+.wiz-chip.on { border-color: var(--accent); background: rgba(236,91,51,.09); box-shadow: 0 0 0 3px rgba(236,91,51,.15); }
+/* Le bloc d'heure seul, quand le calendrier de la fin reste replié. */
+.cal-seule { padding: 12px 14px; }
+/* Le début rappelé sur l'écran de la fin : « le lendemain » de quoi ? */
+.wiz-rappel-debut {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px;
+  margin-top: 16px; padding: 12px 14px; border-radius: 14px; background: rgba(34, 26, 18, .04);
+}
+.wiz-rappel-debut .lbl {
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text4); flex: none;
+}
+.wiz-rappel-debut strong { font-size: 14px; color: var(--ink); text-align: right; }
+
+/* ---------- Aperçus : montrer plutôt que décrire ---------- */
+
+/* La carte d'invitation en grand, avec ses actions : l'écran de la couverture
+   ne montre plus un cadre de téléversement, il montre le résultat. */
+.wiz-carte {
+  margin-top: 14px; padding: 16px 14px 12px; border-radius: 20px;
+  background: rgba(34, 26, 18, .04);
+}
+.wiz-carte-actions {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px;
+}
+.wiz-carte-actions .btn, .wiz-carte-actions label.btn {
+  flex: 1 1 auto; width: auto; min-width: 0; padding: 12px 12px; font-size: 14px;
+  cursor: pointer; text-align: center;
+}
+.wiz-carte-actions .btn.on { border-color: var(--accent); color: var(--accent); }
+/* Le haut de l'écran participant, à sa vraie apparence : la couverture carrée
+   et son titre. Le reste de l'écran s'ouvre en grand par « Prévisualiser ». */
+.wiz-vraie-haut { max-width: 208px; margin: 0 auto; text-align: center; }
+.wiz-vraie-haut .cover { aspect-ratio: 1 / 1; }
+.wiz-vraie-haut .h3 { font-size: 15.5px; margin: 10px 0 0; line-height: 1.25; }
+.wiz-exemple {
+  position: absolute; left: 10px; top: 10px; z-index: 2; border-radius: 999px;
+  background: rgba(34, 26, 18, .7); color: #fff; padding: 4px 9px;
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .12em; text-transform: uppercase;
+}
+.wiz-vraie-haut.on .cover { cursor: grab; touch-action: none; }
+
+/* La réplique de l'écran participant : on dessine l'écran à sa vraie largeur
+   (390 px, un iPhone), puis on le réduit. Mêmes classes que /j/[id], donc
+   aucune dérive possible entre l'aperçu et la réalité. */
+.wiz-vraie {
+  /* Pas de coque de téléphone : c'est l'écran qu'on regarde, pas l'appareil.
+     Un simple bloc aux angles arrondis, posé comme une carte. */
+  width: 195px; height: 350px; margin: 0 auto; overflow: hidden;
+  border-radius: 18px; background: var(--screen);
+  box-shadow: 0 10px 26px rgba(34, 26, 18, .14);
+}
+.wiz-vraie-ecran {
+  width: 390px; transform: scale(.5); transform-origin: top left;
+  padding: 18px 18px 22px; background: var(--screen); text-align: center;
+}
+.wiz-vraie-ecran .cover { aspect-ratio: 1 / 1; }
+.wiz-vraie-ecran .btn { pointer-events: none; }
+.wiz-vraie.on .cover { cursor: grab; touch-action: none; }
+.wiz-vraie-plein { width: 390px; height: min(740px, 82vh); border-radius: 22px; }
+.wiz-vraie-plein .wiz-vraie-ecran { transform: none; width: 100%; }
+.wiz-tel-guide {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  background: rgba(34, 26, 18, .82); color: #fff; border-radius: 999px;
+  padding: 7px 12px; font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+/* L'aperçu plein écran : ce que verra le participant, en vrai. */
+.wiz-apercu-plein {
+  position: fixed; inset: 0; z-index: 60; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 18px; padding: 24px;
+  background: rgba(34, 26, 18, .72); backdrop-filter: blur(6px);
+}
+.wiz-tel-plein { width: min(280px, 76vw); }
+.wiz-apercu-fermer { width: auto; padding: 12px 22px; background: var(--card); flex: none; }
+@media (max-width: 440px) {
+  .wiz-vraie-plein { width: min(320px, 86vw); height: min(700px, 80vh); }
+  /* L'écran entier doit tenir dans le cadre, mention du bas comprise : un
+     aperçu tronqué ferait douter de ce qui manque. */
+  .wiz-vraie-plein .wiz-vraie-ecran { transform: scale(.8); transform-origin: top left; width: 390px; }
+}
+
+/* La carte d'invitation, telle que le participant la recevra. */
+.wiz-apercu { margin-top: 14px; }
+.wiz-apercu-lbl {
+  display: block; text-align: center; font-size: 11.5px; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--text4); margin-bottom: 10px;
+}
+.wiz-tel {
+  width: 158px; margin: 0 auto; border-radius: 24px; overflow: hidden;
+  border: 6px solid #221A12; background: #221A12;
+  box-shadow: 0 14px 30px rgba(34, 26, 18, .18);
+}
+.wiz-tel-ecran {
+  position: relative; aspect-ratio: 9 / 17; background: var(--ink);
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 12px 10px 14px; text-align: center;
+}
+.wiz-tel-ecran img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.wiz-tel-voile {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(34,26,18,.15) 0%, rgba(34,26,18,.82) 100%);
+}
+.wiz-tel-txt { position: relative; }
+.wiz-tel-nom {
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  font-family: var(--font-title); font-size: 14px; font-weight: 700;
+  color: #fff; line-height: 1.25; margin-bottom: 4px; overflow: hidden;
+}
+.wiz-tel-sub { display: block; font-size: 10.5px; color: rgba(255,255,255,.75); margin-bottom: 8px; }
+.wiz-tel-btn {
+  display: block; background: var(--accent); color: #fff; border-radius: 999px;
+  font-size: 10.5px; font-weight: 700; padding: 8px 6px; line-height: 1.2;
+}
+
+/* L'album au moment de la révélation : deux vignettes floutées et la date. */
+.wiz-revele { position: relative; margin: 10px 0 12px; }
+.wiz-revele-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.wiz-revele-grille img {
+  width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 14px;
+  filter: blur(7px) saturate(.85); transform: scale(1.04);
+}
+.wiz-revele-cache { border-radius: 14px; overflow: hidden; }
+.wiz-revele-badge {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  background: rgba(34, 26, 18, .88); color: #fff; border-radius: 999px;
+  padding: 10px 16px; font-size: 12.5px; font-weight: 700; white-space: nowrap;
+  max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis;
+  box-shadow: 0 8px 20px rgba(34, 26, 18, .25);
 }

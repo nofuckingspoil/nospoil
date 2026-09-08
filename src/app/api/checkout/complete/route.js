@@ -2,6 +2,7 @@ import { getStripe } from '../../../../lib/stripe'
 import { insertRow, selectRows } from '../../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../../lib/mail'
 import { purgeDate } from '../../../../lib/retention'
+import { modeValide } from '../../../../lib/photo-mode'
 import { ensureAccount } from '../../../../lib/account'
 import { consumePromo } from '../../../../lib/promo'
 
@@ -56,6 +57,13 @@ export async function POST(request) {
   const expires = purgeDate(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
   // Date de la fête (événements payés avant l'ajout du champ : on l'estime).
   const start = m.starts_at ? new Date(m.starts_at) : new Date(reveal.getTime() - 13 * 3600 * 1000)
+  const debut = isNaN(start.getTime()) ? new Date(reveal.getTime() - 13 * 3600 * 1000) : start
+  // Heure de fin (vide pour les paiements d'avant le champ, et pour les tunnels
+  // courts qui ne la demandent pas : elle sera estimée à la lecture).
+  const finBrute = m.ends_at ? new Date(m.ends_at) : null
+  const fin = finBrute && !isNaN(finBrute.getTime()) && finBrute.getTime() > debut.getTime()
+    ? finBrute
+    : null
 
   // Le nom du moyen de paiement enrichit le compte au passage.
   const compte = await ensureAccount(ownerEmail, ownerName)
@@ -68,8 +76,10 @@ export async function POST(request) {
     name: m.name,
     host_names: m.host_names || null,
     shots_per_guest: parseInt(m.shots_per_guest, 10) || 10,
+    photo_mode: modeValide(m.photo_mode),
     max_guests: parseInt(m.max_guests, 10) || 5,
-    starts_at: (isNaN(start.getTime()) ? new Date(reveal.getTime() - 13 * 3600 * 1000) : start).toISOString(),
+    starts_at: debut.toISOString(),
+    ends_at: fin ? fin.toISOString() : null,
     reveal_at: reveal.toISOString(),
     expires_at: expires.toISOString(),
     status: 'active',

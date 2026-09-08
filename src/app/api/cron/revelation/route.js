@@ -22,6 +22,7 @@
 // ============================================================
 import { selectRows } from '../../../../lib/supabase'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
+import { envoyerRappelsPush, envoyerRevelationPush } from '../../../../lib/rappels-push'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -41,6 +42,17 @@ function authorized(request) {
 export async function GET(request) {
   if (!authorized(request)) {
     return Response.json({ error: 'Non autorisé.' }, { status: 401 })
+  }
+
+  // Les rappels de soirée aux téléphones Android : ils n'ont rien à voir avec
+  // la révélation, mais ils ont besoin d'un rendez-vous fréquent, et c'est
+  // celui-ci. Isolés de tout le reste : une notification qui échoue ne doit
+  // jamais empêcher un album de partir.
+  let rappels = null
+  try {
+    rappels = await envoyerRappelsPush()
+  } catch (err) {
+    console.error('cron/revelation: rappels push impossibles', err)
   }
 
   const now = new Date()
@@ -73,6 +85,9 @@ export async function GET(request) {
       const res = await notifyGuestsOfAlbum(ev)
       envoyes += res.envoyes || 0
       echecs += res.echecs || 0
+      // Et la même nouvelle en notification, pour les téléphones abonnés.
+      // Elle atteint aussi ceux qui n'ont pas laissé leur adresse.
+      try { await envoyerRevelationPush(ev) } catch {}
     } catch (err) {
       // Un événement qui échoue ne doit pas priver les suivants de leur mail.
       console.error('cron/revelation: envoi impossible pour', ev.id, err)
@@ -80,5 +95,5 @@ export async function GET(request) {
     }
   }
 
-  return Response.json({ ok: true, evenements: data.length, envoyes, echecs })
+  return Response.json({ ok: true, evenements: data.length, envoyes, echecs, rappels })
 }

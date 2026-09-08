@@ -1,4 +1,5 @@
 import { selectRows, deleteRows, updateRow, signPhotos, deletePhotos } from '../../../../../lib/supabase'
+import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 export const runtime = 'nodejs'
 
@@ -11,6 +12,7 @@ function authed(request) {
 export async function GET(request, { params }) {
   if (!authed(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
 
   const { ok, data } = await selectRows(
     'events',
@@ -104,6 +106,7 @@ export async function GET(request, { params }) {
 export async function PATCH(request, { params }) {
   if (!authed(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
   const { status } = await request.json().catch(() => ({}))
 
   if (!['active', 'suspended'].includes(status)) {
@@ -119,6 +122,7 @@ export async function PATCH(request, { params }) {
 export async function DELETE(request, { params }) {
   if (!authed(request)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
   const { id } = await params
+  if (!estUuid(id)) return identifiantInvalide()
 
   const { ok, data } = await selectRows('events', `id=eq.${id}&select=cover_url`)
   const ev = Array.isArray(data) ? data[0] : null
