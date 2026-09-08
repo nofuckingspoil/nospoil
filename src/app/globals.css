@@ -828,6 +828,16 @@ a.cam-pile:active { transform: scale(.94); }
   background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: rgba(231,225,212,.82);
 }
 .gal-page .notice strong { color: #fff; }
+/* Les bandeaux de l'organisateur : orange sourd sur fond sombre, au lieu du
+   crème du site clair. */
+.gal-page .notice-orga {
+  background: rgba(236,91,51,.12); border-color: rgba(236,91,51,.4); color: rgba(231,225,212,.86);
+}
+/* Le retour au tableau de bord : il était blanc sur blanc, donc invisible. */
+.gal-page .gal-back {
+  background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16); color: #fff;
+}
+.gal-page .gal-back:hover { border-color: var(--accent); }
 .gal-page .gal-fin {
   background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.1); color: rgba(231,225,212,.7);
 }
@@ -1312,8 +1322,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-fin strong, .db-alb-fin strong { color: var(--ink); }
 
 /* Médaille du classement, dans le coin haut-gauche de la photo. */
-.gal-rang { position: absolute; top: 8px; left: 8px; z-index: 3; font-size: 20px;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
 
 /* Cœur de favori, posé dans le coin de la photo. */
 .gal-coeur { position: absolute; bottom: 8px; right: 8px; z-index: 3;

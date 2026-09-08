@@ -923,12 +923,12 @@ export default function Gallery({ params }) {
         </div>
       )}
       {data.ownerPreview && (
-        <div className="notice" style={{ marginBottom: 14, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
+        <div className="notice notice-orga" style={{ marginBottom: 14 }}>
           👁️ <strong>Aperçu organisateur</strong> : vous voyez les photos en avant-première. Vos participants ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt)}.
         </div>
       )}
       {data.isOwner && (
-        <div className="notice small" style={{ marginBottom: 14, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
+        <div className="notice notice-orga small" style={{ marginBottom: 14 }}>
           🛠️ <strong>Vous gérez cet album.</strong> Sur chaque photo : 🙈 pour la masquer aux participants (elle reste visible pour vous), 🗑️ pour la supprimer.
           {hiddenCount > 0 && <> {hiddenCount} photo{hiddenCount > 1 ? 's' : ''} actuellement masquée{hiddenCount > 1 ? 's' : ''}.</>}
         </div>
@@ -1227,11 +1227,6 @@ export default function Gallery({ params }) {
                       🙈 MASQUÉE
                     </div>
                   )}
-                  {/* Podium : seulement dans le classement, et seulement si la
-                      photo a vraiment recueilli des cœurs. */}
-                  {vueFav === 'aimees' && i < 3 && p.favs > 0 && (
-                    <span className="gal-rang" aria-hidden="true">{['🥇', '🥈', '🥉'][i]}</span>
-                  )}
                   {data.isOwner && (
                     <div style={{ position: 'absolute', top: 8, right: 8, display: 'flex', gap: 6 }}>
                       <button title={p.hidden ? 'Réafficher aux participants' : 'Masquer aux participants'}
@@ -1291,10 +1286,10 @@ export default function Gallery({ params }) {
               {tousCoches ? 'Décocher ces photos' : 'Cocher ces photos'}
             </button>
             <span className="gal-bar-n">
-              {selected.size} photo{selected.size > 1 ? 's' : ''}
+              {aTelecharger.length} photo{aTelecharger.length > 1 ? 's' : ''}
               {auteursChoisis.size > 0 && <em className="gal-bar-note">La sélection se garde d'une personne à l'autre</em>}
             </span>
-            <button className="btn btn-accent gal-bar-dl" disabled={!!zip || selected.size === 0}
+            <button className="btn btn-accent gal-bar-dl" disabled={!!zip || aTelecharger.length === 0}
               onClick={() => downloadAll(aTelecharger)}>
               {zip ? `${zip.done}/${zip.total}` : 'Télécharger'}
             </button>
