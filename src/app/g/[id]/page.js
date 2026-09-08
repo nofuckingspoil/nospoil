@@ -911,7 +911,7 @@ export default function Gallery({ params }) {
   }
 
   return (
-    <main className={`screen wide gal-page ${panneau ? 'panneau-ouvert' : ''}`}>
+    <main className={`screen wide gal-page ${panneau ? 'panneau-ouvert' : ''} ${selecting ? 'en-selection' : ''}`}>
       {/* Retour au tableau de bord, réservé à l'organisateur : l'album est aussi
           la page des participants, qui n'ont rien à y faire. Collé en haut, la page
           étant longue par nature. */}
@@ -1007,6 +1007,8 @@ export default function Gallery({ params }) {
         {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
             occupaient le premier écran d'un téléphone, et les photos
             commençaient hors champ. Chacun dit son état, et ouvre son panneau. */}
+      {panneau && <div className="gal-fond" onClick={() => { if (panneau === 'qui') setChercheQui(''); setPanneau(null) }} />}
+
         <div className="gal-filtres" ref={filtresRef}>
           {/* Souligné seulement quand une pellicule change vraiment les photos :
               « Original » est l'absence d'effet, pas un filtre appliqué. */}
@@ -1038,7 +1040,6 @@ export default function Gallery({ params }) {
         {/* Le panneau se pose par-dessus l'album au lieu de le repousser : ouvrir
             un filtre ne doit pas coûter un écran de photos. On ferme en touchant
             à côté, comme n'importe quel menu. */}
-        {panneau && <div className="gal-fond" onClick={() => { if (panneau === 'qui') setChercheQui(''); setPanneau(null) }} />}
 
         {/* Le cœur passe pour une décoration tant qu'on n'a pas dit à quoi il
             sert : ces trois vues sont l'endroit où l'expliquer. */}

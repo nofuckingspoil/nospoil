@@ -928,7 +928,12 @@ a.cam-pile:active { transform: scale(.94); }
 .gal-page .gal-lbl { color: rgba(255,255,255,.5); }
 
 /* Les actions sous le pouce, collées en bas, quoi qu'on fasse défiler. */
+.gal-page.panneau-ouvert .gal-filtres { z-index: 26; }
 .gal-page.panneau-ouvert .gal-actions-bas { opacity: 0; pointer-events: none; }
+/* En mode sélection, la barre du bas laisse la place à celle de la sélection,
+   qui porte « cocher », le compte et « télécharger ». Les deux étant collées
+   au même endroit, la mienne masquait l'autre et il ne restait qu'Annuler. */
+.gal-page.en-selection .gal-actions-bas { display: none; }
 .gal-actions-bas {
   transition: opacity .18s ease;
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
