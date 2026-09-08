@@ -51,6 +51,11 @@ a { color: inherit; }
 /* ---------- Animations ---------- */
 @keyframes dc-flash   { 0%{opacity:0} 7%{opacity:.92} 100%{opacity:0} }
 @keyframes dc-develop { 0%{filter:grayscale(1) brightness(1.7) contrast(.35);opacity:.15;transform:scale(.97)} 60%{filter:grayscale(.3) brightness(1.1) contrast(.85);opacity:.9} 100%{filter:none;opacity:1;transform:scale(1)} }
+/* Le même développement, mais qui garde l'inclinaison du tirage. La variante
+   d'origine finissait sur transform:scale(1), et comme elle se fige à la fin
+   (fill-mode both), elle écrasait la rotation posée sur le tirage : les photos
+   se redressaient toutes seules au bout de huit dixièmes de seconde. */
+@keyframes dc-develop-pola { 0%{filter:grayscale(1) brightness(1.7) contrast(.35);opacity:.15;transform:rotate(var(--rot,0deg)) scale(.97)} 60%{filter:grayscale(.3) brightness(1.1) contrast(.85);opacity:.9} 100%{filter:none;opacity:1;transform:rotate(var(--rot,0deg)) scale(1)} }
 @keyframes dc-vf      { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 @keyframes dc-bob     { 0%,100%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-7px) rotate(2deg)} }
 @keyframes dc-spin    { to{transform:rotate(360deg)} }
@@ -986,7 +991,7 @@ a.cam-pile:active { transform: scale(.94); }
 }
 .polaroid {
   background: var(--card); padding: 7px 7px 0;
-  border-radius: 7px; box-shadow: 0 6px 16px rgba(34,26,18,.14); animation: dc-develop .8s ease both;
+  border-radius: 7px; box-shadow: 0 6px 16px rgba(34,26,18,.14); animation: dc-develop-pola .8s ease both;
   display: block; text-decoration: none;
 }
 .polaroid .media { position: relative; width: 100%; border-radius: 4px; overflow: hidden; background: var(--line); }
@@ -1991,19 +1996,22 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   background: rgba(20,22,31,.94); backdrop-filter: blur(8px);
   padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
 }
-.gal-bar-in { display: flex; align-items: center; gap: 12px; max-width: 980px; margin: 0 auto; }
-.gal-bar-fin {
-  flex: none; width: 36px; height: 36px; border-radius: 999px;
-  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
-  color: #fff; font-size: 15px; cursor: pointer;
-}
-.gal-bar-fin:hover { background: rgba(255,255,255,.18); }
+.gal-bar-in { display: flex; align-items: center; gap: 10px; max-width: 980px; margin: 0 auto; }
+/* Les trois éléments tenaient sur une ligne d'ordinateur et débordaient d'un
+   téléphone : le bouton de téléchargement sortait de l'écran, ce qui rendait
+   toute la page glissante de gauche à droite. Chacun a maintenant sa règle :
+   le lien de gauche se laisse rogner, le compteur ne se coupe jamais en deux,
+   le bouton ne rétrécit pas. */
 .gal-bar-tout {
-  flex: none; background: none; border: none; cursor: pointer;
+  flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  background: none; border: none; cursor: pointer; padding: 0;
   font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.75);
   text-decoration: underline;
 }
-.gal-bar-n { flex: 1; text-align: center; font-weight: 700; font-size: 14px; color: #fff; }
+.gal-bar-n {
+  flex: 1 1 auto; min-width: 0; text-align: center; white-space: nowrap;
+  font-weight: 700; font-size: 14px; color: #fff;
+}
 .gal-bar-note {
   display: block; margin-top: 2px; font-style: normal; font-weight: 400;
   font-size: 11px; color: rgba(255,255,255,.6);

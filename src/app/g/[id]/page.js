@@ -1262,7 +1262,7 @@ export default function Gallery({ params }) {
                     return n
                   })
                 }}
-                style={{ transform: `rotate(${rot}deg)`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
+                style={{ '--rot': `${rot}deg`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
                   {/* crossOrigin est indispensable au téléchargement : sans lui
                       le navigateur range la photo dans un coin de son cache où
@@ -1359,16 +1359,12 @@ export default function Gallery({ params }) {
       {selecting && (
         <div className="gal-bar">
           <div className="gal-bar-in">
-            {/* La sortie de la sélection : sans elle, on reste coincé, la barre
-                du bas ayant pris la place du bouton « Sélectionner ». */}
-            <button className="gal-bar-fin" aria-label="Quitter la sélection"
-              onClick={() => { setSelecting(false); setSelected(new Set()) }}>
-              ✕
-            </button>
+            {/* Pas de croix ici : « Annuler » vit dans la barre collante du haut,
+                à la place même d'où l'on est entré en sélection. */}
             <button className="gal-bar-tout" onClick={basculerTout}>
               {/* Le nombre dit combien le filtre en cours en montre : on sait ce
                   qu'on coche avant de cliquer. */}
-              {tousCoches ? `Décocher ces ${photos.length} photos` : `Cocher ces ${photos.length} photos`}
+              {tousCoches ? 'Tout décocher' : `Tout cocher (${photos.length})`}
             </button>
             <span className="gal-bar-n">
               {aTelecharger.length} photo{aTelecharger.length > 1 ? 's' : ''}
