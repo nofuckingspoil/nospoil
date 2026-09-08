@@ -314,20 +314,18 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
       else if (e.key === 'ArrowRight') setIndex((i) => Math.min(n - 1, i + 1))
     }
     window.addEventListener('keydown', onKey)
-    // Le retour d'Android referme la photo. Sans cette entrée d'historique, il
-    // sortait de l'album entier : on croyait revenir à la grille et on se
-    // retrouvait sur la page d'avant.
-    window.history.pushState({ diapo: true }, '')
-    const onPop = () => onClose()
-    window.addEventListener('popstate', onPop)
+    // Pas de manipulation de l'historique ici. J'avais posé une entrée pour que
+    // le retour d'Android referme la photo, et retiré cette entrée au
+    // démontage : en développement, React monte chaque composant deux fois, et
+    // ce retour automatique refermait la visionneuse à l'instant où elle
+    // s'ouvrait. Le bouton retour du téléphone sort donc de l'album, comme
+    // avant ; ça mérite d'être repris, mais pas au prix d'une visionneuse qui
+    // ne s'ouvre plus.
     // La page derrière ne doit pas défiler sous la photo qu'on regarde.
     const avant = document.body.style.overflow
     document.body.style.overflow = 'hidden'
     return () => {
       window.removeEventListener('keydown', onKey)
-      window.removeEventListener('popstate', onPop)
-      // Si la fermeture ne vient pas du retour, on retire l'entrée qu'on a posée.
-      if (window.history.state && window.history.state.diapo) window.history.back()
       document.body.style.overflow = avant
     }
   }, [n, onClose, setIndex])

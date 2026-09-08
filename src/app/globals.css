@@ -939,6 +939,12 @@ a.cam-pile:active { transform: scale(.94); }
    08:01 »), elle imposait donc sa largeur à la colonne, et la seconde photo
    sortait de l'écran sur un téléphone. */
 .masonry { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; align-items: start; }
+/* Sur un ordinateur, deux colonnes donnaient des tirages d'un demi-écran de
+   haut : une photo verticale ne tenait plus dans la fenêtre. Trois colonnes les
+   ramènent à une taille qu'on embrasse d'un regard, sans les recadrer. */
+@media (min-width: 700px) {
+  .masonry { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+}
 .polaroid {
   background: var(--card); padding: 7px 7px 0;
   border-radius: 7px; box-shadow: 0 6px 16px rgba(34,26,18,.14); animation: dc-develop .8s ease both;
