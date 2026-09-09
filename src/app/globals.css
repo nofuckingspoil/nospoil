@@ -495,6 +495,8 @@ a.cam-pile:active { transform: scale(.94); }
    milieu, et personne ne se demande à quoi sert l'icône. */
 .album-nav { display: flex; align-items: flex-start; justify-content: space-between; }
 .album-navspace { flex: 1; }
+/* Les deux boutons de droite, épaule contre épaule. */
+.album-navduo { display: flex; align-items: flex-start; gap: 16px; }
 .album-navbtn {
   display: flex; flex-direction: column; align-items: center; gap: 5px;
   background: none; border: 0; padding: 0; cursor: pointer; color: #fff;
@@ -617,6 +619,15 @@ a.cam-pile:active { transform: scale(.94); }
   font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
   text-transform: uppercase; color: rgba(255,255,255,.6);
 }
+/* Le tri du mur : posé à droite des compteurs, dans la même petite capitale.
+   Il ne doit pas se disputer la vedette avec le mur lui-même. */
+.mur-filtre {
+  margin-left: auto; flex: none; background: none; cursor: pointer;
+  padding: 3px 9px; border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.18);
+  font: inherit; letter-spacing: .12em; color: rgba(255,255,255,.6);
+}
+.mur-filtre.on { border-color: var(--accent); color: var(--accent-lt); background: rgba(236,91,51,.12); }
 .mur-lab .pt {
   width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none;
   box-shadow: 0 0 0 0 rgba(236,91,51,.5); animation: dc-pulse 2.4s ease-out infinite;
@@ -693,9 +704,14 @@ a.cam-pile:active { transform: scale(.94); }
   pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
 /* Le mot qui accompagne le seul regard autorisé, sous le cliché à confirmer. */
+/* La légende est collée à son bouton, et les deux colonnes gardent la même
+   largeur : les deux choix doivent peser pareil à l'oeil, c'est une décision,
+   pas une recommandation. */
+.confirm-choix { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; align-items: center; gap: 7px; }
+.confirm-choix .btn { width: 100%; }
 .confirm-note {
-  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: .03em;
-  color: rgba(255,255,255,.55); text-align: center; margin: 14px 0 0;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: .04em;
+  color: rgba(255,255,255,.5); text-align: center; line-height: 1.35;
 }
 
 /* Effet d'obturateur (volet noir qui se ferme/ouvre) */

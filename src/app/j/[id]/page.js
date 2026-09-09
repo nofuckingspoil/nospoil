@@ -125,6 +125,9 @@ export default function GuestCamera({ params }) {
   const [mur, setMur] = useState([])             // [{id, url, qui, moi}] photos du groupe, floutées avant la révélation
   const [murTotal, setMurTotal] = useState(0)    // combien il y en a en tout, pour savoir s'il en reste
   const [murN, setMurN] = useState(12)           // combien on en demande : 12, puis la suite au défilement
+  // Le mur montre la soirée entière, mais on veut aussi pouvoir retrouver les
+  // siennes d'un coup d'oeil, sans les chercher parmi celles des autres.
+  const [murMoi, setMurMoi] = useState(false)
   const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
@@ -388,7 +391,7 @@ export default function GuestCamera({ params }) {
     const refresh = async () => {
       try {
         const n = showAlbum ? murN : 0
-        const d = await fetch(`/api/events/${id}/stats?n=${n}`, {
+        const d = await fetch(`/api/events/${id}/stats?n=${n}${murMoi ? '&qui=moi' : ''}`, {
           headers: { 'x-device-token': getDeviceToken(), 'x-owner-token': getOwnerToken(id) },
         }).then((r) => r.json())
         if (!alive || !d) return
@@ -405,7 +408,7 @@ export default function GuestCamera({ params }) {
     const t = setInterval(refresh, showAlbum ? 4000 : 20000)
     return () => { alive = false; clearInterval(t) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAlbum, murN, phase, id])
+  }, [showAlbum, murN, murMoi, phase, id])
 
   // Où l'on atterrit. Le viseur tant qu'il reste des vues et que la soirée
   // court ; l'album dans tous les autres cas, parce qu'il n'y a alors plus rien
@@ -1190,20 +1193,36 @@ export default function GuestCamera({ params }) {
               </Link>
             )}
 
+            {/* À gauche l'appareil, à droite ce qui touche à soi et aux autres.
+                Le retour au viseur est le geste le plus fréquent depuis cet
+                écran : il mérite le coin que le pouce atteint sans réfléchir,
+                et il prend la place où le bouton retour se trouve partout
+                ailleurs. Après la révélation il n'y a plus d'appareil à
+                rouvrir, la place reste vide. */}
             <div className="album-nav">
-              <button className="album-navbtn" onClick={() => setShowProfil(true)}>
-                <span className="ic">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
-                </span>
-                <em>Profil</em>
-              </button>
+              {!meta?.revealed ? (
+                <button className="album-navbtn" onClick={() => setShowAlbum(false)}>
+                  <span className="ic">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" /><circle cx="12" cy="13" r="4" /></svg>
+                  </span>
+                  <em>Appareil</em>
+                </button>
+              ) : <span />}
               <span className="album-navspace" />
-              <button className="album-navbtn" onClick={() => setShowQR(true)}>
-                <span className="ic">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM21 14v7M14 21h7" /></svg>
-                </span>
-                <em>Inviter</em>
-              </button>
+              <div className="album-navduo">
+                <button className="album-navbtn" onClick={() => setShowProfil(true)}>
+                  <span className="ic">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" /></svg>
+                  </span>
+                  <em>Profil</em>
+                </button>
+                <button className="album-navbtn" onClick={() => setShowQR(true)}>
+                  <span className="ic">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3h-3zM21 14v7M14 21h7" /></svg>
+                  </span>
+                  <em>Inviter</em>
+                </button>
+              </div>
             </div>
 
             {meta?.coverUrl ? (
@@ -1283,6 +1302,14 @@ export default function GuestCamera({ params }) {
                   <span className="pt" />
                   {meta?.photoCount ?? mur.length} photo{(meta?.photoCount ?? mur.length) > 1 ? 's' : ''}
                   {' · '}{meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
+                  {/* Discret, à droite des compteurs : le mur reste celui du
+                      groupe, on ne fait qu'y retrouver les siennes. Le tri se
+                      fait côté serveur, sinon on filtrerait les douze dernières
+                      photos de la soirée, où les siennes manquent souvent. */}
+                  <button className={`mur-filtre ${murMoi ? 'on' : ''}`}
+                    onClick={() => { setMurMoi((v) => !v); setMurN(12) }}>
+                    {murMoi ? 'Tout le monde' : 'Les miennes'}
+                  </button>
                 </div>
                 <div className="mur-grid">
                   {mur.map((p) => (
@@ -1298,9 +1325,11 @@ export default function GuestCamera({ params }) {
                   </button>
                 )}
                 <p className="mur-note">
-                  {flouterMesPhotos
-                    ? 'Toutes les photos de la soirée, y compris les tiennes. Elles se dévoilent à la révélation.'
-                    : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
+                  {murMoi
+                    ? 'Tes clichés, floutés comme les autres jusqu’à la révélation.'
+                    : flouterMesPhotos
+                      ? 'Toutes les photos de la soirée, y compris les tiennes. Elles se dévoilent à la révélation.'
+                      : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
                 </p>
               </div>
             )}
@@ -1442,15 +1471,26 @@ export default function GuestCamera({ params }) {
       {aConfirmer && (
         <div className="viewer">
           <img src={aConfirmer.url} alt="Le cliché que vous venez de prendre" />
-          <p className="confirm-note">Vous ne la reverrez qu'à la révélation.</p>
+          {/* Une micro-légende sous chaque bouton, plutôt qu'une phrase qui les
+              explique tous les deux : à l'instant du déclic on lit trois mots,
+              et une correspondance à faire entre une phrase et deux boutons ne
+              se fait pas dans une fête. Chacune dit ce que son bouton coûte ou
+              promet, et la seule information qui manquait vraiment est celle de
+              gauche : reprendre ne décompte rien. */}
           <div className="viewer-actions">
-            <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }}
-              onClick={reprendreLeCliche} disabled={busy}>
-              Reprendre
-            </button>
-            <button className="btn btn-accent" onClick={garderLeCliche} disabled={busy}>
-              Garder
-            </button>
+            <div className="confirm-choix">
+              <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }}
+                onClick={reprendreLeCliche} disabled={busy}>
+                Reprendre
+              </button>
+              <span className="confirm-note">ne coûte aucune photo</span>
+            </div>
+            <div className="confirm-choix">
+              <button className="btn btn-accent" onClick={garderLeCliche} disabled={busy}>
+                Garder
+              </button>
+              <span className="confirm-note">visible à la révélation</span>
+            </div>
           </div>
         </div>
       )}

@@ -76,7 +76,13 @@ export async function GET(request, { params }) {
     // elles : voir sa photo rejoindre le mur du groupe vaut mieux qu'un
     // compteur, et c'est la preuve qu'elle est bien partie.
     const nom = new Map(invites.map((g) => [g.id, g.display_name || '']))
-    const visibles = cliches.filter((p) => !p.hidden)
+    // `?qui=moi` : ne garder que ses propres clichés. Le tri se fait ICI et non
+    // sur le téléphone, sinon on filtrerait les douze dernières photos de la
+    // soirée et il n'en resterait souvent aucune des siennes.
+    const queLesMiennes = new URL(request.url).searchParams.get('qui') === 'moi'
+    const visibles = cliches.filter(
+      (p) => !p.hidden && (!queLesMiennes || mesFiches.includes(p.guest_id))
+    )
     murTotal = visibles.length
     const recentes = visibles.slice(0, combien)
     const chemin = (p) => p.thumb_path || p.storage_path
