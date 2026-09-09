@@ -1367,6 +1367,20 @@ export default function GuestCamera({ params }) {
                   </button>
                 </div>
 
+                {/* La légende était sous la grille : avec deux cents photos, il
+                    fallait tout traverser pour la lire. Elle passe au-dessus, et
+                    porte au passage le nombre de participants, qui avait disparu
+                    en même temps que l'ancien bandeau du mur. */}
+                <p className="mur-note" style={{ margin: '0 0 12px' }}>
+                  {ongletMoi
+                    ? flouterMesPhotos
+                      ? 'Scellées, comme un vrai jetable. Tu les découvriras à la révélation.'
+                      : 'Tes photos, à toi seul, jusqu’à la révélation.'
+                    : `${meta?.photoCount ?? 0} photo${(meta?.photoCount ?? 0) > 1 ? 's' : ''} · `
+                      + `${meta?.guestCount ?? 1} participant${(meta?.guestCount || 0) > 1 ? 's' : ''}`
+                      + ', floutées jusqu’à la révélation.'}
+                </p>
+
                 {/* Ses propres photos, en clair, quand l'organisateur l'a permis.
                     On les ouvre, on en supprime une ratée, on les télécharge,
                     sans descendre nulle part. */}
@@ -1425,11 +1439,6 @@ export default function GuestCamera({ params }) {
                       Voir plus de photos ({murTotal - mur.length})
                     </button>
                   )}
-                  <p className="mur-note">
-                    {ongletMoi
-                      ? 'Scellées, comme un vrai jetable. Tu les découvriras à la révélation.'
-                      : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
-                  </p>
                 </>)}
               </div>
             )}
