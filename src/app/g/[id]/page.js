@@ -658,7 +658,12 @@ export default function Gallery({ params }) {
     const url = typeof window !== 'undefined' ? `${window.location.origin}/g/${id}` : ''
     if (!url) return
     if (typeof navigator !== 'undefined' && navigator.share) {
-      try { await navigator.share({ title: data?.hostNames || data?.name || 'Time to Flash', text: 'Les photos de la soirée 📸', url }); return } catch {}
+      // Le nom de la soirée dans le TEXTE, pas seulement dans le titre : les
+      // messageries ignorent le titre et ne collent que le texte et le lien.
+      // Sans lui, on reçoit « les photos de la soirée » sans savoir laquelle.
+      const nom = data?.hostNames || data?.name || ''
+      const texte = nom ? `L'album de ${nom} 📸` : 'Les photos de la soirée 📸'
+      try { await navigator.share({ title: nom || 'Time to Flash', text: texte, url }); return } catch {}
     }
     try {
       await navigator.clipboard.writeText(url)
@@ -1251,13 +1256,16 @@ export default function Gallery({ params }) {
             </button>
           </div>
         )}
-        </div>
 
+        {/* La sortie des filtres vit DANS la barre collante, avec eux : posée
+            en dessous, elle partait au premier défilement, et c'est justement
+            filtré et défilé qu'on la cherche. */}
         {filtreActif() && !panneau && (
           <button className="gal-reinit" onClick={toutMontrer}>
             ✕ Tout montrer
           </button>
         )}
+        </div>
 
         {/* Ce que voient les participants, par opposition à ce que vous seul voyez.
             Inutile tant que rien n'est masqué : il n'y aurait rien à trier. */}

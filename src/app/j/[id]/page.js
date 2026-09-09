@@ -348,7 +348,12 @@ export default function GuestCamera({ params }) {
   // Partage natif (Notes, WhatsApp, Mail…) ; repli sur copie si indisponible.
   async function shareMyLink() {
     if (typeof navigator !== 'undefined' && navigator.share) {
-      try { await navigator.share({ title: meta?.name || 'Time to Flash', text: 'Prends des photos avec nous 📸', url: joinUrl }); return } catch {}
+      // Le nom de la soirée dans le TEXTE, pas seulement dans le titre : les
+      // messageries ignorent le titre et ne collent que le texte et le lien.
+      // Sans lui, on reçoit une invitation sans savoir à quoi.
+      const nom = meta?.hostNames || meta?.name || ''
+      const texte = nom ? `Prends des photos avec nous à ${nom} 📸` : 'Prends des photos avec nous 📸'
+      try { await navigator.share({ title: nom || 'Time to Flash', text: texte, url: joinUrl }); return } catch {}
     }
     copyJoinLink()
   }
