@@ -125,9 +125,9 @@ export default function GuestCamera({ params }) {
   const [mur, setMur] = useState([])             // [{id, url, qui, moi}] photos du groupe, floutées avant la révélation
   const [murTotal, setMurTotal] = useState(0)    // combien il y en a en tout, pour savoir s'il en reste
   const [murN, setMurN] = useState(12)           // combien on en demande : 12, puis la suite au défilement
-  // Le mur montre la soirée entière, mais on veut aussi pouvoir retrouver les
-  // siennes d'un coup d'oeil, sans les chercher parmi celles des autres.
-  const [murMoi, setMurMoi] = useState(false)
+  // Lequel des deux onglets est ouvert. On arrive sur les siennes : c'est ce
+  // qu'on vient chercher juste après avoir déclenché.
+  const [ongletMoi, setOngletMoi] = useState(true)
   const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
@@ -391,7 +391,13 @@ export default function GuestCamera({ params }) {
     const refresh = async () => {
       try {
         const n = showAlbum ? murN : 0
-        const d = await fetch(`/api/events/${id}/stats?n=${n}${murMoi ? '&qui=moi' : ''}`, {
+        // Le tri par personne ne sert que dans l'onglet « Mes photos » des modes
+        // où l'on ne revoit pas ses photos : en album ouvert, elles viennent du
+        // téléphone, nettes, sans passer par le mur.
+        // Recalculé ici : `flouterMesPhotos` est défini plus bas, après les
+        // écrans d'attente, et un crochet ne peut pas vivre après eux.
+        const queMoi = ongletMoi && !!meta && !meta.revealed && !revoitSesPhotos(meta.photoMode || 'libre')
+        const d = await fetch(`/api/events/${id}/stats?n=${n}${queMoi ? '&qui=moi' : ''}`, {
           headers: { 'x-device-token': getDeviceToken(), 'x-owner-token': getOwnerToken(id) },
         }).then((r) => r.json())
         if (!alive || !d) return
@@ -408,7 +414,7 @@ export default function GuestCamera({ params }) {
     const t = setInterval(refresh, showAlbum ? 4000 : 20000)
     return () => { alive = false; clearInterval(t) }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showAlbum, murN, murMoi, phase, id])
+  }, [showAlbum, murN, ongletMoi, meta?.photoMode, meta?.revealed, phase, id])
 
   // Où l'on atterrit. Le viseur tant qu'il reste des vues et que la soirée
   // court ; l'album dans tous les autres cas, parce qu'il n'y a alors plus rien
@@ -1314,38 +1320,71 @@ export default function GuestCamera({ params }) {
               )}
             </div>
 
-            {/* Le mur : la soirée en train de se faire. Ses propres photos y
-                sont mêlées aux autres, floutées comme elles, signalées par
-                « Toi ». Rien n'est cliquable : c'est une rumeur d'images. */}
-            {/* Les compteurs et le filtre restent affichés même quand le mur
-                filtré est vide, sinon on se retrouve enfermé dans « les
-                miennes » sans aucun moyen de revenir au groupe. */}
-            {!meta?.revealed && murCharge && (
+            {/* ============================================================
+                Un seul bloc, deux onglets. Avant, trois mécanismes parlaient
+                des mêmes photos : le mur du groupe, une section « Mes photos »
+                tout en bas, et un filtre qui basculait entre les deux. On
+                devait descendre pour éditer ses photos alors que le haut de
+                l'écran parlait déjà de photos, et un bouton qui bascule ne dit
+                jamais s'il désigne l'état actuel ou celui qu'on va obtenir.
+
+                Deux onglets côte à côte montrent les deux états en même temps,
+                et l'on arrive sur les siennes : c'est ce qu'on vient chercher
+                juste après avoir déclenché.
+                ============================================================ */}
+            {!meta?.revealed && (
               <div className="album-mur">
-                <div className="mur-lab">
-                  <span className="pt" />
-                  {meta?.photoCount ?? mur.length} photo{(meta?.photoCount ?? mur.length) > 1 ? 's' : ''}
-                  {' · '}{meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
-                  {/* Discret, à droite des compteurs : le mur reste celui du
-                      groupe, on ne fait qu'y retrouver les siennes. Le tri se
-                      fait côté serveur, sinon on filtrerait les douze dernières
-                      photos de la soirée, où les siennes manquent souvent. */}
-                  <button className={`mur-filtre ${murMoi ? 'on' : ''}`}
-                    onClick={() => { setMurMoi((v) => !v); setMurN(12) }}>
-                    {murMoi ? 'Tout le monde' : 'Les miennes'}
+                <div className="album-onglets" role="tablist">
+                  <button className={`album-onglet ${ongletMoi ? 'actif' : ''}`}
+                    role="tab" aria-selected={ongletMoi}
+                    onClick={() => { setOngletMoi(true); setMurN(12) }}>
+                    <b>Mes photos</b>
+                    <em>{guest?.shotsTaken ?? myPhotos.length} / {guest?.shotsPerGuest ?? 0}</em>
+                  </button>
+                  <button className={`album-onglet ${ongletMoi ? '' : 'actif'}`}
+                    role="tab" aria-selected={!ongletMoi}
+                    onClick={() => { setOngletMoi(false); setMurN(12) }}>
+                    <b>Toutes les photos</b>
+                    <em>{meta?.photoCount ?? 0} photo{(meta?.photoCount ?? 0) > 1 ? 's' : ''}</em>
                   </button>
                 </div>
-                {mur.length === 0 ? (
-                  // Deux vides très différents : personne n'a déclenché de la
-                  // soirée, ou personne SAUF les autres. Le second ne doit
-                  // surtout pas dire que la pellicule est vierge, ce serait
-                  // faux et décourageant.
+
+                {/* Ses propres photos, en clair, quand l'organisateur l'a permis.
+                    On les ouvre, on en supprime une ratée, on les télécharge,
+                    sans descendre nulle part. */}
+                {ongletMoi && !flouterMesPhotos ? (
+                  roll.length === 0 ? (
+                    <div className="album-vierge">
+                      <div className="em">🎞️</div>
+                      <h5>Tu n&apos;as pas encore déclenché</h5>
+                      <p>Ta première photo t&apos;attend.</p>
+                    </div>
+                  ) : (<>
+                    <div className="album-grid">
+                      {roll.map((p, i) => (
+                        <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
+                          onClick={() => { if (!p.pending && p.id) setViewer({ id: p.id, url: p.url }) }}
+                          aria-label="Voir la photo">
+                          {/* crossOrigin : sans lui, la photo mise en cache par cette
+                              vignette ne peut plus être relue pour le zip. */}
+                          <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
+                        </button>
+                      ))}
+                    </div>
+                    <button className="mur-plus" onClick={downloadMine} disabled={downloading || !myPhotos.length}>
+                      {downloading ? 'Préparation…' : 'Télécharger mes photos'}
+                    </button>
+                  </>)
+                ) : mur.length === 0 ? (
+                  // Deux vides, et jamais un mot sur les autres dans l'onglet
+                  // « Mes photos » : dire « les autres ont déjà déclenché »
+                  // quand la soirée entière est vide serait faux.
                   <div className="album-vierge">
                     <div className="em">🎞️</div>
-                    {murMoi ? (
+                    {ongletMoi ? (
                       <>
-                        <h5>Tu n&apos;as encore rien pris</h5>
-                        <p>Les autres ont déjà déclenché. Ta première photo t&apos;attend.</p>
+                        <h5>Tu n&apos;as pas encore déclenché</h5>
+                        <p>Ta première photo t&apos;attend.</p>
                       </>
                     ) : (
                       <>
@@ -1355,52 +1394,25 @@ export default function GuestCamera({ params }) {
                     )}
                   </div>
                 ) : (<>
-                <div className="mur-grid">
-                  {mur.map((p) => (
-                    <div className={`mur-thumb${p.moi ? ' moi' : ''}`} key={p.id}>
-                      <img src={p.url} alt="" loading="lazy" draggable="false" />
-                      {p.qui && <span className="mur-qui">{p.moi ? 'Toi' : p.qui}</span>}
-                    </div>
-                  ))}
-                </div>
-                {murTotal > mur.length && (
-                  <button className="mur-plus" onClick={() => setMurN((n) => n + 12)}>
-                    Voir plus de photos ({murTotal - mur.length})
-                  </button>
-                )}
-                <p className="mur-note">
-                  {murMoi
-                    ? 'Tes clichés, floutés comme les autres jusqu’à la révélation.'
-                    : flouterMesPhotos
-                      ? 'Toutes les photos de la soirée, y compris les tiennes. Elles se dévoilent à la révélation.'
-                      : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
-                </p>
-                </>)}
-              </div>
-            )}
-
-            {/* L'album ouvert : ses propres photos restent consultables et
-                supprimables, c'est ce que l'organisateur a choisi. Dans les
-                deux autres modes, elles vivent dans le mur, floutées. */}
-            {!flouterMesPhotos && roll.length > 0 && (
-              <div className="album-mur">
-                <div className="mur-lab">
-                  <span className="pt" />Mes photos · {myPhotos.length}/{guest?.shotsPerGuest}
-                </div>
-                <div className="album-grid">
-                  {roll.map((p, i) => (
-                    <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
-                      onClick={() => { if (!p.pending && p.id) setViewer({ id: p.id, url: p.url }) }}
-                      aria-label="Voir la photo">
-                      {/* crossOrigin : sans lui, la photo mise en cache par cette
-                          vignette ne peut plus être relue pour le zip. */}
-                      <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
+                  <div className="mur-grid">
+                    {mur.map((p) => (
+                      <div className={`mur-thumb${p.moi ? ' moi' : ''}`} key={p.id}>
+                        <img src={p.url} alt="" loading="lazy" draggable="false" />
+                        {p.qui && !ongletMoi && <span className="mur-qui">{p.moi ? 'Toi' : p.qui}</span>}
+                      </div>
+                    ))}
+                  </div>
+                  {murTotal > mur.length && (
+                    <button className="mur-plus" onClick={() => setMurN((n) => n + 12)}>
+                      Voir plus de photos ({murTotal - mur.length})
                     </button>
-                  ))}
-                </div>
-                <button className="mur-plus" onClick={downloadMine} disabled={downloading || !myPhotos.length}>
-                  {downloading ? 'Préparation…' : 'Télécharger mes photos'}
-                </button>
+                  )}
+                  <p className="mur-note">
+                    {ongletMoi
+                      ? 'Scellées, comme un vrai jetable. Tu les découvriras à la révélation.'
+                      : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
+                  </p>
+                </>)}
               </div>
             )}
           </div>

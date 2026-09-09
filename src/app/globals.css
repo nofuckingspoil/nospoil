@@ -619,17 +619,25 @@ a.cam-pile:active { transform: scale(.94); }
   font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
   text-transform: uppercase; color: rgba(255,255,255,.6);
 }
-/* Le tri du mur : posé à droite des compteurs, dans la même petite capitale.
-   Il ne doit pas se disputer la vedette avec le mur lui-même. */
-.mur-filtre {
-  margin-left: auto; flex: none; background: none; cursor: pointer;
-  /* Assez haut pour un pouce : la pastille faisait 22 px, moitié moins que le
-     minimum recommandé, et elle se regardait sans se presser. */
-  padding: 8px 12px; border-radius: 999px; min-height: 34px;
-  border: 1px solid rgba(255,255,255,.18);
-  font: inherit; letter-spacing: .12em; color: rgba(255,255,255,.6);
+/* Les deux onglets : ils montrent les deux états en même temps, là où un bouton
+   qui bascule ne dit jamais s'il désigne l'état actuel ou celui qu'on obtiendra.
+   Même largeur pour les deux : aucun des deux ne se présente comme le principal. */
+.album-onglets {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
+  padding: 4px; border-radius: 999px; margin-bottom: 13px;
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
 }
-.mur-filtre.on { border-color: var(--accent); color: var(--accent-lt); background: rgba(236,91,51,.12); }
+.album-onglet {
+  border-radius: 999px; padding: 8px 6px; border: 0; cursor: pointer;
+  background: none; font-family: inherit; color: rgba(255,255,255,.6);
+}
+.album-onglet b { display: block; font-size: 13px; font-weight: 600; }
+.album-onglet em {
+  display: block; font-style: normal; font-family: var(--font-mono);
+  font-size: 9px; letter-spacing: .1em; margin-top: 2px; color: rgba(255,255,255,.4);
+}
+.album-onglet.actif { background: var(--accent); color: #fff; }
+.album-onglet.actif em { color: rgba(255,255,255,.78); }
 .mur-lab .pt {
   width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex: none;
   box-shadow: 0 0 0 0 rgba(236,91,51,.5); animation: dc-pulse 2.4s ease-out infinite;
