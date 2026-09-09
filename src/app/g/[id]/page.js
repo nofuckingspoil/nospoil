@@ -1322,11 +1322,13 @@ export default function Gallery({ params }) {
                   {pelli.vignette > 0 && <div className="film-vignette" style={{ opacity: pelli.vignette }} />}
                   {pelli.grain > 0 && <div className="film-grain" style={{ opacity: pelli.grain }} />}
                   {avecDate && <span className="film-date">{tamponDate(p.takenAt)}</span>}
-                  {selecting && (
-                    <span className={`gal-coche ${selected.has(p.id) ? 'on' : ''}`} aria-hidden="true">
-                      {selected.has(p.id) ? '✓' : ''}
-                    </span>
-                  )}
+                  {/* La coche est toujours posée, montrée par une classe sur la
+                      page. La faire apparaître photo par photo obligeait React à
+                      repasser sur les trois cents vignettes à chaque entrée en
+                      sélection, et l'appui semblait mettre une seconde à agir. */}
+                  <span className={`gal-coche ${selected.has(p.id) ? 'on' : ''}`} aria-hidden="true">
+                    {selected.has(p.id) ? '✓' : ''}
+                  </span>
                   {p.hidden && (
                     <div style={{ position: 'absolute', top: 8, left: 8, background: 'rgba(20,22,31,.85)', color: '#fff', fontSize: 10, fontWeight: 700, letterSpacing: '.05em', padding: '4px 8px', borderRadius: 8, fontFamily: 'var(--font-mono)' }}>
                       🙈 MASQUÉE

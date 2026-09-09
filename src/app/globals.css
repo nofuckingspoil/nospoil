@@ -903,8 +903,12 @@ a.cam-pile:active { transform: scale(.94); }
   color: rgba(255,255,255,.5); margin-top: 2px;
 }
 .gal-creer {
-  flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 2px;
+  /* Largeur figée sur le plus long des libellés : sans elle, l'icône se déplaçait
+     en passant de « Sélectionner » à « Annuler », juste sous le doigt. */
+  flex: 0 0 auto; min-width: 76px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
   background: none; border: 0; cursor: pointer; color: var(--accent-lt); font-size: 15px;
+  padding: 4px 2px;
 }
 .gal-creer svg { display: block; }
 .gal-creer i {
@@ -990,6 +994,7 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
    qui porte « cocher », le compte et « télécharger ». Les deux étant collées
    au même endroit, la mienne masquait l'autre et il ne restait qu'Annuler. */
 .gal-page.en-selection .gal-actions-bas { display: none; }
+.gal-page.en-selection .gal-coche { display: flex; }
 .gal-actions-bas {
   transition: opacity .18s ease;
   position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
@@ -2068,7 +2073,9 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-bar-dl { flex: none; width: auto; padding: 12px 22px; font-size: 14.5px; }
 .gal-coche {
   position: absolute; top: 8px; left: 8px; width: 26px; height: 26px;
-  display: flex; align-items: center; justify-content: center;
+  /* Posée dans la page en permanence, révélée par la classe de sélection : voir
+     le commentaire du rendu. */
+  display: none; align-items: center; justify-content: center;
   border-radius: 50%; background: rgba(255,255,255,.9); border: 2px solid var(--line);
   font-size: 14px; font-weight: 800; color: var(--ink);
 }
