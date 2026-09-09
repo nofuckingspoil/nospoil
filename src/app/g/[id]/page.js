@@ -469,6 +469,9 @@ export default function Gallery({ params }) {
   // voit est ce que l'on enregistre.
   const [pelliculeId, setPelliculeId] = useState(PELLICULE_DEFAUT)
   const [avecDate, setAvecDate] = useState(false)
+  // Les tirages posés de travers, comme sortis d'une boîte à chaussures. Droits
+  // par défaut : l'inclinaison est un parti pris, elle se choisit.
+  const [penche, setPenche] = useState(false)
   const pelli = pelliculeParId(pelliculeId)
   const [zip, setZip] = useState(null) // null | {done, total}
   // Un téléchargement raté se dit à côté du bouton : le signaler comme une
@@ -541,11 +544,12 @@ export default function Gallery({ params }) {
       const garde = JSON.parse(localStorage.getItem('ttf-pellicule') || 'null')
       if (garde?.id) setPelliculeId(garde.id)
       if (typeof garde?.date === 'boolean') setAvecDate(garde.date)
+      if (typeof garde?.penche === 'boolean') setPenche(garde.penche)
     } catch {}
   }, [])
-  function choisirPellicule(id, date) {
-    setPelliculeId(id); setAvecDate(date)
-    try { localStorage.setItem('ttf-pellicule', JSON.stringify({ id, date })) } catch {}
+  function choisirPellicule(id, date, incline = penche) {
+    setPelliculeId(id); setAvecDate(date); setPenche(incline)
+    try { localStorage.setItem('ttf-pellicule', JSON.stringify({ id, date, penche: incline })) } catch {}
   }
 
   async function downloadAll(photos) {
@@ -1185,6 +1189,12 @@ export default function Gallery({ params }) {
               <span className={`gal-case ${avecDate ? 'on' : ''}`} aria-hidden="true">{avecDate ? '✓' : ''}</span>
               <span className="gal-opt-t">Date incrustée<em>Les chiffres orange dans le coin, comme sur un jetable</em></span>
             </button>
+            <button className={`gal-opt ${penche ? 'on' : ''}`}
+              role="checkbox" aria-checked={penche}
+              onClick={() => choisirPellicule(pelliculeId, avecDate, !penche)}>
+              <span className={`gal-case ${penche ? 'on' : ''}`} aria-hidden="true">{penche ? '✓' : ''}</span>
+              <span className="gal-opt-t">Tirages penchés<em>Posés de travers, comme sortis d&apos;une boîte à chaussures</em></span>
+            </button>
             <button className="gal-panneau-ok" onClick={() => setPanneau(null)}>Voir les photos</button>
           </div>
         )}
@@ -1295,7 +1305,7 @@ export default function Gallery({ params }) {
                     return n
                   })
                 }}
-                style={{ '--rot': `${rot}deg`, animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
+                style={{ '--rot': penche ? `${rot}deg` : '0deg', animationDelay: `${Math.min(i * 55, 600)}ms`, opacity: p.hidden ? 0.5 : 1 }}>
                 <div className="media">
                   {/* crossOrigin est indispensable au téléchargement : sans lui
                       le navigateur range la photo dans un coin de son cache où

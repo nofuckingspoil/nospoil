@@ -739,11 +739,20 @@ export default function GuestCamera({ params }) {
   // une nouvelle fiche, avec une pellicule neuve, et les photos déjà prises ne
   // seront plus reconnues comme les siennes.
   function seDeconnecter() {
+    // Deux avertissements très différents, selon qu'une adresse a été laissée ou
+    // non. Avec elle, revenir est trivial : l'API rattache la fiche existante au
+    // nouvel appareil (voir rattacherParMail). Sans elle, il ne reste que le
+    // lien personnel, et sans lui c'est une pellicule neuve. Dire la même chose
+    // aux deux, c'est effrayer ceux qui ne risquent rien.
+    const monMail = (getGuest(id)?.email || '').trim()
     const ok = window.confirm(
       'Vous déconnecter de cette soirée ?\n\n'
-        + 'Vos photos restent dans l’album, elles ne sont pas supprimées. '
-        + 'Mais ce téléphone ne vous reconnaîtra plus : sans votre lien personnel, '
-        + 'vous repartirez avec une pellicule neuve.'
+        + 'Vos photos restent dans l’album, elles ne sont pas supprimées.\n\n'
+        + (monMail
+          ? `Pour revenir, indiquez la même adresse (${monMail}) : vous retrouverez vos photos `
+            + 'et vos poses restantes.'
+          : 'Vous n’avez pas laissé d’adresse mail : sans votre lien personnel, '
+            + 'vous repartirez avec une pellicule neuve.')
     )
     if (!ok) return
     forgetGuest(id)
