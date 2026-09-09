@@ -1265,7 +1265,7 @@ export default function Gallery({ params }) {
             filtré et défilé qu'on la cherche. */}
         {filtreActif() && !panneau && (
           <button className="gal-reinit" onClick={toutMontrer}>
-            ✕ Tout montrer
+            ✕ Voir toutes les photos
           </button>
         )}
         </div>
@@ -1294,27 +1294,11 @@ export default function Gallery({ params }) {
             emporter le tri en cours (« les 12 de Rose »). Le bouton disparaît
             quand aucun filtre n'est posé : il dirait la même chose que celui
             du haut, deux fois. */}
-        {/* La barre du bas ne sort que quand un filtre est posé : sans filtre,
-            elle répétait mot pour mot le bouton de l'en-tête et volait 70 px de
-            photos sur un téléphone. Le tri, lui, mérite son propre bouton :
-            « Télécharger les 14 de Julien » ne se lit nulle part ailleurs. */}
-        {photos.length > 0 && filtreActif() && (
-          <div className="gal-actions gal-actions-bas">
-            <button className="btn btn-ghost" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
-              {selecting ? 'Annuler' : 'Sélectionner'}
-            </button>
-            {!selecting && (
-              <button className="btn btn-dark" disabled={!!zip} onClick={() => downloadAll(photos)}>
-                {zip ? `Préparation… ${zip.done}/${zip.total}`
-                  : auteursChoisis.size === 0
-                    ? `Tout télécharger (${photos.length})`
-                    : auteursChoisis.size === 1
-                      ? `Télécharger les ${photos.length} de ${nomFiltre}`
-                      : `Télécharger ces ${photos.length} photos`}
-              </button>
-            )}
-          </div>
-        )}
+        {/* Plus de rangée de téléchargement ici. Deux boutons suffisent, et
+            chacun a son sens : celui de l'en-tête emporte l'album entier, celui
+            de la fin de page emporte ce qu'on vient de parcourir, filtre
+            compris. Un troisième au milieu, qui disait la même chose que celui
+            du bas, ne faisait que semer le doute sur ce qui partirait. */}
 
       {photos.length === 0 ? (
         <div className="notice" style={{ marginTop: 16 }}>Aucune photo pour ce filtre.</div>

@@ -1094,7 +1094,15 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
 .diapo-fleche:disabled { opacity: .25; cursor: default; }
 .diapo-fleche.g { left: 14px; }
 .diapo-fleche.d { right: 14px; }
-@media (hover: hover) and (min-width: 700px) { .diapo-fleche { display: block; } }
+/* Les chevrons partout, y compris au doigt. Le glissement reste le geste
+   principal, mais rien ne disait qu'il y avait une suite : deux flèches
+   discrètes suffisent à l'annoncer, sans un mot d'explication. */
+.diapo-fleche { display: block; }
+@media (max-width: 699px) {
+  .diapo-fleche { width: 38px; height: 38px; font-size: 22px; background: rgba(255,255,255,.1); }
+  .diapo-fleche.g { left: 8px; }
+  .diapo-fleche.d { right: 8px; }
+}
 
 .polaroid .cap { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 7px 3px 9px; }
 .polaroid .cap .who { font-family: var(--font-display); font-weight: 700; font-size: 12px; color: var(--ink);
