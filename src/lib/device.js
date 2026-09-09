@@ -121,6 +121,15 @@ export function saveGuest(eventId, guestId, name, email) {
   try { localStorage.setItem(`pellicule_guest_${eventId}`, JSON.stringify({ guestId, name, email: email || '' })) } catch {}
 }
 
+// Se déconnecter de CETTE soirée : l'appareil oublie qui il était, et la page
+// redemande un prénom. Les photos déjà envoyées ne bougent pas, elles
+// appartiennent à l'album ; c'est le lien entre ce téléphone et la fiche du
+// participant qui est coupé, et il ne se rétablit qu'avec le lien personnel.
+export function forgetGuest(eventId) {
+  if (typeof window === 'undefined') return
+  try { localStorage.removeItem(`pellicule_guest_${eventId}`) } catch {}
+}
+
 export function getGuest(eventId) {
   if (typeof window === 'undefined') return null
   try { return JSON.parse(localStorage.getItem(`pellicule_guest_${eventId}`) || 'null') } catch { return null }

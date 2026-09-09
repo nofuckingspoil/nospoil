@@ -668,6 +668,9 @@ a.cam-pile:active { transform: scale(.94); }
   font-family: inherit; font-size: 14px; text-align: left; text-decoration: none; cursor: pointer;
 }
 .modal-btn-clair { text-align: center; background: none; border-color: rgba(255,255,255,.24); }
+/* La sortie : lisible, jamais alarmante. Ce n'est pas une suppression. */
+.modal-btn-sortie { color: rgba(255,255,255,.66); }
+.modal-btn-sortie:hover { color: #fff; border-color: rgba(255,255,255,.3); }
 .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .album-thumb { position: relative; padding: 0; border: none; background: #000; border-radius: 14px; overflow: hidden; aspect-ratio: 3/4; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
 .album-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }

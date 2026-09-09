@@ -3,7 +3,7 @@
 import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import QRCode from 'qrcode'
-import { getDeviceToken, saveGuest, getGuest, getOwnerToken } from '../../../lib/device'
+import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera } from '../../../lib/camera'
 import CameraBloquee from '../../../components/CameraBloquee'
 import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../lib/photo-mode'
@@ -734,6 +734,26 @@ export default function GuestCamera({ params }) {
 
   // Copie du lien : dernier recours, à coller dans Chrome à la main. Le lien
   // personnel, comme juste au-dessus : on arrive dans Chrome en étant reconnu.
+  // Se déconnecter de cette soirée. On avertit avant, parce que la conséquence
+  // n'est pas devinable : sans le lien personnel, revenir signifie repartir sous
+  // une nouvelle fiche, avec une pellicule neuve, et les photos déjà prises ne
+  // seront plus reconnues comme les siennes.
+  function seDeconnecter() {
+    const ok = window.confirm(
+      'Vous déconnecter de cette soirée ?\n\n'
+        + 'Vos photos restent dans l’album, elles ne sont pas supprimées. '
+        + 'Mais ce téléphone ne vous reconnaîtra plus : sans votre lien personnel, '
+        + 'vous repartirez avec une pellicule neuve.'
+    )
+    if (!ok) return
+    forgetGuest(id)
+    setShowProfil(false)
+    setShowAlbum(false)
+    setGuest(null)
+    setName('')
+    setPhase('cover')
+  }
+
   function copierMonLien() {
     const fait = () => { setQrCopied(true); setTimeout(() => setQrCopied(false), 2200) }
     if (navigator.clipboard?.writeText) {
@@ -1288,15 +1308,10 @@ export default function GuestCamera({ params }) {
             {/* Le mur : la soirée en train de se faire. Ses propres photos y
                 sont mêlées aux autres, floutées comme elles, signalées par
                 « Toi ». Rien n'est cliquable : c'est une rumeur d'images. */}
-            {!meta?.revealed && murCharge && mur.length === 0 && (
-              <div className="album-vierge">
-                <div className="em">🎞️</div>
-                <h5>La pellicule est vierge</h5>
-                <p>Personne n&apos;a encore déclenché. La première photo de la soirée est à toi.</p>
-              </div>
-            )}
-
-            {!meta?.revealed && mur.length > 0 && (
+            {/* Les compteurs et le filtre restent affichés même quand le mur
+                filtré est vide, sinon on se retrouve enfermé dans « les
+                miennes » sans aucun moyen de revenir au groupe. */}
+            {!meta?.revealed && murCharge && (
               <div className="album-mur">
                 <div className="mur-lab">
                   <span className="pt" />
@@ -1311,6 +1326,26 @@ export default function GuestCamera({ params }) {
                     {murMoi ? 'Tout le monde' : 'Les miennes'}
                   </button>
                 </div>
+                {mur.length === 0 ? (
+                  // Deux vides très différents : personne n'a déclenché de la
+                  // soirée, ou personne SAUF les autres. Le second ne doit
+                  // surtout pas dire que la pellicule est vierge, ce serait
+                  // faux et décourageant.
+                  <div className="album-vierge">
+                    <div className="em">🎞️</div>
+                    {murMoi ? (
+                      <>
+                        <h5>Tu n&apos;as encore rien pris</h5>
+                        <p>Les autres ont déjà déclenché. Ta première photo t&apos;attend.</p>
+                      </>
+                    ) : (
+                      <>
+                        <h5>La pellicule est vierge</h5>
+                        <p>Personne n&apos;a encore déclenché. La première photo de la soirée est à toi.</p>
+                      </>
+                    )}
+                  </div>
+                ) : (<>
                 <div className="mur-grid">
                   {mur.map((p) => (
                     <div className={`mur-thumb${p.moi ? ' moi' : ''}`} key={p.id}>
@@ -1331,6 +1366,7 @@ export default function GuestCamera({ params }) {
                       ? 'Toutes les photos de la soirée, y compris les tiennes. Elles se dévoilent à la révélation.'
                       : 'Les photos de la soirée, floutées jusqu’à la révélation.'}
                 </p>
+                </>)}
               </div>
             )}
 
@@ -1375,6 +1411,13 @@ export default function GuestCamera({ params }) {
               🔗 Copier mon lien pour revenir
             </button>
             <a className="modal-btn" href="/mes-photos">📷 Retrouver mes photos</a>
+            {/* Se déconnecter : rendre le téléphone à quelqu'un d'autre, ou
+                repartir sous un autre prénom. La confirmation dit ce qu'on perd
+                vraiment, ni plus ni moins : les photos restent dans l'album,
+                c'est l'accès depuis CE téléphone qui s'en va. */}
+            <button className="modal-btn modal-btn-sortie" onClick={seDeconnecter}>
+              🚪 Me déconnecter de cette soirée
+            </button>
             <button className="modal-btn modal-btn-clair" onClick={() => setShowProfil(false)}>Fermer</button>
           </div>
         </div>
