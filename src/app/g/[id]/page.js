@@ -665,7 +665,11 @@ export default function Gallery({ params }) {
       // messageries ignorent le titre et ne collent que le texte et le lien.
       // Sans lui, on reçoit « les photos de la soirée » sans savoir laquelle.
       const nom = data?.hostNames || data?.name || ''
-      const texte = nom ? `L'album de ${nom} 📸` : 'Les photos de la soirée 📸'
+      // La marque est nommée : le lien voyage de messagerie en messagerie, et
+      // c'est souvent la première fois qu'on entend parler de Time to Flash.
+      const texte = nom
+        ? `L'album de ${nom} est disponible sur Time to Flash ! 📸`
+        : 'Les photos de la soirée sont disponibles sur Time to Flash ! 📸'
       try { await navigator.share({ title: nom || 'Time to Flash', text: texte, url }); return } catch {}
     }
     try {
