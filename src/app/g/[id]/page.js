@@ -527,6 +527,10 @@ export default function Gallery({ params }) {
   // tableau de bord n'a pas de profil de participant).
   const [moi, setMoi] = useState(null)
   const [showProfil, setShowProfil] = useState(false)
+  // La pastille de sélection n'apparaît qu'une fois la façade dépassée : posée
+  // dès l'arrivée, elle recouvrait « Revoir la révélation », le premier écran
+  // étant celui que tout le monde voit.
+  const [defile, setDefile] = useState(false)
   const [lienCopie, setLienCopie] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
@@ -622,6 +626,13 @@ export default function Gallery({ params }) {
     setMoi(g || null)
     setMoiId(g?.guestId || null)
   }, [id])
+
+  useEffect(() => {
+    const verifier = () => setDefile(window.scrollY > 260)
+    verifier()
+    window.addEventListener('scroll', verifier, { passive: true })
+    return () => window.removeEventListener('scroll', verifier)
+  }, [])
 
   // Partager l'album : le lien public de la galerie, pas le lien personnel du
   // viseur, qui rouvrirait l'appareil de celui qui l'a envoyé.
@@ -1079,17 +1090,6 @@ export default function Gallery({ params }) {
             {data.photos.length} photo{data.photos.length > 1 ? 's' : ''} · {data.guests.length} participant{data.guests.length > 1 ? 's' : ''}
           </span>
         </span>
-        {/* « Sélectionner » a rejoint la barre collante : la barre du bas d'où
-            il venait ne sort plus que sur un filtre, et il doit rester joignable
-            à tout moment, y compris en bas de l'album. */}
-        {data.photos.length > 0 && (
-          <button className="gal-creer" onClick={() => { setSelecting((v) => !v); setSelected(new Set()) }}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-            </svg>
-            <i>{selecting ? 'Annuler' : 'Sélectionner'}</i>
-          </button>
-        )}
         {data.photos.length > 0 && (
           <button className="gal-creer" onClick={() => setMontrerCollage(true)}>
             <span aria-hidden="true">✦</span><i>Créer</i>
@@ -1425,11 +1425,28 @@ export default function Gallery({ params }) {
         </div>
       )}
 
+      {/* La sélection s'ouvre et se ferme au même endroit : en bas, dans le
+          pouce. Elle vivait en haut, dans un coin que la main n'atteint pas sur
+          un grand téléphone, alors que la barre de sélection, elle, a toujours
+          été en bas. On entrait par le haut et on sortait par le bas.
+          La pastille s'efface dès qu'autre chose demande l'attention. */}
+      {!selecting && defile && photos.length > 0 && !panneau && diapo === null && !montrerCollage && (
+        <button className="gal-pastille" onClick={() => { setSelecting(true); setSelected(new Set()) }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
+          </svg>
+          Sélectionner
+        </button>
+      )}
+
       {selecting && (
         <div className="gal-bar">
           <div className="gal-bar-in">
-            {/* Pas de croix ici : « Annuler » vit dans la barre collante du haut,
-                à la place même d'où l'on est entré en sélection. */}
+            {/* La croix EST la sortie, à l'endroit exact où l'on est entré. */}
+            <button className="gal-bar-fin" aria-label="Quitter la sélection"
+              onClick={() => { setSelecting(false); setSelected(new Set()) }}>
+              ✕
+            </button>
             <button className="gal-bar-tout" onClick={basculerTout}>
               {/* Le nombre dit combien le filtre en cours en montre : on sait ce
                   qu'on coche avant de cliquer. */}

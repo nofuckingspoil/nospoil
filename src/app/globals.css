@@ -2053,6 +2053,29 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
    toute la page glissante de gauche à droite. Chacun a maintenant sa règle :
    le lien de gauche se laisse rogner, le compteur ne se coupe jamais en deux,
    le bouton ne rétrécit pas. */
+/* La sortie de la sélection, à l'endroit même où l'on est entré. */
+.gal-bar-fin {
+  flex: none; width: 38px; height: 38px; border-radius: 999px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+  color: #fff; font-size: 15px; cursor: pointer;
+}
+.gal-bar-fin:hover { background: rgba(255,255,255,.18); }
+
+/* La pastille : petite, centrée, dans la zone du pouce. Elle flotte au-dessus
+   des photos plutôt que d'occuper une barre pleine largeur, qui volerait de la
+   place à ce qu'on est venu regarder. */
+.gal-pastille {
+  position: fixed; left: 50%; transform: translateX(-50%); z-index: 18;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 20px; border-radius: 999px; cursor: pointer;
+  background: rgba(23,26,37,.92); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.16); color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 14px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+}
+.gal-pastille:hover { background: rgba(30,34,48,.96); border-color: rgba(255,255,255,.26); }
+
 .gal-bar-tout {
   flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   background: none; border: none; cursor: pointer;

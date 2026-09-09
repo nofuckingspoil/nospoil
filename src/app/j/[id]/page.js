@@ -125,9 +125,22 @@ export default function GuestCamera({ params }) {
   const [mur, setMur] = useState([])             // [{id, url, qui, moi}] photos du groupe, floutées avant la révélation
   const [murTotal, setMurTotal] = useState(0)    // combien il y en a en tout, pour savoir s'il en reste
   const [murN, setMurN] = useState(12)           // combien on en demande : 12, puis la suite au défilement
-  // Lequel des deux onglets est ouvert. On arrive sur les siennes : c'est ce
-  // qu'on vient chercher juste après avoir déclenché.
+  // Lequel des deux onglets est ouvert. L'onglet d'arrivée suit le mode, et
+  // c'est le seul endroit où les trois modes divergent vraiment :
+  //  · album ouvert  → « Mes photos », elles sont nettes, il y a quelque chose
+  //    à en faire (les revoir, en supprimer une, les emporter) ;
+  //  · les deux autres → « Toutes les photos », parce que les siennes n'y sont
+  //    que des carrés flous, alors que la pellicule collective qui se remplit
+  //    est justement ce qui fait vivre l'attente.
   const [ongletMoi, setOngletMoi] = useState(true)
+  const ongletChoisi = useRef(false)
+  useEffect(() => {
+    // Une seule fois, à l'arrivée de la fiche : après, c'est le participant qui
+    // décide, et son choix ne doit pas se faire écraser au rafraîchissement.
+    if (!meta || ongletChoisi.current) return
+    ongletChoisi.current = true
+    setOngletMoi(revoitSesPhotos(meta.photoMode || 'libre'))
+  }, [meta])
   const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
   const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
