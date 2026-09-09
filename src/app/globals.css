@@ -623,7 +623,9 @@ a.cam-pile:active { transform: scale(.94); }
    Il ne doit pas se disputer la vedette avec le mur lui-même. */
 .mur-filtre {
   margin-left: auto; flex: none; background: none; cursor: pointer;
-  padding: 3px 9px; border-radius: 999px;
+  /* Assez haut pour un pouce : la pastille faisait 22 px, moitié moins que le
+     minimum recommandé, et elle se regardait sans se presser. */
+  padding: 8px 12px; border-radius: 999px; min-height: 34px;
   border: 1px solid rgba(255,255,255,.18);
   font: inherit; letter-spacing: .12em; color: rgba(255,255,255,.6);
 }
