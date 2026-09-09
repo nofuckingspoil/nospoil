@@ -981,6 +981,11 @@ a.cam-pile:active { transform: scale(.94); }
 /* Les actions sous le pouce, collées en bas, quoi qu'on fasse défiler. */
 .gal-page.panneau-ouvert .gal-filtres { z-index: 26; }
 .gal-page.panneau-ouvert .gal-actions-bas { opacity: 0; pointer-events: none; }
+/* Le défilement se fige tant qu'un panneau est ouvert. Un voile qui grise le
+   fond dit « on choisit maintenant » ; laisser le fond bouger derrière le
+   dément, et le panneau, lui, reste accroché sous les filtres. La sortie est à
+   portée : cliquer à côté, ou le bouton du panneau. */
+body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
 /* En mode sélection, la barre du bas laisse la place à celle de la sélection,
    qui porte « cocher », le compte et « télécharger ». Les deux étant collées
    au même endroit, la mienne masquait l'autre et il ne restait qu'Annuler. */
