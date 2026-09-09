@@ -627,11 +627,22 @@ export default function Gallery({ params }) {
     setMoiId(g?.guestId || null)
   }, [id])
 
+  // La pastille arrive quand la galerie commence, c'est-à-dire à l'instant où la
+  // barre se colle en haut : on suit le bas de la façade plutôt qu'un nombre de
+  // pixels, qui varierait avec la hauteur de la couverture.
+  const heroRef = useRef(null)
   useEffect(() => {
-    const verifier = () => setDefile(window.scrollY > 260)
+    const verifier = () => {
+      const h = heroRef.current
+      setDefile(h ? h.getBoundingClientRect().bottom <= 0 : false)
+    }
     verifier()
     window.addEventListener('scroll', verifier, { passive: true })
-    return () => window.removeEventListener('scroll', verifier)
+    window.addEventListener('resize', verifier)
+    return () => {
+      window.removeEventListener('scroll', verifier)
+      window.removeEventListener('resize', verifier)
+    }
   }, [])
 
   // Partager l'album : le lien public de la galerie, pas le lien personnel du
@@ -1007,7 +1018,7 @@ export default function Gallery({ params }) {
           passée : le décompte laisse la place au verdict, le bouton n'invite
           plus à photographier mais à tout emporter, et le mur devient l'album.
           ============================================================ */}
-      <div className="gal-hero">
+      <div className="gal-hero" ref={heroRef}>
         {data.coverUrl
           ? <div className="gal-hero-fond" style={{ backgroundImage: `url(${data.coverUrl})` }} />
           : <div className="gal-hero-fond gal-hero-motif" />}
