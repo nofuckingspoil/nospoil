@@ -1997,6 +1997,18 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   box-shadow: 0 6px 16px rgba(236,91,51,.24);
 }
 .gal-panneau-ok:hover { background: var(--accent-lt); }
+
+/* Le rappel du bas : après trois cents photos, remonter n'est pas raisonnable. */
+.gal-fin-dl {
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; max-width: 460px; margin: 26px auto 6px; padding: 15px 18px;
+  border: none; border-radius: 999px; cursor: pointer;
+  background: var(--accent); color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
+  box-shadow: 0 10px 26px rgba(236,91,51,.28);
+}
+.gal-fin-dl:hover { background: var(--accent-lt); }
+.gal-fin-dl:disabled { opacity: .6; cursor: default; }
 .gal-vide { margin: 12px; font-size: 13px; color: var(--text4); }
 .gal-panneau .gal-cherche { margin: 4px 0 8px; }
 
@@ -2038,7 +2050,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
    le bouton ne rétrécit pas. */
 .gal-bar-tout {
   flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-  background: none; border: none; cursor: pointer; padding: 0;
+  background: none; border: none; cursor: pointer;
+  /* Un lien souligné de 13 px n'est pas une cible : le doigt manquait la moitié
+     du temps, et l'appui semblait sans effet. */
+  padding: 10px 4px; min-height: 40px;
   font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.75);
   text-decoration: underline;
 }

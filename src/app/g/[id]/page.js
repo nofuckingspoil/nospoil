@@ -913,8 +913,12 @@ export default function Gallery({ params }) {
   const tousCoches = photos.length > 0 && photos.every((p) => selected.has(p.id))
   function basculerTout() {
     setSelected((prev) => {
+      // Le sens de la bascule se relit DANS la mise à jour, jamais depuis le
+      // rendu : deux appuis rapprochés sont regroupés par React, et le second
+      // travaillait alors sur un état déjà périmé, ce qui le rendait sans effet.
       const n = new Set(prev)
-      for (const p of photos) tousCoches ? n.delete(p.id) : n.add(p.id)
+      const tous = photos.length > 0 && photos.every((p) => n.has(p.id))
+      for (const p of photos) tous ? n.delete(p.id) : n.add(p.id)
       return n
     })
   }
@@ -1218,7 +1222,7 @@ export default function Gallery({ params }) {
               {auteursMontres.map((g) => (
                 <button key={g.id} className={`gal-opt ${auteursChoisis.has(g.id) ? 'on' : ''}`}
                   onClick={() => basculerAuteur(g.id)}>
-                  <span className="gal-opt-t">{g.name}{g.id === moiId ? ' (vous)' : ''}<em>{g.n} photo{g.n > 1 ? 's' : ''}</em></span>
+                  <span className="gal-opt-t">{g.name}{g.id === moiId ? ' (moi)' : ''}<em>{g.n} photo{g.n > 1 ? 's' : ''}</em></span>
                   <span className="gal-opt-c" aria-hidden="true">{auteursChoisis.has(g.id) ? '✓' : ''}</span>
                 </button>
               ))}
@@ -1363,6 +1367,22 @@ export default function Gallery({ params }) {
             )
           })}
         </div>
+      )}
+
+      {/* Au bout de deux cent quatre-vingt-dix-sept tirages, remonter chercher
+          le bouton du haut n'est pas raisonnable. Celui-ci emporte ce qu'on
+          vient de parcourir, filtre compris, et il est le seul objet lumineux
+          de la fin de page : on ne peut pas le manquer. */}
+      {photos.length > 0 && !selecting && (
+        <button className="gal-fin-dl" disabled={!!zip} onClick={() => downloadAll(photos)}>
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
+          </svg>
+          {zip ? `Préparation… ${zip.done}/${zip.total}`
+            : filtreActif()
+              ? `Télécharger ces ${photos.length} photo${photos.length > 1 ? 's' : ''}`
+              : `Tout télécharger (${photos.length})`}
+        </button>
       )}
 
       {/* La question monte du bas une fois dix photos dépassées. Elle était
