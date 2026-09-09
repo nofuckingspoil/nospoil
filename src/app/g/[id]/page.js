@@ -683,6 +683,20 @@ export default function Gallery({ params }) {
   // 'tous' · 'miens' (mes coups de cœur) · 'aimees' (le classement de tous)
   const [vueFav, setVueFav] = useState('tous')
 
+  // Changer de filtre vide la sélection.
+  //
+  // Elle se gardait d'une personne à l'autre, et une note le disait. Mais le
+  // téléchargement, lui, n'emporte que les photos cochées ET visibles : la
+  // promesse était devenue fausse, et le compteur affichait un nombre qu'on ne
+  // retrouvait nulle part à l'écran. Ce qu'on voit est ce qu'on emporte.
+  const filtresPoses = `${vueFav}|${vue}|${[...auteursChoisis].sort().join(',')}`
+  const filtresAvant = useRef(filtresPoses)
+  useEffect(() => {
+    if (filtresAvant.current === filtresPoses) return
+    filtresAvant.current = filtresPoses
+    setSelected(new Set())
+  }, [filtresPoses])
+
   // Résumé de soirée : décidé une fois pour toutes au montage, pour qu'il ne
   // resurgisse pas à chaque rechargement des données.
   const [montrerWrap, setMontrerWrap] = useState(false)
@@ -1471,7 +1485,6 @@ export default function Gallery({ params }) {
             </button>
             <span className="gal-bar-n">
               {aTelecharger.length} photo{aTelecharger.length > 1 ? 's' : ''}
-              {auteursChoisis.size > 0 && <em className="gal-bar-note">La sélection se garde d'une personne à l'autre</em>}
             </span>
             <button className="btn btn-accent gal-bar-dl" disabled={!!zip || aTelecharger.length === 0}
               onClick={() => downloadAll(aTelecharger)}>
