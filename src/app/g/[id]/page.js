@@ -630,12 +630,15 @@ export default function Gallery({ params }) {
   // La pastille arrive quand la galerie commence, c'est-à-dire à l'instant où la
   // barre se colle en haut : on suit le bas de la façade plutôt qu'un nombre de
   // pixels, qui varierait avec la hauteur de la couverture.
-  const heroRef = useRef(null)
+  const grilleRef = useRef(null)
   const finRef = useRef(null)
   useEffect(() => {
     const verifier = () => {
-      const h = heroRef.current
-      const colle = h ? h.getBoundingClientRect().bottom <= 0 : false
+      // Elle arrive dès que les photos commencent, pas quand la barre finit de
+      // se coller : c'est en voyant les tirages qu'on a envie d'en choisir. On
+      // laisse passer un tiers d'écran de photos, pour que choisir ait un sens.
+      const g = grilleRef.current
+      const colle = g ? g.getBoundingClientRect().top < window.innerHeight * 0.65 : false
       // ... et elle s'efface dès que le bouton de fin de page entre en scène :
       // deux actions empilées dans le même coin, c'est du bruit, et sur un
       // album court elles se recouvraient franchement.
@@ -1030,7 +1033,7 @@ export default function Gallery({ params }) {
           passée : le décompte laisse la place au verdict, le bouton n'invite
           plus à photographier mais à tout emporter, et le mur devient l'album.
           ============================================================ */}
-      <div className="gal-hero" ref={heroRef}>
+      <div className="gal-hero">
         {data.coverUrl
           ? <div className="gal-hero-fond" style={{ backgroundImage: `url(${data.coverUrl})` }} />
           : <div className="gal-hero-fond gal-hero-motif" />}
@@ -1316,7 +1319,7 @@ export default function Gallery({ params }) {
       {photos.length === 0 ? (
         <div className="notice" style={{ marginTop: 16 }}>Aucune photo pour ce filtre.</div>
       ) : (
-        <div className="masonry" key={rejoue} style={{ marginTop: 8 }}>
+        <div className="masonry" key={rejoue} ref={grilleRef} style={{ marginTop: 8 }}>
           {photos.map((p, i) => {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
