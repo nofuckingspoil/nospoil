@@ -43,6 +43,33 @@ export async function estSuspendu(eventId) {
   return !!ev && ev.status === 'suspended'
 }
 
+// Deux heures après la révélation, la porte se ferme pour de bon.
+//
+// Le délai n'est pas de la politesse : l'app garde les photos dans une file
+// d'attente quand le réseau est mauvais, et une photo prise à trois heures du
+// matin peut ne partir qu'au petit-déjeuner. Fermer à la seconde près la
+// perdrait, alors qu'elle a été prise pendant la fête. Deux heures couvrent
+// largement une reprise de réseau, sans laisser la porte ouverte des semaines.
+export const GRACE_ENVOI_MS = 2 * 60 * 60 * 1000
+
+/**
+ * La soirée accepte-t-elle encore des photos ?
+ *
+ * Sans ce garde-fou, quelqu'un qui scanne le QR d'une affiche restée sur une
+ * table peut ajouter des clichés à un album révélé depuis des semaines. La
+ * vérification vit ici, côté serveur : l'écran, lui, avait déjà refermé
+ * l'appareil, mais un écran ne protège rien.
+ */
+export async function envoiFerme(eventId, maintenant = Date.now()) {
+  if (!estUuid(eventId)) return false
+  const { data } = await selectRows('events', `id=eq.${eventId}&select=reveal_at,reveal_paused`)
+  const ev = Array.isArray(data) ? data[0] : null
+  if (!ev || ev.reveal_paused) return false
+  const revele = new Date(ev.reveal_at || 0).getTime()
+  if (!revele) return false
+  return maintenant > revele + GRACE_ENVOI_MS
+}
+
 // Rôle du porteur de ce jeton sur cet événement, ou null s'il n'en a aucun.
 export async function roleFor(eventId, token) {
   if (!estUuid(eventId) || !token) return null

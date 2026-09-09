@@ -143,7 +143,7 @@ export async function POST(request) {
   // à l'instant même. Personne d'autre n'est gêné pendant ce temps.
   const evRes = await selectRows(
     'events',
-    `id=eq.${eventId}&select=id,name,owner_email,owner_token,owner_name,max_guests,quota_mailed_at`
+    `id=eq.${eventId}&select=id,name,owner_email,owner_token,owner_name,max_guests,quota_mailed_at,reveal_at,reveal_paused`
   )
   const ev = Array.isArray(evRes.data) ? evRes.data[0] : null
 
@@ -168,6 +168,26 @@ export async function POST(request) {
   // Déjà dedans ? Cet appareil, ou la même adresse sur un appareil précédent.
   let dedans = fiches.some((g) => g.device_token === deviceToken)
   if (!dedans) dedans = await rattacherParMail(fiches, email, deviceToken)
+
+  // La fête est finie : la liste est close.
+  //
+  // Sans ce verrou, quelqu'un qui scanne le QR d'une affiche restée sur une
+  // table s'inscrit des semaines plus tard, prend une place dans la formule de
+  // l'organisateur, et se retrouve dans la liste des participants d'un album
+  // déjà révélé. Ceux qui étaient de la fête, eux, reviennent quand ils veulent :
+  // le verrou ne ferme que l'entrée des nouveaux venus.
+  //
+  // L'organisateur passe toujours : il est le seul à pouvoir rouvrir quoi que
+  // ce soit, et lui fermer son propre événement serait absurde.
+  if (ev && !dedans && deviceToken !== ev.owner_token && !ev.reveal_paused) {
+    const revele = new Date(ev.reveal_at || 0).getTime()
+    if (revele && Date.now() > revele) {
+      return Response.json(
+        { error: 'Cette soirée est terminée : son album est déjà révélé.' },
+        { status: 403 }
+      )
+    }
+  }
 
   if (ev && !dedans) {
     const max = Number(ev.max_guests)

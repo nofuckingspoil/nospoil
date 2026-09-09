@@ -1,5 +1,5 @@
 import { rpc, uploadPhoto, deletePhoto, updateRow } from '../../../lib/supabase'
-import { estSuspendu, MESSAGE_SUSPENDU } from '../../../lib/authz'
+import { estSuspendu, envoiFerme, MESSAGE_SUSPENDU } from '../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../lib/params'
 import { estImage, miniature } from '../../../lib/image'
 
@@ -29,6 +29,15 @@ export async function POST(request) {
   // de lire le fichier, pour ne pas transférer des octets qu'on jettera.
   if (await estSuspendu(eventId)) {
     return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+  }
+
+  // La fête est finie : on n'ajoute plus rien à un album déjà ouvert. Vérifié
+  // avant de lire le fichier, pour ne pas transférer des octets qu'on jettera.
+  if (await envoiFerme(eventId)) {
+    return Response.json(
+      { error: 'Cette soirée est terminée : son album est déjà révélé.' },
+      { status: 403 }
+    )
   }
 
   const bytes = Buffer.from(await file.arrayBuffer())
