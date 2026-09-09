@@ -631,10 +631,17 @@ export default function Gallery({ params }) {
   // barre se colle en haut : on suit le bas de la façade plutôt qu'un nombre de
   // pixels, qui varierait avec la hauteur de la couverture.
   const heroRef = useRef(null)
+  const finRef = useRef(null)
   useEffect(() => {
     const verifier = () => {
       const h = heroRef.current
-      setDefile(h ? h.getBoundingClientRect().bottom <= 0 : false)
+      const colle = h ? h.getBoundingClientRect().bottom <= 0 : false
+      // ... et elle s'efface dès que le bouton de fin de page entre en scène :
+      // deux actions empilées dans le même coin, c'est du bruit, et sur un
+      // album court elles se recouvraient franchement.
+      const f = finRef.current
+      const finEnVue = f ? f.getBoundingClientRect().top < window.innerHeight - 8 : false
+      setDefile(colle && !finEnVue)
     }
     verifier()
     window.addEventListener('scroll', verifier, { passive: true })
@@ -1387,7 +1394,7 @@ export default function Gallery({ params }) {
           vient de parcourir, filtre compris, et il est le seul objet lumineux
           de la fin de page : on ne peut pas le manquer. */}
       {photos.length > 0 && !selecting && (
-        <button className="gal-fin-dl" disabled={!!zip} onClick={() => downloadAll(photos)}>
+        <button className="gal-fin-dl" ref={finRef} disabled={!!zip} onClick={() => downloadAll(photos)}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14" />
           </svg>
