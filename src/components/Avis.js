@@ -198,7 +198,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
             </button>
           ))}
         </div>
-        <div className="avis-etoiles-mot">{note ? NOTES.find((n) => n.valeur === note)?.mot : 'Touchez une étoile'}</div>
+        <div className="avis-etoiles-mot">{note ? NOTES.find((n) => n.valeur === note)?.mot : 'Notez de 1 à 5 étoiles'}</div>
       </div>
 
       {/* En pop-up, tout ce qui suit reste plié tant qu'aucune étoile n'est
@@ -331,14 +331,6 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
 
       </>)}
 
-      {/* Tant que rien n'est touché, une seule ligne sous les étoiles : elle dit
-          que ça s'arrête là si on le veut. C'est ce qui rend le premier geste
-          gratuit, et donc faisable. */}
-      {compact && !note && (
-        <p className="avis-pied" style={{ marginTop: 4 }}>
-          Une étoile suffit. Le reste est facultatif.
-        </p>
-      )}
     </div>
   )
 }
