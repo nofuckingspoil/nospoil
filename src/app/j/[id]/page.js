@@ -990,20 +990,23 @@ export default function GuestCamera({ params }) {
           <div className="mail-tip mail-tip-ok">✓ Adresse vérifiée</div>
         )}
 
-        {/* La promesse énumère maintenant DEUX envois, et pas un.
-            Le mail des photos préférées, deux jours après la révélation, est un
-            service rendu aux participants : il n'a rien de publicitaire. Mais il
-            fallait l'annoncer, sinon on l'aurait envoyé après avoir écrit
-            « rien d'autre, jamais ». La partie qui compte, elle, ne bouge pas :
-            ni publicité, ni transmission.
+        {/* La promesse ne liste plus les envois un par un : elle dit à quoi sert
+            l'adresse (les informations de CET événement) et donne deux exemples.
+            Le « comme » est ce qui compte : il autorise le mail des photos
+            préférées, deux jours après la révélation, sans qu'on ait à réécrire
+            la phrase à chaque fois qu'un service utile s'ajoute.
 
-            ATTENTION quand ce mail sera codé : il ne doit partir qu'aux fiches
-            créées APRÈS ce changement. Ceux qui se sont inscrits avant ont lu
-            l'ancienne phrase, et elle les engage. */}
+            La partie qui fait le travail, elle, ne bouge pas : ni publicité,
+            ni transmission. C'est elle qui décide les gens à laisser leur adresse.
+
+            ATTENTION quand le mail des photos préférées sera codé : il ne doit
+            partir qu'aux fiches créées APRÈS ce changement. Ceux qui se sont
+            inscrits avant ont lu une phrase plus étroite, et elle les engage. */}
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
-          ✉️ Le lien de l&apos;album quand les photos sortent, puis les photos préférées
-          quelques jours après. Rien d&apos;autre, jamais : ni publicité, ni transmission
-          à qui que ce soit. Elle disparaît avec l&apos;événement.
+          ✉️ Uniquement pour les informations liées à votre événement, comme votre lien
+          d&apos;accès ou le lien de l&apos;album quand les photos seront révélées.
+          Rien d&apos;autre, jamais : ni publicité, ni transmission à qui que ce soit.
+          Elle disparaît avec l&apos;événement.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         {confirmSansMail ? (

@@ -433,8 +433,15 @@ export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }
       body: `${bigButton(galleryUrl, "Voir l'album →")}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           Vous pouvez les regarder, les télécharger, et retrouver celles que vous avez prises.
+        </div>
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
+          Une photo vous marque ? Touchez le <strong>cœur</strong> en bas à droite.
+          Les préférées du groupe seront réunies et vous seront envoyées dans quelques jours.
         </div>`,
-      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, uniquement pour cela. Elle n'est utilisée pour rien d'autre et sera supprimée avec l'album.`,
+      // Le pied de page ne peut plus dire « uniquement pour cela » : le mail des
+      // photos préférées part quelques jours plus tard. Il dit maintenant la
+      // même chose que la phrase affichée quand on laisse son adresse.
+      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, pour les informations liées à celui-ci et rien d'autre. Elle n'est ni utilisée à des fins publicitaires, ni transmise à qui que ce soit, et sera supprimée avec l'album.`,
     }),
   }
 }
