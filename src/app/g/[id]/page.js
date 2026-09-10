@@ -347,13 +347,48 @@ function ImageDiapo({ ph, prioritaire, pelli, onCassee }) {
   )
 }
 
-function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
+// Au bout de combien de photos regardées on rappelle que le cœur existe.
+// Trois : le temps de comprendre qu'on feuillette, pas assez pour avoir déjà
+// laissé passer sa préférée.
+const COEUR_APRES = 3
+
+function coeurDejaDit(eventId) {
+  try { return !!localStorage.getItem(`ttf_coeur_${eventId}`) } catch { return true }
+}
+function marquerCoeurDit(eventId) {
+  try { localStorage.setItem(`ttf_coeur_${eventId}`, '1') } catch {}
+}
+
+function Diapo({ eventId, photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
   const [dx, setDx] = useState(0)
   const [glisse, setGlisse] = useState(false)
   const [dy, setDy] = useState(0)   // le doigt qui chasse la photo vers le haut ou le bas
   const geste = useRef(null)
   const n = photos.length
   const p = photos[index]
+
+  // --- Le rappel du cœur ---
+  //
+  // Le vote existe depuis toujours, mais rien ne le disait : le cœur passait
+  // pour un « mettre de côté ». On le dit une fois, au moment où la personne
+  // a compris qu'elle feuillette et où elle a vu de quoi préférer.
+  const [ditCoeur, setDitCoeur] = useState(false)
+  const vues = useRef(new Set())
+  useEffect(() => {
+    if (!eventId || ditCoeur || coeurDejaDit(eventId)) return
+    vues.current.add(index)
+    if (vues.current.size < COEUR_APRES) return
+    setDitCoeur(true)
+    marquerCoeurDit(eventId)
+  }, [eventId, index, ditCoeur])
+
+  // Il s'efface tout seul : un bandeau qu'il faut fermer est une corvée de
+  // plus sur un écran qu'on regarde pour les photos.
+  useEffect(() => {
+    if (!ditCoeur) return
+    const t = setTimeout(() => setDitCoeur(false), 7000)
+    return () => clearTimeout(t)
+  }, [ditCoeur])
 
   useEffect(() => {
     function onKey(e) {
@@ -462,6 +497,17 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
         disabled={index === 0} aria-label="Photo précédente">‹</button>
       <button className="diapo-fleche d" onClick={() => setIndex((i) => Math.min(n - 1, i + 1))}
         disabled={index === n - 1} aria-label="Photo suivante">›</button>
+
+      {ditCoeur && (
+        <div className="diapo-vote" role="status">
+          <span className="diapo-vote-c" aria-hidden="true">♥</span>
+          <span className="diapo-vote-t">
+            <b>Une photo vous marque ?</b>
+            Touchez le cœur. Les préférées du groupe seront envoyées à tout le monde.
+          </span>
+          <button className="diapo-vote-x" onClick={() => setDitCoeur(false)} aria-label="Fermer">✕</button>
+        </div>
+      )}
 
       <div className="diapo-bas">
         <div className="diapo-qui">
@@ -1570,6 +1616,7 @@ export default function Gallery({ params }) {
 
       {diapo !== null && photos[diapo] && (
         <Diapo
+          eventId={id}
           photos={photos}
           index={diapo}
           setIndex={setDiapo}

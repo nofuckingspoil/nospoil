@@ -446,6 +446,43 @@ export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }
   }
 }
 
+// ---------- Les photos préférées, quelques jours après ----------
+//
+// Le seul autre envoi que reçoit un participant. Il rend un service (les
+// images que le groupe a élues, qu'on n'aurait pas retrouvées seul) et il
+// ramène du monde dans l'album, ce qui fait remonter les votes.
+//
+// À n'envoyer qu'aux adresses laissées APRÈS le 10 septembre 2026 : avant
+// cette date, la phrase affichée sous le champ mail ne promettait qu'un seul
+// envoi, et elle engage.
+export function photosPrefereesEmail({ eventName, galleryUrl, top = [], votants }) {
+  const vignettes = top
+    .filter((t) => t.url)
+    .slice(0, 3)
+    .map((t) => `<td width="33%" style="padding:0 4px;">
+        <img src="${t.url}" width="140" alt="" style="display:block;width:100%;border-radius:10px;" />
+      </td>`)
+    .join('')
+
+  const combien = votants > 1
+    ? `Vous étiez <strong>${votants}</strong> à voter.`
+    : 'Les votes sont tombés.'
+
+  return {
+    subject: `Les photos préférées de « ${eventName} » ♥`,
+    html: layout({
+      title: 'Les photos que vous avez préférées',
+      intro: `${combien} Voici les clichés de « <strong>${eventName}</strong> » qui ont rassemblé le plus de cœurs.`,
+      body: `${vignettes ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:22px;"><tr>${vignettes}</tr></table>` : ''}
+        ${bigButton(galleryUrl, "Revoir l'album →")}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Le classement bouge encore : touchez le cœur sous une photo pour ajouter votre voix.
+        </div>`,
+      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, pour les informations liées à celui-ci et rien d'autre. Elle n'est ni utilisée à des fins publicitaires, ni transmise à qui que ce soit, et sera supprimée avec l'album.`,
+    }),
+  }
+}
+
 // ---------- Le participant a demandé à retrouver ses photos ----------
 // Répond à la page de connexion quand l'adresse n'est pas celle d'un
 // organisateur, mais celle de quelqu'un qui a photographié une soirée.
