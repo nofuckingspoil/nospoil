@@ -1354,12 +1354,14 @@ export default function GuestCamera({ params }) {
               <div className="album-mur">
                 {/* Le bandeau parle de la soirée, pas de l'onglet choisi : il se
                     tient donc AU-DESSUS des deux, entre le déclencheur et le
-                    choix. C'est lui qui dit que la soirée est en train de se
-                    faire, et il vaut pour les deux vues. */}
+                    choix. Il ne porte QUE le nombre de participants : le nombre
+                    de photos est déjà dans l'onglet « Toutes les photos », et le
+                    répéter à deux lignes d'écart ne disait rien de plus. Reste
+                    le chiffre qu'on ne lit nulle part ailleurs, celui qui dit
+                    combien de gens jouent le jeu. */}
                 <div className="mur-lab">
                   <span className="pt" />
-                  {meta?.photoCount ?? 0} photo{(meta?.photoCount ?? 0) > 1 ? 's' : ''}
-                  {' · '}{meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
+                  {meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
                 </div>
 
                 <div className="album-onglets" role="tablist">
