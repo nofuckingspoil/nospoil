@@ -43,14 +43,21 @@ export async function estSuspendu(eventId) {
   return !!ev && ev.status === 'suspended'
 }
 
-// Deux heures après la révélation, la porte se ferme pour de bon.
+// Sept jours après la révélation, la porte se ferme pour de bon.
 //
-// Le délai n'est pas de la politesse : l'app garde les photos dans une file
-// d'attente quand le réseau est mauvais, et une photo prise à trois heures du
-// matin peut ne partir qu'au petit-déjeuner. Fermer à la seconde près la
-// perdrait, alors qu'elle a été prise pendant la fête. Deux heures couvrent
-// largement une reprise de réseau, sans laisser la porte ouverte des semaines.
-export const GRACE_ENVOI_MS = 2 * 60 * 60 * 1000
+// Le délai n'est pas de la politesse. L'app garde les photos dans une file
+// d'attente quand le réseau manque, et cette file vit exactement sept jours :
+// au-delà, elle cesse d'insister et le fichier finit par disparaître du
+// téléphone. Fermer plus tôt reviendrait à perdre des photos prises pendant la
+// fête, dont le seul tort est d'avoir été prises dans une cave.
+//
+// Ce qu'on ferme, c'est la prise de vue, et elle est déjà fermée : une fois
+// l'album révélé, l'appareil ne s'ouvre plus. Ce qui reste possible ici, c'est
+// de DÉPOSER une photo déjà prise, ce qui est précisément le but.
+//
+// Sept jours, et pas l'infini : au-delà, aucune photo légitime n'attend plus,
+// et la porte resterait ouverte pour rien.
+export const GRACE_ENVOI_MS = 7 * 24 * 60 * 60 * 1000
 
 /**
  * La soirée accepte-t-elle encore des photos ?

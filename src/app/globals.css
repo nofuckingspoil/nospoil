@@ -692,7 +692,9 @@ a.cam-pile:active { transform: scale(.94); }
 .album-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .album-thumb { position: relative; padding: 0; border: none; background: #000; border-radius: 14px; overflow: hidden; aspect-ratio: 3/4; cursor: pointer; box-shadow: 0 6px 16px rgba(0,0,0,.35); }
 .album-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.album-thumb.pending { opacity: .55; }
+/* Plus de grisage sur les photos qui n'ont pas fini de partir : une photo prise
+   est une photo prise, et la faire ressembler à un cliché raté inquiétait pour
+   rien. Le point sur lequel personne n'a de prise ne mérite pas d'être dit. */
 /* Le mur du groupe : les photos de tous les participants pendant la soirée, floutées.
    Le flou est un effet d'affichage : la photo descend entière sur le téléphone.
    C'est assumé. Ce qu'on cherche ici, c'est que l'attente vive, pas un coffre-fort. */
