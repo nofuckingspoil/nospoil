@@ -842,7 +842,16 @@ export default function GuestCamera({ params }) {
     } catch (err) { setError(err.message || 'Suppression impossible.') } finally { setDeleting(false) }
   }
 
-  const remaining = guest ? guest.shotsPerGuest - guest.shotsTaken : 0
+  // Les photos déjà parties, PLUS celles qui attendent leur tour dans la file.
+  //
+  // Le compteur du serveur ne bouge qu'une fois la photo reçue : entre le
+  // déclic et l'arrivée, la molette restait sur le même chiffre et le
+  // déclencheur donnait l'impression de n'avoir rien fait. Une photo en file
+  // est une pose brûlée, elle partira.
+  const prises = guest
+    ? Math.min(guest.shotsPerGuest, guest.shotsTaken + pending.length)
+    : 0
+  const remaining = guest ? guest.shotsPerGuest - prises : 0
   const full = remaining <= 0
   const coupleLabel = meta?.hostNames || meta?.name || ''
 
@@ -1202,7 +1211,7 @@ export default function GuestCamera({ params }) {
             {/* La bande porte tous les chiffres et se décale d'un cran à chaque
                 déclic : on voit celui qu'on vient de brûler partir vers le haut. */}
             <div className="cam-roue">
-              <div className="cam-roue-bande" style={{ transform: `translateY(${CRAN_OFFSET - CRAN * (guest?.shotsTaken || 0)}px)` }}>
+              <div className="cam-roue-bande" style={{ transform: `translateY(${CRAN_OFFSET - CRAN * prises}px)` }}>
                 {Array.from({ length: (guest?.shotsPerGuest || 0) + 1 }, (_, i) => (
                   <span key={i}>{String(Math.max(0, (guest?.shotsPerGuest || 0) - i)).padStart(2, '0')}</span>
                 ))}

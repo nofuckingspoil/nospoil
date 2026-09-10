@@ -1948,7 +1948,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 /* Trois boutons côte à côte, chacun ouvrant son panneau : une ligne au lieu
    des rangées de pastilles qui repoussaient l'album hors de l'écran. */
-.gal-filtres { position: relative; display: flex; gap: 7px; margin-top: 12px; }
+/* La sortie des filtres prend sa propre ligne, comme dans l'app. Sur la même
+   ligne que les trois boutons, elle leur volait la place : sur un téléphone,
+   ils tombaient à 41 px et ne montraient plus que leur emoji, donc on ne
+   voyait plus quel filtre était actif. */
+.gal-filtres { position: relative; display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
 .gal-fbtn {
   flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 2px;
   padding: 9px 12px; border: 1px solid var(--line); border-radius: 14px;
@@ -1969,7 +1973,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* Retirer tous les filtres d'un geste : discret, et présent seulement quand
    il y a vraiment quelque chose à retirer. */
 .gal-reinit {
-  display: block; margin: 10px auto 0; padding: 7px 14px; border-radius: 999px;
+  /* Toute la ligne pour elle, mais la pastille ne fait que la largeur de son
+     texte : la base à 100 % provoque le retour à la ligne, la largeur maximale
+     la ramène à sa taille, et les marges automatiques la centrent. */
+  flex: 1 1 100%; max-width: max-content;
+  display: block; margin: 3px auto 0; padding: 7px 14px; border-radius: 999px;
   background: none; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.7);
   font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; cursor: pointer;
 }
