@@ -1318,6 +1318,16 @@ export default function GuestCamera({ params }) {
             <div className="album-bloc">
               <div className="album-date">{formatLong(meta?.startsAt)}</div>
               <h2 className="album-name">{coupleLabel}</h2>
+              {/* La même ligne que sous le titre de l'album révélé : ce que la
+                  soirée a produit jusqu'ici, en un coup d'œil, à l'endroit où
+                  on lit déjà son nom et sa date. Le bandeau qui portait le seul
+                  nombre de participants, plus bas, n'avait plus de raison
+                  d'exister. */}
+              <div className="album-stats">
+                {meta?.photoCount ?? 0} photo{(meta?.photoCount ?? 0) > 1 ? 's' : ''}
+                {' · '}
+                {meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
+              </div>
 
               {(() => {
                 const cd = breakdownToReveal(meta?.revealAt, now)
@@ -1375,18 +1385,6 @@ export default function GuestCamera({ params }) {
                 ============================================================ */}
             {!meta?.revealed && (
               <div className="album-mur">
-                {/* Le bandeau parle de la soirée, pas de l'onglet choisi : il se
-                    tient donc AU-DESSUS des deux, entre le déclencheur et le
-                    choix. Il ne porte QUE le nombre de participants : le nombre
-                    de photos est déjà dans l'onglet « Toutes les photos », et le
-                    répéter à deux lignes d'écart ne disait rien de plus. Reste
-                    le chiffre qu'on ne lit nulle part ailleurs, celui qui dit
-                    combien de gens jouent le jeu. */}
-                <div className="mur-lab">
-                  <span className="pt" />
-                  {meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
-                </div>
-
                 <div className="album-onglets" role="tablist">
                   <button className={`album-onglet ${ongletMoi ? 'actif' : ''}`}
                     role="tab" aria-selected={ongletMoi}

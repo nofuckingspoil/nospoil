@@ -552,6 +552,13 @@ a.cam-pile:active { transform: scale(.94); }
   font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .2em;
   text-transform: uppercase; color: var(--amber);
 }
+/* Ce que la soirée a produit, sous son nom : la même ligne que dans l'album
+   révélé (.gal-hero-stats), pour que les deux écrans se lisent pareil. */
+.album-stats {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em;
+  color: var(--text3); margin-top: 8px;
+}
+
 .album-name {
   font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1;
   letter-spacing: -.03em; color: #fff; margin: 4px 0 0; text-wrap: balance;
@@ -1329,8 +1336,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .badge-warn { background: rgba(178,59,46,.14); color: #b23b2e; }
 
 /* ---------- Résumé de soirée de l'invité (avant l'album) ---------- */
+/* La réserve du bas tient compte du bouton posé en absolu : sans elle, la
+   carte de fin, plus haute que les cartes qui défilent, venait le frôler. */
 .wrap { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; text-align: center; padding: 64px 28px 34px;
+  align-items: center; justify-content: center; text-align: center; padding: 64px 28px 104px;
   color: #fff; background: linear-gradient(155deg, #F7C26B 0%, #EE7A45 45%, #A23D5C 100%); }
 
 .wrap-barres { position: absolute; top: 14px; left: 14px; right: 14px; display: flex; gap: 5px; }
