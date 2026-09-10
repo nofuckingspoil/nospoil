@@ -348,6 +348,59 @@ function ImageDiapo({ ph, prioritaire, pelli, onCassee }) {
   )
 }
 
+/**
+ * Le rappel du vote, qu'on écarte du doigt comme une notification.
+ *
+ * La croix reste, mais elle demande de viser. Le geste qui vient tout seul,
+ * quand un bandeau se pose en bas de l'écran, c'est de le pousser sur le côté :
+ * c'est celui des notifications, tout le monde l'a déjà fait cent fois.
+ */
+function BandeauVote({ classe, onFermer }) {
+  const [dx, setDx] = useState(0)
+  const [glisse, setGlisse] = useState(false)
+  const depart = useRef(null)
+
+  function debut(e) {
+    depart.current = e.touches[0].clientX
+    setGlisse(true)
+  }
+  function bouge(e) {
+    if (depart.current === null) return
+    setDx(e.touches[0].clientX - depart.current)
+  }
+  function fin() {
+    depart.current = null
+    setGlisse(false)
+    // Assez loin pour que ce soit un geste, pas un frôlement.
+    if (Math.abs(dx) > 90) onFermer()
+    else setDx(0)
+  }
+
+  return (
+    <div
+      className={classe}
+      role="status"
+      onTouchStart={debut}
+      onTouchMove={bouge}
+      onTouchEnd={fin}
+      onTouchCancel={fin}
+      style={
+        dx
+          ? {
+              transform: `translateX(${dx}px)`,
+              opacity: Math.max(0, 1 - Math.abs(dx) / 220),
+              transition: glisse ? 'none' : 'transform .2s ease, opacity .2s ease',
+            }
+          : undefined
+      }
+    >
+      <span className="vote-c" aria-hidden="true">♥</span>
+      <span className="vote-t">Votez pour vos photos préférées en touchant le cœur.</span>
+      <button className="vote-x" onClick={onFermer} aria-label="Fermer">✕</button>
+    </div>
+  )
+}
+
 // Au bout de combien de photos regardées la visionneuse rappelle le vote.
 // Trois : le temps de comprendre qu'on feuillette, pas assez pour avoir déjà
 // laissé passer sa préférée.
@@ -458,13 +511,7 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
       <button className="diapo-fleche d" onClick={() => setIndex((i) => Math.min(n - 1, i + 1))}
         disabled={index === n - 1} aria-label="Photo suivante">›</button>
 
-      {voteDit && assezVues && (
-        <div className="diapo-vote" role="status">
-          <span className="diapo-vote-c" aria-hidden="true">♥</span>
-          <span className="diapo-vote-t">Votez pour vos photos préférées en touchant le cœur.</span>
-          <button className="diapo-vote-x" onClick={onFermerVote} aria-label="Fermer">✕</button>
-        </div>
-      )}
+      {voteDit && assezVues && <BandeauVote classe="diapo-vote" onFermer={onFermerVote} />}
 
       <div className="diapo-bas">
         <div className="diapo-qui">
@@ -1541,11 +1588,7 @@ export default function Gallery({ params }) {
       {/* Le rappel du vote, posé au-dessus de la pastille : il parle du cœur
           qui est sur chaque tirage, il doit donc vivre là où on les voit. */}
       {voteDit && defile && !selecting && photos.length > 0 && !panneau && diapo === null && !montrerCollage && (
-        <div className="gal-vote" role="status">
-          <span className="gal-vote-c" aria-hidden="true">♥</span>
-          <span className="gal-vote-t">Votez pour vos photos préférées en touchant le cœur.</span>
-          <button className="gal-vote-x" onClick={fermerVote} aria-label="Fermer">✕</button>
-        </div>
+        <BandeauVote classe="gal-vote" onFermer={fermerVote} />
       )}
 
       {/* La sélection s'ouvre et se ferme au même endroit : en bas, dans le

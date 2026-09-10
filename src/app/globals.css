@@ -1125,10 +1125,6 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
   border-radius: 14px; padding: 11px 12px;
   animation: dc-vote .25s ease both;
 }
-.diapo-vote-c { flex: none; font-size: 18px; line-height: 1; color: #ff7286; }
-.diapo-vote-t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #fff; }
-.diapo-vote-x { flex: none; border: 0; background: none; cursor: pointer;
-  color: rgba(255,255,255,.45); font-size: 13px; padding: 4px 2px; }
 @media (min-width: 700px) {
   .diapo-vote { left: 50%; right: auto; transform: translateX(-50%); width: 420px; }
 }
@@ -2209,10 +2205,15 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   animation: dc-vote .25s ease both;
 }
 @keyframes dc-vote { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
-.gal-vote-c { flex: none; font-size: 18px; line-height: 1; color: #ff7286; }
-.gal-vote-t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #fff; }
-.gal-vote-x { flex: none; border: 0; background: none; cursor: pointer;
+/* Les deux bandeaux du vote, celui de la grille et celui de la photo ouverte,
+   portent le même contenu : une seule règle pour les deux. */
+.vote-c { flex: none; font-size: 18px; line-height: 1; color: #ff7286; }
+.vote-t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #fff; }
+.vote-x { flex: none; border: 0; background: none; cursor: pointer;
   color: rgba(255,255,255,.45); font-size: 13px; padding: 4px 2px; }
+/* Il s'écarte du doigt, comme une notification : le geste suit la main, donc
+   rien ne doit l'attraper au passage. */
+.gal-vote, .diapo-vote { touch-action: pan-y; }
 @media (min-width: 700px) {
   .gal-vote { left: 50%; right: auto; transform: translateX(-50%); width: 420px; }
   @keyframes dc-vote { from { opacity: 0 } to { opacity: 1 } }
