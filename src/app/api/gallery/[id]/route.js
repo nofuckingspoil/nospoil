@@ -91,7 +91,7 @@ export async function GET(request, { params }) {
   // Photos + prénom de l'auteur (jointure via la clé étrangère guest_id)
   const photosRes = await selectRows(
     'photos',
-    `event_id=eq.${id}&select=id,storage_path,thumb_path,taken_at,guest_id,hidden,guests(display_name)&order=taken_at.asc`
+    `event_id=eq.${id}&select=id,storage_path,thumb_path,view_path,taken_at,guest_id,hidden,guests(display_name)&order=taken_at.asc`
   )
   let rows = Array.isArray(photosRes.data) ? photosRes.data : []
 
@@ -117,11 +117,12 @@ export async function GET(request, { params }) {
     mesFiches = Array.isArray(r.data) ? r.data.map((g) => g.id) : []
   }
 
-  // On signe la pleine qualité ET les mini-versions en un seul appel
+  // On signe les trois tailles en un seul appel
   const allPaths = []
   for (const r of rows) {
     allPaths.push(r.storage_path)
     if (r.thumb_path) allPaths.push(r.thumb_path)
+    if (r.view_path) allPaths.push(r.view_path)
   }
   // Six heures, et non une.
   //
@@ -141,8 +142,11 @@ export async function GET(request, { params }) {
   const photos = rows
     .map((r) => ({
       id: r.id,
-      url: signed[r.thumb_path] || signed[r.storage_path], // mini-version pour l'album (léger)
-      fullUrl: signed[r.storage_path],                     // pleine qualité (ouverture / téléchargement)
+      url: signed[r.thumb_path] || signed[r.storage_path], // vignette pour la grille (~70 Ko)
+      // Le rendu que la visionneuse affiche : 1400 px, environ quatre fois plus
+      // léger que le fichier d'origine, et plus fin que l'écran d'un téléphone.
+      viewUrl: signed[r.view_path] || null,
+      fullUrl: signed[r.storage_path],                     // l'original (téléchargement)
       who: r.guests?.display_name || 'Participant',
       guestId: r.guest_id,
       takenAt: r.taken_at,

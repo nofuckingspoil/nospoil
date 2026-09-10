@@ -299,6 +299,54 @@ async function enregistrer(blob, nom) {
 // visionneuse est un composant à part, elle n'a pas accès aux fonctions
 // définies dans `Gallery`. L'oublier faisait planter la page à l'ouverture
 // d'une photo, avec un « adresseCassee is not defined » que rien ne rattrapait.
+// ============================================================
+//  Une photo dans la visionneuse : la vignette d'abord, la nette ensuite.
+//
+//  La photo entière pèse environ 1 Mo. Jusqu'ici la visionneuse la demandait
+//  directement, et l'écran restait noir le temps du téléchargement : une
+//  seconde sur une bonne connexion, plusieurs dans une salle de mariage.
+//
+//  La vignette, elle, est déjà dans la mémoire du téléphone : il vient de
+//  l'afficher dans la grille. On la montre donc tout de suite, agrandie et
+//  floutée, et la photo nette la recouvre en fondu dès qu'elle arrive.
+//  L'attente ne disparaît pas, elle cesse de se voir.
+// ============================================================
+function ImageDiapo({ ph, prioritaire, pelli, onCassee }) {
+  const [nette, setNette] = useState(false)
+  const vignette = ph.url
+  // On affiche le rendu intermédiaire (1400 px), pas l'original : à l'oeil
+  // c'est la même photo, et elle arrive quatre fois plus vite. Le fichier
+  // d'origine reste réservé au téléchargement.
+  const pleine = ph.viewUrl || ph.fullUrl || ph.url
+  // Photo sans vignette (les envois d'avant la mini-version) : rien à
+  // superposer, on affiche la pleine et c'est tout.
+  const enDeux = !!vignette && vignette !== pleine
+  const filtre = pelli.css || undefined
+
+  if (!enDeux) {
+    return (
+      <img src={pleine} alt={`Photo de ${ph.who}`} crossOrigin="anonymous" draggable={false}
+        onError={onCassee} fetchPriority={prioritaire ? 'high' : 'low'}
+        style={filtre ? { filter: filtre } : undefined} />
+    )
+  }
+
+  return (
+    <>
+      {/* C'est la vignette qui donne ses dimensions au cadre : même photo,
+          même proportion, donc la nette se pose exactement dessus. */}
+      <img className="diapo-flou" src={vignette} alt="" aria-hidden="true"
+        crossOrigin="anonymous" draggable={false}
+        style={{ filter: `${filtre ? filtre + ' ' : ''}blur(14px)` }} />
+      <img className={`diapo-nette${nette ? ' prete' : ''}`} src={pleine}
+        alt={`Photo de ${ph.who}`} crossOrigin="anonymous" draggable={false}
+        onLoad={() => setNette(true)} onError={onCassee}
+        fetchPriority={prioritaire ? 'high' : 'low'}
+        style={filtre ? { filter: filtre } : undefined} />
+    </>
+  )
+}
+
 function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
   const [dx, setDx] = useState(0)
   const [glisse, setGlisse] = useState(false)
@@ -392,10 +440,7 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
                 {/* La photo regardée passe devant les autres dans la file du
                     navigateur : les voisines se chargent, mais jamais au prix
                     de celle qu'on a sous les yeux. */}
-                <img src={ph.fullUrl || ph.url} alt={`Photo de ${ph.who}`} crossOrigin="anonymous" draggable={false}
-                  onError={onImageCassee}
-                  fetchPriority={j === index ? 'high' : 'low'}
-                  style={pelli.css ? { filter: pelli.css } : undefined} />
+                <ImageDiapo ph={ph} prioritaire={j === index} pelli={pelli} onCassee={onImageCassee} />
                 {pelli.teinte && <div className="film-teinte" style={{ background: cssTeinte(pelli) }} />}
                 {pelli.halo > 0 && <div className="film-halo" style={{ opacity: pelli.halo }} />}
                 {pelli.vignette > 0 && <div className="film-vignette" style={{ opacity: pelli.vignette }} />}

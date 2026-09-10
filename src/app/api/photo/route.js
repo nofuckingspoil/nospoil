@@ -80,6 +80,23 @@ export async function POST(request) {
     if (tup.ok) thumbPath = tp
   }
 
+  // Rendu intermédiaire : celui que la visionneuse affiche.
+  //
+  // La vignette de 640 px suffit à une case de grille, pas à un plein écran.
+  // Le fichier d'origine, lui, pèse près d'un mégaoctet, et l'écran restait
+  // noir le temps de le télécharger. Entre les deux, 1400 px : plus fin que
+  // ce qu'un écran de téléphone sait montrer, et quatre fois plus léger.
+  //
+  // On ne le garde que s'il fait réellement gagner du poids : une photo déjà
+  // petite n'a rien à y gagner, et on préfère un fichier de moins.
+  let viewPath = null
+  const vbytes = await miniature(bytes, { taille: 1400, qualite: 72 })
+  if (vbytes && vbytes.length < bytes.length * 0.8) {
+    const vp = path.replace(/\.jpg$/, '_vue.jpg')
+    const vup = await uploadPhoto(vp, vbytes, 'image/jpeg')
+    if (vup.ok) viewPath = vp
+  }
+
   // Réserve le cliché (atomique) + enregistre la ligne photo
   const { ok, data } = await rpc('take_photo', {
     p_event_id: eventId,
@@ -95,12 +112,16 @@ export async function POST(request) {
   if (data?.status === 'full') {
     await deletePhoto(path) // on annule l'upload : plus de clichés disponibles
     if (thumbPath) await deletePhoto(thumbPath)
+    if (viewPath) await deletePhoto(viewPath)
     return Response.json({ full: true, error: data.message }, { status: 409 })
   }
 
-  // Associe la mini-version à la ligne photo créée (repérée par son chemin unique)
-  if (thumbPath) {
-    await updateRow('photos', `storage_path=eq.${encodeURIComponent(path)}`, { thumb_path: thumbPath })
+  // Associe les deux rendus à la ligne photo créée (repérée par son chemin unique)
+  if (thumbPath || viewPath) {
+    const rendus = {}
+    if (thumbPath) rendus.thumb_path = thumbPath
+    if (viewPath) rendus.view_path = viewPath
+    await updateRow('photos', `storage_path=eq.${encodeURIComponent(path)}`, rendus)
   }
 
   // Signe de vie du participant : alimente l'indicateur « joue en ce moment »

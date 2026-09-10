@@ -1071,6 +1071,15 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
 /* La hauteur laisse la place aux deux bandeaux, sinon le nom du photographe
    recouvre le bas de la photo. */
 .diapo-media img { display: block; max-width: calc(100vw - 24px); max-height: calc(100vh - 168px); max-height: calc(100dvh - 168px); width: auto; height: auto; user-select: none; -webkit-user-drag: none; }
+/* La vignette floutée tient le cadre pendant que la photo nette arrive. Le
+   léger agrandissement cache le bord du flou, qui laisserait sinon un liseré
+   translucide sur les quatre côtés. */
+.diapo-flou { transform: scale(1.04); }
+.diapo-nette { position: absolute; inset: 0; width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; opacity: 0; transition: opacity .22s ease-out; }
+.diapo-nette.prete { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .diapo-nette { transition: none; }
+}
 
 .diapo-haut { position: absolute; top: 0; left: 0; right: 0; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px; background: linear-gradient(rgba(0,0,0,.5), rgba(0,0,0,0)); pointer-events: none; }
 .diapo-haut > * { pointer-events: auto; }

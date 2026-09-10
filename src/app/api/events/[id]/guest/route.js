@@ -37,12 +37,13 @@ export async function DELETE(request, { params }) {
 
   // Les fichiers d'abord : une ligne supprimée sans son fichier laisserait une
   // photo orpheline dans le stockage, facturée et jamais nettoyée.
-  const ph = await selectRows('photos', `guest_id=eq.${guestId}&select=id,storage_path,thumb_path`)
+  const ph = await selectRows('photos', `guest_id=eq.${guestId}&select=id,storage_path,thumb_path,view_path`)
   const lignes = Array.isArray(ph.data) ? ph.data : []
   const fichiers = []
   for (const p of lignes) {
     if (p.storage_path) fichiers.push(p.storage_path)
     if (p.thumb_path) fichiers.push(p.thumb_path)
+    if (p.view_path) fichiers.push(p.view_path)
   }
   if (fichiers.length) await deletePhotos(fichiers)
 

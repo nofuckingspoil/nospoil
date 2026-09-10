@@ -12,11 +12,12 @@ export async function POST(request) {
   }
   if (!estUuid(photoId)) return identifiantInvalide()
 
-  // La mini-version se lit AVANT la suppression : la fonction en base ne rend
-  // que le fichier pleine qualité, et la vignette restait sur R2 à occuper de
-  // la place pour une photo qui n'existe plus.
-  const avant = await selectRows('photos', `id=eq.${photoId}&select=thumb_path,event_id`)
+  // Les deux rendus se lisent AVANT la suppression : la fonction en base ne
+  // rend que le fichier pleine qualité, et les copies allégées restaient sur R2
+  // à occuper de la place pour une photo qui n'existe plus.
+  const avant = await selectRows('photos', `id=eq.${photoId}&select=thumb_path,view_path,event_id`)
   const thumb = Array.isArray(avant.data) ? avant.data[0]?.thumb_path : null
+  const vue = Array.isArray(avant.data) ? avant.data[0]?.view_path : null
   const eventId = Array.isArray(avant.data) ? avant.data[0]?.event_id : null
 
   // Le mode photo de l'événement ferme la porte, et le serveur la ferme aussi :
@@ -46,5 +47,6 @@ export async function POST(request) {
 
   if (data?.storage_path) await deletePhoto(data.storage_path)
   if (thumb && thumb !== data?.storage_path) await deletePhoto(thumb)
+  if (vue && vue !== data?.storage_path) await deletePhoto(vue)
   return Response.json({ shotsTaken: data.shots_taken })
 }

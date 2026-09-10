@@ -37,12 +37,13 @@ const ANONYME = 'Participant'
  * celle-ci laissait aux contraintes de clés.
  */
 async function supprimerEvenement(id) {
-  const ph = await selectRows('photos', `event_id=eq.${id}&select=storage_path,thumb_path`)
+  const ph = await selectRows('photos', `event_id=eq.${id}&select=storage_path,thumb_path,view_path`)
   const lignes = Array.isArray(ph.data) ? ph.data : []
   const fichiers = []
   for (const p of lignes) {
     if (p.storage_path) fichiers.push(p.storage_path)
     if (p.thumb_path) fichiers.push(p.thumb_path)
+    if (p.view_path) fichiers.push(p.view_path)
   }
 
   const ev = await selectRows('events', `id=eq.${id}&select=cover_url`)

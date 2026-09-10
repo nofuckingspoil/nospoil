@@ -98,11 +98,11 @@ async function purgeExpired(now) {
 
   const purged = []
   for (const ev of data) {
-    const photos = await selectRows('photos', `select=storage_path,thumb_path&event_id=eq.${ev.id}`)
+    const photos = await selectRows('photos', `select=storage_path,thumb_path,view_path&event_id=eq.${ev.id}`)
     const rows = Array.isArray(photos.data) ? photos.data : []
 
     // Fichiers R2 : l'original et sa mini-version.
-    const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path]).filter(Boolean)
+    const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path, p.view_path]).filter(Boolean)
     if (paths.length) await deletePhotos(paths)
     if (ev.cover_url) await deletePhoto(ev.cover_url)
 
@@ -141,9 +141,9 @@ async function purgeDemos(now) {
 
   const supprimes = []
   for (const ev of data) {
-    const photos = await selectRows('photos', `select=storage_path,thumb_path&event_id=eq.${ev.id}`)
+    const photos = await selectRows('photos', `select=storage_path,thumb_path,view_path&event_id=eq.${ev.id}`)
     const rows = Array.isArray(photos.data) ? photos.data : []
-    const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path]).filter(Boolean)
+    const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path, p.view_path]).filter(Boolean)
     if (paths.length) await deletePhotos(paths)
     if (ev.cover_url) await deletePhoto(ev.cover_url)
 

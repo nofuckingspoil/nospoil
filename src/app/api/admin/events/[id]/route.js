@@ -129,11 +129,12 @@ export async function DELETE(request, { params }) {
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
 
   // Fichiers à effacer du stockage : photos (pleine + mini) + couverture
-  const ph = await selectRows('photos', `event_id=eq.${id}&select=storage_path,thumb_path`)
+  const ph = await selectRows('photos', `event_id=eq.${id}&select=storage_path,thumb_path,view_path`)
   const paths = []
   for (const p of Array.isArray(ph.data) ? ph.data : []) {
     if (p.storage_path) paths.push(p.storage_path)
     if (p.thumb_path) paths.push(p.thumb_path)
+    if (p.view_path) paths.push(p.view_path)
   }
   if (ev.cover_url) paths.push(ev.cover_url)
   if (paths.length) await deletePhotos(paths)
