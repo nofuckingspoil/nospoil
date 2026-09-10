@@ -1087,26 +1087,6 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
 .diapo-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; font-size: 19px; line-height: 1; cursor: pointer; }
 .diapo-x:hover { background: rgba(255,255,255,.26); }
 
-/* Le rappel du cœur : posé juste au-dessus de la barre du bas, à hauteur du
-   bouton dont il parle. Il s'efface tout seul au bout de quelques secondes. */
-.diapo-vote { position: absolute; left: 12px; right: 12px; z-index: 4;
-  bottom: calc(84px + env(safe-area-inset-bottom));
-  display: flex; align-items: center; gap: 10px;
-  background: rgba(23,26,37,.96); border: 1px solid rgba(255,255,255,.14);
-  border-radius: 14px; padding: 11px 12px;
-  animation: dc-vote .25s ease both; }
-@keyframes dc-vote { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
-.diapo-vote-c { flex: none; font-size: 19px; line-height: 1; color: #ff7286; }
-.diapo-vote-t { flex: 1; min-width: 0; font-size: 11.5px; line-height: 1.35; color: rgba(255,255,255,.62); }
-.diapo-vote-t b { display: block; color: #fff; font-size: 13px; font-weight: 600; }
-.diapo-vote-x { flex: none; border: 0; background: none; cursor: pointer;
-  color: rgba(255,255,255,.45); font-size: 13px; padding: 4px 2px; }
-@media (min-width: 700px) {
-  .diapo-vote { left: 50%; right: auto; transform: translateX(-50%); width: 400px; }
-  @keyframes dc-vote { from { opacity: 0 } to { opacity: 1 } }
-}
-@media (prefers-reduced-motion: reduce) { .diapo-vote { animation: none; } }
-
 .diapo-bas { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 16px 14px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.62)); }
 .diapo-qui { flex: 1; min-width: 0; color: #fff; }
 .diapo-qui b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -2166,6 +2146,30 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* La pastille : petite, centrée, dans la zone du pouce. Elle flotte au-dessus
    des photos plutôt que d'occuper une barre pleine largeur, qui volerait de la
    place à ce qu'on est venu regarder. */
+/* Le rappel du vote : posé au-dessus de la pastille de sélection, dans la
+   galerie et non dans la visionneuse. C'est là que les gens sont, et c'est en
+   voyant défiler les tirages qu'on se met à en préférer. */
+.gal-vote {
+  position: fixed; left: 12px; right: 12px; z-index: 19;
+  bottom: calc(74px + env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 12px; border-radius: 14px;
+  background: rgba(23,26,37,.94); backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.16);
+  box-shadow: 0 10px 30px rgba(0,0,0,.4);
+  animation: dc-vote .25s ease both;
+}
+@keyframes dc-vote { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
+.gal-vote-c { flex: none; font-size: 18px; line-height: 1; color: #ff7286; }
+.gal-vote-t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #fff; }
+.gal-vote-x { flex: none; border: 0; background: none; cursor: pointer;
+  color: rgba(255,255,255,.45); font-size: 13px; padding: 4px 2px; }
+@media (min-width: 700px) {
+  .gal-vote { left: 50%; right: auto; transform: translateX(-50%); width: 420px; }
+  @keyframes dc-vote { from { opacity: 0 } to { opacity: 1 } }
+}
+@media (prefers-reduced-motion: reduce) { .gal-vote { animation: none; } }
+
 .gal-pastille {
   position: fixed; left: 50%; transform: translateX(-50%); z-index: 18;
   bottom: calc(16px + env(safe-area-inset-bottom));

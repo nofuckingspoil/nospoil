@@ -347,73 +347,13 @@ function ImageDiapo({ ph, prioritaire, pelli, onCassee }) {
   )
 }
 
-// Au bout de combien de photos regardées on rappelle que le cœur existe.
-// Trois : le temps de comprendre qu'on feuillette, pas assez pour avoir déjà
-// laissé passer sa préférée.
-const COEUR_APRES = 3
-
-function coeurDejaDit(eventId) {
-  try { return !!localStorage.getItem(`ttf_coeur_${eventId}`) } catch { return true }
-}
-function marquerCoeurDit(eventId) {
-  try { localStorage.setItem(`ttf_coeur_${eventId}`, '1') } catch {}
-}
-
-function Diapo({ eventId, photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
+function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
   const [dx, setDx] = useState(0)
   const [glisse, setGlisse] = useState(false)
   const [dy, setDy] = useState(0)   // le doigt qui chasse la photo vers le haut ou le bas
   const geste = useRef(null)
   const n = photos.length
   const p = photos[index]
-
-  // --- Le rappel du cœur ---
-  //
-  // Le vote existe depuis toujours, mais rien ne le disait : le cœur passait
-  // pour un « mettre de côté ». On le dit une fois, au moment où la personne
-  // a compris qu'elle feuillette et où elle a vu de quoi préférer.
-  const [ditCoeur, setDitCoeur] = useState(false)
-  const vues = useRef(new Set())
-  useEffect(() => {
-    if (!eventId || ditCoeur || coeurDejaDit(eventId)) return
-    vues.current.add(index)
-    if (vues.current.size < COEUR_APRES) return
-    setDitCoeur(true)
-    marquerCoeurDit(eventId)
-  }, [eventId, index, ditCoeur])
-
-  // Il reste tant qu'on ne l'a pas fermé : un bandeau qui s'évapore tout seul
-  // se rate, et celui-ci n'a qu'une seule occasion d'être lu.
-  //
-  // Toucher le cœur le referme aussi : la phrase a été comprise, la répéter
-  // n'apprendrait plus rien.
-  useEffect(() => {
-    if (!ditCoeur) return
-    if (favs.has(p?.id)) setDitCoeur(false)
-  }, [ditCoeur, favs, p?.id])
-
-  useEffect(() => {
-    function onKey(e) {
-      if (e.key === 'Escape') onClose()
-      else if (e.key === 'ArrowLeft') setIndex((i) => Math.max(0, i - 1))
-      else if (e.key === 'ArrowRight') setIndex((i) => Math.min(n - 1, i + 1))
-    }
-    window.addEventListener('keydown', onKey)
-    // Pas de manipulation de l'historique ici. J'avais posé une entrée pour que
-    // le retour d'Android referme la photo, et retiré cette entrée au
-    // démontage : en développement, React monte chaque composant deux fois, et
-    // ce retour automatique refermait la visionneuse à l'instant où elle
-    // s'ouvrait. Le bouton retour du téléphone sort donc de l'album, comme
-    // avant ; ça mérite d'être repris, mais pas au prix d'une visionneuse qui
-    // ne s'ouvre plus.
-    // La page derrière ne doit pas défiler sous la photo qu'on regarde.
-    const avant = document.body.style.overflow
-    document.body.style.overflow = 'hidden'
-    return () => {
-      window.removeEventListener('keydown', onKey)
-      document.body.style.overflow = avant
-    }
-  }, [n, onClose, setIndex])
 
   function debut(e) {
     const t = e.touches[0]
@@ -499,17 +439,6 @@ function Diapo({ eventId, photos, index, setIndex, pelli, avecDate, favs, onFav,
         disabled={index === 0} aria-label="Photo précédente">‹</button>
       <button className="diapo-fleche d" onClick={() => setIndex((i) => Math.min(n - 1, i + 1))}
         disabled={index === n - 1} aria-label="Photo suivante">›</button>
-
-      {ditCoeur && (
-        <div className="diapo-vote" role="status">
-          <span className="diapo-vote-c" aria-hidden="true">♥</span>
-          <span className="diapo-vote-t">
-            <b>Une photo vous marque ?</b>
-            Touchez le cœur. Les préférées du groupe seront envoyées à tout le monde.
-          </span>
-          <button className="diapo-vote-x" onClick={() => setDitCoeur(false)} aria-label="Fermer">✕</button>
-        </div>
-      )}
 
       <div className="diapo-bas">
         <div className="diapo-qui">
@@ -624,6 +553,8 @@ export default function Gallery({ params }) {
   // dès l'arrivée, elle recouvrait « Revoir la révélation », le premier écran
   // étant celui que tout le monde voit.
   const [defile, setDefile] = useState(false)
+  // Le rappel du vote, montré une seule fois par soirée et par appareil.
+  const [voteDit, setVoteDit] = useState(false)
   const [lienCopie, setLienCopie] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
@@ -748,6 +679,25 @@ export default function Gallery({ params }) {
     }
   }, [])
 
+  // --- Le rappel du vote ---
+  //
+  // Le cœur existe depuis toujours, mais rien ne disait à quoi il sert : il
+  // passait pour un « mettre de côté ». On le dit une fois, dans la galerie et
+  // pas dans la visionneuse : c'est là que les gens sont, et c'est en voyant
+  // défiler les tirages qu'on se met à en préférer.
+  //
+  // Il attend qu'on le ferme : un bandeau qui s'évapore tout seul se rate, et
+  // celui-ci n'a qu'une occasion d'être lu.
+  useEffect(() => {
+    if (!id) return
+    try { setVoteDit(!localStorage.getItem(`ttf_coeur_${id}`)) } catch {}
+  }, [id])
+
+  const fermerVote = useCallback(() => {
+    setVoteDit(false)
+    try { localStorage.setItem(`ttf_coeur_${id}`, '1') } catch {}
+  }, [id])
+
   // Partager l'album : le lien public de la galerie, pas le lien personnel du
   // viseur, qui rouvrirait l'appareil de celui qui l'a envoyé.
   async function partagerAlbum() {
@@ -859,6 +809,8 @@ export default function Gallery({ params }) {
 
   function toggleFav(photoId) {
     const aime = favs.has(photoId)
+    // La phrase a été comprise : on ne la répète pas.
+    if (!aime && voteDit) fermerVote()
     // Affichage immédiat : un cœur qui attend le serveur ne donne pas envie.
     setFavs((prev) => {
       const n = new Set(prev)
@@ -1549,6 +1501,16 @@ export default function Gallery({ params }) {
         </div>
       )}
 
+      {/* Le rappel du vote, posé au-dessus de la pastille : il parle du cœur
+          qui est sur chaque tirage, il doit donc vivre là où on les voit. */}
+      {voteDit && defile && !selecting && photos.length > 0 && !panneau && diapo === null && !montrerCollage && (
+        <div className="gal-vote" role="status">
+          <span className="gal-vote-c" aria-hidden="true">♥</span>
+          <span className="gal-vote-t">Votez pour vos photos préférées en touchant le cœur.</span>
+          <button className="gal-vote-x" onClick={fermerVote} aria-label="Fermer">✕</button>
+        </div>
+      )}
+
       {/* La sélection s'ouvre et se ferme au même endroit : en bas, dans le
           pouce. Elle vivait en haut, dans un coin que la main n'atteint pas sur
           un grand téléphone, alors que la barre de sélection, elle, a toujours
@@ -1618,7 +1580,6 @@ export default function Gallery({ params }) {
 
       {diapo !== null && photos[diapo] && (
         <Diapo
-          eventId={id}
           photos={photos}
           index={diapo}
           setIndex={setDiapo}
