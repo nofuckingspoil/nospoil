@@ -165,7 +165,7 @@ function disposer(n, zx, zy, zw, zh, graine) {
 
 // ---------- Texte ----------
 
-function police(variable, repli) {
+export function police(variable, repli) {
   if (typeof window === 'undefined') return repli
   try {
     const v = getComputedStyle(document.documentElement).getPropertyValue(variable).trim()
@@ -175,7 +175,7 @@ function police(variable, repli) {
 
 // Un prénom composé ne doit pas sortir du cadre : on rétrécit jusqu'à ce que
 // ça rentre, plutôt que de couper au milieu d'un mot.
-function ajuste(ctx, texte, maxLargeur, taille, fabrique) {
+export function ajuste(ctx, texte, maxLargeur, taille, fabrique) {
   let t = taille
   for (let i = 0; i < 24; i++) {
     ctx.font = fabrique(t)
