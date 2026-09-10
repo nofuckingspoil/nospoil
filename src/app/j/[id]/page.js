@@ -1352,6 +1352,16 @@ export default function GuestCamera({ params }) {
                 ============================================================ */}
             {!meta?.revealed && (
               <div className="album-mur">
+                {/* Le bandeau parle de la soirée, pas de l'onglet choisi : il se
+                    tient donc AU-DESSUS des deux, entre le déclencheur et le
+                    choix. C'est lui qui dit que la soirée est en train de se
+                    faire, et il vaut pour les deux vues. */}
+                <div className="mur-lab">
+                  <span className="pt" />
+                  {meta?.photoCount ?? 0} photo{(meta?.photoCount ?? 0) > 1 ? 's' : ''}
+                  {' · '}{meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
+                </div>
+
                 <div className="album-onglets" role="tablist">
                   <button className={`album-onglet ${ongletMoi ? 'actif' : ''}`}
                     role="tab" aria-selected={ongletMoi}
@@ -1371,20 +1381,10 @@ export default function GuestCamera({ params }) {
                     fallait tout traverser pour la lire. Elle passe au-dessus, et
                     porte au passage le nombre de participants, qui avait disparu
                     en même temps que l'ancien bandeau du mur. */}
-                {/* Le bandeau du mur, avec sa pastille qui bat : c'est lui qui
-                    dit que la soirée est en train de se faire. Il avait disparu
-                    avec l'ancien mur, et son compte de participants avec. */}
-                {!ongletMoi && (
-                  <div className="mur-lab">
-                    <span className="pt" />
-                    {meta?.photoCount ?? 0} photo{(meta?.photoCount ?? 0) > 1 ? 's' : ''}
-                    {' · '}{meta?.guestCount ?? 1} participant{(meta?.guestCount || 0) > 1 ? 's' : ''}
-                  </div>
-                )}
                 <p className="mur-note" style={{ margin: '0 0 12px' }}>
                   {ongletMoi
                     ? flouterMesPhotos
-                      ? 'Scellées, comme un vrai jetable. Tu les découvriras à la révélation.'
+                      ? 'Tu les découvriras à la révélation.'
                       : 'Tes photos, à toi seul, jusqu’à la révélation.'
                     : 'Floutées jusqu’à la révélation.'}
                 </p>

@@ -615,7 +615,7 @@ a.cam-pile:active { transform: scale(.94); }
 /* Le mur : la soirée en train de se faire, juste amorcée sous le bouton. */
 .album-mur { margin-top: 22px; }
 .mur-lab {
-  display: flex; align-items: center; gap: 8px; margin-bottom: 11px;
+  display: flex; align-items: center; gap: 8px; margin: 22px 0 10px;
   font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .14em;
   text-transform: uppercase; color: rgba(255,255,255,.6);
 }
@@ -624,7 +624,7 @@ a.cam-pile:active { transform: scale(.94); }
    Même largeur pour les deux : aucun des deux ne se présente comme le principal. */
 .album-onglets {
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-  padding: 4px; border-radius: 999px; margin-bottom: 13px;
+  padding: 4px; border-radius: 999px; margin: 0 0 13px;
   background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
 }
 .album-onglet {
