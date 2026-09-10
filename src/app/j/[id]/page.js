@@ -990,9 +990,20 @@ export default function GuestCamera({ params }) {
           <div className="mail-tip mail-tip-ok">✓ Adresse vérifiée</div>
         )}
 
+        {/* La promesse énumère maintenant DEUX envois, et pas un.
+            Le mail des photos préférées, deux jours après la révélation, est un
+            service rendu aux participants : il n'a rien de publicitaire. Mais il
+            fallait l'annoncer, sinon on l'aurait envoyé après avoir écrit
+            « rien d'autre, jamais ». La partie qui compte, elle, ne bouge pas :
+            ni publicité, ni transmission.
+
+            ATTENTION quand ce mail sera codé : il ne doit partir qu'aux fiches
+            créées APRÈS ce changement. Ceux qui se sont inscrits avant ont lu
+            l'ancienne phrase, et elle les engage. */}
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
-          ✉️ Rien d'autre, jamais : ni publicité, ni transmission à qui que ce soit.
-          Elle disparaît avec l'événement.
+          ✉️ Le lien de l&apos;album quand les photos sortent, puis les photos préférées
+          quelques jours après. Rien d&apos;autre, jamais : ni publicité, ni transmission
+          à qui que ce soit. Elle disparaît avec l&apos;événement.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         {confirmSansMail ? (
