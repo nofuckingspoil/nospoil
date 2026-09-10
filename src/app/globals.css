@@ -2212,7 +2212,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-pastille:hover { background: rgba(30,34,48,.96); border-color: rgba(255,255,255,.26); }
 
 .gal-bar-tout {
-  flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  flex: none; white-space: nowrap;
   background: none; border: none; cursor: pointer;
   /* Un lien souligné de 13 px n'est pas une cible : le doigt manquait la moitié
      du temps, et l'appui semblait sans effet. */
@@ -2220,15 +2220,36 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   font-family: var(--font-body); font-size: 13.5px; color: rgba(255,255,255,.75);
   text-decoration: underline;
 }
+/* Le compte prend la place qui reste sur la première ligne, et son détail
+   passe dessous : « 3 photos choisies / sur 297 » se lit d'un coup d'œil, là
+   où « 3 photos » coupait le mot en deux faute de largeur. */
 .gal-bar-n {
-  flex: 1 1 auto; min-width: 0; text-align: center; white-space: nowrap;
-  font-weight: 700; font-size: 14px; color: #fff;
+  flex: 1 1 auto; min-width: 0; text-align: left;
+  font-weight: 700; font-size: 14px; line-height: 1.25; color: #fff;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.gal-bar-n em {
+  display: block; font-style: normal; font-weight: 400;
+  font-size: 11.5px; color: rgba(255,255,255,.5); margin-top: 1px;
 }
 .gal-bar-note {
   display: block; margin-top: 2px; font-style: normal; font-weight: 400;
   font-size: 11px; color: rgba(255,255,255,.6);
 }
-.gal-bar-dl { flex: none; width: auto; padding: 12px 22px; font-size: 14.5px; }
+/* L'action prend toute la largeur : c'est elle qu'on vient chercher, et elle
+   dit ce qu'elle emporte. */
+.gal-bar-dl {
+  display: block; width: 100%; max-width: 980px; margin: 12px auto 0;
+  padding: 14px 18px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--accent); color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
+}
+.gal-bar-dl:hover:not(:disabled) { filter: brightness(1.06); }
+/* Éteint, il ne ment pas : un bouton orange pâle donne l'impression d'une
+   panne, un bouton gris dit qu'il n'y a rien à emporter pour l'instant. */
+.gal-bar-dl:disabled {
+  background: rgba(255,255,255,.08); color: rgba(255,255,255,.4); cursor: default;
+}
 .gal-coche {
   position: absolute; top: 8px; left: 8px; width: 26px; height: 26px;
   /* Posée dans la page en permanence, révélée par la classe de sélection : voir

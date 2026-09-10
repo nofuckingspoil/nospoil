@@ -1552,25 +1552,42 @@ export default function Gallery({ params }) {
 
       {selecting && (
         <div className="gal-bar">
+          {/* Deux étages, et non quatre objets sur une ligne : le nombre choisi
+              se retrouvait avec quarante pixels et coupait le mot « photo » en
+              trois morceaux. C'est pourtant l'information la plus utile de la
+              barre. Le bouton, lui, gagne toute la largeur et dit ce qu'il
+              emporte : choisir des photos est le moment où l'on compte, pas
+              celui où l'on déchiffre des abréviations. */}
           <div className="gal-bar-in">
             {/* La croix EST la sortie, à l'endroit exact où l'on est entré. */}
             <button className="gal-bar-fin" aria-label="Quitter la sélection"
               onClick={() => { setSelecting(false); setSelected(new Set()) }}>
               ✕
             </button>
-            <button className="gal-bar-tout" onClick={basculerTout}>
-              {/* Le nombre dit combien le filtre en cours en montre : on sait ce
-                  qu'on coche avant de cliquer. */}
-              {tousCoches ? 'Tout décocher' : `Tout cocher (${photos.length})`}
-            </button>
             <span className="gal-bar-n">
-              {aTelecharger.length} photo{aTelecharger.length > 1 ? 's' : ''}
+              {aTelecharger.length === 0
+                ? 'Aucune photo choisie'
+                : `${aTelecharger.length} photo${aTelecharger.length > 1 ? 's' : ''} choisie${aTelecharger.length > 1 ? 's' : ''}`}
+              <em>
+                {aTelecharger.length === 0
+                  ? 'Touchez les tirages à télécharger'
+                  : tousCoches
+                    ? 'l’album entier'
+                    : `sur ${photos.length}`}
+              </em>
             </span>
-            <button className="btn btn-accent gal-bar-dl" disabled={!!zip || aTelecharger.length === 0}
-              onClick={() => downloadAll(aTelecharger)}>
-              {zip ? `${zip.done}/${zip.total}` : 'Télécharger'}
+            <button className="gal-bar-tout" onClick={basculerTout}>
+              {tousCoches ? 'Tout décocher' : 'Tout cocher'}
             </button>
           </div>
+          <button className="gal-bar-dl" disabled={!!zip || aTelecharger.length === 0}
+            onClick={() => downloadAll(aTelecharger)}>
+            {zip
+              ? `Préparation… ${zip.done}/${zip.total}`
+              : aTelecharger.length === 0
+                ? 'Sélectionnez des photos'
+                : `⤓ Télécharger ${aTelecharger.length > 1 ? `les ${aTelecharger.length} photos` : 'la photo'}`}
+          </button>
         </div>
       )}
 
