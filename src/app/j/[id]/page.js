@@ -1722,7 +1722,7 @@ export default function GuestCamera({ params }) {
                 reste quoi qu'il arrive à l'album. */}
             <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }}
               onClick={() => telechargerUne(viewer)} disabled={downloading}>
-              {downloading ? 'Préparation…' : '⤓ Enregistrer'}
+              {downloading ? 'Préparation…' : '⤓ Télécharger'}
             </button>
             {/* Jamais du premier coup : une photo supprimée ne revient pas, et
                 le bouton est juste à côté de celui qui enregistre. */}

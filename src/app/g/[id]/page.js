@@ -530,7 +530,7 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
             {p.favs > 0 && <span>{p.favs}</span>}
           </button>
           <button className="diapo-b" onClick={() => onDownload(p)} disabled={occupe}>
-            {occupe ? '…' : '⬇ Enregistrer'}
+            {occupe ? '…' : '⤓ Télécharger'}
           </button>
           {/* Sa propre photo se retire ; celle des autres se signale. Jamais les
               deux à la fois : on ne supprime pas le cliché d'autrui, et signaler
