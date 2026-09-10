@@ -695,6 +695,15 @@ a.cam-pile:active { transform: scale(.94); }
 /* Plus de grisage sur les photos qui n'ont pas fini de partir : une photo prise
    est une photo prise, et la faire ressembler à un cliché raté inquiétait pour
    rien. Le point sur lequel personne n'a de prise ne mérite pas d'être dit. */
+/* Le seul mot de la file d'attente, et seulement quand ça coince : trois
+   choses dans l'ordre, ce qui se passe, où sont les photos, quoi faire. */
+.album-coince {
+  margin: 0 0 12px; padding: 11px 12px; border-radius: 12px;
+  font-size: 13px; line-height: 1.5; color: rgba(255,255,255,.85);
+  background: rgba(244,193,78,.12); border: 1px solid rgba(244,193,78,.32);
+}
+.album-coince b { display: block; margin-bottom: 3px; font-size: 13.5px; color: var(--amber); }
+
 /* Le mur du groupe : les photos de tous les participants pendant la soirée, floutées.
    Le flou est un effet d'affichage : la photo descend entière sur le téléphone.
    C'est assumé. Ce qu'on cherche ici, c'est que l'attente vive, pas un coffre-fort. */

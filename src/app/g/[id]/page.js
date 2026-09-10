@@ -5,6 +5,7 @@ import Link from 'next/link'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
+import { brancherLesReveils, demarrerFileEnvoi } from '../../../lib/file-envoi-web'
 import { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, cssTeinte, tamponDate, cuirePhoto } from '../../../lib/film'
 import Collage from '../../../components/Collage'
 import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
@@ -702,6 +703,17 @@ export default function Gallery({ params }) {
       window.removeEventListener('scroll', verifier)
       window.removeEventListener('resize', verifier)
     }
+  }, [])
+
+  // Les photos restées en route repartent d'ici aussi.
+  //
+  // C'est le mail de révélation qui ramène tout le monde sur le site, et il
+  // mène à l'album, pas au viseur. Une photo coincée le samedi soir dans une
+  // salle sans réseau arrive donc au moment où l'on clique dans son mail le
+  // mercredi, sans que personne ait rien à faire.
+  useEffect(() => {
+    brancherLesReveils()
+    void demarrerFileEnvoi()
   }, [])
 
   // --- Le rappel du vote ---

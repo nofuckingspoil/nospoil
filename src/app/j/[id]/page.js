@@ -8,6 +8,7 @@ import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compres
 import CameraBloquee from '../../../components/CameraBloquee'
 import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../lib/photo-mode'
 import { pushPossible, pushEtat, dejaPropose, marquerPropose, activerPush } from '../../../lib/push'
+import { ajouterALaFile, brancherLesReveils, demarrerFileEnvoi, sabonnerALaFile, ESSAIS_COINCE } from '../../../lib/file-envoi-web'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
@@ -142,7 +143,7 @@ export default function GuestCamera({ params }) {
     setOngletMoi(revoitSesPhotos(meta.photoMode || 'libre'))
   }, [meta])
   const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
-  const [pending, setPending] = useState([])     // [{tempId, url}] en cours d'envoi
+  const [pending, setPending] = useState([])     // [{tempId, url, essais}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [aConfirmer, setAConfirmer] = useState(null) // {blob, url} cliché montré une fois, à garder ou à reprendre
   const [deleting, setDeleting] = useState(false)
@@ -448,6 +449,42 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, guest, meta])
 
+  // La file d'attente du navigateur : elle affiche les photos avant qu'elles
+  // soient parties, et prévient quand l'une d'elles arrive.
+  useEffect(() => {
+    if (!id) return
+    brancherLesReveils()
+    void demarrerFileEnvoi()
+    return sabonnerALaFile((ev) => {
+      if (ev.type === 'file') {
+        setPending(
+          ev.enAttente
+            .filter((e) => e.eventId === id)
+            .map((e) => ({ tempId: e.id, url: e.url, essais: e.essais }))
+        )
+        return
+      }
+      if (ev.eventId !== id) return
+      // Arrivée : le compteur du serveur remplace le nôtre, et l'album se relit.
+      if (ev.type === 'arrivee') { loadMyPhotos(); return }
+      if (ev.type === 'refus') { setError(ev.message || PLEINE()); loadMyPhotos(); return }
+      if (ev.type === 'perdue') {
+        setError("Une photo attendait depuis trop longtemps pour être encore envoyée.")
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
+
+  // Fermer l'onglet avec des photos en route, c'est les laisser sur place
+  // jusqu'à la prochaine visite. Le navigateur sait poser la question, on la
+  // pose : c'est le seul moment où l'on peut encore attraper le geste.
+  useEffect(() => {
+    if (pending.length === 0) return
+    const avertir = (e) => { e.preventDefault(); e.returnValue = '' }
+    window.addEventListener('beforeunload', avertir)
+    return () => window.removeEventListener('beforeunload', avertir)
+  }, [pending.length])
+
   // Charge mes photos confirmées + synchronise le compteur depuis le serveur
   async function loadMyPhotos() {
     try {
@@ -634,11 +671,17 @@ export default function GuestCamera({ params }) {
     URL.revokeObjectURL(v.url)
   }
 
+  /**
+   * Capture optimiste : la photo entre dans la file d'attente du navigateur,
+   * qui l'affiche tout de suite depuis la mémoire et l'enverra toute seule.
+   *
+   * Avant, l'envoi partait ici même, et une coupure de trois secondes perdait
+   * la photo : un message d'erreur, et il fallait la reprendre. Dans une salle
+   * de réception, ça arrive tout le temps.
+   */
   async function capture(blob) {
-    const tempId = `tmp-${++_tmp}`
-    const url = URL.createObjectURL(blob)
-    setPending((p) => [{ tempId, url }, ...p])
-    setGuest((g) => (g ? { ...g, shotsTaken: Math.min(g.shotsPerGuest, g.shotsTaken + 1) } : g))
+    // Rien à faire pour le compteur : la molette compte déjà les photos en
+    // file (voir `prises`). Le pousser ici les compterait deux fois.
     try {
       // Mini-version légère (~640px) pour l'affichage de l'album, économise la data
       let thumbBlob = null
@@ -648,22 +691,18 @@ export default function GuestCamera({ params }) {
         try { im.close?.() } catch {}
       } catch {}
 
-      const fd = new FormData()
-      fd.append('file', blob, 'photo.jpg')
-      if (thumbBlob) fd.append('thumb', thumbBlob, 'thumb.jpg')
-      fd.append('eventId', id); fd.append('guestId', guest.guestId); fd.append('deviceToken', getDeviceToken())
-
-      const res = await envoyer('/api/photo', { method: 'POST', body: fd },
-        'Connexion perdue pendant l’envoi. Vérifie ta connexion et réessaie.')
-      const d = await res.json().catch(() => ({}))
-      if (res.status === 409) { setError(PLEINE()) }
-      else if (!res.ok) { throw new Error(d.error || "Échec de l'envoi.") }
-    } catch (err) {
-      setError(err.message || "Échec de l'envoi. Réessaie.")
-    } finally {
-      setPending((p) => p.filter((x) => x.tempId !== tempId))
-      URL.revokeObjectURL(url)
-      loadMyPhotos() // synchronise compteur + photos depuis le serveur
+      await ajouterALaFile({
+        eventId: id,
+        guestId: guest.guestId,
+        deviceToken: getDeviceToken(),
+        blob,
+        thumb: thumbBlob,
+      })
+    } catch {
+      // La mémoire du navigateur a refusé la photo (mode privé, disque plein) :
+      // on le dit, c'est le seul cas où elle est réellement perdue.
+      setError("Cette photo n'a pas pu être gardée. Réessaie.")
+      loadMyPhotos()
     }
   }
 
@@ -851,6 +890,7 @@ export default function GuestCamera({ params }) {
   const prises = guest
     ? Math.min(guest.shotsPerGuest, guest.shotsTaken + pending.length)
     : 0
+  const coince = pending.filter((p) => (p.essais || 0) >= ESSAIS_COINCE)
   const remaining = guest ? guest.shotsPerGuest - prises : 0
   const full = remaining <= 0
   const coupleLabel = meta?.hostNames || meta?.name || ''
@@ -1399,6 +1439,20 @@ export default function GuestCamera({ params }) {
                     <em>{meta?.photoCount ?? 0} photo{(meta?.photoCount ?? 0) > 1 ? 's' : ''}</em>
                   </button>
                 </div>
+
+                {/* Le seul mot que la file a le droit de dire, et seulement
+                    quand ça coince pour de bon : cinq tentatives ratées, soit
+                    deux minutes. La dernière phrase compte autant que les
+                    autres, sans elle on croit qu'il faut arrêter de
+                    photographier en attendant. */}
+                {ongletMoi && coince.length > 0 && (
+                  <div className="album-coince">
+                    <b>📶 En attente de réseau</b>
+                    {coince.length > 1
+                      ? `Tes ${coince.length} photos sont bien sur ce téléphone, mais elles ne peuvent pas encore rejoindre l'album. Reviens sur cette page dès que tu as du réseau, elles partiront toutes seules. Tu peux continuer à photographier.`
+                      : "Ta photo est bien sur ce téléphone, mais elle ne peut pas encore rejoindre l'album. Reviens sur cette page dès que tu as du réseau, elle partira toute seule. Tu peux continuer à photographier."}
+                  </div>
+                )}
 
                 {/* La légende était sous la grille : avec deux cents photos, il
                     fallait tout traverser pour la lire. Elle passe au-dessus, et
