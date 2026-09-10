@@ -262,13 +262,22 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
             <div><b>{String(chiffres.moyenne).replace('.', ',')}</b><span>chacun</span></div>
           </div>
 
+          {/* `crossOrigin` n'est pas décoratif : sans lui, le navigateur garde
+              en cache une copie qu'il s'interdit ensuite de relire, et le
+              dessin de l'image à emporter repartait sans les deux photos. */}
           {(chiffres.premier?.url || chiffres.dernier?.url) && (
             <div className="syn-duo">
               {chiffres.premier?.url && (
-                <span><img src={chiffres.premier.url} alt="" /><i>La première · {chiffres.premier.heure}</i></span>
+                <span>
+                  <img src={chiffres.premier.url} alt="" crossOrigin="anonymous" />
+                  <i>La première · {chiffres.premier.heure}</i>
+                </span>
               )}
               {chiffres.dernier?.url && (
-                <span><img src={chiffres.dernier.url} alt="" /><i>La dernière · {chiffres.dernier.heure}</i></span>
+                <span>
+                  <img src={chiffres.dernier.url} alt="" crossOrigin="anonymous" />
+                  <i>La dernière · {chiffres.dernier.heure}</i>
+                </span>
               )}
             </div>
           )}
