@@ -657,11 +657,15 @@ a.cam-pile:active { transform: scale(.94); }
   70% { box-shadow: 0 0 0 8px rgba(236,91,51,0) }
   100% { box-shadow: 0 0 0 0 rgba(236,91,51,0) }
 }
+/* Emporter ses photos est une action, pas une note de bas de page : elle porte
+   donc l'orange de la marque, comme partout ailleurs. En gris sur fond sombre,
+   elle passait pour un texte d'aide. */
 .mur-plus {
-  width: 100%; margin-top: 12px; padding: 11px 0; border-radius: 12px; cursor: pointer;
-  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16); color: #fff;
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em;
+  width: 100%; margin-top: 12px; padding: 14px 0; border-radius: 999px; cursor: pointer;
+  background: var(--accent); border: 0; color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
 }
+.mur-plus:hover:not(:disabled) { filter: brightness(1.06); }
 .mur-plus:disabled { opacity: .5; }
 
 /* Le panneau du participant */
@@ -695,6 +699,12 @@ a.cam-pile:active { transform: scale(.94); }
 /* Plus de grisage sur les photos qui n'ont pas fini de partir : une photo prise
    est une photo prise, et la faire ressembler à un cliché raté inquiétait pour
    rien. Le point sur lequel personne n'a de prise ne mérite pas d'être dit. */
+/* Ce que la suppression va coûter, dit avant le second appui. */
+.viewer-note {
+  margin: 12px 0 0; max-width: 360px; width: 100%; text-align: center;
+  font-size: 13px; line-height: 1.45; color: rgba(255,255,255,.7);
+}
+
 /* La sortie du mini-navigateur. Discret, en haut de l'écran, et jamais plus
    d'une ligne : c'est une proposition, pas un péage. */
 .ouvrir-app {

@@ -146,6 +146,7 @@ export default function GuestCamera({ params }) {
   const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
   const [pending, setPending] = useState([])     // [{tempId, url, essais}] en cours d'envoi
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
+  const [confirmeSuppr, setConfirmeSuppr] = useState(false) // la suppression demande un second appui
   const [aConfirmer, setAConfirmer] = useState(null) // {blob, url} cliché montré une fois, à garder ou à reprendre
   const [deleting, setDeleting] = useState(false)
   const [showQR, setShowQR] = useState(false)    // pop-up "inviter un proche"
@@ -361,6 +362,34 @@ export default function GuestCamera({ params }) {
   }
 
   // Télécharge mes propres photos en .zip
+  /**
+   * Enregistrer LA photo qu'on regarde.
+   *
+   * Une seule image, donc pas d'archive : le fichier part directement, et le
+   * téléphone propose de le garder. Emporter sa propre photo rassure, et c'est
+   * la seule chose qui lui appartienne vraiment avant la révélation.
+   */
+  async function telechargerUne(photo) {
+    if (downloading || !photo?.url) return
+    setDownloading(true)
+    setError('')
+    try {
+      const blob = await fetch(photo.url).then((r) => r.blob())
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'timetoflash.jpg'
+      a.style.display = 'none'
+      document.body.appendChild(a)
+      a.click()
+      setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
+    } catch {
+      setError("Cette photo n'a pas pu être enregistrée. Réessaie dans un instant.")
+    } finally {
+      setDownloading(false)
+    }
+  }
+
   async function downloadMine() {
     if (downloading || !myPhotos.length) return
     setDownloading(true)
@@ -1682,12 +1711,26 @@ export default function GuestCamera({ params }) {
       {/* Visionneuse photo */}
       {viewer && (
         <div className="viewer" onClick={(e) => { if (e.target === e.currentTarget) setViewer(null) }}>
-          <button className="viewer-close" onClick={() => setViewer(null)} aria-label="Fermer">×</button>
+          <button className="viewer-close" onClick={() => { setViewer(null); setConfirmeSuppr(false) }} aria-label="Fermer">×</button>
           <img src={viewer.url} alt="Ta photo" crossOrigin="anonymous" />
           {error && <div className="err" style={{ marginTop: 14, maxWidth: 360, width: '100%' }}>{error}</div>}
+          {confirmeSuppr && !deleting && (
+            <p className="viewer-note">Cette photo quittera l&apos;album, et ta pose te sera rendue.</p>
+          )}
           <div className="viewer-actions">
-            <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }} onClick={() => setViewer(null)}>Garder</button>
-            <button className="btn btn-danger" onClick={removePhoto} disabled={deleting}>{deleting ? 'Suppression…' : 'Supprimer'}</button>
+            {/* Emporter sa propre photo rassure : elle est à soi, et elle le
+                reste quoi qu'il arrive à l'album. */}
+            <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }}
+              onClick={() => telechargerUne(viewer)} disabled={downloading}>
+              {downloading ? 'Préparation…' : '⤓ Enregistrer'}
+            </button>
+            {/* Jamais du premier coup : une photo supprimée ne revient pas, et
+                le bouton est juste à côté de celui qui enregistre. */}
+            <button className="btn btn-danger"
+              onClick={() => (confirmeSuppr ? removePhoto() : setConfirmeSuppr(true))}
+              disabled={deleting}>
+              {deleting ? 'Suppression…' : confirmeSuppr ? 'Confirmer' : 'Supprimer'}
+            </button>
           </div>
         </div>
       )}

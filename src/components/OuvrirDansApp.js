@@ -31,6 +31,8 @@ const PATIENCE = 1500
 export default function OuvrirDansApp() {
   const [visible, setVisible] = useState(false)
   const [rate, setRate] = useState(false)
+  /** Même Safari n'a pas voulu s'ouvrir : reste le menu du mini-navigateur. */
+  const [menu, setMenu] = useState(false)
 
   useEffect(() => {
     // Uniquement l'iPhone : c'est là qu'existe l'application. Sur Android, le
@@ -52,10 +54,23 @@ export default function OuvrirDansApp() {
   }
 
   function ouvrirSafari() {
-    // « x-safari-https:// » : la façon reconnue de sortir d'un mini-navigateur
-    // sur iPhone. Dans Safari, l'appareil photo fonctionne, et iOS propose de
-    // lui-même l'application ou l'extrait d'app en haut de la page.
-    try { window.location.href = ici.replace(/^https:/, 'x-safari-https:') } catch {}
+    // « x-safari-https:// » ouvre Safari depuis certains mini-navigateurs. Ce
+    // n'est pas une interface officielle d'Apple, personne ne la garantit, et
+    // Messenger la bloque selon les versions. On tente, et si rien ne bouge on
+    // donne le chemin qui marche à coup sûr : le menu du mini-navigateur.
+    setTimeout(() => { if (!document.hidden) setMenu(true) }, PATIENCE)
+    try { window.location.href = ici.replace(/^https:/, 'x-safari-https:') } catch { setMenu(true) }
+  }
+
+  if (menu) {
+    return (
+      <div className="ouvrir-app">
+        <span className="ouvrir-app-t">
+          Touchez <b>•••</b> en haut de cet écran, puis « Ouvrir dans le navigateur ».
+          L&apos;appareil photo y fonctionne.
+        </span>
+      </div>
+    )
   }
 
   return (
