@@ -996,8 +996,10 @@ export default function GuestCamera({ params }) {
             préférées, deux jours après la révélation, sans qu'on ait à réécrire
             la phrase à chaque fois qu'un service utile s'ajoute.
 
-            La partie qui fait le travail, elle, ne bouge pas : ni publicité,
-            ni transmission. C'est elle qui décide les gens à laisser leur adresse.
+            La liste des engagements (« ni publicité, ni transmission ») a été
+            retirée d'ici : elle alourdissait un écran qu'on traverse en courant.
+            Elle reste écrite là où on va la chercher, dans la politique de
+            confidentialité et au pied des mails.
 
             ATTENTION quand le mail des photos préférées sera codé : il ne doit
             partir qu'aux fiches créées APRÈS ce changement. Ceux qui se sont
@@ -1005,8 +1007,6 @@ export default function GuestCamera({ params }) {
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
           ✉️ Uniquement pour les informations liées à votre événement, comme votre lien
           d&apos;accès ou le lien de l&apos;album quand les photos seront révélées.
-          Rien d&apos;autre, jamais : ni publicité, ni transmission à qui que ce soit.
-          Elle disparaît avec l&apos;événement.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         {confirmSansMail ? (
