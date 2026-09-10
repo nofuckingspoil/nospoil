@@ -34,6 +34,29 @@ export function lienChrome(url) {
   } catch { return null }
 }
 
+// iPhone, et seulement lui : c'est là qu'existe l'application native. Sur
+// Android, le mini-navigateur se règle avec « Ouvrir dans Chrome ».
+export function estIOS() {
+  if (typeof navigator === 'undefined') return false
+  const ua = navigator.userAgent || ''
+  return /iPhone|iPad|iPod/i.test(ua)
+    // L'iPad se fait passer pour un Mac depuis iPadOS 13 : on le reconnaît au
+    // fait qu'un Mac n'a pas d'écran tactile.
+    || (/Macintosh/i.test(ua) && typeof document !== 'undefined' && 'ontouchend' in document)
+}
+
+// L'adresse du même contenu, mais pour l'application installée.
+//
+// « timetoflash://j/xxx » : le même chemin, un autre porteur. Si l'application
+// est là, iOS bascule dessus ; sinon il ne se passe rien, et c'est justement
+// pour ça qu'on prévoit un repli.
+export function lienApp(url) {
+  try {
+    const u = new URL(url)
+    return `timetoflash://${u.pathname.replace(/^\//, '')}${u.search}`
+  } catch { return null }
+}
+
 // La caméra live (getUserMedia) est-elle envisageable ?
 // On ne présume plus de l'issue d'après le nom du navigateur : certains
 // navigateurs intégrés l'autorisent. On tente, et l'échec fait basculer sur

@@ -11,6 +11,7 @@ import Collage from '../../../components/Collage'
 import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
 import Avis from '../../../components/Avis'
 import { ACCROCHE } from '../../../lib/avis'
+import OuvrirDansApp from '../../../components/OuvrirDansApp'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -1162,6 +1163,9 @@ export default function Gallery({ params }) {
 
   return (
     <main className={`screen wide gal-page ${panneau ? 'panneau-ouvert' : ''} ${selecting ? 'en-selection' : ''}`}>
+      {/* Arrivé depuis Messenger : l'album se regarde bien mieux ailleurs, et
+          les photos s'y enregistrent vraiment dans la photothèque. */}
+      <OuvrirDansApp />
       {data.ownerPreview && (
         <div className="notice notice-orga" style={{ marginBottom: 14 }}>
           👁️ <strong>Aperçu organisateur</strong> : vous voyez les photos en avant-première. Vos participants ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt)}.

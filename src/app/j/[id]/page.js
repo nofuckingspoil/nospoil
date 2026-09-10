@@ -9,6 +9,7 @@ import CameraBloquee from '../../../components/CameraBloquee'
 import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../lib/photo-mode'
 import { pushPossible, pushEtat, dejaPropose, marquerPropose, activerPush } from '../../../lib/push'
 import { ajouterALaFile, brancherLesReveils, demarrerFileEnvoi, sabonnerALaFile, ESSAIS_COINCE } from '../../../lib/file-envoi-web'
+import OuvrirDansApp from '../../../components/OuvrirDansApp'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
@@ -901,6 +902,9 @@ export default function GuestCamera({ params }) {
 
   if (phase === 'cover') return (
     <main className="screen screen-cream">
+      {/* Arrivé depuis Messenger : on propose d'en sortir avant de commencer.
+          C'est le seul écran où ça vaut la peine, celui de l'entrée. */}
+      <OuvrirDansApp />
       {/* Même bascule que sur le tableau de bord, inversée : l'organisateur qui
           vient prendre ses photos doit pouvoir repartir aussi simplement. */}
       {meta?.isOwner && (
@@ -980,7 +984,7 @@ export default function GuestCamera({ params }) {
             style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
           >
             <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
-              autoCorrect="off" spellCheck="false" placeholder="vous@exemple.fr"
+              spellCheck="false" placeholder="vous@exemple.fr"
               value={mailRetour} onChange={(e) => setMailRetour(e.target.value)} maxLength={160} />
             <button className="btn btn-dark" type="submit" disabled={busy || !mailRetour.trim()}>
               {busy ? 'Un instant…' : 'Retrouver ma place'}
@@ -1019,8 +1023,12 @@ export default function GuestCamera({ params }) {
         </div>
         <div className="input-icon">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></svg>
+          {/* Pas de `autoCorrect="off"` ici, et c'est voulu : sur iPhone, les
+              raccourcis clavier font partie de la correction automatique, et la
+              couper les coupe avec elle. Or c'est exactement le champ où ils
+              servent le plus, celui où l'on tape sa propre adresse. */}
           <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
-            autoCorrect="off" spellCheck="false" placeholder="vous@exemple.fr" value={email} ref={mailRef}
+            spellCheck="false" placeholder="vous@exemple.fr" value={email} ref={mailRef}
             onChange={(e) => { setEmail(e.target.value); setMailCheck(null); setConfirmSansMail(false) }}
             onBlur={(e) => verifierMail(e.target.value)} maxLength={160} />
         </div>

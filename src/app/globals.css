@@ -695,6 +695,22 @@ a.cam-pile:active { transform: scale(.94); }
 /* Plus de grisage sur les photos qui n'ont pas fini de partir : une photo prise
    est une photo prise, et la faire ressembler à un cliché raté inquiétait pour
    rien. Le point sur lequel personne n'a de prise ne mérite pas d'être dit. */
+/* La sortie du mini-navigateur. Discret, en haut de l'écran, et jamais plus
+   d'une ligne : c'est une proposition, pas un péage. */
+.ouvrir-app {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: 0 0 12px; padding: 9px 10px 9px 12px; border-radius: 12px;
+  background: rgba(236,91,51,.1); border: 1px solid rgba(236,91,51,.28);
+}
+.ouvrir-app-t { flex: 1; min-width: 0; font-size: 12.5px; line-height: 1.35; color: var(--text2); }
+.ouvrir-app-b {
+  flex: none; cursor: pointer; border: 0; border-radius: 999px;
+  padding: 8px 14px; background: var(--accent); color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 12.5px;
+}
+.gal-page .ouvrir-app { background: rgba(236,91,51,.14); border-color: rgba(236,91,51,.3); }
+.gal-page .ouvrir-app-t { color: rgba(255,255,255,.75); }
+
 /* Le seul mot de la file d'attente, et seulement quand ça coince : trois
    choses dans l'ordre, ce qui se passe, où sont les photos, quoi faire. */
 .album-coince {

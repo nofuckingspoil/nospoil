@@ -74,6 +74,18 @@ export const metadata = {
     title: BRAND.name,
   },
   robots: { index: true, follow: true },
+  // La bannière d'iOS, en haut de la page dans Safari.
+  //
+  // C'est iOS lui-même qui la dessine, et lui seul sait si l'application est
+  // installée : elle affiche « OUVRIR » dans ce cas, « OBTENIR » sinon. Aucun
+  // site ne peut faire cette distinction, c'est délibéré du côté d'Apple.
+  //
+  // Elle n'apparaît que dans Safari : les navigateurs de Messenger et
+  // d'Instagram l'ignorent, comme ils ignorent tout le reste. D'où le bandeau
+  // maison qui propose d'en sortir (voir OuvrirDansApp).
+  other: {
+    'apple-itunes-app': 'app-id=6801111367',
+  },
 }
 
 export const viewport = {
