@@ -631,7 +631,10 @@ a.cam-pile:active { transform: scale(.94); }
    Même largeur pour les deux : aucun des deux ne se présente comme le principal. */
 .album-onglets {
   display: grid; grid-template-columns: 1fr 1fr; gap: 6px;
-  padding: 4px; border-radius: 999px; margin: 0 0 13px;
+  /* L'air au-dessus venait du bandeau des participants, qui a déménagé sous le
+     titre : sans lui, les onglets se collaient au déclencheur et les deux se
+     lisaient comme un seul bloc. */
+  padding: 4px; border-radius: 999px; margin: 22px 0 13px;
   background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
 }
 .album-onglet {
@@ -708,8 +711,12 @@ a.cam-pile:active { transform: scale(.94); }
   width: 100%; height: 100%; object-fit: cover; display: block;
   /* Agrandi juste ce qu'il faut : sans cela, le flou laisse un halo transparent
      sur les quatre bords de la vignette. */
-  transform: scale(1.16);
-  filter: blur(7px);
+  transform: scale(1.10);
+  /* Quatre pixels, et non sept : à sept, le mur devenait une suite de taches
+     grises et ne donnait plus envie de sortir l'appareil. À quatre, les
+     couleurs et le mouvement de la soirée restent lisibles, les visages non.
+     Comparé sur de vraies photos, à la taille exacte de la grille. */
+  filter: blur(4px);
   /* Ni appui long, ni glisser-déposer : la photo n'est pas encore à prendre. */
   pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
@@ -719,8 +726,10 @@ a.cam-pile:active { transform: scale(.94); }
    avant la révélation. Même traitement que le mur du groupe, pour que les deux
    se lisent comme une seule et même attente. */
 .photo-scellee {
-  transform: scale(1.18);
-  filter: blur(9px);
+  transform: scale(1.12);
+  /* Un cran au-dessus du mur : cette photo-là s'affiche deux fois plus grande,
+     et le même rayon y révélerait davantage. */
+  filter: blur(5px);
   pointer-events: none; -webkit-touch-callout: none; user-select: none; -webkit-user-select: none;
 }
 /* Le mot qui accompagne le seul regard autorisé, sous le cliché à confirmer. */
@@ -4003,7 +4012,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .wiz-revele-grille { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .wiz-revele-grille img {
   width: 100%; aspect-ratio: 2 / 1; object-fit: cover; border-radius: 14px;
-  filter: blur(7px) saturate(.85); transform: scale(1.04);
+  filter: blur(4px) saturate(.85); transform: scale(1.04);
 }
 .wiz-revele-cache { border-radius: 14px; overflow: hidden; }
 .wiz-revele-badge {
