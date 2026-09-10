@@ -1719,10 +1719,16 @@ export default function GuestCamera({ params }) {
           )}
           <div className="viewer-actions">
             {/* Emporter sa propre photo rassure : elle est à soi, et elle le
-                reste quoi qu'il arrive à l'album. */}
+                reste quoi qu'il arrive à l'album.
+
+                Pendant la confirmation, ce bouton devient la porte de sortie :
+                « Annuler » en face de « Confirmer », la paire que tout le monde
+                connaît. Sans lui, on ne pouvait revenir en arrière qu'en
+                fermant la photo, ce qui n'est pas la même chose. */}
             <button className="btn btn-ghost" style={{ color: '#fff', borderColor: 'rgba(255,255,255,.3)' }}
-              onClick={() => telechargerUne(viewer)} disabled={downloading}>
-              {downloading ? 'Préparation…' : '⤓ Télécharger'}
+              onClick={() => (confirmeSuppr ? setConfirmeSuppr(false) : telechargerUne(viewer))}
+              disabled={downloading || deleting}>
+              {confirmeSuppr ? 'Annuler' : downloading ? 'Préparation…' : '⤓ Télécharger'}
             </button>
             {/* Jamais du premier coup : une photo supprimée ne revient pas, et
                 le bouton est juste à côté de celui qui enregistre. */}
