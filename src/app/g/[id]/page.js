@@ -347,13 +347,30 @@ function ImageDiapo({ ph, prioritaire, pelli, onCassee }) {
   )
 }
 
-function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee }) {
+// Au bout de combien de photos regardées la visionneuse rappelle le vote.
+// Trois : le temps de comprendre qu'on feuillette, pas assez pour avoir déjà
+// laissé passer sa préférée.
+const COEUR_APRES = 3
+
+function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose, onDownload, occupe, onSignaler, onRetirer, onImageCassee, voteDit, onFermerVote }) {
   const [dx, setDx] = useState(0)
   const [glisse, setGlisse] = useState(false)
   const [dy, setDy] = useState(0)   // le doigt qui chasse la photo vers le haut ou le bas
   const geste = useRef(null)
   const n = photos.length
   const p = photos[index]
+
+  // Le même rappel qu'en bas de la galerie, et le même drapeau : celui qui
+  // ferme l'un ferme l'autre. Les deux endroits valent d'être couverts (on
+  // arrive au vote soit en parcourant, soit en regardant), mais le dire deux
+  // fois à la même personne, c'est du harcèlement.
+  const vues = useRef(new Set())
+  const [assezVues, setAssezVues] = useState(false)
+  useEffect(() => {
+    if (assezVues) return
+    vues.current.add(index)
+    if (vues.current.size >= COEUR_APRES) setAssezVues(true)
+  }, [index, assezVues])
 
   function debut(e) {
     const t = e.touches[0]
@@ -439,6 +456,14 @@ function Diapo({ photos, index, setIndex, pelli, avecDate, favs, onFav, onClose,
         disabled={index === 0} aria-label="Photo précédente">‹</button>
       <button className="diapo-fleche d" onClick={() => setIndex((i) => Math.min(n - 1, i + 1))}
         disabled={index === n - 1} aria-label="Photo suivante">›</button>
+
+      {voteDit && assezVues && (
+        <div className="diapo-vote" role="status">
+          <span className="diapo-vote-c" aria-hidden="true">♥</span>
+          <span className="diapo-vote-t">Votez pour vos photos préférées en touchant le cœur.</span>
+          <button className="diapo-vote-x" onClick={onFermerVote} aria-label="Fermer">✕</button>
+        </div>
+      )}
 
       <div className="diapo-bas">
         <div className="diapo-qui">
@@ -1593,6 +1618,8 @@ export default function Gallery({ params }) {
           onSignaler={data.isOwner ? undefined : signalerPhoto}
           onRetirer={data.isOwner ? undefined : retirerMaPhoto}
           onImageCassee={adresseCassee}
+          voteDit={voteDit}
+          onFermerVote={fermerVote}
         />
       )}
 

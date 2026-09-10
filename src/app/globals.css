@@ -1094,6 +1094,26 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
 .diapo-x { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; font-size: 19px; line-height: 1; cursor: pointer; }
 .diapo-x:hover { background: rgba(255,255,255,.26); }
 
+/* Le même rappel qu'en bas de la galerie, ici posé au-dessus de la barre du
+   bas, à hauteur du cœur dont il parle. Un seul drapeau pour les deux : celui
+   qui ferme l'un ferme l'autre. */
+.diapo-vote {
+  position: absolute; left: 12px; right: 12px; z-index: 4;
+  bottom: calc(84px + env(safe-area-inset-bottom));
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(23,26,37,.96); border: 1px solid rgba(255,255,255,.14);
+  border-radius: 14px; padding: 11px 12px;
+  animation: dc-vote .25s ease both;
+}
+.diapo-vote-c { flex: none; font-size: 18px; line-height: 1; color: #ff7286; }
+.diapo-vote-t { flex: 1; min-width: 0; font-size: 13px; line-height: 1.35; color: #fff; }
+.diapo-vote-x { flex: none; border: 0; background: none; cursor: pointer;
+  color: rgba(255,255,255,.45); font-size: 13px; padding: 4px 2px; }
+@media (min-width: 700px) {
+  .diapo-vote { left: 50%; right: auto; transform: translateX(-50%); width: 420px; }
+}
+@media (prefers-reduced-motion: reduce) { .diapo-vote { animation: none; } }
+
 .diapo-bas { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: center; gap: 12px; padding: 16px 14px calc(16px + env(safe-area-inset-bottom)); background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.62)); }
 .diapo-qui { flex: 1; min-width: 0; color: #fff; }
 .diapo-qui b { display: block; font-family: var(--font-display); font-weight: 700; font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
