@@ -479,6 +479,13 @@ export default function GuestCamera({ params }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, guest, meta])
 
+  // La question de suppression ne survit jamais à la photo qui l'a posée.
+  //
+  // Elle était remise à zéro en fermant la visionneuse, ce qui laissait un
+  // trou : supprimer refermait l'écran par un autre chemin, et la photo
+  // suivante s'ouvrait déjà en train de demander confirmation.
+  useEffect(() => { setConfirmeSuppr(false) }, [viewer?.id])
+
   // La file d'attente du navigateur : elle affiche les photos avant qu'elles
   // soient parties, et prévient quand l'une d'elles arrive.
   useEffect(() => {
