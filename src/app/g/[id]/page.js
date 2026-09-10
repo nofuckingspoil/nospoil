@@ -382,13 +382,15 @@ function Diapo({ eventId, photos, index, setIndex, pelli, avecDate, favs, onFav,
     marquerCoeurDit(eventId)
   }, [eventId, index, ditCoeur])
 
-  // Il s'efface tout seul : un bandeau qu'il faut fermer est une corvée de
-  // plus sur un écran qu'on regarde pour les photos.
+  // Il reste tant qu'on ne l'a pas fermé : un bandeau qui s'évapore tout seul
+  // se rate, et celui-ci n'a qu'une seule occasion d'être lu.
+  //
+  // Toucher le cœur le referme aussi : la phrase a été comprise, la répéter
+  // n'apprendrait plus rien.
   useEffect(() => {
     if (!ditCoeur) return
-    const t = setTimeout(() => setDitCoeur(false), 7000)
-    return () => clearTimeout(t)
-  }, [ditCoeur])
+    if (favs.has(p?.id)) setDitCoeur(false)
+  }, [ditCoeur, favs, p?.id])
 
   useEffect(() => {
     function onKey(e) {

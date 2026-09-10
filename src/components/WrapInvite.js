@@ -99,7 +99,9 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
         cle: 'champion',
         oeil: 'photographe en chef',
         texte: chiffres.champion.nom,
-        sous: `${chiffres.champion.photos} clichés à lui seul. Respect.`,
+        sous: chiffres.champion.rapidite
+          ? `${chiffres.champion.photos} clichés, et les plus rapides. Respect.`
+          : `${chiffres.champion.photos} clichés à lui seul. Respect.`,
       })
     }
 
@@ -206,7 +208,16 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
           {(chiffres.champion || chiffres.pointe) && (
             <div className="syn-faits">
               {chiffres.champion && (
-                <div><span>Photographe en chef</span><b>{chiffres.champion.nom} <em>{chiffres.champion.photos} clichés</em></b></div>
+                <div>
+                  <span>Photographe en chef</span>
+                  <b>
+                    {chiffres.champion.nom}
+                    <em>
+                      {chiffres.champion.photos} clichés
+                      {chiffres.champion.rapidite ? ` en ${chiffres.champion.rapidite}` : ''}
+                    </em>
+                  </b>
+                </div>
               )}
               {chiffres.pointe && (
                 <div><span>Ça a le plus flashé</span><b>{chiffres.pointe.libelle} <em>{chiffres.pointe.photos} photos</em></b></div>

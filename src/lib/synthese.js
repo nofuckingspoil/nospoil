@@ -44,17 +44,30 @@ export function chiffresSoiree({ photos = [], guests = [] } = {}) {
   const parAuteur = new Map()
   for (const p of prises) {
     if (!p.guestId) continue
-    const e = parAuteur.get(p.guestId) || { nom: p.who || 'Un participant', n: 0 }
+    const t = new Date(p.takenAt).getTime()
+    const e = parAuteur.get(p.guestId) || { nom: p.who || 'Un participant', n: 0, debut: t, fin: t }
     e.n++
+    if (t < e.debut) e.debut = t
+    if (t > e.fin) e.fin = t
     parAuteur.set(p.guestId, e)
   }
 
-  // Le photographe en chef ne se proclame pas à égalité : un ex æquo ne se
-  // raconte pas, on préfère ne rien dire.
-  const classement = [...parAuteur.values()].sort((a, b) => b.n - a.n)
+  // Le photographe en chef, départagé comme dans le bilan de l'organisateur :
+  // à nombre égal de clichés, gagne celui qui a sorti les siens le plus vite.
+  // Deux ex æquo sans vainqueur, ça ne se raconte pas.
+  const classement = [...parAuteur.values()]
+    .sort((a, b) => (b.n - a.n) || ((a.fin - a.debut) - (b.fin - b.debut)))
   const tete = classement[0] || null
   const partage = !!tete && classement.filter((e) => e.n === tete.n).length > 1
-  const champion = tete && tete.n > 1 && !partage ? { nom: tete.nom, photos: tete.n } : null
+  const champion = tete && tete.n > 1
+    ? {
+        nom: tete.nom,
+        photos: tete.n,
+        // Le temps qu'il lui a fallu : c'est ce qui l'a départagé, et c'est ce
+        // qui se raconte. Sans égalité, il n'y a rien à justifier.
+        rapidite: partage ? duree(tete.debut, tete.fin) : null,
+      }
+    : null
 
   // Le créneau le plus chargé se compte par heure de la journée : une soirée
   // qui déborde sur le lendemain garde ainsi ses photos ensemble.
