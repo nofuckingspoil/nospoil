@@ -1,7 +1,7 @@
 'use client'
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { chiffresSoiree, dessinerSynthese, syntheseEnBlob } from '../lib/synthese'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { chiffresSoiree } from '../lib/synthese'
 
 // ============================================================
 //  Le résumé de soirée, montré au participant juste avant l'album.
@@ -136,76 +136,6 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
     return () => clearTimeout(t)
   }, [suivant, surSynthese])
 
-  // --- L'image à emporter ---
-  const toile = useRef(null)
-  const [occupe, setOccupe] = useState('')
-
-  // Les deux bornes de la soirée sont déjà à l'écran dans la carte : on les
-  // recharge ici pour le dessin, parce qu'un canvas n'accepte pas une image
-  // dont il n'a pas la permission de lire les pixels.
-  const chargerImage = useCallback((url) => new Promise((r) => {
-    if (!url) return r(null)
-    const im = new Image()
-    im.crossOrigin = 'anonymous'
-    im.onload = () => r(im)
-    im.onerror = () => r(null)
-    im.src = url
-  }), [])
-
-  const fabriquer = useCallback(async (format) => {
-    const [premiere, derniere] = await Promise.all([
-      chargerImage(chiffres.premier?.url),
-      chargerImage(chiffres.dernier?.url),
-    ])
-    const c = toile.current || document.createElement('canvas')
-    toile.current = c
-    dessinerSynthese(c, { chiffres, nom: nom || '', images: { premiere, derniere }, format })
-    return syntheseEnBlob(c)
-  }, [chargerImage, chiffres, nom])
-
-  const nomFichier = `${(nom || 'album').replace(/[^\p{L}\p{N}]+/gu, '-').toLowerCase()}-en-chiffres.jpg`
-
-  const enregistrer = useCallback(async () => {
-    if (occupe) return
-    setOccupe('enregistrer')
-    try {
-      const blob = await fabriquer('post')
-      if (!blob) return
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = nomFichier
-      document.body.appendChild(a)
-      a.click()
-      setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
-    } catch {} finally { setOccupe('') }
-  }, [occupe, fabriquer, nomFichier])
-
-  const partager = useCallback(async () => {
-    if (occupe) return
-    setOccupe('partager')
-    try {
-      // Le format vertical pour le partage : c'est celui des stories, et c'est
-      // par là que ça circule.
-      const blob = await fabriquer('story')
-      if (!blob) return
-      const fichier = new File([blob], nomFichier, { type: 'image/jpeg' })
-      if (navigator.canShare?.({ files: [fichier] })) {
-        await navigator.share({ files: [fichier], title: nom || 'Time to Flash' })
-        return
-      }
-      // Pas de partage de fichier (un ordinateur, le plus souvent) : on
-      // enregistre, ce qui revient au même geste en deux temps.
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = nomFichier
-      document.body.appendChild(a)
-      a.click()
-      setTimeout(() => { a.remove(); URL.revokeObjectURL(url) }, 60000)
-    } catch {} finally { setOccupe('') }
-  }, [occupe, fabriquer, nomFichier, nom])
-
   // Échap pour sortir : personne ne doit se sentir retenu.
   useEffect(() => {
     const onKey = (e) => {
@@ -234,16 +164,10 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
 
       <button className="wrap-passer" onClick={fermer}>Passer</button>
 
-      {/* Toucher à droite avance, à gauche revient : le geste des stories. Sur
-          la carte de fin, ces zones disparaissent : elles recouvraient les deux
-          boutons, et un doigt posé au hasard aurait refermé le résumé. */}
-      {!c.synthese && (
-        <>
-          <button className="wrap-zone gauche" aria-label="Précédent"
-            onClick={() => setI((n) => Math.max(0, n - 1))} />
-          <button className="wrap-zone droite" aria-label="Suivant" onClick={suivant} />
-        </>
-      )}
+      {/* Toucher à droite avance, à gauche revient : le geste des stories. */}
+      <button className="wrap-zone gauche" aria-label="Précédent"
+        onClick={() => setI((n) => Math.max(0, n - 1))} />
+      <button className="wrap-zone droite" aria-label="Suivant" onClick={suivant} />
 
       {c.synthese ? (
         <div className="wrap-carte synthese" key={c.cle}>
@@ -262,20 +186,17 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
             <div><b>{String(chiffres.moyenne).replace('.', ',')}</b><span>chacun</span></div>
           </div>
 
-          {/* `crossOrigin` n'est pas décoratif : sans lui, le navigateur garde
-              en cache une copie qu'il s'interdit ensuite de relire, et le
-              dessin de l'image à emporter repartait sans les deux photos. */}
           {(chiffres.premier?.url || chiffres.dernier?.url) && (
             <div className="syn-duo">
               {chiffres.premier?.url && (
                 <span>
-                  <img src={chiffres.premier.url} alt="" crossOrigin="anonymous" />
+                  <img src={chiffres.premier.url} alt="" />
                   <i>La première · {chiffres.premier.heure}</i>
                 </span>
               )}
               {chiffres.dernier?.url && (
                 <span>
-                  <img src={chiffres.dernier.url} alt="" crossOrigin="anonymous" />
+                  <img src={chiffres.dernier.url} alt="" />
                   <i>La dernière · {chiffres.dernier.heure}</i>
                 </span>
               )}
@@ -292,15 +213,6 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
               )}
             </div>
           )}
-
-          <div className="syn-gestes">
-            <button onClick={enregistrer} disabled={!!occupe}>
-              {occupe === 'enregistrer' ? '…' : '⤓ Enregistrer'}
-            </button>
-            <button onClick={partager} disabled={!!occupe}>
-              {occupe === 'partager' ? '…' : '↗ Partager'}
-            </button>
-          </div>
         </div>
       ) : (
         <div className="wrap-carte" key={c.cle}>

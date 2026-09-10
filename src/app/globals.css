@@ -1383,7 +1383,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
    c'est ce qu'elle raconte, et parce que l'image qu'on en emporte est
    exactement celle-là. */
 .wrap-carte.synthese {
-  pointer-events: auto; width: min(360px, 100%); text-align: left;
+  width: min(360px, 100%); text-align: left;
   background: #0E1017; color: #E7E1D4; border: 1px solid rgba(255,255,255,.09);
   border-radius: 20px; padding: 20px 18px 16px;
   box-shadow: 0 22px 50px rgba(0,0,0,.35);
@@ -1425,13 +1425,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .syn-duo span::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0;
   height: 34%; background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,.62)); pointer-events: none; }
 .syn-duo i { z-index: 2; }
-
-.syn-gestes { display: flex; gap: 8px; margin-top: 16px; }
-.syn-gestes button { flex: 1; cursor: pointer; padding: 10px; border-radius: 999px;
-  background: none; border: 1px solid rgba(255,255,255,.2); color: rgba(255,255,255,.85);
-  font-family: var(--font-body); font-size: 13px; }
-.syn-gestes button:hover { border-color: #FF8A5C; color: #FF8A5C; }
-.syn-gestes button:disabled { opacity: .5; cursor: default; }
 
 /* Mouvement réduit : on garde l'enchaînement, on retire les animations. */
 @media (prefers-reduced-motion: reduce) {
