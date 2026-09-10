@@ -42,6 +42,99 @@ self.addEventListener('push', function (e) {
   e.waitUntil(self.registration.showNotification(titre, options))
 })
 
+// ============================================================
+//  Les photos restées en route, reprises quand le réseau revient.
+//
+//  Sur Android, le navigateur sait réveiller ce petit programme dès que la
+//  connexion est de retour, même si l'onglet est fermé depuis longtemps. C'est
+//  la seule façon, sur le web, de finir un envoi sans que personne ne revienne
+//  sur la page. Sur iPhone, ça n'existe pas : là-bas, c'est la visite suivante
+//  qui vide la file, et le mail de révélation y ramène tout le monde.
+//
+//  Il lit la même mémoire que la page (IndexedDB « ttf-envois »), il envoie au
+//  même endroit, et il applique la même règle du succès : un code 200 ne suffit
+//  pas, le serveur doit renvoyer le compteur de la pellicule.
+// ============================================================
+var BASE_ENVOIS = 'ttf-envois'
+var MAGASIN_ENVOIS = 'photos'
+
+function ouvrirLesEnvois() {
+  return new Promise(function (ok, ko) {
+    var d = indexedDB.open(BASE_ENVOIS, 1)
+    d.onsuccess = function () { ok(d.result) }
+    d.onerror = function () { ko(d.error) }
+  })
+}
+
+function lireLesEnvois(base) {
+  return new Promise(function (ok) {
+    var d = base.transaction(MAGASIN_ENVOIS, 'readonly').objectStore(MAGASIN_ENVOIS).getAll()
+    d.onsuccess = function () { ok(d.result || []) }
+    d.onerror = function () { ok([]) }
+  })
+}
+
+function effacerUnEnvoi(base, id) {
+  return new Promise(function (ok) {
+    var d = base.transaction(MAGASIN_ENVOIS, 'readwrite').objectStore(MAGASIN_ENVOIS).delete(id)
+    d.onsuccess = function () { ok() }
+    d.onerror = function () { ok() }
+  })
+}
+
+function viderLaFile() {
+  // Un onglet est ouvert : c'est lui qui pompe, on ne s'en mêle pas. Deux
+  // envois de la même photo la feraient apparaître deux fois dans l'album.
+  return self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (fenetres) {
+    if (fenetres.length > 0) return
+    return ouvrirLesEnvois().then(function (base) {
+      return lireLesEnvois(base).then(function (liste) {
+        liste.sort(function (a, b) { return a.creeLe - b.creeLe })
+        var reste = 0
+        var suite = Promise.resolve()
+        liste.forEach(function (e) {
+          suite = suite.then(function () {
+            var fd = new FormData()
+            fd.append('file', e.blob, 'photo.jpg')
+            if (e.thumb) fd.append('thumb', e.thumb, 'thumb.jpg')
+            fd.append('eventId', e.eventId)
+            fd.append('guestId', e.guestId)
+            fd.append('deviceToken', e.deviceToken)
+            return fetch('/api/photo', { method: 'POST', body: fd })
+              .then(function (r) { return r.json().catch(function () { return {} }).then(function (d) { return { r: r, d: d } }) })
+              .then(function (rep) {
+                // Pellicule pleine : elle ne sera jamais acceptée.
+                if (rep.r.status === 409) return effacerUnEnvoi(base, e.id)
+                if (rep.r.ok && typeof rep.d.shotsTaken === 'number') return effacerUnEnvoi(base, e.id)
+                reste++
+              })
+              .catch(function () { reste++ })
+          })
+        })
+        return suite.then(function () {
+          if (reste === 0 || Notification.permission !== 'granted') return
+          return self.registration.showNotification(
+            reste > 1 ? reste + ' photos en cours de dépôt' : '1 photo en cours de dépôt',
+            {
+              body: reste > 1
+                ? 'Elles sont bien sur ton téléphone. Rouvre la page avec du réseau et elles s\'enregistreront toutes seules.'
+                : 'Elle est bien sur ton téléphone. Rouvre la page avec du réseau et elle s\'enregistrera toute seule.',
+              icon: '/icone-192.png',
+              badge: '/badge-96.png',
+              tag: 'ttf-envois',
+              data: { url: '/' },
+            }
+          )
+        })
+      })
+    })
+  }).catch(function () {})
+}
+
+self.addEventListener('sync', function (e) {
+  if (e.tag === 'ttf-envois') e.waitUntil(viderLaFile())
+})
+
 // --- Le doigt sur la notification ---
 //
 // Si la page est déjà ouverte quelque part, on la ramène au premier plan

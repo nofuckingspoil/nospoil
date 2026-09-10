@@ -275,7 +275,29 @@ export async function ajouterALaFile({ eventId, guestId, deviceToken, blob, thum
   await ecrire(entree)
   await diffuser()
   planifier(0)
+  void demanderLaReprise()
   return id
+}
+
+/**
+ * Demander au navigateur de reprendre l'envoi quand la connexion revient,
+ * même si l'onglet est fermé.
+ *
+ * Android sait le faire ; le veilleur (public/sw.js) reprend alors la file
+ * tout seul. iPhone ne le sait pas, et cet appel n'y fait rien : là-bas, c'est
+ * la visite suivante qui vide la file, et le mail de révélation y ramène tout
+ * le monde.
+ */
+async function demanderLaReprise() {
+  try {
+    if (!('serviceWorker' in navigator)) return
+    const veilleur = await navigator.serviceWorker.ready
+    if (!veilleur?.sync) return
+    await veilleur.sync.register('ttf-envois')
+  } catch {
+    // Pas de reprise en arrière-plan : la file tourne quand même tant que la
+    // page est ouverte, et repartira à la visite suivante.
+  }
 }
 
 /**
