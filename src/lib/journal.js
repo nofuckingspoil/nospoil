@@ -42,6 +42,108 @@ export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulis
 // n'importe où dans la liste ci-dessous sans te soucier de sa position.
 const ALL_POSTS = [
   {
+    // Vise « app appareil photo jetable mariage » : sur cette recherche, Google
+    // montre des applis jetables (Scene, POV, Reveal, Fotify…), pas des albums
+    // partagés. L'article « carton ou appli ? » garde la recherche voisine
+    // « appareil photo jetable mariage », où ce sont les vrais jetables qui
+    // sortent. Faits concurrents relevés sur leurs sites le 17/09/2026.
+    slug: 'application-appareil-photo-jetable-mariage',
+    cat: 'Photo',
+    title: 'App appareil photo jetable mariage : les 5 applis comparées',
+    excerpt: 'Scene, POV, Reveal, Fotify, Time to Flash : quelles applis font vraiment jetable, lesquelles demandent une installation, et combien elles coûtent.',
+    author: 'Camille Rouzaud',
+    date: '2026-09-17',
+    read: '9 min',
+    caption: 'Un invité scanne le QR code posé sur une table de mariage',
+    image: '/journal/ca-ne-marche-pas-solutions.webp',
+    body: `
+<p>L’idée te plaît : transformer le téléphone de chaque invité en appareil photo jetable, avec ses poses comptées et la surprise du développement. En cherchant une appli, tu découvres vite que tout le monde utilise le mot « jetable », y compris des services qui n’en ont que le filtre. Voici comment reconnaître un vrai jetable numérique, et ce que valent les cinq applis qu’on voit le plus.</p>
+<p>Un rappel utile avant de commencer : la plupart des « applications photo de mariage » (WedShoots, Wedibox, Invinee…) sont des <strong>galeries</strong>, des albums en ligne où les invités déposent les photos prises avec leur téléphone. Une appli appareil jetable est autre chose : une <strong>animation</strong>, un jeu auquel tes invités participent pendant la soirée. Les galeries sont comparées dans <a href="/journal/application-photo-mariage">notre comparatif des applications photo de mariage</a> ; ici, on ne parle que des jetables.</p>
+
+<h2>Vrai jetable ou simple album ? Le test en 3 questions</h2>
+<p>Un appareil jetable, ce n’est pas un filtre vintage. C’est une façon de photographier. Pose ces trois questions à n’importe quelle appli :</p>
+<ul>
+<li><strong>Le nombre de photos est-il compté ?</strong> Un jetable, c’est 27 poses. Si l’appli est illimitée, tes invités mitraillent comme avec leur appareil habituel.</li>
+<li><strong>Les photos sont-elles cachées ?</strong> Pas d’écran au dos d’un jetable : on ne vérifie pas, on ne recommence pas.</li>
+<li><strong>Y a-t-il une révélation ?</strong> Tout le charme du jetable, c’est d’attendre le développement, puis de tout découvrir d’un coup.</li>
+</ul>
+<p>Trois oui : c’est un vrai jetable numérique, donc une animation. Un seul : c’est une galerie avec un joli nom. Ce n’est pas un défaut en soi, mais ce n’est pas la même soirée.</p>
+
+<h2>Le comparatif en un tableau</h2>
+<table>
+<thead><tr><th>Appli</th><th>Sans appli</th><th>Poses</th><th>Surprise</th><th>Gratuit</th></tr></thead>
+<tbody>
+<tr><td><strong>Scene</strong></td><td>Oui</td><td>?</td><td>Oui</td><td>Offre</td></tr>
+<tr><td><strong>POV</strong></td><td>Oui</td><td>Au choix</td><td>Au choix</td><td>10 invités</td></tr>
+<tr><td><strong>Reveal</strong></td><td>Non</td><td>Au choix</td><td>Oui</td><td>5 invités</td></tr>
+<tr><td><strong>Fotify</strong></td><td>Oui</td><td>Illimité</td><td>Option</td><td>Offre</td></tr>
+<tr><td><strong>Time to Flash</strong></td><td>Oui</td><td>3 à 15</td><td>Oui</td><td>5 invités</td></tr>
+</tbody>
+</table>
+<p>« ? » : le site de l’éditeur ne le précise pas. Informations relevées en septembre 2026 ; les formules changent souvent : vérifie avant de payer.</p>
+
+<h2>Les applis, une par une</h2>
+
+<h3>Scene : le jetable sans téléchargement, originaux gardés à vie</h3>
+<p>Scene se présente clairement comme une « appli photo jetable ». Les invités scannent un QR code : sur iPhone, un extrait d’app (App Clip) s’ouvre sans installation, et les autres téléphones photographient dans le navigateur. Tu choisis un rendu pellicule pour tout l’événement et l’heure à laquelle l’album se déverrouille. Deux points forts : les photos sont enregistrées en pleine résolution, sans filtre incrusté ni filigrane, et conservées à vie, sans abonnement. Le site ne précise pas s’il est possible de limiter le nombre de photos par invité.</p>
+
+<h3>POV : la référence américaine</h3>
+<p>POV est l’une des applis jetables les plus utilisées aux États-Unis, avec des dizaines de milliers d’avis sur l’App Store. Les invités rejoignent l’événement par QR code, sans téléchargement grâce aux App Clips (iPhone) et Instant Apps (Android). Tu règles le style, le nombre de photos par personne et le moment où elles se révèlent. C’est gratuit jusqu’à 10 invités. En option, POV imprime un livre photo de ta soirée. Seul bémol pour un mariage en France : le site et le support sont en anglais, et les prix en dollars.</p>
+
+<h3>Reveal : le vrai jetable, mais en application</h3>
+<p>Reveal coche les trois cases : nombre de photos par invité, photos cachées, révélation programmée. Les invités donnent seulement leur prénom, sans compte. En revanche, <strong>ils doivent installer l’application</strong> (iPhone ou Android), puis rouvrir le lien ou rescanner le QR code. C’est gratuit jusqu’à 5 participants, puis un paiement unique dans l’app, sans abonnement. Très bien si tes invités sont à l’aise avec les applis ; plus risqué avec plusieurs générations autour des tables.</p>
+
+<h3>Fotify : l’esthétique jetable, sans la contrainte</h3>
+<p>Fotify parle d’« appareil photo jetable numérique », mais fait un choix assumé : <strong>photos illimitées</strong> par invité, directement dans le navigateur, sans application. La révélation en fin d’événement est une option ; sinon, les photos arrivent en direct dans la galerie. Il y a une offre gratuite pour commencer. C’est une bonne solution pour tout récupérer, mais c’est plus une galerie qu’un jetable : sans poses comptées, on retrouve le réflexe de la rafale.</p>
+
+<h3>Time to Flash : le jetable réglable (c’est nous)</h3>
+<p>On fait partie de la liste, alors autant être clair sur ce qu’on propose. Tes invités scannent le QR code, tapent leur prénom et photographient dans la page, sans rien installer (une app iPhone existe pour ceux qui la veulent). Tu choisis de 3 à 15 clichés par personne, un rendu parmi plusieurs pellicules (dont un « jetable » avec la date incrustée), et l’album se révèle le lendemain pour tout le monde.</p>
+<p>Notre particularité, c’est de choisir <strong>à quel point c’est jetable</strong> : album ouvert (on revoit ses photos et on refait une photo ratée), une seule chance (on voit chaque cliché une fois, juste après le déclic), ou vrai jetable (on ne voit rien avant la révélation).</p>
+<p><strong>Le prix :</strong> gratuit jusqu’à 5 invités, puis un paiement unique : 14,99&nbsp;€ jusqu’à 50 invités, 29,99&nbsp;€ jusqu’à 100, 34,99&nbsp;€ jusqu’à 150, 59,99&nbsp;€ jusqu’à 300. Site et support en français, hébergement en Europe.</p>
+<p><strong>Là où d’autres font mieux :</strong> les photos sont enregistrées en 1600 pixels (parfait à l’écran et jusqu’au tirage 13×18, trop juste pour une affiche), et elles sont supprimées 6 mois après la révélation, après t’avoir prévenu. Si tu veux des originaux en pleine résolution gardés à vie, Scene est mieux placé.</p>
+
+<h3>Et WedShoots ?</h3>
+<p>WedShoots sort souvent dans les recherches, mais ce n’est pas un appareil jetable : c’est une galerie, avec des photos illimitées, visibles tout de suite, et une application à installer. Très bien pour rassembler des photos, sans le jeu du jetable. On le compare aux autres albums dans <a href="/journal/application-photo-mariage">notre comparatif des applications photo de mariage</a>.</p>
+
+<h2>Appli jetable ou vrais jetables en carton ?</h2>
+<p>Les jetables en carton ont le charme de l’objet, mais ils coûtent vite 10 à 15&nbsp;€ pièce, il faut les ramasser en fin de soirée, les faire développer, et une partie des pellicules se perd ou sort ratée. L’appli garde l’esprit (les poses comptées, la surprise) sans la logistique : chaque invité a déjà son appareil en poche. On détaille les deux options dans <a href="/journal/appareil-photo-jetable-mariage">appareil photo jetable de mariage : le carton ou l’appli ?</a></p>
+
+<h2>Combien de photos donner à chaque invité ?</h2>
+<p>C’est LE réglage qui fait la réussite d’un jetable numérique. Trop peu, et les invités n’osent pas s’en servir. Trop, et on retombe dans la rafale. Pour un mariage, 8 à 12 clichés par personne est un bon point de départ : assez pour la cérémonie, le vin d’honneur et la soirée, assez peu pour que chacun choisisse ses moments. Le raisonnement complet est ici : <a href="/journal/dix-cliches">pourquoi 10 clichés valent mieux que 300</a>.</p>
+
+<h2>Comment ça se passe le jour J</h2>
+<p><strong>1. Avant :</strong> tu crées l’événement, tu règles le nombre de photos et l’heure de révélation, tu imprimes le QR code (notre <a href="/generateur-qr-code-mariage">générateur d’affiche QR code</a> est gratuit).<br>
+<strong>2. Pendant :</strong> les QR codes sont posés sur les tables, au bar et à l’entrée (voir <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>). Un mot au micro suffit à lancer le jeu.<br>
+<strong>3. Après :</strong> l’album se révèle, en général le lendemain matin. C’est souvent le meilleur moment du week-end (on raconte pourquoi dans <a href="/journal/revelation-photos-lendemain-mariage">la révélation au lendemain</a>).</p>
+
+<h2>Notre avis</h2>
+<p>Si tu veux une vraie animation, écarte d’abord les applis illimitées : ce sont des galeries, pas des jetables. Entre celles qui restent, le critère décisif est l’installation. Avec des invités de tous les âges, prends une appli qui s’ouvre sans téléchargement.</p>
+<p>C’est ce qu’on a construit avec <a href="/">Time to Flash</a> : un QR code, aucune application, des poses comptées, un rendu pellicule, un album révélé le lendemain, et toutes les photos à télécharger en plus. C’est gratuit jusqu’à 5 invités : teste-le avec tes témoins avant le grand jour.</p>
+`,
+    faq: [
+      {
+        q: 'Qu’est-ce qu’une application appareil photo jetable pour mariage ?',
+        a: 'C’est une appli qui transforme le téléphone de chaque invité en appareil jetable : un nombre de photos limité, pas d’aperçu des clichés, et un album qui se révèle d’un coup après la fête, en général le lendemain. Les invités y accèdent en scannant un QR code.',
+      },
+      {
+        q: 'Existe-t-il une appli appareil photo jetable sans téléchargement ?',
+        a: 'Oui. Scene, POV, Fotify et Time to Flash fonctionnent sans installation, directement dans le navigateur ou via un extrait d’app sur iPhone. Reveal, en revanche, demande d’installer l’application.',
+      },
+      {
+        q: 'Quelle appli appareil photo jetable est gratuite ?',
+        a: 'La plupart ont une formule gratuite limitée : POV jusqu’à 10 invités, Reveal et Time to Flash jusqu’à 5 invités, Scene et Fotify proposent une offre gratuite pour commencer. Pour un mariage complet, compte en général un paiement unique, sans abonnement.',
+      },
+      {
+        q: 'Combien de photos donner à chaque invité ?',
+        a: 'Entre 8 et 12 photos par personne est un bon point de départ pour un mariage : assez pour couvrir la journée, assez peu pour que chacun choisisse ses moments au lieu de mitrailler.',
+      },
+      {
+        q: 'WedShoots est-il un appareil photo jetable ?',
+        a: 'Non. WedShoots est une galerie photo gratuite : les photos sont illimitées, visibles tout de suite, et chaque invité doit installer l’application. Il n’y a ni poses comptées ni révélation.',
+      },
+    ],
+  },
+  {
     // Article envoyé dans le mail de création : c'est la réponse à « et
     // maintenant ? », la question que se posent les organisateurs juste après
     // avoir payé. Volontairement chronologique, pour être suivi comme un plan.
@@ -138,6 +240,7 @@ const ALL_POSTS = [
 <p>Un jetable numérique, c’est le même esprit (nombre de photos limité, esthétique pellicule, révélation différée), mais sur le téléphone que tes invités ont déjà en main. Pas d’appareil à acheter ni à ramasser, pas de labo, aucune photo perdue : tout arrive au même endroit. Il te suffit d’un QR code sur les tables (voir <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>).</p>
 
 <p>Le carton a l’avantage de la nostalgie ; le numérique a l’avantage de te garantir de <em>récupérer</em> les souvenirs. Si tu hésites encore entre les différentes formules, on les compare toutes dans <a href="/journal/comparatif-animations-photo-mariage">photobooth, borne, miroir ou jetable</a>. Avec une <a href="/">application photo de mariage comme Time to Flash</a>, tu gardes le meilleur des deux : la contrainte argentique, sans la crainte de tout perdre au développement.</p>
+<p>Tu veux comparer les applis qui font vraiment jetable (Scene, POV, Reveal…) ? Tout est dans <a href="/journal/application-appareil-photo-jetable-mariage">notre comparatif des applis appareil photo jetable</a>.</p>
 `,
   },
   {
@@ -476,7 +579,7 @@ const ALL_POSTS = [
     slug: 'application-photo-mariage',
     cat: 'Organisation',
     title: 'Application photo mariage : le comparatif 2026',
-    excerpt: 'WedShoots, Wedibox, Invinee, Google Photos… On compare les applis photo de mariage (prix, installation, limites) et on te dit laquelle choisir.',
+    excerpt: 'La plupart des applis photo de mariage sont des galeries où l’on dépose ses photos. On les compare (prix, installation, limites), et on te présente l’autre option : l’animation appareil jetable.',
     author: 'Léa Ferrand',
     date: '2026-07-30',
     updated: '2026-09-17',
@@ -484,35 +587,34 @@ const ALL_POSTS = [
     caption: 'Des invités photographient un mariage avec leur téléphone',
     image: '/journal/application-photo-mariage-guide.webp',
     body: `
-<p>Tu veux récupérer les photos prises par tes invités, et en tapant « application photo mariage » tu tombes sur une dizaine de services qui promettent tous la même chose. On les a passés en revue : ce qu’ils coûtent, ce qu’ils demandent à tes invités, et ce qu’ils ne disent pas sur leur page d’accueil. On vend l’une de ces solutions (Time to Flash), on le dit franchement, et on te donne aussi les cas où elle n’est pas la bonne.</p>
+<p>Tu veux récupérer les photos prises par tes invités, et en tapant « application photo mariage » tu tombes sur une dizaine de services qui promettent tous la même chose. On les a passés en revue : ce qu’ils coûtent, ce qu’ils demandent à tes invités, et ce qu’ils ne disent pas sur leur page d’accueil. On vend l’une de ces solutions (Time to Flash), on le dit franchement.</p>
 
-<h2>La réponse courte</h2>
-<ul>
-<li><strong>Tu veux zéro dépense et tes invités sont à l’aise avec la technologie :</strong> WedShoots (gratuit, mais une application à installer).</li>
-<li><strong>Tu veux tout récupérer, en illimité, avec les vidéos :</strong> une galerie par QR code sans application, comme Invinee ou Album Mariage Facile.</li>
-<li><strong>Tu veux que la photo devienne une animation de la soirée :</strong> un appareil photo jetable numérique, comme Time to Flash (nombre de clichés limité, album révélé le lendemain).</li>
-<li><strong>Tu as moins de 20 invités, tous sur iPhone :</strong> un album partagé iCloud suffit.</li>
-</ul>
-<p>Le reste de l’article explique pourquoi, solution par solution.</p>
+<h2>Galerie photo ou animation : deux choses différentes</h2>
+<p>Avant de comparer les prix, il faut comprendre qu’il existe deux familles, qui ne font pas la même chose.</p>
+<p><strong>1. Les galeries photo.</strong> C’est ce que sont presque toutes les « applications photo de mariage » : WedShoots, Wedbox, Wedibox, Invinee, Album Mariage Facile, Google Photos… Un album en ligne où chacun <em>dépose</em> les photos qu’il a prises avec l’appareil photo de son téléphone. C’est un dossier de collecte. Utile, mais ça ne se passe pas pendant la fête : ça se passe après, quand les invités y pensent.</p>
+<p><strong>2. L’animation appareil photo jetable.</strong> C’est ce que fait Time to Flash. Chaque invité scanne un QR code et son téléphone devient un appareil jetable : quelques poses comptées, un rendu pellicule, et des photos qui restent cachées jusqu’à la révélation du lendemain. Ce n’est pas un dossier où l’on dépose, c’est un jeu auquel on participe pendant la soirée. Et le lendemain, tu récupères quand même tout l’album : l’animation <em>en plus</em> de la galerie.</p>
+<p><strong>En résumé :</strong> si tu veux seulement rassembler un maximum de fichiers, une galerie suffit. Si tu veux que la photo devienne un moment de ton mariage, il te faut une animation.</p>
 
 <h2>Le comparatif en un tableau</h2>
 <table>
 <thead><tr><th>Solution</th><th>Pour tes invités</th><th>Prix</th><th>Idéal pour</th></tr></thead>
 <tbody>
+<tr><td colspan="4"><strong>Les galeries photo : on dépose ses photos</strong></td></tr>
 <tr><td><strong>WedShoots</strong></td><td>Appli à installer</td><td>Gratuit</td><td>Budget zéro</td></tr>
 <tr><td><strong>Wedbox</strong></td><td>Appli mobile + QR code</td><td>Achats dans l’appli</td><td>Photos et vidéos illimitées</td></tr>
 <tr><td><strong>Wedibox</strong></td><td>QR code, navigateur</td><td>Gratuit, puis dès 27&nbsp;€</td><td>Tester avant de payer</td></tr>
 <tr><td><strong>Invinee</strong></td><td>QR code, navigateur</td><td>Essai gratuit, puis payant</td><td>Photos, vidéos, livre d’or</td></tr>
 <tr><td><strong>Album Mariage Facile</strong></td><td>QR code, navigateur</td><td>35 à 72&nbsp;€</td><td>Grands mariages, illimité</td></tr>
 <tr><td><strong>Google Photos</strong></td><td>Compte Google</td><td>Gratuit</td><td>Familles déjà sur Google</td></tr>
-<tr><td><strong>Album iCloud</strong></td><td>iPhone surtout</td><td>Gratuit</td><td>Petit comité 100 % Apple</td></tr>
+<tr><td><strong>Album iCloud</strong></td><td>iPhone surtout</td><td>Gratuit</td><td>Petit comité 100&nbsp;% Apple</td></tr>
 <tr><td><strong>WhatsApp</strong></td><td>Déjà installé</td><td>Gratuit</td><td>Dépannage</td></tr>
-<tr><td><strong>Time to Flash</strong></td><td>QR code, navigateur</td><td>Gratuit jusqu’à 5, puis de 1,99 à 59,99&nbsp;€</td><td>Une animation, pas un simple dossier</td></tr>
+<tr><td colspan="4"><strong>L’animation appareil jetable : on joue pendant la soirée</strong></td></tr>
+<tr><td><strong>Time to Flash</strong></td><td>QR code, navigateur</td><td>Gratuit jusqu’à 5, puis dès 1,99&nbsp;€</td><td>Une animation, et l’album en plus</td></tr>
 </tbody>
 </table>
 <p>Prix relevés sur les sites des éditeurs en septembre 2026. Ils changent souvent (promotions, formules) : vérifie toujours avant de payer.</p>
 
-<h2>Les applications photo de mariage, une par une</h2>
+<h2>Les galeries photo, une par une</h2>
 
 <h3>WedShoots : la plus connue, gratuite, mais à installer</h3>
 <p>WedShoots appartient à Mariages.net, et c’est la première réponse de Google, de loin. L’application est entièrement gratuite, pour les mariés comme pour les invités. Chacun installe l’appli, rejoint l’album avec un code, et les photos s’affichent au fil de la journée, avec des filtres, des « j’aime » et des commentaires. Les mariés téléchargent ensuite l’album complet depuis les réglages.</p>
@@ -538,10 +640,13 @@ const ALL_POSTS = [
 <h3>WhatsApp : la solution par défaut, et ses défauts</h3>
 <p>Tout le monde l’a déjà, donc tout le monde y pense. Mais les photos sont compressées par défaut, le groupe devient illisible en 48 heures (les photos se noient dans les messages), et six mois plus tard, personne ne retrouve rien. Parfait pour s’échanger trois photos le lendemain, pas pour garder les souvenirs d’un mariage.</p>
 
-<h3>Time to Flash : l’appareil jetable numérique (c’est nous)</h3>
-<p>Time to Flash part d’une autre idée : au lieu d’un dossier où chacun dépose ses photos, chaque invité reçoit un <strong>appareil photo jetable</strong> dans son téléphone. Il scanne le QR code, tape son prénom, et prend ses photos directement dans la page, sans rien installer. Tu choisis le nombre de clichés par personne (de 3 à 15), le rendu (plusieurs pellicules argentiques), et l’album se révèle le lendemain matin, d’un coup, pour tout le monde. Une app iPhone existe pour ceux qui la préfèrent, mais personne n’est obligé de l’installer.</p>
+<h2>L’autre option : l’animation appareil photo jetable</h2>
+<p>Toutes les solutions ci-dessus partent du même principe : tes invités prennent leurs photos comme d’habitude, puis doivent penser à les envoyer. Time to Flash part d’une autre idée : <strong>faire de la photo une animation de ton mariage</strong>, comme les appareils jetables qu’on posait autrefois sur les tables.</p>
+<p><strong>Comment ça se passe :</strong> un invité scanne le QR code, tape son prénom, et son téléphone devient un appareil jetable, directement dans la page, sans rien installer (une app iPhone existe pour ceux qui la veulent). Il a un nombre de poses compté (tu choisis, de 3 à 15), un rendu pellicule argentique, et il ne voit pas ses photos. Pendant la soirée, chacun guette le bon moment pour utiliser ses dernières poses. Le lendemain matin, l’album se révèle d’un coup, pour tout le monde : c’est le développement de la pellicule, en version partagée.</p>
+<p><strong>Ce que ça change par rapport à une galerie :</strong> les photos se prennent <em>pendant</em> la fête, pas après ; tout le monde joue le jeu, parce que c’est un jeu ; et la découverte du lendemain devient un second moment fort. À la fin, tu as quand même ton album complet, téléchargeable d’un bloc.</p>
 <p><strong>Le prix :</strong> gratuit jusqu’à 5 invités, puis un paiement unique selon la taille du mariage : 14,99&nbsp;€ jusqu’à 50 invités, 29,99&nbsp;€ jusqu’à 100, 34,99&nbsp;€ jusqu’à 150, 59,99&nbsp;€ jusqu’à 300. Hébergement en Europe, photos effacées 6 mois après la révélation (on te prévient avant).</p>
 <p><strong>Ce n’est pas le bon choix si :</strong> tu veux récupérer les vidéos (on ne fait que la photo), toutes les photos déjà prises avec l’appareil photo du téléphone, ou des fichiers en pleine résolution pour un tirage grand format. Les photos sont enregistrées en 1600 pixels : très bien à l’écran et pour un tirage jusqu’au 13×18, trop juste pour une affiche.</p>
+<p>D’autres applis jetables existent (Scene, POV, Reveal…) : on les compare dans <a href="/journal/application-appareil-photo-jetable-mariage">notre comparatif des applis appareil photo jetable</a>.</p>
 
 <h2>Comment choisir : les 6 critères qui comptent vraiment</h2>
 <p><strong>1. Zéro installation.</strong> C’est le critère numéro un, très loin devant les autres. Une appli à télécharger, c’est un magasin d’applications à ouvrir, un mot de passe à retrouver, des dizaines de mégas à charger sur le réseau saturé de la salle. Une bonne partie des invités abandonne à cette étape (on en parle dans <a href="/journal/pas-de-reseau-salle-mariage">pas de réseau dans la salle</a>).<br>
@@ -552,7 +657,7 @@ const ALL_POSTS = [
 <strong>6. Le moment de la révélation.</strong> Photos visibles en direct, ou cachées jusqu’au lendemain ? En direct, c’est un diaporama. Le lendemain, c’est une surprise (voir <a href="/journal/revelation-photos-lendemain-mariage">la révélation au lendemain</a>).</p>
 
 <h2>Application à installer ou QR code sans application ?</h2>
-<p>C’est la vraie ligne de partage du marché. D’un côté, les applications natives (WedShoots, Wedbox) : plus riches, souvent gratuites, mais chaque invité doit faire la démarche. De l’autre, les solutions par QR code qui s’ouvrent dans le navigateur (Wedibox, Invinee, Album Mariage Facile, Time to Flash) : un scan, et on y est.</p>
+<p>Chez les galeries, c’est la vraie ligne de partage. D’un côté, les applications natives (WedShoots, Wedbox) : plus riches, souvent gratuites, mais chaque invité doit faire la démarche. De l’autre, les solutions par QR code qui s’ouvrent dans le navigateur (Wedibox, Invinee, Album Mariage Facile, Time to Flash) : un scan, et on y est.</p>
 <p>Pose-toi une seule question : <strong>« Est-ce que ma tante de 72 ans y arrivera seule, un verre à la main, à 23 h ? »</strong> Si la réponse est non, écarte tout ce qui demande une installation ou un compte. Pour un mariage, avec plusieurs générations autour des tables, le QR code gagne presque toujours.</p>
 
 <h2>Combien coûte une application photo de mariage ?</h2>
@@ -567,13 +672,13 @@ const ALL_POSTS = [
 <p><strong>Un seul QR code dans un coin.</strong> Il en faut cinq ou six, là où les gens attendent : tables, bar, entrée, toilettes (voir <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>, et notre <a href="/generateur-qr-code-mariage">générateur d’affiche QR code gratuit</a>).</p>
 
 <h2>Notre avis</h2>
-<p>Si ton seul objectif est de récupérer un maximum de fichiers, prends une galerie par QR code en illimité : c’est simple et ça fait le travail. Si tu veux que la photo fasse partie de la fête, que tes invités lèvent le nez de leur écran et que le lendemain ait son moment de découverte, essaie l’appareil jetable numérique.</p>
-<p>C’est le parti pris de <a href="/">Time to Flash</a> : un QR code, aucune application, quelques clichés par personne, un rendu argentique, et un album qui se dévoile le lendemain. C’est gratuit jusqu’à 5 invités : fais le test avec tes témoins avant de te décider.</p>
+<p>Si ton seul objectif est de récupérer un maximum de fichiers, prends une galerie par QR code en illimité : c’est simple et ça fait le travail. Mais une galerie reste un dossier. Si tu veux que la photo fasse partie de la fête, que tes invités lèvent le nez de leur écran et que le lendemain ait son moment de découverte, il te faut une animation : l’appareil photo jetable numérique.</p>
+<p>C’est ce que fait <a href="/">Time to Flash</a> : un QR code, aucune application, quelques poses par personne, un rendu argentique, une révélation le lendemain, et l’album complet en plus. C’est gratuit jusqu’à 5 invités : fais le test avec tes témoins avant de te décider.</p>
 `,
     faq: [
       {
         q: 'Quelle est la meilleure application photo pour un mariage ?',
-        a: 'Il n’y en a pas une seule. Pour un budget nul et des invités à l’aise avec les applis, WedShoots. Pour tout récupérer, vidéos comprises, une galerie par QR code comme Invinee ou Album Mariage Facile. Pour faire de la photo une animation, un appareil jetable numérique comme Time to Flash. Le critère décisif reste l’absence d’installation.',
+        a: 'Ça dépend de ce que tu attends. La plupart des applis sont des galeries où les invités déposent leurs photos : WedShoots si ton budget est nul, Invinee ou Album Mariage Facile pour tout récupérer, vidéos comprises. Si tu veux en plus une animation pendant la soirée, choisis un appareil photo jetable numérique comme Time to Flash. Dans tous les cas, privilégie une solution sans installation.',
       },
       {
         q: 'Est-ce que WedShoots est gratuit ?',
