@@ -26,6 +26,7 @@ export async function generateMetadata({ params }) {
       title: p.title,
       description: p.excerpt,
       publishedTime: p.date,
+      ...(p.updated ? { modifiedTime: p.updated } : {}),
       authors: [p.author],
       siteName: BRAND.name,
       images: img,
@@ -55,18 +56,31 @@ export default async function Article({ params }) {
     description: p.excerpt,
     ...(p.image ? { image: [`${SITE_URL}${p.image}`] } : {}),
     datePublished: p.date,
-    dateModified: p.date,
+    dateModified: p.updated || p.date,
     author: { '@type': 'Person', name: p.author },
     publisher: { '@type': 'Organization', name: BRAND.name, url: SITE_URL },
     mainEntityOfPage: { '@type': 'WebPage', '@id': url },
     inLanguage: 'fr-FR',
   }
 
+  // FAQ facultative : affichée en fin d'article et déclarée à Google, qui
+  // peut s'en servir pour ses encadrés « Autres questions ».
+  const faqLd = p.faq?.length ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: p.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a },
+    })),
+  } : null
+
   const related = relatedPosts(p)
 
   return (
     <main className="dj" id="journal" aria-label={p.title}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      {faqLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />}
 
       <SiteNav large />
 
@@ -83,7 +97,7 @@ export default async function Article({ params }) {
           <h1>{p.title}</h1>
           <div className="dj-art-byline">
             <span className="dj-av" style={{ background: avatarColor(p.author) }}>{p.author[0]}</span>
-            <span><strong>{p.author}</strong>{formatDate(p.date)} · {p.read}</span>
+            <span><strong>{p.author}</strong>{p.updated ? `Mis à jour le ${formatDate(p.updated)}` : formatDate(p.date)} · {p.read}</span>
           </div>
         </header>
 
@@ -97,6 +111,18 @@ export default async function Article({ params }) {
         <div className="dj-prose">
           <p className="dj-lede">{p.excerpt}</p>
           <div dangerouslySetInnerHTML={{ __html: p.body }} />
+
+          {faqLd && (
+            <section aria-label="Questions fréquentes">
+              <h2>Questions fréquentes</h2>
+              {p.faq.map((f) => (
+                <div key={f.q}>
+                  <h3>{f.q}</h3>
+                  <p>{f.a}</p>
+                </div>
+              ))}
+            </section>
+          )}
 
           <div className="dj-cta">
             <div>

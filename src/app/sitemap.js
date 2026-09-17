@@ -21,7 +21,7 @@ export default function sitemap() {
   ]
   const articles = POSTS.map((p) => ({
     url: `${BASE}/journal/${p.slug}`,
-    lastModified: new Date(p.date),
+    lastModified: new Date(p.updated || p.date),
     changeFrequency: 'monthly',
     priority: 0.6,
   }))

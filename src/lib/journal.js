@@ -467,53 +467,135 @@ const ALL_POSTS = [
 `,
   },
   {
+    // Article pilier sur « application photo mariage ». Réécrit le 17/09/2026
+    // après analyse de la première page Google : les pages qui se classent
+    // nomment les applications, les comparent dans un tableau et répondent aux
+    // questions « Autres questions » (WedShoots gratuit, sans installation…).
+    // Faits sur les concurrents relevés sur leurs sites le 17/09/2026 : à
+    // revérifier avant chaque mise à jour, les prix bougent souvent.
     slug: 'application-photo-mariage',
     cat: 'Organisation',
-    title: 'Application photo mariage : le guide pour bien choisir',
-    excerpt: 'Quatre familles de solutions, sept critères qui comptent, et les trois erreurs qui font qu’une appli ne sert finalement à rien.',
+    title: 'Application photo mariage : le comparatif 2026',
+    excerpt: 'WedShoots, Wedibox, Invinee, Google Photos… On compare les applis photo de mariage (prix, installation, limites) et on te dit laquelle choisir.',
     author: 'Léa Ferrand',
     date: '2026-07-30',
-    read: '8 min',
+    updated: '2026-09-17',
+    read: '12 min',
     caption: 'Des invités photographient un mariage avec leur téléphone',
     image: '/journal/application-photo-mariage-guide.webp',
     body: `
-<p>Tu cherches un moyen de récupérer les photos prises par tes invités. En tapant « application photo mariage », tu tombes sur une dizaine de services qui promettent tous exactement la même chose. Voici comment les départager, et surtout comment éviter les trois erreurs qui font qu’une appli finit par ne servir à rien le jour J.</p>
+<p>Tu veux récupérer les photos prises par tes invités, et en tapant « application photo mariage » tu tombes sur une dizaine de services qui promettent tous la même chose. On les a passés en revue : ce qu’ils coûtent, ce qu’ils demandent à tes invités, et ce qu’ils ne disent pas sur leur page d’accueil. On vend l’une de ces solutions (Time to Flash), on le dit franchement, et on te donne aussi les cas où elle n’est pas la bonne.</p>
 
-<h2>À quoi ça sert, concrètement</h2>
-<p>Ton photographe couvre la journée, mais il ne peut pas être partout : pendant qu’il cadre ton entrée, ton cousin fait rire toute la table du fond. Une application photo de mariage sert à récupérer <em>l’autre</em> reportage, celui de tes 80 invités qui vivent la fête de l’intérieur (on développe ça dans <a href="/journal/invites-photographe">tes invités voient ce que le photographe ne voit pas</a>). Sans elle, ces images restent dans les téléphones et se perdent en trois semaines.</p>
+<h2>La réponse courte</h2>
+<ul>
+<li><strong>Tu veux zéro dépense et tes invités sont à l’aise avec la technologie :</strong> WedShoots (gratuit, mais une application à installer).</li>
+<li><strong>Tu veux tout récupérer, en illimité, avec les vidéos :</strong> une galerie par QR code sans application, comme Invinee ou Album Mariage Facile.</li>
+<li><strong>Tu veux que la photo devienne une animation de la soirée :</strong> un appareil photo jetable numérique, comme Time to Flash (nombre de clichés limité, album révélé le lendemain).</li>
+<li><strong>Tu as moins de 20 invités, tous sur iPhone :</strong> un album partagé iCloud suffit.</li>
+</ul>
+<p>Le reste de l’article explique pourquoi, solution par solution.</p>
 
-<h2>Les quatre familles de solutions</h2>
-<p><strong>1. Le groupe de messagerie.</strong> Gratuit et déjà installé. Mais les photos arrivent compressées, le fil devient illisible en 48 heures, et personne ne retrouve rien six mois plus tard.<br>
-<strong>2. L’album cloud partagé</strong> (Google Photos, iCloud, Drive). Gratuit et de bonne qualité. Mais il faut un compte, et un album iCloud exclut d’office tes invités sous Android.<br>
-<strong>3. L’application à installer.</strong> Plus complète, souvent plus jolie. Mais chaque installation élimine une partie de tes invités, massivement chez les plus de 60 ans.<br>
-<strong>4. L’appareil photo jetable numérique.</strong> Un QR code, une page web qui s’ouvre, aucune installation. C’est le modèle qui obtient de loin le plus de participation.</p>
-<p>Le comparatif détaillé des trois premières options est ici : <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos ou appli dédiée ?</a></p>
+<h2>Le comparatif en un tableau</h2>
+<table>
+<thead><tr><th>Solution</th><th>Pour tes invités</th><th>Prix</th><th>Idéal pour</th></tr></thead>
+<tbody>
+<tr><td><strong>WedShoots</strong></td><td>Appli à installer</td><td>Gratuit</td><td>Budget zéro</td></tr>
+<tr><td><strong>Wedbox</strong></td><td>Appli mobile + QR code</td><td>Achats dans l’appli</td><td>Photos et vidéos illimitées</td></tr>
+<tr><td><strong>Wedibox</strong></td><td>QR code, navigateur</td><td>Gratuit, puis dès 27&nbsp;€</td><td>Tester avant de payer</td></tr>
+<tr><td><strong>Invinee</strong></td><td>QR code, navigateur</td><td>Essai gratuit, puis payant</td><td>Photos, vidéos, livre d’or</td></tr>
+<tr><td><strong>Album Mariage Facile</strong></td><td>QR code, navigateur</td><td>35 à 72&nbsp;€</td><td>Grands mariages, illimité</td></tr>
+<tr><td><strong>Google Photos</strong></td><td>Compte Google</td><td>Gratuit</td><td>Familles déjà sur Google</td></tr>
+<tr><td><strong>Album iCloud</strong></td><td>iPhone surtout</td><td>Gratuit</td><td>Petit comité 100 % Apple</td></tr>
+<tr><td><strong>WhatsApp</strong></td><td>Déjà installé</td><td>Gratuit</td><td>Dépannage</td></tr>
+<tr><td><strong>Time to Flash</strong></td><td>QR code, navigateur</td><td>Gratuit jusqu’à 5, puis de 1,99 à 59,99&nbsp;€</td><td>Une animation, pas un simple dossier</td></tr>
+</tbody>
+</table>
+<p>Prix relevés sur les sites des éditeurs en septembre 2026. Ils changent souvent (promotions, formules) : vérifie toujours avant de payer.</p>
 
-<h2>Les 7 critères qui comptent vraiment</h2>
-<p><strong>1. Zéro installation.</strong> C’est le critère numéro un, très loin devant tous les autres. Une appli à télécharger, c’est un magasin d’applications à ouvrir, un mot de passe à retrouver, 200 Mo à charger sur le wifi saturé de la salle. La moitié de tes invités abandonne à cette étape.<br>
+<h2>Les applications photo de mariage, une par une</h2>
+
+<h3>WedShoots : la plus connue, gratuite, mais à installer</h3>
+<p>WedShoots appartient à Mariages.net, et c’est la première réponse de Google, de loin. L’application est entièrement gratuite, pour les mariés comme pour les invités. Chacun installe l’appli, rejoint l’album avec un code, et les photos s’affichent au fil de la journée, avec des filtres, des « j’aime » et des commentaires. Les mariés téléchargent ensuite l’album complet depuis les réglages.</p>
+<p><strong>La limite :</strong> tout repose sur l’installation. Chaque invité doit ouvrir un magasin d’applications, télécharger, créer son profil, puis retrouver le code. Sur le wifi saturé d’une salle de réception, et pour les plus âgés, c’est là que la participation s’effondre. Si tes invités sont jeunes et prévenus à l’avance, ça marche très bien.</p>
+
+<h3>Wedbox : l’application mobile, photos et vidéos illimitées</h3>
+<p>Wedbox est une application mobile (App Store et Google Play) : les invités rejoignent l’album grâce à un QR code et y envoient photos et vidéos, en qualité d’origine et sans limite de stockage. Elle ajoute un diaporama en direct et un classement par moments de la journée. Le téléchargement de l’appli est gratuit, certaines fonctions passent par des achats intégrés. Même force et même frein que WedShoots : c’est riche, mais c’est une application.</p>
+
+<h3>Wedibox : le gratuit pour tester, le payant pour aller loin</h3>
+<p>Wedibox propose une formule gratuite, sans carte bancaire, puis des formules payantes sans abonnement (de 27 à 73&nbsp;€ selon l’offre en septembre 2026). Tes invités passent par un QR code, sans rien installer. C’est une bonne option si tu veux essayer le déroulé complet avant de t’engager. Regarde bien ce que la formule gratuite n’inclut pas : c’est écrit sur leur page de tarifs.</p>
+
+<h3>Invinee : la galerie complète, sans application</h3>
+<p>Invinee mise sur la galerie la plus riche : photos et vidéos, livre d’or, diaporama en direct sur grand écran, téléchargement de tout en un fichier ZIP, hébergement en France. Les invités scannent un QR code et envoient, sans inscription. C’est un bon choix si tu veux <em>tout</em> récupérer, y compris les vidéos de la première danse.</p>
+
+<h3>Album Mariage Facile : l’illimité en paiement unique</h3>
+<p>Un album collaboratif par QR code, sans installation ni inscription : photos illimitées, jusqu’à 300 invités, photos en qualité originale et 12 mois de stockage. Le prix affiché en septembre 2026 est de 35&nbsp;€ en promotion, pour 72&nbsp;€ en temps normal. Simple et efficace pour un grand mariage qui veut un dossier complet.</p>
+
+<h3>Google Photos et iCloud : gratuits, mais pas pour tout le monde</h3>
+<p><strong>Google Photos</strong> est gratuit et garde une bonne qualité, mais pour <em>ajouter</em> des photos à un album partagé, il faut un compte Google. Une partie de tes invités n’en a pas, ou ne s’en souvient pas.</p>
+<p><strong>L’album partagé iCloud</strong> est parfait entre utilisateurs d’iPhone, et quasiment inutilisable pour les autres : tes invités sous Android pourront au mieux regarder, pas contribuer.</p>
+<p>Le comparatif détaillé est ici : <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos ou appli dédiée ?</a></p>
+
+<h3>WhatsApp : la solution par défaut, et ses défauts</h3>
+<p>Tout le monde l’a déjà, donc tout le monde y pense. Mais les photos sont compressées par défaut, le groupe devient illisible en 48 heures (les photos se noient dans les messages), et six mois plus tard, personne ne retrouve rien. Parfait pour s’échanger trois photos le lendemain, pas pour garder les souvenirs d’un mariage.</p>
+
+<h3>Time to Flash : l’appareil jetable numérique (c’est nous)</h3>
+<p>Time to Flash part d’une autre idée : au lieu d’un dossier où chacun dépose ses photos, chaque invité reçoit un <strong>appareil photo jetable</strong> dans son téléphone. Il scanne le QR code, tape son prénom, et prend ses photos directement dans la page, sans rien installer. Tu choisis le nombre de clichés par personne (de 3 à 15), le rendu (plusieurs pellicules argentiques), et l’album se révèle le lendemain matin, d’un coup, pour tout le monde. Une app iPhone existe pour ceux qui la préfèrent, mais personne n’est obligé de l’installer.</p>
+<p><strong>Le prix :</strong> gratuit jusqu’à 5 invités, puis un paiement unique selon la taille du mariage : 14,99&nbsp;€ jusqu’à 50 invités, 29,99&nbsp;€ jusqu’à 100, 34,99&nbsp;€ jusqu’à 150, 59,99&nbsp;€ jusqu’à 300. Hébergement en Europe, photos effacées 6 mois après la révélation (on te prévient avant).</p>
+<p><strong>Ce n’est pas le bon choix si :</strong> tu veux récupérer les vidéos (on ne fait que la photo), toutes les photos déjà prises avec l’appareil photo du téléphone, ou des fichiers en pleine résolution pour un tirage grand format. Les photos sont enregistrées en 1600 pixels : très bien à l’écran et pour un tirage jusqu’au 13×18, trop juste pour une affiche.</p>
+
+<h2>Comment choisir : les 6 critères qui comptent vraiment</h2>
+<p><strong>1. Zéro installation.</strong> C’est le critère numéro un, très loin devant les autres. Une appli à télécharger, c’est un magasin d’applications à ouvrir, un mot de passe à retrouver, des dizaines de mégas à charger sur le réseau saturé de la salle. Une bonne partie des invités abandonne à cette étape (on en parle dans <a href="/journal/pas-de-reseau-salle-mariage">pas de réseau dans la salle</a>).<br>
 <strong>2. Pas de compte à créer.</strong> Même logique : un prénom à saisir, et c’est tout.<br>
-<strong>3. La qualité d’origine.</strong> Vérifie que tu récupères les fichiers en pleine résolution, pas des versions compressées. C’est ce qui fait la différence le jour où tu voudras imprimer.<br>
-<strong>4. Un album unique et centralisé.</strong> Toutes les photos au même endroit, téléchargeables d’un bloc.<br>
-<strong>5. Le nombre de photos par invité.</strong> Pouvoir le limiter change tout : la contrainte pousse à choisir (voir <a href="/journal/dix-cliches">pourquoi 10 clichés valent mieux que 300</a>).<br>
-<strong>6. Le moment de la révélation.</strong> Photos visibles en direct, ou cachées jusqu’au lendemain ? Ce réglage change la façon dont tes invités vivent la soirée (voir <a href="/journal/revelation-photos-lendemain-mariage">la révélation au lendemain</a>).<br>
-<strong>7. Le prix, et sa forme.</strong> Paiement unique ou abonnement ? Pour un événement qui n’arrive qu’une fois, l’abonnement n’a aucun sens.</p>
+<strong>3. La qualité, selon l’usage.</strong> Pour regarder l’album sur un écran ou faire un petit livre, une photo de téléphone réduite suffit largement. Pour imprimer en grand, il te faut les fichiers d’origine : vérifie ce que la solution conserve.<br>
+<strong>4. Un album unique, téléchargeable d’un bloc.</strong> Toutes les photos au même endroit, récupérables en une fois, sans frais surprise le lendemain.<br>
+<strong>5. Le nombre de photos par invité.</strong> Illimité, tu récupères tout, y compris 40 photos floues de la piste de danse. Limité, chacun choisit ses moments (voir <a href="/journal/dix-cliches">pourquoi 10 clichés valent mieux que 300</a>). Aucun des deux n’est mieux : ça dépend de ce que tu attends.<br>
+<strong>6. Le moment de la révélation.</strong> Photos visibles en direct, ou cachées jusqu’au lendemain ? En direct, c’est un diaporama. Le lendemain, c’est une surprise (voir <a href="/journal/revelation-photos-lendemain-mariage">la révélation au lendemain</a>).</p>
 
-<blockquote class="dj-quote">« On a testé trois solutions avant. Celle qui a marché est celle où il n’y avait rien à installer. »
-  <cite>Léa &amp; Marius · 2026</cite>
-</blockquote>
+<h2>Application à installer ou QR code sans application ?</h2>
+<p>C’est la vraie ligne de partage du marché. D’un côté, les applications natives (WedShoots, Wedbox) : plus riches, souvent gratuites, mais chaque invité doit faire la démarche. De l’autre, les solutions par QR code qui s’ouvrent dans le navigateur (Wedibox, Invinee, Album Mariage Facile, Time to Flash) : un scan, et on y est.</p>
+<p>Pose-toi une seule question : <strong>« Est-ce que ma tante de 72 ans y arrivera seule, un verre à la main, à 23 h ? »</strong> Si la réponse est non, écarte tout ce qui demande une installation ou un compte. Pour un mariage, avec plusieurs générations autour des tables, le QR code gagne presque toujours.</p>
 
-<h2>Les trois erreurs classiques</h2>
-<p><strong>Choisir une solution que tes invités ne savent pas utiliser.</strong> Le critère n’est pas « est-ce que ça me plaît », mais « est-ce que ma tante de 72 ans y arrivera seule, un verre à la main, à 23 h ».</p>
-<p><strong>Ne pas prévenir avant le jour J.</strong> Une solution excellente dont personne n’a entendu parler ne produit rien. Il faut l’annoncer sur le faire-part, la rappeler au micro, et laisser le QR code visible partout (on t’a préparé <a href="/journal/brief-invites">le brief invités à copier-coller</a>).</p>
-<p><strong>Tout miser sur un seul emplacement.</strong> Un QR code sur une seule table, c’est une animation invisible. Il en faut cinq ou six (voir <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>).</p>
+<h2>Combien coûte une application photo de mariage ?</h2>
+<p><strong>0&nbsp;€ :</strong> WedShoots, Google Photos, iCloud, WhatsApp, et les formules gratuites limitées.<br>
+<strong>15 à 40&nbsp;€ :</strong> la plupart des solutions par QR code pour un mariage de 50 à 150 invités.<br>
+<strong>40 à 75&nbsp;€ :</strong> les grandes formules (300 invités, illimité, vidéos, options).</p>
+<p>Dans tous les cas, c’est sans commune mesure avec les 400 à 900&nbsp;€ d’une borne photo (le détail est dans <a href="/journal/prix-photobooth-mariage">combien coûte un photobooth de mariage</a>). Méfie-toi seulement du gratuit qui devient payant au moment de télécharger l’album : on t’explique comment le repérer dans <a href="/journal/application-photo-mariage-gratuite">appli photo mariage gratuite : ce qui l’est vraiment</a>.</p>
 
-<h2>Combien ça coûte</h2>
-<p>Compte de 0 à 40 € pour un mariage classique, en paiement unique. C’est sans commune mesure avec les 400 à 900 € d’une borne photo (le détail est dans <a href="/journal/prix-photobooth-mariage">combien coûte un photobooth de mariage</a>). Attention aux offres « gratuites » : on t’explique ce qui l’est vraiment dans <a href="/journal/application-photo-mariage-gratuite">appli photo mariage gratuite</a>.</p>
+<h2>Les trois erreurs qui font qu’une appli ne sert à rien</h2>
+<p><strong>Choisir pour toi, pas pour tes invités.</strong> La plus belle interface ne vaut rien si la moitié de la salle ne parvient pas à l’ouvrir.</p>
+<p><strong>Ne pas prévenir avant le jour J.</strong> Une solution dont personne n’a entendu parler ne produit rien. Annonce-la sur le faire-part, rappelle-la au micro (on t’a préparé <a href="/journal/brief-invites">le brief invités à copier-coller</a>).</p>
+<p><strong>Un seul QR code dans un coin.</strong> Il en faut cinq ou six, là où les gens attendent : tables, bar, entrée, toilettes (voir <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>, et notre <a href="/generateur-qr-code-mariage">générateur d’affiche QR code gratuit</a>).</p>
 
-<h2>Notre recommandation</h2>
-<p>Choisis une solution sans installation, limite le nombre de clichés par invité, et diffère la révélation au lendemain matin. Ces trois réglages, à eux seuls, font la différence entre 300 photos oubliées et 40 souvenirs qu’on encadre.</p>
-<p>C’est exactement le parti pris de <a href="/">Time to Flash</a> : un QR code, aucune application, quelques clichés par personne, un rendu argentique, et un album qui se dévoile le lendemain. Gratuit jusqu’à 5 invités si tu veux l’essayer avant de t’engager.</p>
+<h2>Notre avis</h2>
+<p>Si ton seul objectif est de récupérer un maximum de fichiers, prends une galerie par QR code en illimité : c’est simple et ça fait le travail. Si tu veux que la photo fasse partie de la fête, que tes invités lèvent le nez de leur écran et que le lendemain ait son moment de découverte, essaie l’appareil jetable numérique.</p>
+<p>C’est le parti pris de <a href="/">Time to Flash</a> : un QR code, aucune application, quelques clichés par personne, un rendu argentique, et un album qui se dévoile le lendemain. C’est gratuit jusqu’à 5 invités : fais le test avec tes témoins avant de te décider.</p>
 `,
+    faq: [
+      {
+        q: 'Quelle est la meilleure application photo pour un mariage ?',
+        a: 'Il n’y en a pas une seule. Pour un budget nul et des invités à l’aise avec les applis, WedShoots. Pour tout récupérer, vidéos comprises, une galerie par QR code comme Invinee ou Album Mariage Facile. Pour faire de la photo une animation, un appareil jetable numérique comme Time to Flash. Le critère décisif reste l’absence d’installation.',
+      },
+      {
+        q: 'Est-ce que WedShoots est gratuit ?',
+        a: 'Oui, WedShoots est entièrement gratuit, pour les mariés comme pour les invités. En contrepartie, chaque invité doit installer l’application sur son téléphone pour envoyer ses photos.',
+      },
+      {
+        q: 'Mes invités doivent-ils télécharger une application ?',
+        a: 'Pas forcément. WedShoots et Wedbox demandent une installation, mais les solutions par QR code dans le navigateur (Wedibox, Invinee, Album Mariage Facile, Time to Flash) s’ouvrent directement dans le navigateur du téléphone, sans application ni compte.',
+      },
+      {
+        q: 'Existe-t-il une application photo de mariage gratuite ?',
+        a: 'Oui : WedShoots, Google Photos, l’album partagé iCloud et WhatsApp sont gratuits, et plusieurs services payants ont une formule gratuite limitée (Time to Flash est gratuit jusqu’à 5 invités). Vérifie toujours que le téléchargement de l’album complet est inclus avant le jour J.',
+      },
+      {
+        q: 'Combien coûte une application photo de mariage ?',
+        a: 'De 0 € à environ 75 €, en paiement unique. Pour un mariage de 50 à 150 invités, la plupart des solutions par QR code coûtent entre 15 et 40 €, soit dix à vingt fois moins qu’un photobooth.',
+      },
+      {
+        q: 'Comment récupérer les photos des invités après le mariage ?',
+        a: 'Le plus simple est de choisir une solution qui centralise tout dans un seul album téléchargeable d’un bloc, et de laisser l’album ouvert quelques jours après la fête pour les retardataires. Évite de tout faire transiter par WhatsApp, qui compresse les photos par défaut.',
+      },
+    ],
   },
   {
     slug: 'prix-photobooth-mariage',
@@ -571,7 +653,7 @@ const ALL_POSTS = [
     caption: 'Un téléphone affichant un album photo de mariage',
     image: '/journal/application-photo-mariage-gratuite.webp',
     body: `
-<p>« Gratuit » est le mot le plus recherché quand on cherche une solution photo pour son mariage. C’est légitime : le budget est déjà tendu. Mais derrière ce mot se cachent trois modèles très différents, et un seul d’entre eux est vraiment sans contrepartie.</p>
+<p>« Gratuit » est le mot le plus recherché quand on cherche une solution photo pour son mariage. C’est légitime : le budget est déjà tendu. Mais derrière ce mot se cachent trois modèles très différents, et un seul d’entre eux est vraiment sans contrepartie. (Pour le panorama complet, payant compris, va voir notre <a href="/journal/application-photo-mariage">comparatif des applications photo de mariage</a>.)</p>
 
 <h2>Les trois modèles derrière le mot « gratuit »</h2>
 <p><strong>1. Le gratuit limité (freemium).</strong> Tu crées l’événement sans payer, tout se passe bien… puis tu découvres au moment de télécharger que l’album est bloqué au bout de 30 photos, ou que le téléchargement complet est payant. C’est le modèle le plus fréquent, et le plus désagréable : tu découvres la facture le lendemain du mariage, quand tu n’as plus le choix.</p>
@@ -589,7 +671,7 @@ const ALL_POSTS = [
 <p>Crée ton événement, scanne le QR code avec ton propre téléphone, prends trois photos, et <strong>va jusqu’au bout du téléchargement</strong>. Si tu peux récupérer tes trois photos en pleine qualité sans qu’on te demande ta carte, l’offre est honnête. Sinon, tu viens d’éviter une très mauvaise surprise.</p>
 
 <h2>Ce qu’on fait de notre côté</h2>
-<p>Avec <a href="/">notre appli photo de mariage</a>, c’est gratuit jusqu’à 5 invités, sans carte bancaire : de quoi tester le déroulé complet, du QR code au téléchargement. Au-delà, c’est un paiement unique selon le nombre d’invités : pas d’abonnement, pas de frais au moment de récupérer tes photos, et les fichiers en qualité d’origine. Les serveurs sont en Europe.</p>
+<p>Avec <a href="/">notre appli photo de mariage</a>, c’est gratuit jusqu’à 5 invités, sans carte bancaire : de quoi tester le déroulé complet, du QR code au téléchargement. Au-delà, c’est un paiement unique selon le nombre d’invités : pas d’abonnement, pas de frais au moment de récupérer tes photos. Les serveurs sont en Europe.</p>
 <p>La bonne nouvelle : même l’offre payante reste très en dessous du <a href="/journal/prix-photobooth-mariage">prix d’un photobooth</a>. Le vrai sujet n’est donc pas le prix, c’est de ne pas te retrouver bloqué le lendemain.</p>
 `,
   },
@@ -617,7 +699,7 @@ const ALL_POSTS = [
 <p><strong>Verdict :</strong> excellent pour <em>archiver</em> une fois que tu as les photos. Mauvais pour les <em>collecter</em>.</p>
 
 <h2>L’appareil jetable numérique</h2>
-<p><strong>Ce qui marche :</strong> un QR code posé sur les tables, une page qui s’ouvre dans le navigateur, un prénom à taper. Rien à installer, aucun compte. Tout le monde participe, y compris les grands-parents. Les photos arrivent en qualité d’origine dans un seul album, et le jeu (nombre de clichés limité, révélation le lendemain) fait qu’on y pense pendant la fête.</p>
+<p><strong>Ce qui marche :</strong> un QR code posé sur les tables, une page qui s’ouvre dans le navigateur, un prénom à taper. Rien à installer, aucun compte. Tout le monde participe, y compris les grands-parents. Les photos arrivent toutes dans un seul album, et le jeu (nombre de clichés limité, révélation le lendemain) fait qu’on y pense pendant la fête.</p>
 <p><strong>Ce qui coince :</strong> c’est payant au-delà d’une poignée d’invités. Et ça dépend d’un service extérieur : tu dois vérifier ce qui est inclus, notamment le téléchargement complet (voir <a href="/journal/application-photo-mariage-gratuite">appli photo mariage gratuite</a>).</p>
 <p><strong>Verdict :</strong> c’est le seul des trois qui règle le problème de la <em>collecte</em>, qui est le vrai problème.</p>
 
@@ -628,6 +710,7 @@ const ALL_POSTS = [
 <h2>La combinaison qu’on recommande</h2>
 <p>Elle est simple : <strong>collecte</strong> avec un appareil jetable numérique le jour J (la méthode est détaillée dans <a href="/journal/partager-photos-mariage-invites">comment partager les photos avec tous les invités</a>), <strong>archive</strong> ensuite dans ton cloud personnel. Tu télécharges l’album complet une fois, tu le ranges à deux endroits, et tu es tranquille pour vingt ans. La méthode de tri est ici : <a href="/journal/300-photos-lendemain">que faire des 300 photos du lendemain</a>.</p>
 <p>C’est ce que <a href="/">notre appli photo de mariage dédiée</a> fait de la partie la plus difficile : faire en sorte que 80 personnes déposent réellement leurs photos au même endroit.</p>
+<p>Tu hésites encore entre plusieurs services ? On les a tous passés en revue (WedShoots, Wedibox, Invinee…) dans <a href="/journal/application-photo-mariage">le comparatif des applications photo de mariage</a>.</p>
 `,
   },
   {
@@ -1018,7 +1101,7 @@ const ALL_POSTS = [
 
 <h2>Étape 4 : L’impression</h2>
 <p>Compte 50 à 150 € pour un livre de qualité correcte, contre 300 à 800 € s’il passe par ton photographe. Trois points à vérifier avant de commander :</p>
-<p><strong>1. La résolution.</strong> Les photos doivent être en qualité d’origine, pas récupérées depuis une messagerie qui les a compressées. C’est LA raison pour laquelle un album fait à partir de photos WhatsApp est souvent décevant (voir <a href="/journal/whatsapp-google-photos-mariage">le comparatif des solutions de partage</a>).<br>
+<p><strong>1. La résolution.</strong> Les photos doivent être en bonne résolution, pas récupérées depuis une messagerie qui les a compressées. C’est LA raison pour laquelle un album fait à partir de photos WhatsApp est souvent décevant (voir <a href="/journal/whatsapp-google-photos-mariage">le comparatif des solutions de partage</a>).<br>
 <strong>2. La reliure.</strong> Une reliure à plat, qui s’ouvre complètement, change tout sur les photos en double page.<br>
 <strong>3. Le papier.</strong> Un papier mat épais rend beaucoup mieux le grain argentique que le brillant.</p>
 
@@ -1033,7 +1116,7 @@ const ALL_POSTS = [
 
 <h2>Le cadeau le plus rentable du mariage</h2>
 <p>Fais-en deux ou trois exemplaires : un pour vous, un par famille. Un livre à 80 € qui raconte la soirée par les yeux des invités fait beaucoup plus d’effet qu’un cadeau classique, et il se regarde encore dans vingt ans.</p>
-<p>Avec <a href="/">Time to Flash</a>, tu télécharges l’album complet en un fichier, en qualité d’origine : il ne te reste plus qu’à choisir.</p>
+<p>Avec <a href="/">Time to Flash</a>, tu télécharges l’album complet en un fichier : il ne te reste plus qu’à choisir.</p>
 `,
   },
 ]
