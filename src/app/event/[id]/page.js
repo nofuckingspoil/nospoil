@@ -17,6 +17,7 @@ import { BRAND, avatarColor } from '../../../lib/brand'
 import { MODE_OPTIONS, modeValide } from '../../../lib/photo-mode'
 import Logo from '../../../components/Logo'
 import InstallPrompt from '../../../components/InstallPrompt'
+import ProposerAppIPhone from '../../../components/ProposerAppIPhone'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J, APRES } from '../../../lib/phase'
 import { formatPrice, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
 import { purgeDate } from '../../../lib/retention'
@@ -899,6 +900,8 @@ export default function EventManage({ params }) {
         <a href={`/j/${id}`} onClick={ouvrirMonAppareil}>Mon appareil 📷</a>
       </nav>
 
+      <ProposerAppIPhone email={ev.ownerEmail} />
+
       {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque
           soit refusé : c'est le message qu'on veut voir le plus souvent.
           « Dépassée » ne concerne plus que les événements d'avant la porte. */}
@@ -1619,7 +1622,7 @@ export default function EventManage({ params }) {
         </Link>
       </div>
 
-      <InstallPrompt label="Épinglez votre tableau de bord" />
+      <InstallPrompt label="Épinglez votre tableau de bord" iphone={false} />
 
       <div style={{ marginTop: 30, borderTop: '1px solid var(--line)', paddingTop: 20 }}>
         {error && <div className="err" style={{ marginBottom: 12 }}>{error}</div>}

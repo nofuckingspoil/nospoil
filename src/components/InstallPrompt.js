@@ -15,7 +15,8 @@ function ShareIcon({ size = 16 }) {
 // Invite à épingler la page sur l'écran d'accueil.
 // Android : vrai bouton d'installation (beforeinstallprompt).
 // iOS : instructions visuelles "Partager → Sur l'écran d'accueil".
-export default function InstallPrompt({ label = "Ajoute Time to Flash à ton écran d'accueil" }) {
+// `iphone={false}` : rien sur iPhone, où l'app native est proposée à la place.
+export default function InstallPrompt({ label = "Ajoute Time to Flash à ton écran d'accueil", iphone = true }) {
   const [deferred, setDeferred] = useState(null)
   const [isIOS, setIsIOS] = useState(false)
   const [show, setShow] = useState(false)
@@ -26,7 +27,7 @@ export default function InstallPrompt({ label = "Ajoute Time to Flash à ton éc
     if (standalone) return
 
     const ios = /iphone|ipad|ipod/i.test(navigator.userAgent) && !/crios|fxios/i.test(navigator.userAgent)
-    if (ios) { setIsIOS(true); setShow(true); return }
+    if (ios) { if (iphone) { setIsIOS(true); setShow(true) } return }
 
     const onPrompt = (e) => { e.preventDefault(); setDeferred(e); setShow(true) }
     window.addEventListener('beforeinstallprompt', onPrompt)
