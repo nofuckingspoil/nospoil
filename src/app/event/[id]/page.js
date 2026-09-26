@@ -23,7 +23,7 @@ import { purgeDate } from '../../../lib/retention'
 import { rappelsAutomatiques, heureDuRappel, jourDuRappel, autreJourQueLeDebut, minutesDepuisHeure, dureeMin } from '../../../lib/rappels'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DEFAULT_EVENT_NAME } from '../../../lib/event-defaults'
-import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent } from '../../../lib/device'
+import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent, getGuest, notePrenomOrganisateur } from '../../../lib/device'
 import { track } from '../../../lib/tracking'
 import Bilan from '../../../components/Bilan'
 
@@ -105,7 +105,8 @@ export default function EventManage({ params }) {
   const [galleryUrl, setGalleryUrl] = useState('')
   const [ownerUrl, setOwnerUrl] = useState('')
   const [qrUrl, setQrUrl] = useState('')
-  const [sheet, setSheet] = useState(null) // 'qr' | 'message' | null
+  const [sheet, setSheet] = useState(null) // 'qr' | 'message' | 'prenom' | null
+  const [prenomOrga, setPrenomOrga] = useState('')
   // Une seule section ouverte à la fois. « Réglages » l'est d'emblée : c'est là
   // qu'on se rend en préparant son événement. Une fois la révélation passée,
   // il n'y a plus grand-chose à régler : c'est l'album qui prend la place.
@@ -402,6 +403,25 @@ export default function EventManage({ params }) {
     }
     // La fin suit toute seule : le serveur lui garde sa durée (voir PATCH).
     if (await patchEvent(patch)) setEditing('')
+  }
+
+  // « Mon appareil » : l'organisateur n'est pas un inconnu. Il passait par la
+  // pochette puis l'écran du prénom, comme un invité qui vient de scanner. Déjà
+  // inscrit sur ce téléphone : l'appareil s'ouvre. Sinon, son prénom une seule
+  // fois ici, et la page de l'appareil l'inscrit sans rien redemander.
+  function ouvrirMonAppareil(e) {
+    if (getGuest(id)?.name) return // le lien suit son cours
+    e.preventDefault()
+    setPrenomOrga(prenomOrga || String(ev?.ownerName || '').trim().split(/\s+/)[0] || '')
+    setSheet('prenom')
+  }
+  function validerPrenomOrga(e) {
+    e.preventDefault()
+    const prenom = prenomOrga.trim()
+    if (!prenom) return
+    notePrenomOrganisateur(id, prenom)
+    setSheet(null)
+    router.push(`/j/${id}`)
   }
 
   function copy(text, key) {
@@ -876,7 +896,7 @@ export default function EventManage({ params }) {
       {/* Bascule permanente : l'organisateur joue aussi */}
       <nav className="db-modes" aria-label="Mode">
         <span className="on">Organisation</span>
-        <Link href={`/j/${id}`}>Mon appareil 📷</Link>
+        <a href={`/j/${id}`} onClick={ouvrirMonAppareil}>Mon appareil 📷</a>
       </nav>
 
       {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque
@@ -1654,6 +1674,22 @@ export default function EventManage({ params }) {
         <div className="db-overlay" onClick={() => setSheet(null)}>
           <div className="db-sheet" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
             <div className="db-sheet-grip" />
+            {sheet === 'prenom' && (
+              <form onSubmit={validerPrenomOrga}>
+                <h3 className="h3">Votre prénom</h3>
+                <p className="muted small">
+                  Il signe vos photos dans l'album, comme pour chaque participant.
+                  On ne vous le demandera plus.
+                </p>
+                <input type="text" name="prenom" autoComplete="given-name" autoFocus maxLength={30}
+                  style={{ marginTop: 14 }} placeholder="Votre prénom"
+                  value={prenomOrga} onChange={(e) => setPrenomOrga(e.target.value)} />
+                <button className="btn btn-accent" type="submit" style={{ marginTop: 12, width: '100%' }}
+                  disabled={!prenomOrga.trim()}>
+                  Ouvrir mon appareil
+                </button>
+              </form>
+            )}
             {sheet === 'qr' && (
               <>
                 <h3 className="h3">Faites-le scanner</h3>

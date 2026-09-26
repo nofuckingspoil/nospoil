@@ -4,7 +4,7 @@ import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { initialesDe } from '../../../lib/initiales'
 import QRCode from 'qrcode'
-import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken } from '../../../lib/device'
+import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken, prendrePrenomOrganisateur } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera } from '../../../lib/camera'
 import CameraBloquee from '../../../components/CameraBloquee'
 import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../lib/photo-mode'
@@ -214,7 +214,15 @@ export default function GuestCamera({ params }) {
         // que le retour du navigateur ne ramène pas ici.
         if (d.revealed) { window.location.replace(`/g/${id}`); return }
         const saved = getGuest(id)
+        const prenomOrga = d.isOwner ? prendrePrenomOrganisateur(id) : ''
         if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
+        // L'organisateur arrive de son tableau de bord avec son prénom : on
+        // l'inscrit tout de suite, sans pochette ni question.
+        else if (prenomOrga) {
+          setName(prenomOrga)
+          if (d.ownerEmail) setEmail(d.ownerEmail)
+          join(prenomOrga, d.ownerEmail || '')
+        }
         else {
           // Rien de saisi encore : on reprend ce que le serveur sait de cet
           // événement précis. Surtout pas l'adresse mémorisée par le navigateur :

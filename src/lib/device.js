@@ -130,6 +130,23 @@ export function forgetGuest(eventId) {
   try { localStorage.removeItem(`pellicule_guest_${eventId}`) } catch {}
 }
 
+// Prénom donné par l'organisateur depuis son tableau de bord, en attendant que
+// la page de l'appareil l'inscrive. Le temps d'un onglet seulement : c'est un
+// passage de relais, pas une identité.
+export function notePrenomOrganisateur(eventId, prenom) {
+  if (typeof window === 'undefined') return
+  try { sessionStorage.setItem(`ttf_prenom_orga_${eventId}`, prenom) } catch {}
+}
+
+export function prendrePrenomOrganisateur(eventId) {
+  if (typeof window === 'undefined') return ''
+  try {
+    const p = sessionStorage.getItem(`ttf_prenom_orga_${eventId}`) || ''
+    sessionStorage.removeItem(`ttf_prenom_orga_${eventId}`)
+    return p
+  } catch { return '' }
+}
+
 export function getGuest(eventId) {
   if (typeof window === 'undefined') return null
   try { return JSON.parse(localStorage.getItem(`pellicule_guest_${eventId}`) || 'null') } catch { return null }
