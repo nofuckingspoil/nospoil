@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useRef, useState } from 'react'
+import { Suspense, useEffect, useRef, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
@@ -173,8 +173,18 @@ function CreateForm() {
 
   // L'écran affiché, et le moyen d'en désigner un par son nom : « allerA(
   // 'cliches') » survit à un changement d'ordre, « goTo(4) » non.
-  const ecran = ETAPES[step - 1] || 'final'
+  //
+  // Le code reçu par mail a son propre écran. Il retombait sur 'final' ('code'
+  // - 1 ne donne aucun rang) : le mail et le récapitulatif restaient affichés,
+  // et le champ du code s'ajoutait en dessous, hors de la vue sur un téléphone.
+  const ecran = step === 'code' ? 'code' : (ETAPES[step - 1] || 'final')
   const estEcran = (cle) => ecran === cle
+
+  // Chaque écran s'ouvre par son haut : sans ça, on arrivait sur le nouvel
+  // écran à la hauteur où l'on avait touché le bouton du précédent.
+  useEffect(() => {
+    try { window.scrollTo({ top: 0 }) } catch {}
+  }, [step])
   const allerA = (cle) => goTo(ETAPES.indexOf(cle) + 1)
   const suivant = () => goTo(step + 1)
   const precedent = () => goTo(Math.max(1, step - 1))
@@ -829,7 +839,7 @@ function CreateForm() {
         <form className="card wiz-card" onSubmit={handleCreate}>
           <h2 className="wiz-q">Vérifiez votre adresse</h2>
           <p className="wiz-sub">
-            On vient d'envoyer un code à 6 chiffres à <strong>{email.trim()}</strong>. Saisissez-le pour créer votre événement.
+            On vient d'envoyer un code à 6 chiffres à <strong>{email.trim()}</strong>. Saisissez-le pour créer votre événement. Rien reçu ? Regardez dans les indésirables.
           </p>
           <div className="field">
             <label>Code reçu par mail</label>
