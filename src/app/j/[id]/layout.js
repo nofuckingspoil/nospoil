@@ -1,4 +1,5 @@
 import { BRAND } from '../../../lib/brand'
+import { BANNIERE_APP } from '../../../lib/banniere-app'
 import { nomEvenement } from '../../../lib/og'
 
 // Le titre nommait « un » album sans dire lequel : collé dans une messagerie,
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }) {
     robots: { index: false, follow: false },
     openGraph: { title: titre, description: desc, type: 'website' },
     twitter: { card: 'summary_large_image', title: titre, description: desc },
+    other: BANNIERE_APP,
   }
 }
 
