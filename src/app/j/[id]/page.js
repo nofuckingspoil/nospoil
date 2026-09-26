@@ -1592,7 +1592,11 @@ export default function GuestCamera({ params }) {
                   <div className="mur-grid">
                     {mur.map((p) => (
                       <div className={`mur-thumb${p.moi ? ' moi' : ''}`} key={p.id}>
-                        <img src={p.url} alt="" loading="lazy" draggable="false" />
+                        {/* crossOrigin comme dans l'album : c'est la même adresse
+                            de vignette. Chargée ici sans lui, le téléphone la
+                            gardait dans une version que l'album refusait ensuite,
+                            et la photo y restait cassée. */}
+                        <img src={p.url} alt="" loading="lazy" draggable="false" crossOrigin="anonymous" />
                         {p.qui && !ongletMoi && <span className="mur-qui">{p.moi ? 'Toi' : p.qui}</span>}
                       </div>
                     ))}
