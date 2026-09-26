@@ -4,6 +4,7 @@ import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { initialesDe } from '../../../lib/initiales'
 import QRCode from 'qrcode'
+import IconeCorbeille from '../../../components/IconeCorbeille'
 import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken, prendrePrenomOrganisateur } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera } from '../../../lib/camera'
 import CameraBloquee from '../../../components/CameraBloquee'
@@ -1524,13 +1525,25 @@ export default function GuestCamera({ params }) {
                   ) : (<>
                     <div className="album-grid">
                       {roll.map((p, i) => (
-                        <button key={p.tempId || p.id || i} className={`album-thumb ${p.pending ? 'pending' : ''}`}
-                          onClick={() => { if (!p.pending && p.id) setViewer({ id: p.id, url: p.url }) }}
-                          aria-label="Voir la photo">
-                          {/* crossOrigin : sans lui, la photo mise en cache par cette
-                              vignette ne peut plus être relue pour le zip. */}
-                          <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
-                        </button>
+                        <div key={p.tempId || p.id || i} className="album-case">
+                          <button className={`album-thumb ${p.pending ? 'pending' : ''}`}
+                            onClick={() => { if (!p.pending && p.id) { setConfirmeSuppr(false); setViewer({ id: p.id, url: p.url }) } }}
+                            aria-label="Voir la photo">
+                            {/* crossOrigin : sans lui, la photo mise en cache par cette
+                                vignette ne peut plus être relue pour le zip. */}
+                            <img src={p.url} alt="" loading="lazy" crossOrigin="anonymous" />
+                          </button>
+                          {/* La corbeille se voit sur la vignette : la suppression
+                              était cachée derrière la photo ouverte en grand. Elle
+                              ouvre la photo directement sur la question, jamais
+                              de suppression en un seul appui. */}
+                          {suppressionOuverte && !p.pending && p.id && (
+                            <button type="button" className="album-corbeille" aria-label="Supprimer cette photo"
+                              onClick={() => { setConfirmeSuppr(true); setViewer({ id: p.id, url: p.url }) }}>
+                              <IconeCorbeille size={16} />
+                            </button>
+                          )}
+                        </div>
                       ))}
                     </div>
                     <button className="mur-plus" onClick={downloadMine} disabled={downloading || !myPhotos.length}>
@@ -1743,7 +1756,7 @@ export default function GuestCamera({ params }) {
             <button className="btn btn-danger"
               onClick={() => (confirmeSuppr ? removePhoto() : setConfirmeSuppr(true))}
               disabled={deleting}>
-              {deleting ? 'Suppression…' : confirmeSuppr ? 'Confirmer' : 'Supprimer'}
+              {deleting ? 'Suppression…' : confirmeSuppr ? 'Confirmer' : <><IconeCorbeille size={16} /> Supprimer</>}
             </button>
           </div>
         </div>
