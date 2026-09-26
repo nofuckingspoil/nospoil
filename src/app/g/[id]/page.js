@@ -2,6 +2,7 @@
 
 import { use, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { initialesDe } from '../../../lib/initiales'
 import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
@@ -60,22 +61,6 @@ function formatCourt(iso) {
     if (isNaN(d.getTime())) return ''
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, ' · ')
   } catch { return '' }
-}
-
-// Les initiales de la carte de repli, quand la soirée n'a pas de couverture.
-//
-// « Claire & Martin » donne « C&M », mais « Banc d'essai » ne doit pas donner
-// « B&D » : l'esperluette annoncerait un couple là où il n'y a qu'un nom. On
-// ne la met donc que si le nom en porte vraiment une, ou un « et » entre deux
-// mots. Sinon, une seule lettre suffit.
-function initialesDe(nom) {
-  const brut = String(nom || '').trim()
-  if (!brut) return '✳'
-  const couple = brut.split(/\s*(?:&|\+|\bet\b)\s*/i).filter(Boolean)
-  if (couple.length >= 2) {
-    return couple.slice(0, 2).map((m) => m.trim()[0].toUpperCase()).join('&')
-  }
-  return brut[0].toUpperCase()
 }
 
 function formatStamp(iso) {

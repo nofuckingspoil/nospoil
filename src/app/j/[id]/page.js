@@ -2,6 +2,7 @@
 
 import { use, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import { initialesDe } from '../../../lib/initiales'
 import QRCode from 'qrcode'
 import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken } from '../../../lib/device'
 import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera } from '../../../lib/camera'
@@ -49,14 +50,6 @@ function formatCourt(iso) {
     if (isNaN(d.getTime())) return ''
     return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }).replace(/\//g, ' · ')
   } catch { return '' }
-}
-
-// « Claire & Martin » donne « C&M ». Un nom d'un seul tenant garde sa première
-// lettre : mieux vaut une initiale seule qu'un carton vide.
-function initialesDe(nom) {
-  const mots = String(nom || '').split(/[\s&+]+/).filter(Boolean)
-  if (!mots.length) return '✳'
-  return mots.slice(0, 2).map((m) => m[0].toUpperCase()).join('&')
 }
 
 // La molette de vues : un cran de 22 px, une fenêtre de deux crans et demi.
