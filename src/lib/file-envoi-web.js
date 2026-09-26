@@ -36,6 +36,8 @@
 //  aussi sept jours : aucune photo légitime ne se fait refuser.
 // ============================================================
 
+import { noterEtape } from './etapes'
+
 const BASE = 'ttf-envois'
 const MAGASIN = 'photos'
 const VERSION = 1
@@ -256,6 +258,11 @@ async function reporter(e, message) {
       ? AGE_MAX
       : Math.min(ATTENTE_MAX, ATTENTE_MIN * 2 ** Math.min(essais - 1, 5))
   await ecrire({ ...e, essais, dernierMot: message || e.dernierMot, prochainEssai: Date.now() + attente })
+  // Compteur de parcours : la photo coince pour de bon. Le motif donné par le
+  // serveur s'il y en a un, sinon c'est le réseau qui manque.
+  if (essais === ESSAIS_COINCE) {
+    noterEtape('envoi_coince', { eventId: e.eventId, detail: (message || 'reseau').slice(0, 120) })
+  }
   await diffuser()
   planifier(attente)
 }

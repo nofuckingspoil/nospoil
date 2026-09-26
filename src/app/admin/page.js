@@ -226,6 +226,7 @@ export default function Admin() {
           <h1 className="h2" style={{ margin: 0 }}>Tableau de bord</h1>
           <Link href="/admin/codes" className="linklike" style={{ fontSize: 14 }}>Codes promo →</Link>
           <Link href="/admin/avis" className="linklike" style={{ fontSize: 14 }}>Avis →</Link>
+          <Link href="/admin/parcours" className="linklike" style={{ fontSize: 14 }}>Parcours →</Link>
         </div>
 
         {/* Chiffres clés */}

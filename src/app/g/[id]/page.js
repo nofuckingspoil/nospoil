@@ -7,6 +7,7 @@ import JSZip from 'jszip'
 import { BRAND } from '../../../lib/brand'
 import { getOwnerToken, getGuest, getDeviceToken } from '../../../lib/device'
 import { brancherLesReveils, demarrerFileEnvoi } from '../../../lib/file-envoi-web'
+import { noterEtape, marquerOrganisateur } from '../../../lib/etapes'
 import { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, cssTeinte, tamponDate, cuirePhoto } from '../../../lib/film'
 import Collage from '../../../components/Collage'
 import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInvite'
@@ -927,6 +928,16 @@ export default function Gallery({ params }) {
       .catch(() => setError('Connexion impossible.'))
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Compteur de parcours : l'album révélé est à l'écran, pour un invité (pas
+  // pour l'organisateur, pas derrière la porte du code). Le détail dit si
+  // cette personne avait participé depuis ce téléphone ou vient seulement voir.
+  useEffect(() => {
+    if (!data) return
+    if (data.isOwner) { marquerOrganisateur(id); return }
+    if (!data.revealed || data.quotaBlocked || data.needCode) return
+    noterEtape('album', { eventId: id, detail: getGuest(id)?.guestId ? 'participant' : 'visiteur' })
+  }, [data, id])
 
   // ------------------------------------------------------------------
   //  Quand une image casse, on redemande des adresses fraîches.

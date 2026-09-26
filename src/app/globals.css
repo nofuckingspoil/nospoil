@@ -4083,3 +4083,34 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   max-width: calc(100% - 16px); overflow: hidden; text-overflow: ellipsis;
   box-shadow: 0 8px 20px rgba(34, 26, 18, .25);
 }
+
+/* ---------- /admin/parcours : les entonnoirs ----------
+   Une barre par étape, longue comme la part des arrivants qui l'ont
+   atteinte. La perte depuis l'étape d'avant se lit à droite ; la plus grosse
+   est en rouge, c'est la marche à réparer en premier. */
+.parcours-legende { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: var(--text3); margin: 0 0 16px; }
+.parcours-legende i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+.parcours-liste { display: flex; flex-direction: column; gap: 14px; margin-bottom: 28px; }
+.parcours-etape {
+  background: var(--card); border: 1px solid var(--line-soft);
+  border-radius: 14px; padding: 13px 14px;
+}
+.parcours-etape.hors { border-style: dashed; }
+.parcours-etape.pire { border-color: #b23b2e; }
+.parcours-tete { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.parcours-tete .t { font-size: 14px; font-weight: 600; color: var(--ink); flex: 1 1 180px; }
+.parcours-tete .n { font-family: var(--font-mono); font-size: 13px; color: var(--ink); }
+.parcours-tete .pct { font-family: var(--font-mono); font-size: 12px; color: var(--text4); }
+.parcours-perte {
+  font-family: var(--font-mono); font-size: 11.5px; padding: 2px 8px; border-radius: 999px;
+  background: rgba(34,26,18,.06); color: var(--text3); white-space: nowrap;
+}
+.parcours-perte.pire { background: #fbe9e6; color: #b23b2e; font-weight: 700; }
+.parcours-piste { height: 12px; border-radius: 999px; background: rgba(34,26,18,.07); overflow: hidden; }
+.parcours-piste .plein { display: flex; height: 100%; border-radius: 999px; overflow: hidden; }
+.parcours-piste .plein i { display: block; height: 100%; }
+.parcours-support { display: flex; gap: 12px; flex-wrap: wrap; font-size: 11.5px; color: var(--text4); margin-top: 6px; }
+.parcours-details { font-size: 12px; color: var(--text3); margin-top: 6px; line-height: 1.5; }
+.parcours-details code { font-family: var(--font-mono); font-size: 11.5px; background: rgba(34,26,18,.05); padding: 1px 5px; border-radius: 5px; }
+.parcours-filtres { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
+.parcours-filtres select { max-width: 100%; }

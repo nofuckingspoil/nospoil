@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Logo from '../../../components/Logo'
 import { rememberMyEvent, saveAccount } from '../../../lib/device'
 import { track } from '../../../lib/tracking'
+import { noterEtape } from '../../../lib/etapes'
 
 // Le tunnel long (/create) demande la couverture AVANT le paiement : il la met
 // de côté, compressée, le temps de l'aller-retour Stripe. Les tunnels courts ne
@@ -42,6 +43,7 @@ function PaiementInner() {
         if (done) return
 
         rememberMyEvent(data.id)
+        noterEtape('crea_termine', { eventId: data.id, detail: 'payant' })
 
         // Publicité : la vente. C'est CE signal que les campagnes apprennent à
         // reproduire, d'où le vrai montant encaissé (remise déduite).

@@ -11,6 +11,7 @@ import { fileToImage, compressToBlob } from '../../lib/camera'
 import { DUREE_PROPOSEE_MIN } from '../../lib/rappels'
 import { maintenant, finProposee, REVELATION_PROPOSEE } from '../../lib/event-defaults'
 import { track } from '../../lib/tracking'
+import { noterEtape } from '../../lib/etapes'
 import TierPicker from '../../components/TierPicker'
 import SelecteurDate from '../../components/SelecteurDate'
 import PromoField from '../../components/PromoField'
@@ -185,6 +186,12 @@ function CreateForm() {
   useEffect(() => {
     try { window.scrollTo({ top: 0 }) } catch {}
   }, [step])
+  // Compteur de parcours : chaque écran atteint, une fois par visite. Le
+  // premier (le nom) s'affiche à l'arrivée, il porte donc le nom d'ouverture.
+  useEffect(() => {
+    noterEtape(ecran === 'nom' ? 'crea_ouverture' : `crea_${ecran}`)
+  }, [ecran])
+
   const allerA = (cle) => goTo(ETAPES.indexOf(cle) + 1)
   const suivant = () => goTo(step + 1)
   const precedent = () => goTo(Math.max(1, step - 1))
@@ -388,6 +395,7 @@ function CreateForm() {
         })
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || 'Erreur.')
+        noterEtape('crea_paiement', { detail: `formule_${tier.maxGuests}` })
         window.location.href = data.url // redirection vers la page de paiement Stripe
         return
       } catch (err) { setError(err.message); setLoading(false); return }
@@ -402,6 +410,7 @@ function CreateForm() {
       if (!res.ok) throw new Error(data.error || 'Erreur.')
       rememberMyEvent(data.id)
       saveAccount(email.trim().toLowerCase())
+      noterEtape('crea_termine', { eventId: data.id, detail: 'gratuit' })
 
       // Publicité : événement gratuit créé. C'est la conversion à optimiser sur
       // du trafic froid : l'inconnu vient de devenir utilisateur.

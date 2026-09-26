@@ -46,6 +46,25 @@ export async function insertRow(table, row) {
   return { ok: res.status < 300, status: res.status, data: Array.isArray(data) ? data[0] : data }
 }
 
+// --- Insertion qui ignore les doublons ---
+// Si une ligne porte déjà la même valeur dans la colonne unique `colonne`, la
+// base ne dit rien et ne change rien : utile pour les compteurs où « une fois
+// par personne » suffit. Ne renvoie pas la ligne (personne n'en a besoin).
+export async function insertIgnore(table, row, colonne) {
+  assertConfig()
+  const res = await fetch(`${URL}/rest/v1/${table}?on_conflict=${encodeURIComponent(colonne)}`, {
+    method: 'POST',
+    headers: {
+      ...authHeaders(),
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=ignore-duplicates,return=minimal',
+    },
+    body: JSON.stringify(row),
+    cache: 'no-store',
+  })
+  return { ok: res.status < 300, status: res.status }
+}
+
 // --- Mise à jour de ligne(s) filtrée(s) (PATCH) ---
 export async function updateRow(table, query, patch) {
   assertConfig()

@@ -1,0 +1,66 @@
+// ============================================================
+//  La liste des étapes du compteur de parcours.
+//
+//  Partagée par la route qui les reçoit (/api/etape), le petit envoyeur du
+//  site (lib/etapes.js) et la page qui les affiche (/admin/parcours). Un seul
+//  endroit, pour qu'aucun des trois ne parle d'une étape que les autres
+//  ignorent.
+//
+//  ATTENTION : ces noms sont aussi envoyés par l'app iPhone et l'extrait
+//  d'app (App Clip). Renommer une étape ici, c'est la faire refuser dès la
+//  prochaine version de l'app déjà installée. On en ajoute, on n'en renomme
+//  jamais.
+// ============================================================
+
+// Les invités, dans l'ordre de l'entonnoir. `chaine: true` : l'étape fait
+// partie du chemin principal, et l'atteindre prouve qu'on est passé par les
+// précédentes (quelqu'un qui a pris une photo a forcément ouvert la page).
+// Les autres se comptent à part.
+export const ETAPES_INVITE = [
+  { id: 'ouverture', label: 'Arrive sur la page de la soirée', chaine: true },
+  { id: 'formulaire', label: 'Voit le formulaire prénom + mail', chaine: true },
+  { id: 'inscrit', label: 'Inscrit', chaine: true },
+  { id: 'camera_ok', label: "Voit l'image de sa caméra", chaine: true },
+  { id: 'photo', label: 'Prend sa première photo', chaine: true },
+  { id: 'album', label: "Ouvre l'album après la révélation", chaine: false },
+]
+
+// Les ennuis, comptés à part : ils ne sont pas une marche de l'escalier, ils
+// expliquent pourquoi on en tombe.
+export const ETAPES_PROBLEME = [
+  { id: 'camera_refus', label: 'Caméra refusée ou en panne' },
+  { id: 'envoi_coince', label: "Photo qui n'arrive pas à partir" },
+]
+
+// Les organisateurs : le tunnel /create, un écran après l'autre (voir la
+// liste ETAPES de src/app/create/page.js). Le premier écran, celui du nom,
+// est `crea_ouverture` : il s'affiche à l'arrivée sur la page.
+// `crea_code` et `crea_paiement` sont deux branches (formule gratuite : code
+// reçu par mail ; formule payante : départ vers Stripe), pas des marches.
+export const ETAPES_ORGA = [
+  { id: 'crea_ouverture', label: 'Arrive sur la création (écran du nom)', chaine: true },
+  { id: 'crea_debut', label: 'Écran : date de début', chaine: true },
+  { id: 'crea_fin', label: 'Écran : date de fin', chaine: true },
+  { id: 'crea_revelation', label: 'Écran : révélation', chaine: true },
+  { id: 'crea_cliches', label: 'Écran : nombre de clichés', chaine: true },
+  { id: 'crea_revoir', label: 'Écran : revoir ses photos', chaine: true },
+  { id: 'crea_couverture', label: 'Écran : photo de couverture', chaine: true },
+  { id: 'crea_formule', label: 'Écran : formule', chaine: true },
+  { id: 'crea_final', label: 'Écran : mail et récapitulatif', chaine: true },
+  { id: 'crea_code', label: 'Écran : code reçu par mail (gratuit)', chaine: false },
+  { id: 'crea_paiement', label: 'Part vers le paiement (payant)', chaine: false },
+  { id: 'crea_termine', label: 'Événement créé', chaine: true },
+]
+
+export const SUPPORTS = ['site', 'app', 'clip']
+
+const TOUTES = [...ETAPES_INVITE, ...ETAPES_PROBLEME, ...ETAPES_ORGA].map((e) => e.id)
+
+export function etapeConnue(id) {
+  return TOUTES.includes(id)
+}
+
+// Une étape d'invité n'a de sens qu'attachée à une soirée.
+export function etapeInvite(id) {
+  return !id.startsWith('crea_')
+}

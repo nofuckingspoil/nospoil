@@ -6,7 +6,8 @@ import { initialesDe } from '../../../lib/initiales'
 import QRCode from 'qrcode'
 import IconeCorbeille from '../../../components/IconeCorbeille'
 import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken, prendrePrenomOrganisateur } from '../../../lib/device'
-import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera } from '../../../lib/camera'
+import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera, familleNavigateur } from '../../../lib/camera'
+import { noterEtape, marquerOrganisateur } from '../../../lib/etapes'
 import CameraBloquee from '../../../components/CameraBloquee'
 import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../lib/photo-mode'
 import { pushPossible, pushEtat, dejaPropose, marquerPropose, activerPush } from '../../../lib/push'
@@ -214,6 +215,10 @@ export default function GuestCamera({ params }) {
         // page suivante montre, animation d'ouverture comprise. `replace` pour
         // que le retour du navigateur ne ramène pas ici.
         if (d.revealed) { window.location.replace(`/g/${id}`); return }
+        // Compteur de parcours : l'organisateur qui vient photographier sa
+        // propre soirée n'est pas un invité, il ne compte pas dans l'entonnoir.
+        if (d.isOwner) marquerOrganisateur(id)
+        noterEtape('ouverture', { eventId: id })
         const saved = getGuest(id)
         const prenomOrga = d.isOwner ? prendrePrenomOrganisateur(id) : ''
         if (saved?.name) { setName(saved.name); if (saved.email) setEmail(saved.email); join(saved.name, saved.email) }
@@ -263,6 +268,11 @@ export default function GuestCamera({ params }) {
       document.removeEventListener('visibilitychange', reveil)
     }
   }, [meta?.revealAt, id])
+
+  // Compteur de parcours : le formulaire prénom + mail est à l'écran.
+  useEffect(() => {
+    if (phase === 'name') noterEtape('formulaire', { eventId: id })
+  }, [phase, id])
 
   useEffect(() => {
     if (phase === 'camera' && liveCam) startCamera()
@@ -591,6 +601,7 @@ export default function GuestCamera({ params }) {
       saveGuest(id, d.guestId, d.displayName, d.email ?? emailVal)
       if (d.token) setMonJeton(d.token)
       setGuest({ guestId: d.guestId, shotsTaken: d.shotsTaken, shotsPerGuest: d.shotsPerGuest })
+      noterEtape('inscrit', { eventId: id, detail: emailVal ? 'avec_mail' : 'sans_mail' })
       setLiveCam(supportsLiveCamera())
       loadMyPhotos()
       setPhase('camera')
@@ -631,8 +642,16 @@ export default function GuestCamera({ params }) {
       setCamBlocked(false)
       setCamDenied(false)
       if (videoRef.current) { videoRef.current.srcObject = stream; await videoRef.current.play().catch(() => {}) }
+      noterEtape('camera_ok', { eventId: id })
     } catch (err) {
       setLiveCam(false)
+      // Compteur de parcours : le nom de l'erreur et le type de téléphone, rien
+      // de plus. C'est ce qui dit si le blocage vient d'un refus ou d'un
+      // navigateur incapable.
+      noterEtape('camera_refus', {
+        eventId: id,
+        detail: `${(err && (err.name || err.message)) || 'inconnue'} · ${familleNavigateur()}${isInAppBrowser() ? ' · mini-navigateur' : ''}`,
+      })
       // Accès refusé (par réflexe ?) : on le signale pour proposer de réautoriser
       if (err && (err.name === 'NotAllowedError' || err.name === 'SecurityError')) {
         setCamBlocked(true)
@@ -688,6 +707,7 @@ export default function GuestCamera({ params }) {
   // Un cliché de plus, à confirmer ou à envoyer selon le mode. Le compteur ne
   // bouge qu'à l'envoi : une photo reprise n'a jamais existé.
   async function proposer(blob) {
+    noterEtape('photo', { eventId: id }) // le premier déclic : les suivants sont ignorés
     if (jeuEnCours && demandeConfirmation(mode)) {
       setAConfirmer((v) => { if (v) URL.revokeObjectURL(v.url); return { blob, url: URL.createObjectURL(blob) } })
       return
