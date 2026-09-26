@@ -11,23 +11,9 @@ import { track } from '../../../lib/tracking'
 import TierPicker from '../../../components/TierPicker'
 import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
+import { atDay, maintenant, finProposee, REVELATION_PROPOSEE } from '../../../lib/event-defaults'
 
 // ---------- Petits utilitaires de date ----------
-
-function atDay(daysAhead, hour, from = new Date()) {
-  const d = new Date(from)
-  d.setDate(d.getDate() + daysAhead)
-  d.setHours(hour, 0, 0, 0)
-  return d
-}
-
-// Proposition par défaut pour la soirée : le prochain samedi à 19h.
-function nextSaturday() {
-  const d = new Date()
-  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7))
-  d.setHours(19, 0, 0, 0)
-  return d
-}
 
 function toInputValue(d) {
   const pad = (n) => String(n).padStart(2, '0')
@@ -89,9 +75,12 @@ function CreateForm() {
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
-  const [startsAt, setStartsAt] = useState(toInputValue(nextSaturday()))
-  const [revealKey, setRevealKey] = useState('d1-20')
-  const [revealAt, setRevealAt] = useState(toInputValue(atDay(1, 20, nextSaturday())))
+  // Dates proposées (voir lib/event-defaults.js) : début maintenant,
+  // révélation le lendemain à midi.
+  const [depart] = useState(maintenant)
+  const [startsAt, setStartsAt] = useState(() => toInputValue(depart))
+  const [revealKey, setRevealKey] = useState(REVELATION_PROPOSEE.key)
+  const [revealAt, setRevealAt] = useState(() => toInputValue(atDay(REVELATION_PROPOSEE.days, REVELATION_PROPOSEE.hour, depart)))
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -196,6 +185,9 @@ function CreateForm() {
       ownerToken: getDeviceToken(), name, ownerEmail: email.trim(),
       code: code.replace(/\D/g, ''),
       startsAt: new Date(startsAt).toISOString(),
+      // Pas de question sur la fin dans ce tunnel : on propose le lendemain à
+      // 8 h. Le serveur l'ignore si elle tombe après la révélation choisie.
+      endsAt: finProposee(new Date(startsAt)).toISOString(),
       revealAt: new Date(revealAt).toISOString(), shotsPerGuest: DEFAULT_SHOTS,
       // Même promesse que le tunnel long, dite explicitement : sans ce champ,
       // le serveur retomberait sur « album ouvert », qui n'est que le repli des

@@ -9,6 +9,7 @@ import { MODE_OPTIONS, MODE_PROPOSE } from '../../lib/photo-mode'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise, SHOTS_MIN, SHOTS_MAX } from '../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../lib/camera'
 import { DUREE_PROPOSEE_MIN } from '../../lib/rappels'
+import { maintenant, finProposee, REVELATION_PROPOSEE } from '../../lib/event-defaults'
 import { track } from '../../lib/tracking'
 import TierPicker from '../../components/TierPicker'
 import SelecteurDate from '../../components/SelecteurDate'
@@ -20,14 +21,6 @@ function atDay(daysAhead, hour, from = new Date()) {
   const d = new Date(from)
   d.setDate(d.getDate() + daysAhead)
   d.setHours(hour, 0, 0, 0)
-  return d
-}
-
-// Proposition par défaut pour la soirée : le prochain samedi à 19h.
-function nextSaturday() {
-  const d = new Date()
-  d.setDate(d.getDate() + ((6 - d.getDay() + 7) % 7 || 7))
-  d.setHours(19, 0, 0, 0)
   return d
 }
 
@@ -149,12 +142,17 @@ function CreateForm() {
   const [shots, setShots] = useState(5)
   const [shotsCustom, setShotsCustom] = useState(false)
   const [photoMode, setPhotoMode] = useState(MODE_PROPOSE)
-  const [startsAt, setStartsAt] = useState(toInputValue(nextSaturday()))
-  // Fin de la fête : proposée six heures après le début, et modifiable. C'est
-  // elle qui règle la cadence des rappels envoyés aux participants.
-  const [endsAt, setEndsAt] = useState(toInputValue(new Date(nextSaturday().getTime() + DUREE_PROPOSEE_MIN * 60000)))
-  const [revealKey, setRevealKey] = useState('d1-20')
-  const [revealAt, setRevealAt] = useState(toInputValue(atDay(1, 20, nextSaturday())))
+  // Dates proposées (voir lib/event-defaults.js) : début maintenant, fin le
+  // lendemain à 8 h, révélation le lendemain à midi.
+  const [depart] = useState(maintenant)
+  const [startsAt, setStartsAt] = useState(() => toInputValue(depart))
+  // Fin de la fête, modifiable. C'est elle qui règle la cadence des rappels
+  // envoyés aux participants. Tant qu'on n'y a pas touché, elle suit le début
+  // (« le lendemain à 8 h » du nouveau jour) ; ensuite, la fête garde sa durée.
+  const [endsAt, setEndsAt] = useState(() => toInputValue(finProposee(depart)))
+  const [finChoisie, setFinChoisie] = useState(false)
+  const [revealKey, setRevealKey] = useState(REVELATION_PROPOSEE.key)
+  const [revealAt, setRevealAt] = useState(() => toInputValue(apresLaFete(REVELATION_PROPOSEE.days, REVELATION_PROPOSEE.hour, depart, finProposee(depart))))
   const [coverFile, setCoverFile] = useState(null)
   const [coverPreview, setCoverPreview] = useState('')
   // Cadrage de la couverture, au format CSS « 50% 50% », et l'aperçu en grand.
@@ -224,6 +222,7 @@ function CreateForm() {
   // le lendemain de la fête.
   function pickFin(value) {
     setEndsAt(value)
+    setFinChoisie(true)
     recalerRevelation(startsAt, value)
   }
 
@@ -234,15 +233,20 @@ function CreateForm() {
     }
   }
 
-  // Changer la date de la soirée emmène la fin avec elle (la fête garde sa
-  // durée), et recale la révélation choisie (« le lendemain » doit rester le
-  // lendemain de la fête).
+  // Changer la date de la soirée emmène la fin avec elle, et recale la
+  // révélation choisie (« le lendemain » doit rester le lendemain de la fête).
+  // Fin jamais touchée : elle redevient « le lendemain à 8 h » du nouveau début.
+  // Fin choisie : la fête garde la durée qu'on lui a donnée.
   function pickStart(value) {
     setStartsAt(value)
     if (isNaN(new Date(value))) return
-    const ecart = Math.round((new Date(endsAt).getTime() - new Date(startsAt).getTime()) / 60000)
-    const minutes = Number.isFinite(ecart) && ecart > 0 ? ecart : DUREE_PROPOSEE_MIN
-    const fin = toInputValue(new Date(new Date(value).getTime() + minutes * 60000))
+    let fin
+    if (!finChoisie) fin = toInputValue(finProposee(new Date(value)))
+    else {
+      const ecart = Math.round((new Date(endsAt).getTime() - new Date(startsAt).getTime()) / 60000)
+      const minutes = Number.isFinite(ecart) && ecart > 0 ? ecart : DUREE_PROPOSEE_MIN
+      fin = toInputValue(new Date(new Date(value).getTime() + minutes * 60000))
+    }
     setEndsAt(fin)
     recalerRevelation(value, fin)
   }

@@ -9,7 +9,7 @@ import PromoField from '../../../components/PromoField'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../lib/device'
 import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise } from '../../../lib/pricing'
 import { track } from '../../../lib/tracking'
-import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, atDay, nextSaturday } from '../../../lib/event-defaults'
+import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, maintenant, finProposee, revelationProposee } from '../../../lib/event-defaults'
 import { MODE_PROPOSE } from '../../../lib/photo-mode'
 
 // ============================================================
@@ -102,14 +102,16 @@ function ExpressForm() {
     setLoading(true)
 
     // Valeurs de départ : l'organisateur les reprendra depuis son tableau de bord.
-    const start = nextSaturday()
-    const reveal = atDay(1, 20, start)
+    const start = maintenant()
+    const fin = finProposee(start)
+    const reveal = revelationProposee(start)
     const payload = {
       ownerToken: getDeviceToken(),
       name: DEFAULT_EVENT_NAME,
       ownerEmail: email.trim(),
       code: code.replace(/\D/g, ''),
       startsAt: start.toISOString(),
+      endsAt: fin.toISOString(),
       revealAt: reveal.toISOString(),
       shotsPerGuest: DEFAULT_SHOTS,
       // Même promesse que le tunnel long (voir /create) : le vrai jetable.
