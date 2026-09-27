@@ -140,6 +140,14 @@ export default function GuestCamera({ params }) {
   }, [meta])
   const [murCharge, setMurCharge] = useState(false) // le serveur a répondu au moins une fois
   const [pending, setPending] = useState([])     // [{tempId, url, essais}] en cours d'envoi
+  // Les photos déclenchées qui ne sont pas encore dans la file : le temps de
+  // les compresser et de les ranger, près d'une seconde sur un téléphone. Sans
+  // elles, le compteur ne bougeait qu'après, et le déclic semblait n'avoir rien fait.
+  const [enPrise, setEnPrise] = useState(0)
+  const idsEnFile = useRef(null)
+  // Numéro du dernier appel à /api/my-photos : une réponse doublée par une
+  // plus récente ramènerait un compteur périmé (voir loadMyPhotos).
+  const rangMesPhotos = useRef(0)
   const [viewer, setViewer] = useState(null)     // {id, url} photo affichée en grand
   const [confirmeSuppr, setConfirmeSuppr] = useState(false) // la suppression demande un second appui
   const [aConfirmer, setAConfirmer] = useState(null) // {blob, url} cliché montré une fois, à garder ou à reprendre
@@ -506,16 +514,32 @@ export default function GuestCamera({ params }) {
     void demarrerFileEnvoi()
     return sabonnerALaFile((ev) => {
       if (ev.type === 'file') {
-        setPending(
-          ev.enAttente
-            .filter((e) => e.eventId === id)
-            .map((e) => ({ tempId: e.id, url: e.url, essais: e.essais }))
-        )
+        const miennes = ev.enAttente.filter((e) => e.eventId === id)
+        // Une photo qui entre dans la file cesse d'être « en prise » : elle est
+        // désormais comptée par la file. Les deux changent dans le même geste,
+        // sinon le compteur la compterait deux fois le temps d'un affichage.
+        const avant = idsEnFile.current
+        const entrees = avant ? miennes.filter((e) => !avant.has(e.id)).length : 0
+        idsEnFile.current = new Set(miennes.map((e) => e.id))
+        if (entrees) setEnPrise((n) => Math.max(0, n - entrees))
+        setPending(miennes.map((e) => ({ tempId: e.id, url: e.url, essais: e.essais })))
         return
       }
       if (ev.eventId !== id) return
-      // Arrivée : le compteur du serveur remplace le nôtre, et l'album se relit.
-      if (ev.type === 'arrivee') { loadMyPhotos(); return }
+      // Arrivée : le serveur renvoie son compteur avec la réponse. On le prend
+      // AU MÊME INSTANT que la photo sort de la file. Attendre la relecture
+      // laissait un trou où la photo n'était comptée nulle part : le compteur
+      // remontait d'un cran (15, 14, 15, 14). La pastille de l'album, elle,
+      // n'attend plus son rafraîchissement des vingt secondes.
+      if (ev.type === 'arrivee') {
+        if (typeof ev.shotsTaken === 'number') {
+          rangMesPhotos.current++ // une relecture déjà en route est périmée
+          setGuest((g) => (g ? { ...g, shotsTaken: ev.shotsTaken } : g))
+        }
+        setMeta((m) => (m ? { ...m, photoCount: (m.photoCount || 0) + 1 } : m))
+        loadMyPhotos()
+        return
+      }
       if (ev.type === 'refus') { setError(ev.message || PLEINE()); loadMyPhotos(); return }
       if (ev.type === 'perdue') {
         setError("Une photo attendait depuis trop longtemps pour être encore envoyée.")
@@ -536,12 +560,15 @@ export default function GuestCamera({ params }) {
 
   // Charge mes photos confirmées + synchronise le compteur depuis le serveur
   async function loadMyPhotos() {
+    const rang = ++rangMesPhotos.current
     try {
       const res = await fetch('/api/my-photos', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken() }),
       })
       const d = await res.json()
+      // Doublée par une lecture plus récente : son compteur est périmé.
+      if (rang !== rangMesPhotos.current) return
       if (Array.isArray(d.photos)) setMyPhotos(d.photos)
       setGuest((g) => (g ? {
         ...g,
@@ -720,6 +747,7 @@ export default function GuestCamera({ params }) {
     if (!v) return
     setAConfirmer(null)
     URL.revokeObjectURL(v.url)
+    setEnPrise((n) => n + 1)
     capture(v.blob)
   }
 
@@ -758,6 +786,7 @@ export default function GuestCamera({ params }) {
         thumb: thumbBlob,
       })
     } catch {
+      setEnPrise((n) => Math.max(0, n - 1))
       // La mémoire du navigateur a refusé la photo (mode privé, disque plein) :
       // on le dit, c'est le seul cas où elle est réellement perdue.
       setError("Cette photo n'a pas pu être gardée. Réessaie.")
@@ -773,9 +802,13 @@ export default function GuestCamera({ params }) {
 
   async function snap() {
     if (busy || !videoRef.current) return
-    const remaining = guest.shotsPerGuest - guest.shotsTaken
+    // Les photos en route comptent : sans elles, on pouvait déclencher une
+    // pose de trop, que le serveur refusait ensuite.
     if (remaining <= 0) { setError(PLEINE()); return }
     setBusy(true); setError('')
+    // Le compteur descend au déclic. « Une seule chance » attend « Garder ».
+    const compte = !(jeuEnCours && demandeConfirmation(mode))
+    if (compte) setEnPrise((n) => n + 1)
 
     // Flash : torche réelle si dispo (Android), sinon flash écran pour les selfies (caméra avant)
     let torchUsed = false
@@ -791,7 +824,10 @@ export default function GuestCamera({ params }) {
     if (flashOn && !useScreenFlash) { setFlashFx(true); setTimeout(() => setFlashFx(false), 420) }
 
     try { await proposer(await compressToBlob(videoRef.current)) }
-    catch (err) { setError(err.message || 'Erreur.') }
+    catch (err) {
+      if (compte) setEnPrise((n) => Math.max(0, n - 1))
+      setError(err.message || 'Erreur.')
+    }
     finally {
       setBusy(false)
       if (useScreenFlash) setScreenFlash(false)
@@ -911,8 +947,13 @@ export default function GuestCamera({ params }) {
     if (!file) return
     setBusy(true); setError('')
     fireShutterFeedback()
+    const compte = !(jeuEnCours && demandeConfirmation(mode))
+    if (compte) setEnPrise((n) => n + 1)
     try { await proposer(await prepareUpload(file)) }
-    catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
+    catch (err) {
+      if (compte) setEnPrise((n) => Math.max(0, n - 1))
+      setError(err.message || 'Erreur.')
+    } finally { setBusy(false) }
   }
 
   // Import depuis la galerie (compte dans le solde, comme une photo prise)
@@ -921,8 +962,13 @@ export default function GuestCamera({ params }) {
     if (!file) return
     if (full) { setError(suppressionOuverte ? 'Pellicule pleine : supprime une photo pour en importer une.' : PLEINE()); return }
     setBusy(true); setError('')
+    const compte = !(jeuEnCours && demandeConfirmation(mode))
+    if (compte) setEnPrise((n) => n + 1)
     try { await proposer(await prepareUpload(file)) }
-    catch (err) { setError(err.message || 'Erreur.') } finally { setBusy(false) }
+    catch (err) {
+      if (compte) setEnPrise((n) => Math.max(0, n - 1))
+      setError(err.message || 'Erreur.')
+    } finally { setBusy(false) }
   }
 
   async function removePhoto() {
@@ -947,7 +993,7 @@ export default function GuestCamera({ params }) {
   // déclencheur donnait l'impression de n'avoir rien fait. Une photo en file
   // est une pose brûlée, elle partira.
   const prises = guest
-    ? Math.min(guest.shotsPerGuest, guest.shotsTaken + pending.length)
+    ? Math.min(guest.shotsPerGuest, guest.shotsTaken + pending.length + enPrise)
     : 0
   const coince = pending.filter((p) => (p.essais || 0) >= ESSAIS_COINCE)
   const remaining = guest ? guest.shotsPerGuest - prises : 0
