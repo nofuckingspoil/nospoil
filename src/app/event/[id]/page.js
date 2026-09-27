@@ -900,7 +900,9 @@ export default function EventManage({ params }) {
         <a href={`/j/${id}`} onClick={ouvrirMonAppareil}>Mon appareil 📷</a>
       </nav>
 
-      <ProposerAppIPhone email={ev.ownerEmail} />
+      {/* Avant et pendant la fête seulement : une fois finie, il n'y a plus de
+          photos à prendre, l'organisateur vérifie et valide l'album. */}
+      {phase !== APRES && <ProposerAppIPhone email={ev.ownerEmail} />}
 
       {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque
           soit refusé : c'est le message qu'on veut voir le plus souvent.
