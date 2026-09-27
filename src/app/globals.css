@@ -1217,6 +1217,8 @@ body:has(.gal-page.panneau-ouvert) { overflow: hidden; }
 .badge { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; border-radius: 999px; padding: 4px 10px; }
 .badge-live { background: rgba(31,138,91,.16); color: var(--ok); }
 .badge-wait { background: rgba(236,91,51,.14); color: var(--accent-deep); }
+/* Pas encore commencée : ni l'orange d'une fête en cours, ni le vert d'un album ouvert. */
+.badge-soon { background: rgba(34,26,18,.07); color: var(--text2); }
 .badge .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
 
 /* ---------- Divers ---------- */

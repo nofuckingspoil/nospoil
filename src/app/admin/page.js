@@ -260,6 +260,15 @@ export default function Admin() {
   const reels = (events || []).filter((e) => !e.isTest).length
   const avg = (n) => (reels ? Math.round(n / reels) : 0)
 
+  // La colonne de date montre celle du tri choisi : trier par début en
+  // affichant la révélation rendait l'ordre illisible.
+  const colonneDate = sort === 'debut' ? 'Début' : sort === 'fin' ? 'Fin' : 'Révélation'
+  const dateDe = (e) => {
+    if (sort === 'debut') return e.startsAt
+    if (sort === 'fin') { const f = finDeLaFete(e); return Number.isFinite(f) ? new Date(f).toISOString() : null }
+    return e.revealAt
+  }
+
   const list = useMemo(() => {
     let l = (events || []).filter((e) => {
       if (q && !`${e.name} ${e.hostNames || ''} ${e.ownerEmail || ''}`.toLowerCase().includes(q.toLowerCase())) return false
@@ -428,7 +437,7 @@ export default function Admin() {
               <span>Photos</span>
               <span>Téléch.</span>
               <span>Numéros</span>
-              <span>Révélation</span>
+              <span>{colonneDate}</span>
               <span>Statut</span>
               <span>Avis</span>
               <span style={{ textAlign: 'right' }}>Actions</span>
@@ -465,10 +474,10 @@ export default function Admin() {
                   <span data-label="Photos"><span className="big" style={{ color: 'var(--accent)' }}>{e.photoCount}</span></span>
                   <span data-label="Téléch."><span className="big">{e.downloadCount}</span></span>
                   <span data-label="Numéros"><span className="big">{e.contactsCount}</span></span>
-                  <span data-label="Révélation">
-                    <span className="ev-quand" title={e.revealAt ? dateHeureParis(e.revealAt) : ''}>
-                      {relTime(e.revealAt)}
-                      <small>{dateCourte(e.revealAt)}</small>
+                  <span data-label={colonneDate}>
+                    <span className="ev-quand" title={dateDe(e) ? dateHeureParis(dateDe(e)) : ''}>
+                      {relTime(dateDe(e))}
+                      <small>{dateDe(e) ? dateCourte(dateDe(e)) : ''}</small>
                     </span>
                   </span>
                   <span data-label="Statut">
@@ -478,7 +487,9 @@ export default function Admin() {
                         ? <span className="badge badge-warn"><span className="dot" />À vérifier</span>
                         : e.revealed
                           ? <span className="badge badge-live"><span className="dot" />Révélé</span>
-                          : <span className="badge badge-wait"><span className="dot" />En cours</span>}
+                          : momentDe(e) === 'avenir'
+                            ? <span className="badge badge-soon"><span className="dot" />À venir</span>
+                            : <span className="badge badge-wait"><span className="dot" />En cours</span>}
                   </span>
                   {/* Les avis de cette soirée, à un clic. La pastille orange
                       signale qu'au moins un problème technique a été coché :
