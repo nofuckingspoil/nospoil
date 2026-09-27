@@ -8,18 +8,15 @@
 // ============================================================
 import 'server-only'
 import { ImageResponse } from 'next/og'
-import { selectRows } from './supabase'
+import { lireEvenement } from './evenement-serveur'
 
 export const TAILLE_OG = { width: 1200, height: 630 }
 
-// Nom de l'événement, ou null s'il est introuvable.
+// Nom de l'événement, ou null s'il est introuvable. Lu une seule fois par
+// requête : la page de l'appareil lit le même événement pour son tri.
 export async function nomEvenement(id) {
-  try {
-    const { data } = await selectRows('events', `id=eq.${id}&select=name,host_names`)
-    const ev = Array.isArray(data) ? data[0] : null
-    if (!ev) return null
-    return ev.host_names || ev.name || null
-  } catch { return null }
+  const ev = await lireEvenement(id)
+  return ev ? ev.host_names || ev.name || null : null
 }
 
 // La carte elle-même. `accroche` change selon qu'on invite ou qu'on partage.
