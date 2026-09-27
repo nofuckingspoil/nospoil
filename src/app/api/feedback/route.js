@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 // ============================================================
 //  Enregistrement des avis (enquête de satisfaction).
 //
@@ -185,8 +186,10 @@ export async function POST(request) {
   // Sans ce tri, un mariage de cent participants rendrait la boîte inutilisable et
   // l'alerte qui comptait passerait inaperçue.
   if (estUneAlerte({ ...ligne, rating: ligne.rating, nps: ligne.nps }) || qui.role === 'organisateur') {
-    try { await alerterAdmin({ avis: { ...ligne, id: cree.data?.id }, eventName: qui.ev?.name, guestName: qui.guest?.display_name }) }
-    catch (err) { console.error('avis : alerte admin', err) }
+    after(async () => {
+      try { await alerterAdmin({ avis: { ...ligne, id: cree.data?.id }, eventName: qui.ev?.name, guestName: qui.guest?.display_name }) }
+      catch (err) { console.error('avis : alerte admin', err) }
+    })
   }
 
   return Response.json({ ok: true, id: cree.data?.id || null })
@@ -240,8 +243,10 @@ async function completer(request, body, qui, id) {
   // faire basculer un avis tiède en alerte, pas l'inverse.
   const apres = { ...avant, ...suite }
   if (!estUneAlerte(avant) && estUneAlerte(apres)) {
-    try { await alerterAdmin({ avis: { ...apres, id }, eventName: qui.ev?.name, guestName: qui.guest?.display_name }) }
-    catch (err) { console.error('avis : alerte admin', err) }
+    after(async () => {
+      try { await alerterAdmin({ avis: { ...apres, id }, eventName: qui.ev?.name, guestName: qui.guest?.display_name }) }
+      catch (err) { console.error('avis : alerte admin', err) }
+    })
   }
 
   return Response.json({ ok: true, id })

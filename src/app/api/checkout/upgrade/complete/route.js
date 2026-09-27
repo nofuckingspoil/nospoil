@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 import { getStripe } from '../../../../../lib/stripe'
 import { selectRows } from '../../../../../lib/supabase'
 import { membrePar } from '../../../../../lib/equipe'
@@ -60,7 +61,7 @@ export async function POST(request) {
   // formule ne monte qu'une fois : le second est à rembourser, et personne ne
   // le verrait si on n'en disait rien ici.
   if (applique.deja && ev.upgrade_session_id && ev.upgrade_session_id !== session.id) {
-    try {
+    after(async () => { try {
       await alerterDoublePaiement({
         eventName: ev.name,
         eventId: ev.id,
@@ -68,7 +69,7 @@ export async function POST(request) {
         montantCents: session.amount_total,
         sessionId: session.id,
       })
-    } catch (err) { console.error('alerte double paiement:', err) }
+    } catch (err) { console.error('alerte double paiement:', err) } })
   }
 
   return Response.json({

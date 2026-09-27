@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 // ============================================================
 //  Signaler une photo de l'album.
 //
@@ -54,7 +55,8 @@ export async function POST(request, { params }) {
 
   // Prévenir l'organisateur, sans jamais faire échouer le signalement pour un
   // problème d'envoi de mail : la photo est déjà retirée, c'est l'essentiel.
-  try {
+  // Après la réponse : celui qui signale n'a pas à attendre le mail.
+  after(async () => { try {
     const ev = await selectRows('events', `id=eq.${id}&select=name,owner_email`)
     const evenement = Array.isArray(ev.data) ? ev.data[0] : null
     if (evenement?.owner_email) {
@@ -67,7 +69,7 @@ export async function POST(request, { params }) {
     }
   } catch (err) {
     console.error('mail signalement:', err)
-  }
+  } })
 
   return Response.json({ ok: true })
 }

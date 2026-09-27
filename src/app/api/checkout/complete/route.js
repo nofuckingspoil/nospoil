@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 import { getStripe } from '../../../../lib/stripe'
 import { insertRow, selectRows } from '../../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../../lib/mail'
@@ -105,8 +106,10 @@ export async function POST(request) {
     catch (err) { console.error('décompte code promo:', err) }
   }
 
-  // Mail d'accès organisateur (filet de sécurité).
-  if (ownerEmail) {
+  // Mail d'accès organisateur (filet de sécurité). Après la réponse :
+  // l'organisateur qui revient du paiement attendait l'envoi du mail avant de
+  // voir son tableau de bord.
+  if (ownerEmail) after(async () => {
     try {
       const base = siteUrl()
       const mail = eventCreatedEmail({
@@ -119,7 +122,7 @@ export async function POST(request) {
     } catch (err) {
       console.error('mail création événement payant:', err)
     }
-  }
+  })
 
   return Response.json({
     id: data.id,

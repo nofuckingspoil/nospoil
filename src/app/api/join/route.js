@@ -202,8 +202,11 @@ export async function POST(request) {
     // rendue, sinon retirer quelqu'un laisserait un siège vide et payé.
     const presents = fiches.filter((g) => !g.blocked).length
     if (plafonne && !estOrga && presents >= max) {
-      try { await alerteQuota(ev, presents, (displayName || '').toString().trim()) }
-      catch (err) { console.error('alerte quota:', err) }
+      // Après la réponse : l'invité à la porte n'a pas à attendre le mail.
+      after(async () => {
+        try { await alerteQuota(ev, presents, (displayName || '').toString().trim()) }
+        catch (err) { console.error('alerte quota:', err) }
+      })
       return Response.json({
         waiting: true,
         eventName: ev.name,

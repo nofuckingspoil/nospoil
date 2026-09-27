@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 import { insertRow } from '../../../lib/supabase'
 import { sendMail, eventCreatedEmail, siteUrl } from '../../../lib/mail'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode, ensureAccount } from '../../../lib/account'
@@ -123,8 +124,9 @@ export async function POST(request) {
   }
 
   // Mail d'accès organisateur : filet de sécurité si l'appareil ou le lien est perdu.
-  // Un échec d'envoi ne doit pas empêcher la création de l'événement.
-  try {
+  // Un échec d'envoi ne doit pas empêcher la création de l'événement. Après la
+  // réponse : l'organisateur attendait l'envoi avant de voir son tableau de bord.
+  after(async () => { try {
     const base = siteUrl()
     const mail = eventCreatedEmail({
       eventName: name.trim().slice(0, 80),
@@ -135,7 +137,7 @@ export async function POST(request) {
     await sendMail({ to: ownerEmail, subject: mail.subject, html: mail.html })
   } catch (err) {
     console.error('mail création événement:', err)
-  }
+  } })
 
   return Response.json({ id: data.id })
 }
