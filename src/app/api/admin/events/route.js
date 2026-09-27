@@ -12,7 +12,7 @@ export async function GET(request) {
 
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,host_names,owner_email,owner_token,cover_url,created_at,reveal_at,status,max_guests,download_count,promo_code,paid_cents,is_test,guests(count),photos(count)' +
+    'select=id,name,host_names,owner_email,owner_token,cover_url,created_at,starts_at,ends_at,reveal_at,reveal_paused,status,max_guests,download_count,promo_code,paid_cents,is_test,guests(count),photos(count)' +
       // Les essais du site ne sont pas des événements : ils encombreraient la
       // liste sans rien apprendre, et s'effacent d'eux-mêmes le lendemain.
       '&is_demo=is.false&order=created_at.desc'
@@ -56,6 +56,9 @@ export async function GET(request) {
     coverUrl: e.cover_url ? signedCovers[e.cover_url] || null : null,
     createdAt: e.created_at,
     revealAt: e.reveal_at,
+    startsAt: e.starts_at,
+    endsAt: e.ends_at,
+    revealPaused: !!e.reveal_paused,
     status: e.status,
     maxGuests: e.max_guests,
     revealed: new Date(e.reveal_at).getTime() <= Date.now(),

@@ -61,23 +61,62 @@ function IconeAvis() {
   )
 }
 
-function fmtDate(iso) {
-  try { return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'short', year: '2-digit' }) }
-  catch { return iso }
+// « sam. 27 sept. · 12:00 », à l'heure de Paris : la date exacte, sous le
+// « dans 3 j » qui ne dit pas quel jour.
+function dateCourte(iso) {
+  try {
+    const d = new Date(iso)
+    if (isNaN(d)) return ''
+    const jour = d.toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris', weekday: 'short', day: 'numeric', month: 'short' })
+    const heure = d.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' })
+    return `${jour} · ${heure}`
+  } catch { return '' }
 }
 
-// Date en langage humain : « dans 3 j », « il y a 2 mois », « aujourd'hui »
-function relTime(iso) {
-  const diff = new Date(iso).getTime() - Date.now()
-  const abs = Math.abs(diff)
-  const day = 86400000
-  if (abs < day) return "aujourd'hui"
-  let val, unit
-  if (abs < 30 * day) { val = Math.round(abs / day); unit = 'j' }
-  else if (abs < 365 * day) { val = Math.round(abs / (30 * day)); unit = 'mois' }
-  else { val = Math.round(abs / (365 * day)); unit = val > 1 ? 'ans' : 'an' }
-  return (diff >= 0 ? 'dans ' : 'il y a ') + val + ' ' + unit
+// Le jour du calendrier à Paris, « 2026-09-27 ». Les écarts se comptent en
+// jours du calendrier et non en tranches de 24 h : un lundi à 9 h, une
+// révélation mardi à 20 h est « demain », pas « dans 2 j » (35 h arrondies).
+const FUSEAU = 'Europe/Paris'
+function jourParis(d) {
+  return new Date(d).toLocaleDateString('fr-CA', { timeZone: FUSEAU })
 }
+function ecartJours(iso, maintenant = Date.now()) {
+  const a = Date.parse(jourParis(maintenant))
+  const b = Date.parse(jourParis(iso))
+  return Math.round((b - a) / 86400000)
+}
+function heureParis(iso) {
+  return new Date(iso).toLocaleTimeString('fr-FR', { timeZone: FUSEAU, hour: '2-digit', minute: '2-digit' })
+}
+function dateHeureParis(iso) {
+  return new Date(iso).toLocaleString('fr-FR', { timeZone: FUSEAU, weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })
+}
+
+// Date en langage humain : « demain », « dans 3 j », « il y a 2 mois ».
+function relTime(iso) {
+  if (!iso || isNaN(new Date(iso))) return '-'
+  const j = ecartJours(iso)
+  if (j === 0) return "aujourd'hui"
+  if (j === 1) return 'demain'
+  if (j === -1) return 'hier'
+  if (j === 2) return 'après-demain'
+  const abs = Math.abs(j)
+  let val, unit
+  if (abs < 30) { val = abs; unit = 'j' }
+  else if (abs < 365) { val = Math.round(abs / 30); unit = 'mois' }
+  else { val = Math.round(abs / 365); unit = val > 1 ? 'ans' : 'an' }
+  return (j > 0 ? 'dans ' : 'il y a ') + val + ' ' + unit
+}
+
+// Le titre d'un jour dans le bloc « à venir ».
+function titreJour(j, iso) {
+  if (j === 0) return "Aujourd'hui"
+  if (j === 1) return 'Demain'
+  const t = new Date(iso).toLocaleDateString('fr-FR', { timeZone: FUSEAU, weekday: 'long', day: 'numeric', month: 'long' })
+  return t.charAt(0).toUpperCase() + t.slice(1)
+}
+
+const JOURS_A_VENIR = 7
 
 export default function Admin() {
   const [authed, setAuthed] = useState(false)
@@ -115,6 +154,29 @@ export default function Admin() {
     if (k) load(k)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
+
+  // Les 7 prochains jours : qui fait la fête, qui se révèle, jour par jour.
+  // Les tests sont laissés de côté, comme dans les chiffres clés.
+  const aVenir = useMemo(() => {
+    if (!events) return []
+    const jours = new Map()
+    const ajouter = (iso, quoi, e) => {
+      if (!iso || isNaN(new Date(iso))) return
+      const j = ecartJours(iso)
+      if (j < 0 || j >= JOURS_A_VENIR) return
+      if (quoi === 'revelation' && new Date(iso).getTime() < Date.now()) return
+      if (!jours.has(j)) jours.set(j, { j, iso, lignes: [] })
+      jours.get(j).lignes.push({ quoi, iso, e })
+    }
+    for (const e of events) {
+      if (e.isTest || e.status === 'suspended') continue
+      ajouter(e.startsAt, 'debut', e)
+      ajouter(e.revealAt, 'revelation', e)
+    }
+    return [...jours.values()]
+      .sort((a, b) => a.j - b.j)
+      .map((d) => ({ ...d, lignes: d.lignes.sort((a, b) => new Date(a.iso) - new Date(b.iso)) }))
+  }, [events])
 
   // Un événement révélé mais sans aucune photo = à vérifier
   const isWarn = (e) => e.revealed && e.photoCount === 0
@@ -275,6 +337,26 @@ export default function Admin() {
           ))}
         </div>
 
+        {/* Les 7 prochains jours */}
+        <div className="avenir">
+          <div className="avenir-titre">Les {JOURS_A_VENIR} prochains jours</div>
+          {aVenir.length === 0 ? (
+            <div className="muted" style={{ fontSize: 14 }}>Aucune fête ni révélation prévue.</div>
+          ) : aVenir.map((d) => (
+            <div className="avenir-jour" key={d.j}>
+              <div className="avenir-date">{titreJour(d.j, d.iso)}</div>
+              {d.lignes.map((l) => (
+                <a className="avenir-ligne" key={`${l.quoi}-${l.e.id}`} href={`/admin/event/${l.e.id}`}>
+                  <span className="avenir-heure">{heureParis(l.iso)}</span>
+                  <span className={`avenir-quoi ${l.quoi}`}>{l.quoi === 'debut' ? 'Jour J' : 'Révélation'}</span>
+                  <span className="avenir-nom">{l.e.hostNames || l.e.name}</span>
+                  <span className="avenir-chiffres">{l.e.guestCount} part. · {l.e.photoCount} photos</span>
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
+
         {/* Barre d'outils : recherche, filtres, tri */}
         <div className="adash-toolbar">
           <div className="adash-search">
@@ -354,7 +436,10 @@ export default function Admin() {
                   <span data-label="Téléch."><span className="big">{e.downloadCount}</span></span>
                   <span data-label="Numéros"><span className="big">{e.contactsCount}</span></span>
                   <span data-label="Révélation">
-                    <span title={fmtDate(e.revealAt)}>{relTime(e.revealAt)}</span>
+                    <span className="ev-quand" title={e.revealAt ? dateHeureParis(e.revealAt) : ''}>
+                      {relTime(e.revealAt)}
+                      <small>{dateCourte(e.revealAt)}</small>
+                    </span>
                   </span>
                   <span data-label="Statut">
                     {suspendu
