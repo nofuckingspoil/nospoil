@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import Logo from '../../components/Logo'
 import { tierByGuests, formatPrice } from '../../lib/pricing'
+import { finDe } from '../../lib/rappels'
 
 const KEY_STORE = 'declic_admin_key'
 
@@ -118,6 +119,30 @@ function titreJour(j, iso) {
 
 const JOURS_A_VENIR = 7
 
+// Où en est une soirée : pas encore commencée, en cours (commencée, pas encore
+// révélée), ou terminée (révélée).
+function momentDe(e, maintenant = Date.now()) {
+  if (e.revealed) return 'termine'
+  const debut = Date.parse(e.startsAt)
+  if (Number.isFinite(debut) && debut > maintenant) return 'avenir'
+  return 'encours'
+}
+
+// La fin de la fête : celle qu'a donnée l'organisateur, sinon l'estimation
+// habituelle (six heures après le début, jamais après la révélation).
+const finDeLaFete = (e) => finDe({ startsAt: e.startsAt, endsAt: e.endsAt, revealAt: e.revealAt })
+
+// Tri par date « au plus proche » : ce qui arrive d'abord, dans l'ordre ;
+// puis ce qui est passé, du plus récent au plus ancien. Un tri croissant brut
+// mettrait en tête les soirées d'il y a trois mois.
+function parProximite(ta, tb, maintenant = Date.now()) {
+  const a = Number.isFinite(ta) ? ta : -Infinity
+  const b = Number.isFinite(tb) ? tb : -Infinity
+  const aVenirA = a >= maintenant, aVenirB = b >= maintenant
+  if (aVenirA !== aVenirB) return aVenirA ? -1 : 1
+  return aVenirA ? a - b : b - a
+}
+
 export default function Admin() {
   const [authed, setAuthed] = useState(false)
   const [key, setKey] = useState('')      // clé admin courante, pour les actions
@@ -134,8 +159,8 @@ export default function Admin() {
   const [busy, setBusy] = useState(false)
 
   const [q, setQ] = useState('')
-  const [statusFilter, setStatusFilter] = useState('all') // all | ongoing | revealed | warn
-  const [sort, setSort] = useState('recent')               // recent | photos | guests | reveal
+  const [statusFilter, setStatusFilter] = useState('all') // all | avenir | encours | termine | warn | test
+  const [sort, setSort] = useState('recent')               // recent | debut | fin | reveal | photos | guests
 
   async function load(key) {
     setLoading(true); setError('')
@@ -215,7 +240,7 @@ export default function Admin() {
   }
 
   const totals = useMemo(() => {
-    const t = { guests: 0, photos: 0, downloads: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0, tests: 0 }
+    const t = { guests: 0, photos: 0, downloads: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0, tests: 0, avenir: 0, encours: 0, termine: 0 }
     for (const e of events || []) {
       // Les événements d'essai ne comptent dans aucun total : sinon les
       // moyennes ne veulent plus rien dire, et le revenu encore moins.
@@ -226,6 +251,7 @@ export default function Admin() {
       // Les événements antérieurs à cet enregistrement gardent le prix du palier.
       t.revenue += e.paidCents ?? tierByGuests(e.maxGuests).priceCents
       if (e.revealed) t.revealed++; else t.ongoing++
+      t[momentDe(e)]++
     }
     return t
   }, [events])
@@ -237,8 +263,7 @@ export default function Admin() {
   const list = useMemo(() => {
     let l = (events || []).filter((e) => {
       if (q && !`${e.name} ${e.hostNames || ''} ${e.ownerEmail || ''}`.toLowerCase().includes(q.toLowerCase())) return false
-      if (statusFilter === 'ongoing' && e.revealed) return false
-      if (statusFilter === 'revealed' && !e.revealed) return false
+      if (['avenir', 'encours', 'termine'].includes(statusFilter) && (e.isTest || momentDe(e) !== statusFilter)) return false
       if (statusFilter === 'warn' && !isWarn(e)) return false
       if (statusFilter === 'test' && !e.isTest) return false
       return true
@@ -246,7 +271,9 @@ export default function Admin() {
     l = [...l].sort((a, b) => {
       if (sort === 'photos') return b.photoCount - a.photoCount
       if (sort === 'guests') return b.guestCount - a.guestCount
-      if (sort === 'reveal') return new Date(a.revealAt) - new Date(b.revealAt)
+      if (sort === 'debut') return parProximite(Date.parse(a.startsAt), Date.parse(b.startsAt))
+      if (sort === 'fin') return parProximite(finDeLaFete(a), finDeLaFete(b))
+      if (sort === 'reveal') return parProximite(Date.parse(a.revealAt), Date.parse(b.revealAt))
       return new Date(b.createdAt) - new Date(a.createdAt)
     })
     return l
@@ -297,7 +324,7 @@ export default function Admin() {
             <div className="lbl">Événements</div>
             <div className="val">{reels}</div>
             <div className="note">
-              {totals.ongoing} en cours · {totals.revealed} révélés
+              {totals.avenir} à venir · {totals.encours} en cours · {totals.termine} terminés
               {totals.tests > 0 && <> · {totals.tests} test{totals.tests > 1 ? 's' : ''} exclu{totals.tests > 1 ? 's' : ''}</>}
             </div>
           </div>
@@ -366,8 +393,9 @@ export default function Admin() {
           <div className="adash-filters">
             {[
               ['all', `Tous (${events.length})`],
-              ['ongoing', `En cours (${totals.ongoing})`],
-              ['revealed', `Révélés (${totals.revealed})`],
+              ['avenir', `À venir (${totals.avenir})`],
+              ['encours', `En cours (${totals.encours})`],
+              ['termine', `Terminés (${totals.termine})`],
               ['warn', `À vérifier (${warnCount})`],
               ['test', `Tests (${totals.tests})`],
             ].map(([val, label]) => (
@@ -380,7 +408,9 @@ export default function Admin() {
               <option value="recent">Trier : plus récents</option>
               <option value="photos">Trier : plus de photos</option>
               <option value="guests">Trier : plus de participants</option>
-              <option value="reveal">Trier : révélation</option>
+              <option value="debut">Trier : date de début</option>
+              <option value="fin">Trier : date de fin</option>
+              <option value="reveal">Trier : date de révélation</option>
             </select>
           </div>
         </div>
