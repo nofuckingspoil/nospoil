@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
 import { sendMail, guestAccessEmail, quotaEmail, siteUrl } from '../../../lib/mail'
@@ -231,17 +232,27 @@ export async function POST(request) {
   // revient sans la resaisir ne doit pas perdre son inscription à l'album.
   try {
     const patch = { last_active_at: new Date().toISOString() }
-    if (email) {
-      patch.email = email
-      // Un participant qui laisse son adresse est une personne comme une autre :
-      // c'est peut-être l'organisateur d'un autre événement. Et s'il vient de
-      // l'essai du site, on le note : c'est quelqu'un qui a tenu l'appareil.
-      const { data: evData } = await selectRows('events', `id=eq.${eventId}&select=is_demo`)
-      const estEssai = Array.isArray(evData) && !!evData[0]?.is_demo
-      patch.account_id = await ensureAccount(email, displayName, { demo: estEssai })
-    }
+    if (email) patch.email = email
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}
+
+  // Le compte et le mail partent APRÈS la réponse (voir plus bas, « after ») :
+  // l'invité attendait l'envoi du mail, près de deux secondes, devant un écran
+  // « Chargement… » avant de voir l'appareil photo. Rien de ce qu'on lui
+  // renvoie n'en dépend.
+  if (email) {
+    after(async () => {
+      try {
+        // Un participant qui laisse son adresse est une personne comme une
+        // autre : c'est peut-être l'organisateur d'un autre événement. Et s'il
+        // vient de l'essai du site, on le note : il a tenu l'appareil.
+        const { data: evData } = await selectRows('events', `id=eq.${eventId}&select=is_demo`)
+        const estEssai = Array.isArray(evData) && !!evData[0]?.is_demo
+        const compte = await ensureAccount(email, displayName, { demo: estEssai })
+        if (compte) await updateRow('guests', `id=eq.${data.guest_id}`, { account_id: compte })
+      } catch (err) { console.error('compte participant:', err) }
+    })
+  }
 
   // L'organisateur qui prend ses propres photos se nomme : sur une formule
   // gratuite, c'est la seule occasion de connaître son nom, Stripe ne l'ayant
@@ -263,8 +274,10 @@ export async function POST(request) {
   catch (err) { console.error('jeton participant:', err) }
 
   if (email) {
-    try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at, token) }
-    catch (err) { console.error('mail accès participant:', err) }
+    after(async () => {
+      try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at, token) }
+      catch (err) { console.error('mail accès participant:', err) }
+    })
   }
 
   return Response.json({
