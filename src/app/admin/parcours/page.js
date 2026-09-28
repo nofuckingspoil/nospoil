@@ -153,7 +153,7 @@ export default function AdminParcours() {
   const [loading, setLoading] = useState(false)
   const [donnees, setDonnees] = useState(null)
 
-  const [onglet, setOnglet] = useState('invites') // invites | orgas
+  const [onglet, setOnglet] = useState('invites') // invites | orgas | tirages
   const [periode, setPeriode] = useState('30')     // 7 | 30 | tout
   const [eventId, setEventId] = useState('')
 
@@ -233,6 +233,7 @@ export default function AdminParcours() {
         <div className="adash-filters" style={{ marginBottom: 14 }}>
           <button className={`chip ${onglet === 'invites' ? 'on' : ''}`} onClick={() => setOnglet('invites')}>Invités</button>
           <button className={`chip ${onglet === 'orgas' ? 'on' : ''}`} onClick={() => setOnglet('orgas')}>Organisateurs</button>
+          <button className={`chip ${onglet === 'tirages' ? 'on' : ''}`} onClick={() => setOnglet('tirages')}>Tirages</button>
         </div>
 
         <div className="parcours-filtres">
@@ -242,7 +243,7 @@ export default function AdminParcours() {
                 onClick={() => changer({ periode: val })} disabled={loading}>{label}</button>
             ))}
           </div>
-          {onglet === 'invites' && (
+          {onglet !== 'orgas' && (
             <select value={eventId} onChange={(e) => changer({ eventId: e.target.value })} disabled={loading}>
               <option value="">Toutes les soirées</option>
               {(donnees?.events || []).map((ev) => (
@@ -272,6 +273,16 @@ export default function AdminParcours() {
 
             <h3 className="h3" style={{ fontSize: 17, marginBottom: 12 }}>Problèmes</h3>
             {inv && <Problemes liste={inv.problemes} inscrits={inscrits} />}
+          </>
+        ) : onglet === 'tirages' ? (
+          <>
+            <p className="muted small" style={{ marginBottom: 12, lineHeight: 1.6 }}>
+              Au départ : <strong>{donnees?.tirages?.depart || 0}</strong> personne
+              {(donnees?.tirages?.depart || 0) > 1 ? 's' : ''} ayant ouvert un album révélé. La fenêtre
+              d&apos;invitation se compte à part : on peut commander sans l&apos;avoir vue (bouton du haut,
+              barre, mail). Les précisions de « Commence à choisir » disent par où l&apos;on est arrivé.
+            </p>
+            <Entonnoir donnees={donnees?.tirages} vide="Aucune ouverture d'album mesurée sur cette période." />
           </>
         ) : (
           <>
