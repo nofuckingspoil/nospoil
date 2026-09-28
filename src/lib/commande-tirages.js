@@ -300,3 +300,27 @@ export async function suivreExpedition(imprimeurCommandeId, lire) {
   await sendMail({ to: c.destinataire.email, subject: mail.subject, html: mail.html })
   return { envoye: true }
 }
+
+/**
+ * Filet de l'avis de l'imprimeur : on lui redemande l'étape de chaque commande
+ * envoyée dont le client n'a pas encore reçu son mail d'expédition. Si l'avis
+ * s'est perdu (ou n'a pas la forme attendue), le mail part quand même, au plus
+ * tard à la tournée suivante. On s'arrête à 30 jours : au-delà, une commande
+ * encore « non postée » demande qu'on regarde à la main.
+ */
+export async function verifierExpeditions(lire) {
+  const depuis = new Date(Date.now() - 30 * 86400000).toISOString()
+  const { data } = await selectRows(
+    TABLE,
+    `statut=eq.envoyee&expedition_envoyee_le=is.null&imprimeur=eq.${imprimeurChoisi()}` +
+      `&imprimeur_env=eq.live&envoye_le=gte.${depuis}&select=imprimeur_commande_id&limit=100`
+  )
+  const bilan = { verifiees: 0, mails: 0 }
+  for (const c of Array.isArray(data) ? data : []) {
+    if (!c.imprimeur_commande_id) continue
+    bilan.verifiees++
+    const r = await suivreExpedition(c.imprimeur_commande_id, lire).catch(() => null)
+    if (r?.envoye) bilan.mails++
+  }
+  return bilan
+}

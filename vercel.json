@@ -19,6 +19,10 @@
     {
       "path": "/api/cron/tirages",
       "schedule": "0 17 * * *"
+    },
+    {
+      "path": "/api/cron/tirages-suivi",
+      "schedule": "0 */2 * * *"
     }
   ],
   "headers": [

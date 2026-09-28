@@ -13,7 +13,10 @@ export const runtime = 'nodejs'
 
 export async function POST(request) {
   const corps = await request.json().catch(() => ({}))
-  const pk = String(corps?.pk || corps?.order_pk || corps?.order?.pk || corps?.id || '')
+  // Leur notice ne décrit pas ce message : on garde sa forme dans les journaux,
+  // pour vérifier qu'on y trouve bien le numéro de commande.
+  console.log('tirages: avis Familink reçu', JSON.stringify(corps).slice(0, 600))
+  const pk = String(corps?.pk || corps?.order_pk || corps?.order?.pk || corps?.order_id || corps?.data?.pk || corps?.id || '')
   if (!/^[A-Z]{2}\d{2}[A-Z]{2}$/.test(pk)) return Response.json({ ok: true })
   try {
     return Response.json({ ok: true, ...(await suivreExpedition(pk, lireCommandeFamilink)) })
