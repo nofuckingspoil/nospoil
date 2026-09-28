@@ -12,6 +12,7 @@
 //  une requête, ou comparés en mémoire une fois la ligne lue.
 // ============================================================
 import 'server-only'
+import { t } from './i18n'
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
@@ -21,6 +22,9 @@ export function estUuid(v) {
 
 // Réponse commune : un identifiant mal formé n'est pas une panne du serveur,
 // c'est une requête qui n'aurait jamais dû partir. On répond 400 sans détailler.
-export function identifiantInvalide() {
-  return Response.json({ error: 'Identifiant invalide.' }, { status: 400 })
+// `langue` : celle de la requête (langueRequete), français par défaut.
+export function identifiantInvalide(langue = 'fr') {
+  return Response.json({
+    error: t({ fr: 'Identifiant invalide.', en: 'Invalid identifier.', de: 'Ungültige Kennung.' }, langue),
+  }, { status: 400 })
 }

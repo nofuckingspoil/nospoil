@@ -1,6 +1,8 @@
 import { selectRows, insertRow, deleteRows } from '../../../../../lib/supabase'
-import { estSuspendu, MESSAGE_SUSPENDU } from '../../../../../lib/authz'
+import { estSuspendu, messageSuspendu } from '../../../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { t } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
@@ -10,22 +12,23 @@ export const runtime = 'nodejs'
 // participant de voter dix fois. Aucune route ne renvoie jamais qui a aimé quoi.
 export async function POST(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
   const { photoId, deviceToken, on } = await request.json().catch(() => ({}))
 
   if (!id || !photoId || !deviceToken) {
-    return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paramètres manquants.', en: 'Missing parameters.', de: 'Fehlende Parameter.' }, langue) }, { status: 400 })
   }
-  if (!estUuid(photoId)) return identifiantInvalide()
+  if (!estUuid(photoId)) return identifiantInvalide(langue)
   if (await estSuspendu(id)) {
-    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+    return Response.json({ error: messageSuspendu(langue) }, { status: 403 })
   }
 
   // La photo appartient-elle bien à cet album, et y est-elle visible ?
   const { data } = await selectRows('photos', `id=eq.${photoId}&select=id,event_id,hidden`)
   const photo = Array.isArray(data) ? data[0] : null
   if (!photo || photo.event_id !== id || photo.hidden) {
-    return Response.json({ error: 'Photo introuvable.' }, { status: 404 })
+    return Response.json({ error: t({ fr: 'Photo introuvable.', en: 'Photo not found.', de: 'Foto nicht gefunden.' }, langue) }, { status: 404 })
   }
 
   const filtre = `photo_id=eq.${photoId}&device_token=eq.${encodeURIComponent(deviceToken)}`

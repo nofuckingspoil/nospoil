@@ -7,17 +7,21 @@
 //  quand l'invité referme la page de paiement.
 // ============================================================
 import { confirmerSession } from '../../../../lib/commande-tirages'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 export const maxDuration = 60
 
 export async function POST(request) {
-  const { sessionId } = await request.json().catch(() => ({}))
+  const body = await request.json().catch(() => ({}))
+  const { sessionId } = body
+  const langue = langueValide(body.langue) || langueRequete(request)
   if (!/^cs_[A-Za-z0-9_]+$/.test(String(sessionId || ''))) {
-    return Response.json({ error: 'Paiement inconnu.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paiement inconnu.', en: 'Unknown payment.', de: 'Unbekannte Zahlung.' }, langue) }, { status: 400 })
   }
   const c = await confirmerSession(String(sessionId))
-  if (!c) return Response.json({ error: 'Paiement introuvable.' }, { status: 404 })
+  if (!c) return Response.json({ error: t({ fr: 'Paiement introuvable.', en: 'Payment not found.', de: 'Zahlung nicht gefunden.' }, langue) }, { status: 404 })
 
   return Response.json({
     statut: c.statut,

@@ -12,6 +12,7 @@
 // ============================================================
 import 'server-only'
 import { selectRows, insertRow, deleteRows } from './supabase'
+import { t } from './i18n'
 
 // Adresse de l'appelant, telle que Vercel la place devant la requête.
 // En développement local il n'y en a pas : on ne bloque alors personne.
@@ -41,6 +42,13 @@ export async function tropDeDemandes(ip, action, { max, minutes }) {
 }
 
 export const MESSAGE_TROP = 'Trop de demandes depuis cet appareil. Réessayez dans un moment.'
+export function messageTrop(langue = 'fr') {
+  return t({
+    fr: MESSAGE_TROP,
+    en: 'Too many requests from this device. Please try again in a moment.',
+    de: 'Zu viele Anfragen von diesem Gerät. Bitte versuchen Sie es gleich noch einmal.',
+  }, langue)
+}
 
 // Ménage : les lignes de comptage ne servent plus à rien passé une journée.
 export async function purgerCompteurs(now = new Date()) {

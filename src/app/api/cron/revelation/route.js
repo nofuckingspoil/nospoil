@@ -60,7 +60,7 @@ export async function GET(request) {
 
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,reveal_at,reveal_paused,max_guests' +
+    'select=id,name,reveal_at,reveal_paused,max_guests,langue' +
       `&reveal_at=lte.${now.toISOString()}` +
       `&reveal_at=gte.${depuis.toISOString()}` +
       '&reveal_paused=is.false' +

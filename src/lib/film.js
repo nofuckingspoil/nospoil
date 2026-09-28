@@ -11,7 +11,7 @@ import { compressToBlob, decodeImage } from './camera'
 import { PELLICULES, pelliculeParId, fabriqueLut } from './pellicules'
 
 // Les recettes vivent dans ./pellicules, lisible aussi du serveur (tirages).
-export { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, cssTeinte, tamponDate } from './pellicules'
+export { PELLICULES, PELLICULE_DEFAUT, pelliculeParId, pellicules, nomPellicule, cssTeinte, tamponDate } from './pellicules'
 
 // ---------- Cuisson (téléchargement) ----------
 

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useLangue } from './Langue'
 
 // Icône "Partager" d'iOS (carré avec flèche vers le haut)
 function ShareIcon({ size = 16 }) {
@@ -16,7 +17,13 @@ function ShareIcon({ size = 16 }) {
 // Android : vrai bouton d'installation (beforeinstallprompt).
 // iOS : instructions visuelles "Partager → Sur l'écran d'accueil".
 // `iphone={false}` : rien sur iPhone, où l'app native est proposée à la place.
-export default function InstallPrompt({ label = "Ajoute Time to Flash à ton écran d'accueil", iphone = true }) {
+export default function InstallPrompt({ label: labelRecu, iphone = true }) {
+  const { t } = useLangue()
+  const label = labelRecu ?? t({
+    fr: "Ajoute Time to Flash à ton écran d'accueil",
+    en: 'Add Time to Flash to your home screen',
+    de: 'Fügen Sie Time to Flash zum Home-Bildschirm hinzu',
+  })
   const [deferred, setDeferred] = useState(null)
   const [isIOS, setIsIOS] = useState(false)
   const [show, setShow] = useState(false)
@@ -51,16 +58,24 @@ export default function InstallPrompt({ label = "Ajoute Time to Flash à ton éc
   // ---- iOS : instructions visuelles ----
   if (isIOS) return (
     <div className="a2hs a2hs-ios">
-      <button className="a2hs-close" onClick={dismiss} aria-label="Fermer">×</button>
+      <button className="a2hs-close" onClick={dismiss} aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}>×</button>
       <div className="a2hs-title" style={{ paddingRight: 20 }}>📲 {label}</div>
       <div className="a2hs-steps">
         <div className="a2hs-step">
           <span className="a2hs-num">1</span>
-          <span>Touche <span className="a2hs-share"><ShareIcon size={15} /> Partager</span> en bas de Safari</span>
+          {t({
+            fr: <span>Touche <span className="a2hs-share"><ShareIcon size={15} /> Partager</span> en bas de Safari</span>,
+            en: <span>Tap <span className="a2hs-share"><ShareIcon size={15} /> Share</span> at the bottom of Safari</span>,
+            de: <span>Tippen Sie unten in Safari auf <span className="a2hs-share"><ShareIcon size={15} /> Teilen</span></span>,
+          })}
         </div>
         <div className="a2hs-step">
           <span className="a2hs-num">2</span>
-          <span>Choisis <strong>« Sur l'écran d'accueil »</strong> <span className="a2hs-plus">⊕</span></span>
+          {t({
+            fr: <span>Choisis <strong>« Sur l'écran d'accueil »</strong> <span className="a2hs-plus">⊕</span></span>,
+            en: <span>Choose <strong>“Add to Home Screen”</strong> <span className="a2hs-plus">⊕</span></span>,
+            de: <span>Wählen Sie <strong>„Zum Home-Bildschirm“</strong> <span className="a2hs-plus">⊕</span></span>,
+          })}
         </div>
       </div>
     </div>
@@ -69,11 +84,11 @@ export default function InstallPrompt({ label = "Ajoute Time to Flash à ton éc
   // ---- Android : bouton d'installation ----
   return (
     <div className="a2hs">
-      <button className="a2hs-close" onClick={dismiss} aria-label="Fermer">×</button>
+      <button className="a2hs-close" onClick={dismiss} aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}>×</button>
       <div className="a2hs-ic">📲</div>
       <div className="a2hs-body">
         <div className="a2hs-title">{label}</div>
-        <button className="a2hs-btn" onClick={install}>Ajouter à l'écran d'accueil</button>
+        <button className="a2hs-btn" onClick={install}>{t({ fr: "Ajouter à l'écran d'accueil", en: 'Add to home screen', de: 'Zum Startbildschirm hinzufügen' })}</button>
       </div>
     </div>
   )

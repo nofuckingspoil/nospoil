@@ -9,6 +9,8 @@ import { tiragesEmail, tiragesConfirmationEmail, tiragesExpeditionEmail } from '
 import { contenuTirages } from '../../../../lib/relance-tirages'
 import { contenuConfirmation } from '../../../../lib/commande-tirages'
 import { estUuid } from '../../../../lib/params'
+import { langueValide } from '../../../../lib/i18n'
+import { prixAppel } from '../../../../lib/tirages'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,6 +27,8 @@ export async function GET(request) {
   // ?type=confirmation ou ?type=expedition : les mails d'une commande, avec
   // la dernière commande passée sur cet album.
   const type = new URL(request.url).searchParams.get('type')
+  // Aperçu dans une autre langue : ?lang=en ou ?lang=de.
+  const langue = langueValide(new URL(request.url).searchParams.get('lang')) || 'fr'
   if (type === 'confirmation' || type === 'expedition') {
     const r = await selectRows('tirages_commandes', `event_id=eq.${e}&select=*&order=created_at.desc&limit=1`)
     const c = Array.isArray(r.data) ? r.data[0] : null
@@ -32,14 +36,14 @@ export async function GET(request) {
     const ids = c.lignes.map((l) => l.photoId)
     const ph = await selectRows('photos', `id=in.(${ids.join(',')})&select=id,storage_path,thumb_path,taken_at`)
     const mail = type === 'confirmation'
-      ? tiragesConfirmationEmail(await contenuConfirmation(c, ph.data || []))
-      : tiragesExpeditionEmail({ prenom: 'Julie', nombre: c.nombre, transporteur: 'Royal Mail', suiviUrl: 'https://www.royalmail.com/track-your-item', suiviNumero: 'AB123456789GB', reference: c.id.slice(0, 8).toUpperCase() })
+      ? tiragesConfirmationEmail({ ...(await contenuConfirmation({ ...c, langue }, ph.data || [])) })
+      : tiragesExpeditionEmail({ prenom: 'Julie', nombre: c.nombre, transporteur: 'Royal Mail', suiviUrl: 'https://www.royalmail.com/track-your-item', suiviNumero: 'AB123456789GB', reference: c.id.slice(0, 8).toUpperCase(), langue })
     return new Response(mail.html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
   }
 
   const contenu = await contenuTirages(ev)
   if (!contenu) return new Response('Cet album n\'a aucune photo.', { status: 404 })
 
-  const mail = tiragesEmail({ ...contenu, stopLink: '#' })
+  const mail = tiragesEmail({ ...contenu, prixAppel: prixAppel(langue), langue, stopLink: '#' })
   return new Response(mail.html, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
 }

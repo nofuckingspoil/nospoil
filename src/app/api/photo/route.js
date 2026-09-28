@@ -1,16 +1,21 @@
 import { rpc, uploadPhoto, deletePhoto, updateRow } from '../../../lib/supabase'
-import { estSuspendu, envoiFerme, MESSAGE_SUSPENDU } from '../../../lib/authz'
+import { estSuspendu, envoiFerme, messageSuspendu } from '../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../lib/params'
 import { estImage, miniature } from '../../../lib/image'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
+import { messageBase } from '../../../lib/messages-serveur'
 
 export const runtime = 'nodejs'
 // Autorise des images compressées jusqu'à ~8 Mo
 export const maxDuration = 30
 
 export async function POST(request) {
+  let langue = langueRequete(request)
   let form
-  try { form = await request.formData() } catch { return Response.json({ error: 'Requête invalide.' }, { status: 400 }) }
+  try { form = await request.formData() } catch { return Response.json({ error: t({ fr: 'Requête invalide.', en: 'Invalid request.', de: 'Ungültige Anfrage.' }, langue) }, { status: 400 }) }
 
+  langue = langueValide(form.get('langue')) || langue
   const file = form.get('file')
   const thumb = form.get('thumb') // mini-version facultative (pour alléger l'album)
   const eventId = form.get('eventId')
@@ -18,34 +23,34 @@ export async function POST(request) {
   const deviceToken = form.get('deviceToken')
 
   if (!file || typeof file === 'string' || !eventId || !guestId || !deviceToken) {
-    return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paramètres manquants.', en: 'Missing parameters.', de: 'Fehlende Parameter.' }, langue) }, { status: 400 })
   }
   // Les deux identifiants composent le chemin du fichier dans le stockage :
   // mal formés, ils ne désignent plus seulement une ligne de la base, ils
   // choisissent un emplacement sur le disque. On les contrôle avant tout.
-  if (!estUuid(eventId) || !estUuid(guestId)) return identifiantInvalide()
+  if (!estUuid(eventId) || !estUuid(guestId)) return identifiantInvalide(langue)
 
   // Suspendu par l'administration : plus aucune photo n'entre. Vérifié avant
   // de lire le fichier, pour ne pas transférer des octets qu'on jettera.
   if (await estSuspendu(eventId)) {
-    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+    return Response.json({ error: messageSuspendu(langue) }, { status: 403 })
   }
 
   // La fête est finie : on n'ajoute plus rien à un album déjà ouvert. Vérifié
   // avant de lire le fichier, pour ne pas transférer des octets qu'on jettera.
   if (await envoiFerme(eventId)) {
     return Response.json(
-      { error: 'Cette soirée est terminée : son album est déjà révélé.' },
+      { error: t({ fr: 'Cette soirée est terminée : son album est déjà révélé.', en: 'This party is over: its album has already been revealed.', de: 'Diese Feier ist vorbei: Ihr Album wurde bereits enthüllt.' }, langue) },
       { status: 403 }
     )
   }
 
   const bytes = Buffer.from(await file.arrayBuffer())
   if (bytes.length > 8 * 1024 * 1024) {
-    return Response.json({ error: 'Photo trop lourde.' }, { status: 413 })
+    return Response.json({ error: t({ fr: 'Photo trop lourde.', en: 'Photo too large.', de: 'Foto zu groß.' }, langue) }, { status: 413 })
   }
   if (!estImage(bytes)) {
-    return Response.json({ error: "Ce fichier n'est pas une image." }, { status: 415 })
+    return Response.json({ error: t({ fr: 'Ce fichier n\'est pas une image.', en: 'This file is not an image.', de: 'Diese Datei ist kein Bild.' }, langue) }, { status: 415 })
   }
 
   // Chemin : eventId/guestId/horodatage-aléatoire.jpg
@@ -55,7 +60,7 @@ export async function POST(request) {
   const up = await uploadPhoto(path, bytes, 'image/jpeg')
   if (!up.ok) {
     console.error('upload error', up.status)
-    return Response.json({ error: "Échec de l'envoi de la photo." }, { status: 500 })
+    return Response.json({ error: t({ fr: 'Échec de l\'envoi de la photo.', en: 'The photo could not be uploaded.', de: 'Das Foto konnte nicht hochgeladen werden.' }, langue) }, { status: 500 })
   }
 
   // Mini-version : celle du navigateur si elle est là, sinon fabriquée ici.
@@ -107,13 +112,13 @@ export async function POST(request) {
 
   if (!ok || data?.status === 'error') {
     await deletePhoto(path)
-    return Response.json({ error: data?.message || 'Erreur serveur.' }, { status: 500 })
+    return Response.json({ error: messageBase(data?.message, langue) || t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
   }
   if (data?.status === 'full') {
     await deletePhoto(path) // on annule l'upload : plus de clichés disponibles
     if (thumbPath) await deletePhoto(thumbPath)
     if (viewPath) await deletePhoto(viewPath)
-    return Response.json({ full: true, error: data.message }, { status: 409 })
+    return Response.json({ full: true, error: messageBase(data.message, langue) }, { status: 409 })
   }
 
   // Associe les deux rendus à la ligne photo créée (repérée par son chemin unique)

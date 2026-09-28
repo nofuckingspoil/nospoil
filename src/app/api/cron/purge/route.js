@@ -10,7 +10,8 @@
 // ============================================================
 import { selectRows, updateRow, deleteRows, deletePhotos, deletePhoto } from '../../../../lib/supabase'
 import { sendMail, purgeWarningEmail, siteUrl } from '../../../../lib/mail'
-import { WARNINGS, formatPurgeDate } from '../../../../lib/retention'
+import { WARNINGS, formatPurgeDate, libelleAlerte } from '../../../../lib/retention'
+import { langueDe } from '../../../../lib/langue-serveur'
 import { purgerCompteurs } from '../../../../lib/rate-limit'
 
 export const dynamic = 'force-dynamic'
@@ -35,7 +36,7 @@ async function sendWarnings(now) {
     const horizon = new Date(now.getTime() + w.days * DAY).toISOString()
     const { ok, data } = await selectRows(
       'events',
-      `select=id,name,expires_at,owner_email` +
+      `select=id,name,expires_at,owner_email,langue` +
         `&expires_at=gt.${now.toISOString()}` +
         `&expires_at=lte.${horizon}` +
         `&purged_at=is.null` +
@@ -60,12 +61,16 @@ async function sendWarnings(now) {
         continue
       }
 
+      // Dans la langue de l'organisateur (celle de l'événement).
+      const langue = langueDe(ev)
       const mail = purgeWarningEmail({
         eventName: ev.name,
         galleryUrl: `${siteUrl()}/event/${ev.id}`,
-        remaining: w.label,
-        purgeDate: formatPurgeDate(ev.expires_at),
+        remaining: libelleAlerte(w, langue),
+        urgent: w.key === 'warned_1w_at',
+        purgeDate: formatPurgeDate(ev.expires_at, langue),
         photoCount,
+        langue,
       })
       const res = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
 

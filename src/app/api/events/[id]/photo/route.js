@@ -1,6 +1,8 @@
 import { selectRows, updateRow, deleteRows, deletePhoto } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { t } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 // Masquer une photo gênante fait partie de la gestion courante : l'organisateur
 // comme les co-admins peuvent le faire.
@@ -11,35 +13,37 @@ async function requireOwner(id, request) {
 // Masquer / réafficher une photo (hidden true|false)
 export async function PATCH(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
   if (!(await requireOwner(id, request))) {
-    return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+    return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
   }
   const body = await request.json().catch(() => ({}))
   const { photoId, hidden } = body
-  if (!photoId) return Response.json({ error: 'Photo non précisée.' }, { status: 400 })
+  if (!photoId) return Response.json({ error: t({ fr: 'Photo non précisée.', en: 'No photo specified.', de: 'Kein Foto angegeben.' }, langue) }, { status: 400 })
 
   const upd = await updateRow('photos', `id=eq.${photoId}&event_id=eq.${id}`, { hidden: !!hidden })
-  if (!upd.ok) return Response.json({ error: 'Action impossible.' }, { status: 500 })
+  if (!upd.ok) return Response.json({ error: t({ fr: 'Action impossible.', en: 'Action not possible.', de: 'Aktion nicht möglich.' }, langue) }, { status: 500 })
   return Response.json({ ok: true, hidden: !!hidden })
 }
 
 // Supprimer définitivement une photo (fichier + ligne)
 export async function DELETE(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
   if (!(await requireOwner(id, request))) {
-    return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+    return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
   }
   const photoId = new URL(request.url).searchParams.get('photoId')
-  if (!photoId) return Response.json({ error: 'Photo non précisée.' }, { status: 400 })
+  if (!photoId) return Response.json({ error: t({ fr: 'Photo non précisée.', en: 'No photo specified.', de: 'Kein Foto angegeben.' }, langue) }, { status: 400 })
 
   const { data } = await selectRows('photos', `id=eq.${photoId}&event_id=eq.${id}&select=storage_path`)
   const ph = Array.isArray(data) ? data[0] : null
-  if (!ph) return Response.json({ error: 'Photo introuvable.' }, { status: 404 })
+  if (!ph) return Response.json({ error: t({ fr: 'Photo introuvable.', en: 'Photo not found.', de: 'Foto nicht gefunden.' }, langue) }, { status: 404 })
 
   const del = await deleteRows('photos', `id=eq.${photoId}&event_id=eq.${id}`)
-  if (!del.ok) return Response.json({ error: 'Suppression impossible.' }, { status: 500 })
+  if (!del.ok) return Response.json({ error: t({ fr: 'Suppression impossible.', en: 'Deletion not possible.', de: 'Löschen nicht möglich.' }, langue) }, { status: 500 })
   if (ph.storage_path) await deletePhoto(ph.storage_path)
 
   return Response.json({ ok: true })

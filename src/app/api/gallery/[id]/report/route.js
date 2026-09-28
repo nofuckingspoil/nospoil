@@ -22,46 +22,52 @@ import { after } from 'next/server'
 // ============================================================
 import { selectRows, updateRow } from '../../../../../lib/supabase'
 import { sendMail, photoSignaleeEmail } from '../../../../../lib/mail'
-import { ipDe, tropDeDemandes, MESSAGE_TROP } from '../../../../../lib/rate-limit'
+import { ipDe, tropDeDemandes, messageTrop } from '../../../../../lib/rate-limit'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { t } from '../../../../../lib/i18n'
+import { langueRequete, langueDe } from '../../../../../lib/langue-serveur'
 
 const SITE = process.env.NEXT_PUBLIC_SITE_URL || 'https://timetoflash.fr'
 
 export async function POST(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const body = await request.json().catch(() => ({}))
   const photoId = (body.photoId || '').toString()
   const motif = (body.motif || '').toString().trim().slice(0, 300)
 
-  if (!estUuid(photoId)) return identifiantInvalide()
+  if (!estUuid(photoId)) return identifiantInvalide(langue)
 
   // Un signalement est un geste rare. Dix par heure et par appareil suffisent
   // largement, et ferment la porte à qui voudrait vider un album.
   if (await tropDeDemandes(ipDe(request), 'photo-report', { max: 10, minutes: 60 })) {
-    return Response.json({ error: MESSAGE_TROP }, { status: 429 })
+    return Response.json({ error: messageTrop(langue) }, { status: 429 })
   }
 
   const ph = await selectRows('photos', `id=eq.${photoId}&event_id=eq.${id}&select=id,hidden`)
   const photo = Array.isArray(ph.data) ? ph.data[0] : null
-  if (!photo) return Response.json({ error: 'Photo introuvable.' }, { status: 404 })
+  if (!photo) return Response.json({ error: t({ fr: 'Photo introuvable.', en: 'Photo not found.', de: 'Foto nicht gefunden.' }, langue) }, { status: 404 })
 
   // Déjà masquée : le signalement est reçu, il n'y a rien de plus à faire.
   if (!photo.hidden) {
     const maj = await updateRow('photos', `id=eq.${photoId}`, { hidden: true })
-    if (!maj.ok) return Response.json({ error: 'Signalement impossible.' }, { status: 500 })
+    if (!maj.ok) return Response.json({ error: t({ fr: 'Signalement impossible.', en: 'The report could not be sent.', de: 'Die Meldung ist fehlgeschlagen.' }, langue) }, { status: 500 })
   }
 
   // Prévenir l'organisateur, sans jamais faire échouer le signalement pour un
   // problème d'envoi de mail : la photo est déjà retirée, c'est l'essentiel.
   // Après la réponse : celui qui signale n'a pas à attendre le mail.
   after(async () => { try {
-    const ev = await selectRows('events', `id=eq.${id}&select=name,owner_email`)
+    const ev = await selectRows('events', `id=eq.${id}&select=name,owner_email,langue`)
     const evenement = Array.isArray(ev.data) ? ev.data[0] : null
     if (evenement?.owner_email) {
+      // Le mail part dans la langue de l'organisateur (celle de l'événement).
+      const langueOrga = langueDe(evenement)
       const mail = photoSignaleeEmail({
-        eventName: evenement.name || 'votre événement',
+        langue: langueOrga,
+        eventName: evenement.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langueOrga),
         galleryUrl: `${SITE}/g/${id}`,
         motif,
       })

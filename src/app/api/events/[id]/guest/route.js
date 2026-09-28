@@ -18,22 +18,25 @@ import { selectRows, updateRow, deleteRows } from '../../../../../lib/supabase'
 import { deletePhotos } from '../../../../../lib/r2'
 import { roleFor, canManage } from '../../../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { t } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 export async function DELETE(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   if (!canManage(await roleFor(id, request.headers.get('x-owner-token')))) {
-    return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+    return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
   }
 
   const body = await request.json().catch(() => ({}))
   const guestId = (body.guestId || '').toString()
-  if (!estUuid(guestId)) return identifiantInvalide()
+  if (!estUuid(guestId)) return identifiantInvalide(langue)
 
   const g = await selectRows('guests', `id=eq.${guestId}&event_id=eq.${id}&select=id,display_name`)
   const invite = Array.isArray(g.data) ? g.data[0] : null
-  if (!invite) return Response.json({ error: 'Participant introuvable.' }, { status: 404 })
+  if (!invite) return Response.json({ error: t({ fr: 'Participant introuvable.', en: 'Guest not found.', de: 'Gast nicht gefunden.' }, langue) }, { status: 404 })
 
   // Les fichiers d'abord : une ligne supprimée sans son fichier laisserait une
   // photo orpheline dans le stockage, facturée et jamais nettoyée.
@@ -62,7 +65,7 @@ export async function DELETE(request, { params }) {
     phone: null,
     shots_taken: 0,
   })
-  if (!maj.ok) return Response.json({ error: 'Retrait impossible.' }, { status: 500 })
+  if (!maj.ok) return Response.json({ error: t({ fr: 'Retrait impossible.', en: 'Removal not possible.', de: 'Entfernen nicht möglich.' }, langue) }, { status: 500 })
 
   return Response.json({ ok: true, photosSupprimees: fichiers.length })
 }

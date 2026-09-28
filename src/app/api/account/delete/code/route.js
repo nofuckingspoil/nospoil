@@ -12,22 +12,25 @@
 import { insertRow, updateRow, selectRows } from '../../../../../lib/supabase'
 import { sendMail, deleteAccountEmail } from '../../../../../lib/mail'
 import { normalizeEmail, isValidEmail, makeCode, makeToken } from '../../../../../lib/account'
-import { ipDe, tropDeDemandes, MESSAGE_TROP } from '../../../../../lib/rate-limit'
+import { ipDe, tropDeDemandes, messageTrop } from '../../../../../lib/rate-limit'
+import { t, langueValide } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 const QUINZE_MIN = 15 * 60 * 1000
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const email = normalizeEmail(body.email)
+  const langue = langueValide(body.langue) || langueRequete(request)
 
   if (!isValidEmail(email)) {
-    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
   }
 
   // Deux garde-fous : par machine, puis par adresse. Le premier arrête celui
   // qui arrose mille adresses, le second celui qui s'acharne sur une seule.
   if (await tropDeDemandes(ipDe(request), 'account-delete-code', { max: 10, minutes: 60 })) {
-    return Response.json({ error: MESSAGE_TROP }, { status: 429 })
+    return Response.json({ error: messageTrop(langue) }, { status: 429 })
   }
 
   // Le garde-fou ne regarde QUE les codes de suppression : demander un code
@@ -39,7 +42,11 @@ export async function POST(request) {
   const dernier = Array.isArray(recent.data) ? recent.data[0] : null
   if (dernier && Date.now() - new Date(dernier.created_at).getTime() < 45 * 1000) {
     return Response.json(
-      { error: 'Un code vient de vous être envoyé. Patientez une minute avant d\'en redemander un.' },
+      { error: t({
+        fr: 'Un code vient de vous être envoyé. Patientez une minute avant d\'en redemander un.',
+        en: 'A code has just been sent to you. Please wait a minute before asking for another one.',
+        de: 'Ihnen wurde gerade ein Code geschickt. Bitte warten Sie eine Minute, bevor Sie einen neuen anfordern.',
+      }, langue) },
       { status: 429 }
     )
   }
@@ -59,10 +66,10 @@ export async function POST(request) {
     expires_at: new Date(Date.now() + QUINZE_MIN).toISOString(),
   })
   if (!ok) {
-    return Response.json({ error: 'Impossible d\'envoyer le code. Réessayez.' }, { status: 500 })
+    return Response.json({ error: t({ fr: 'Impossible d\'envoyer le code. Réessayez.', en: 'The code could not be sent. Please try again.', de: 'Der Code konnte nicht gesendet werden. Bitte versuchen Sie es erneut.' }, langue) }, { status: 500 })
   }
 
-  const mail = deleteAccountEmail({ code })
+  const mail = deleteAccountEmail({ code, langue })
   await sendMail({ to: email, subject: mail.subject, html: mail.html, text: mail.text })
 
   // Toujours la même réponse, que l'adresse existe ou non.

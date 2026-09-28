@@ -19,6 +19,8 @@ import { selectRows, updateRow } from './supabase'
 import { sendMail } from './mail'
 import { makeToken } from './account'
 import { isRevealed } from './phase'
+import { t } from './i18n'
+import { langueDe } from './langue-serveur'
 import {
   surveyOrgaEmail, surveyInviteEmail, recapAdmin,
   lienAvisOrga, lienAvisInvite,
@@ -42,7 +44,7 @@ export async function enqueteOrganisateurs(now = new Date()) {
   const seuil = new Date(now.getTime() - 2 * JOUR).toISOString()
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,owner_email,owner_token,reveal_at,reveal_paused,max_guests' +
+    'select=id,name,owner_email,owner_token,reveal_at,reveal_paused,max_guests,langue' +
       `&reveal_at=lte.${seuil}` +
       '&survey_mailed_at=is.null' +
       '&owner_email=not.is.null' +
@@ -69,8 +71,10 @@ export async function enqueteOrganisateurs(now = new Date()) {
     })
     if (!ouvert) continue
 
+    const langue = langueDe(ev)
     const mail = surveyOrgaEmail({
-      eventName: ev.name || 'votre événement',
+      langue,
+      eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
       link: lienAvisOrga(ev.owner_token),
     })
     const res = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
@@ -89,7 +93,7 @@ export async function enqueteInvites(now = new Date()) {
   const seuil = new Date(now.getTime() - 3 * JOUR).toISOString()
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,reveal_at,reveal_paused,max_guests' +
+    'select=id,name,reveal_at,reveal_paused,max_guests,langue' +
       `&reveal_at=lte.${seuil}` +
       '&reveal_paused=is.false' +
       '&purged_at=is.null' +
@@ -113,7 +117,7 @@ export async function enqueteInvites(now = new Date()) {
         '&feedback_at=is.null' +       // et qui n'ont pas déjà répondu autrement
         '&survey_mailed_at=is.null' +
         '&survey_optout=is.false' +
-        '&select=id,email,token&order=created_at.asc'
+        '&select=id,email,token,langue&order=created_at.asc'
     )
     const invites = Array.isArray(res.data) ? res.data : []
     if (!invites.length) continue
@@ -141,8 +145,10 @@ export async function enqueteInvites(now = new Date()) {
         if (!maj.ok) continue // sans jeton, le lien ne mènerait nulle part
       }
 
+      const langue = langueDe(g, langueDe(ev))
       const mail = surveyInviteEmail({
-        eventName: ev.name || 'votre événement',
+        langue,
+        eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
         link: lienAvisInvite(token),
         stopLink: `${lienAvisInvite(token)}&stop=1`,
       })

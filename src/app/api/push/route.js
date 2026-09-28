@@ -11,6 +11,8 @@
 import { selectRows, insertRow, updateRow } from '../../../lib/supabase'
 import { estUuid, identifiantInvalide } from '../../../lib/params'
 import { clePublique, pushConfigure } from '../../../lib/push-envoi'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,12 +24,13 @@ export async function GET() {
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const { eventId, guestId, deviceToken, abonnement } = body
 
   if (!eventId || !guestId || !deviceToken || !abonnement) {
-    return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paramètres manquants.', en: 'Missing parameters.', de: 'Fehlende Parameter.' }, langue) }, { status: 400 })
   }
-  if (!estUuid(eventId) || !estUuid(guestId)) return identifiantInvalide()
+  if (!estUuid(eventId) || !estUuid(guestId)) return identifiantInvalide(langue)
 
   const endpoint = String(abonnement.endpoint || '')
   const p256dh = String(abonnement.keys?.p256dh || '')
@@ -35,7 +38,7 @@ export async function POST(request) {
   // Une adresse d'abonnement est toujours une URL https d'un service de
   // notification (Google, Mozilla, Microsoft). Tout le reste est écarté.
   if (!/^https:\/\//.test(endpoint) || endpoint.length > 2000 || !p256dh || !auth) {
-    return Response.json({ error: 'Abonnement invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Abonnement invalide.', en: 'Invalid subscription.', de: 'Ungültiges Abonnement.' }, langue) }, { status: 400 })
   }
 
   // Le participant est-il bien celui qu'il dit être, sur cet événement ?
@@ -44,7 +47,7 @@ export async function POST(request) {
     `id=eq.${guestId}&event_id=eq.${eventId}&device_token=eq.${encodeURIComponent(deviceToken)}&select=id,blocked`
   )
   const g = Array.isArray(data) ? data[0] : null
-  if (!ok || !g || g.blocked) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  if (!ok || !g || g.blocked) return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
 
   // Ce téléphone est peut-être déjà abonné : d'une soirée précédente, ou de
   // celle-ci s'il a rouvert la page. On réutilise la ligne plutôt que d'en
@@ -64,7 +67,7 @@ export async function POST(request) {
       patch.revealed_at = null
     }
     const maj = await updateRow('push_subscriptions', `id=eq.${ligne.id}`, patch)
-    if (!maj.ok) return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
+    if (!maj.ok) return Response.json({ error: t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
     return Response.json({ ok: true })
   }
 
@@ -75,7 +78,7 @@ export async function POST(request) {
     p256dh,
     auth,
   })
-  if (!cree.ok) return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
+  if (!cree.ok) return Response.json({ error: t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
 
   return Response.json({ ok: true })
 }

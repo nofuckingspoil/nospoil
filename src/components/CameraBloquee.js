@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { familleNavigateur } from '../lib/camera'
+import { useLangue } from './Langue'
 
 // Icône « réglages » de Chrome (les curseurs, à gauche de l'adresse depuis 2023)
 function IconeReglages({ size = 15 }) {
@@ -35,6 +36,7 @@ function IconeCadenas({ size = 14 }) {
 // surtout le dessin de la barre d'adresse : c'est le bouton à toucher que
 // personne ne trouve.
 export default function CameraBloquee({ onReessayer }) {
+  const { t, lien } = useLangue()
   const [famille, setFamille] = useState('android')
   const [hote, setHote] = useState('timetoflash.fr')
 
@@ -50,23 +52,57 @@ export default function CameraBloquee({ onReessayer }) {
     ? <span className="camfix-chip camfix-aa">aA</span>
     : <span className="camfix-chip"><IconeReglages /></span>
 
+  const iconeReglages = <span className="camfix-inline"><IconeReglages size={13} /></span>
+  const iconeCadenas = <span className="camfix-inline"><IconeCadenas size={12} /></span>
   const etapes = ios
     ? [
-        <>Touche <strong>« aA »</strong> à gauche de l'adresse</>,
-        <>Choisis <strong>« Réglages du site »</strong></>,
-        <>Passe <strong>Caméra</strong> sur <strong>« Autoriser »</strong></>,
+        t({
+          fr: <>Touche <strong>« aA »</strong> à gauche de l'adresse</>,
+          en: <>Tap <strong>“aA”</strong> to the left of the address</>,
+          de: <>Tippen Sie links neben der Adresse auf <strong>„aA“</strong></>,
+        }),
+        t({
+          fr: <>Choisis <strong>« Réglages du site »</strong></>,
+          en: <>Choose <strong>“Website Settings”</strong></>,
+          de: <>Wählen Sie <strong>„Website-Einstellungen“</strong></>,
+        }),
+        t({
+          fr: <>Passe <strong>Caméra</strong> sur <strong>« Autoriser »</strong></>,
+          en: <>Set <strong>Camera</strong> to <strong>“Allow”</strong></>,
+          de: <>Stellen Sie <strong>Kamera</strong> auf <strong>„Erlauben“</strong></>,
+        }),
       ]
     : [
-        <>Touche l'icône <span className="camfix-inline"><IconeReglages size={13} /></span> (ou le <span className="camfix-inline"><IconeCadenas size={12} /></span>) à gauche de l'adresse</>,
-        <>Choisis <strong>« Autorisations »</strong>, ou <strong>« Paramètres du site »</strong></>,
-        <>Passe <strong>Caméra</strong> sur <strong>« Autoriser »</strong></>,
+        t({
+          fr: <>Touche l'icône {iconeReglages} (ou le {iconeCadenas}) à gauche de l'adresse</>,
+          en: <>Tap the {iconeReglages} icon (or the {iconeCadenas}) to the left of the address</>,
+          de: <>Tippen Sie links neben der Adresse auf das Symbol {iconeReglages} (oder das {iconeCadenas})</>,
+        }),
+        t({
+          fr: <>Choisis <strong>« Autorisations »</strong>, ou <strong>« Paramètres du site »</strong></>,
+          en: <>Choose <strong>“Permissions”</strong> or <strong>“Site settings”</strong></>,
+          de: <>Wählen Sie <strong>„Berechtigungen“</strong> oder <strong>„Website-Einstellungen“</strong></>,
+        }),
+        t({
+          fr: <>Passe <strong>Caméra</strong> sur <strong>« Autoriser »</strong></>,
+          en: <>Set <strong>Camera</strong> to <strong>“Allow”</strong></>,
+          de: <>Stellen Sie <strong>Kamera</strong> auf <strong>„Zulassen“</strong></>,
+        }),
       ]
 
   return (
     <div className="camfix">
-      <div className="camfix-title">Ta caméra est bloquée par ton navigateur</div>
+      <div className="camfix-title">{t({
+        fr: 'Ta caméra est bloquée par ton navigateur',
+        en: 'Your camera is blocked by your browser',
+        de: 'Ihre Kamera wird von Ihrem Browser blockiert',
+      })}</div>
       <p className="camfix-sub">
-        Un « Refuser » a été retenu : c'est à toi de le lui faire oublier, en trois gestes.
+        {t({
+          fr: "Un « Refuser » a été retenu : c'est à toi de le lui faire oublier, en trois gestes.",
+          en: 'Your browser remembered a “Block”: it’s up to you to undo it, in three taps.',
+          de: 'Ihr Browser hat ein „Blockieren“ gespeichert: Sie können das in drei Schritten rückgängig machen.',
+        })}
       </p>
 
       {/* La barre d'adresse du téléphone, en miniature : la pastille à toucher
@@ -76,7 +112,9 @@ export default function CameraBloquee({ onReessayer }) {
         <span className="camfix-url">{hote}</span>
         <span className="camfix-dots">⋮</span>
       </div>
-      <div className="camfix-hint">☝️ {ios ? 'en bas' : 'en haut'} de ton écran</div>
+      <div className="camfix-hint">☝️ {ios
+        ? t({ fr: 'en bas de ton écran', en: 'at the bottom of your screen', de: 'unten auf Ihrem Bildschirm' })
+        : t({ fr: 'en haut de ton écran', en: 'at the top of your screen', de: 'oben auf Ihrem Bildschirm' })}</div>
 
       <ol className="camfix-steps">
         {etapes.map((texte, i) => (
@@ -86,14 +124,17 @@ export default function CameraBloquee({ onReessayer }) {
 
       <button type="button" className="camfix-btn"
         onClick={() => (onReessayer ? onReessayer() : window.location.reload())}>
-        C'est fait, réessayer
+        {t({ fr: "C'est fait, réessayer", en: 'Done, try again', de: 'Erledigt, erneut versuchen' })}
       </button>
 
       <p className="camfix-foot">
-        Rien ne se perd en attendant : le gros bouton blanc ouvre l'appareil photo de ton
-        téléphone, et tes photos rejoignent l'album exactement pareil.
+        {t({
+          fr: "Rien ne se perd en attendant : le gros bouton blanc ouvre l'appareil photo de ton téléphone, et tes photos rejoignent l'album exactement pareil.",
+          en: 'Nothing is lost in the meantime: the big white button opens your phone’s camera, and your photos join the album just the same.',
+          de: 'In der Zwischenzeit geht nichts verloren: Der große weiße Knopf öffnet die Kamera Ihres Handys, und Ihre Fotos landen genauso im Album.',
+        })}
       </p>
-      <a className="camfix-aide" href="/aide" target="_blank" rel="noreferrer">Voir les autres solutions →</a>
+      <a className="camfix-aide" href={lien('/aide')} target="_blank" rel="noreferrer">{t({ fr: 'Voir les autres solutions →', en: 'See other solutions →', de: 'Weitere Lösungen ansehen →' })}</a>
     </div>
   )
 }

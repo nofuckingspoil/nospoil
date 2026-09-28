@@ -14,6 +14,7 @@
 import 'server-only'
 import { selectRows, rpc } from './supabase'
 import { tierByGuests, formatPrice } from './pricing'
+import { t } from './i18n'
 
 // En dessous de ce montant, Stripe refuse d'encaisser (minimum légal de la
 // carte bancaire en euros). Une remise qui descend si bas vaut donc gratuité.
@@ -24,21 +25,22 @@ export function normalizePromo(code) {
 }
 
 // Le code existe-t-il, et est-il encore utilisable ?
-export async function findPromo(code) {
+// `langue` : celle du visiteur, pour les messages d'erreur.
+export async function findPromo(code, langue) {
   const c = normalizePromo(code)
-  if (!c) return { ok: false, error: 'Entre un code promo.' }
+  if (!c) return { ok: false, error: t({ fr: 'Entre un code promo.', en: 'Enter a promo code.', de: 'Geben Sie einen Gutscheincode ein.' }, langue) }
 
   const { data } = await selectRows('promo_codes', `code=eq.${encodeURIComponent(c)}&select=*`)
   const p = Array.isArray(data) ? data[0] : null
 
   // Un code désactivé se comporte comme un code inexistant : inutile
   // d'apprendre à qui l'a trouvé qu'il a existé.
-  if (!p || !p.active) return { ok: false, error: "Ce code promo n'est pas valable." }
+  if (!p || !p.active) return { ok: false, error: t({ fr: "Ce code promo n'est pas valable.", en: 'This promo code is not valid.', de: 'Dieser Gutscheincode ist nicht gültig.' }, langue) }
   if (p.expires_at && new Date(p.expires_at).getTime() <= Date.now()) {
-    return { ok: false, error: 'Ce code promo a expiré.' }
+    return { ok: false, error: t({ fr: 'Ce code promo a expiré.', en: 'This promo code has expired.', de: 'Dieser Gutscheincode ist abgelaufen.' }, langue) }
   }
   if (p.max_uses != null && p.uses >= p.max_uses) {
-    return { ok: false, error: 'Ce code promo a déjà servi le nombre de fois prévu.' }
+    return { ok: false, error: t({ fr: 'Ce code promo a déjà servi le nombre de fois prévu.', en: 'This promo code has already been used the maximum number of times.', de: 'Dieser Gutscheincode wurde bereits so oft wie vorgesehen eingelöst.' }, langue) }
   }
   return { ok: true, promo: p }
 }
@@ -56,28 +58,36 @@ export function applyPromo(promo, priceCents) {
 }
 
 // Formulation courte de l'avantage, affichée à l'organisateur et dans l'admin.
-export function promoLabel(promo) {
+export function promoLabel(promo, langue = 'fr') {
   if (!promo) return ''
-  if (promo.kind === 'free') return 'Offert'
-  if (promo.kind === 'percent') return `−${promo.value} %`
-  return `−${formatPrice(promo.value)}`
+  if (promo.kind === 'free') return t({ fr: 'Offert', en: 'Free', de: 'Geschenkt' }, langue)
+  if (promo.kind === 'percent') return t({ fr: `−${promo.value} %`, en: `−${promo.value}%`, de: `−${promo.value} %` }, langue)
+  return `−${formatPrice(promo.value, langue)}`
 }
 
 // Vérification complète : ce code, sur cette formule, donne quoi ?
 // Utilisée par le champ « J'ai un code promo » ET rejouée à chaque étape
 // sensible : une vérification faite une fois ne protège de rien.
-export async function quotePromo(code, maxGuests) {
-  const found = await findPromo(code)
+export async function quotePromo(code, maxGuests, langue = 'fr') {
+  const found = await findPromo(code, langue)
   if (!found.ok) return { ok: false, error: found.error }
 
   const p = found.promo
   const tier = tierByGuests(maxGuests)
 
   if (tier.priceCents <= 0) {
-    return { ok: false, error: 'Cette formule est déjà gratuite : garde ton code pour une autre fois.' }
+    return { ok: false, error: t({
+      fr: 'Cette formule est déjà gratuite : garde ton code pour une autre fois.',
+      en: 'This plan is already free: keep your code for another time.',
+      de: 'Dieses Paket ist bereits kostenlos: Heben Sie Ihren Code für ein anderes Mal auf.',
+    }, langue) }
   }
   if (p.max_guests_allowed != null && tier.maxGuests > p.max_guests_allowed) {
-    return { ok: false, error: `Ce code s'arrête à la formule « ${p.max_guests_allowed} participants ».` }
+    return { ok: false, error: t({
+      fr: `Ce code s'arrête à la formule « ${p.max_guests_allowed} participants ».`,
+      en: `This code only goes up to the “${p.max_guests_allowed} guests” plan.`,
+      de: `Dieser Code gilt nur bis zum Paket „${p.max_guests_allowed} Gäste“.`,
+    }, langue) }
   }
 
   let priceCents = applyPromo(p, tier.priceCents)
@@ -89,7 +99,7 @@ export async function quotePromo(code, maxGuests) {
     ok: true,
     promo: p,
     code: p.code,
-    label: promoLabel(p),
+    label: promoLabel(p, langue),
     basePriceCents: tier.priceCents,
     priceCents,
     free: priceCents <= 0,

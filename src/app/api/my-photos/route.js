@@ -1,15 +1,18 @@
 import { selectRows, signPhotos } from '../../../lib/supabase'
 import { estUuid, identifiantInvalide } from '../../../lib/params'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
 
 // Renvoie les photos prises par CET participant (identifié par son appareil),
 // avec leur identifiant (pour pouvoir les supprimer) + le compteur de clichés.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const { eventId, deviceToken } = body
   if (!eventId || !deviceToken) {
-    return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paramètres manquants.', en: 'Missing parameters.', de: 'Fehlende Parameter.' }, langue) }, { status: 400 })
   }
-  if (!estUuid(eventId)) return identifiantInvalide()
+  if (!estUuid(eventId)) return identifiantInvalide(langue)
 
   const guestRes = await selectRows(
     'guests',

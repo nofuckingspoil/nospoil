@@ -26,6 +26,8 @@
 import 'server-only'
 import { selectRows, updateRow, signPhotos } from './supabase'
 import { sendMail, photosPrefereesEmail, siteUrl } from './mail'
+import { langueDe } from './langue-serveur'
+import { lien } from './langue-lien'
 
 // Les adresses laissées avant cette date ont lu une promesse plus étroite.
 export const PROMESSE_ELARGIE = '2026-09-10T00:00:00Z'
@@ -76,21 +78,30 @@ export async function envoyerPhotosPreferees(ev) {
     'guests',
     `event_id=eq.${ev.id}&email=not.is.null&faves_notified_at=is.null` +
       `&created_at=gte.${PROMESSE_ELARGIE}` +
-      `&select=id,email&order=created_at.asc&limit=${BATCH}`
+      `&select=id,email,langue&order=created_at.asc&limit=${BATCH}`
   )
   if (!ok || !Array.isArray(data) || !data.length) return { envoyes: 0, echecs: 0 }
 
-  const mail = photosPrefereesEmail({
-    eventName: ev.name,
-    galleryUrl: `${siteUrl()}/g/${ev.id}`,
-    top: retenues.map((p) => ({ url: signees[p.thumb_path || p.storage_path] || null })),
-    votants,
-  })
+  // Un mail par langue : chaque participant le reçoit dans la sienne.
+  const mails = {}
+  const mailPour = (langue) => {
+    if (!mails[langue]) {
+      mails[langue] = photosPrefereesEmail({
+        eventName: ev.name,
+        galleryUrl: `${siteUrl()}${lien(`/g/${ev.id}`, langue)}`,
+        top: retenues.map((p) => ({ url: signees[p.thumb_path || p.storage_path] || null })),
+        votants,
+        langue,
+      })
+    }
+    return mails[langue]
+  }
 
   let envoyes = 0
   let echecs = 0
   for (const g of data) {
     if (!g.email) continue
+    const mail = mailPour(langueDe(g, langueDe(ev)))
     const res = await sendMail({ to: g.email, subject: mail.subject, html: mail.html })
     // On horodate dans tous les cas : un échec ne doit pas déclencher une
     // boucle de renvoi quotidien.

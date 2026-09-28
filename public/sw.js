@@ -56,6 +56,45 @@ self.addEventListener('push', function (e) {
 //  pas, le serveur doit renvoyer le compteur de la pellicule.
 // ============================================================
 var BASE_ENVOIS = 'ttf-envois'
+
+// La langue de la notification : celle rangée avec les photos par la page
+// (champ `langue`), sinon celle du navigateur. Français, anglais ou allemand.
+function langueDuVeilleur(liste) {
+  for (var i = 0; i < liste.length; i++) {
+    var l = liste[i] && liste[i].langue
+    if (l === 'fr' || l === 'en' || l === 'de') return l
+  }
+  var n = String((self.navigator && self.navigator.language) || 'fr').toLowerCase().slice(0, 2)
+  if (n === 'fr' || n === 'de') return n
+  return 'en'
+}
+
+var TEXTES_VEILLEUR = {
+  fr: {
+    titre: function (n) { return n > 1 ? n + ' photos en cours de dépôt' : '1 photo en cours de dépôt' },
+    corps: function (n) {
+      return n > 1
+        ? 'Elles sont bien sur ton téléphone. Rouvre la page avec du réseau et elles s\'enregistreront toutes seules.'
+        : 'Elle est bien sur ton téléphone. Rouvre la page avec du réseau et elle s\'enregistrera toute seule.'
+    },
+  },
+  en: {
+    titre: function (n) { return n > 1 ? n + ' photos waiting to upload' : '1 photo waiting to upload' },
+    corps: function (n) {
+      return n > 1
+        ? 'They’re safe on your phone. Reopen the page when you have signal and they’ll save on their own.'
+        : 'It’s safe on your phone. Reopen the page when you have signal and it’ll save on its own.'
+    },
+  },
+  de: {
+    titre: function (n) { return n > 1 ? n + ' Fotos werden hochgeladen' : '1 Foto wird hochgeladen' },
+    corps: function (n) {
+      return n > 1
+        ? 'Sie sind sicher auf Ihrem Handy. Öffnen Sie die Seite wieder, sobald Sie Empfang haben, dann werden sie automatisch gespeichert.'
+        : 'Es ist sicher auf Ihrem Handy. Öffnen Sie die Seite wieder, sobald Sie Empfang haben, dann wird es automatisch gespeichert.'
+    },
+  },
+}
 var MAGASIN_ENVOIS = 'photos'
 
 function ouvrirLesEnvois() {
@@ -91,6 +130,7 @@ function viderLaFile() {
       return lireLesEnvois(base).then(function (liste) {
         liste.sort(function (a, b) { return a.creeLe - b.creeLe })
         var reste = 0
+        var langue = langueDuVeilleur(liste)
         var suite = Promise.resolve()
         liste.forEach(function (e) {
           suite = suite.then(function () {
@@ -100,7 +140,7 @@ function viderLaFile() {
             fd.append('eventId', e.eventId)
             fd.append('guestId', e.guestId)
             fd.append('deviceToken', e.deviceToken)
-            return fetch('/api/photo', { method: 'POST', body: fd })
+            return fetch('/api/photo', { method: 'POST', body: fd, headers: { 'X-Langue': e.langue || langue } })
               .then(function (r) { return r.json().catch(function () { return {} }).then(function (d) { return { r: r, d: d } }) })
               .then(function (rep) {
                 // Pellicule pleine : elle ne sera jamais acceptée.
@@ -113,12 +153,11 @@ function viderLaFile() {
         })
         return suite.then(function () {
           if (reste === 0 || Notification.permission !== 'granted') return
+          var textes = TEXTES_VEILLEUR[langue] || TEXTES_VEILLEUR.fr
           return self.registration.showNotification(
-            reste > 1 ? reste + ' photos en cours de dépôt' : '1 photo en cours de dépôt',
+            textes.titre(reste),
             {
-              body: reste > 1
-                ? 'Elles sont bien sur ton téléphone. Rouvre la page avec du réseau et elles s\'enregistreront toutes seules.'
-                : 'Elle est bien sur ton téléphone. Rouvre la page avec du réseau et elle s\'enregistrera toute seule.',
+              body: textes.corps(reste),
               icon: '/icone-192.png',
               badge: '/badge-96.png',
               tag: 'ttf-envois',

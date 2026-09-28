@@ -13,6 +13,8 @@
 import { rpc } from '../../../lib/supabase'
 import { isRevealed } from '../../../lib/phase'
 import { estUuid } from '../../../lib/params'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
 
 // Au-delà, ce n'est plus la liste de quelqu'un : c'est un balayage. On s'arrête
 // là plutôt que d'assembler une requête sans fin.
@@ -20,6 +22,7 @@ const MAX = 300
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const demandes = Array.isArray(body?.acces) ? body.acces.slice(0, MAX) : []
 
   // Un identifiant bien formé et un jeton non vide : le reste ne mérite pas un
@@ -43,7 +46,7 @@ export async function POST(request) {
     p_ids: paires.map((p) => p.id),
     p_tokens: paires.map((p) => p.token),
   })
-  if (!ok) return Response.json({ error: 'Liste indisponible.' }, { status: 502 })
+  if (!ok) return Response.json({ error: t({ fr: 'Liste indisponible.', en: 'List unavailable.', de: 'Liste nicht verfügbar.' }, langue) }, { status: 502 })
 
   const parId = new Map((Array.isArray(data) ? data : []).map((e) => [e.id, e]))
 

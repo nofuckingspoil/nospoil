@@ -1,7 +1,7 @@
 import { selectRows, updateRow, signPhotos, deleteRows, deletePhotos } from '../../../../lib/supabase'
 import { normalizeEmail, isValidEmail } from '../../../../lib/account'
 import { purgeDateISO } from '../../../../lib/retention'
-import { roleFor, canManage, canDelete, ADMIN, MESSAGE_SUSPENDU } from '../../../../lib/authz'
+import { roleFor, canManage, canDelete, ADMIN, messageSuspendu } from '../../../../lib/authz'
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
 import { finDe, planRappels, nettoyerRappels, dureeMin } from '../../../../lib/rappels'
 // (isRevealed sert aussi à figer les dates une fois l'album ouvert, voir PATCH)
@@ -9,6 +9,8 @@ import { upgradeFor, SHOTS_MIN, SHOTS_MAX, BONUS_MAX, CONTACT_EMAIL } from '../.
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
 import { PHOTO_MODES, modeValide } from '../../../../lib/photo-mode'
+import { t } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 // Un participant est considéré « en train de jouer » si son appareil a donné signe
 // de vie récemment (scan ou photo).
@@ -16,20 +18,21 @@ const ACTIF_MS = 10 * 60 * 1000
 
 export async function GET(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const { ok, data } = await selectRows(
     'events',
     `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
-    return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
+    return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
   }
   const ev = data[0]
 
   // Suspendu par l'administration : plus personne n'entre, organisateur compris.
   if (ev.status === 'suspended') {
-    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+    return Response.json({ error: messageSuspendu(langue) }, { status: 403 })
   }
 
   // Organisateur ou co-admin : les deux voient le tableau de bord complet.
@@ -199,17 +202,18 @@ export async function GET(request, { params }) {
 // Modification de réglages (réservée à l'organisateur/admin) : date de révélation, code galerie
 export async function PATCH(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
   const ownerToken = request.headers.get('x-owner-token')
-  if (!ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  if (!ownerToken) return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
 
-  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,ends_at,reminder_offsets,reveal_at,reveal_paused,max_guests,bonus_shots`)
+  const { data } = await selectRows('events', `id=eq.${id}&select=id,name,owner_token,starts_at,ends_at,reminder_offsets,reveal_at,reveal_paused,max_guests,bonus_shots,langue`)
   const ev = Array.isArray(data) ? data[0] : null
-  if (!ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
+  if (!ev) return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
   // Les réglages du quotidien sont ouverts aux co-admins : c'est le sens même
   // de les inviter. Seule la suppression reste au propriétaire.
   if (!canManage(await roleFor(id, ownerToken))) {
-    return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+    return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
   }
 
   const body = await request.json().catch(() => ({}))
@@ -221,7 +225,7 @@ export async function PATCH(request, { params }) {
   const revelationPassee = new Date(ev.reveal_at || 0).getTime() <= Date.now()
   if (revelationPassee && (body.revealAt !== undefined || body.startsAt !== undefined || body.endsAt !== undefined)) {
     return Response.json(
-      { error: 'La révélation a eu lieu : les dates ne peuvent plus être modifiées.' },
+      { error: t({ fr: 'La révélation a eu lieu : les dates ne peuvent plus être modifiées.', en: 'The reveal has taken place: the dates can no longer be changed.', de: 'Die Enthüllung hat stattgefunden: Die Termine können nicht mehr geändert werden.' }, langue) },
       { status: 409 }
     )
   }
@@ -232,21 +236,21 @@ export async function PATCH(request, { params }) {
     const v = (body.coverPos || '').toString().trim()
     if (v === '') patch.cover_pos = null
     else if (/^\d{1,3}% \d{1,3}%$/.test(v)) patch.cover_pos = v
-    else return Response.json({ error: 'Cadrage invalide.' }, { status: 400 })
+    else return Response.json({ error: t({ fr: 'Cadrage invalide.', en: 'Invalid framing.', de: 'Ungültiger Bildausschnitt.' }, langue) }, { status: 400 })
   }
 
   // Nom de l'événement : s'affiche chez les participants, donc modifiable à tout moment
   // (une faute de frappe ne doit pas rester figée jusqu'à la révélation).
   if (body.name !== undefined) {
     const clean = String(body.name).trim().slice(0, 80)
-    if (!clean) return Response.json({ error: "Donnez un nom à votre événement." }, { status: 400 })
+    if (!clean) return Response.json({ error: t({ fr: 'Donnez un nom à votre événement.', en: 'Give your event a name.', de: 'Geben Sie Ihrem Event einen Namen.' }, langue) }, { status: 400 })
     patch.name = clean
   }
 
   // Date et heure de la soirée : pilote l'affichage du tableau de bord.
   if (body.startsAt !== undefined) {
     const start = new Date(body.startsAt)
-    if (isNaN(start.getTime())) return Response.json({ error: 'Date de l’événement invalide.' }, { status: 400 })
+    if (isNaN(start.getTime())) return Response.json({ error: t({ fr: 'Date de l’événement invalide.', en: 'Invalid event date.', de: 'Ungültiges Eventdatum.' }, langue) }, { status: 400 })
     patch.starts_at = start.toISOString()
   }
 
@@ -258,14 +262,14 @@ export async function PATCH(request, { params }) {
       patch.ends_at = null
     } else {
       const fin = new Date(body.endsAt)
-      if (isNaN(fin.getTime())) return Response.json({ error: 'Heure de fin invalide.' }, { status: 400 })
+      if (isNaN(fin.getTime())) return Response.json({ error: t({ fr: 'Heure de fin invalide.', en: 'Invalid end time.', de: 'Ungültige Endzeit.' }, langue) }, { status: 400 })
       const debut = new Date(patch.starts_at || ev.starts_at).getTime()
       if (Number.isFinite(debut) && fin.getTime() <= debut) {
-        return Response.json({ error: 'La fin doit venir après le début de l’événement.' }, { status: 400 })
+        return Response.json({ error: t({ fr: 'La fin doit venir après le début de l’événement.', en: 'The end must come after the start of the event.', de: 'Das Ende muss nach dem Beginn des Events liegen.' }, langue) }, { status: 400 })
       }
       const rev = new Date(patch.reveal_at || ev.reveal_at).getTime()
       if (Number.isFinite(rev) && fin.getTime() > rev) {
-        return Response.json({ error: 'La fin ne peut pas dépasser la révélation des photos.' }, { status: 400 })
+        return Response.json({ error: t({ fr: 'La fin ne peut pas dépasser la révélation des photos.', en: 'The end cannot be later than the photo reveal.', de: 'Das Ende darf nicht nach der Enthüllung der Fotos liegen.' }, langue) }, { status: 400 })
       }
       patch.ends_at = fin.toISOString()
     }
@@ -297,7 +301,7 @@ export async function PATCH(request, { params }) {
       })
       patch.reminder_offsets = nettoyerRappels(body.rappels, duree)
     } else {
-      return Response.json({ error: 'Rappels invalides.' }, { status: 400 })
+      return Response.json({ error: t({ fr: 'Rappels invalides.', en: 'Invalid reminders.', de: 'Ungültige Erinnerungen.' }, langue) }, { status: 400 })
     }
   }
 
@@ -305,13 +309,13 @@ export async function PATCH(request, { params }) {
   // Après, tout le monde n'aurait pas joué au même jeu.
   if (body.shotsPerGuest !== undefined) {
     if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
-      return Response.json({ error: 'La soirée a commencé : le nombre de photos est figé.' }, { status: 409 })
+      return Response.json({ error: t({ fr: 'La soirée a commencé : le nombre de photos est figé.', en: 'The party has started: the number of photos is locked.', de: 'Die Feier hat begonnen: Die Anzahl der Fotos steht fest.' }, langue) }, { status: 409 })
     }
     // Mêmes bornes que le formulaire de création (src/lib/pricing.js) et que
     // les CGV : l'API ne doit pas accepter ce que l'interface interdit.
     const n = parseInt(body.shotsPerGuest, 10)
     if (!Number.isFinite(n) || n < SHOTS_MIN || n > SHOTS_MAX) {
-      return Response.json({ error: `Nombre de photos invalide (entre ${SHOTS_MIN} et ${SHOTS_MAX}).` }, { status: 400 })
+      return Response.json({ error: t({ fr: `Nombre de photos invalide (entre ${SHOTS_MIN} et ${SHOTS_MAX}).`, en: `Invalid number of photos (between ${SHOTS_MIN} and ${SHOTS_MAX}).`, de: `Ungültige Anzahl an Fotos (zwischen ${SHOTS_MIN} und ${SHOTS_MAX}).` }, langue) }, { status: 400 })
     }
     patch.shots_per_guest = n
   }
@@ -320,11 +324,11 @@ export async function PATCH(request, { params }) {
   // tant que la soirée n'a pas commencé, comme le nombre de prises.
   if (body.bonusShots !== undefined) {
     if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
-      return Response.json({ error: 'La soirée a commencé : la recharge est figée.' }, { status: 409 })
+      return Response.json({ error: t({ fr: 'La soirée a commencé : la recharge est figée.', en: 'The party has started: the top-up is locked.', de: 'Die Feier hat begonnen: Das Nachladen steht fest.' }, langue) }, { status: 409 })
     }
     const n = parseInt(body.bonusShots, 10)
     if (!Number.isFinite(n) || n < 0 || n > BONUS_MAX) {
-      return Response.json({ error: `Recharge invalide (entre 0 et ${BONUS_MAX}).` }, { status: 400 })
+      return Response.json({ error: t({ fr: `Recharge invalide (entre 0 et ${BONUS_MAX}).`, en: `Invalid top-up (between 0 and ${BONUS_MAX}).`, de: `Ungültiges Nachladen (zwischen 0 und ${BONUS_MAX}).` }, langue) }, { status: 400 })
     }
     patch.bonus_shots = n
   }
@@ -337,7 +341,7 @@ export async function PATCH(request, { params }) {
   if (body.photoMode !== undefined) {
     const m = String(body.photoMode)
     if (!PHOTO_MODES.includes(m)) {
-      return Response.json({ error: 'Mode photo inconnu.' }, { status: 400 })
+      return Response.json({ error: t({ fr: 'Mode photo inconnu.', en: 'Unknown photo mode.', de: 'Unbekannter Fotomodus.' }, langue) }, { status: 400 })
     }
     patch.photo_mode = m
   }
@@ -355,7 +359,7 @@ export async function PATCH(request, { params }) {
 
   if (body.revealAt !== undefined) {
     const reveal = new Date(body.revealAt)
-    if (isNaN(reveal.getTime())) return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
+    if (isNaN(reveal.getTime())) return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiges Enthüllungsdatum.' }, langue) }, { status: 400 })
     patch.reveal_at = reveal.toISOString()
     patch.expires_at = purgeDateISO(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
     // La date de suppression change : les alertes déjà envoyées ne valent plus.
@@ -366,7 +370,7 @@ export async function PATCH(request, { params }) {
   // Mail de l'organisateur : permet de se reconnecter depuis n'importe quel appareil
   if (body.ownerEmail !== undefined) {
     const email = normalizeEmail(body.ownerEmail)
-    if (!isValidEmail(email)) return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    if (!isValidEmail(email)) return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
     patch.owner_email = email
   }
 
@@ -386,16 +390,16 @@ export async function PATCH(request, { params }) {
     const immediate = Number.isFinite(rev) && rev <= Date.now() + 60 * 1000
     if (!immediate && Number.isFinite(debut) && Number.isFinite(rev) && rev <= debut) {
       return Response.json(
-        { error: 'La révélation doit venir après le début de l’événement.' },
+        { error: t({ fr: 'La révélation doit venir après le début de l’événement.', en: 'The reveal must come after the start of the event.', de: 'Die Enthüllung muss nach dem Beginn des Events liegen.' }, langue) },
         { status: 400 }
       )
     }
   }
 
-  if (!Object.keys(patch).length) return Response.json({ error: 'Rien à modifier.' }, { status: 400 })
+  if (!Object.keys(patch).length) return Response.json({ error: t({ fr: 'Rien à modifier.', en: 'Nothing to change.', de: 'Nichts zu ändern.' }, langue) }, { status: 400 })
 
   const upd = await updateRow('events', `id=eq.${id}`, patch)
-  if (!upd.ok) return Response.json({ error: 'Modification impossible.' }, { status: 500 })
+  if (!upd.ok) return Response.json({ error: t({ fr: 'Modification impossible.', en: 'The change could not be saved.', de: 'Änderung nicht möglich.' }, langue) }, { status: 500 })
 
   // Si ce réglage vient d'ouvrir l'album (« révéler maintenant », reprise après
   // suspension), les participants qui ont laissé leur adresse reçoivent le lien tout
@@ -414,14 +418,15 @@ export async function PATCH(request, { params }) {
 // Suppression d'un événement (réservée à l'organisateur) : photos, participants, fichiers et ligne
 export async function DELETE(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const ownerToken = request.headers.get('x-owner-token')
-  if (!ownerToken) return Response.json({ error: 'Action non autorisée.' }, { status: 403 })
+  if (!ownerToken) return Response.json({ error: t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue) }, { status: 403 })
 
   const { ok, data } = await selectRows('events', `id=eq.${id}&select=owner_token,cover_url`)
   const ev = Array.isArray(data) ? data[0] : null
-  if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
+  if (!ok || !ev) return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
 
   // Le seul geste réservé au propriétaire : il efface les photos de tous les
   // participants, sans retour possible. Un co-admin ne doit pas pouvoir le faire.
@@ -429,8 +434,8 @@ export async function DELETE(request, { params }) {
   if (!canDelete(role)) {
     return Response.json({
       error: role === ADMIN
-        ? "Seul l'organisateur peut supprimer l'événement."
-        : 'Action non autorisée.',
+        ? t({ fr: 'Seul l\'organisateur peut supprimer l\'événement.', en: 'Only the host can delete the event.', de: 'Nur der Gastgeber kann das Event löschen.' }, langue)
+        : t({ fr: 'Action non autorisée.', en: 'Action not allowed.', de: 'Aktion nicht erlaubt.' }, langue),
     }, { status: 403 })
   }
 
@@ -444,7 +449,7 @@ export async function DELETE(request, { params }) {
   await deleteRows('photos', `event_id=eq.${id}`)
   await deleteRows('guests', `event_id=eq.${id}`)
   const del = await deleteRows('events', `id=eq.${id}`)
-  if (!del.ok) return Response.json({ error: 'Suppression impossible.' }, { status: 500 })
+  if (!del.ok) return Response.json({ error: t({ fr: 'Suppression impossible.', en: 'Deletion not possible.', de: 'Löschen nicht möglich.' }, langue) }, { status: 500 })
 
   return Response.json({ ok: true })
 }

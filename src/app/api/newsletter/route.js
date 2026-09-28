@@ -1,4 +1,6 @@
 import { normalizeEmail, isValidEmail } from '../../../lib/account'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
@@ -18,9 +20,10 @@ const SOURCES = Object.keys(LISTES)
 // Inscription à la newsletter du journal : ajoute/actualise le contact dans Brevo.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const email = normalizeEmail(body.email)
   if (!isValidEmail(email)) {
-    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
   }
   const source = SOURCES.includes(body.source) ? body.source : 'journal'
 
@@ -49,11 +52,11 @@ export async function POST(request) {
     if (res.status >= 300 && res.status !== 400) {
       const detail = await res.text().catch(() => '')
       console.error('newsletter: échec Brevo', res.status, detail)
-      return Response.json({ error: "L'inscription a échoué. Réessaie." }, { status: 502 })
+      return Response.json({ error: t({ fr: 'L\'inscription a échoué. Réessaie.', en: 'Sign-up failed. Please try again.', de: 'Die Anmeldung ist fehlgeschlagen. Bitte versuchen Sie es erneut.' }, langue) }, { status: 502 })
     }
     return Response.json({ ok: true })
   } catch (err) {
     console.error('newsletter: erreur réseau', err)
-    return Response.json({ error: 'Réseau indisponible. Réessaie.' }, { status: 502 })
+    return Response.json({ error: t({ fr: 'Réseau indisponible. Réessaie.', en: 'Network unavailable. Please try again.', de: 'Netzwerk nicht verfügbar. Bitte versuchen Sie es erneut.' }, langue) }, { status: 502 })
   }
 }

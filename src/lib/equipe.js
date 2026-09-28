@@ -39,22 +39,22 @@ export async function membrePar(eventId, token) {
 }
 
 // `ev` : ligne `events` brute, avec au moins id, owner_email et owner_token.
-// Renvoie [{ email, token, role }], l'organisateur d'abord.
+// Renvoie [{ email, token, role, langue }], l'organisateur d'abord.
 export async function equipeDe(ev) {
   const liste = []
   if (ev?.owner_email && ev?.owner_token) {
-    liste.push({ email: ev.owner_email, token: ev.owner_token, role: OWNER })
+    liste.push({ email: ev.owner_email, token: ev.owner_token, role: OWNER, langue: ev.langue || null })
   }
   if (!ev?.id) return liste
 
   try {
-    const { data } = await selectRows('event_admins', `event_id=eq.${ev.id}&select=email,token`)
+    const { data } = await selectRows('event_admins', `event_id=eq.${ev.id}&select=email,token,langue`)
     for (const a of Array.isArray(data) ? data : []) {
       if (!a.email || !a.token) continue
       // Un co-organisateur inscrit avec l'adresse du propriétaire ne doit pas
       // recevoir deux fois le même message.
       if (liste.some((p) => p.email.toLowerCase() === a.email.toLowerCase())) continue
-      liste.push({ email: a.email, token: a.token, role: ADMIN })
+      liste.push({ email: a.email, token: a.token, role: ADMIN, langue: a.langue || null })
     }
   } catch (err) {
     // L'organisateur reste prévenu quoi qu'il arrive : mieux vaut un rappel

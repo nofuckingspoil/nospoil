@@ -13,7 +13,9 @@ import 'server-only'
 import { BRAND } from './brand'
 import { CONTACT_EMAIL } from './pricing'
 import { sendMail, layout, bigButton, siteUrl } from './mail'
-import { ACCROCHE, libelle, resumeAppareil, NOTES } from './avis'
+import { accroche, libelle, resumeAppareil, NOTES } from './avis'
+import { t } from './i18n'
+import { nomAffiche } from './event-defaults'
 
 // Votre adresse de réception. Réglable, mais jamais vide : une enquête dont
 // les alertes ne partent nulle part n'alerte personne.
@@ -30,19 +32,42 @@ export function lienAvisInvite(token) {
 }
 
 // ---------- Vers l'organisateur, deux jours après la révélation ----------
-export function surveyOrgaEmail({ eventName, link }) {
+export function surveyOrgaEmail({ eventName, link, langue }) {
+  eventName = nomAffiche(eventName, langue) // « Mon événement » traduit
+  const accr = accroche(langue)
   return {
-    subject: `Vous faites partie des 1000 premiers : 2 minutes ?`,
+    subject: t({
+      fr: `Vous faites partie des 1000 premiers : 2 minutes ?`,
+      en: `You are one of our first 1,000: 2 minutes?`,
+      de: `Sie gehören zu den ersten 1.000: Haben Sie 2 Minuten?`,
+    }, langue),
     html: layout({
-      title: 'Votre avis, vraiment',
-      intro: `${ACCROCHE} On construit encore beaucoup de choses, et ce que vous direz après « <strong>${eventName}</strong> » pèse lourd à ce stade.`,
-      body: `${bigButton(link, 'Répondre (2 minutes) →')}
+      langue,
+      title: t({ fr: 'Votre avis, vraiment', en: 'Your honest opinion', de: 'Ihre ehrliche Meinung' }, langue),
+      intro: t({
+        fr: `${accr} On construit encore beaucoup de choses, et ce que vous direz après « <strong>${eventName}</strong> » pèse lourd à ce stade.`,
+        en: `${accr} We are still building a lot, and what you tell us after “<strong>${eventName}</strong>” carries real weight at this stage.`,
+        de: `${accr} Wir bauen noch vieles auf, und was Sie uns nach „<strong>${eventName}</strong>“ sagen, hat in dieser Phase großes Gewicht.`,
+      }, langue),
+      body: `${bigButton(link, t({ fr: 'Répondre (2 minutes) →', en: 'Answer (2 minutes) →', de: 'Antworten (2 Minuten) →' }, langue))}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          Ce qui vous a plu, ce qui a coincé, ce qui vous a manqué, et un
+          ${t({
+            fr: `Ce qui vous a plu, ce qui a coincé, ce qui vous a manqué, et un
           espace pour tout dire librement.
-          Rien à créer, rien à installer : le lien vous reconnaît.
+          Rien à créer, rien à installer : le lien vous reconnaît.`,
+            en: `What you liked, what went wrong, what you missed, and a
+          space to say anything you like.
+          Nothing to create, nothing to install: the link knows who you are.`,
+            de: `Was Ihnen gefallen hat, was gehakt hat, was Ihnen gefehlt hat, und
+          ein Feld, in dem Sie frei alles sagen können.
+          Nichts anzulegen, nichts zu installieren: Der Link erkennt Sie.`,
+          }, langue)}
         </div>`,
-      footer: `Vous ne recevrez ce message qu'une seule fois, et aucune relance ne suivra.`,
+      footer: t({
+        fr: `Vous ne recevrez ce message qu'une seule fois, et aucune relance ne suivra.`,
+        en: `You will only receive this message once, and no reminder will follow.`,
+        de: `Sie erhalten diese Nachricht nur ein einziges Mal, und es folgt keine Erinnerung.`,
+      }, langue),
     }),
   }
 }
@@ -51,18 +76,39 @@ export function surveyOrgaEmail({ eventName, link }) {
 // Ceux-là sont invisibles pour la question posée dans l'album, et ce sont
 // probablement ceux qui ont rencontré le plus de difficultés : c'est
 // exactement pour eux que ce mail existe.
-export function surveyInviteEmail({ eventName, link, stopLink }) {
+export function surveyInviteEmail({ eventName, link, stopLink, langue }) {
+  eventName = nomAffiche(eventName, langue) // « Mon événement » traduit
+  const accr = accroche(langue)
   return {
-    subject: `Vous faites partie des 1000 premiers : 30 secondes ?`,
+    subject: t({
+      fr: `Vous faites partie des 1000 premiers : 30 secondes ?`,
+      en: `You are one of our first 1,000: 30 seconds?`,
+      de: `Sie gehören zu den ersten 1.000: Haben Sie 30 Sekunden?`,
+    }, langue),
     html: layout({
-      title: 'Dites-nous ce que vous en avez pensé',
-      intro: `Vous avez participé à l'album de « <strong>${eventName}</strong> ». ${ACCROCHE} Votre avis nous aide à corriger ce qui ne va pas encore.`,
-      body: `${bigButton(link, 'Répondre (30 secondes) →')}
+      langue,
+      title: t({ fr: 'Dites-nous ce que vous en avez pensé', en: 'Tell us what you thought', de: 'Sagen Sie uns Ihre Meinung' }, langue),
+      intro: t({
+        fr: `Vous avez participé à l'album de « <strong>${eventName}</strong> ». ${accr} Votre avis nous aide à corriger ce qui ne va pas encore.`,
+        en: `You took part in the album for “<strong>${eventName}</strong>”. ${accr} Your feedback helps us fix what is not working yet.`,
+        de: `Sie haben beim Album von „<strong>${eventName}</strong>“ mitgemacht. ${accr} Ihre Meinung hilft uns, zu verbessern, was noch nicht rund läuft.`,
+      }, langue),
+      body: `${bigButton(link, t({ fr: 'Répondre (30 secondes) →', en: 'Answer (30 seconds) →', de: 'Antworten (30 Sekunden) →' }, langue))}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          Trois questions rapides, et un espace pour nous dire librement
-          ce que vous en avez pensé : c'est celui qu'on lit en premier.
+          ${t({
+            fr: `Trois questions rapides, et un espace pour nous dire librement
+          ce que vous en avez pensé : c'est celui qu'on lit en premier.`,
+            en: `Three quick questions, and a space to tell us freely
+          what you thought: that is the one we read first.`,
+            de: `Drei kurze Fragen und ein Feld, in dem Sie uns frei sagen können,
+          was Sie davon halten: Das lesen wir als Erstes.`,
+          }, langue)}
         </div>`,
-      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement. C'est le seul message de ce type que nous vous enverrons, et aucune relance ne suivra. <a href="${stopLink}" style="color:#8a7c69;">Ne plus recevoir de message de ce type</a>.`,
+      footer: t({
+        fr: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement. C'est le seul message de ce type que nous vous enverrons, et aucune relance ne suivra. <a href="${stopLink}" style="color:#8a7c69;">Ne plus recevoir de message de ce type</a>.`,
+        en: `You are receiving this message because you left your email address when joining this event. It is the only message of this kind we will send you, and no reminder will follow. <a href="${stopLink}" style="color:#8a7c69;">Stop receiving messages like this</a>.`,
+        de: `Sie erhalten diese Nachricht, weil Sie beim Beitritt zu diesem Event Ihre E-Mail-Adresse angegeben haben. Es ist die einzige Nachricht dieser Art, die wir Ihnen schicken, und es folgt keine Erinnerung. <a href="${stopLink}" style="color:#8a7c69;">Keine Nachrichten dieser Art mehr erhalten</a>.`,
+      }, langue),
     }),
   }
 }

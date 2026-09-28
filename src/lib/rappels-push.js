@@ -24,6 +24,8 @@ import { selectRows, updateRow } from './supabase'
 import { momentsRappels } from './rappels'
 import { quotaExceeded } from './phase'
 import { envoyerPush, pushConfigure } from './push-envoi'
+import { t } from './i18n'
+import { langueDe } from './langue-serveur'
 
 // Aucune fête ne commence il y a plus de trente-six heures et n'est encore en
 // cours. Sans cette borne, chaque passage relirait tous les événements du site.
@@ -45,21 +47,37 @@ function nombreDePhotos(n) {
 // Les mots sont ceux de l'iPhone, au caractère près (RappelsDuClip.swift dans
 // le dépôt de l'application). Deux participants côte à côte, l'un sur Android
 // et l'autre sur iPhone, doivent lire exactement la même chose.
-function messageRappel(nomEvenement, restantes, eventId) {
+function messageRappel(nomEvenement, restantes, eventId, langue) {
   const nom = (nomEvenement || '').trim()
   return {
-    titre: nom ? `${nom}, la soirée continue` : 'La soirée continue',
-    corps: `Il vous reste ${nombreDePhotos(restantes)} à prendre. Elles rejoindront l'album de la fête.`,
+    titre: nom
+      ? t({ fr: `${nom}, la soirée continue`, en: `${nom}: the party goes on`, de: `${nom}: Die Feier geht weiter` }, langue)
+      : t({ fr: 'La soirée continue', en: 'The party goes on', de: 'Die Feier geht weiter' }, langue),
+    corps: t({
+      fr: `Il vous reste ${nombreDePhotos(restantes)} à prendre. Elles rejoindront l'album de la fête.`,
+      en: restantes === 1
+        ? 'You still have one photo to take. It will join the party album.'
+        : `You still have ${restantes} photos to take. They will join the party album.`,
+      de: restantes === 1
+        ? 'Sie haben noch ein Foto übrig. Es kommt ins Album der Feier.'
+        : `Sie haben noch ${restantes} Fotos übrig. Sie kommen ins Album der Feier.`,
+    }, langue),
     url: `/j/${eventId}`,
     tag: `ttf-rappel-${eventId}`,
   }
 }
 
-function messageRevelation(nomEvenement, eventId) {
+function messageRevelation(nomEvenement, eventId, langue) {
   const nom = (nomEvenement || '').trim()
   return {
-    titre: nom ? `${nom} : c'est la révélation` : "C'est la révélation",
-    corps: "L'album vient de s'ouvrir. Découvrez la soirée par les yeux des autres.",
+    titre: nom
+      ? t({ fr: `${nom} : c'est la révélation`, en: `${nom}: it's reveal time`, de: `${nom}: Zeit für die Enthüllung` }, langue)
+      : t({ fr: "C'est la révélation", en: "It's reveal time", de: 'Zeit für die Enthüllung' }, langue),
+    corps: t({
+      fr: "L'album vient de s'ouvrir. Découvrez la soirée par les yeux des autres.",
+      en: 'The album has just opened. See the party through everyone else’s eyes.',
+      de: 'Das Album ist gerade aufgegangen. Erleben Sie die Feier mit den Augen der anderen.',
+    }, langue),
     url: `/g/${eventId}`,
     tag: `ttf-revelation-${eventId}`,
   }
@@ -78,7 +96,7 @@ export async function envoyerRappelsPush(maintenant = Date.now()) {
   // Les fêtes en cours : commencées, pas encore révélées, pas supprimées.
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,starts_at,ends_at,reveal_at,reminder_offsets,shots_per_guest,bonus_shots,max_guests' +
+    'select=id,name,starts_at,ends_at,reveal_at,reminder_offsets,shots_per_guest,bonus_shots,max_guests,langue' +
       `&starts_at=lte.${now.toISOString()}` +
       `&starts_at=gte.${depuis.toISOString()}` +
       `&reveal_at=gt.${now.toISOString()}` +
@@ -101,7 +119,7 @@ export async function envoyerRappelsPush(maintenant = Date.now()) {
 
       const invites = await selectRows(
         'guests',
-        `event_id=eq.${ev.id}&select=id,shots_taken,bonus_shots,blocked`
+        `event_id=eq.${ev.id}&select=id,shots_taken,bonus_shots,blocked,langue`
       )
       const fiches = Array.isArray(invites.data) ? invites.data : []
 
@@ -140,7 +158,7 @@ export async function envoyerRappelsPush(maintenant = Date.now()) {
         // Pellicule finie : rien à dire, mais la marque avance quand même,
         // sinon on reposerait la question à chaque passage.
         if (restantes > 0) {
-          const res = await envoyerPush(abo, messageRappel(ev.name, restantes, ev.id), TTL_RAPPEL)
+          const res = await envoyerPush(abo, messageRappel(ev.name, restantes, ev.id, langueDe(g, langueDe(ev))), TTL_RAPPEL)
           if (res.ok) envoyes++
           else if (!res.disparu) echecs++
           // Abonnement disparu : la ligne vient d'être effacée, rien à marquer.
@@ -177,15 +195,20 @@ export async function envoyerRevelationPush(ev) {
 
   const { ok, data } = await selectRows(
     'push_subscriptions',
-    `event_id=eq.${ev.id}&revealed_at=is.null&select=id,endpoint,p256dh,auth&limit=${ABONNES_MAX}`
+    `event_id=eq.${ev.id}&revealed_at=is.null&select=id,guest_id,endpoint,p256dh,auth&limit=${ABONNES_MAX}`
   )
   if (!ok || !Array.isArray(data) || !data.length) return { envoyes: 0, echecs: 0 }
 
-  const message = messageRevelation(ev.name, ev.id)
+  // Chaque participant reçoit la notification dans sa langue, sinon dans
+  // celle de l'événement.
+  const invites = await selectRows('guests', `event_id=eq.${ev.id}&select=id,langue`)
+  const langues = new Map((Array.isArray(invites.data) ? invites.data : []).map((g) => [g.id, g]))
+  const langueEvenement = langueDe(ev)
   let envoyes = 0
   let echecs = 0
 
   for (const abo of data) {
+    const message = messageRevelation(ev.name, ev.id, langueDe(langues.get(abo.guest_id), langueEvenement))
     const res = await envoyerPush(abo, message, TTL_REVELATION)
     if (res.disparu) continue
     if (res.ok) envoyes++

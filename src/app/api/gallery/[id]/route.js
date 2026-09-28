@@ -1,26 +1,29 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
 import { isRevealed, quotaExceeded } from '../../../../lib/phase'
 import { upgradeFor, CONTACT_EMAIL } from '../../../../lib/pricing'
-import { MESSAGE_SUSPENDU, accesExpire } from '../../../../lib/authz'
+import { messageSuspendu, accesExpire } from '../../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
 import { tiragesActifs } from '../../../../lib/tirages'
+import { t } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 export async function GET(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const { ok, data } = await selectRows(
     'events',
     `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status,expires_at,cover_url,starts_at`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
-    return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
+    return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
   }
   const ev = data[0]
 
   // Suspendu par l'administration : l'album se ferme, sans rien détruire.
   if (ev.status === 'suspended') {
-    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+    return Response.json({ error: messageSuspendu(langue) }, { status: 403 })
   }
 
   // Le nombre de participants décide aussi de l'ouverture : une formule dépassée

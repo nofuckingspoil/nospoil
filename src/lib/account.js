@@ -4,15 +4,17 @@
 // ============================================================
 import 'server-only'
 import { selectRows, updateRow, insertRow } from './supabase'
+import { t, langueValide } from './i18n'
 
 const MAX_ATTEMPTS = 6
 
 // Vérifie un code à 6 chiffres pour un mail, et le consomme s'il est correct.
 // Renvoie { ok:true } ou { ok:false, status, error }.
-export async function verifyAndConsumeCode(email, code, purpose = 'connexion') {
+// `langue` : celle de la requête, pour le message d'erreur.
+export async function verifyAndConsumeCode(email, code, purpose = 'connexion', langue = 'fr') {
   const clean = (code || '').toString().replace(/\D/g, '')
   if (!isValidEmail(email) || clean.length !== 6) {
-    return { ok: false, status: 400, error: 'Mail ou code manquant.' }
+    return { ok: false, status: 400, error: t({ fr: 'Mail ou code manquant.', en: 'Email or code missing.', de: 'E-Mail oder Code fehlt.' }, langue) }
   }
   const enc = encodeURIComponent(email)
   // Le motif compte : un code reçu pour se connecter ne doit pas pouvoir
@@ -24,15 +26,15 @@ export async function verifyAndConsumeCode(email, code, purpose = 'connexion') {
   )
   const row = Array.isArray(data) ? data[0] : null
   if (!row || row.used_at || new Date(row.expires_at).getTime() < Date.now()) {
-    return { ok: false, status: 401, error: 'Ce code a expiré. Demandez-en un nouveau.' }
+    return { ok: false, status: 401, error: t({ fr: 'Ce code a expiré. Demandez-en un nouveau.', en: 'This code has expired. Request a new one.', de: 'Dieser Code ist abgelaufen. Fordern Sie einen neuen an.' }, langue) }
   }
   if (row.attempts >= MAX_ATTEMPTS) {
     await updateRow('login_codes', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
-    return { ok: false, status: 429, error: 'Trop de tentatives. Demandez un nouveau code.' }
+    return { ok: false, status: 429, error: t({ fr: 'Trop de tentatives. Demandez un nouveau code.', en: 'Too many attempts. Request a new code.', de: 'Zu viele Versuche. Fordern Sie einen neuen Code an.' }, langue) }
   }
   if (row.code !== clean) {
     await updateRow('login_codes', `id=eq.${row.id}`, { attempts: row.attempts + 1 })
-    return { ok: false, status: 401, error: 'Code incorrect.' }
+    return { ok: false, status: 401, error: t({ fr: 'Code incorrect.', en: 'Incorrect code.', de: 'Falscher Code.' }, langue) }
   }
   await updateRow('login_codes', `id=eq.${row.id}`, { used_at: new Date().toISOString() })
   return { ok: true }
@@ -54,7 +56,10 @@ export function normalizeEmail(v) {
 // ------------------------------------------------------------
 // `demo` : la personne vient d'essayer l'appareil depuis le site. On horodate
 // ce premier contact : l'album d'essai, lui, disparaîtra le lendemain.
-export async function ensureAccount(email, name, { demo = false } = {}) {
+// `langue` : la langue de la personne (fr, en, de), mémorisée sur le compte
+// pour les mails envoyés plus tard. Absente : on ne touche à rien.
+export async function ensureAccount(email, name, { demo = false, langue = null } = {}) {
+  const lang = langueValide(langue)
   const mail = normalizeEmail(email)
   if (!isValidEmail(mail)) return null
   const nom = (name || '').toString().trim().slice(0, 80) || null
@@ -71,6 +76,7 @@ export async function ensureAccount(email, name, { demo = false } = {}) {
       if (nom && !existant.name) patch.name = nom
       // Le premier essai fait foi : on ne réécrit pas la date à chaque passage.
       if (demo && !existant.tried_demo_at) patch.tried_demo_at = maintenant
+      if (lang) patch.langue = lang
       await updateRow('accounts', `id=eq.${existant.id}`, patch)
       return existant.id
     }
@@ -80,6 +86,7 @@ export async function ensureAccount(email, name, { demo = false } = {}) {
       name: nom,
       last_seen_at: maintenant,
       tried_demo_at: demo ? maintenant : null,
+      ...(lang ? { langue: lang } : {}),
     })
     if (cree.ok && cree.data?.id) return cree.data.id
 
@@ -129,10 +136,10 @@ export async function aDesEvenements(email) {
 // Le jeton renvoyé dépend du lien : le propriétaire reçoit celui de l'événement,
 // le co-admin le sien. Auparavant tout le monde recevait celui du propriétaire,
 // ce qui donnait à n'importe quel co-admin le droit de tout supprimer.
-export async function eventsForEmail(email) {
+export async function eventsForEmail(email, langue = null) {
   const enc = encodeURIComponent(email)
   // Se connecter, c'est se manifester : le compte existe au plus tard ici.
-  await ensureAccount(email)
+  await ensureAccount(email, null, { langue })
 
   // L'équipe voit tout. Les albums d'essai du site sont écartés : ils
   // s'effacent le lendemain et noieraient les vrais événements.

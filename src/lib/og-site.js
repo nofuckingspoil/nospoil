@@ -6,6 +6,7 @@
 //  d'embarquer Supabase dans des routes qui n'en ont aucun besoin.
 // ============================================================
 import { ImageResponse } from 'next/og'
+import { t } from './i18n'
 
 export const TAILLE_OG = { width: 1200, height: 630 }
 
@@ -13,8 +14,16 @@ export const TAILLE_OG = { width: 1200, height: 630 }
 const FOND = 'linear-gradient(150deg,#F7C26B 0%,#EE7A45 45%,#A23D5C 100%)'
 
 // `etiquette` situe la page (ex. « Guide gratuit »), `pied` reprend les
-// arguments qui lèvent les objections les plus fréquentes.
-export function carteSite({ titre, accroche, etiquette = null, pied = 'Aucune appli · Gratuit jusqu\'à 5 participants' }) {
+// arguments qui lèvent les objections les plus fréquentes. `langue` choisit
+// la langue du pied par défaut.
+export function carteSite({ titre, accroche, etiquette = null, pied = null, langue = 'fr' }) {
+  if (pied == null) {
+    pied = t({
+      fr: 'Aucune appli · Gratuit jusqu\'à 5 participants',
+      en: 'No app · Free for up to 5 guests',
+      de: 'Keine App · Kostenlos bis 5 Gäste',
+    }, langue)
+  }
   return new ImageResponse(
     (
       <div

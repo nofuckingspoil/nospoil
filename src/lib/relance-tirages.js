@@ -22,7 +22,8 @@ import sharp from 'sharp'
 import { selectRows, signPhotos } from './supabase'
 import { sendMail, tiragesEmail, siteUrl } from './mail'
 import { lienAvisInvite } from './avis-mail'
-import { PRIX_APPEL } from './tirages'
+import { PRIX_APPEL, prixAppel } from './tirages'
+import { langueDe } from './langue-serveur'
 
 // À REMPLIR LE JOUR DE LA MISE EN LIGNE de la nouvelle phrase sous le champ
 // mail (format '2026-10-15T00:00:00Z'). Tant que c'est vide, personne ne
@@ -98,15 +99,19 @@ export async function envoyerRelanceTirages(ev) {
     'guests',
     `event_id=eq.${ev.id}&email=not.is.null&blocked=is.false&survey_optout=not.is.true` +
       `&created_at=gte.${PROMESSE_SERVICES}` +
-      `&select=id,email,token&order=created_at.asc&limit=${BATCH}`
+      `&select=id,email,token,langue&order=created_at.asc&limit=${BATCH}`
   )
   if (!ok || !Array.isArray(data)) return { envoyes: 0, echecs: 0 }
 
   let envoyes = 0
   let echecs = 0
   for (const g of data) {
+    // La langue du participant, sinon celle de l'événement.
+    const langue = langueDe(g, langueDe(ev))
     const mail = tiragesEmail({
       ...contenu,
+      prixAppel: prixAppel(langue),
+      langue,
       stopLink: g.token ? `${lienAvisInvite(g.token)}&stop=1` : null,
     })
     const res = await sendMail({ to: g.email, subject: mail.subject, html: mail.html })

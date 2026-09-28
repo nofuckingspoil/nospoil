@@ -81,8 +81,59 @@ export const PELLICULES = [
 // changer. Le jetable et sa date sont à une pastille de là.
 export const PELLICULE_DEFAUT = 'retro'
 
-export function pelliculeParId(id) {
-  return PELLICULES.find((p) => p.id === id) || PELLICULES[0]
+// Les noms et descriptions dans chaque langue. PELLICULES garde le français
+// (l'app et le serveur l'importent tel quel).
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+const TEXTES = {
+  aucune: {
+    nom: { fr: 'Original', en: 'Original', de: 'Original' },
+    resume: { fr: 'La photo telle qu\'elle a été prise', en: 'The photo just as it was taken', de: 'Das Foto so, wie es aufgenommen wurde' },
+  },
+  jetable: {
+    nom: { fr: 'Jetable', en: 'Disposable', de: 'Einweg' },
+    resume: { fr: 'Le Kodak des soirées : chaud, contrasté, granuleux', en: 'The party Kodak: warm, punchy, grainy', de: 'Die Party-Kodak: warm, kontrastreich, körnig' },
+  },
+  retro: {
+    nom: { fr: 'Rétro', en: 'Retro', de: 'Retro' },
+    resume: { fr: 'Le sépia doré de l\'album, sans grain ni coins sombres', en: 'The album\'s golden sepia, no grain or dark corners', de: 'Das goldene Sepia des Albums, ohne Korn und dunkle Ecken' },
+  },
+  nb: {
+    nom: { fr: 'Noir & blanc', en: 'Black & white', de: 'Schwarzweiß' },
+    resume: { fr: 'Argentique dur, gros grain', en: 'Hard film look, heavy grain', de: 'Harter Analoglook, grobes Korn' },
+  },
+  instant: {
+    nom: { fr: 'Instantané', en: 'Instant', de: 'Sofortbild' },
+    resume: { fr: 'Le tirage qui se développe : délavé, doux, un peu vert', en: 'The print that develops in your hand: faded, soft, a little green', de: 'Das Bild, das sich entwickelt: verblasst, weich, leicht grünlich' },
+  },
+}
+
+// Les copies traduites sont gardées : un même identifiant rend toujours le
+// même objet, ce qui évite de redessiner les aperçus à chaque rendu.
+const CACHE = {}
+function traduite(p, langue) {
+  const x = p && TEXTES[p.id]
+  if (!x) return p
+  const nom = tr(x.nom, langue)
+  const resume = tr(x.resume, langue)
+  if (nom === p.nom && resume === p.resume) return p
+  const cle = `${p.id}|${nom}`
+  if (!CACHE[cle]) CACHE[cle] = { ...p, nom, resume }
+  return CACHE[cle]
+}
+
+// Les pellicules avec leurs noms dans la langue voulue (par défaut, celle de
+// l'appareil ; côté serveur, toujours la passer).
+export function pellicules(langue) {
+  return PELLICULES.map((p) => traduite(p, langue))
+}
+
+// `langue` facultative : le nom et la description sont alors traduits.
+export function pelliculeParId(id, langue) {
+  return traduite(PELLICULES.find((p) => p.id === id) || PELLICULES[0], langue)
+}
+
+export function nomPellicule(id, langue) {
+  return pelliculeParId(id, langue).nom
 }
 
 // Le dégradé de teinte, en CSS d'un côté, en canvas de l'autre.

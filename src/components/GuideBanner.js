@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { isOrganizer } from '../lib/device'
+import { sansLangue } from '../lib/langue-lien'
+import { useLangue } from './Langue'
 
 // ============================================================
 //  Bandeau du guide, posé tout en haut de la page.
@@ -27,13 +29,16 @@ const OUVERT = 'ttf_guide_unlocked'
 
 // Pages vitrines uniquement. Jamais pendant qu'on crée un événement, qu'on
 // prend des photos ou qu'on regarde un album, ni sur le guide lui-même.
+// Le chemin est lu sans son préfixe de langue (/en, /de).
 function estEligible(chemin) {
   if (!chemin) return false
   return chemin === '/' || chemin === '/journal' || chemin.startsWith('/journal/')
 }
 
 export default function GuideBanner() {
-  const chemin = usePathname()
+  const brut = usePathname()
+  const chemin = brut ? sansLangue(brut) : brut
+  const { t, lien } = useLangue()
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
@@ -61,18 +66,22 @@ export default function GuideBanner() {
       {/* Le journal est plus large que l'accueil : sans cet alignement, le
           bandeau déborderait de soixante-dix pixels sur la barre du site. */}
       <div className={`gbn-in ${chemin === '/' ? '' : 'large'}`}>
-        <Link className="gbn-link" href="/guide">
+        <Link className="gbn-link" href={lien('/guide')}>
           <span className="gbn-ic" aria-hidden="true">📕</span>
           <span className="gbn-txt">
-            <strong>Le guide de l'organisateur</strong>
+            <strong>{t({ fr: "Le guide de l'organisateur", en: "The host's guide", de: 'Der Leitfaden für Gastgeber' })}</strong>
             {/* Masqué sur téléphone : le bandeau doit tenir sur une ligne. */}
             <span className="gbn-long">
-              {' '}: sept chapitres courts, et la checklist à suivre jusqu'au jour J.
+              {t({
+                fr: " : sept chapitres courts, et la checklist à suivre jusqu'au jour J.",
+                en: ': seven short chapters, and the checklist to follow right up to the big day.',
+                de: ': sieben kurze Kapitel und die Checkliste bis zum großen Tag.',
+              })}
             </span>
           </span>
-          <span className="gbn-go">Le lire →</span>
+          <span className="gbn-go">{t({ fr: 'Le lire →', en: 'Read it →', de: 'Jetzt lesen →' })}</span>
         </Link>
-        <button className="gbn-x" onClick={ecarter} aria-label="Masquer ce bandeau">×</button>
+        <button className="gbn-x" onClick={ecarter} aria-label={t({ fr: 'Masquer ce bandeau', en: 'Hide this banner', de: 'Dieses Banner ausblenden' })}>×</button>
       </div>
     </div>
   )

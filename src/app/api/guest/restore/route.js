@@ -1,5 +1,7 @@
 import { selectRows, updateRow } from '../../../../lib/supabase'
 import { normalizeEmail } from '../../../../lib/account'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 // ============================================================
 //  Reconnexion d'un participant depuis son lien personnel.
@@ -14,9 +16,11 @@ import { normalizeEmail } from '../../../../lib/account'
 // ============================================================
 
 export async function POST(request) {
-  const { token, deviceToken } = await request.json().catch(() => ({}))
+  const body = await request.json().catch(() => ({}))
+  const { token, deviceToken } = body
+  const langue = langueValide(body.langue) || langueRequete(request)
   if (!token || !deviceToken) {
-    return Response.json({ error: 'Lien incomplet.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Lien incomplet.', en: 'Incomplete link.', de: 'Unvollständiger Link.' }, langue) }, { status: 400 })
   }
 
   const { data } = await selectRows(
@@ -25,7 +29,7 @@ export async function POST(request) {
   )
   const source = Array.isArray(data) ? data[0] : null
   if (!source) {
-    return Response.json({ error: 'Ce lien n’est plus valable.' }, { status: 404 })
+    return Response.json({ error: t({ fr: 'Ce lien n’est plus valable.', en: 'This link is no longer valid.', de: 'Dieser Link ist nicht mehr gültig.' }, langue) }, { status: 404 })
   }
 
   // Toutes les participations de cette adresse. Le jeton prouve qu'on a reçu le
@@ -59,6 +63,7 @@ export async function POST(request) {
     await updateRow('guests', `id=eq.${r.id}`, {
       device_token: deviceToken,
       last_active_at: new Date().toISOString(),
+      langue,
     })
 
     const photos = await selectRows('photos', `event_id=eq.${ev.id}&guest_id=eq.${r.id}&select=id`)
@@ -76,7 +81,7 @@ export async function POST(request) {
   }
 
   if (!sorties.length) {
-    return Response.json({ error: 'Ces événements ne sont plus disponibles.' }, { status: 404 })
+    return Response.json({ error: t({ fr: 'Ces événements ne sont plus disponibles.', en: 'These events are no longer available.', de: 'Diese Events sind nicht mehr verfügbar.' }, langue) }, { status: 404 })
   }
 
   sorties.sort((a, b) => new Date(b.startsAt || 0) - new Date(a.startsAt || 0))

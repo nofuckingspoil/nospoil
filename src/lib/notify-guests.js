@@ -13,6 +13,7 @@ import 'server-only'
 import { selectRows, updateRow } from './supabase'
 import { sendMail, albumReadyEmail, siteUrl } from './mail'
 import { isRevealed } from './phase'
+import { langueDe } from './langue-serveur'
 
 // On ne traite jamais plus de N participants par passage : le cron repasse,
 // et un gros mariage ne doit pas faire expirer la requête.
@@ -41,7 +42,7 @@ export async function notifyGuestsOfAlbum(ev) {
   const { ok, data } = await selectRows(
     'guests',
     `event_id=eq.${ev.id}&email=not.is.null&notified_at=is.null` +
-      `&select=id,display_name,email&order=created_at.asc&limit=${BATCH}`
+      `&select=id,display_name,email,langue&order=created_at.asc&limit=${BATCH}`
   )
   if (!ok || !Array.isArray(data) || !data.length) return { envoyes: 0, echecs: 0 }
 
@@ -58,6 +59,8 @@ export async function notifyGuestsOfAlbum(ev) {
       galleryUrl,
       photoCount,
       guestName: g.display_name,
+      // La langue du participant, sinon celle de l'événement.
+      langue: langueDe(g, langueDe(ev)),
     })
     const res = await sendMail({ to: g.email, subject: mail.subject, html: mail.html })
     // On horodate dans tous les cas : un échec ne doit pas déclencher une

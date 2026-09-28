@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { isInAppBrowser, estIOS, lienApp } from '../lib/camera'
+import { useLangue } from './Langue'
 
 // ============================================================
 //  « Ouvrir dans l'application », depuis un mini-navigateur.
@@ -29,6 +30,7 @@ import { isInAppBrowser, estIOS, lienApp } from '../lib/camera'
 const PATIENCE = 1500
 
 export default function OuvrirDansApp() {
+  const { t } = useLangue()
   const [visible, setVisible] = useState(false)
   const [rate, setRate] = useState(false)
   /** Même Safari n'a pas voulu s'ouvrir : reste le menu du mini-navigateur. */
@@ -66,8 +68,11 @@ export default function OuvrirDansApp() {
     return (
       <div className="ouvrir-app">
         <span className="ouvrir-app-t">
-          Touchez <b>•••</b> en haut de cet écran, puis « Ouvrir dans le navigateur ».
-          L&apos;appareil photo y fonctionne.
+          {t({
+            fr: <>Touchez <b>•••</b> en haut de cet écran, puis « Ouvrir dans le navigateur ». L&apos;appareil photo y fonctionne.</>,
+            en: <>Tap <b>•••</b> at the top of this screen, then “Open in browser”. The camera works there.</>,
+            de: <>Tippen Sie oben auf diesem Bildschirm auf <b>•••</b> und dann auf „Im Browser öffnen“. Dort funktioniert die Kamera.</>,
+          })}
         </span>
       </div>
     )
@@ -77,13 +82,21 @@ export default function OuvrirDansApp() {
     <div className="ouvrir-app">
       <span className="ouvrir-app-t">
         {rate
-          ? "L'application ne s'est pas ouverte. Safari, lui, sait tout faire."
-          : 'Vous êtes dans le navigateur de Messenger.'}
+          ? t({
+              fr: "L'application ne s'est pas ouverte. Safari, lui, sait tout faire.",
+              en: "The app didn't open. Safari, on the other hand, can do it all.",
+              de: 'Die App hat sich nicht geöffnet. Safari dagegen kann alles.',
+            })
+          : t({
+              fr: 'Vous êtes dans le navigateur de Messenger.',
+              en: "You're in Messenger's built-in browser.",
+              de: 'Sie sind im Browser von Messenger.',
+            })}
       </span>
       {rate ? (
-        <button className="ouvrir-app-b" onClick={ouvrirSafari}>Ouvrir dans Safari</button>
+        <button className="ouvrir-app-b" onClick={ouvrirSafari}>{t({ fr: 'Ouvrir dans Safari', en: 'Open in Safari', de: 'In Safari öffnen' })}</button>
       ) : (
-        <button className="ouvrir-app-b" onClick={ouvrirLApp}>Ouvrir dans l&apos;application</button>
+        <button className="ouvrir-app-b" onClick={ouvrirLApp}>{t({ fr: "Ouvrir dans l'application", en: 'Open in the app', de: 'In der App öffnen' })}</button>
       )}
     </div>
   )

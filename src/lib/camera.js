@@ -1,4 +1,5 @@
 'use client'
+import { t } from './i18n'
 // ============================================================
 //  Outils caméra : détection de navigateur intégré + compression
 // ============================================================
@@ -73,7 +74,7 @@ export function compressToBlob(source, { maxSize = 1600, quality = 0.82 } = {}) 
   return new Promise((resolve, reject) => {
     const sw = source.videoWidth || source.naturalWidth || source.width
     const sh = source.videoHeight || source.naturalHeight || source.height
-    if (!sw || !sh) return reject(new Error('Source image vide'))
+    if (!sw || !sh) return reject(new Error(t({ fr: 'Source image vide', en: 'Empty image source', de: 'Leere Bildquelle' })))
 
     const scale = Math.min(1, maxSize / Math.max(sw, sh))
     const w = Math.round(sw * scale)
@@ -93,7 +94,7 @@ export function compressToBlob(source, { maxSize = 1600, quality = 0.82 } = {}) 
       if (fini) return
       fini = true
       try { resolve(dataUrlEnBlob(canvas.toDataURL('image/jpeg', quality))) }
-      catch { reject(new Error('Échec de la compression')) }
+      catch { reject(new Error(t({ fr: 'Échec de la compression', en: 'Compression failed', de: 'Komprimierung fehlgeschlagen' }))) }
     }
     const minuteur = setTimeout(parDataUrl, 6000)
 
@@ -124,7 +125,7 @@ export function fileToImage(file) {
     const img = new Image()
     const url = URL.createObjectURL(file)
     img.onload = () => { URL.revokeObjectURL(url); resolve(img) }
-    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image illisible')) }
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error(t({ fr: 'Image illisible', en: 'Unreadable image', de: 'Bild nicht lesbar' }))) }
     img.src = url
   })
 }
@@ -160,7 +161,11 @@ export async function prepareUpload(file) {
   // d'un poids raisonnable (c'est le cas des photos prises depuis le téléphone).
   if (file && file.size && file.size <= MAX_OCTETS && /jpe?g/i.test(file.type || '')) return file
 
-  throw new Error("Cette photo n'a pas pu être préparée. Réessaie, ou importe-la depuis ta galerie.")
+  throw new Error(t({
+    fr: "Cette photo n'a pas pu être préparée. Réessaie, ou importe-la depuis ta galerie.",
+    en: 'This photo couldn’t be prepared. Try again, or import it from your gallery.',
+    de: 'Dieses Foto konnte nicht vorbereitet werden. Versuchen Sie es erneut oder importieren Sie es aus Ihrer Galerie.',
+  }))
 }
 
 // Son d'obturateur synthétisé (deux clics mécaniques), sans fichier audio.

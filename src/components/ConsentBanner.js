@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { lireConsentement, ecrireConsentement, surConsentement } from '../lib/consent'
 import { META_PIXEL_ID, GA4_ID, GOOGLE_ADS_ID, pageMesurable } from '../lib/tracking'
+import { useLangue } from './Langue'
 
 // ============================================================
 //  Bandeau de consentement aux traceurs publicitaires.
@@ -36,6 +37,7 @@ function estExclu(chemin) {
 
 export default function ConsentBanner() {
   const chemin = usePathname()
+  const { t, lien } = useLangue()
   const [etat, setEtat] = useState('inconnu') // 'inconnu' le temps de lire le stockage
 
   useEffect(() => {
@@ -57,21 +59,22 @@ export default function ConsentBanner() {
     <div className="ck" role="dialog" aria-modal="false" aria-labelledby="ck-t">
       <p className="ck-tag" aria-hidden="true"><span className="ck-dot" />Cookies</p>
       <div className="ck-txt">
-        <h2 id="ck-t">Un mot sur les cookies</h2>
+        <h2 id="ck-t">{t({ fr: 'Un mot sur les cookies', en: 'A word about cookies', de: 'Ein Wort zu Cookies' })}</h2>
         <p>
-          Nous aimerions savoir d'où viennent nos visiteurs, pour ne payer que les
-          publicités qui en valent la peine. Cela suppose de déposer des traceurs de
-          Meta et de Google sur votre appareil. Le site fonctionne exactement pareil
-          dans les deux cas.{' '}
-          <Link href="/politique-de-confidentialite">En savoir plus</Link>
+          {t({
+            fr: "Nous aimerions savoir d'où viennent nos visiteurs, pour ne payer que les publicités qui en valent la peine. Cela suppose de déposer des traceurs de Meta et de Google sur votre appareil. Le site fonctionne exactement pareil dans les deux cas.",
+            en: "We'd like to know where our visitors come from, so we only pay for the ads that are worth it. That means placing Meta and Google trackers on your device. The site works exactly the same either way.",
+            de: 'Wir würden gern wissen, woher unsere Besucher kommen, um nur für Werbung zu bezahlen, die sich lohnt. Dafür müssten wir Tracker von Meta und Google auf Ihrem Gerät speichern. Die Website funktioniert in beiden Fällen genau gleich.',
+          })}{' '}
+          <Link href={lien('/politique-de-confidentialite')}>{t({ fr: 'En savoir plus', en: 'Learn more', de: 'Mehr erfahren' })}</Link>
         </p>
       </div>
       <div className="ck-btns">
         <button className="btn btn-ghost ck-b" onClick={() => ecrireConsentement('refuse')}>
-          Refuser
+          {t({ fr: 'Refuser', en: 'Decline', de: 'Ablehnen' })}
         </button>
         <button className="btn btn-accent ck-b" onClick={() => ecrireConsentement('accepte')}>
-          Accepter
+          {t({ fr: 'Accepter', en: 'Accept', de: 'Akzeptieren' })}
         </button>
       </div>
     </div>

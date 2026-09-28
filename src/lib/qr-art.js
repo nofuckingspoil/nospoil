@@ -16,6 +16,7 @@
 // ============================================================
 
 import QRCode from 'qrcode'
+import { t } from './i18n'
 
 // ---------- Réglages disponibles ----------
 
@@ -90,6 +91,59 @@ export const STYLES = [
   },
 ]
 
+// ---------- Libellés traduits ----------
+// Les listes ci-dessus gardent leurs libellés français (compatibilité) ;
+// ces fonctions renvoient les mêmes listes avec les libellés dans la langue
+// voulue. Pendant le rendu, TOUJOURS passer la langue de la page.
+
+const NOMS = {
+  fonts: {
+    didone: { fr: 'Chic', en: 'Chic', de: 'Edel' },
+    serif: { fr: 'Classique', en: 'Classic', de: 'Klassisch' },
+    garamond: { fr: 'Romantique', en: 'Romantic', de: 'Romantisch' },
+    script: { fr: 'Manuscrite', en: 'Handwritten', de: 'Handschrift' },
+    sans: { fr: 'Moderne', en: 'Modern', de: 'Modern' },
+    geo: { fr: 'Géométrique', en: 'Geometric', de: 'Geometrisch' },
+    mono: { fr: 'Machine à écrire', en: 'Typewriter', de: 'Schreibmaschine' },
+  },
+  dots: {
+    square: { fr: 'Carrés', en: 'Squares', de: 'Quadrate' },
+    rounded: { fr: 'Arrondis', en: 'Rounded', de: 'Abgerundet' },
+    dots: { fr: 'Points', en: 'Dots', de: 'Punkte' },
+  },
+  eyes: {
+    square: { fr: 'Carrés', en: 'Squares', de: 'Quadrate' },
+    rounded: { fr: 'Arrondis', en: 'Rounded', de: 'Abgerundet' },
+    circle: { fr: 'Ronds', en: 'Circles', de: 'Kreise' },
+  },
+  centers: {
+    none: { fr: 'Rien', en: 'None', de: 'Nichts' },
+    heart: { fr: 'Cœur', en: 'Heart', de: 'Herz' },
+    rings: { fr: 'Alliances', en: 'Rings', de: 'Ringe' },
+    camera: { fr: 'Appareil', en: 'Camera', de: 'Kamera' },
+    initials: { fr: 'Initiales', en: 'Initials', de: 'Initialen' },
+  },
+  styles: {
+    minimal: { fr: 'Minimaliste', en: 'Minimalist', de: 'Minimalistisch' },
+    champetre: { fr: 'Champêtre', en: 'Rustic', de: 'Ländlich' },
+    boheme: { fr: 'Bohème', en: 'Boho', de: 'Boho' },
+    elegant: { fr: 'Élégant', en: 'Elegant', de: 'Elegant' },
+    romantique: { fr: 'Romantique', en: 'Romantic', de: 'Romantisch' },
+    deco: { fr: 'Art déco', en: 'Art Deco', de: 'Art déco' },
+    nuit: { fr: 'Nuit étoilée', en: 'Starry night', de: 'Sternennacht' },
+    flash: { fr: 'Time to Flash', en: 'Time to Flash', de: 'Time to Flash' },
+  },
+}
+
+const traduire = (liste, noms, langue) =>
+  liste.map((x) => (noms[x.key] ? { ...x, label: t(noms[x.key], langue) } : x))
+
+export const fontsDe = (langue) => traduire(FONTS, NOMS.fonts, langue)
+export const dotShapesDe = (langue) => traduire(DOT_SHAPES, NOMS.dots, langue)
+export const eyeShapesDe = (langue) => traduire(EYE_SHAPES, NOMS.eyes, langue)
+export const centersDe = (langue) => traduire(CENTERS, NOMS.centers, langue)
+export const stylesDe = (langue) => traduire(STYLES, NOMS.styles, langue)
+
 export const DEFAULTS = {
   url: '',
   ...pickStyle('minimal'),
@@ -135,24 +189,44 @@ export function contrast(a, b) {
 // passe sur un bel écran et ça coince sur un carton imprimé le soir. Les
 // ambiances proposées plus haut restent toutes au-dessus de 5 : une alerte
 // qui s'allume sur les propres suggestions de l'outil n'est plus écoutée.
-export function diagnose(o) {
+export function diagnose(o, langue) {
   const fond = o.transparent ? '#FFFFFF' : o.bg
   const c = contrast(o.fg, fond)
   if (c < 3) {
-    return { level: 'bad', text: "Ce QR ne sera pas lu : la couleur des pixels est bien trop proche du fond. Foncez-la, ou éclaircissez le fond." }
+    return { level: 'bad', text: t({
+      fr: "Ce QR ne sera pas lu : la couleur des pixels est bien trop proche du fond. Foncez-la, ou éclaircissez le fond.",
+      en: 'This QR code won’t scan: the colour of the pixels is far too close to the background. Make it darker, or lighten the background.',
+      de: 'Dieser QR-Code wird nicht gelesen: Die Farbe der Pixel ist dem Hintergrund viel zu ähnlich. Dunkeln Sie sie ab oder hellen Sie den Hintergrund auf.',
+    }, langue) }
   }
   const ce = contrast(o.eye, fond)
   if (ce < 3) {
-    return { level: 'bad', text: "La couleur des trois coins est trop proche du fond : les téléphones ne trouveront pas le code. Foncez-la." }
+    return { level: 'bad', text: t({
+      fr: "La couleur des trois coins est trop proche du fond : les téléphones ne trouveront pas le code. Foncez-la.",
+      en: 'The colour of the three corners is too close to the background: phones won’t find the code. Make it darker.',
+      de: 'Die Farbe der drei Ecken ist dem Hintergrund zu ähnlich: Handys finden den Code nicht. Dunkeln Sie sie ab.',
+    }, langue) }
   }
   if (c < 5) {
-    return { level: 'warn', text: "Contraste juste : ça peut passer à l'écran, mais échouer une fois imprimé ou dans une salle sombre. Testez le scan avant de commander." }
+    return { level: 'warn', text: t({
+      fr: "Contraste juste : ça peut passer à l'écran, mais échouer une fois imprimé ou dans une salle sombre. Testez le scan avant de commander.",
+      en: 'Borderline contrast: it may work on screen, but fail once printed or in a dark room. Test the scan before you order.',
+      de: 'Knapper Kontrast: Auf dem Bildschirm kann es klappen, gedruckt oder in einem dunklen Saal aber scheitern. Testen Sie den Scan, bevor Sie bestellen.',
+    }, langue) }
   }
   if (ce < 4.5) {
-    return { level: 'warn', text: "Les trois coins manquent un peu de contraste. Testez le scan avant d'imprimer." }
+    return { level: 'warn', text: t({
+      fr: "Les trois coins manquent un peu de contraste. Testez le scan avant d'imprimer.",
+      en: 'The three corners are a little low on contrast. Test the scan before printing.',
+      de: 'Die drei Ecken haben etwas wenig Kontrast. Testen Sie den Scan vor dem Drucken.',
+    }, langue) }
   }
   if (luminance(o.fg) > luminance(fond)) {
-    return { level: 'warn', text: "QR clair sur fond foncé : la plupart des téléphones récents y arrivent, les plus anciens non. Testez avant d'imprimer." }
+    return { level: 'warn', text: t({
+      fr: "QR clair sur fond foncé : la plupart des téléphones récents y arrivent, les plus anciens non. Testez avant d'imprimer.",
+      en: 'Light QR code on a dark background: most recent phones can read it, older ones can’t. Test before printing.',
+      de: 'Heller QR-Code auf dunklem Hintergrund: Die meisten neueren Handys schaffen das, ältere nicht. Testen Sie vor dem Drucken.',
+    }, langue) }
   }
   return null
 }
@@ -403,9 +477,11 @@ export function normalizeUrl(v) {
   return `https://${s}`
 }
 
-export function fileName(o, ext) {
-  const base = (o.titre || 'mariage')
+// `langue` : nom de repli du fichier quand l'affiche n'a pas de prénoms.
+export function fileName(o, ext, langue) {
+  const repli = t({ fr: 'mariage', en: 'wedding', de: 'hochzeit' }, langue)
+  const base = (o.titre || repli)
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40)
-  return `qr-${base || 'mariage'}.${ext}`
+  return `qr-${base || repli}.${ext}`
 }

@@ -6,26 +6,30 @@ import { purgeDate } from '../../../../lib/retention'
 import { modeValide } from '../../../../lib/photo-mode'
 import { ensureAccount } from '../../../../lib/account'
 import { consumePromo } from '../../../../lib/promo'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
 // Confirme un paiement Stripe et crée l'événement. Idempotent : rappelable sans
 // risque de créer deux fois le même événement (page rechargée, etc.).
 export async function POST(request) {
+  const body = await request.json().catch(() => ({}))
+  const { sessionId } = body
+  const langueVisiteur = langueValide(body.langue) || langueRequete(request)
   const stripe = getStripe()
-  if (!stripe) return Response.json({ error: 'Paiement indisponible.' }, { status: 400 })
+  if (!stripe) return Response.json({ error: t({ fr: 'Paiement indisponible.', en: 'Payment unavailable.', de: 'Zahlung nicht verfügbar.' }, langueVisiteur) }, { status: 400 })
 
-  const { sessionId } = await request.json().catch(() => ({}))
-  if (!sessionId) return Response.json({ error: 'Session manquante.' }, { status: 400 })
+  if (!sessionId) return Response.json({ error: t({ fr: 'Session manquante.', en: 'Session missing.', de: 'Sitzung fehlt.' }, langueVisiteur) }, { status: 400 })
 
   let session
   try {
     session = await stripe.checkout.sessions.retrieve(sessionId)
   } catch {
-    return Response.json({ error: 'Session de paiement introuvable.' }, { status: 404 })
+    return Response.json({ error: t({ fr: 'Session de paiement introuvable.', en: 'Payment session not found.', de: 'Zahlungssitzung nicht gefunden.' }, langueVisiteur) }, { status: 404 })
   }
   if (!session || session.payment_status !== 'paid') {
-    return Response.json({ error: "Le paiement n'a pas été confirmé." }, { status: 402 })
+    return Response.json({ error: t({ fr: "Le paiement n'a pas été confirmé.", en: 'The payment has not been confirmed.', de: 'Die Zahlung wurde nicht bestätigt.' }, langueVisiteur) }, { status: 402 })
   }
 
   // Déjà créé pour ce paiement ? On renvoie l'événement existant.
@@ -46,6 +50,8 @@ export async function POST(request) {
   }
 
   const m = session.metadata || {}
+  // La langue choisie au moment du paiement, sinon celle de la page de retour.
+  const langue = langueValide(m.langue) || langueVisiteur
 
   // L'adresse vient soit de l'assistant (formule gratuite, vérification par code),
   // soit de la page de paiement Stripe : on ne la fait plus saisir deux fois.
@@ -67,7 +73,7 @@ export async function POST(request) {
     : null
 
   // Le nom du moyen de paiement enrichit le compte au passage.
-  const compte = await ensureAccount(ownerEmail, ownerName)
+  const compte = await ensureAccount(ownerEmail, ownerName, { langue })
 
   const { ok, data } = await insertRow('events', {
     owner_token: m.owner_token,
@@ -92,10 +98,11 @@ export async function POST(request) {
     promo_code: m.promo_code || null,
     paid_cents: session.amount_total ?? null, // ce qui a réellement été encaissé, remise déduite
     is_test: m.is_test === '1',
+    langue,
   })
   if (!ok || !data?.id) {
     console.error('create paid event error:', data)
-    return Response.json({ error: "Erreur lors de la création de l'événement." }, { status: 500 })
+    return Response.json({ error: t({ fr: "Erreur lors de la création de l'événement.", en: 'Error while creating the event.', de: 'Fehler beim Erstellen des Events.' }, langue) }, { status: 500 })
   }
 
   // Le code promo n'est décompté qu'ici : l'événement existe, l'argent est
@@ -113,6 +120,7 @@ export async function POST(request) {
     try {
       const base = siteUrl()
       const mail = eventCreatedEmail({
+        langue,
         eventName: m.name,
         ownerUrl: `${base}/event/${data.id}?k=${m.owner_token}`,
         joinUrl: `${base}/j/${data.id}`,

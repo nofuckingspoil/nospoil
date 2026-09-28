@@ -9,6 +9,7 @@
 import 'server-only'
 import { ImageResponse } from 'next/og'
 import { lireEvenement } from './evenement-serveur'
+import { t } from './i18n'
 
 export const TAILLE_OG = { width: 1200, height: 630 }
 
@@ -20,7 +21,8 @@ export async function nomEvenement(id) {
 }
 
 // La carte elle-même. `accroche` change selon qu'on invite ou qu'on partage.
-export function carteOG({ titre, accroche }) {
+// `langue` : celle de la page partagée (le bas de la carte est traduit).
+export function carteOG({ titre, accroche, langue = 'fr' }) {
   return new ImageResponse(
     (
       <div
@@ -56,7 +58,7 @@ export function carteOG({ titre, accroche }) {
           display: 'flex', marginTop: 'auto', fontSize: 22, letterSpacing: 3,
           textTransform: 'uppercase', opacity: 0.75,
         }}>
-          Aucune appli · depuis le navigateur
+          {t({ fr: 'Aucune appli · depuis le navigateur', en: 'No app · right in the browser', de: 'Keine App · direkt im Browser' }, langue)}
         </div>
       </div>
     ),

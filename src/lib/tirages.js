@@ -11,6 +11,10 @@
 //  apparaisse.
 // ============================================================
 
+// Traductions : fichier partagé, donc aucun import. La langue vient du
+// paramètre `langue`, sinon de celle de l'appareil.
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+
 export function tiragesActifs() {
   return process.env.NEXT_PUBLIC_TIRAGES === '1'
 }
@@ -41,6 +45,36 @@ const PALIERS_PORT = {
   '15x20': [[8, 4.9, 6.9], [31, 5.9, 11.9], [Infinity, 7.9, 15.9]],
 }
 
+const TEXTES_FORMATS = {
+  '10x15': { fr: 'Le classique, comme au labo', en: 'The classic, just like the photo lab', de: 'Der Klassiker, wie aus dem Fotolabor' },
+  '15x20': { fr: 'Le grand format, pour encadrer', en: 'The large size, for framing', de: 'Das große Format, zum Einrahmen' },
+}
+const TEXTES_FINITIONS = {
+  brillante: {
+    nom: { fr: 'Brillante', en: 'Glossy', de: 'Glänzend' },
+    sous: { fr: 'Couleurs éclatantes, noirs profonds. La plus choisie', en: 'Vivid colours, deep blacks. The most popular', de: 'Leuchtende Farben, tiefes Schwarz. Am beliebtesten' },
+  },
+  mate: {
+    nom: { fr: 'Mate', en: 'Matte', de: 'Matt' },
+    sous: { fr: 'Douce, sans reflets ni traces de doigts', en: 'Soft, with no glare or fingerprints', de: 'Sanft, ohne Spiegelungen und Fingerabdrücke' },
+  },
+}
+
+// Les formats et finitions avec leurs textes dans la langue voulue.
+export function formatsTirage(langue) {
+  return FORMATS_TIRAGE.map((f) => ({ ...f, sous: tr(TEXTES_FORMATS[f.id] || { fr: f.sous }, langue) }))
+}
+export function finitions(langue) {
+  return FINITIONS.map((f) => {
+    const x = TEXTES_FINITIONS[f.id]
+    return x ? { ...f, nom: tr(x.nom, langue), sous: tr(x.sous, langue) } : f
+  })
+}
+export function finitionParId(id, langue) {
+  const liste = finitions(langue)
+  return liste.find((f) => f.id === id) || liste[0]
+}
+
 const UE = 'ue'
 export const PAYS = [
   { code: 'FR', nom: 'France métropolitaine', zone: 'fr' },
@@ -61,6 +95,38 @@ export const PAYS = [
   { code: 'GR', nom: 'Grèce', zone: UE },
 ]
 
+const NOMS_PAYS = {
+  FR: { fr: 'France métropolitaine', en: 'Mainland France', de: 'Frankreich (Festland)' },
+  BE: { fr: 'Belgique', en: 'Belgium', de: 'Belgien' },
+  LU: { fr: 'Luxembourg', en: 'Luxembourg', de: 'Luxemburg' },
+  DE: { fr: 'Allemagne', en: 'Germany', de: 'Deutschland' },
+  ES: { fr: 'Espagne', en: 'Spain', de: 'Spanien' },
+  IT: { fr: 'Italie', en: 'Italy', de: 'Italien' },
+  PT: { fr: 'Portugal', en: 'Portugal', de: 'Portugal' },
+  NL: { fr: 'Pays-Bas', en: 'Netherlands', de: 'Niederlande' },
+  AT: { fr: 'Autriche', en: 'Austria', de: 'Österreich' },
+  IE: { fr: 'Irlande', en: 'Ireland', de: 'Irland' },
+  DK: { fr: 'Danemark', en: 'Denmark', de: 'Dänemark' },
+  SE: { fr: 'Suède', en: 'Sweden', de: 'Schweden' },
+  FI: { fr: 'Finlande', en: 'Finland', de: 'Finnland' },
+  PL: { fr: 'Pologne', en: 'Poland', de: 'Polen' },
+  CZ: { fr: 'Tchéquie', en: 'Czechia', de: 'Tschechien' },
+  GR: { fr: 'Grèce', en: 'Greece', de: 'Griechenland' },
+}
+
+function paysTraduit(p, langue) {
+  return p && NOMS_PAYS[p.code] ? { ...p, nom: tr(NOMS_PAYS[p.code], langue) } : p
+}
+
+// Les pays avec leur nom dans la langue voulue, même ordre que PAYS.
+export function listePays(langue) {
+  return PAYS.map((p) => paysTraduit(p, langue))
+}
+
+export function nomPays(code, langue) {
+  return NOMS_PAYS[code] ? tr(NOMS_PAYS[code], langue) : (PAYS.find((p) => p.code === code)?.nom || '')
+}
+
 // Le prix de la livraison (en euros) pour une commande donnée.
 export function prixPort(formatId, nombre, paysCode = 'FR') {
   const paliers = PALIERS_PORT[formatId] || PALIERS_PORT['10x15']
@@ -72,24 +138,27 @@ export function prixPort(formatId, nombre, paysCode = 'FR') {
 // Le plus petit prix de livraison en France, affiché avant le choix du format.
 export const PORT = PALIERS_PORT['10x15'][0][1]
 
-export function paysLivraison(code) {
-  return PAYS.find((p) => p.code === code) || null
+// `langue` facultative : le nom du pays est alors traduit.
+export function paysLivraison(code, langue) {
+  return paysTraduit(PAYS.find((p) => p.code === code) || null, langue)
 }
 
 // Au total, tous exemplaires confondus, et par photo.
 export const TIRAGES_MAX = 200
 export const EXEMPLAIRES_MAX = 20
 
-export function formatTirage(id) {
-  return FORMATS_TIRAGE.find((f) => f.id === id) || FORMATS_TIRAGE[0]
+// `langue` facultative : la description est alors traduite.
+export function formatTirage(id, langue) {
+  const f = FORMATS_TIRAGE.find((x) => x.id === id) || FORMATS_TIRAGE[0]
+  return TEXTES_FORMATS[f.id] ? { ...f, sous: tr(TEXTES_FORMATS[f.id], langue) } : f
 }
 
 // Tout se calcule en centimes : 12 × 0,49 en virgule flottante donne
 // 5,879999…, et un total faux d'un centime sur un reçu fait mauvais effet.
 // `nombre` : le nombre de tirages, exemplaires compris.
-export function devisTirages(nombre, formatId, paysCode = 'FR') {
-  const f = formatTirage(formatId)
-  const pays = paysLivraison(paysCode) || PAYS[0]
+export function devisTirages(nombre, formatId, paysCode = 'FR', langue) {
+  const f = formatTirage(formatId, langue)
+  const pays = paysLivraison(paysCode, langue) || paysTraduit(PAYS[0], langue)
   const n = Math.max(0, Math.min(TIRAGES_MAX, Math.floor(nombre) || 0))
   const photos = n * Math.round(f.prix * 100)
   const port = n > 0 ? Math.round(prixPort(f.id, n, pays.code) * 100) : 0
@@ -105,9 +174,16 @@ export const PROPORTIONS = { '10x15': 102 / 152, '15x20': 152 / 203 }
 export const BORDURE_MM = 6
 export const LARGEUR_MM = { '10x15': 102, '15x20': 152 }
 
-export function euros(centimes) {
-  return (centimes / 100).toFixed(2).replace('.', ',') + ' €'
+// « 5,88 € » en français et en allemand, « €5.88 » en anglais.
+export function euros(centimes, langue) {
+  const l = langue || globalThis.__ttfLangue
+  const n = (centimes / 100).toFixed(2)
+  if (l === 'en') return (centimes < 0 ? '-€' : '€') + n.replace('-', '')
+  return n.replace('.', ',') + ' €'
 }
 
 // « dès 0,49 € » : le prix d'appel affiché avant qu'on ait rien choisi.
-export const PRIX_APPEL = euros(Math.round(FORMATS_TIRAGE[0].prix * 100))
+export const PRIX_APPEL = euros(Math.round(FORMATS_TIRAGE[0].prix * 100), 'fr')
+export function prixAppel(langue) {
+  return euros(Math.round(FORMATS_TIRAGE[0].prix * 100), langue)
+}

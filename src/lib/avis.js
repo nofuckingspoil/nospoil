@@ -144,8 +144,12 @@ const REACTIONS_ORGA = {
   5: { q: 'Racontez-nous : qu’est-ce qui a le mieux marché ?', ph: 'Le moment où vous avez vu que ça prenait, la réaction des participants…' },
 }
 
-export function reactionA(role, note) {
-  const table = role === 'organisateur' ? REACTIONS_ORGA : REACTIONS_INVITE
+export function reactionA(role, note, langue) {
+  const l = lg(langue)
+  const orga = role === 'organisateur'
+  const table = l === 'fr'
+    ? (orga ? REACTIONS_ORGA : REACTIONS_INVITE)
+    : TRAD[l][orga ? 'reactionsOrga' : 'reactionsInvite']
   return table[note] || null
 }
 
@@ -178,8 +182,153 @@ export function libelle(id) {
   return LIB[id] || id
 }
 
-export function souciDe(role) {
-  return role === 'organisateur' ? SOUCIS_ORGA : SOUCIS_INVITE
+// ------------------------------------------------------------
+//  Traductions (anglais, allemand).
+//
+//  Les listes ci-dessus restent en français : l'admin les lit, et l'app les
+//  importe telles quelles. Pour les AFFICHER à un répondant, passer par les
+//  fonctions ci-dessous, qui prennent une langue facultative (sinon celle du
+//  navigateur ou de l'app). Les `id` ne changent jamais : ce sont eux qu'on
+//  enregistre.
+// ------------------------------------------------------------
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+const lg = (l) => (l || globalThis.__ttfLangue) === 'en' ? 'en' : (l || globalThis.__ttfLangue) === 'de' ? 'de' : 'fr'
+
+const TRAD = {
+  en: {
+    invite: {
+      ok: { label: 'Everything worked first time' },
+      qr: { label: 'I struggled to scan the QR code', relance: 'What did you try with?', exemple: 'E.g. the phone camera, a scanner app, Snapchat…' },
+      camera: { label: "The camera wouldn't open", relance: 'Did a window ask you for permission? What did you answer?', exemple: "E.g. I said no without thinking, no window appeared…" },
+      lien: { label: "I couldn't find the album link again", relance: 'Where did you look for it first?', exemple: 'E.g. in my emails, in my history, I asked the host again…' },
+      autre: { label: 'Other', relance: 'What happened?', exemple: 'In one sentence, even a rough one.' },
+    },
+    orga: {
+      ok: { label: 'Everything worked, nobody reported anything to me' },
+      qr: { label: "Some guests couldn't scan the QR code", relance: 'Roughly how many, and with which phones?', exemple: 'E.g. two or three people, mostly iPhones…' },
+      camera: { label: "Some guests couldn't open the camera", relance: 'What did they see on screen?', exemple: 'E.g. a black screen, a permission message…' },
+      lien: { label: "Some guests couldn't find the album link again", relance: 'How did they end up finding it?', exemple: 'E.g. I sent them the link again myself…' },
+      reveal: { label: "I wasn't sure when the photos would be revealed", relance: 'At what point were you unsure?', exemple: 'E.g. when creating the event, when choosing the date…' },
+      paiement: { label: 'I had a problem with the plan or the payment', relance: 'At what point did it get stuck?', exemple: 'E.g. when paying, when changing plan…' },
+      autre: { label: 'Other', relance: 'What happened?', exemple: 'In one sentence, even a rough one.' },
+    },
+    preferees: {
+      limite: 'The limited number of photos',
+      suspense: 'The suspense: nobody sees anything before the reveal',
+      jetable: 'The disposable camera look',
+      sansappli: 'No app to install',
+      album: 'The shared album at the end',
+      autre: 'Something else',
+    },
+    sources: {
+      google: 'Google',
+      reseaux: 'Instagram / TikTok',
+      bouche: 'A friend told me about it',
+      invite: 'I was a guest at a Time to Flash event',
+      article: 'A blog post',
+      autre: 'Other',
+    },
+    notes: { 1: 'Disappointing', 2: 'Average', 3: 'Good', 4: 'Very good', 5: 'Brilliant' },
+    reactionsInvite: {
+      1: { q: 'What disappointed you?', ph: 'Be honest: that is what helps us improve the most.' },
+      2: { q: 'What would have made it really good?', ph: 'The missing detail, the moment it fell flat…' },
+      3: { q: 'What did you like, and what was missing to make it brilliant?', ph: 'We want to hear both, even in one sentence.' },
+      4: { q: 'What did you like, and what was missing for the fifth star?', ph: 'We want to hear both, even in one sentence.' },
+      5: { q: 'What did you like most?', ph: 'The moment, the detail, the surprise… Tell us.' },
+    },
+    reactionsOrga: {
+      1: { q: "What didn't work?", ph: "Be direct, we'd rather hear it from you." },
+      2: { q: 'What left you wanting more?', ph: "What you expected and didn't get…" },
+      3: { q: 'What worked well, and what was missing to make it brilliant?', ph: 'We want to hear both, even in one sentence.' },
+      4: { q: 'What worked well, and what was missing for the fifth star?', ph: 'We want to hear both, even in one sentence.' },
+      5: { q: 'Tell us: what worked best?', ph: 'The moment you saw it catching on, how your guests reacted…' },
+    },
+    probleme: { non: 'No, everything worked', oui: 'Yes' },
+    referait: { oui: 'Yes', 'peut-etre': 'Maybe', non: 'No' },
+    accroche: 'You are one of the first 1,000 people to use Time to Flash.',
+  },
+  de: {
+    invite: {
+      ok: { label: 'Alles hat auf Anhieb funktioniert' },
+      qr: { label: 'Ich hatte Mühe, den QR-Code zu scannen', relance: 'Womit haben Sie es versucht?', exemple: 'Z. B. mit der Handykamera, einer Scanner-App, Snapchat…' },
+      camera: { label: 'Die Kamera wollte sich nicht öffnen', relance: 'Hat ein Fenster Sie um eine Erlaubnis gebeten? Was haben Sie geantwortet?', exemple: 'Z. B. ich habe ohne nachzudenken abgelehnt, es ist kein Fenster erschienen…' },
+      lien: { label: 'Ich habe den Link zum Album nicht wiedergefunden', relance: 'Wo haben Sie zuerst danach gesucht?', exemple: 'Z. B. in meinen E-Mails, in meinem Verlauf, ich habe den Gastgeber noch einmal gefragt…' },
+      autre: { label: 'Sonstiges', relance: 'Was ist passiert?', exemple: 'In einem Satz, auch gern ungefähr.' },
+    },
+    orga: {
+      ok: { label: 'Alles hat funktioniert, niemand hat mir etwas gemeldet' },
+      qr: { label: 'Einige Gäste konnten den QR-Code nicht scannen', relance: 'Ungefähr wie viele, und mit welchen Handys?', exemple: 'Z. B. zwei oder drei Personen, eher iPhones…' },
+      camera: { label: 'Einige Gäste konnten die Kamera nicht öffnen', relance: 'Was haben sie auf dem Bildschirm gesehen?', exemple: 'Z. B. einen schwarzen Bildschirm, eine Berechtigungsanfrage…' },
+      lien: { label: 'Einige Gäste haben den Link zum Album nicht wiedergefunden', relance: 'Wie haben sie ihn schließlich gefunden?', exemple: 'Z. B. ich habe ihnen den Link selbst noch einmal geschickt…' },
+      reveal: { label: 'Mir war nicht klar, wann die Fotos enthüllt werden', relance: 'An welcher Stelle waren Sie unsicher?', exemple: 'Z. B. beim Erstellen, bei der Wahl des Datums…' },
+      paiement: { label: 'Ich hatte ein Problem mit dem Paket oder der Zahlung', relance: 'An welcher Stelle hat es gehakt?', exemple: 'Z. B. beim Bezahlen, beim Wechsel des Pakets…' },
+      autre: { label: 'Sonstiges', relance: 'Was ist passiert?', exemple: 'In einem Satz, auch gern ungefähr.' },
+    },
+    preferees: {
+      limite: 'Die begrenzte Anzahl an Fotos',
+      suspense: 'Die Spannung: Niemand sieht etwas vor der Enthüllung',
+      jetable: 'Der Look einer Einwegkamera',
+      sansappli: 'Keine App zu installieren',
+      album: 'Das gemeinsame Album am Ende',
+      autre: 'Etwas anderes',
+    },
+    sources: {
+      google: 'Google',
+      reseaux: 'Instagram / TikTok',
+      bouche: 'Ein Freund hat mir davon erzählt',
+      invite: 'Ich war Gast bei einem Time to Flash Event',
+      article: 'Ein Blogartikel',
+      autre: 'Sonstiges',
+    },
+    notes: { 1: 'Enttäuschend', 2: 'Mittelmäßig', 3: 'Gut', 4: 'Sehr gut', 5: 'Großartig' },
+    reactionsInvite: {
+      1: { q: 'Was hat Sie enttäuscht?', ph: 'Sagen Sie es ehrlich: Das hilft uns am meisten weiter.' },
+      2: { q: 'Was hätte es richtig gut gemacht?', ph: 'Das fehlende Detail, der Moment, in dem die Stimmung kippte…' },
+      3: { q: 'Was hat Ihnen gefallen, und was hat gefehlt, damit es großartig wird?', ph: 'Beides interessiert uns, auch in einem Satz.' },
+      4: { q: 'Was hat Ihnen gefallen, und was hat für den fünften Stern gefehlt?', ph: 'Beides interessiert uns, auch in einem Satz.' },
+      5: { q: 'Was hat Ihnen am besten gefallen?', ph: 'Der Moment, das Detail, die Überraschung… Erzählen Sie.' },
+    },
+    reactionsOrga: {
+      1: { q: 'Was hat nicht funktioniert?', ph: 'Seien Sie direkt, wir hören es lieber von Ihnen.' },
+      2: { q: 'Was hat Ihnen gefehlt?', ph: 'Was Sie erwartet haben und was nicht kam…' },
+      3: { q: 'Was hat gut funktioniert, und was hat gefehlt, damit es großartig wird?', ph: 'Beides interessiert uns, auch in einem Satz.' },
+      4: { q: 'Was hat gut funktioniert, und was hat für den fünften Stern gefehlt?', ph: 'Beides interessiert uns, auch in einem Satz.' },
+      5: { q: 'Erzählen Sie: Was hat am besten funktioniert?', ph: 'Der Moment, in dem Sie gemerkt haben, dass es ankommt, die Reaktion Ihrer Gäste…' },
+    },
+    probleme: { non: 'Nein, alles hat funktioniert', oui: 'Ja' },
+    referait: { oui: 'Ja', 'peut-etre': 'Vielleicht', non: 'Nein' },
+    accroche: 'Sie gehören zu den ersten 1.000 Nutzern von Time to Flash.',
+  },
+}
+
+// Liste des soucis (invité ou organisateur), dans la langue voulue.
+export function souciDe(role, langue) {
+  const base = role === 'organisateur' ? SOUCIS_ORGA : SOUCIS_INVITE
+  const l = lg(langue)
+  if (l === 'fr') return base
+  const table = TRAD[l][role === 'organisateur' ? 'orga' : 'invite']
+  return base.map((x) => ({ ...x, ...(table[x.id] || {}) }))
+}
+
+const traduireListe = (liste, cle, langue) => {
+  const l = lg(langue)
+  if (l === 'fr') return liste
+  return liste.map((x) => ({ ...x, label: TRAD[l][cle][x.id] ?? x.label }))
+}
+
+export function preferees(langue) { return traduireListe(PREFEREES, 'preferees', langue) }
+export function sources(langue) { return traduireListe(SOURCES, 'sources', langue) }
+export function probleme(langue) { return traduireListe(PROBLEME, 'probleme', langue) }
+export function referait(langue) { return traduireListe(REFERAIT, 'referait', langue) }
+
+export function notes(langue) {
+  const l = lg(langue)
+  if (l === 'fr') return NOTES
+  return NOTES.map((n) => ({ ...n, mot: TRAD[l].notes[n.valeur] ?? n.mot }))
+}
+
+export function accroche(langue) {
+  return tr({ fr: ACCROCHE, en: TRAD.en.accroche, de: TRAD.de.accroche }, langue)
 }
 
 // L'identité technique brute est illisible : on en tire les deux seules

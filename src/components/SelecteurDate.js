@@ -20,8 +20,15 @@
 // ============================================================
 
 import { useId, useMemo, useState } from 'react'
+import { useLangue } from './Langue'
 
-const JOURS = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']
+// La semaine commence le lundi dans les trois langues (France, Royaume-Uni,
+// Allemagne).
+const JOURS = {
+  fr: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'],
+  en: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+  de: ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'],
+}
 
 const pad = (n) => String(n).padStart(2, '0')
 
@@ -50,6 +57,7 @@ function debutGrille(annee, mois) {
 export default function SelecteurDate({ value, onChange, min, id }) {
   // Une vraie étiquette reliée au champ : « aria-label » suffit aux lecteurs
   // d'écran, pas aux navigateurs, qui signalent un champ sans étiquette.
+  const { t, lang, locale } = useLangue()
   const idHeure = useId()
   const choisie = versDate(value) || new Date()
   const minimum = versDate(min)
@@ -79,7 +87,7 @@ export default function SelecteurDate({ value, onChange, min, id }) {
     if (utile) semaines.push(semaine)
   }
 
-  const moisTitre = ancre.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })
+  const moisTitre = ancre.toLocaleDateString(locale, { month: 'long', year: 'numeric' })
   const jourChoisi = jour(choisie)
 
   function choisirJour(d) {
@@ -102,15 +110,15 @@ export default function SelecteurDate({ value, onChange, min, id }) {
   return (
     <div className="cal" id={id}>
       <div className="cal-head">
-        <button type="button" className="cal-nav" aria-label="Mois précédent" disabled={!moisPrecedentPossible}
+        <button type="button" className="cal-nav" aria-label={t({ fr: 'Mois précédent', en: 'Previous month', de: 'Vorheriger Monat' })} disabled={!moisPrecedentPossible}
           onClick={() => setAncre(new Date(ancre.getFullYear(), ancre.getMonth() - 1, 1))}>←</button>
         <span className="cal-mois">{moisTitre}</span>
-        <button type="button" className="cal-nav" aria-label="Mois suivant"
+        <button type="button" className="cal-nav" aria-label={t({ fr: 'Mois suivant', en: 'Next month', de: 'Nächster Monat' })}
           onClick={() => setAncre(new Date(ancre.getFullYear(), ancre.getMonth() + 1, 1))}>→</button>
       </div>
 
       <div className="cal-jours" aria-hidden="true">
-        {JOURS.map((j) => <span key={j}>{j}</span>)}
+        {(JOURS[lang] || JOURS.fr).map((j) => <span key={j}>{j}</span>)}
       </div>
 
       <div className="cal-grille">
@@ -122,7 +130,7 @@ export default function SelecteurDate({ value, onChange, min, id }) {
             <button key={d.getTime()} type="button" disabled={interdit}
               className={`cal-case${actif ? ' on' : ''}${horsMois ? ' hors' : ''}`}
               aria-current={actif ? 'date' : undefined}
-              aria-label={d.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+              aria-label={d.toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}
               onClick={() => choisirJour(d)}>
               {d.getDate()}
             </button>
@@ -131,7 +139,7 @@ export default function SelecteurDate({ value, onChange, min, id }) {
       </div>
 
       <div className="cal-heure">
-        <label className="lbl" htmlFor={idHeure}>Heure</label>
+        <label className="lbl" htmlFor={idHeure}>{t({ fr: 'Heure', en: 'Time', de: 'Uhrzeit' })}</label>
         <input type="time" id={idHeure} name="heure" value={`${pad(choisie.getHours())}:${pad(choisie.getMinutes())}`}
           onChange={(e) => choisirHeure(e.target.value)} />
       </div>

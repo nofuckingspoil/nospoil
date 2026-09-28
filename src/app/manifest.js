@@ -1,8 +1,12 @@
 import { BRAND } from '../lib/brand'
 
+// Le manifeste est unique, quelle que soit la langue du visiteur : son nom
+// se limite donc à la marque, qui se lit pareil partout (c'est lui que la
+// fenêtre d'installation d'Android affiche). La description, rarement vue,
+// reste en français, langue principale du site.
 export default function manifest() {
   return {
-    name: `${BRAND.name} | ${BRAND.tagline}`,
+    name: BRAND.name,
     short_name: BRAND.name,
     description: BRAND.pitch,
     start_url: '/',

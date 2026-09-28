@@ -5,35 +5,40 @@ import { modeValide } from '../../../lib/photo-mode'
 import { siteUrl } from '../../../lib/mail'
 import { LEGAL_UPDATED } from '../../../lib/legal'
 import { quotePromo } from '../../../lib/promo'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
+import { lien } from '../../../lib/langue-lien'
 
 export const runtime = 'nodejs'
 
 // Crée une session de paiement Stripe pour une formule payante.
 // L'événement n'est PAS encore créé : il le sera après confirmation du paiement.
 export async function POST(request) {
-  if (!paymentsLive()) {
-    return Response.json({ error: "Le paiement n'est pas encore activé." }, { status: 400 })
-  }
   const body = await request.json().catch(() => ({}))
+  // La langue de l'organisateur : page de paiement Stripe, puis événement.
+  const langue = langueValide(body.langue) || langueRequete(request)
+  if (!paymentsLive()) {
+    return Response.json({ error: t({ fr: "Le paiement n'est pas encore activé.", en: 'Payment is not enabled yet.', de: 'Die Zahlung ist noch nicht aktiviert.' }, langue) }, { status: 400 })
+  }
   const { ownerToken, name, hostNames, revealAt, shotsPerGuest, maxGuests } = body
   const ownerEmail = normalizeEmail(body.ownerEmail)
 
-  if (!ownerToken) return Response.json({ error: 'Appareil non identifié.' }, { status: 400 })
-  if (!name || !name.trim()) return Response.json({ error: "Donne un nom à ton événement." }, { status: 400 })
+  if (!ownerToken) return Response.json({ error: t({ fr: 'Appareil non identifié.', en: 'Device not identified.', de: 'Gerät nicht erkannt.' }, langue) }, { status: 400 })
+  if (!name || !name.trim()) return Response.json({ error: t({ fr: "Donne un nom à ton événement.", en: 'Give your event a name.', de: 'Geben Sie Ihrem Event einen Namen.' }, langue) }, { status: 400 })
 
   // L'adresse est facultative ici : Stripe la demande de toute façon pendant le
   // paiement, et on la récupère au retour. On l'exige seulement si elle doit
   // être vérifiée par code en amont, ou si elle a été fournie mais mal formée.
   if (EMAIL_VERIFICATION_PAID && !isValidEmail(ownerEmail)) {
-    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
   }
   if (ownerEmail && !isValidEmail(ownerEmail)) {
-    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
   }
 
   const reveal = new Date(revealAt)
   if (!revealAt || isNaN(reveal.getTime()) || reveal.getTime() < Date.now() - 60 * 1000) {
-    return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiges Enthüllungsdatum.' }, langue) }, { status: 400 })
   }
 
   // Date de la fête : à défaut, estimée à la veille au soir de la révélation.
@@ -52,35 +57,35 @@ export async function POST(request) {
 
   const tier = tierByGuests(maxGuests)
   if (tier.priceCents <= 0) {
-    return Response.json({ error: 'Cette formule est gratuite : aucun paiement nécessaire.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Cette formule est gratuite : aucun paiement nécessaire.', en: 'This plan is free: no payment needed.', de: 'Dieses Paket ist kostenlos: Keine Zahlung nötig.' }, langue) }, { status: 400 })
   }
 
   // Code promo : revérifié ici même si le navigateur l'a déjà fait vérifier.
   // Un prix annoncé par le client ne prouve rien.
   let promo = null
   if (body.promo) {
-    const q = await quotePromo(body.promo, tier.maxGuests)
+    const q = await quotePromo(body.promo, tier.maxGuests, langue)
     if (!q.ok) return Response.json({ error: q.error }, { status: 400 })
     // Plus rien à encaisser : ce n'est plus une vente, c'est une création
     // directe. Le navigateur doit passer par /api/events.
-    if (q.free) return Response.json({ free: true, code: q.code, error: 'Ce code offre la formule : aucun paiement nécessaire.' }, { status: 400 })
+    if (q.free) return Response.json({ free: true, code: q.code, error: t({ fr: 'Ce code offre la formule : aucun paiement nécessaire.', en: 'This code makes the plan free: no payment needed.', de: 'Mit diesem Code ist das Paket geschenkt: Keine Zahlung nötig.' }, langue) }, { status: 400 })
     promo = q
   }
 
   // L'adresse doit être vérifiée (code à 6 chiffres) avant d'aller au paiement.
   // (Éteint par défaut : Stripe vérifie déjà l'adresse pendant le paiement.)
   if (EMAIL_VERIFICATION_PAID) {
-    const check = await verifyAndConsumeCode(ownerEmail, body.code)
+    const check = await verifyAndConsumeCode(ownerEmail, body.code, 'connexion', langue)
     if (!check.ok) return Response.json({ error: check.error }, { status: check.status })
   }
 
   // Formule payante : l'acceptation des CGV ET la renonciation au droit de
   // rétractation sont exigées avant d'ouvrir le paiement (CGV art. 6 et 9.2).
   if (body.cgvAccepted !== true) {
-    return Response.json({ error: 'Vous devez accepter les conditions générales.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Vous devez accepter les conditions générales.', en: 'You must accept the terms and conditions.', de: 'Sie müssen die Allgemeinen Geschäftsbedingungen akzeptieren.' }, langue) }, { status: 400 })
   }
   if (body.withdrawalWaived !== true) {
-    return Response.json({ error: "Vous devez demander l'exécution immédiate du service." }, { status: 400 })
+    return Response.json({ error: t({ fr: "Vous devez demander l'exécution immédiate du service.", en: 'You must request immediate performance of the service.', de: 'Sie müssen die sofortige Ausführung der Leistung verlangen.' }, langue) }, { status: 400 })
   }
   const consentAt = new Date().toISOString()
 
@@ -115,6 +120,8 @@ export async function POST(request) {
   try {
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      // La page de paiement Stripe dans la langue de l'organisateur.
+      locale: langue,
       discounts,
       // Sans adresse fournie, Stripe la demande lui-même sur sa page de paiement.
       customer_email: ownerEmail || undefined,
@@ -123,13 +130,17 @@ export async function POST(request) {
         price_data: {
           currency: 'eur',
           unit_amount: unitAmount,
-          product_data: { name: `Time to Flash, « ${cleanName} » (jusqu'à ${tier.maxGuests} participants)` },
+          product_data: { name: t({
+            fr: `Time to Flash, « ${cleanName} » (jusqu'à ${tier.maxGuests} participants)`,
+            en: `Time to Flash, “${cleanName}” (up to ${tier.maxGuests} guests)`,
+            de: `Time to Flash, „${cleanName}“ (bis zu ${tier.maxGuests} Gäste)`,
+          }, langue) },
         },
       }],
       success_url: `${base}/create/paiement?session_id={CHECKOUT_SESSION_ID}`,
       // Une annulation doit ramener sur la variante d'où l'on vient, sinon la
       // comparaison entre les tunnels est faussée.
-      cancel_url: `${base}${cancelPath}?tier=${tier.maxGuests}`,
+      cancel_url: `${base}${lien(cancelPath, langue)}?tier=${tier.maxGuests}`,
       // Toutes les infos de l'événement voyagent avec le paiement : on crée l'événement au retour.
       metadata: {
         owner_token: String(ownerToken),
@@ -153,11 +164,13 @@ export async function POST(request) {
         // une fois l'événement réellement créé.
         promo_code: promo ? promo.code : '',
         is_test: promo && promo.marksTest ? '1' : '',
+        // La langue de l'organisateur, mémorisée sur l'événement au retour.
+        langue,
       },
     })
     return Response.json({ url: session.url })
   } catch (err) {
     console.error('stripe checkout:', err)
-    return Response.json({ error: 'Impossible de démarrer le paiement. Réessayez.' }, { status: 502 })
+    return Response.json({ error: t({ fr: 'Impossible de démarrer le paiement. Réessayez.', en: 'Payment could not be started. Please try again.', de: 'Die Zahlung konnte nicht gestartet werden. Bitte versuchen Sie es erneut.' }, langue) }, { status: 502 })
   }
 }

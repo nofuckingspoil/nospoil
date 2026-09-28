@@ -4,6 +4,11 @@
 //  Le "body" est du HTML rendu dans .dj-prose (voir globals.css).
 // ============================================================
 
+import { lien } from './langue-lien'
+import { LOCALES } from './i18n'
+import { POSTS_EN } from './journal-en'
+import { POSTS_DE } from './journal-de'
+
 // Dégradés "argentiques" placeholder (repris du handoff design), choisis de
 // façon déterministe par le slug → chaque article garde toujours sa couleur.
 export const JOURNAL_GRADS = [
@@ -27,15 +32,29 @@ export function gradientFor(slug) {
 export function avatarColor(author) {
   return JOURNAL_AV[hash(author) % JOURNAL_AV.length]
 }
-// Date ISO → « 18 juin 2026 »
-export function formatDate(iso) {
+// Date ISO → « 18 juin 2026 » (ou « 18 June 2026 », « 18. Juni 2026 »)
+export function formatDate(iso, langue = 'fr') {
   try {
-    return new Date(iso).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
+    return new Date(iso).toLocaleDateString(LOCALES[langue] || 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })
   } catch { return iso }
 }
 
 // Les catégories, dans l'ordre d'affichage des filtres.
+// Ces valeurs françaises servent aussi de clé (filtre ?cat=) dans les trois
+// langues ; seul le libellé affiché change (categorieLabel).
 export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulisses']
+
+const LIBELLES_CATEGORIES = {
+  Tous: { en: 'All', de: 'Alle' },
+  Photo: { en: 'Photo', de: 'Foto' },
+  Organisation: { en: 'Planning', de: 'Planung' },
+  Souvenirs: { en: 'Memories', de: 'Erinnerungen' },
+  Coulisses: { en: 'Behind the scenes', de: 'Hinter den Kulissen' },
+}
+export function categorieLabel(cat, langue = 'fr') {
+  if (langue === 'fr') return cat
+  return LIBELLES_CATEGORIES[cat]?.[langue] || cat
+}
 
 // Articles. L'ordre d'affichage est calculé automatiquement à partir de la date
 // (le plus récent en premier = "à la une"), donc tu peux ajouter un article
@@ -1243,4 +1262,48 @@ export const POSTS = [...ALL_POSTS].sort((a, b) => b.date.localeCompare(a.date))
 
 export function getPost(slug) {
   return POSTS.find((p) => p.slug === slug) || null
+}
+
+// ---- Versions traduites ----------------------------------------------------
+const TRADUCTIONS = { en: POSTS_EN, de: POSTS_DE }
+
+// Durée de lecture : « 9 min » → « 9 min read » / « 9 Min. Lesezeit ».
+function dureeLecture(read, langue) {
+  const n = parseInt(read, 10)
+  if (!n || langue === 'fr') return read
+  return langue === 'de' ? `${n} Min. Lesezeit` : `${n} min read`
+}
+
+// Les liens internes des articles (href="/journal/…", "/guide"…) gardent
+// le préfixe de langue (/en, /de).
+function localiserLiens(html, langue) {
+  if (!html || langue === 'fr') return html
+  return html.replace(/href="(\/[^"]*)"/g, (m, chemin) => `href="${lien(chemin, langue)}"`)
+}
+
+// Un article dans la langue demandée (repli sur le français champ par champ).
+export function postEnLangue(p, langue = 'fr') {
+  if (!p || langue === 'fr') return p
+  const tr = TRADUCTIONS[langue]?.[p.slug] || {}
+  return {
+    ...p,
+    title: tr.title || p.title,
+    excerpt: tr.excerpt || p.excerpt,
+    caption: tr.caption || p.caption,
+    body: localiserLiens(tr.body || p.body, langue),
+    faq: tr.faq || p.faq,
+    read: dureeLecture(p.read, langue),
+    catLabel: categorieLabel(p.cat, langue),
+  }
+}
+
+// Tous les articles, triés, dans la langue demandée.
+export function postsEnLangue(langue = 'fr') {
+  return POSTS.map((p) => (langue === 'fr' ? { ...p, catLabel: p.cat } : postEnLangue(p, langue)))
+}
+
+export function getPostEnLangue(slug, langue = 'fr') {
+  const p = getPost(slug)
+  if (!p) return null
+  return langue === 'fr' ? { ...p, catLabel: p.cat } : postEnLangue(p, langue)
 }

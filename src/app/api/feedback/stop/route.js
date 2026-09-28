@@ -7,13 +7,16 @@
 //  reste dû au participant, c'est la contrepartie de son adresse.
 // ============================================================
 import { selectRows, updateRow } from '../../../../lib/supabase'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const token = (body.t || '').toString().trim()
-  if (!token) return Response.json({ error: 'Lien incomplet.' }, { status: 400 })
+  if (!token) return Response.json({ error: t({ fr: 'Lien incomplet.', en: 'Incomplete link.', de: 'Unvollständiger Link.' }, langue) }, { status: 400 })
 
   const { data } = await selectRows('guests', `token=eq.${encodeURIComponent(token)}&select=id&limit=1`)
   const g = Array.isArray(data) ? data[0] : null

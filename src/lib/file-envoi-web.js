@@ -37,6 +37,7 @@
 // ============================================================
 
 import { noterEtape } from './etapes'
+import { langueCourante } from './i18n'
 
 const BASE = 'ttf-envois'
 const MAGASIN = 'photos'
@@ -214,7 +215,11 @@ async function envoyer(e) {
     fd.append('guestId', e.guestId)
     fd.append('deviceToken', e.deviceToken)
 
-    const res = await fetch('/api/photo', { method: 'POST', body: fd })
+    const res = await fetch('/api/photo', {
+      method: 'POST',
+      body: fd,
+      headers: { 'X-Langue': e.langue || langueCourante() },
+    })
     const d = await res.json().catch(() => ({}))
 
     // Pellicule pleine : elle ne sera jamais acceptée, on ne la garde pas. Le
@@ -278,7 +283,9 @@ let _n = 0
  */
 export async function ajouterALaFile({ eventId, guestId, deviceToken, blob, thumb }) {
   const id = `w-${Date.now().toString(36)}-${++_n}`
-  const entree = { id, eventId, guestId, deviceToken, blob, thumb: thumb || null, creeLe: Date.now(), essais: 0, prochainEssai: 0 }
+  // La langue est rangée avec la photo : le veilleur (public/sw.js), qui peut
+  // reprendre l'envoi page fermée, s'en sert pour sa notification.
+  const entree = { id, eventId, guestId, deviceToken, blob, thumb: thumb || null, creeLe: Date.now(), essais: 0, prochainEssai: 0, langue: langueCourante() }
   await ecrire(entree)
   await diffuser()
   planifier(0)

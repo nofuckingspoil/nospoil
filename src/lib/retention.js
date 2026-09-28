@@ -15,6 +15,24 @@ export const WARNINGS = [
   { key: 'warned_1w_at', days: 7, label: 'une semaine' },
 ]
 
+// Petit assistant de langue (fichier partagé : aucun import autorisé).
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+
+// Libellé d'une alerte dans la langue voulue (« un mois », « one month »…).
+const LIBELLES_ALERTES = {
+  warned_1m_at: { fr: 'un mois', en: 'one month', de: 'einen Monat' },
+  warned_1w_at: { fr: 'une semaine', en: 'one week', de: 'eine Woche' },
+}
+export function libelleAlerte(w, langue) {
+  const o = LIBELLES_ALERTES[w?.key]
+  return o ? tr(o, langue) : w?.label || ''
+}
+
+// Les alertes avec leur libellé traduit (mêmes clés que WARNINGS).
+export function warnings(langue) {
+  return WARNINGS.map((w) => ({ ...w, label: libelleAlerte(w, langue) }))
+}
+
 // Date de suppression définitive d'un événement.
 export function purgeDate(revealAt) {
   const d = new Date(revealAt)
@@ -30,9 +48,10 @@ export function purgeDateISO(revealAt) {
 }
 
 // Formatage lisible dans les mails : « mardi 16 décembre 2026 ».
-export function formatPurgeDate(value) {
+export function formatPurgeDate(value, langue) {
   try {
-    return new Date(value).toLocaleDateString('fr-FR', {
+    const loc = { fr: 'fr-FR', en: 'en-GB', de: 'de-DE' }[langue || globalThis.__ttfLangue] || 'fr-FR'
+    return new Date(value).toLocaleDateString(loc, {
       weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
     })
   } catch {

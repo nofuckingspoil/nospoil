@@ -63,9 +63,19 @@ export const TOP_TIER = TIERS[TIERS.length - 1]
 // Adresse à laquelle on négocie les événements hors barème.
 export const CONTACT_EMAIL = 'support@timetoflash.fr'
 
-export function formatPrice(cents) {
-  if (!cents) return 'Gratuit'
-  return (cents / 100).toFixed(2).replace('.', ',') + ' €'
+// Choisit le texte dans la langue voulue (ou celle du navigateur / de l'app).
+// Fichier partagé avec l'app : pas d'import, d'où ce petit assistant local.
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+
+// Prix affiché. `langue` facultative : 'fr' (4,99 €), 'en' (€4.99), 'de' (4,99 €).
+export function formatPrice(cents, langue) {
+  if (!cents) return tr({ fr: 'Gratuit', en: 'Free', de: 'Kostenlos' }, langue)
+  const montant = (cents / 100).toFixed(2)
+  return tr({
+    fr: montant.replace('.', ',') + ' €',
+    en: '€' + montant,
+    de: montant.replace('.', ',') + ' €',
+  }, langue)
 }
 
 export function tierByGuests(n) {

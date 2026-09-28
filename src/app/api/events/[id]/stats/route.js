@@ -1,6 +1,7 @@
 import { selectRows, signPhotos } from '../../../../../lib/supabase'
 import { isRevealed, quotaExceeded } from '../../../../../lib/phase'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 // Le mur du groupe : les photos de la soirée, floutées à l'écran, pendant que
 // la pellicule se remplit. Douze suffisent à remplir le premier écran ; la
@@ -15,7 +16,8 @@ const MUR_MAX = 60
 // pour rester rapide même appelé souvent.
 export async function GET(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const [evs, guests, photos] = await Promise.all([
     selectRows('events', `id=eq.${id}&select=reveal_at,reveal_paused,max_guests,status,owner_token`),

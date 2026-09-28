@@ -1,7 +1,9 @@
 import { insertRow, updateRow, selectRows } from '../../../../lib/supabase'
 import { sendMail, loginEmail, retrouverPhotosEmail, siteUrl } from '../../../../lib/mail'
 import { aDesEvenements, participationsDe, normalizeEmail, isValidEmail, makeCode, makeToken } from '../../../../lib/account'
-import { ipDe, tropDeDemandes, MESSAGE_TROP } from '../../../../lib/rate-limit'
+import { ipDe, tropDeDemandes, messageTrop } from '../../../../lib/rate-limit'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 const FIFTEEN_MIN = 15 * 60 * 1000
 
@@ -19,7 +21,7 @@ const REPONSE_NEUTRE = { ok: true }
 //
 // Ne renvoie rien, et n'échoue jamais bruyamment : la page de connexion doit
 // répondre exactement la même chose que l'adresse soit connue ou non.
-async function envoyerLienParticipant(email) {
+async function envoyerLienParticipant(email, langue) {
   // Garde-fou par adresse visée. Sans lui, cette page deviendrait un moyen
   // commode d'arroser la boîte de quelqu'un d'autre : trois rappels par heure
   // suffisent largement à qui cherche vraiment ses photos.
@@ -29,6 +31,7 @@ async function envoyerLienParticipant(email) {
   if (!participations) return
 
   const mail = retrouverPhotosEmail({
+    langue,
     albums: participations.albums,
     link: `${siteUrl()}/mes-photos?t=${participations.token}`,
   })
@@ -39,17 +42,18 @@ async function envoyerLienParticipant(email) {
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const email = normalizeEmail(body.email)
+  const langue = langueValide(body.langue) || langueRequete(request)
 
   // Seule erreur encore visible : une adresse qui n'en est pas une. Elle ne
   // renseigne sur personne, et se taire empêcherait de corriger une faute de frappe.
   if (!isValidEmail(email)) {
-    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
   }
 
   // Plafond par machine : le garde-fou par adresse, plus bas, ne voit pas
   // celui qui essaie mille adresses différentes.
   if (await tropDeDemandes(ipDe(request), 'auth-request', { max: 20, minutes: 60 })) {
-    return Response.json({ error: MESSAGE_TROP }, { status: 429 })
+    return Response.json({ error: messageTrop(langue) }, { status: 429 })
   }
 
   // Pas organisateur ? Alors peut-être participant, et dans ce cas il ne cherche
@@ -57,7 +61,7 @@ export async function POST(request) {
   // avec son lien personnel. Inconnu des deux côtés : on s'arrête là, sans le
   // dire et sans rien écrire en base.
   if (!(await aDesEvenements(email))) {
-    await envoyerLienParticipant(email)
+    await envoyerLienParticipant(email, langue)
     return Response.json(REPONSE_NEUTRE)
   }
 
@@ -87,14 +91,14 @@ export async function POST(request) {
     expires_at: new Date(Date.now() + FIFTEEN_MIN).toISOString(),
   })
   if (!ok) {
-    return Response.json({ error: 'Impossible de préparer la connexion. Réessayez.' }, { status: 500 })
+    return Response.json({ error: t({ fr: 'Impossible de préparer la connexion. Réessayez.', en: 'Sign-in could not be prepared. Please try again.', de: 'Die Anmeldung konnte nicht vorbereitet werden. Bitte versuchen Sie es erneut.' }, langue) }, { status: 500 })
   }
 
   const link = `${siteUrl()}/connexion?t=${token}`
-  const mail = loginEmail({ code, link })
+  const mail = loginEmail({ code, link, langue })
   const sent = await sendMail({ to: email, subject: mail.subject, html: mail.html, text: mail.text })
   if (!sent.ok) {
-    return Response.json({ error: "L'envoi du mail a échoué. Réessayez dans un instant." }, { status: 502 })
+    return Response.json({ error: t({ fr: "L'envoi du mail a échoué. Réessayez dans un instant.", en: 'The email could not be sent. Please try again in a moment.', de: 'Die E-Mail konnte nicht gesendet werden. Bitte versuchen Sie es gleich noch einmal.' }, langue) }, { status: 502 })
   }
 
   return Response.json(REPONSE_NEUTRE)

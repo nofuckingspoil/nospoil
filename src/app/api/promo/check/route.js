@@ -1,4 +1,6 @@
 import { quotePromo, countPromoVisit } from '../../../../lib/promo'
+import { langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
@@ -6,8 +8,10 @@ export const runtime = 'nodejs'
 // résulte. On ne renvoie que ce que l'organisateur a besoin de voir : ni le
 // nom du partenaire, ni sa commission.
 export async function POST(request) {
-  const { code, maxGuests } = await request.json().catch(() => ({}))
-  const q = await quotePromo(code, maxGuests)
+  const body = await request.json().catch(() => ({}))
+  const { code, maxGuests } = body
+  const langue = langueValide(body.langue) || langueRequete(request)
+  const q = await quotePromo(code, maxGuests, langue)
 
   if (!q.ok) return Response.json({ valid: false, error: q.error }, { status: 200 })
 

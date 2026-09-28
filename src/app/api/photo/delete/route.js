@@ -2,15 +2,19 @@ import { rpc, deletePhoto, selectRows } from '../../../../lib/supabase'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
 import { peutSupprimer } from '../../../../lib/photo-mode'
 import { isRevealed } from '../../../../lib/phase'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
+import { messageBase } from '../../../../lib/messages-serveur'
 
 // Supprime une photo du participant (vérifiée par device_token) et libère un cliché.
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const { photoId, deviceToken } = body
   if (!photoId || !deviceToken) {
-    return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paramètres manquants.', en: 'Missing parameters.', de: 'Fehlende Parameter.' }, langue) }, { status: 400 })
   }
-  if (!estUuid(photoId)) return identifiantInvalide()
+  if (!estUuid(photoId)) return identifiantInvalide(langue)
 
   // Les deux rendus se lisent AVANT la suppression : la fonction en base ne
   // rend que le fichier pleine qualité, et les copies allégées restaient sur R2
@@ -30,7 +34,7 @@ export async function POST(request) {
     const ouvert = ev ? isRevealed({ revealAt: ev.reveal_at, revealPaused: ev.reveal_paused }) : true
     if (ev && !ouvert && !peutSupprimer(ev.photo_mode)) {
       return Response.json(
-        { error: "Sur cet événement, une photo prise ne se reprend pas : elle se découvrira à la révélation." },
+        { error: t({ fr: 'Sur cet événement, une photo prise ne se reprend pas : elle se découvrira à la révélation.', en: 'At this event, a photo cannot be taken back once taken: it will be discovered at the reveal.', de: 'Bei diesem Event kann ein aufgenommenes Foto nicht zurückgenommen werden: Es wird bei der Enthüllung sichtbar.' }, langue) },
         { status: 409 }
       )
     }
@@ -42,7 +46,7 @@ export async function POST(request) {
   })
 
   if (!ok || data?.status === 'error') {
-    return Response.json({ error: data?.message || 'Suppression impossible.' }, { status: 400 })
+    return Response.json({ error: messageBase(data?.message, langue) || t({ fr: 'Suppression impossible.', en: 'Deletion not possible.', de: 'Löschen nicht möglich.' }, langue) }, { status: 400 })
   }
 
   if (data?.storage_path) await deletePhoto(data.storage_path)

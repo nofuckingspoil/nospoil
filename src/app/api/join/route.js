@@ -3,10 +3,13 @@ import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
 import { sendMail, guestAccessEmail, quotaEmail, siteUrl } from '../../../lib/mail'
 import { makeToken, ensureAccount } from '../../../lib/account'
-import { estSuspendu, MESSAGE_SUSPENDU, ADMIN } from '../../../lib/authz'
+import { estSuspendu, messageSuspendu, ADMIN } from '../../../lib/authz'
 import { equipeDe } from '../../../lib/equipe'
 import { upgradeFor, formatPrice } from '../../../lib/pricing'
 import { estUuid, identifiantInvalide } from '../../../lib/params'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete, langueDe } from '../../../lib/langue-serveur'
+import { messageBase } from '../../../lib/messages-serveur'
 
 // Un participant attend à la porte : on prévient l'organisateur tout de suite.
 //
@@ -33,14 +36,17 @@ async function alerteQuota(ev, guestCount, prenom) {
   const equipe = await equipeDe(ev)
   let unEnvoiReussi = false
   for (const p of equipe) {
+    // Chacun dans sa langue : celle de l'invitation, sinon celle de l'événement.
+    const langue = langueDe(p, langueDe(ev))
     const mail = quotaEmail({
-      eventName: ev.name || 'votre événement',
+      langue,
+      eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
       ownerUrl: `${siteUrl()}/event/${ev.id}?k=${p.token}`,
       guestCount,
       maxGuests: ev.max_guests,
       prenom,
       upgradeMaxGuests: cible?.maxGuests,
-      upgradePrice: cible ? formatPrice(cible.priceCents) : null,
+      upgradePrice: cible ? formatPrice(cible.priceCents, langue) : null,
       coOrga: p.role === ADMIN ? { ownerName: ev.owner_name } : null,
     })
     const sent = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
@@ -98,7 +104,7 @@ async function jetonPersonnel(guestId) {
   return maj.ok ? token : null
 }
 
-async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealAt, token) {
+async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealAt, token, langue) {
   const reveal = revealAt ? new Date(revealAt).getTime() : NaN
   if (Number.isFinite(reveal) && reveal <= Date.now()) return
 
@@ -107,7 +113,8 @@ async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealA
   if (!g || g.access_mailed_at || !token) return // déjà envoyé : on ne le harcèle pas
 
   const mail = guestAccessEmail({
-    eventName: eventName || 'votre événement',
+    langue,
+    eventName: eventName || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
     link: `${siteUrl()}/mes-photos?t=${token}`,
     shotsPerGuest,
   })
@@ -120,21 +127,23 @@ async function sendGuestAccess(guestId, eventName, shotsPerGuest, email, revealA
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const { eventId, deviceToken, displayName } = body
+  // La langue du participant : celle envoyée par l'écran, sinon celle de la requête.
+  const langue = langueValide(body.langue) || langueRequete(request)
 
-  if (eventId && !estUuid(eventId)) return identifiantInvalide()
+  if (eventId && !estUuid(eventId)) return identifiantInvalide(langue)
   if (!eventId || !deviceToken) {
-    return Response.json({ error: 'Paramètres manquants.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Paramètres manquants.', en: 'Missing parameters.', de: 'Fehlende Parameter.' }, langue) }, { status: 400 })
   }
 
   // Suspendu par l'administration : personne ne rejoint.
   if (await estSuspendu(eventId)) {
-    return Response.json({ error: MESSAGE_SUSPENDU }, { status: 403 })
+    return Response.json({ error: messageSuspendu(langue) }, { status: 403 })
   }
 
   // Dernier filet : le navigateur peut être contourné, pas le serveur.
   // Une adresse mal formée n'est jamais enregistrée : mieux vaut aucun
   // contact qu'un contact qui ne recevra rien.
-  const forme = checkEmailShape(body.email)
+  const forme = checkEmailShape(body.email, langue)
   const email = forme.ok && !forme.empty ? forme.email : ''
 
   // ---- La porte ----
@@ -144,7 +153,7 @@ export async function POST(request) {
   // à l'instant même. Personne d'autre n'est gêné pendant ce temps.
   const evRes = await selectRows(
     'events',
-    `id=eq.${eventId}&select=id,name,owner_email,owner_token,owner_name,max_guests,quota_mailed_at,reveal_at,reveal_paused`
+    `id=eq.${eventId}&select=id,name,owner_email,owner_token,owner_name,max_guests,quota_mailed_at,reveal_at,reveal_paused,langue`
   )
   const ev = Array.isArray(evRes.data) ? evRes.data[0] : null
 
@@ -161,7 +170,11 @@ export async function POST(request) {
   // on ferme la porte sans toucher à la mécanique d'entrée, qui marche.
   if (fiches.some((g) => g.device_token === deviceToken && g.blocked)) {
     return Response.json(
-      { error: "L'organisateur de cet événement vous en a retiré l'accès." },
+      { error: t({
+        fr: "L'organisateur de cet événement vous en a retiré l'accès.",
+        en: 'The host of this event has removed your access.',
+        de: 'Der Gastgeber dieses Events hat Ihnen den Zugang entzogen.',
+      }, langue) },
       { status: 403 }
     )
   }
@@ -184,7 +197,11 @@ export async function POST(request) {
     const revele = new Date(ev.reveal_at || 0).getTime()
     if (revele && Date.now() > revele) {
       return Response.json(
-        { error: 'Cette soirée est terminée : son album est déjà révélé.' },
+        { error: t({
+          fr: 'Cette soirée est terminée : son album est déjà révélé.',
+          en: 'This party is over: its album has already been revealed.',
+          de: 'Diese Feier ist vorbei: Ihr Album wurde bereits enthüllt.',
+        }, langue) },
         { status: 403 }
       )
     }
@@ -224,17 +241,17 @@ export async function POST(request) {
 
   if (!ok) {
     console.error('join_event error:', data)
-    return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
+    return Response.json({ error: t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
   }
   if (data?.status === 'error') {
-    return Response.json({ error: data.message }, { status: 404 })
+    return Response.json({ error: messageBase(data.message, langue) }, { status: 404 })
   }
 
   // Signe de vie (indicateur « joue en ce moment ») + adresse mail éventuelle.
   // Une adresse vide n'écrase pas celle déjà enregistrée : un participant qui
   // revient sans la resaisir ne doit pas perdre son inscription à l'album.
   try {
-    const patch = { last_active_at: new Date().toISOString() }
+    const patch = { last_active_at: new Date().toISOString(), langue }
     if (email) patch.email = email
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}
@@ -251,7 +268,7 @@ export async function POST(request) {
         // vient de l'essai du site, on le note : il a tenu l'appareil.
         const { data: evData } = await selectRows('events', `id=eq.${eventId}&select=is_demo`)
         const estEssai = Array.isArray(evData) && !!evData[0]?.is_demo
-        const compte = await ensureAccount(email, displayName, { demo: estEssai })
+        const compte = await ensureAccount(email, displayName, { demo: estEssai, langue })
         if (compte) await updateRow('guests', `id=eq.${data.guest_id}`, { account_id: compte })
       } catch (err) { console.error('compte participant:', err) }
     })
@@ -278,7 +295,7 @@ export async function POST(request) {
 
   if (email) {
     after(async () => {
-      try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at, token) }
+      try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at, token, langue) }
       catch (err) { console.error('mail accès participant:', err) }
     })
   }

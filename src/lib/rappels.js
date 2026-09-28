@@ -184,32 +184,38 @@ export function momentsRappels(ev, cle = null, maintenant = Date.now()) {
 
 // ---------- Affichage ----------
 
+// Locale d'affichage selon la langue (fr, en, de). Sans langue : celle de
+// l'app ou du navigateur (globalThis.__ttfLangue), sinon le français.
+const LOCALES_RAPPELS = { fr: 'fr-FR', en: 'en-GB', de: 'de-DE' }
+const localeRappels = (l) => LOCALES_RAPPELS[l || globalThis.__ttfLangue] || 'fr-FR'
+
 // « 20:30 », dans l'heure locale de celui qui regarde.
-export function heureDe(ms) {
+export function heureDe(ms, langue) {
   try {
-    return new Date(ms).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })
+    return new Date(ms).toLocaleTimeString(localeRappels(langue), { hour: '2-digit', minute: '2-digit' })
   } catch { return '' }
 }
 
 // Une minute après le début, ramenée à l'heure qu'il sera ce soir-là.
-export function heureDuRappel(startsAt, minutes) {
+export function heureDuRappel(startsAt, minutes, langue) {
   const debut = t(startsAt)
   if (!debut) return ''
-  return heureDe(debut + Math.round(Number(minutes) || 0) * MIN)
+  return heureDe(debut + Math.round(Number(minutes) || 0) * MIN, langue)
 }
 
 // Le jour d'un rappel, en court : « dim. 13 sept. ». Une soirée qui passe
 // minuit relance ses participants le lendemain : l'heure seule ne suffit plus.
-export function jourDuRappel(startsAt, minutes, court = false) {
+export function jourDuRappel(startsAt, minutes, court = false, langue) {
   const debut = t(startsAt)
   if (!debut) return ''
   const quand = new Date(debut + Math.round(Number(minutes) || 0) * MIN)
   try {
     // En court, le jour de la semaine suffit : dans une liste d'horaires, la
     // date complète répétée trois fois noie l'information.
+    const loc = localeRappels(langue)
     return court
-      ? quand.toLocaleDateString('fr-FR', { weekday: 'short' })
-      : quand.toLocaleDateString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short' })
+      ? quand.toLocaleDateString(loc, { weekday: 'short' })
+      : quand.toLocaleDateString(loc, { weekday: 'short', day: 'numeric', month: 'short' })
   } catch { return '' }
 }
 

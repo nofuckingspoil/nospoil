@@ -13,6 +13,7 @@
 import 'server-only'
 import { selectRows } from './supabase'
 import { estUuid } from './params'
+import { t } from './i18n'
 
 export const OWNER = 'owner'
 export const ADMIN = 'admin'
@@ -24,6 +25,9 @@ export const ADMIN = 'admin'
 // donnait la main sur les réglages et sur les coordonnées des participants
 // pour toujours.
 export const MESSAGE_EXPIRE = "Ce lien d'accès a expiré."
+export function messageExpire(langue = 'fr') {
+  return t({ fr: MESSAGE_EXPIRE, en: 'This access link has expired.', de: 'Dieser Zugangslink ist abgelaufen.' }, langue)
+}
 
 export function accesExpire(ev) {
   if (!ev?.expires_at) return false // aucune date connue : on ne ferme rien
@@ -35,6 +39,9 @@ export function accesExpire(ev) {
 // ni album, ni participation, ni nouvelle photo. Le statut existait en base
 // mais n'était appliqué nulle part : le suspendre ne suspendait rien.
 export const MESSAGE_SUSPENDU = 'Cet événement est momentanément suspendu.'
+export function messageSuspendu(langue = 'fr') {
+  return t({ fr: MESSAGE_SUSPENDU, en: 'This event is temporarily suspended.', de: 'Dieses Event ist vorübergehend gesperrt.' }, langue)
+}
 
 export async function estSuspendu(eventId) {
   if (!estUuid(eventId)) return false

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { chiffresSoiree } from '../lib/synthese'
+import { useLangue } from './Langue'
 
 // ============================================================
 //  Le résumé de soirée, montré au participant juste avant l'album.
@@ -28,64 +29,97 @@ function marquerVu(eventId) {
   try { localStorage.setItem(`ttf_wrap_${eventId}`, '1') } catch {}
 }
 
-function dateCourte(iso) {
+function dateCourte(iso, locale = 'fr-FR') {
   try {
-    return new Date(iso).toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })
+    return new Date(iso).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })
   } catch { return '' }
 }
 
-function heure(iso) {
+// « 21h30 » en français, « 21:30 » ailleurs.
+function heure(iso, locale = 'fr-FR') {
   try {
-    return new Date(iso).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }).replace(':', 'h')
+    const h = new Date(iso).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+    return locale === 'fr-FR' ? h.replace(':', 'h') : h
   } catch { return '' }
 }
 
 export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClose }) {
-  const chiffres = useMemo(() => chiffresSoiree({ photos, guests }), [photos, guests])
+  const { t, lang, locale } = useLangue()
+  const chiffres = useMemo(() => chiffresSoiree({ photos, guests, langue: lang }), [photos, guests, lang])
 
   const cartes = useMemo(() => {
     const mesPhotos = moiId ? photos.filter((p) => p.guestId === moiId) : []
 
+    const nbPhotos = photos.length
+    const nbGuests = (guests || []).length
     const liste = [
       {
         cle: 'ouverture',
-        oeil: nom ? `l’album de ${nom}` : 'votre album',
-        chiffre: photos.length,
-        titre: `photo${photos.length > 1 ? 's' : ''} développée${photos.length > 1 ? 's' : ''}`,
-        sous: 'La pellicule est prête.',
+        oeil: nom
+          ? t({ fr: `l’album de ${nom}`, en: `${nom}’s album`, de: `das Album: ${nom}` })
+          : t({ fr: 'votre album', en: 'your album', de: 'Ihr Album' }),
+        chiffre: nbPhotos,
+        titre: t({
+          fr: `photo${nbPhotos > 1 ? 's' : ''} développée${nbPhotos > 1 ? 's' : ''}`,
+          en: nbPhotos === 1 ? 'photo developed' : 'photos developed',
+          de: nbPhotos === 1 ? 'Foto entwickelt' : 'Fotos entwickelt',
+        }),
+        sous: t({ fr: 'La pellicule est prête.', en: 'The film is ready.', de: 'Der Film ist fertig.' }),
       },
       {
         cle: 'photographes',
-        oeil: 'derrière l’objectif',
-        chiffre: (guests || []).length,
-        titre: `photographe${(guests || []).length > 1 ? 's' : ''}`,
-        sous: 'Chacun a vu la fête autrement.',
+        oeil: t({ fr: 'derrière l’objectif', en: 'behind the lens', de: 'hinter der Linse' }),
+        chiffre: nbGuests,
+        titre: t({
+          fr: `photographe${nbGuests > 1 ? 's' : ''}`,
+          en: nbGuests === 1 ? 'photographer' : 'photographers',
+          de: nbGuests === 1 ? 'Fotograf' : 'Fotografen',
+        }),
+        sous: t({
+          fr: 'Chacun a vu la fête autrement.',
+          en: 'Everyone saw the party differently.',
+          de: 'Jeder hat die Feier anders gesehen.',
+        }),
       },
     ]
 
     if (mesPhotos.length > 0) {
       liste.push({
         cle: 'moi',
-        oeil: 'et toi dans tout ça',
+        oeil: t({ fr: 'et toi dans tout ça', en: 'and what about you', de: 'und Sie?' }),
         chiffre: mesPhotos.length,
-        titre: `cliché${mesPhotos.length > 1 ? 's' : ''} de toi`,
+        titre: t({
+          fr: `cliché${mesPhotos.length > 1 ? 's' : ''} de toi`,
+          en: mesPhotos.length === 1 ? 'shot by you' : 'shots by you',
+          de: mesPhotos.length === 1 ? 'Aufnahme von Ihnen' : 'Aufnahmen von Ihnen',
+        }),
         sous: mesPhotos.length >= 5
-          ? 'Tu n’as pas chômé.'
-          : 'Chacun compte : ils sont dans l’album.',
+          ? t({ fr: 'Tu n’as pas chômé.', en: 'You’ve been busy.', de: 'Sie waren fleißig.' })
+          : t({
+              fr: 'Chacun compte : ils sont dans l’album.',
+              en: 'Every one counts: they’re in the album.',
+              de: 'Jede zählt: Sie sind alle im Album.',
+            }),
         vignettes: mesPhotos.slice(0, 4).map((p) => p.url),
       })
 
       if (mesPhotos.length > 1) {
         const premiere = mesPhotos[0]
         const derniere = mesPhotos[mesPhotos.length - 1]
-        if (heure(premiere.takenAt) !== heure(derniere.takenAt)) {
+        const h1 = heure(premiere.takenAt, locale)
+        const h2 = heure(derniere.takenAt, locale)
+        if (h1 !== h2) {
           liste.push({
             cle: 'evenement',
             // « Ta nuit » supposait une fête nocturne : un baptême à 15 h s'y
             // serait senti moqué.
-            oeil: 'ton événement',
-            texte: `de ${heure(premiere.takenAt)} à ${heure(derniere.takenAt)}`,
-            sous: 'Entre les deux, il s’est passé des choses.',
+            oeil: t({ fr: 'ton événement', en: 'your event', de: 'Ihr Event' }),
+            texte: t({ fr: `de ${h1} à ${h2}`, en: `from ${h1} to ${h2}`, de: `von ${h1} bis ${h2}` }),
+            sous: t({
+              fr: 'Entre les deux, il s’est passé des choses.',
+              en: 'A lot happened in between.',
+              de: 'Dazwischen ist einiges passiert.',
+            }),
           })
         }
       }
@@ -97,11 +131,19 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
     if (chiffres.champion) {
       liste.push({
         cle: 'champion',
-        oeil: 'photographe en chef',
+        oeil: t({ fr: 'photographe en chef', en: 'chief photographer', de: 'Chef-Fotograf' }),
         texte: chiffres.champion.nom,
         sous: chiffres.champion.rapidite
-          ? `${chiffres.champion.photos} clichés, et les plus rapides. Respect.`
-          : `${chiffres.champion.photos} clichés à lui seul. Respect.`,
+          ? t({
+              fr: `${chiffres.champion.photos} clichés, et les plus rapides. Respect.`,
+              en: `${chiffres.champion.photos} shots, and the fastest. Respect.`,
+              de: `${chiffres.champion.photos} Aufnahmen, und das am schnellsten. Respekt.`,
+            })
+          : t({
+              fr: `${chiffres.champion.photos} clichés à lui seul. Respect.`,
+              en: `${chiffres.champion.photos} shots all on their own. Respect.`,
+              de: `${chiffres.champion.photos} Aufnahmen ganz allein. Respekt.`,
+            }),
       })
     }
 
@@ -111,7 +153,7 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
     if (photos.length > 0) liste.push({ cle: 'synthese', synthese: true })
 
     return liste
-  }, [photos, guests, moiId, chiffres])
+  }, [photos, guests, moiId, chiffres, nom, t, locale])
 
   const [i, setI] = useState(0)
 
@@ -154,7 +196,7 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
   const derniere = i === cartes.length - 1
 
   return (
-    <div className="wrap" role="dialog" aria-label="Résumé de l'événement">
+    <div className="wrap" role="dialog" aria-label={t({ fr: "Résumé de l'événement", en: 'Event summary', de: 'Zusammenfassung des Events' })}>
       <div className="wrap-barres" aria-hidden="true">
         {cartes.map((x, n) => (
           <span key={x.cle} className="wrap-barre">
@@ -164,28 +206,41 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
         ))}
       </div>
 
-      <button className="wrap-passer" onClick={fermer}>Passer</button>
+      <button className="wrap-passer" onClick={fermer}>{t({ fr: 'Passer', en: 'Skip', de: 'Überspringen' })}</button>
 
       {/* Toucher à droite avance, à gauche revient : le geste des stories. */}
-      <button className="wrap-zone gauche" aria-label="Précédent"
+      <button className="wrap-zone gauche" aria-label={t({ fr: 'Précédent', en: 'Previous', de: 'Zurück' })}
         onClick={() => setI((n) => Math.max(0, n - 1))} />
-      <button className="wrap-zone droite" aria-label="Suivant" onClick={suivant} />
+      <button className="wrap-zone droite" aria-label={t({ fr: 'Suivant', en: 'Next', de: 'Weiter' })} onClick={suivant} />
 
       {c.synthese ? (
         <div className="wrap-carte synthese" key={c.cle}>
-          <span className="syn-oeil">🎉 Votre album collaboratif</span>
+          <span className="syn-oeil">🎉 {t({ fr: 'Votre album collaboratif', en: 'Your shared album', de: 'Ihr gemeinsames Album' })}</span>
           {nom && <h2 className="syn-nom">{nom}</h2>}
           {(chiffres.date || chiffres.duree) && (
             <p className="syn-date">
-              {[chiffres.date ? dateCourte(chiffres.date) : '', chiffres.duree ? `${chiffres.duree} de fête` : '']
+              {[
+                chiffres.date ? dateCourte(chiffres.date, locale) : '',
+                chiffres.duree
+                  ? t({ fr: `${chiffres.duree} de fête`, en: `${chiffres.duree} of partying`, de: `${chiffres.duree} Feier` })
+                  : '',
+              ]
                 .filter(Boolean).join(' · ')}
             </p>
           )}
 
           <div className="syn-chiffres">
-            <div><b>{chiffres.photos}</b><span>photo{chiffres.photos > 1 ? 's' : ''} prise{chiffres.photos > 1 ? 's' : ''}</span></div>
-            <div><b>{chiffres.photographes}</b><span>photographe{chiffres.photographes > 1 ? 's' : ''}</span></div>
-            <div><b>{String(chiffres.moyenne).replace('.', ',')}</b><span>chacun</span></div>
+            <div><b>{chiffres.photos}</b><span>{t({
+              fr: `photo${chiffres.photos > 1 ? 's' : ''} prise${chiffres.photos > 1 ? 's' : ''}`,
+              en: chiffres.photos === 1 ? 'photo taken' : 'photos taken',
+              de: chiffres.photos === 1 ? 'Foto gemacht' : 'Fotos gemacht',
+            })}</span></div>
+            <div><b>{chiffres.photographes}</b><span>{t({
+              fr: `photographe${chiffres.photographes > 1 ? 's' : ''}`,
+              en: chiffres.photographes === 1 ? 'photographer' : 'photographers',
+              de: chiffres.photographes === 1 ? 'Fotograf' : 'Fotografen',
+            })}</span></div>
+            <div><b>{lang === 'en' ? String(chiffres.moyenne) : String(chiffres.moyenne).replace('.', ',')}</b><span>{t({ fr: 'chacun', en: 'each', de: 'pro Person' })}</span></div>
           </div>
 
           {(chiffres.premier?.url || chiffres.dernier?.url) && (
@@ -193,13 +248,13 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
               {chiffres.premier?.url && (
                 <span>
                   <img src={chiffres.premier.url} alt="" />
-                  <i>La première · {chiffres.premier.heure}</i>
+                  <i>{t({ fr: 'La première', en: 'The first', de: 'Das erste' })} · {chiffres.premier.heure}</i>
                 </span>
               )}
               {chiffres.dernier?.url && (
                 <span>
                   <img src={chiffres.dernier.url} alt="" />
-                  <i>La dernière · {chiffres.dernier.heure}</i>
+                  <i>{t({ fr: 'La dernière', en: 'The last', de: 'Das letzte' })} · {chiffres.dernier.heure}</i>
                 </span>
               )}
             </div>
@@ -209,18 +264,20 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
             <div className="syn-faits">
               {chiffres.champion && (
                 <div>
-                  <span>Photographe en chef</span>
+                  <span>{t({ fr: 'Photographe en chef', en: 'Chief photographer', de: 'Chef-Fotograf' })}</span>
                   <b>
                     {chiffres.champion.nom}
                     <em>
-                      {chiffres.champion.photos} clichés
-                      {chiffres.champion.rapidite ? ` en ${chiffres.champion.rapidite}` : ''}
+                      {t({ fr: `${chiffres.champion.photos} clichés`, en: `${chiffres.champion.photos} shots`, de: `${chiffres.champion.photos} Aufnahmen` })}
+                      {chiffres.champion.rapidite
+                        ? t({ fr: ` en ${chiffres.champion.rapidite}`, en: ` in ${chiffres.champion.rapidite}`, de: ` in ${chiffres.champion.rapidite}` })
+                        : ''}
                     </em>
                   </b>
                 </div>
               )}
               {chiffres.pointe && (
-                <div><span>Ça a le plus flashé</span><b>{chiffres.pointe.libelle} <em>{chiffres.pointe.photos} photos</em></b></div>
+                <div><span>{t({ fr: 'Ça a le plus flashé', en: 'Peak flashing', de: 'Am meisten geblitzt' })}</span><b>{chiffres.pointe.libelle} <em>{t({ fr: `${chiffres.pointe.photos} photos`, en: `${chiffres.pointe.photos} photos`, de: `${chiffres.pointe.photos} Fotos` })}</em></b></div>
               )}
             </div>
           )}
@@ -253,7 +310,9 @@ export default function WrapInvite({ eventId, nom, photos, guests, moiId, onClos
       )}
 
       <button className="wrap-fin" onClick={fermer}>
-        {derniere ? `Voir les ${photos.length} photos →` : 'Aller à l’album →'}
+        {derniere
+          ? t({ fr: `Voir les ${photos.length} photos →`, en: `See all ${photos.length} photos →`, de: `Alle ${photos.length} Fotos ansehen →` })
+          : t({ fr: 'Aller à l’album →', en: 'Go to the album →', de: 'Zum Album →' })}
       </button>
     </div>
   )

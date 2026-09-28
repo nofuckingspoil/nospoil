@@ -14,6 +14,8 @@ import { selectRows, insertRow, updateRow } from '../../../lib/supabase'
 import { estUneAlerte } from '../../../lib/avis'
 import { alerterAdmin } from '../../../lib/avis-mail'
 import { estUuid } from '../../../lib/params'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
@@ -85,8 +87,9 @@ async function evenement(id) {
 // --- Qui suis-je, et ai-je déjà répondu ? (ouverture de la page d'enquête) ---
 export async function GET(request) {
   const url = new URL(request.url)
+  const langue = langueRequete(request)
   const qui = await resoudre({ o: url.searchParams.get('o'), i: url.searchParams.get('i') })
-  if (!qui) return Response.json({ error: 'Lien inconnu ou expiré.' }, { status: 404 })
+  if (!qui) return Response.json({ error: t({ fr: 'Lien inconnu ou expiré.', en: 'Unknown or expired link.', de: 'Unbekannter oder abgelaufener Link.' }, langue) }, { status: 404 })
 
   // Une seule réponse par personne : on ne redemande jamais, y compris à
   // quelqu'un qui rouvre le mail des semaines plus tard.
@@ -110,8 +113,9 @@ async function dejaRepondu(colonne, valeur, role) {
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const qui = await resoudre(body)
-  if (!qui) return Response.json({ error: 'Lien inconnu ou expiré.' }, { status: 404 })
+  if (!qui) return Response.json({ error: t({ fr: 'Lien inconnu ou expiré.', en: 'Unknown or expired link.', de: 'Unbekannter oder abgelaufener Link.' }, langue) }, { status: 404 })
 
   // Compléter un avis commencé. La pop-up de l'album enregistre la note dès la
   // première étoile : sans ça, celui qui referme juste après ne compte pour
@@ -165,7 +169,7 @@ export async function POST(request) {
   const cree = await insertRow('feedback', ligne)
   if (!cree.ok) {
     console.error('avis : enregistrement impossible', cree.data)
-    return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
+    return Response.json({ error: t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
   }
 
   // Marquage anti-doublon. Un échec ici ne doit pas perdre l'avis : au pire la
@@ -204,14 +208,15 @@ export async function POST(request) {
 //  réécrire l'avis de quelqu'un d'autre.
 // ============================================================
 async function completer(request, body, qui, id) {
-  if (!estUuid(id)) return Response.json({ error: 'Avis inconnu.' }, { status: 404 })
+  const langue = langueValide(body?.langue) || langueRequete(request)
+  if (!estUuid(id)) return Response.json({ error: t({ fr: 'Avis inconnu.', en: 'Unknown feedback.', de: 'Unbekannte Bewertung.' }, langue) }, { status: 404 })
 
   const { data } = await selectRows('feedback', `id=eq.${id}&select=id,guest_id,event_id,role,rating,issues,nps&limit=1`)
   const avant = Array.isArray(data) ? data[0] : null
   const aLui = avant && avant.role === qui.role && (
     qui.role === 'organisateur' ? avant.event_id === qui.ev?.id : avant.guest_id === qui.guest?.id
   )
-  if (!aLui) return Response.json({ error: 'Avis inconnu.' }, { status: 404 })
+  if (!aLui) return Response.json({ error: t({ fr: 'Avis inconnu.', en: 'Unknown feedback.', de: 'Unbekannte Bewertung.' }, langue) }, { status: 404 })
 
   const soucis = listeDeSoucis(body.issues)
   const suite = {
@@ -235,7 +240,7 @@ async function completer(request, body, qui, id) {
   const maj = await updateRow('feedback', `id=eq.${id}`, suite)
   if (!maj.ok) {
     console.error('avis : complément impossible', maj.data)
-    return Response.json({ error: 'Erreur serveur.' }, { status: 500 })
+    return Response.json({ error: t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
   }
 
   // L'alerte n'est envoyée qu'une fois : si la note seule avait déjà sonné,

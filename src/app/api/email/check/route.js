@@ -10,6 +10,8 @@
 // ============================================================
 import { resolveMx } from 'node:dns/promises'
 import { checkEmailShape, normalizeGuestEmail } from '../../../../lib/email-check'
+import { t, langueValide } from '../../../../lib/i18n'
+import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
@@ -36,9 +38,10 @@ async function domaineAccepteDuCourrier(domaine) {
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
+  const langue = langueValide(body.langue) || langueRequete(request)
   const email = normalizeGuestEmail(body.email)
 
-  const forme = checkEmailShape(email)
+  const forme = checkEmailShape(email, langue)
   if (forme.empty) return Response.json({ status: 'vide' })
   if (!forme.ok) return Response.json({ status: 'invalide', reason: forme.reason })
 
@@ -52,7 +55,11 @@ export async function POST(request) {
   if (accepte === false) {
     return Response.json({
       status: 'domaine-inconnu',
-      reason: `« ${domaine} » ne reçoit pas de courrier. Vérifiez l'orthographe.`,
+      reason: t({
+        fr: `« ${domaine} » ne reçoit pas de courrier. Vérifiez l'orthographe.`,
+        en: `“${domaine}” does not receive email. Check the spelling.`,
+        de: `„${domaine}“ empfängt keine E-Mails. Bitte prüfen Sie die Schreibweise.`,
+      }, langue),
     })
   }
 

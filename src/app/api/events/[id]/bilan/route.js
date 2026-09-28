@@ -2,6 +2,8 @@ import { selectRows, signPhotos } from '../../../../../lib/supabase'
 import { roleFor, canManage } from '../../../../../lib/authz'
 import { quotaExceeded } from '../../../../../lib/phase'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { t } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
@@ -18,32 +20,43 @@ const HEURES = ['minuit', '1 h', '2 h', '3 h', '4 h', '5 h', '6 h', '7 h', '8 h'
   'midi', '13 h', '14 h', '15 h', '16 h', '17 h', '18 h', '19 h', '20 h', '21 h', '22 h', '23 h']
 
 // « vers 18 h » laissait croire à un instant : c'est une tranche entière.
-function creneau(h) {
-  return `entre ${HEURES[h]} et ${HEURES[(h + 1) % 24]}`
+const HEURES_EN = ['midnight', '1 am', '2 am', '3 am', '4 am', '5 am', '6 am', '7 am', '8 am', '9 am', '10 am', '11 am',
+  'noon', '1 pm', '2 pm', '3 pm', '4 pm', '5 pm', '6 pm', '7 pm', '8 pm', '9 pm', '10 pm', '11 pm']
+
+function creneau(h, langue) {
+  return t({
+    fr: `entre ${HEURES[h]} et ${HEURES[(h + 1) % 24]}`,
+    en: `between ${HEURES_EN[h]} and ${HEURES_EN[(h + 1) % 24]}`,
+    de: `zwischen ${h} und ${(h + 1) % 24} Uhr`,
+  }, langue)
 }
 
-function heureCourte(iso) {
+function heureCourte(iso, langue) {
   const d = new Date(iso)
   if (isNaN(d.getTime())) return ''
-  return `${d.getHours()}h${String(d.getMinutes()).padStart(2, '0')}`
+  const mm = String(d.getMinutes()).padStart(2, '0')
+  return t({ fr: `${d.getHours()}h${mm}`, en: `${d.getHours()}:${mm}`, de: `${d.getHours()}:${mm} Uhr` }, langue)
 }
 
 // Durée en clair : « 6 h 53 », « 48 min ».
-function duree(msA, msB) {
+function duree(msA, msB, langue) {
   const min = Math.round((msB - msA) / 60000)
   if (min < 1) return null
-  if (min < 60) return `${min} min`
+  if (min < 60) return t({ fr: `${min} min`, en: `${min} min`, de: `${min} Min.` }, langue)
   const h = Math.floor(min / 60)
   const reste = min % 60
-  return reste ? `${h} h ${String(reste).padStart(2, '0')}` : `${h} h`
+  return reste
+    ? t({ fr: `${h} h ${String(reste).padStart(2, '0')}`, en: `${h} hr ${reste} min`, de: `${h} Std. ${reste} Min.` }, langue)
+    : t({ fr: `${h} h`, en: `${h} hr`, de: `${h} Std.` }, langue)
 }
 
 export async function GET(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const role = await roleFor(id, request.headers.get('x-owner-token'))
-  if (!canManage(role)) return Response.json({ error: 'Accès refusé.' }, { status: 401 })
+  if (!canManage(role)) return Response.json({ error: t({ fr: 'Accès refusé.', en: 'Access denied.', de: 'Zugriff verweigert.' }, langue) }, { status: 401 })
 
   const { data } = await selectRows(
     'photos',
@@ -67,11 +80,12 @@ export async function GET(request, { params }) {
   // --- Le photographe de la soirée ---
   // À égalité, on départage par la rapidité : celui qui a sorti son quota le
   // plus vite. Deux ex æquo sans vainqueur, ça ne se raconte pas.
+  const unParticipant = t({ fr: 'Un participant', en: 'A guest', de: 'Ein Gast' }, langue)
   const parInvite = new Map()
   for (const p of photos) {
     if (!p.guest_id) continue
     const t = new Date(p.taken_at).getTime()
-    const e = parInvite.get(p.guest_id) || { nom: p.guests?.display_name || 'Un participant', n: 0, debut: t, fin: t }
+    const e = parInvite.get(p.guest_id) || { nom: p.guests?.display_name || unParticipant, n: 0, debut: t, fin: t }
     e.n++
     if (t < e.debut) e.debut = t
     if (t > e.fin) e.fin = t
@@ -85,7 +99,7 @@ export async function GET(request, { params }) {
         nom: premierDuClassement.nom,
         photos: premierDuClassement.n,
         // Le temps qu'il lui a fallu : ce qui l'a départagé, et ce qui se raconte.
-        rapidite: exAequo ? duree(premierDuClassement.debut, premierDuClassement.fin) : null,
+        rapidite: exAequo ? duree(premierDuClassement.debut, premierDuClassement.fin, langue) : null,
       }
     : null
 
@@ -99,7 +113,7 @@ export async function GET(request, { params }) {
   }
   let pointe = null
   parHeure.forEach((n, h) => { if (n > 0 && (!pointe || n > pointe.n)) pointe = { h, n } })
-  const heurePointe = pointe ? { libelle: creneau(pointe.h), photos: pointe.n } : null
+  const heurePointe = pointe ? { libelle: creneau(pointe.h, langue), photos: pointe.n } : null
 
   // --- Qui a ouvert le bal, qui a fermé la marche ---
   // « la dernière photo de la nuit » supposait une fête nocturne : un
@@ -115,7 +129,7 @@ export async function GET(request, { params }) {
   const signees = aSigner.length ? await signPhotos(aSigner, 3600) : {}
   const vignette = (p) => (p ? signees[p.thumb_path || p.storage_path] || null : null)
   const dureeFete = premierClic && dernierClic
-    ? duree(new Date(premierClic.taken_at).getTime(), new Date(dernierClic.taken_at).getTime())
+    ? duree(new Date(premierClic.taken_at).getTime(), new Date(dernierClic.taken_at).getTime(), langue)
     : null
 
   // --- La photo de la soirée ---
@@ -147,11 +161,11 @@ export async function GET(request, { params }) {
     ] || null
     photoDeLaSoiree = {
       url,
-      nom: favorite.photo.guests?.display_name || 'Un participant',
-      heure: heureCourte(favorite.photo.taken_at),
+      nom: favorite.photo.guests?.display_name || unParticipant,
+      heure: heureCourte(favorite.photo.taken_at, langue),
       coeurs: favorite.stats.n,
       // Le temps qu'il lui a fallu pour faire l'unanimité.
-      rapidite: favorite.stats.n > 1 ? duree(favorite.stats.debut, favorite.stats.fin) : null,
+      rapidite: favorite.stats.n > 1 ? duree(favorite.stats.debut, favorite.stats.fin, langue) : null,
     }
   }
 
@@ -176,15 +190,15 @@ export async function GET(request, { params }) {
     heurePointe,
     premier: premierClic
       ? {
-          nom: premierClic.guests?.display_name || 'Un participant',
-          heure: heureCourte(premierClic.taken_at),
+          nom: premierClic.guests?.display_name || unParticipant,
+          heure: heureCourte(premierClic.taken_at, langue),
           url: vignette(premierClic),
         }
       : null,
     dernier: dernierClic
       ? {
-          nom: dernierClic.guests?.display_name || 'Un participant',
-          heure: heureCourte(dernierClic.taken_at),
+          nom: dernierClic.guests?.display_name || unParticipant,
+          heure: heureCourte(dernierClic.taken_at, langue),
           url: vignette(dernierClic),
         }
       : null,

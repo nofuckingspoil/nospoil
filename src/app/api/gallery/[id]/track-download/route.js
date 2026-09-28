@@ -1,5 +1,7 @@
 import { rpc, insertRow } from '../../../../../lib/supabase'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
+import { t } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
 
 // Enregistre un téléchargement d'album (bouton « Tout télécharger »).
 //
@@ -9,8 +11,9 @@ import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 // même personne peut gonfler à elle seule.
 export async function POST(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
-  if (!id) return Response.json({ error: 'Événement non précisé.' }, { status: 400 })
+  const langue = langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
+  if (!id) return Response.json({ error: t({ fr: 'Événement non précisé.', en: 'No event specified.', de: 'Kein Event angegeben.' }, langue) }, { status: 400 })
 
   const body = await request.json().catch(() => ({}))
   const photoCount = Math.max(0, parseInt(body.photoCount, 10) || 0)

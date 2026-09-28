@@ -2,7 +2,8 @@ import { BRAND } from '../lib/brand'
 
 // Logo Time to Flash : marque orange + objectif d'appareil photo.
 // size = taille de la pastille ; dark = variante pour fond sombre.
-export default function Logo({ size = 46, showName = true, dark = false, nameSize = 30 }) {
+// nameClassName : classe posée sur le nom, pour l'ajuster sur petit écran.
+export default function Logo({ size = 46, showName = true, dark = false, nameSize = 30, nameClassName }) {
   const lens = Math.round(size * 0.5)
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 13 }}>
@@ -19,7 +20,7 @@ export default function Logo({ size = 46, showName = true, dark = false, nameSiz
         <div style={{ position: 'absolute', top: size * 0.15, right: size * 0.15, width: size * 0.15, height: size * 0.15, borderRadius: 2, background: 'var(--amber)' }} />
       </div>
       {showName && (
-        <span style={{
+        <span className={nameClassName} style={{
           fontFamily: "'Bricolage Grotesque', sans-serif", fontWeight: 800,
           fontSize: nameSize, letterSpacing: '-.03em', color: dark ? '#fff' : 'var(--ink)',
           whiteSpace: 'nowrap',

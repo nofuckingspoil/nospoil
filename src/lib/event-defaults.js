@@ -10,6 +10,20 @@
 // le tableau de bord sait qu'il reste à nommer.
 export const DEFAULT_EVENT_NAME = 'Mon événement'
 
+// Le marqueur ci-dessus reste en français (c'est lui qu'on enregistre et
+// qu'on compare). Pour l'AFFICHER, passer par ces fonctions.
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+
+export function nomEvenementParDefaut(langue) {
+  return tr({ fr: DEFAULT_EVENT_NAME, en: 'My event', de: 'Mein Event' }, langue)
+}
+
+// Nom d'un événement tel qu'on l'affiche : le nom provisoire est traduit,
+// un vrai nom choisi par l'organisateur est rendu tel quel.
+export function nomAffiche(nom, langue) {
+  return nom === DEFAULT_EVENT_NAME ? nomEvenementParDefaut(langue) : nom
+}
+
 // Clichés par participant à la création, réglable jusqu'au jour J.
 export const DEFAULT_SHOTS = 5
 

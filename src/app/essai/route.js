@@ -1,4 +1,7 @@
 import { insertRow } from '../../lib/supabase'
+import { langueRequete } from '../../lib/langue-serveur'
+import { lien } from '../../lib/langue-lien'
+import { t } from '../../lib/i18n'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -27,9 +30,10 @@ function estUnRobot(ua = '') {
 
 export async function GET(request) {
   const base = new URL(request.url).origin
+  const langue = langueRequete(request)
 
   if (estUnRobot(request.headers.get('user-agent') || '')) {
-    return Response.redirect(`${base}/`, 302)
+    return Response.redirect(`${base}${lien('/', langue)}`, 302)
   }
 
   const maintenant = Date.now()
@@ -37,8 +41,9 @@ export async function GET(request) {
 
   const { ok, data } = await insertRow('events', {
     owner_token: `demo-${Math.random().toString(36).slice(2)}${maintenant.toString(36)}`,
-    name: 'Votre essai Time to Flash',
-    host_names: 'Essai',
+    name: t({ fr: 'Votre essai Time to Flash', en: 'Your Time to Flash trial', de: 'Ihr Time to Flash Test' }, langue),
+    host_names: t({ fr: 'Essai', en: 'Trial', de: 'Test' }, langue),
+    langue,
     shots_per_guest: CLICHES,
     bonus_shots: 0,
     starts_at: new Date(maintenant - 60 * 1000).toISOString(), // déjà commencé : on photographie tout de suite
@@ -53,7 +58,7 @@ export async function GET(request) {
 
   if (!ok || !data?.id) {
     console.error('création démo impossible:', data)
-    return Response.redirect(`${base}/?essai=indisponible`, 302)
+    return Response.redirect(`${base}${lien('/', langue)}?essai=indisponible`, 302)
   }
 
   return Response.redirect(`${base}/j/${data.id}`, 302)

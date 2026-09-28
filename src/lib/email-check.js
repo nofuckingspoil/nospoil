@@ -90,15 +90,20 @@ export function suggestEmail(value) {
   return null
 }
 
+// Choisit le texte dans la langue voulue (ou celle du navigateur / de l'app).
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+
 // Contrôle de forme, sans réseau. `ok` à false = inutile d'aller plus loin.
-export function checkEmailShape(value) {
+// `langue` facultative ('fr', 'en', 'de') : la langue des messages. Côté
+// serveur, toujours la passer.
+export function checkEmailShape(value, langue) {
   const email = normalizeGuestEmail(value)
   if (!email) return { ok: true, empty: true } // facultatif : vide est valide
-  if (email.length > 160) return { ok: false, reason: 'Cette adresse est trop longue.' }
-  if (!FORME.test(email)) return { ok: false, reason: "Il manque quelque chose : vérifiez le @ et le point." }
-  if (email.includes('..')) return { ok: false, reason: 'Il y a deux points de suite.' }
+  if (email.length > 160) return { ok: false, reason: tr({ fr: 'Cette adresse est trop longue.', en: 'This address is too long.', de: 'Diese Adresse ist zu lang.' }, langue) }
+  if (!FORME.test(email)) return { ok: false, reason: tr({ fr: "Il manque quelque chose : vérifiez le @ et le point.", en: 'Something is missing: check the @ and the dot.', de: 'Da fehlt etwas: Prüfen Sie das @ und den Punkt.' }, langue) }
+  if (email.includes('..')) return { ok: false, reason: tr({ fr: 'Il y a deux points de suite.', en: 'There are two dots in a row.', de: 'Da stehen zwei Punkte hintereinander.' }, langue) }
   const domaine = email.slice(email.lastIndexOf('@') + 1)
   const fin = domaine.split('.').pop()
-  if (fin.length < 2) return { ok: false, reason: 'La fin de l’adresse semble incomplète.' }
+  if (fin.length < 2) return { ok: false, reason: tr({ fr: 'La fin de l’adresse semble incomplète.', en: 'The end of the address looks incomplete.', de: 'Das Ende der Adresse scheint unvollständig.' }, langue) }
   return { ok: true, email, suggestion: suggestEmail(email) }
 }

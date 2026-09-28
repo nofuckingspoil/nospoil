@@ -7,25 +7,29 @@ import { quotePromo, consumePromo } from '../../../lib/promo'
 import { purgeDate } from '../../../lib/retention'
 import { LEGAL_UPDATED } from '../../../lib/legal'
 import { modeValide } from '../../../lib/photo-mode'
+import { t, langueValide } from '../../../lib/i18n'
+import { langueRequete } from '../../../lib/langue-serveur'
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
   const { ownerToken, name, hostNames, revealAt, shotsPerGuest, maxGuests } = body
   const ownerEmail = normalizeEmail(body.ownerEmail)
+  // La langue de l'organisateur : mémorisée sur l'événement pour tous ses mails.
+  const langue = langueValide(body.langue) || langueRequete(request)
 
   if (!ownerToken) {
-    return Response.json({ error: 'Appareil non identifié.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Appareil non identifié.', en: 'Device not identified.', de: 'Gerät nicht erkannt.' }, langue) }, { status: 400 })
   }
   if (!name || !name.trim()) {
-    return Response.json({ error: "Donne un nom à ton événement." }, { status: 400 })
+    return Response.json({ error: t({ fr: "Donne un nom à ton événement.", en: 'Give your event a name.', de: 'Geben Sie Ihrem Event einen Namen.' }, langue) }, { status: 400 })
   }
   if (!isValidEmail(ownerEmail)) {
-    return Response.json({ error: 'Adresse mail invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Adresse mail invalide.', en: 'Invalid email address.', de: 'Ungültige E-Mail-Adresse.' }, langue) }, { status: 400 })
   }
   // L'acceptation des CGV est exigée côté serveur aussi : sans elle, la case
   // cochée dans le navigateur ne prouverait rien.
   if (body.cgvAccepted !== true) {
-    return Response.json({ error: 'Vous devez accepter les conditions générales.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Vous devez accepter les conditions générales.', en: 'You must accept the terms and conditions.', de: 'Sie müssen die Allgemeinen Geschäftsbedingungen akzeptieren.' }, langue) }, { status: 400 })
   }
 
   // Cette route crée sans passer par la caisse : personne d'autre ne vérifiera
@@ -33,7 +37,7 @@ export async function POST(request) {
   // quand un code promo rend gratuite une formule normalement payante.
   // (Repasser EMAIL_VERIFICATION_FREE à false rouvre la création sans code.)
   if (EMAIL_VERIFICATION_FREE) {
-    const check = await verifyAndConsumeCode(ownerEmail, body.code)
+    const check = await verifyAndConsumeCode(ownerEmail, body.code, 'connexion', langue)
     if (!check.ok) {
       return Response.json({ error: check.error }, { status: check.status })
     }
@@ -41,10 +45,10 @@ export async function POST(request) {
 
   const reveal = new Date(revealAt)
   if (!revealAt || isNaN(reveal.getTime())) {
-    return Response.json({ error: 'Date de révélation invalide.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiges Enthüllungsdatum.' }, langue) }, { status: 400 })
   }
   if (reveal.getTime() < Date.now() - 60 * 1000) {
-    return Response.json({ error: 'La date de révélation doit être dans le futur.' }, { status: 400 })
+    return Response.json({ error: t({ fr: 'La date de révélation doit être dans le futur.', en: 'The reveal date must be in the future.', de: 'Das Enthüllungsdatum muss in der Zukunft liegen.' }, langue) }, { status: 400 })
   }
 
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
@@ -58,16 +62,16 @@ export async function POST(request) {
   let isTest = false
   if (tier.priceCents > 0) {
     if (!body.promo) {
-      return Response.json({ error: 'Cette formule doit être réglée.' }, { status: 402 })
+      return Response.json({ error: t({ fr: 'Cette formule doit être réglée.', en: 'This plan must be paid for.', de: 'Dieses Paket muss bezahlt werden.' }, langue) }, { status: 402 })
     }
-    const q = await quotePromo(body.promo, guests)
+    const q = await quotePromo(body.promo, guests, langue)
     if (!q.ok || !q.free) {
-      return Response.json({ error: q.ok ? 'Ce code ne rend pas cette formule gratuite.' : q.error }, { status: 402 })
+      return Response.json({ error: q.ok ? t({ fr: 'Ce code ne rend pas cette formule gratuite.', en: 'This code does not make this plan free.', de: 'Mit diesem Code wird dieses Paket nicht kostenlos.' }, langue) : q.error }, { status: 402 })
     }
     // Décompté avant la création : deux demandes simultanées ne peuvent pas
     // dépasser le nombre d'utilisations prévu.
     if (!(await consumePromo(q.code, 0))) {
-      return Response.json({ error: 'Ce code promo n’est plus disponible.' }, { status: 409 })
+      return Response.json({ error: t({ fr: 'Ce code promo n’est plus disponible.', en: 'This promo code is no longer available.', de: 'Dieser Gutscheincode ist nicht mehr verfügbar.' }, langue) }, { status: 409 })
     }
     promoCode = q.code
     isTest = q.marksTest
@@ -92,7 +96,7 @@ export async function POST(request) {
     : null
 
   // Une adresse connue, c'est une personne : son compte existe dès maintenant.
-  const compte = await ensureAccount(ownerEmail)
+  const compte = await ensureAccount(ownerEmail, null, { langue })
 
   const { ok, data } = await insertRow('events', {
     owner_token: ownerToken,
@@ -116,11 +120,12 @@ export async function POST(request) {
     promo_code: promoCode,
     paid_cents: 0, // création sans paiement : formule gratuite, ou offerte par un code
     is_test: isTest,
+    langue,
   })
 
   if (!ok || !data?.id) {
     console.error('create event error:', data)
-    return Response.json({ error: "Erreur lors de la création de l'événement." }, { status: 500 })
+    return Response.json({ error: t({ fr: "Erreur lors de la création de l'événement.", en: 'Error while creating the event.', de: 'Fehler beim Erstellen des Events.' }, langue) }, { status: 500 })
   }
 
   // Mail d'accès organisateur : filet de sécurité si l'appareil ou le lien est perdu.
@@ -129,6 +134,7 @@ export async function POST(request) {
   after(async () => { try {
     const base = siteUrl()
     const mail = eventCreatedEmail({
+      langue,
       eventName: name.trim().slice(0, 80),
       ownerUrl: `${base}/event/${data.id}?k=${ownerToken}`,
       joinUrl: `${base}/j/${data.id}`,

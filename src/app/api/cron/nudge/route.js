@@ -17,6 +17,8 @@ import { quotaExceeded } from '../../../../lib/phase'
 import { finDe } from '../../../../lib/rappels'
 import { enqueteOrganisateurs, enqueteInvites, recapDuJour } from '../../../../lib/avis-envoi'
 import { equipeDe } from '../../../../lib/equipe'
+import { LOCALES } from '../../../../lib/i18n'
+import { langueDe } from '../../../../lib/langue-serveur'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 60
@@ -30,15 +32,15 @@ function authorized(request) {
   return request.headers.get('authorization') === `Bearer ${secret}`
 }
 
-function frDate(iso) {
+function frDate(iso, langue) {
   try {
-    return new Date(iso).toLocaleString('fr-FR', {
+    return new Date(iso).toLocaleString(LOCALES[langue] || 'fr-FR', {
       weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit',
     })
   } catch { return '' }
 }
 
-const champs = 'id,name,owner_email,owner_token,starts_at,ends_at,reveal_at,shots_per_guest,max_guests'
+const champs = 'id,name,owner_email,owner_token,starts_at,ends_at,reveal_at,shots_per_guest,max_guests,langue'
 
 // --- 1. Le matin de l'événement ---
 // On vise les événements qui commencent dans les 24 h à venir : le cron
@@ -65,7 +67,9 @@ async function nudgeEventDay(now, base) {
     // Toute l'équipe, chacun avec son propre lien : c'est le rappel qui compte
     // le plus, et celui qui l'a créé n'est pas toujours celui qui sera là.
     for (const p of await equipeDe(ev)) {
+      const langue = langueDe(p, langueDe(ev))
       const mail = eventDayEmail({
+        langue,
         eventName: ev.name,
         ownerUrl: `${base}/event/${ev.id}?k=${p.token}`,
         shotsPerGuest: ev.shots_per_guest,
@@ -128,12 +132,14 @@ async function nudgeAfterParty(now, base) {
 
     const depasse = quotaExceeded({ maxGuests: ev.max_guests, guestCount })
     for (const p of await equipeDe(ev)) {
+      const langue = langueDe(p, langueDe(ev))
       const mail = afterPartyEmail({
+        langue,
         eventName: ev.name,
         ownerUrl: `${base}/event/${ev.id}?k=${p.token}`,
         photoCount,
         guestCount,
-        revealDate: frDate(ev.reveal_at),
+        revealDate: frDate(ev.reveal_at, langue),
         // Formule dépassée : on l'annonce dans ce mail plutôt que dans un envoi
         // séparé : il arrive pile au bon moment, entre la fête et la révélation.
         // Les co-organisateurs le reçoivent aussi : ils peuvent régler, et
@@ -154,7 +160,7 @@ async function nudgeAfterParty(now, base) {
 async function notifyRevealedEvents(now) {
   const { ok, data } = await selectRows(
     'events',
-    `select=id,name,reveal_at,reveal_paused,max_guests` +
+    `select=id,name,reveal_at,reveal_paused,max_guests,langue` +
       `&reveal_at=lte.${now.toISOString()}` +
       `&reveal_paused=is.false` +
       `&purged_at=is.null` +

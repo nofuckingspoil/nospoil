@@ -2,11 +2,13 @@
 
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
+import { useLangue } from './Langue'
 
 // Le QR mène à une adresse fixe qui fabrique un album d'essai neuf à chaque
 // visiteur. Il pointait auparavant sur un événement unique, supprimé depuis :
 // le QR de la page d'accueil ne menait donc plus nulle part.
 export default function TryQR() {
+  const { t } = useLangue()
   const [qr, setQr] = useState('')
   const [href, setHref] = useState('/essai')
 
@@ -24,15 +26,23 @@ export default function TryQR() {
   }, [])
 
   return (
-    <a className="tryqr" href={href} aria-label="Essayer Time to Flash, ouvrir l'appareil photo de démonstration">
+    <a className="tryqr" href={href} aria-label={t({
+      fr: "Essayer Time to Flash, ouvrir l'appareil photo de démonstration",
+      en: 'Try Time to Flash: open the demo camera',
+      de: 'Time to Flash ausprobieren: die Demo-Kamera öffnen',
+    })}>
       <div className="tryqr-head">
-        <span className="tryqr-star">✱</span> ESSAYER TIME TO FLASH
+        <span className="tryqr-star">✱</span> {t({ fr: 'ESSAYER TIME TO FLASH', en: 'TRY TIME TO FLASH', de: 'TIME TO FLASH TESTEN' })}
       </div>
       <div className="tryqr-frame">
-        {qr ? <img src={qr} alt="QR code de démonstration Time to Flash" /> : <div className="tryqr-skeleton" />}
+        {qr ? <img src={qr} alt={t({ fr: 'QR code de démonstration Time to Flash', en: 'Time to Flash demo QR code', de: 'Demo-QR-Code von Time to Flash' })} /> : <div className="tryqr-skeleton" />}
       </div>
       <div className="tryqr-sub">
-        Votre appareil vous attend déjà.<br />Aucune appli à installer.
+        {t({
+          fr: <>Votre appareil vous attend déjà.<br />Aucune appli à installer.</>,
+          en: <>Your camera is already waiting.<br />No app to install.</>,
+          de: <>Ihre Kamera wartet schon.<br />Keine App nötig.</>,
+        })}
       </div>
     </a>
   )

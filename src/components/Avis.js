@@ -19,7 +19,8 @@
 //  personne sur cinq.
 // ============================================================
 import { useState } from 'react'
-import { NOTES, REFERAIT, PREFEREES, SOURCES, PROBLEME, souciDe, reactionA } from '../lib/avis'
+import { notes, referait as referaitListe, preferees, sources, probleme, souciDe, reactionA } from '../lib/avis'
+import { useLangue } from './Langue'
 
 function Choix({ options, valeur, onChange, cle = 'id' }) {
   return (
@@ -40,10 +41,12 @@ function Choix({ options, valeur, onChange, cle = 'id' }) {
 }
 
 export default function Avis({ role = 'invite', payload = {}, onClose = null, compact = false, accroche = null }) {
+  const { t, lang } = useLangue()
+  const NOTES = notes(lang)
   const orga = role === 'organisateur'
   // La case « tout allait bien » a été remplacée par le oui/non : elle n'a plus
   // à figurer dans la liste, qui ne s'ouvre déjà qu'en cas de « oui ».
-  const SOUCIS = souciDe(role).filter((s) => !s.ok)
+  const SOUCIS = souciDe(role, lang).filter((s) => !s.ok)
 
   const [note, setNote] = useState(null)
   // L'identifiant de la ligne créée dès la première étoile, en mode pop-up.
@@ -96,7 +99,10 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
   const relance = problemes.length === 1
     ? problemes[0]
     : problemes.length > 1
-      ? { relance: "Racontez-nous en une phrase ce qui s'est passé.", exemple: 'Le plus concret possible, même approximatif.' }
+      ? {
+        relance: t({ fr: "Racontez-nous en une phrase ce qui s'est passé.", en: 'Tell us in one sentence what happened.', de: 'Erzählen Sie uns in einem Satz, was passiert ist.' }),
+        exemple: t({ fr: 'Le plus concret possible, même approximatif.', en: 'As specific as possible, even if rough.', de: 'So konkret wie möglich, auch wenn nur ungefähr.' }),
+      }
       : null
 
   // La note part dès la première étoile, sans attendre le reste. Celui qui
@@ -143,7 +149,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
       if (d.error) { setErreur(d.error); setEnvoi(false); return }
       setFini(true)
     } catch {
-      setErreur('Connexion impossible. Réessayez dans un instant.')
+      setErreur(t({ fr: 'Connexion impossible. Réessayez dans un instant.', en: 'Could not connect. Please try again in a moment.', de: 'Keine Verbindung möglich. Bitte versuchen Sie es gleich noch einmal.' }))
       setEnvoi(false)
     }
   }
@@ -153,17 +159,17 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
       <div className={`avis ${compact ? 'avis-compact' : ''}`}>
         <div className="avis-merci">
           <div className="avis-merci-ic" aria-hidden="true">🎞️</div>
-          <h3 className="h3" style={{ margin: '0 0 6px' }}>Merci, vraiment.</h3>
+          <h3 className="h3" style={{ margin: '0 0 6px' }}>{t({ fr: 'Merci, vraiment.', en: 'Thank you, truly.', de: 'Vielen Dank, wirklich.' })}</h3>
           <p className="muted small" style={{ margin: 0 }}>
             {orga
-              ? 'Chaque réponse est lue. Si vous avez accepté l’appel, on vous écrit très vite.'
-              : 'C’est avec ça qu’on corrige ce qui ne va pas encore.'}
+              ? t({ fr: 'Chaque réponse est lue. Si vous avez accepté l’appel, on vous écrit très vite.', en: 'Every answer gets read. If you agreed to a call, we will be in touch very soon.', de: 'Jede Antwort wird gelesen. Wenn Sie dem Anruf zugestimmt haben, melden wir uns sehr bald.' })
+              : t({ fr: 'C’est avec ça qu’on corrige ce qui ne va pas encore.', en: 'This is how we fix what is not quite right yet.', de: 'Genau damit verbessern wir, was noch nicht rund läuft.' })}
           </p>
         </div>
 
         {onClose && (
           <button className="btn btn-dark" style={{ marginTop: 18, width: '100%' }} onClick={onClose}>
-            {compact ? 'Revenir aux photos' : 'Fermer'}
+            {compact ? t({ fr: 'Revenir aux photos', en: 'Back to the photos', de: 'Zurück zu den Fotos' }) : t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}
           </button>
         )}
       </div>
@@ -173,7 +179,7 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
   return (
     <div className={`avis ${compact ? 'avis-compact' : ''}`}>
       {onClose && compact && (
-        <button className="avis-fermer" onClick={onClose} aria-label="Fermer">×</button>
+        <button className="avis-fermer" onClick={onClose} aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}>×</button>
       )}
       {/* La raison pour laquelle on se permet d'interrompre, écrite avant la
           question et non après : « vous faites partie des mille premiers ». */}
@@ -182,23 +188,23 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
       {/* 1. La note. La seule question obligatoire : celle à laquelle tout le
           monde répond, et qui suffit à mesurer la satisfaction dans le temps. */}
       <div className="avis-q">
-        <div className="avis-lbl">{orga ? 'Dans l’ensemble, comment s’est passée votre soirée ?' : 'Vous avez aimé ?'}</div>
+        <div className="avis-lbl">{orga ? t({ fr: 'Dans l’ensemble, comment s’est passée votre soirée ?', en: 'Overall, how did your event go?', de: 'Wie ist Ihre Feier insgesamt gelaufen?' }) : t({ fr: 'Vous avez aimé ?', en: 'Did you enjoy it?', de: 'Hat es Ihnen gefallen?' })}</div>
         {/* Cinq étoiles : le geste se fait sans rien lire. Elles s'allument
             jusqu'à celle qu'on touche, comme partout ailleurs, et le mot
             correspondant s'affiche dessous une fois le choix fait. */}
         <div className="avis-etoiles" role="radiogroup"
-          aria-label={orga ? 'Note de votre soirée' : 'Votre note'}>
+          aria-label={orga ? t({ fr: 'Note de votre soirée', en: 'Your event rating', de: 'Bewertung Ihrer Feier' }) : t({ fr: 'Votre note', en: 'Your rating', de: 'Ihre Bewertung' })}>
           {NOTES.map((n) => (
             <button key={n.valeur} type="button"
               className={`avis-etoile ${note >= n.valeur ? 'on' : ''}`}
               role="radio" aria-checked={note === n.valeur}
-              aria-label={`${n.valeur} étoile${n.valeur > 1 ? 's' : ''} sur 5 : ${n.mot}`}
+              aria-label={t({ fr: `${n.valeur} étoile${n.valeur > 1 ? 's' : ''} sur 5 : ${n.mot}`, en: `${n.valeur} star${n.valeur > 1 ? 's' : ''} out of 5: ${n.mot}`, de: `${n.valeur} von 5 Sternen: ${n.mot}` })}
               onClick={() => poserLaNote(n.valeur)}>
               <span aria-hidden="true">★</span>
             </button>
           ))}
         </div>
-        <div className="avis-etoiles-mot">{note ? NOTES.find((n) => n.valeur === note)?.mot : 'Notez de 1 à 5 étoiles'}</div>
+        <div className="avis-etoiles-mot">{note ? NOTES.find((n) => n.valeur === note)?.mot : t({ fr: 'Notez de 1 à 5 étoiles', en: 'Rate from 1 to 5 stars', de: 'Bewerten Sie mit 1 bis 5 Sternen' })}</div>
       </div>
 
       {/* En pop-up, tout ce qui suit reste plié tant qu'aucune étoile n'est
@@ -214,11 +220,11 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           une étoile et à quelqu'un qui en a mis cinq. */}
       {note && (
         <div className="avis-q avis-ouvert">
-          <div className="avis-lbl">{reactionA(role, note)?.q}</div>
+          <div className="avis-lbl">{reactionA(role, note, lang)?.q}</div>
           <textarea rows={4} value={reaction} onChange={(e) => setReaction(e.target.value)}
-            placeholder={reactionA(role, note)?.ph} />
+            placeholder={reactionA(role, note, lang)?.ph} />
           <div className="avis-sous" style={{ margin: '6px 0 0' }}>
-            Facultatif, mais c’est ce qu’on lit en premier.
+            {t({ fr: 'Facultatif, mais c’est ce qu’on lit en premier.', en: 'Optional, but it is the first thing we read.', de: 'Freiwillig, aber das lesen wir als Erstes.' })}
           </div>
         </div>
       )}
@@ -227,17 +233,17 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           se compare d'un mois sur l'autre : elle ne changera plus. */}
       {orga && (
         <div className="avis-q">
-          <div className="avis-lbl">Recommanderiez-vous Time to Flash à un ami qui organise une fête ?</div>
+          <div className="avis-lbl">{t({ fr: 'Recommanderiez-vous Time to Flash à un ami qui organise une fête ?', en: 'Would you recommend Time to Flash to a friend planning a party?', de: 'Würden Sie Time to Flash einem Freund empfehlen, der eine Feier plant?' })}</div>
           <div className="avis-nps">
             {Array.from({ length: 11 }, (_, i) => (
               <button key={i} type="button" className={`avis-num ${nps === i ? 'on' : ''}`}
                 aria-pressed={nps === i} onClick={() => setNps(i)}>{i}</button>
             ))}
           </div>
-          <div className="avis-nps-ext"><span>Jamais</span><span>Sans hésiter</span></div>
+          <div className="avis-nps-ext"><span>{t({ fr: 'Jamais', en: 'Never', de: 'Niemals' })}</span><span>{t({ fr: 'Sans hésiter', en: 'Without hesitation', de: 'Auf jeden Fall' })}</span></div>
           {nps !== null && (
             <input type="text" value={npsRaison} onChange={(e) => setNpsRaison(e.target.value)}
-              placeholder="En une phrase, pourquoi cette note ? (facultatif)" style={{ marginTop: 10 }} />
+              placeholder={t({ fr: 'En une phrase, pourquoi cette note ? (facultatif)', en: 'In one sentence, why this score? (optional)', de: 'In einem Satz: Warum diese Bewertung? (freiwillig)' })} style={{ marginTop: 10 }} />
           )}
         </div>
       )}
@@ -250,13 +256,13 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           texte libre ne récolte que des « rien ». La liste, elle, force à se
           souvenir. */}
       <div className="avis-q">
-        <div className="avis-lbl">{orga ? 'Avez-vous eu un problème technique, vous ou vos participants ?' : 'Avez-vous eu un problème technique ?'}</div>
-        <Choix options={PROBLEME} valeur={aEuProbleme} onChange={repondreProbleme} />
+        <div className="avis-lbl">{orga ? t({ fr: 'Avez-vous eu un problème technique, vous ou vos participants ?', en: 'Did you or your guests have any technical problems?', de: 'Hatten Sie oder Ihre Gäste ein technisches Problem?' }) : t({ fr: 'Avez-vous eu un problème technique ?', en: 'Did you have any technical problems?', de: 'Hatten Sie ein technisches Problem?' })}</div>
+        <Choix options={probleme(lang)} valeur={aEuProbleme} onChange={repondreProbleme} />
 
         {aEuProbleme === 'oui' && (
           <div className="avis-suite">
-            <div className="avis-lbl" style={{ fontSize: 14 }}>Lequel ?</div>
-            <div className="avis-sous">Plusieurs réponses possibles.</div>
+            <div className="avis-lbl" style={{ fontSize: 14 }}>{t({ fr: 'Lequel ?', en: 'Which one?', de: 'Welches?' })}</div>
+            <div className="avis-sous">{t({ fr: 'Plusieurs réponses possibles.', en: 'You can choose more than one.', de: 'Mehrere Antworten möglich.' })}</div>
             <div className="avis-choix">
               {SOUCIS.map((s) => (
                 <button key={s.id} type="button"
@@ -282,13 +288,13 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         <>
           {/* 5. Ce qui a plu : sert à savoir ce qu'on ne doit surtout pas casser. */}
           <div className="avis-q">
-            <div className="avis-lbl">Qu’est-ce qui a le plus plu, chez vous ?</div>
-            <Choix options={PREFEREES} valeur={preferee} onChange={setPreferee} />
+            <div className="avis-lbl">{t({ fr: 'Qu’est-ce qui a le plus plu, chez vous ?', en: 'What did people like most at your event?', de: 'Was hat bei Ihnen am besten gefallen?' })}</div>
+            <Choix options={preferees(lang)} valeur={preferee} onChange={setPreferee} />
           </div>
 
           <div className="avis-q">
-            <div className="avis-lbl">Comment avez-vous connu Time to Flash ?</div>
-            <Choix options={SOURCES} valeur={source} onChange={setSource} />
+            <div className="avis-lbl">{t({ fr: 'Comment avez-vous connu Time to Flash ?', en: 'How did you hear about Time to Flash?', de: 'Wie haben Sie von Time to Flash erfahren?' })}</div>
+            <Choix options={sources(lang)} valeur={source} onChange={setSource} />
           </div>
 
           {/* Le champ du numéro n'apparaît qu'après la case cochée : un
@@ -297,14 +303,14 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
           <div className="avis-appel">
             <label className="avis-case">
               <input type="checkbox" checked={appel} onChange={(e) => setAppel(e.target.checked)} />
-              <span>J’accepte qu’on m’appelle <strong>5 minutes</strong> pour en parler.</span>
+              <span>{t({ fr: <>J’accepte qu’on m’appelle <strong>5 minutes</strong> pour en parler.</>, en: <>I am happy to take a <strong>5-minute</strong> call to talk about it.</>, de: <>Ich bin mit einem <strong>5-minütigen</strong> Anruf dazu einverstanden.</> })}</span>
             </label>
             {appel && (
               <div className="field" style={{ margin: '12px 0 0' }}>
-                <label>Votre numéro <span className="field-tag">facultatif</span></label>
+                <label>{t({ fr: 'Votre numéro', en: 'Your number', de: 'Ihre Nummer' })} <span className="field-tag">{t({ fr: 'facultatif', en: 'optional', de: 'freiwillig' })}</span></label>
                 <input type="tel" inputMode="tel" autoComplete="tel" value={tel}
-                  onChange={(e) => setTel(e.target.value)} placeholder="06 12 34 56 78" />
-                <div className="hint">Utilisé uniquement pour cet appel, puis supprimé.</div>
+                  onChange={(e) => setTel(e.target.value)} placeholder={t({ fr: '06 12 34 56 78', en: '07700 900123', de: '0151 23456789' })} />
+                <div className="hint">{t({ fr: 'Utilisé uniquement pour cet appel, puis supprimé.', en: 'Used only for this call, then deleted.', de: 'Wird nur für diesen Anruf verwendet und danach gelöscht.' })}</div>
               </div>
             )}
           </div>
@@ -313,20 +319,20 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
         /* 5 bis. La question qui compte pour la suite : chaque participant est un
            organisateur en puissance, et c'est là que ça se joue. */
         <div className="avis-q">
-          <div className="avis-lbl">Utiliseriez-vous Time to Flash pour votre propre fête ?</div>
-          <Choix options={REFERAIT} valeur={referait} onChange={setReferait} />
+          <div className="avis-lbl">{t({ fr: 'Utiliseriez-vous Time to Flash pour votre propre fête ?', en: 'Would you use Time to Flash for your own party?', de: 'Würden Sie Time to Flash für Ihre eigene Feier nutzen?' })}</div>
+          <Choix options={referaitListe(lang)} valeur={referait} onChange={setReferait} />
         </div>
       )}
 
       {erreur && <div className="err" style={{ marginTop: 8 }}>{erreur}</div>}
 
       <button className="btn btn-accent avis-envoi" onClick={envoyer} disabled={!note || envoi}>
-        {envoi ? 'Envoi…' : note ? 'Envoyer' : 'Choisissez une réponse ci-dessus'}
+        {envoi ? t({ fr: 'Envoi…', en: 'Sending…', de: 'Wird gesendet…' }) : note ? t({ fr: 'Envoyer', en: 'Send', de: 'Senden' }) : t({ fr: 'Choisissez une réponse ci-dessus', en: 'Choose an answer above', de: 'Wählen Sie oben eine Antwort' })}
       </button>
       <p className="avis-pied">
         {orga
-          ? 'Une seule question est obligatoire, les autres sont libres.'
-          : 'Anonyme pour l’organisateur : lui ne verra jamais votre réponse.'}
+          ? t({ fr: 'Une seule question est obligatoire, les autres sont libres.', en: 'Only one question is required, the rest are up to you.', de: 'Nur eine Frage ist Pflicht, die anderen sind freiwillig.' })
+          : t({ fr: 'Anonyme pour l’organisateur : lui ne verra jamais votre réponse.', en: 'Anonymous for the host: they will never see your answer.', de: 'Anonym für den Gastgeber: Er sieht Ihre Antwort nie.' })}
       </p>
 
       </>)}

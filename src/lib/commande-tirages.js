@@ -23,9 +23,11 @@ import { prodigiEnv, devisProdigi, commanderProdigi } from './prodigi'
 import { familinkEnv, coutFamilink, commanderFamilink } from './familink'
 import { cuireTirage, mettreEnPage } from './cuisson-serveur'
 import { pelliculeParId, tamponDate } from './pellicules'
-import { formatTirage, paysLivraison, FINITIONS, euros } from './tirages'
+import { formatTirage, paysLivraison, finitions, euros } from './tirages'
 import { sendMail, siteUrl, tiragesConfirmationEmail, tiragesExpeditionEmail, tiragesBloqueeEmail } from './mail'
 import { CONTACT_EMAIL } from './pricing'
+import { t } from './i18n'
+import { langueDe } from './langue-serveur'
 
 const TABLE = 'tirages_commandes'
 
@@ -184,7 +186,7 @@ export async function confirmerSession(sessionId) {
       await sendMail({
         to: CONTACT_EMAIL,
         subject: `🎞️ Tirages : commande ${reference(c)} payée, en attente d'imprimeur`,
-        html: `<p>${c.nombre} tirage(s) ${c.format}, ${euros(c.total_cents)}. Elle partira avec les autres une fois l'accès de production de l'imprimeur branché.</p>`,
+        html: `<p>${c.nombre} tirage(s) ${c.format}, ${euros(c.total_cents, 'fr')}. Elle partira avec les autres une fois l'accès de production de l'imprimeur branché.</p>`,
       }).catch(() => {})
     }
   }
@@ -219,8 +221,9 @@ const reference = (c) => c.id.slice(0, 8).toUpperCase()
 const prenomDe = (nom) => String(nom || '').trim().split(/\s+/)[0] || ''
 
 // Ce que dit le mail de confirmation : le récapitulatif, et les photos
-// commandées posées sur leur papier.
+// commandées posées sur leur papier. Dans la langue de la commande.
 export async function contenuConfirmation(c, photos) {
+  const langue = langueDe(c)
   const ev = await selectRows('events', `id=eq.${c.event_id}&select=name,host_names`)
   const e = Array.isArray(ev.data) ? ev.data[0] : null
   const retenues = photos.slice(0, 4)
@@ -236,16 +239,21 @@ export async function contenuConfirmation(c, photos) {
     }
   }))
   const d = c.destinataire || {}
-  const effet = pelliculeParId(c.rendu?.pellicule)
+  const effet = pelliculeParId(c.rendu?.pellicule, langue)
+  const liste = finitions(langue)
   return {
+    langue,
     prenom: prenomDe(d.nom),
     eventName: e?.host_names || e?.name || '',
     nombre: c.nombre,
-    formatNom: formatTirage(c.format).nom,
-    finition: (FINITIONS.find((f) => f.id === c.finition) || FINITIONS[0]).nom,
-    rendu: [effet.canaux ? effet.nom : 'Photo d\'origine', c.rendu?.date ? 'date incrustée' : ''].filter(Boolean).join(' + '),
-    adresse: [d.nom, d.adresse, d.complement, `${d.codePostal} ${d.ville}`, paysLivraison(d.pays)?.nom].filter(Boolean).join('<br>'),
-    total: euros(c.total_cents),
+    formatNom: formatTirage(c.format, langue).nom,
+    finition: (liste.find((f) => f.id === c.finition) || liste[0]).nom,
+    rendu: [
+      effet.canaux ? effet.nom : t({ fr: 'Photo d\'origine', en: 'Original photo', de: 'Originalfoto' }, langue),
+      c.rendu?.date ? t({ fr: 'date incrustée', en: 'date stamp', de: 'eingeblendetes Datum' }, langue) : '',
+    ].filter(Boolean).join(' + '),
+    adresse: [d.nom, d.adresse, d.complement, `${d.codePostal} ${d.ville}`, paysLivraison(d.pays, langue)?.nom].filter(Boolean).join('<br>'),
+    total: euros(c.total_cents, langue),
     reference: reference(c),
     photos: vignettes,
     lienAlbum: `${siteUrl()}/g/${c.event_id}`,
@@ -296,6 +304,7 @@ export async function suivreExpedition(imprimeurCommandeId, lire) {
     suiviUrl: colis.url,
     suiviNumero: colis.numero,
     reference: reference(c),
+    langue: langueDe(c),
   })
   await sendMail({ to: c.destinataire.email, subject: mail.subject, html: mail.html })
   return { envoye: true }

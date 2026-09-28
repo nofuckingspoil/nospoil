@@ -78,3 +78,51 @@ export const MODE_OPTIONS = [
     court: 'ils ne voient rien, comme avec un vrai appareil jetable',
   },
 ]
+
+// Petit assistant de langue (fichier partagé : aucun import autorisé).
+const tr = (o, l) => o[l || globalThis.__ttfLangue] ?? o.fr
+
+const MODE_OPTIONS_TRAD = {
+  en: {
+    libre: {
+      title: 'Open album',
+      sub: 'Everyone can look back at their photos whenever they like, and delete a bad one to retake it.',
+      court: 'they can look back at their photos and retake a bad one',
+    },
+    confirmation: {
+      title: 'One chance',
+      sub: 'The photo appears right after the shot: you keep it or retake it. Once kept, it joins the roll and can’t be seen again.',
+      court: 'they see each photo once, to keep it or retake it',
+    },
+    jetable: {
+      title: 'True disposable',
+      sub: 'Nobody sees anything. Every photo goes into the roll blurred, and is discovered at the reveal, like a film being developed.',
+      court: 'they see nothing, just like with a real disposable camera',
+    },
+  },
+  de: {
+    libre: {
+      title: 'Offenes Album',
+      sub: 'Jeder kann seine Fotos jederzeit ansehen und ein misslungenes löschen, um es neu aufzunehmen.',
+      court: 'sie sehen ihre Fotos und können ein misslungenes neu machen',
+    },
+    confirmation: {
+      title: 'Nur eine Chance',
+      sub: 'Das Foto erscheint direkt nach dem Auslösen: behalten oder neu aufnehmen. Einmal behalten, wandert es in den Film und ist nicht mehr zu sehen.',
+      court: 'sie sehen jedes Foto einmal, um es zu behalten oder neu zu machen',
+    },
+    jetable: {
+      title: 'Echte Einwegkamera',
+      sub: 'Niemand sieht etwas. Jedes Foto landet verschwommen im Film und wird bei der Enthüllung entdeckt, wie ein Film, der entwickelt wird.',
+      court: 'sie sehen nichts, wie bei einer echten Einwegkamera',
+    },
+  },
+}
+
+// Les options dans la langue voulue (mêmes clés et même forme que MODE_OPTIONS).
+export function modeOptions(langue) {
+  return MODE_OPTIONS.map((o) => ({
+    ...o,
+    ...tr({ fr: {}, en: MODE_OPTIONS_TRAD.en[o.key], de: MODE_OPTIONS_TRAD.de[o.key] }, langue),
+  }))
+}

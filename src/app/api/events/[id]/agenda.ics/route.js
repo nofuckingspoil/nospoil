@@ -7,6 +7,9 @@
 import { selectRows } from '../../../../../lib/supabase'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 import { finDe, momentsRappels } from '../../../../../lib/rappels'
+import { t, langueValide } from '../../../../../lib/i18n'
+import { langueRequete } from '../../../../../lib/langue-serveur'
+import { nomAffiche } from '../../../../../lib/event-defaults'
 
 // Échappement des textes selon la norme iCalendar
 function esc(s = '') {
@@ -40,11 +43,13 @@ function fold(line) {
 
 export async function GET(request, { params }) {
   const { id } = await params
-  if (!estUuid(id)) return identifiantInvalide()
+  // La langue : ?lang= (lien construit par l'écran), sinon celle de la requête.
+  const langue = langueValide(new URL(request.url).searchParams.get('lang')) || langueRequete(request)
+  if (!estUuid(id)) return identifiantInvalide(langue)
 
   const { ok, data } = await selectRows('events', `id=eq.${id}&select=id,name,host_names,starts_at,ends_at,reveal_at,reminder_offsets`)
   const ev = Array.isArray(data) ? data[0] : null
-  if (!ok || !ev) return new Response('Événement introuvable.', { status: 404 })
+  if (!ok || !ev) return new Response(t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue), { status: 404 })
 
   // On repart du domaine sur lequel le participant se trouve : le lien mis en
   // agenda est exactement celui qu'il utilise déjà.
@@ -52,10 +57,18 @@ export async function GET(request, { params }) {
   const joinUrl = `${origin}/j/${id}`
   const galleryUrl = `${origin}/g/${id}`
 
-  const title = ev.host_names || ev.name || 'Time to Flash'
+  const title = ev.host_names || nomAffiche(ev.name, langue) || 'Time to Flash'
   const links = [
-    `Mon appareil photo (et mes photos) : ${joinUrl}`,
-    `L'album de tous les participants : ${galleryUrl}`,
+    t({
+      fr: `Mon appareil photo (et mes photos) : ${joinUrl}`,
+      en: `My camera (and my photos): ${joinUrl}`,
+      de: `Meine Kamera (und meine Fotos): ${joinUrl}`,
+    }, langue),
+    t({
+      fr: `L'album de tous les participants : ${galleryUrl}`,
+      en: `Everyone's album: ${galleryUrl}`,
+      de: `Das Album aller Gäste: ${galleryUrl}`,
+    }, langue),
   ].join('\n')
 
   const H = 60 * 60 * 1000
@@ -115,8 +128,12 @@ export async function GET(request, { params }) {
       uid: 'shoot',
       start: shootStart,
       end: shootEnd,
-      summary: `📸 Soirée photo : ${title}`,
-      description: `C'est parti ! Sortez votre appareil et immortalisez la soirée.\n\n${links}`,
+      summary: t({ fr: `📸 Soirée photo : ${title}`, en: `📸 Photo party: ${title}`, de: `📸 Fotoabend: ${title}` }, langue),
+      description: t({
+        fr: `C'est parti ! Sortez votre appareil et immortalisez la soirée.\n\n${links}`,
+        en: `Here we go! Get your camera out and capture the party.\n\n${links}`,
+        de: `Los geht's! Holen Sie Ihre Kamera heraus und halten Sie die Feier fest.\n\n${links}`,
+      }, langue),
     }),
 
     // 2 · Les rappels « pense à shooter », répartis dans la fête
@@ -124,9 +141,13 @@ export async function GET(request, { params }) {
       uid: `nudge${i + 1}`,
       start: quand,
       end: quand + 15 * 60 * 1000,
-      summary: "🔔 N'oubliez pas de prendre des photos !",
-      description: `Il vous reste des clichés à croquer.\n\n${links}`,
-      alarm: { trigger: '-PT0S', text: "N'oubliez pas de prendre des photos !" },
+      summary: t({ fr: "🔔 N'oubliez pas de prendre des photos !", en: "🔔 Don't forget to take photos!", de: '🔔 Vergessen Sie nicht, Fotos zu machen!' }, langue),
+      description: t({
+        fr: `Il vous reste des clichés à croquer.\n\n${links}`,
+        en: `You still have shots left to take.\n\n${links}`,
+        de: `Sie haben noch Aufnahmen übrig.\n\n${links}`,
+      }, langue),
+      alarm: { trigger: '-PT0S', text: t({ fr: "N'oubliez pas de prendre des photos !", en: "Don't forget to take photos!", de: 'Vergessen Sie nicht, Fotos zu machen!' }, langue) },
     })),
 
     // 3 · La révélation de l'album
@@ -134,9 +155,13 @@ export async function GET(request, { params }) {
       uid: 'reveal',
       start: reveal,
       end: reveal + 1 * H,
-      summary: `✨ Révélation des photos : ${title}`,
-      description: `Les photos de « ${title} » se révèlent.\n\n${links}`,
-      alarm: { trigger: '-PT15M', text: 'Vos photos se révèlent dans 15 minutes' },
+      summary: t({ fr: `✨ Révélation des photos : ${title}`, en: `✨ Photo reveal: ${title}`, de: `✨ Enthüllung der Fotos: ${title}` }, langue),
+      description: t({
+        fr: `Les photos de « ${title} » se révèlent.\n\n${links}`,
+        en: `The photos from “${title}” are being revealed.\n\n${links}`,
+        de: `Die Fotos von „${title}“ werden enthüllt.\n\n${links}`,
+      }, langue),
+      alarm: { trigger: '-PT15M', text: t({ fr: 'Vos photos se révèlent dans 15 minutes', en: 'Your photos will be revealed in 15 minutes', de: 'Ihre Fotos werden in 15 Minuten enthüllt' }, langue) },
     }),
 
     'END:VCALENDAR',

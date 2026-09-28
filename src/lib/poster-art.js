@@ -12,6 +12,7 @@
 // ============================================================
 
 import { buildPlan, FONTS, contrast, luminance } from './qr-art'
+import { t } from './i18n'
 
 // ---------- Formats ----------
 // `per` = nombre d'exemplaires par page A4. Au-delà de 1, on compose une
@@ -47,6 +48,48 @@ export const POSTER_DEFAULTS = {
   titreFont: 'didone',
   texteFont: 'sans',
   plaque: false,
+}
+
+// ---------- Textes traduits ----------
+// FORMATS, MODELES et POSTER_DEFAULTS gardent leurs textes français
+// (compatibilité) ; ces fonctions renvoient les mêmes objets dans la langue
+// voulue. Pendant le rendu, TOUJOURS passer la langue de la page.
+
+const NOMS_FORMATS = {
+  a4: { label: { fr: 'Affiche A4', en: 'A4 poster', de: 'A4-Poster' }, sub: { fr: 'Entrée, bar, vestiaire', en: 'Entrance, bar, cloakroom', de: 'Eingang, Bar, Garderobe' } },
+  a5: { label: { fr: 'Affiche A5', en: 'A5 poster', de: 'A5-Poster' }, sub: { fr: '2 par page, à découper', en: '2 per page, to cut out', de: '2 pro Seite, zum Ausschneiden' } },
+  chevalet: { label: { fr: 'Chevalet de table', en: 'Table tent', de: 'Tischaufsteller' }, sub: { fr: '2 par page, à plier en deux', en: '2 per page, to fold in half', de: '2 pro Seite, zum Falten' } },
+  cartons: { label: { fr: 'Petits cartons', en: 'Small cards', de: 'Kärtchen' }, sub: { fr: '9 par page, à disperser', en: '9 per page, to scatter around', de: '9 pro Seite, zum Verteilen' } },
+  carre: { label: { fr: 'Carré pour écran', en: 'Square for screens', de: 'Quadrat für Bildschirme' }, sub: { fr: 'Réseaux, télé, projection', en: 'Social media, TV, projector', de: 'Social Media, TV, Beamer' } },
+  qr: { label: { fr: 'QR code seul', en: 'QR code only', de: 'Nur QR-Code' }, sub: { fr: 'Sans habillage, à intégrer', en: 'No design, to use in your own', de: 'Ohne Gestaltung, zum Einbauen' } },
+}
+
+const NOMS_MODELES = {
+  epure: { label: { fr: 'Épuré', en: 'Clean', de: 'Schlicht' }, sub: { fr: 'Un filet, rien de plus', en: 'A fine line, nothing more', de: 'Eine feine Linie, mehr nicht' } },
+  arche: { label: { fr: 'Arche', en: 'Arch', de: 'Bogen' }, sub: { fr: 'Le code dans une arche', en: 'The code inside an arch', de: 'Der Code in einem Bogen' } },
+  botanique: { label: { fr: 'Botanique', en: 'Botanical', de: 'Botanisch' }, sub: { fr: 'Feuillages dans les coins', en: 'Foliage in the corners', de: 'Blätter in den Ecken' } },
+  deco: { label: { fr: 'Art déco', en: 'Art Deco', de: 'Art déco' }, sub: { fr: 'Cadre à angles coupés', en: 'Frame with cut corners', de: 'Rahmen mit abgeschrägten Ecken' } },
+  polaroid: { label: { fr: 'Photo', en: 'Photo', de: 'Foto' }, sub: { fr: 'Le code posé comme un cliché', en: 'The code framed like a snapshot', de: 'Der Code wie ein Schnappschuss' } },
+  ruban: { label: { fr: 'Bandeau', en: 'Banner', de: 'Banner' }, sub: { fr: 'Vos prénoms en négatif', en: 'Your names reversed out', de: 'Ihre Namen in Negativschrift' } },
+}
+
+const traduire = (liste, noms, langue) => liste.map((x) => (noms[x.key]
+  ? { ...x, label: t(noms[x.key].label, langue), sub: t(noms[x.key].sub, langue) }
+  : x))
+
+export const formatsDe = (langue) => traduire(FORMATS, NOMS_FORMATS, langue)
+export const modelesDe = (langue) => traduire(MODELES, NOMS_MODELES, langue)
+
+// Les textes d'exemple dessinés sur l'affiche, dans la langue de la page.
+export function posterDefaults(langue) {
+  return {
+    ...POSTER_DEFAULTS,
+    surtitre: t({ fr: POSTER_DEFAULTS.surtitre, en: 'The wedding of', de: 'Die Hochzeit von' }, langue),
+    date: t({ fr: POSTER_DEFAULTS.date, en: '12 June 2027', de: '12. Juni 2027' }, langue),
+    accroche: t({ fr: POSTER_DEFAULTS.accroche, en: 'Tonight, you’re the photographer.', de: 'Heute Abend sind Sie der Fotograf.' }, langue),
+    consigne: t({ fr: POSTER_DEFAULTS.consigne, en: 'Scan to share your photos', de: 'Scannen und Fotos teilen' }, langue),
+    pied: t({ fr: POSTER_DEFAULTS.pied, en: 'No app to install', de: 'Keine App nötig' }, langue),
+  }
 }
 
 // ---------- Couleurs ----------
@@ -400,7 +443,7 @@ export function buildSheet(poster, fmt) {
 // Reprend le diagnostic du QR, mais sur la couleur réellement située derrière
 // le code une fois posé sur l'affiche.
 
-export function diagnosePoster(o) {
+export function diagnosePoster(o, langue) {
   const fmt = FORMATS.find((f) => f.key === o.format) || FORMATS[0]
   if (fmt.bare) return null
   const sombre = luminance(o.bg) < 0.35
@@ -411,15 +454,31 @@ export function diagnosePoster(o) {
     return {
       level: 'bad',
       text: sombre && !o.plaque
-        ? "Le code se fond dans l'affiche. Activez la pastille claire derrière le QR, ou foncez la couleur des pixels."
-        : "Ce QR ne sera pas lu : la couleur des pixels est trop proche du fond de l'affiche.",
+        ? t({
+          fr: "Le code se fond dans l'affiche. Activez la pastille claire derrière le QR, ou foncez la couleur des pixels.",
+          en: 'The code blends into the poster. Turn on the light patch behind the QR code, or make the pixels darker.',
+          de: 'Der Code verschwindet im Poster. Aktivieren Sie das helle Feld hinter dem QR-Code oder dunkeln Sie die Pixel ab.',
+        }, langue)
+        : t({
+          fr: "Ce QR ne sera pas lu : la couleur des pixels est trop proche du fond de l'affiche.",
+          en: 'This QR code won’t scan: the colour of the pixels is too close to the poster background.',
+          de: 'Dieser QR-Code wird nicht gelesen: Die Farbe der Pixel ist dem Hintergrund des Posters zu ähnlich.',
+        }, langue),
     }
   }
   if (c < 5 || ce < 4.5) {
-    return { level: 'warn', text: "Contraste juste entre le code et l'affiche : ça passe à l'écran, ça peut échouer une fois imprimé. Testez le scan avant de commander." }
+    return { level: 'warn', text: t({
+      fr: "Contraste juste entre le code et l'affiche : ça passe à l'écran, ça peut échouer une fois imprimé. Testez le scan avant de commander.",
+      en: 'Borderline contrast between the code and the poster: it works on screen, but may fail once printed. Test the scan before you order.',
+      de: 'Knapper Kontrast zwischen Code und Poster: Auf dem Bildschirm klappt es, gedruckt kann es scheitern. Testen Sie den Scan, bevor Sie bestellen.',
+    }, langue) }
   }
   if (luminance(o.fg) > luminance(fond)) {
-    return { level: 'warn', text: 'QR clair sur fond foncé : les téléphones récents y arrivent, les plus anciens non. Testez avant d’imprimer.' }
+    return { level: 'warn', text: t({
+      fr: 'QR clair sur fond foncé : les téléphones récents y arrivent, les plus anciens non. Testez avant d’imprimer.',
+      en: 'Light QR code on a dark background: recent phones can read it, older ones can’t. Test before printing.',
+      de: 'Heller QR-Code auf dunklem Hintergrund: Neuere Handys schaffen das, ältere nicht. Testen Sie vor dem Drucken.',
+    }, langue) }
   }
   return null
 }
