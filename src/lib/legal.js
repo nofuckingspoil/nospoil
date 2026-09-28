@@ -97,7 +97,7 @@ const cgv = {
   html: `
 <h2>Article 1 : Objet</h2>
 <p>Les présentes Conditions Générales de Vente et d'Utilisation (les « <strong>CGVU</strong> ») régissent la vente et l'utilisation du service <strong>Time to Flash</strong>, accessible à l'adresse timetoflash.fr.</p>
-<p>Elles s'appliquent à toute création d'événement, gratuite ou payante, à l'exclusion de toute autre condition. Le fait de créer un événement emporte acceptation pleine et entière des présentes CGVU.</p>
+<p>Elles s'appliquent à toute création d'événement, gratuite ou payante, ainsi qu'à toute commande de tirages photo papier (article 20), à l'exclusion de toute autre condition. Le fait de créer un événement ou de passer commande emporte acceptation pleine et entière des présentes CGVU.</p>
 
 <h2>Article 2 : Identification du vendeur</h2>
 <p><strong>BLACK BY C</strong>, SASU au capital de 300 €, dont le siège social est situé 2 impasse des Ligures, 44840 Les Sorinières, immatriculée au RCS de Nantes sous le numéro 898 409 446, TVA intracommunautaire FR27898409446.</p>
@@ -230,6 +230,22 @@ const cgv = {
 
 <hr />
 
+<h2>Article 20 : Vente de tirages photo papier</h2>
+<h3>20.1 Objet</h3>
+<p>Depuis l'album d'un Événement révélé, tout Organisateur ou Participant (l'« <strong>Acheteur</strong> ») peut commander des tirages photo papier des photographies de cet Événement. Les tirages sont destinés à un usage strictement privé.</p>
+<h3>20.2 Prix</h3>
+<p>Les prix sont indiqués en euros, toutes taxes comprises : un prix par tirage, selon le format, et des frais de livraison selon le pays de destination. Le détail (nombre de tirages, format, finition, rendu, livraison, total) est affiché avant le paiement, puis repris dans le courrier électronique de confirmation.</p>
+<h3>20.3 Commande et paiement</h3>
+<p>La commande est payable en ligne, au moyen des modes proposés par notre prestataire de paiement Stripe. Le contrat est formé au moment où le paiement est accepté ; l'Acheteur en reçoit la confirmation par courrier électronique.</p>
+<h3>20.4 Fabrication et livraison</h3>
+<p>Les tirages sont imprimés en France par un laboratoire partenaire, puis expédiés par La Poste, sous enveloppe, à l'adresse indiquée par l'Acheteur. Les envois se font en lettre, sans numéro de suivi. Le délai de livraison indicatif est d'environ une semaine en France métropolitaine ; en tout état de cause, les tirages sont livrés au plus tard trente (30) jours après la commande, conformément à l'article L.216-1 du Code de la consommation. L'Acheteur est informé par courrier électronique de l'expédition.</p>
+<h3>20.5 Rendu des tirages</h3>
+<p>Chaque tirage reproduit la photographie entière, entourée d'une bordure blanche. L'aperçu affiché lors de la commande est indicatif : de légères différences de couleur peuvent apparaître entre un écran et une impression sur papier. La qualité d'un tirage dépend de celle de la photographie prise pendant l'Événement.</p>
+<h3>20.6 Absence de droit de rétractation</h3>
+<p>Les tirages étant confectionnés selon les spécifications de l'Acheteur et nettement personnalisés (choix des photographies, du format, de la finition et du rendu), <strong>le droit de rétractation ne s'applique pas</strong>, conformément à l'article L.221-28, 3° du Code de la consommation. L'Acheteur en est informé avant de passer commande.</p>
+<h3>20.7 Garanties et réclamations</h3>
+<p>Les tirages bénéficient de la garantie légale de conformité (articles L.217-3 et suivants du Code de la consommation) et de la garantie contre les vices cachés (articles 1641 et suivants du Code civil). Tout tirage abîmé, mal imprimé ou non reçu peut être signalé à support@timetoflash.fr, avec une photographie du défaut le cas échéant : BLACK BY C procède alors, au choix de l'Acheteur, à une nouvelle impression ou au remboursement des tirages concernés.</p>
+
 <h2>Annexe 1 : Formulaire type de rétractation</h2>
 <blockquote>
   <p>À l'attention de BLACK BY C, 2 impasse des Ligures, 44840 Les Sorinières (support@timetoflash.fr)</p>
@@ -283,6 +299,7 @@ const cgv = {
     <tr><td>Cloudflare, Inc.</td><td>stockage des Contenus (R2)</td><td>Europe de l'Ouest</td></tr>
     <tr><td>Stripe Payments Europe, Ltd.</td><td>traitement des paiements</td><td>Union européenne</td></tr>
     <tr><td>Brevo (Sendinblue SAS)</td><td>envoi des courriers électroniques transactionnels</td><td>Union européenne (France)</td></tr>
+    <tr><td>Familink</td><td>impression et expédition des tirages photo commandés (nom, adresse postale, photographies commandées)</td><td>France</td></tr>
   </tbody>
 </table>
 <p>BLACK BY C informe l'Organisateur de tout changement envisagé, celui-ci disposant d'un délai raisonnable pour formuler des objections.</p>
@@ -380,6 +397,7 @@ const confidentialite = {
     <tr><td>Cloudflare, Inc.</td><td>stockage des fichiers (R2)</td><td>Europe de l'Ouest</td></tr>
     <tr><td>Stripe Payments Europe, Ltd.</td><td>traitement des paiements</td><td>Union européenne</td></tr>
     <tr><td>Brevo (Sendinblue SAS)</td><td>envoi des courriers électroniques transactionnels</td><td>Union européenne (France)</td></tr>
+    <tr><td>Familink</td><td>impression et expédition des tirages photo commandés (nom, adresse postale, photographies commandées)</td><td>France</td></tr>
     <tr><td>Meta Platforms Ireland Ltd.</td><td>mesure d'audience publicitaire, <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
     <tr><td>Google Ireland Ltd.</td><td>mesure d'audience et publicité, <em>uniquement après consentement</em></td><td>Irlande, États-Unis</td></tr>
   </tbody>

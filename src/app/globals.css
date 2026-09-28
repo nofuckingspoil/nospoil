@@ -4361,3 +4361,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-compact .gal-creer i { font-size: 7.5px; letter-spacing: .08em; }
 .gal-compact-sous { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 @media (max-width: 400px) { .gal-compact { gap: 8px; } }
+
+.tir-cgv { margin-bottom: 8px; font-size: 11.5px; line-height: 1.4; color: var(--text3); text-align: center; }
+.tir-cgv a { color: inherit; }

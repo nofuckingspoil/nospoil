@@ -33,6 +33,18 @@ export function imprimeurChoisi() {
   return process.env.IMPRIMEUR === 'familink' ? 'familink' : 'prodigi'
 }
 
+// En ligne, une commande payée ne part que chez un imprimeur réel. Tant que
+// son accès de production n'est pas branché, elle reste « payee » et attend :
+// libererCommandesEnAttente() les fera partir d'un coup.
+function imprimeurReel() {
+  return imprimeurChoisi() === 'familink'
+    ? !!process.env.FAMILINK_API_TOKEN && familinkEnv() === 'live'
+    : !!process.env.PRODIGI_API_KEY && prodigiEnv() === 'live'
+}
+export function commandesRetenues() {
+  return process.env.NODE_ENV === 'production' && !imprimeurReel()
+}
+
 export async function lireCommande(id) {
   const { data } = await selectRows(TABLE, `id=eq.${id}&select=*`)
   return Array.isArray(data) ? data[0] || null : null
@@ -73,6 +85,7 @@ async function preparerFichiers(eventId, photos, rendu, format = null) {
  * plus) à l'état « payee » : un second appel simultané ressort bredouille.
  */
 export async function honorerCommande(id) {
+  if (commandesRetenues()) return lireCommande(id)
   const verrou = await updateRow(TABLE, `id=eq.${id}&statut=eq.payee`, { statut: 'en_preparation' })
   const c = verrou.data
   if (!c?.id) return lireCommande(id)
@@ -129,7 +142,6 @@ export async function honorerCommande(id) {
       cout_imprimeur_cents: cout?.total ?? null,
       envoye_le: new Date().toISOString(),
     })
-    await envoyerConfirmation(fin.data || c, photos).catch((e) => console.error('tirages: mail de confirmation', e))
     return fin.data || c
   } catch (err) {
     // Le client a payé : on ne perd rien, la commande attend qu'on la reprenne,
@@ -160,8 +172,45 @@ export async function confirmerSession(sessionId) {
   if (!id || session.metadata?.type !== 'tirages') return null
   if (session.payment_status !== 'paid') return lireCommande(id)
 
-  await updateRow(TABLE, `id=eq.${id}&statut=eq.en_attente`, { statut: 'payee', paye_le: new Date().toISOString() })
+  const payee = await updateRow(TABLE, `id=eq.${id}&statut=eq.en_attente`, { statut: 'payee', paye_le: new Date().toISOString() })
+  // Le mail de confirmation part au paiement, une seule fois (le verrou
+  // ci-dessus ne réussit qu'au premier passage).
+  if (payee.data?.id) {
+    await envoyerConfirmation(payee.data).catch((e) => console.error('tirages: mail de confirmation', e))
+    // Tant que l'imprimeur réel n'est pas branché, on est prévenu de chaque
+    // vente : elle attend qu'on la fasse partir.
+    if (commandesRetenues()) {
+      const c = payee.data
+      await sendMail({
+        to: CONTACT_EMAIL,
+        subject: `🎞️ Tirages : commande ${reference(c)} payée, en attente d'imprimeur`,
+        html: `<p>${c.nombre} tirage(s) ${c.format}, ${euros(c.total_cents)}. Elle partira avec les autres une fois l'accès de production de l'imprimeur branché.</p>`,
+      }).catch(() => {})
+    }
+  }
   return honorerCommande(id)
+}
+
+/**
+ * Fait partir les commandes restées en chemin : les payées qui attendaient
+ * l'imprimeur réel, et les « en attente » dont le paiement a abouti sans que
+ * l'invité revienne sur l'album (onglet fermé). À lancer une fois l'accès de
+ * production de l'imprimeur branché.
+ */
+export async function libererCommandesEnAttente() {
+  const bilan = { verifiees: 0, envoyees: 0, erreurs: 0, retenues: commandesRetenues() }
+  const attente = await selectRows(TABLE, 'statut=eq.en_attente&stripe_session_id=not.is.null&select=stripe_session_id&order=created_at.asc&limit=200')
+  for (const c of Array.isArray(attente.data) ? attente.data : []) {
+    bilan.verifiees++
+    await confirmerSession(c.stripe_session_id).catch(() => null)
+  }
+  const payees = await selectRows(TABLE, 'statut=eq.payee&select=id&order=paye_le.asc&limit=200')
+  for (const c of Array.isArray(payees.data) ? payees.data : []) {
+    const fin = await honorerCommande(c.id)
+    if (fin?.statut === 'envoyee') bilan.envoyees++
+    else if (fin?.statut === 'erreur') bilan.erreurs++
+  }
+  return bilan
 }
 
 // ---------------------------------------------------------------- les mails
@@ -203,10 +252,14 @@ export async function contenuConfirmation(c, photos) {
   }
 }
 
-async function envoyerConfirmation(c, photos) {
+async function envoyerConfirmation(c) {
   const to = c.destinataire?.email
   if (!to || c.confirmation_envoyee_le) return
-  const mail = tiragesConfirmationEmail(await contenuConfirmation(c, photos))
+  const ids = (c.lignes || []).map((l) => l.photoId)
+  const ph = ids.length
+    ? await selectRows('photos', `id=in.(${ids.join(',')})&select=id,storage_path,thumb_path,taken_at`)
+    : { data: [] }
+  const mail = tiragesConfirmationEmail(await contenuConfirmation(c, Array.isArray(ph.data) ? ph.data : []))
   const res = await sendMail({ to, subject: mail.subject, html: mail.html })
   if (res?.ok) await updateRow(TABLE, `id=eq.${c.id}`, { confirmation_envoyee_le: new Date().toISOString() })
 }

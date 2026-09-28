@@ -27,7 +27,7 @@ import { PRIX_APPEL } from './tirages'
 // À REMPLIR LE JOUR DE LA MISE EN LIGNE de la nouvelle phrase sous le champ
 // mail (format '2026-10-15T00:00:00Z'). Tant que c'est vide, personne ne
 // reçoit la relance.
-export const PROMESSE_SERVICES = ''
+export const PROMESSE_SERVICES = '2026-09-28T17:00:00Z' // 28/09/2026, 19 h (Paris) : juste après la mise en ligne
 
 export const APRES_JOURS = 5
 const BATCH = 200

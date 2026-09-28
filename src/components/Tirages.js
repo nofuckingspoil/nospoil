@@ -287,6 +287,10 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
 
       <div className="tir-pied">
         {erreur && <p className="tir-erreur" role="alert">{erreur}</p>}
+        <p className="tir-cgv">
+          Tirages personnalisés : pas de droit de rétractation. En commandant, vous acceptez
+          nos <a href="/cgv" target="_blank" rel="noreferrer">conditions de vente</a>.
+        </p>
         <button className="tir-cta" disabled={etat !== 'choix' || devis.nombre === 0} onClick={commander}>
           {etat === 'paiement' ? 'Ouverture du paiement…' : etat === 'envoi' ? 'Un instant…' : devis.nombre === 0 ? 'Aucun tirage choisi' : `Commander (${euros(devis.total)})`}
         </button>

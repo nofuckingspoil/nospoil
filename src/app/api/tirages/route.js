@@ -155,7 +155,9 @@ export async function POST(request) {
   // En ligne, rien ne part sans paiement ni imprimeur réel.
   const stripe = getStripe()
   const imprimeur = imprimeurPret()
-  if (EN_LIGNE && (!stripe || !imprimeur.configure || imprimeur.env !== 'live')) {
+  // (Un imprimeur pas encore réel ne bloque pas : la commande payée attend,
+  // voir commandesRetenues dans lib/commande-tirages.)
+  if (EN_LIGNE && !stripe) {
     return Response.json({ error: 'Les tirages papier arrivent bientôt.' }, { status: 503 })
   }
 
