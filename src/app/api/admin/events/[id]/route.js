@@ -1,4 +1,5 @@
 import { selectRows, deleteRows, updateRow, signPhotos, deletePhotos } from '../../../../../lib/supabase'
+import { genreTelechargement, resumerTelechargements } from '../../../../../lib/telechargements'
 import { estUuid, identifiantInvalide } from '../../../../../lib/params'
 
 export const runtime = 'nodejs'
@@ -16,7 +17,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,owner_email,cover_url,created_at,reveal_at,status,max_guests,shots_per_guest,bonus_shots,download_count,gallery_code,expires_at,purged_at,cgv_accepted_at,withdrawal_waived_at,cgv_version,guests(count),photos(count)`
+    `id=eq.${id}&select=id,name,host_names,owner_email,owner_token,cover_url,created_at,reveal_at,status,max_guests,shots_per_guest,bonus_shots,download_count,gallery_code,expires_at,purged_at,cgv_accepted_at,withdrawal_waived_at,cgv_version,guests(count),photos(count)`
   )
   const ev = Array.isArray(data) ? data[0] : null
   if (!ok || !ev) return Response.json({ error: 'Événement introuvable.' }, { status: 404 })
@@ -25,7 +26,7 @@ export async function GET(request, { params }) {
   // qui permet de comprendre en un coup d'œil qui a joué le jeu.
   const guestsRes = await selectRows(
     'guests',
-    `event_id=eq.${id}&select=id,display_name,phone,email,shots_taken,bonus_shots,created_at,last_active_at,notified_at,notify_failed&order=last_active_at.desc.nullslast,created_at.asc`
+    `event_id=eq.${id}&select=id,display_name,device_token,phone,email,shots_taken,bonus_shots,created_at,last_active_at,notified_at,notify_failed&order=last_active_at.desc.nullslast,created_at.asc`
   )
   const guestRows = Array.isArray(guestsRes.data) ? guestsRes.data : []
   const guests = guestRows.map((g) => ({
@@ -69,7 +70,27 @@ export async function GET(request, { params }) {
     }))
     .filter((p) => p.fullUrl)
 
+  // Qui a téléchargé quoi. L'appareil relie un téléchargement au prénom d'un
+  // participant ; sans correspondance, c'est quelqu'un qui a ouvert l'album
+  // sans s'inscrire (le lien de l'album partagé à la famille, par exemple).
+  const dlRes = await selectRows('downloads', `event_id=eq.${id}&select=id,device_token,photo_count,created_at&order=created_at.desc`)
+  const dlRows = Array.isArray(dlRes.data) ? dlRes.data : []
+  const nomParAppareil = new Map(guestRows.filter((g) => g.device_token).map((g) => [g.device_token, g.display_name || 'Participant sans nom']))
+  const totalAlbum = ev.photos?.[0]?.count ?? 0
+  const telechargements = dlRows.map((d) => ({
+    id: d.id,
+    quand: d.created_at,
+    nb: d.photo_count || 0,
+    genre: genreTelechargement(d.photo_count, totalAlbum),
+    qui: d.device_token && d.device_token === ev.owner_token
+      ? 'Organisateur'
+      : nomParAppareil.get(d.device_token) || null,
+    appareil: d.device_token ? d.device_token.slice(-4) : null,
+  }))
+
   return Response.json({
+    telechargements,
+    resumeTelechargements: resumerTelechargements(dlRows, totalAlbum),
     event: {
       id: ev.id,
       name: ev.name,

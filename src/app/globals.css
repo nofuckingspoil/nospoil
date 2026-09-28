@@ -1408,6 +1408,17 @@ a.admin-row:hover { background: rgba(236,91,51,.05); }
   .avenir-chiffres { display: none; }
 }
 
+/* Qui a téléchargé quoi, sur la fiche admin d'un événement. */
+.adm-dl { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--card); }
+.adm-dl-ligne { display: grid; grid-template-columns: minmax(0,1.4fr) minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 9px 14px; font-size: 14px; }
+.adm-dl-ligne + .adm-dl-ligne { border-top: 1px solid var(--line-soft); }
+.adm-dl-qui { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm-dl-genre { font-size: 12.5px; font-weight: 700; }
+.adm-dl-genre.album { color: var(--ok); }
+.adm-dl-genre.selection { color: var(--accent-deep); }
+.adm-dl-genre.photo { color: var(--text3); font-weight: 600; }
+@media (max-width: 640px) { .adm-dl-ligne { grid-template-columns: 1fr auto; } .adm-dl-ligne > :last-child { grid-column: 1 / -1; } }
+
 .evtable { border: 1px solid var(--line-soft); border-radius: 14px; background: var(--card); overflow: hidden; }
 .evrow { display: grid; grid-template-columns: minmax(180px,2.1fr) 1.1fr .6fr .6fr .6fr 1fr .9fr .8fr 96px; gap: 12px; align-items: center; padding: 12px 16px; border-top: 1px solid var(--line-soft); text-decoration: none; color: var(--ink); font-size: 14px; }
 a.ev-name { text-decoration: none; color: inherit; }
@@ -4138,3 +4149,166 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .parcours-details code { font-family: var(--font-mono); font-size: 11.5px; background: rgba(34,26,18,.05); padding: 1px 5px; border-radius: 5px; }
 .parcours-filtres { display: flex; flex-direction: column; gap: 10px; margin-bottom: 18px; }
 .parcours-filtres select { max-width: 100%; }
+
+/* ============================================================
+   Tirages papier : l'invitation, puis l'écran de commande.
+   Même carton crème que l'enquête : ce qui se pose sur l'album sombre est un
+   objet en papier, et c'est justement de papier qu'on parle ici.
+   ============================================================ */
+.gal-bar-actions { display: flex; gap: 8px; max-width: 980px; margin: 12px auto 0; }
+.gal-bar-actions .gal-bar-dl { margin: 0; flex: 1 1 auto; min-width: 0; }
+.gal-bar-imp {
+  flex: none; padding: 14px 18px; border-radius: 999px; cursor: pointer;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); color: #fff;
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
+}
+.gal-bar-imp:hover:not(:disabled) { background: rgba(255,255,255,.18); }
+.gal-bar-imp:disabled { opacity: .4; cursor: default; }
+
+.tir-invit { position: relative; padding: 22px 20px 16px; text-align: center; }
+.tir-x {
+  position: absolute; top: 10px; right: 10px; width: 34px; height: 34px; border-radius: 50%;
+  border: 0; background: var(--line-soft); color: var(--text3); font-size: 14px; cursor: pointer;
+}
+.tir-eventail { position: relative; height: 160px; margin: 6px 0 14px; }
+.tir-pose {
+  position: absolute; left: 50%; top: 4px; width: 92px; margin-left: -46px;
+  display: flex; justify-content: center;
+  transform: translateX(var(--x)) rotate(var(--r));
+}
+.tir-pose .tir-tirage { width: 100%; box-shadow: 0 10px 22px -8px rgba(34,26,18,.45); }
+
+/* Un tirage : le papier blanc à la forme exacte du format, la photo posée
+   entière au milieu. Les calques de pellicule ne couvrent que la photo, pas
+   les bandes blanches, exactement comme sur le fichier envoyé à l'imprimeur. */
+.tir-tirage {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 100%; background: #fff; border-radius: 2px; overflow: hidden;
+  box-shadow: 0 2px 8px rgba(34,26,18,.18);
+}
+.tir-image { position: relative; display: block; overflow: hidden; }
+.tir-image img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tir-image > .film-teinte { position: absolute; inset: 0; mix-blend-mode: multiply; pointer-events: none; }
+.tir-image > .film-date {
+  position: absolute; right: 6%; bottom: 4%; pointer-events: none;
+  font-family: var(--font-mono); font-weight: 700; font-size: 8px; letter-spacing: .09em; color: #ff9a45;
+  text-shadow: 0 1px 2px rgba(50,12,0,.7), 0 0 5px rgba(255,60,0,.95);
+}
+
+/* La planche de la commande : chaque tirage à sa forme, son compteur dessous. */
+.tir-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 18px 14px; align-items: end; }
+.tir-case { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
+.tir-case.retiree .tir-tirage { opacity: .35; }
+.tir-compteur {
+  display: flex; align-items: center; gap: 2px; padding: 2px; border-radius: 999px;
+  background: var(--card); border: 1px solid var(--line);
+}
+.tir-compteur button {
+  width: 30px; height: 30px; border-radius: 50%; border: 0; cursor: pointer;
+  background: none; color: var(--ink); font-size: 17px; line-height: 1;
+}
+.tir-compteur button:hover:not(:disabled) { background: var(--line-soft); }
+.tir-compteur button:disabled { opacity: .3; cursor: default; }
+.tir-compteur span { min-width: 20px; text-align: center; font-weight: 700; font-size: 14px; font-variant-numeric: tabular-nums; }
+.tir-champs select {
+  width: 100%; padding: 12px 13px; border-radius: 12px; border: 1.5px solid var(--line);
+  background: var(--card); color: var(--ink); font-family: var(--font-body); font-size: 16px;
+}
+.tir-titre { font-family: var(--font-display); font-size: 24px; letter-spacing: -.02em; color: var(--ink); text-wrap: balance; }
+.tir-texte { margin: 8px auto 0; max-width: 34ch; font-size: 14.5px; line-height: 1.55; color: var(--text2); }
+.tir-prix {
+  display: inline-block; margin-top: 12px; padding: 5px 11px; border-radius: 999px;
+  background: rgba(236,91,51,.1); color: var(--accent-deep);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em;
+}
+.tir-cta {
+  display: block; width: 100%; margin-top: 18px; padding: 15px 18px; border: 0; border-radius: 14px;
+  background: var(--accent-btn); color: #fff; cursor: pointer;
+  font-family: var(--font-body); font-weight: 700; font-size: 15.5px;
+}
+.tir-cta:hover:not(:disabled) { background: var(--accent-dk); }
+.tir-cta:disabled { opacity: .55; cursor: default; }
+.tir-plus-tard {
+  display: block; width: 100%; margin-top: 6px; padding: 11px; border: 0; background: none; cursor: pointer;
+  font-family: var(--font-body); font-size: 14px; color: var(--text3);
+}
+
+/* L'écran de commande couvre l'album : on est passé de « je regarde » à
+   « je commande », et le pied de page garde le bouton sous le pouce. */
+.tir-ecran {
+  position: fixed; inset: 0; z-index: 140; background: var(--screen); color: var(--ink);
+  display: flex; flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+  animation: dc-fade .2s ease both;
+}
+.tir-haut {
+  display: flex; align-items: center; gap: 12px; width: 100%; max-width: 520px; margin: 0 auto;
+  padding: 14px 16px 10px;
+}
+.tir-haut > div { flex: 1; min-width: 0; }
+.tir-retour {
+  flex: none; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--card); color: var(--ink); font-size: 17px; cursor: pointer;
+}
+.tir-h { font-family: var(--font-display); font-size: 21px; letter-spacing: -.02em; }
+.tir-compte { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text3); }
+.tir-modifier { flex: none; border: 0; background: none; cursor: pointer; padding: 8px 4px;
+  font-family: var(--font-body); font-weight: 700; font-size: 14px; color: var(--accent-deep); }
+.tir-corps {
+  flex: 1; overflow-y: auto; width: 100%; max-width: 520px; margin: 0 auto;
+  padding: 4px 16px 20px; display: flex; flex-direction: column; gap: 18px;
+}
+.tir-groupe { border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.tir-groupe legend {
+  padding: 0; margin-bottom: 8px; font-family: var(--font-mono); font-size: 11px;
+  letter-spacing: .14em; text-transform: uppercase; color: var(--text3);
+}
+.tir-deux { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tir-opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left;
+  padding: 13px 14px; border-radius: 14px; cursor: pointer;
+  background: var(--card); border: 1.5px solid var(--line); color: var(--ink);
+  font-family: var(--font-body); font-weight: 700; font-size: 15px;
+}
+.tir-opt small { display: block; margin-top: 2px; font-weight: 400; font-size: 12.5px; color: var(--text3); }
+.tir-opt.on { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 1px var(--accent); }
+.tir-opt-prix { flex: none; font-family: var(--font-mono); font-weight: 400; font-size: 12.5px; color: var(--text2); }
+.tir-note { font-size: 13px; color: var(--text3); line-height: 1.5; }
+.tir-recap {
+  display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid var(--line);
+  font-size: 14.5px; font-variant-numeric: tabular-nums;
+}
+.tir-recap > div { display: flex; justify-content: space-between; gap: 12px; }
+.tir-total { font-family: var(--font-display); font-weight: 800; font-size: 18px; margin-top: 2px; }
+.tir-pied {
+  width: 100%; max-width: 520px; margin: 0 auto;
+  padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line-soft);
+}
+.tir-pied .tir-cta { margin-top: 0; }
+.tir-erreur { margin-bottom: 10px; font-size: 13.5px; color: #7a2018; }
+.tir-fait {
+  flex: 1; width: 100%; max-width: 420px; margin: 0 auto; padding: 24px 20px calc(24px + env(safe-area-inset-bottom));
+  display: flex; flex-direction: column; justify-content: center; text-align: center;
+}
+.tir-simule {
+  margin-top: 16px; padding: 10px 12px; border-radius: 12px; border: 1px dashed var(--line);
+  background: var(--card); font-size: 13px; color: var(--text3); line-height: 1.45;
+}
+@media (prefers-reduced-motion: reduce) { .tir-ecran { animation: none; } }
+/* L'album peint ses titres en blanc ; ceux-ci sont posés sur du papier. */
+.gal-page .tir-titre, .gal-page .tir-h { color: var(--ink); }
+.tir-champs { display: flex; flex-direction: column; gap: 10px; }
+.tir-champs label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: var(--text2); }
+.tir-champs em { font-style: normal; font-weight: 400; color: var(--text3); }
+.tir-champs input {
+  width: 100%; padding: 12px 13px; border-radius: 12px; border: 1.5px solid var(--line);
+  background: var(--card); color: var(--ink); font-family: var(--font-body); font-size: 16px;
+}
+.tir-champs input:focus { outline: none; border-color: var(--accent); background: #fff; }
+.tir-cp-ville { display: grid; grid-template-columns: 7.5em 1fr; gap: 10px; }
+.tir-marge {
+  display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; margin-top: 10px; text-align: left;
+  font-variant-numeric: tabular-nums; color: var(--text2);
+}
+.tir-marge b { color: var(--ink); padding-top: 4px; border-top: 1px solid var(--line); }

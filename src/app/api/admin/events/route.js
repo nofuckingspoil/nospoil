@@ -1,4 +1,5 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
+import { resumerTelechargements } from '../../../../lib/telechargements'
 
 export const runtime = 'nodejs'
 
@@ -41,6 +42,15 @@ export async function GET(request) {
     if ((a.issues || []).some((i) => i !== 'ok')) acc.soucis++
   }
 
+  // Téléchargements détaillés : qui, combien de photos. Le compteur brut
+  // (download_count) compte chaque appui, photo seule comprise.
+  const dlRes = await selectRows('downloads', 'select=id,event_id,device_token,photo_count&limit=100000')
+  const dlParEvent = {}
+  for (const d of Array.isArray(dlRes.data) ? dlRes.data : []) {
+    if (!d.event_id) continue
+    ;(dlParEvent[d.event_id] ||= []).push(d)
+  }
+
   // Miniatures de couverture : URLs signées temporaires (le bucket est privé)
   const covers = rows.map((e) => e.cover_url).filter(Boolean)
   const signedCovers = covers.length ? await signPhotos(covers, 3600) : {}
@@ -65,6 +75,7 @@ export async function GET(request) {
     guestCount: e.guests?.[0]?.count ?? 0,
     photoCount: e.photos?.[0]?.count ?? 0,
     downloadCount: e.download_count || 0,
+    telechargements: resumerTelechargements(dlParEvent[e.id], e.photos?.[0]?.count ?? 0),
     contactsCount: contactsByEvent[e.id] || 0,
     promoCode: e.promo_code || null,
     isTest: !!e.is_test,

@@ -8,6 +8,16 @@ import { libelle, NOTES, estUneAlerte } from '../../../../lib/avis'
 
 const KEY_STORE = 'declic_admin_key'
 
+// « dim. 27 sept. · 14:32 », à l'heure de Paris.
+function quandParis(iso) {
+  try {
+    const d = new Date(iso)
+    const jour = d.toLocaleDateString('fr-FR', { timeZone: 'Europe/Paris', weekday: 'short', day: 'numeric', month: 'short' })
+    const heure = d.toLocaleTimeString('fr-FR', { timeZone: 'Europe/Paris', hour: '2-digit', minute: '2-digit' })
+    return `${jour} · ${heure}`
+  } catch { return '' }
+}
+
 function fmtDate(iso) {
   try { return new Date(iso).toLocaleDateString('fr-FR', { day: '2-digit', month: 'long', year: 'numeric' }) }
   catch { return iso }
@@ -102,7 +112,13 @@ export default function AdminEvent() {
             <div className="stats" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(130px,1fr))', marginTop: 16 }}>
               <div className="stat"><div className="lbl">Participants</div><div className="val">{data.event.guestCount}<span style={{ fontSize: 16, color: 'var(--text3)' }}>/{data.event.maxGuests}</span></div></div>
               <div className="stat"><div className="lbl">Photos</div><div className="val" style={{ color: 'var(--accent)' }}>{data.event.photoCount}</div></div>
-              <div className="stat"><div className="lbl">Téléchargements</div><div className="val">{data.event.downloadCount}</div></div>
+              <div className="stat">
+                <div className="lbl">Téléchargements</div>
+                <div className="val">{data.resumeTelechargements?.personnes ?? 0}</div>
+                <div className="note">
+                  personne{(data.resumeTelechargements?.personnes ?? 0) > 1 ? 's' : ''} · {data.resumeTelechargements?.albums ?? 0} album{(data.resumeTelechargements?.albums ?? 0) > 1 ? 's' : ''} complet{(data.resumeTelechargements?.albums ?? 0) > 1 ? 's' : ''}
+                </div>
+              </div>
               <div className="stat"><div className="lbl">Numéros</div><div className="val">{data.contacts.length}</div></div>
             </div>
 
@@ -224,6 +240,36 @@ export default function AdminEvent() {
                   </div>
                 ))}
               </div>
+            )}
+
+            {/* Qui a téléchargé quoi, du plus récent au plus ancien. */}
+            {data.telechargements?.length > 0 && (
+              <>
+                <h3 className="h3" style={{ margin: '28px 0 10px' }}>
+                  Téléchargements ({data.telechargements.length})
+                  <span className="muted small" style={{ fontWeight: 400, marginLeft: 8 }}>
+                    {data.resumeTelechargements.albums} album{data.resumeTelechargements.albums > 1 ? 's' : ''} complet{data.resumeTelechargements.albums > 1 ? 's' : ''}
+                    {' · '}{data.resumeTelechargements.selections} sélection{data.resumeTelechargements.selections > 1 ? 's' : ''}
+                    {' · '}{data.resumeTelechargements.photos} photo{data.resumeTelechargements.photos > 1 ? 's' : ''} seule{data.resumeTelechargements.photos > 1 ? 's' : ''}
+                  </span>
+                </h3>
+                <div className="adm-dl">
+                  {data.telechargements.map((d) => (
+                    <div className="adm-dl-ligne" key={d.id}>
+                      <span className="adm-dl-qui">
+                        {d.qui
+                          ? <strong>{d.qui}</strong>
+                          : <span className="muted">Visiteur non inscrit{d.appareil ? <span className="mono small"> · appareil …{d.appareil}</span> : null}</span>}
+                      </span>
+                      <span className={`adm-dl-genre ${d.genre}`}>
+                        {d.genre === 'album' ? 'Album complet' : d.genre === 'selection' ? 'Sélection' : 'Photo seule'}
+                        {d.genre !== 'photo' ? ` (${d.nb} photos)` : ''}
+                      </span>
+                      <span className="muted small">{quandParis(d.quand)}</span>
+                    </div>
+                  ))}
+                </div>
+              </>
             )}
 
             {/* Numéros collectés */}

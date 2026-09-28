@@ -240,13 +240,18 @@ export default function Admin() {
   }
 
   const totals = useMemo(() => {
-    const t = { guests: 0, photos: 0, downloads: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0, tests: 0, avenir: 0, encours: 0, termine: 0 }
+    const t = { guests: 0, photos: 0, downloads: 0, dlAlbums: 0, dlSelections: 0, dlPhotos: 0, contacts: 0, revenue: 0, revealed: 0, ongoing: 0, tests: 0, avenir: 0, encours: 0, termine: 0 }
     for (const e of events || []) {
       // Les événements d'essai ne comptent dans aucun total : sinon les
       // moyennes ne veulent plus rien dire, et le revenu encore moins.
       if (e.isTest) { t.tests++; continue }
       t.guests += e.guestCount; t.photos += e.photoCount
-      t.downloads += e.downloadCount; t.contacts += e.contactsCount
+      // Les personnes qui ont emporté quelque chose, et quoi : le compteur brut
+      // comptait chaque appui, photo seule comprise.
+      const dl = e.telechargements || {}
+      t.downloads += dl.personnes || 0
+      t.dlAlbums += dl.albums || 0; t.dlSelections += dl.selections || 0; t.dlPhotos += dl.photos || 0
+      t.contacts += e.contactsCount
       // Ce qui a réellement été encaissé (remise déduite, 0 si offert).
       // Les événements antérieurs à cet enregistrement gardent le prix du palier.
       t.revenue += e.paidCents ?? tierByGuests(e.maxGuests).priceCents
@@ -350,7 +355,10 @@ export default function Admin() {
           <div className="stat">
             <div className="lbl">Téléchargements</div>
             <div className="val">{totals.downloads}</div>
-            <div className="note">albums « tout télécharger »</div>
+            <div className="note">
+              personnes · {totals.dlAlbums} album{totals.dlAlbums > 1 ? 's' : ''} complet{totals.dlAlbums > 1 ? 's' : ''},
+              {' '}{totals.dlSelections} sélection{totals.dlSelections > 1 ? 's' : ''}, {totals.dlPhotos} photo{totals.dlPhotos > 1 ? 's' : ''} seule{totals.dlPhotos > 1 ? 's' : ''}
+            </div>
           </div>
           <div className="stat">
             <div className="lbl">Numéros collectés</div>
@@ -472,7 +480,12 @@ export default function Admin() {
                     </span>
                   </span>
                   <span data-label="Photos"><span className="big" style={{ color: 'var(--accent)' }}>{e.photoCount}</span></span>
-                  <span data-label="Téléch."><span className="big">{e.downloadCount}</span></span>
+                  <span data-label="Téléch." title={`${e.telechargements?.personnes || 0} personne(s) : ${e.telechargements?.albums || 0} album(s) complet(s), ${e.telechargements?.selections || 0} sélection(s), ${e.telechargements?.photos || 0} photo(s) seule(s)`}>
+                    <span className="ev-quand">
+                      <span className="big">{e.telechargements?.personnes || 0}</span>
+                      {(e.telechargements?.albums || 0) > 0 && <small>{e.telechargements.albums} album{e.telechargements.albums > 1 ? 's' : ''}</small>}
+                    </span>
+                  </span>
                   <span data-label="Numéros"><span className="big">{e.contactsCount}</span></span>
                   <span data-label={colonneDate}>
                     <span className="ev-quand" title={dateDe(e) ? dateHeureParis(dateDe(e)) : ''}>
