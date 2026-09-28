@@ -28,8 +28,8 @@ export async function POST(request) {
     rendu: c.rendu,
     // Ce que l'imprimeur nous facture : affiché en local seulement, pour juger
     // la marge pendant les essais. Jamais montré à un invité en ligne.
-    ...(process.env.NODE_ENV !== 'production' && c.cout_prodigi_cents != null
-      ? { prodigi: { id: c.prodigi_order_id, cout: { total: c.cout_prodigi_cents } } }
+    ...(process.env.NODE_ENV !== 'production' && c.cout_imprimeur_cents != null
+      ? { imprimeur: { nom: c.imprimeur, id: c.imprimeur_commande_id, cout: { total: c.cout_imprimeur_cents } } }
       : {}),
   })
 }

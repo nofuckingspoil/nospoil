@@ -17,12 +17,14 @@ export function tiragesActifs() {
 
 export const FORMATS_TIRAGE = [
   { id: '10x15', nom: '10 × 15 cm', sous: 'Le classique, comme au labo', prix: 0.49 },
-  { id: '13x18', nom: '13 × 18 cm', sous: 'Pour encadrer', prix: 0.89 },
+  // 15 × 20 plutôt que 13 × 18 : il a exactement la forme des photos de
+  // l'appareil (3:4), et c'est le grand format de l'imprimeur.
+  { id: '15x20', nom: '15 × 20 cm', sous: 'Le grand format, pour encadrer', prix: 0.89 },
 ]
 
 export const FINITIONS = [
-  { id: 'satinee', nom: 'Satinée', sous: 'Douce, sans reflets ni traces de doigts. La plus choisie' },
-  { id: 'brillante', nom: 'Brillante', sous: 'Couleurs éclatantes, noirs profonds, avec des reflets' },
+  { id: 'brillante', nom: 'Brillante', sous: 'Couleurs éclatantes, noirs profonds. La plus choisie' },
+  { id: 'mate', nom: 'Mate', sous: 'Douce, sans reflets ni traces de doigts' },
 ]
 
 // Un prix de port par pays, quel que soit le nombre de tirages (Prodigi nous
@@ -78,7 +80,12 @@ export function devisTirages(nombre, formatId, paysCode = 'FR') {
 
 // Proportions du papier, largeur sur hauteur, pour les aperçus : ce qu'on voit
 // à l'écran doit avoir la forme exacte du tirage qu'on recevra.
-export const PROPORTIONS = { '10x15': 4 / 6, '13x18': 5 / 7 }
+export const PROPORTIONS = { '10x15': 102 / 152, '15x20': 152 / 203 }
+
+// La bordure blanche de sécurité qui fait le tour de chaque tirage (en mm) et
+// la largeur du papier : l'aperçu la dessine à la même échelle.
+export const BORDURE_MM = 6
+export const LARGEUR_MM = { '10x15': 102, '15x20': 152 }
 
 export function euros(centimes) {
   return (centimes / 100).toFixed(2).replace('.', ',') + ' €'

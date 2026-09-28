@@ -4,10 +4,12 @@
 //    en_attente      créée au clic sur « Commander », avant Stripe
 //    payee           Stripe a confirmé le paiement
 //    en_preparation  les photos sont en cours de préparation (verrou)
-//    envoyee         transmise à Prodigi, qui imprime et expédie
+//    envoyee         transmise à l'imprimeur, qui imprime et expédie
 //    erreur          un échec après paiement : à reprendre à la main
 //
-//  Le passage à « payee » puis la transmission à Prodigi sont faits UNE seule
+//  L'imprimeur : Familink (Rouen) si IMPRIMEUR vaut « familink », sinon Prodigi.
+//
+//  Le passage à « payee » puis la transmission à l'imprimeur sont faits UNE seule
 //  fois, même si la confirmation arrive par deux chemins à la fois (le retour
 //  de l'invité sur l'album, et l'avis envoyé par Stripe) : chaque étape ne
 //  s'applique qu'à une commande encore dans l'état précédent.
@@ -18,7 +20,8 @@ import sharp from 'sharp'
 import { selectRows, updateRow, signPhotos, uploadPhoto } from './supabase'
 import { getStripe } from './stripe'
 import { prodigiEnv, devisProdigi, commanderProdigi } from './prodigi'
-import { cuireTirage } from './cuisson-serveur'
+import { familinkEnv, coutFamilink, commanderFamilink } from './familink'
+import { cuireTirage, mettreEnPage } from './cuisson-serveur'
 import { pelliculeParId, tamponDate } from './pellicules'
 import { formatTirage, paysLivraison, FINITIONS, euros } from './tirages'
 import { sendMail, siteUrl, tiragesConfirmationEmail, tiragesExpeditionEmail, tiragesBloqueeEmail } from './mail'
@@ -26,15 +29,21 @@ import { CONTACT_EMAIL } from './pricing'
 
 const TABLE = 'tirages_commandes'
 
+export function imprimeurChoisi() {
+  return process.env.IMPRIMEUR === 'familink' ? 'familink' : 'prodigi'
+}
+
 export async function lireCommande(id) {
   const { data } = await selectRows(TABLE, `id=eq.${id}&select=*`)
   return Array.isArray(data) ? data[0] || null : null
 }
 
-// Chaque photo « avec l'effet » est cuite ici, puis déposée dans le dossier des
-// tirages, d'où l'imprimeur ira la chercher. Quatre à la fois : assez pour
-// aller vite, pas assez pour saturer la mémoire du serveur.
-async function preparerFichiers(eventId, photos, rendu) {
+// Chaque photo est préparée ici, puis déposée dans le dossier des tirages,
+// d'où l'imprimeur ira la chercher : cuite avec son effet s'il y en a un, et,
+// avec `format`, mise en page à la forme exacte du papier (Familink ne recadre
+// rien). Quatre à la fois : assez pour aller vite, pas assez pour saturer la
+// mémoire du serveur.
+async function preparerFichiers(eventId, photos, rendu, format = null) {
   const pellicule = pelliculeParId(rendu.pellicule)
   const sources = await signPhotos(photos.map((p) => p.storage_path), 600)
   const cles = {}
@@ -44,12 +53,13 @@ async function preparerFichiers(eventId, photos, rendu) {
       const p = photos[suivante++]
       const res = await fetch(sources[p.storage_path])
       if (!res.ok) throw new Error('photo illisible')
-      const cuite = await cuireTirage(Buffer.from(await res.arrayBuffer()), {
+      let fichier = await cuireTirage(Buffer.from(await res.arrayBuffer()), {
         pellicule: pellicule.id,
         date: rendu.date ? tamponDate(p.taken_at, 'Europe/Paris') : '',
       })
+      if (format) fichier = await mettreEnPage(fichier, format)
       const cle = `tirages/${eventId}/${randomUUID()}.jpg`
-      const envoi = await uploadPhoto(cle, cuite, 'image/jpeg')
+      const envoi = await uploadPhoto(cle, fichier, 'image/jpeg')
       if (!envoi.ok) throw new Error('dépôt impossible')
       cles[p.id] = cle
     }
@@ -59,7 +69,7 @@ async function preparerFichiers(eventId, photos, rendu) {
 }
 
 /**
- * Transmet une commande payée à Prodigi. Ne fait rien si elle n'est pas (ou
+ * Transmet une commande payée à l'imprimeur. Ne fait rien si elle n'est pas (ou
  * plus) à l'état « payee » : un second appel simultané ressort bredouille.
  */
 export async function honorerCommande(id) {
@@ -76,33 +86,47 @@ export async function honorerCommande(id) {
     const photos = Array.isArray(data) ? data : []
     if (photos.length !== ids.length) throw new Error('photos disparues de l\'album')
 
+    const imprimeur = imprimeurChoisi()
     const rendu = { pellicule: pelliculeParId(c.rendu?.pellicule).id, date: !!c.rendu?.date }
     const avecEffet = !!pelliculeParId(rendu.pellicule).canaux || rendu.date
-    const cuites = avecEffet ? await preparerFichiers(c.event_id, photos, rendu) : {}
+    // Familink veut chaque fichier à la forme exacte du papier : on les
+    // prépare tous. Prodigi, lui, sait poser une photo sur son papier.
+    const aPreparer = imprimeur === 'familink' || avecEffet
+    const prepares = aPreparer
+      ? await preparerFichiers(c.event_id, photos, rendu, imprimeur === 'familink' ? c.format : null)
+      : {}
     const parId = new Map(photos.map((p) => [p.id, p]))
     const lignes = c.lignes.map((l) => ({
       exemplaires: l.exemplaires,
-      chemin: cuites[l.photoId] || parId.get(l.photoId).storage_path,
+      chemin: prepares[l.photoId] || parId.get(l.photoId).storage_path,
     }))
 
     const pays = c.destinataire?.pays || 'FR'
-    const cout = await devisProdigi({ format: c.format, finition: c.finition, lignes, pays }).catch(() => null)
-    // Six jours : Prodigi télécharge les fichiers après coup.
+    // Six jours : l'imprimeur télécharge les fichiers après coup.
     const signees = await signPhotos(lignes.map((l) => l.chemin), 6 * 24 * 3600)
-    const envoi = await commanderProdigi({
-      reference: `ttf-${c.id.slice(0, 8)}`,
-      format: c.format,
-      finition: c.finition,
-      lignes: lignes.map((l) => ({ url: signees[l.chemin], exemplaires: l.exemplaires })),
-      destinataire: c.destinataire,
-      // En ligne seulement : Prodigi ne peut pas joindre un ordinateur.
-      ...(process.env.NODE_ENV === 'production' ? { callbackUrl: `${siteUrl()}/api/tirages/prodigi` } : {}),
-    })
+    const aImprimer = lignes.map((l) => ({ url: signees[l.chemin], exemplaires: l.exemplaires }))
+    const commun = { reference: `ttf-${c.id.slice(0, 8)}`, format: c.format, finition: c.finition, lignes: aImprimer, destinataire: c.destinataire }
+
+    let envoi, cout, env
+    if (imprimeur === 'familink') {
+      cout = coutFamilink({ format: c.format, nombre: c.nombre, pays })
+      envoi = await commanderFamilink(commun)
+      env = familinkEnv()
+    } else {
+      cout = await devisProdigi({ format: c.format, finition: c.finition, lignes, pays }).catch(() => null)
+      envoi = await commanderProdigi({
+        ...commun,
+        // En ligne seulement : Prodigi ne peut pas joindre un ordinateur.
+        ...(process.env.NODE_ENV === 'production' ? { callbackUrl: `${siteUrl()}/api/tirages/prodigi` } : {}),
+      })
+      env = prodigiEnv()
+    }
     const fin = await updateRow(TABLE, `id=eq.${c.id}`, {
       statut: 'envoyee',
-      prodigi_order_id: envoi.id,
-      prodigi_env: prodigiEnv(),
-      cout_prodigi_cents: cout?.total ?? null,
+      imprimeur,
+      imprimeur_commande_id: envoi.id,
+      imprimeur_env: env,
+      cout_imprimeur_cents: cout?.total ?? null,
       envoye_le: new Date().toISOString(),
     })
     await envoyerConfirmation(fin.data || c, photos).catch((e) => console.error('tirages: mail de confirmation', e))
@@ -192,14 +216,17 @@ async function envoyerConfirmation(c, photos) {
  * ne croit jamais le contenu de l'avis) et, dès qu'un colis a un suivi, on
  * l'envoie au client, une seule fois.
  */
-export async function suivreExpedition(prodigiOrderId, lireCommandeProdigi) {
-  const { data } = await selectRows(TABLE, `prodigi_order_id=eq.${encodeURIComponent(prodigiOrderId)}&select=*`)
+//
+// `lire` relit la commande chez l'imprimeur et répond { expediee, colis? } :
+// Prodigi donne un suivi ; Familink envoie en lettre, sans numéro de suivi.
+export async function suivreExpedition(imprimeurCommandeId, lire) {
+  const { data } = await selectRows(TABLE, `imprimeur_commande_id=eq.${encodeURIComponent(imprimeurCommandeId)}&select=*`)
   const c = Array.isArray(data) ? data[0] : null
   if (!c || c.expedition_envoyee_le) return { ignore: true }
 
-  const o = await lireCommandeProdigi(prodigiOrderId)
-  const colis = o?.expeditions?.find((e) => e.url || e.numero)
-  if (!colis) return { attente: true }
+  const o = await lire(imprimeurCommandeId)
+  if (!o?.expediee) return { attente: true }
+  const colis = o.colis || {}
 
   // Le verrou : un seul avis envoie le mail, même si Prodigi en envoie deux.
   const verrou = await updateRow(TABLE, `id=eq.${c.id}&expedition_envoyee_le=is.null`, {

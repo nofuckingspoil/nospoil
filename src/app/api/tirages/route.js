@@ -19,10 +19,18 @@ import {
   devisTirages, formatTirage, paysLivraison, FINITIONS, TIRAGES_MAX, EXEMPLAIRES_MAX, tiragesActifs,
 } from '../../../lib/tirages'
 import { prodigiConfigure, prodigiEnv } from '../../../lib/prodigi'
+import { familinkConfigure, familinkEnv, maxFamilink } from '../../../lib/familink'
 import { pelliculeParId } from '../../../lib/pellicules'
 import { getStripe } from '../../../lib/stripe'
 import { siteUrl } from '../../../lib/mail'
-import { honorerCommande } from '../../../lib/commande-tirages'
+import { honorerCommande, imprimeurChoisi } from '../../../lib/commande-tirages'
+
+// L'imprimeur est-il branché, et en réel (live) ou en bac à sable ?
+function imprimeurPret() {
+  return imprimeurChoisi() === 'familink'
+    ? { configure: familinkConfigure(), env: familinkEnv() }
+    : { configure: prodigiConfigure(), env: prodigiEnv() }
+}
 
 // Préparer une trentaine de photos prend une quinzaine de secondes (cas du
 // local sans Stripe, où tout se fait dans la même requête).
@@ -137,11 +145,17 @@ export async function POST(request) {
     return Response.json({ error: 'Certaines photos ne sont plus dans l\'album. Rechargez la page.' }, { status: 409 })
   }
 
+  // Familink met au plus 129 tirages 10 × 15 (ou 64 en 15 × 20) par enveloppe.
+  if (imprimeurChoisi() === 'familink' && nombre > maxFamilink(format.id)) {
+    return Response.json({ error: `${maxFamilink(format.id)} tirages ${format.nom} au plus par commande.` }, { status: 400 })
+  }
+
   const devis = devisTirages(nombre, format.id, dest.pays)
 
   // En ligne, rien ne part sans paiement ni imprimeur réel.
   const stripe = getStripe()
-  if (EN_LIGNE && (!stripe || !prodigiConfigure() || prodigiEnv() !== 'live')) {
+  const imprimeur = imprimeurPret()
+  if (EN_LIGNE && (!stripe || !imprimeur.configure || imprimeur.env !== 'live')) {
     return Response.json({ error: 'Les tirages papier arrivent bientôt.' }, { status: 503 })
   }
 
@@ -207,9 +221,9 @@ export async function POST(request) {
   }
 
   // Local sans Stripe : la commande est tenue pour payée et part dans le bac à
-  // sable de Prodigi (ou nulle part, si Prodigi n'est pas configuré).
-  if (!prodigiConfigure() || prodigiEnv() !== 'sandbox') {
-    console.log('tirages: commande simulée (ni Stripe ni Prodigi)', { photos: devis.nombre, total: devis.total })
+  // sable de l'imprimeur (ou nulle part, s'il n'est pas configuré).
+  if (!imprimeur.configure || imprimeur.env !== 'sandbox') {
+    console.log('tirages: commande simulée (ni Stripe ni imprimeur)', { photos: devis.nombre, total: devis.total })
     return Response.json({ ok: true, simule: true, total: devis.total })
   }
   await updateRow('tirages_commandes', `id=eq.${commande.id}`, { statut: 'payee', paye_le: new Date().toISOString() })
@@ -219,6 +233,6 @@ export async function POST(request) {
   }
   return Response.json({
     ok: true, simule: true, bacASable: true, total: devis.total,
-    prodigi: { id: fin.prodigi_order_id, cout: { total: fin.cout_prodigi_cents } },
+    imprimeur: { nom: fin.imprimeur, id: fin.imprimeur_commande_id, cout: { total: fin.cout_imprimeur_cents } },
   })
 }

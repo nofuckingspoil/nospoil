@@ -19,7 +19,7 @@
 
 import { useState } from 'react'
 import {
-  FORMATS_TIRAGE, FINITIONS, PAYS, PROPORTIONS, PRIX_APPEL, EXEMPLAIRES_MAX, devisTirages, euros,
+  FORMATS_TIRAGE, FINITIONS, PAYS, PROPORTIONS, BORDURE_MM, LARGEUR_MM, PRIX_APPEL, EXEMPLAIRES_MAX, devisTirages, euros,
 } from '../lib/tirages'
 import { PELLICULES, cssTeinte, tamponDate } from '../lib/film'
 import IconeCorbeille from './IconeCorbeille'
@@ -31,7 +31,7 @@ const RATIO_PAR_DEFAUT = 3 / 4
 // `aLEchelle` : dans une planche, un tirage en largeur et un tirage en hauteur
 // ont le même papier. On les dessine donc à la même échelle : le paysage prend
 // toute la case, le portrait seulement la part qui correspond à sa largeur.
-// `finition` : satinee | brillante. L'aperçu suggère le papier (un reflet
+// `finition` : brillante | mate. L'aperçu suggère le papier (un reflet
 // franc sur le brillant, un voile nacré sur le satiné) ; ce n'est qu'une
 // évocation, la vraie différence se voit en tenant le tirage.
 export function Tirage({ photo, format = '10x15', pelli = null, date = false, aLEchelle = false, finition = '', className = '', style }) {
@@ -39,9 +39,16 @@ export function Tirage({ photo, format = '10x15', pelli = null, date = false, aL
   const papier = PROPORTIONS[format] || PROPORTIONS['10x15']
   // Le papier tourne avec la photo : un paysage s'imprime à l'horizontale.
   const pr = ratio > 1 ? 1 / papier : papier
-  const image = ratio > pr
-    ? { width: '100%', height: `${(pr / ratio) * 100}%` }
-    : { width: `${(ratio / pr) * 100}%`, height: '100%' }
+  // La bordure blanche de sécurité, à l'échelle du papier : la photo se pose
+  // entière dans ce qui reste.
+  const court = LARGEUR_MM[format] || LARGEUR_MM['10x15']
+  const long = court / papier
+  const bl = BORDURE_MM / (ratio > 1 ? long : court) // part de la largeur
+  const bh = BORDURE_MM / (ratio > 1 ? court : long) // part de la hauteur
+  const L = pr * (1 - 2 * bl)
+  const H = 1 - 2 * bh
+  const [w, h] = ratio > L / H ? [L, L / ratio] : [H * ratio, H]
+  const image = { width: `${(w / pr) * 100}%`, height: `${h * 100}%` }
   return (
     <span className={`tir-tirage ${finition ? `fini-${finition}` : ''} ${className}`}
       style={{ aspectRatio: String(pr), ...(aLEchelle ? { width: ratio > 1 ? '100%' : `${papier * 100}%` } : {}), ...style }}>
@@ -146,7 +153,7 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
       // Le paiement se fait chez Stripe, qui ramène ensuite sur l'album.
       if (d.url) { setEtat('paiement'); window.location.href = d.url; return }
       setSimule(!!d.simule)
-      setCoutImprimeur(d.prodigi?.cout || null)
+      setCoutImprimeur(d.imprimeur?.cout || null)
       setEtat('fait')
     } catch (e) {
       setErreur(e.message)
@@ -316,10 +323,10 @@ export function MerciTirages({ photos = [], pelli = null, date = false, nombre, 
         )}
         {cout != null && (
           <div className="tir-simule">
-            <strong>Commande d&apos;essai envoyée à Prodigi</strong> (bac à sable : rien n&apos;est imprimé ni facturé).
+            <strong>Commande d&apos;essai envoyée à l&apos;imprimeur</strong> (bac à sable : rien n&apos;est imprimé ni facturé).
             <div className="tir-marge">
               <span>Le client paie</span><span>{euros(total)}</span>
-              <span>Prodigi facture</span><span>− {euros(cout)}</span>
+              <span>L&apos;imprimeur facture</span><span>− {euros(cout)}</span>
               <span>Stripe (1,5 % + 0,25 €)</span><span>− {euros(stripe)}</span>
               <b>Il vous reste</b><b>{euros(total - cout - stripe)}</b>
             </div>

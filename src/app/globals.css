@@ -4346,7 +4346,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .tir-tirage.fini-brillante .tir-image::after {
   background: linear-gradient(118deg, rgba(255,255,255,0) 28%, rgba(255,255,255,.42) 40%, rgba(255,255,255,.08) 47%, rgba(255,255,255,0) 58%);
 }
-.tir-tirage.fini-satinee .tir-image::after {
+.tir-tirage.fini-mate .tir-image::after {
   background: linear-gradient(160deg, rgba(255,250,240,.16), rgba(255,250,240,.04) 60%);
 }
 @media (prefers-reduced-motion: no-preference) {

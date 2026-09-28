@@ -179,3 +179,44 @@ export async function cuireTirage(octets, { pellicule, date } = {}) {
   if (date) sortie = sortie.composite(await calquesDate(w, h, date))
   return sortie.jpeg({ quality: 92, mozjpeg: true }).toBuffer()
 }
+
+// ---------------------------------------------------------------- mise en page
+//
+// L'imprimeur ne recadre rien : un fichier qui n'a pas exactement la forme du
+// papier sort coupé ou déformé. On lui envoie donc le tirage tout fait : une
+// feuille blanche aux proportions exactes, à 300 points par pouce, la photo
+// posée entière au milieu.
+//
+// Une bordure blanche de 6 mm fait le tour : l'imprimeur prévient que la coupe
+// peut mordre jusqu'à 5 mm de chaque côté. Avec elle, aucun visage n'est coupé.
+//
+// Le papier est toujours fourni debout. Une photo couchée y est tournée d'un
+// quart de tour : on tourne le tirage pour la regarder, comme n'importe quelle
+// photo en largeur.
+export const PAPIERS_MM = { '10x15': [102, 152], '15x20': [152, 203] }
+export const BORDURE_MM = 6
+const PPP = 300
+
+export async function mettreEnPage(octets, format) {
+  const [lmm, hmm] = PAPIERS_MM[format] || PAPIERS_MM['10x15']
+  const px = (mm) => Math.round((mm / 25.4) * PPP)
+  const L = px(lmm)
+  const H = px(hmm)
+  const bord = px(BORDURE_MM)
+
+  // D'abord remettre la photo à l'endroit (l'orientation du téléphone), puis
+  // la coucher sur le papier si elle est en largeur. Deux appels à rotate()
+  // se remplaceraient : l'orientation passe donc par autoOrient().
+  const droite = await sharp(octets).autoOrient().toBuffer({ resolveWithObject: true })
+  const couchee = droite.info.width > droite.info.height
+  const redressee = await sharp(droite.data).rotate(couchee ? 90 : 0)
+    .resize(L - 2 * bord, H - 2 * bord, { fit: 'inside' })
+    .toBuffer({ resolveWithObject: true })
+  const { width: w, height: h } = redressee.info
+
+  return sharp({ create: { width: L, height: H, channels: 3, background: '#ffffff' } })
+    .composite([{ input: redressee.data, left: Math.round((L - w) / 2), top: Math.round((H - h) / 2) }])
+    .withMetadata({ density: PPP })
+    .jpeg({ quality: 93, mozjpeg: true })
+    .toBuffer()
+}

@@ -26,7 +26,7 @@ function IconeImprimante({ size = 16 }) {
     </svg>
   )
 }
-import { devisTirages, euros } from '../../../lib/tirages'
+import { devisTirages, euros, formatTirage } from '../../../lib/tirages'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -1793,10 +1793,10 @@ export default function Gallery({ params }) {
           pelli={PELLICULES.find((f) => f.id === merci.rendu?.pellicule) || null}
           date={!!merci.rendu?.date}
           nombre={merci.nombre}
-          formatNom={merci.format === '13x18' ? '13\u00a0×\u00a018\u00a0cm' : '10\u00a0×\u00a015\u00a0cm'}
+          formatNom={formatTirage(merci.format).nom}
           total={merci.total}
           statut={merci.statut}
-          cout={merci.prodigi?.cout?.total ?? null}
+          cout={merci.imprimeur?.cout?.total ?? null}
           onFermer={() => setMerci(null)}
         />
       )}

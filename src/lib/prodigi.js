@@ -30,8 +30,8 @@ export function prodigiConfigure() {
 // Nos formats et finitions, traduits dans les références de Prodigi.
 // 10×15 = 4×6 pouces ; 13×18 = 5×7 pouces. La gamme « Pro » du 5×7 coûtait
 // deux fois plus cher, et son port vers la France près de 11 € : écartée.
-const SKU = { '10x15': 'GLOBAL-PHO-4X6', '13x18': 'GLOBAL-PHO-5X7' }
-const FINI = { satinee: 'lustre', brillante: 'gloss' }
+const SKU = { '10x15': 'GLOBAL-PHO-4X6', '15x20': 'GLOBAL-PHO-6X8' }
+const FINI = { mate: 'lustre', brillante: 'gloss' }
 
 // La livraison la moins chère : c'est elle que couvrent nos 3,90 €.
 const LIVRAISON = 'Budget'
@@ -61,7 +61,7 @@ function articles({ format, finition, lignes }) {
     // reste une fine bande blanche, comme sur un tirage de labo. La demande
     // de prix refuse ce champ : il ne part qu'avec une vraie image.
     ...(url ? { sizing: 'fitPrintArea' } : {}),
-    attributes: { finish: FINI[finition] || FINI.satinee },
+    attributes: { finish: FINI[finition] || FINI.brillante },
     assets: [{ printArea: 'default', ...(url ? { url } : {}) }],
   }))
 }
@@ -127,5 +127,6 @@ export async function lireCommandeProdigi(id) {
     numero: e.tracking?.number || '',
     url: e.tracking?.url || '',
   }))
-  return { id: o.id, etape: o.status?.stage || '', expeditions }
+  const colis = expeditions.find((e) => e.url || e.numero) || null
+  return { id: o.id, etape: o.status?.stage || '', expeditions, expediee: !!colis, colis }
 }
