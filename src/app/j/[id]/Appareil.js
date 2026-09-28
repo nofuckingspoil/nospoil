@@ -1164,10 +1164,16 @@ export default function GuestCamera({ params }) {
 
             ATTENTION quand le mail des photos préférées sera codé : il ne doit
             partir qu'aux fiches créées APRÈS ce changement. Ceux qui se sont
-            inscrits avant ont lu une phrase plus étroite, et elle les engage. */}
+            inscrits avant ont lu une phrase plus étroite, et elle les engage.
+
+            Même règle pour « nos services autour de vos photos », ajouté pour
+            proposer les tirages papier : la relance des tirages ne part qu'aux
+            fiches créées après la mise en ligne de cette phrase (voir
+            PROMESSE_SERVICES dans lib/relance-tirages). */}
         <p className="lead small" style={{ margin: '10px 2px 0', color: 'var(--text3)' }}>
-          ✉️ Uniquement pour les informations liées à votre événement, comme votre lien
-          d&apos;accès ou le lien de l&apos;album quand les photos seront révélées.
+          ✉️ Pour les informations liées à votre événement, comme votre lien d&apos;accès ou
+          le lien de l&apos;album quand les photos seront révélées, et nos services autour
+          de vos photos.
         </p>
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         {confirmSansMail ? (

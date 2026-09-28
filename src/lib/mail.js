@@ -81,12 +81,20 @@ export async function sendMail({ to, subject, html, text }) {
 // Exporté pour les mails d'enquête (voir ./avis-mail), qui doivent avoir
 // exactement la même allure que les autres : un questionnaire qui ne ressemble
 // pas au reste passe pour un message d'un autre expéditeur.
-export function layout({ title, intro, body, footer }) {
+export function layout({ title, intro, body, footer, logo = false }) {
+  // Le logo et l'adresse du site, pour les mails qui présentent une offre :
+  // on doit reconnaître l'expéditeur d'un coup d'œil.
+  const entete = logo
+    ? `<table role="presentation" cellpadding="0" cellspacing="0"><tr>
+        <td style="padding-right:10px;"><img src="${siteUrl()}/logo-mail.png" width="36" height="36" alt="Time to Flash" style="display:block;border-radius:9px;" /></td>
+        <td style="font-size:15px;font-weight:800;color:#221A12;">timetoflash.fr</td>
+      </tr></table>`
+    : BRAND.name
   return `<!doctype html><html lang="fr"><body style="margin:0;padding:0;background:#E7E1D4;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#E7E1D4;padding:32px 12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
     <tr><td align="center">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background:#FCF8F0;border-radius:20px;padding:32px 28px;">
-        <tr><td style="font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:#EC5B33;font-weight:700;padding-bottom:18px;">${BRAND.name}</td></tr>
+        <tr><td style="font-size:13px;letter-spacing:${logo ? '0' : '.12em'};text-transform:${logo ? 'none' : 'uppercase'};color:#EC5B33;font-weight:700;padding-bottom:18px;">${entete}</td></tr>
         <tr><td style="font-size:24px;line-height:1.25;font-weight:800;color:#221A12;padding-bottom:14px;">${title}</td></tr>
         <tr><td style="font-size:15px;line-height:1.6;color:#5f5341;padding-bottom:24px;">${intro}</td></tr>
         <tr><td>${body}</td></tr>
@@ -441,7 +449,7 @@ export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName }
       // Le pied de page ne peut plus dire « uniquement pour cela » : le mail des
       // photos préférées part quelques jours plus tard. Il dit maintenant la
       // même chose que la phrase affichée quand on laisse son adresse.
-      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, pour les informations liées à celui-ci et rien d'autre. Elle n'est ni utilisée à des fins publicitaires, ni transmise à qui que ce soit, et sera supprimée avec l'album.`,
+      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement. Elle n'est ni vendue ni transmise à qui que ce soit, et sera supprimée avec l'album.`,
     }),
   }
 }
@@ -478,7 +486,130 @@ export function photosPrefereesEmail({ eventName, galleryUrl, top = [], votants 
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
           Le classement bouge encore : touchez le cœur sous une photo pour ajouter votre voix.
         </div>`,
-      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement, pour les informations liées à celui-ci et rien d'autre. Elle n'est ni utilisée à des fins publicitaires, ni transmise à qui que ce soit, et sera supprimée avec l'album.`,
+      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement. Elle n'est ni vendue ni transmise à qui que ce soit, et sera supprimée avec l'album.`,
+    }),
+  }
+}
+
+// ---------- Les tirages papier, quelques jours après ----------
+//
+// Part après le mail des photos préférées : le classement du groupe est fait,
+// et ce sont précisément ces photos-là qu'on a envie de tenir en main. Le
+// bouton ouvre l'album directement sur la sélection des tirages, favoris déjà
+// cochés.
+export function tiragesEmail({ eventName, lien, top = [], ratio = 3 / 4, prixAppel, stopLink }) {
+  // Trois photos du même format, affichées entières et à la même taille (voir
+  // contenuTirages). Les dimensions sont écrites en dur : les messageries ne
+  // savent pas ajuster une image seules.
+  const L = ratio >= 1 ? 150 : 130
+  const H = Math.round(L / ratio)
+  const vignettes = top
+    .filter((t) => t.url)
+    .slice(0, 3)
+    .map((t, i) => `<td width="33%" align="center" valign="middle" style="padding:0 5px;">
+        <img src="${t.url}" width="${L}" height="${H}" alt="" style="display:block;width:${L}px;max-width:100%;height:auto;border-radius:6px;box-shadow:0 4px 12px rgba(34,26,18,.22);transform:rotate(${[-3, 2, -1][i]}deg);" />
+      </td>`)
+    .join('')
+
+  return {
+    subject: `Les photos de « ${eventName} », sur papier 🎞️`,
+    html: layout({
+      logo: true,
+      title: 'Vos plus belles photos méritent mieux qu\'un écran',
+      intro: `Les photos de « <strong>${eventName}</strong> » que tout le monde a préférées peuvent arriver chez vous en vrais tirages, imprimés sur papier photo.`,
+      body: `${vignettes ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;"><tr>${vignettes}</tr></table>` : ''}
+        ${bigButton(lien, 'Choisir mes tirages →')}
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
+          Vos favoris sont déjà cochés : il ne reste qu'à ajouter ou retirer des photos.
+          Tirages 10 × 15 dès <strong>${prixAppel}</strong> la photo, livrés dans votre boîte aux lettres.
+        </div>`,
+      footer: `Vous recevez ce message parce que vous avez laissé votre adresse en rejoignant cet événement.${stopLink ? ` <a href="${stopLink}" style="color:#8a7c69;">Ne plus recevoir de message de ce type</a>.` : ''}`,
+    }),
+  }
+}
+
+// ---------- Les tirages commandés : confirmation, puis expédition ----------
+//
+// Deux mails seulement, et pas un par étape interne : la confirmation juste
+// après le paiement (avec le récapitulatif), puis l'expédition avec le lien
+// de suivi du colis. L'imprimeur ne sait pas quand le colis est livré : c'est
+// le suivi du transporteur qui le dit.
+
+// Les photos commandées, posées sur leur papier : c'est ce qui arrivera, bandes
+// blanches comprises. `photos` : [{ url, largeur, hauteur }].
+function planchetirages(photos) {
+  const cases = photos.slice(0, 4).map((t) => {
+    const r = t.largeur && t.hauteur ? t.largeur / t.hauteur : 3 / 4
+    const paysage = r > 1
+    const PL = paysage ? 120 : 80 // le papier 10 × 15, tourné comme la photo
+    const PH = paysage ? 80 : 120
+    const w = Math.round(r > PL / PH ? PL - 6 : (PH - 6) * r)
+    const h = Math.round(w / r)
+    return `<td align="center" valign="bottom" style="padding:0 4px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:2px;box-shadow:0 3px 8px rgba(34,26,18,.18);"><tr>
+        <td width="${PL}" height="${PH}" align="center" valign="middle" style="width:${PL}px;height:${PH}px;">
+          <img src="${t.url}" width="${w}" height="${h}" alt="" style="display:block;width:${w}px;height:${h}px;" />
+        </td>
+      </tr></table>
+    </td>`
+  }).join('')
+  return cases ? `<table role="presentation" cellpadding="0" cellspacing="0" align="center" style="margin:0 auto 22px;"><tr>${cases}</tr></table>` : ''
+}
+
+function ligneRecap(libelle, valeur) {
+  return `<tr>
+    <td style="padding:6px 0;font-size:14px;color:#6E6252;">${libelle}</td>
+    <td align="right" style="padding:6px 0;font-size:14px;color:#221A12;font-weight:600;">${valeur}</td>
+  </tr>`
+}
+
+export function tiragesConfirmationEmail({ prenom, eventName, nombre, formatNom, finition, rendu, adresse, total, reference, photos = [], lienAlbum }) {
+  return {
+    subject: `Votre commande de tirages est confirmée 🎞️`,
+    html: layout({
+      logo: true,
+      title: 'Merci ! Vos tirages partent à l\'impression',
+      intro: `${prenom ? `Bonjour ${prenom}, v` : 'V'}otre commande de <strong>${nombre} tirage${nombre > 1 ? 's' : ''}</strong> des photos de « <strong>${eventName}</strong> » est bien payée.`,
+      body: `${planchetirages(photos)}
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid rgba(34,26,18,.1);border-bottom:1px solid rgba(34,26,18,.1);margin-bottom:20px;">
+          ${ligneRecap('Tirages', `${nombre} × ${formatNom}`)}
+          ${ligneRecap('Papier', finition)}
+          ${ligneRecap('Rendu', rendu)}
+          ${ligneRecap('Livraison', adresse)}
+          ${ligneRecap('Total payé', total)}
+        </table>
+        <div style="font-size:14px;line-height:1.7;color:#5f5341;">
+          Vos photos sont imprimées sous 2 à 3 jours, puis expédiées. <strong>Vous recevrez un second mail avec le lien de suivi du colis</strong> dès son départ.
+        </div>
+        ${lienAlbum ? `<div style="padding-top:22px;">${bigButton(lienAlbum, 'Revoir l\'album →')}</div>` : ''}`,
+      footer: `Commande n° ${reference}. Une question sur votre commande ? Écrivez-nous à ${CONTACT_EMAIL}.`,
+    }),
+  }
+}
+
+export function tiragesExpeditionEmail({ prenom, nombre, transporteur, suiviUrl, suiviNumero, reference }) {
+  return {
+    subject: `Vos tirages sont expédiés 📦`,
+    html: layout({
+      logo: true,
+      title: 'Vos tirages sont en chemin',
+      intro: `${prenom ? `Bonjour ${prenom}, v` : 'V'}os ${nombre} tirage${nombre > 1 ? 's' : ''} viennent de partir${transporteur ? ` avec <strong>${transporteur}</strong>` : ''}. Comptez quelques jours avant de les trouver dans votre boîte aux lettres.`,
+      body: `${suiviUrl ? bigButton(suiviUrl, 'Suivre mon colis →') : ''}
+        ${suiviNumero ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:${suiviUrl ? 18 : 0}px;">Numéro de suivi : <strong style="font-family:ui-monospace,Menlo,monospace;">${suiviNumero}</strong></div>` : ''}`,
+      footer: `Commande n° ${reference}. Une question sur votre commande ? Écrivez-nous à ${CONTACT_EMAIL}.`,
+    }),
+  }
+}
+
+// Pour nous : une commande payée n'a pas pu partir chez l'imprimeur.
+export function tiragesBloqueeEmail({ reference, erreur, eventName }) {
+  return {
+    subject: `⚠️ Tirages : commande ${reference} bloquée`,
+    html: layout({
+      title: 'Une commande de tirages est bloquée',
+      intro: `La commande ${reference} (« ${eventName || 'album inconnu'} ») est payée, mais n'a pas pu être transmise à l'imprimeur.`,
+      body: `<div style="font-size:14px;line-height:1.7;color:#5f5341;">Raison : <strong>${erreur}</strong><br>Elle attend dans la table tirages_commandes, au statut « erreur ».</div>`,
+      footer: 'Message automatique.',
     }),
   }
 }

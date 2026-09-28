@@ -91,12 +91,17 @@ export async function deletePhotos(paths) {
 // obtenu qu'une demie. Chacun garde donc exactement ce qu'il a demandé.
 const TRANCHE_S = 30 * 60
 
+// Le stockage refuse toute adresse valable plus de sept jours. Les mails qui
+// demandaient « sept jours » dépassaient donc d'une demi-heure (la tranche),
+// et leurs vignettes arrivaient cassées. On plafonne ici, une fois pour toutes.
+const VALIDITE_MAX_S = 7 * 24 * 3600 - 1
+
 export async function signPhotos(paths, expiresIn = 3600) {
   assertConfig()
   if (!paths.length) return {}
   const debutDeTranche = Math.floor(Date.now() / (TRANCHE_S * 1000)) * TRANCHE_S * 1000
   const datetime = new Date(debutDeTranche).toISOString().replace(/[:-]|\.\d{3}/g, '')
-  const validite = expiresIn + TRANCHE_S
+  const validite = Math.min(expiresIn + TRANCHE_S, VALIDITE_MAX_S)
   const map = {}
   await Promise.all(
     paths.map(async (path) => {

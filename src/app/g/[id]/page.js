@@ -14,6 +14,19 @@ import WrapInvite, { wrapDejaVu, oublierWrap } from '../../../components/WrapInv
 import Avis from '../../../components/Avis'
 import { ACCROCHE } from '../../../lib/avis'
 import OuvrirDansApp from '../../../components/OuvrirDansApp'
+import { InvitationTirages, CommandeTirages, MerciTirages } from '../../../components/Tirages'
+
+// Une imprimante au trait, dans le style des autres icônes de l'album.
+function IconeImprimante({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <path d="M6 9V3h12v6" /><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2" />
+      <path d="M6 14h12v7H6z" />
+    </svg>
+  )
+}
+import { devisTirages, euros } from '../../../lib/tirages'
 
 // Au-delà, la rangée de pastilles devient illisible et l'on passe à la recherche.
 const SEUIL_AUTEURS = 8
@@ -618,6 +631,14 @@ export default function Gallery({ params }) {
   const [lienCopie, setLienCopie] = useState(false)
   const [selecting, setSelecting] = useState(false)
   const [selected, setSelected] = useState(() => new Set())
+  // Ce que la sélection prépare : un téléchargement, ou des tirages papier.
+  // Le même geste (cocher des photos), deux sorties différentes.
+  const [but, setBut] = useState('telecharger') // telecharger | tirages
+  const [commande, setCommande] = useState(false)
+  // La fenêtre qui propose les tirages : une seule fois par album et par
+  // appareil, qu'on l'ait acceptée ou fermée.
+  const [invitTirages, setInvitTirages] = useState(false)
+  const [invitDejaVue, setInvitDejaVue] = useState(true)
   // Les réglages mangeaient l'écran entier d'un téléphone : les photos
   // n'apparaissaient qu'après un long défilement. Ils tiennent maintenant dans
   // deux boutons, qui ouvrent chacun leur panneau. null | 'film' | 'qui'
@@ -878,6 +899,78 @@ export default function Gallery({ params }) {
     // pas vivre après eux.
   }, [montrerAvis, assezVu, avisFerme, data?.photos?.length])
 
+  // --- L'invitation aux tirages ---
+  //
+  // Elle attend la vingtième photo : c'est en ayant vu défiler la soirée qu'on
+  // a envie de la tenir en main, pas en arrivant. Et elle cède la place à
+  // l'enquête de satisfaction : deux fenêtres dans la même visite, c'est une
+  // de trop. Celle-ci reviendra à la visite suivante.
+  const repereTirages = useRef(null)
+  useEffect(() => {
+    if (!id || !data?.tirages) return
+    try { setInvitDejaVue(!!localStorage.getItem(`ttf_tirages_${id}`)) } catch { setInvitDejaVue(false) }
+  }, [id, data?.tirages])
+  useEffect(() => {
+    if (invitDejaVue || invitTirages || montrerAvis || !peutRepondre) return
+    const verifier = () => {
+      const cible = repereTirages.current
+      if (cible && cible.getBoundingClientRect().top < window.innerHeight * 0.5) setInvitTirages(true)
+    }
+    window.addEventListener('scroll', verifier, { passive: true })
+    return () => window.removeEventListener('scroll', verifier)
+  }, [invitDejaVue, invitTirages, montrerAvis, peutRepondre])
+
+  function fermerInvitTirages() {
+    setInvitTirages(false)
+    setInvitDejaVue(true)
+    try { localStorage.setItem(`ttf_tirages_${id}`, '1') } catch {}
+  }
+
+  // Entrer dans la sélection pour imprimer. Ses favoris sont déjà cochés :
+  // ce sont les photos qu'on a mises de côté, donc celles qu'on veut sur papier.
+  function lancerTirages() {
+    if (invitTirages) fermerInvitTirages()
+    const visibles = new Set((data?.photos || []).filter((p) => !p.hidden).map((p) => p.id))
+    setBut('tirages')
+    setSelected(new Set([...favs].filter((f) => visibles.has(f))))
+    setSelecting(true)
+  }
+
+  // Retour du paiement Stripe : on fait confirmer la commande (c'est ce qui la
+  // fait partir chez l'imprimeur), puis on dit merci. L'adresse est nettoyée
+  // tout de suite, pour qu'un rechargement ne rejoue pas la scène.
+  const [merci, setMerci] = useState(null) // null | { chargement } | réponse du serveur
+  const retourPaiement = useRef(false)
+  useEffect(() => {
+    if (retourPaiement.current || !data) return
+    const sp = new URLSearchParams(window.location.search)
+    const quoi = sp.get('tirages')
+    if (quoi !== 'merci' && quoi !== 'annule') return
+    retourPaiement.current = true
+    window.history.replaceState(null, '', window.location.pathname)
+    setMontrerWrap(false)
+    if (quoi === 'annule') { annoncer('Paiement annulé : rien n\'a été débité.'); return }
+    setMerci({ chargement: true })
+    fetch('/api/tirages/confirmer', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ sessionId: sp.get('commande') }),
+    })
+      .then((r) => r.json())
+      .then((d) => setMerci(d.error ? { erreurLecture: d.error } : d))
+      .catch(() => setMerci({ erreurLecture: 'Connexion impossible.' }))
+  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Arrivé par le mail « imprimez vos photos » : on ouvre directement la
+  // sélection des tirages, une fois l'album chargé.
+  const lienTirages = useRef(false)
+  useEffect(() => {
+    if (lienTirages.current || !data?.tirages) return
+    if (new URLSearchParams(window.location.search).get('tirages') !== '1') return
+    lienTirages.current = true
+    setMontrerWrap(false)
+    lancerTirages()
+  }, [data?.tirages]) // eslint-disable-line react-hooks/exhaustive-deps
+
   function toggleFav(photoId) {
     const aime = favs.has(photoId)
     // La phrase a été comprise : on ne la répète pas.
@@ -1077,6 +1170,12 @@ export default function Gallery({ params }) {
     : parVisibilite
   // Ce qu'on emporte : la sélection si elle est ouverte, sinon ce qui est affiché.
   const aTelecharger = selecting ? photos.filter((p) => selected.has(p.id)) : photos
+  const pourTirages = but === 'tirages'
+  // L'éventail de l'invitation : les photos les plus aimées du groupe, sinon
+  // les premières de la soirée.
+  const vedettes = [...data.photos.filter((p) => !p.hidden)]
+    .sort((a, b) => (b.favs || 0) - (a.favs || 0))
+    .slice(0, 3)
   // L'aperçu des pellicules : la première photo visible de la soirée. Sur ses
   // propres souvenirs, un rendu se juge en une seconde.
   const apercuUrl = (data?.photos || []).find((x) => !x.hidden)?.url || ''
@@ -1239,6 +1338,11 @@ export default function Gallery({ params }) {
               </svg>
               {zip ? `Préparation… ${zip.done}/${zip.total}` : `Tout télécharger (${data.photos.length})`}
             </button>
+            {data.tirages && data.photos.length > 0 && (
+              <button className="gal-hero-revoir gal-hero-imprimer" onClick={lancerTirages}>
+                <IconeImprimante size={15} /> Commander mon tirage photo
+              </button>
+            )}
             {data.photos.length > 1 && (
               <button className="gal-hero-revoir" onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
                 ↺ Revoir la révélation
@@ -1263,6 +1367,13 @@ export default function Gallery({ params }) {
             {data.photos.length} photo{data.photos.length > 1 ? 's' : ''} · {data.guests.length} participant{data.guests.length > 1 ? 's' : ''}
           </span>
         </span>
+        {/* Les tirages, à portée de pouce pendant qu'on défile : le bouton
+            de la façade disparaît dès la première photo passée. */}
+        {data.tirages && data.photos.length > 0 && (
+          <button className="gal-creer" onClick={lancerTirages}>
+            <IconeImprimante size={15} /><i>Imprimez</i>
+          </button>
+        )}
         {data.photos.length > 0 && (
           <button className="gal-creer" onClick={() => setMontrerCollage(true)}>
             <span aria-hidden="true">✦</span><i>Créer</i>
@@ -1455,7 +1566,7 @@ export default function Gallery({ params }) {
             const rot = ((i * 37) % 7) - 3 // rotation déterministe -3°..+3°
             return (
               <a key={p.id || i} className={`polaroid ${selecting && selected.has(p.id) ? 'pris' : ''}`}
-                ref={i === 9 ? repereDixieme : null}
+                ref={i === 9 ? repereDixieme : i === Math.min(19, photos.length - 1) ? repereTirages : null}
                 href={p.fullUrl || p.url} target="_blank" rel="noreferrer"
                 onClick={(e) => {
                   // Ctrl/⌘ + clic garde son sens sur un ordinateur : ouvrir le
@@ -1597,7 +1708,7 @@ export default function Gallery({ params }) {
           été en bas. On entrait par le haut et on sortait par le bas.
           La pastille s'efface dès qu'autre chose demande l'attention. */}
       {!selecting && defile && photos.length > 0 && !panneau && diapo === null && !montrerCollage && (
-        <button className="gal-pastille" onClick={() => { setSelecting(true); setSelected(new Set()) }}>
+        <button className="gal-pastille" onClick={() => { setBut('telecharger'); setSelecting(true); setSelected(new Set()) }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M9 11l3 3L22 4" /><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
           </svg>
@@ -1616,7 +1727,7 @@ export default function Gallery({ params }) {
           <div className="gal-bar-in">
             {/* La croix EST la sortie, à l'endroit exact où l'on est entré. */}
             <button className="gal-bar-fin" aria-label="Quitter la sélection"
-              onClick={() => { setSelecting(false); setSelected(new Set()) }}>
+              onClick={() => { setSelecting(false); setSelected(new Set()); setBut('telecharger') }}>
               ✕
             </button>
             <span className="gal-bar-n">
@@ -1625,7 +1736,7 @@ export default function Gallery({ params }) {
                 : `${aTelecharger.length} photo${aTelecharger.length > 1 ? 's' : ''} choisie${aTelecharger.length > 1 ? 's' : ''}`}
               <em>
                 {aTelecharger.length === 0
-                  ? 'Touchez les tirages à télécharger'
+                  ? (pourTirages ? 'Touchez les photos à recevoir en tirage' : 'Touchez les tirages à télécharger')
                   : tousCoches
                     ? 'l’album entier'
                     : `sur ${photos.length}`}
@@ -1635,15 +1746,81 @@ export default function Gallery({ params }) {
               {tousCoches ? 'Tout décocher' : 'Tout cocher'}
             </button>
           </div>
-          <button className="gal-bar-dl" disabled={!!zip || aTelecharger.length === 0}
-            onClick={() => downloadAll(aTelecharger)}>
-            {zip
-              ? `Préparation… ${zip.done}/${zip.total}`
-              : aTelecharger.length === 0
+          {pourTirages ? (
+            <button className="gal-bar-dl" disabled={aTelecharger.length === 0}
+              onClick={() => setCommande(true)}>
+              {aTelecharger.length === 0
                 ? 'Sélectionnez des photos'
-                : `⤓ Télécharger ${aTelecharger.length > 1 ? `les ${aTelecharger.length} photos` : 'la photo'}`}
-          </button>
+                : `Commander ${aTelecharger.length > 1 ? `les ${aTelecharger.length} tirages` : 'le tirage'} (${euros(devisTirages(aTelecharger.length, '10x15').photos)} hors livraison)`}
+            </button>
+          ) : (
+            <div className="gal-bar-actions">
+              <button className="gal-bar-dl" disabled={!!zip || aTelecharger.length === 0}
+                onClick={() => downloadAll(aTelecharger)}>
+                {zip
+                  ? `Préparation… ${zip.done}/${zip.total}`
+                  : aTelecharger.length === 0
+                    ? 'Sélectionnez des photos'
+                    : `⤓ Télécharger ${aTelecharger.length > 1 ? `les ${aTelecharger.length} photos` : 'la photo'}`}
+              </button>
+              {/* Ce qu'on vient de choisir peut aussi partir sur papier : la
+                  sélection est déjà faite, il ne reste qu'un appui. */}
+              {data.tirages && (
+                <button className="gal-bar-imp" disabled={!!zip || aTelecharger.length === 0}
+                  onClick={() => { setBut('tirages'); setCommande(true) }}>
+                  Commander
+                </button>
+              )}
+            </div>
+          )}
         </div>
+      )}
+
+      {invitTirages && !selecting && diapo === null && !montrerCollage && (
+        <InvitationTirages
+          photos={vedettes}
+          nbFavoris={[...favs].filter((f) => data.photos.some((p) => p.id === f && !p.hidden)).length}
+          pelli={pelli}
+          avecDate={avecDate}
+          onChoisir={lancerTirages}
+          onFermer={fermerInvitTirages}
+        />
+      )}
+
+      {merci && !merci.chargement && !merci.erreurLecture && (
+        <MerciTirages
+          photos={data.photos.filter((p) => (merci.photoIds || []).includes(p.id))}
+          pelli={PELLICULES.find((f) => f.id === merci.rendu?.pellicule) || null}
+          date={!!merci.rendu?.date}
+          nombre={merci.nombre}
+          formatNom={merci.format === '13x18' ? '13\u00a0×\u00a018\u00a0cm' : '10\u00a0×\u00a015\u00a0cm'}
+          total={merci.total}
+          statut={merci.statut}
+          cout={merci.prodigi?.cout?.total ?? null}
+          onFermer={() => setMerci(null)}
+        />
+      )}
+      {merci?.chargement && (
+        <div className="tir-ecran" role="status"><div className="tir-fait"><p className="tir-texte">Confirmation du paiement…</p></div></div>
+      )}
+      {merci?.erreurLecture && (
+        <div className="tir-ecran" role="alert"><div className="tir-fait">
+          <h2 className="tir-titre">Paiement non confirmé</h2>
+          <p className="tir-texte">{merci.erreurLecture} Si vous avez été débité, votre commande partira quand même : rien n&apos;est perdu.</p>
+          <button className="tir-cta" onClick={() => setMerci(null)}>Revenir à l&apos;album</button>
+        </div></div>
+      )}
+
+      {commande && aTelecharger.length > 0 && (
+        <CommandeTirages
+          eventId={id}
+          photos={aTelecharger}
+          deviceToken={getDeviceToken()}
+          pelli={pelli}
+          avecDate={avecDate}
+          onRetour={() => setCommande(false)}
+          onTermine={() => { setCommande(false); setSelecting(false); setSelected(new Set()); setBut('telecharger') }}
+        />
       )}
 
       {/* Le message flotte au-dessus de tout, y compris de la photo en plein

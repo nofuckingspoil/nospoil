@@ -5,6 +5,11 @@ const nextConfig = {
   // après chaque `npm run dev`.
   agentRules: false,
 
+  // En développement, laisse un téléphone du même Wi-Fi ouvrir le site du Mac
+  // (http://192.168.x.x:3000) : sans ça, la page restait bloquée sur
+  // « Chargement… ». Sans effet en ligne.
+  allowedDevOrigins: ['192.168.*.*'],
+
   // sharp taille les mini-versions des photos arrivées sans (celles de l'app
   // native). C'est du code natif : il doit rester en dehors du paquet compilé,
   // sinon la mise en ligne se retrouve avec un module illisible.

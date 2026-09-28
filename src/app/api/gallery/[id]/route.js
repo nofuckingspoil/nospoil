@@ -3,6 +3,7 @@ import { isRevealed, quotaExceeded } from '../../../../lib/phase'
 import { upgradeFor, CONTACT_EMAIL } from '../../../../lib/pricing'
 import { MESSAGE_SUSPENDU, accesExpire } from '../../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
+import { tiragesActifs } from '../../../../lib/tirages'
 
 export async function GET(request, { params }) {
   const { id } = await params
@@ -187,5 +188,8 @@ export async function GET(request, { params }) {
     // Jusqu'à quand l'album reste en ligne : le participant qui remet à plus tard
     // doit savoir combien de temps « plus tard » peut durer.
     expiresAt: ev.expires_at || null,
+    // Les tirages papier sont-ils proposés ? C'est le serveur qui le dit, pour
+    // que l'application iPhone les montre ou les cache sans nouvelle version.
+    tirages: revealed && tiragesActifs(),
   })
 }

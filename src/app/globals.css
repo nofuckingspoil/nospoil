@@ -4198,7 +4198,6 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* La planche de la commande : chaque tirage à sa forme, son compteur dessous. */
 .tir-grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 18px 14px; align-items: end; }
 .tir-case { display: flex; flex-direction: column; align-items: center; gap: 8px; min-width: 0; }
-.tir-case.retiree .tir-tirage { opacity: .35; }
 .tir-compteur {
   display: flex; align-items: center; gap: 2px; padding: 2px; border-radius: 999px;
   background: var(--card); border: 1px solid var(--line);
@@ -4312,3 +4311,53 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   font-variant-numeric: tabular-nums; color: var(--text2);
 }
 .tir-marge b { color: var(--ink); padding-top: 4px; border-top: 1px solid var(--line); }
+
+/* À un exemplaire, le « moins » devient une corbeille. */
+.tir-compteur .tir-retirer { display: flex; align-items: center; justify-content: center; color: var(--accent-deep); }
+.tir-lien { border: 0; background: none; padding: 0; cursor: pointer; font: inherit; color: var(--accent-deep); text-decoration: underline; }
+
+/* Le rendu : une rangée de tirages d'aperçu, un par pellicule. */
+.tir-rendus { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.tir-rendu {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0;
+  padding: 8px 4px; border-radius: 12px; border: 1.5px solid transparent; background: none; cursor: pointer;
+}
+.tir-rendu .tir-tirage { width: 100%; max-width: 64px; }
+.tir-rendu em { font-style: normal; font-family: var(--font-mono); font-size: 10.5px; color: var(--text3); text-align: center; line-height: 1.25; }
+.tir-rendu.on { border-color: var(--accent); background: #fff; }
+.tir-rendu.on em { color: var(--accent-deep); font-weight: 700; }
+.tir-case-date { justify-content: flex-start; margin-top: 4px; }
+.tir-coche {
+  flex: none; width: 22px; height: 22px; border-radius: 6px; border: 1.5px solid var(--line);
+  display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; color: #fff;
+}
+.tir-coche.on { background: var(--accent); border-color: var(--accent); }
+/* L'entrée des tirages dans la façade : même rang que « Revoir », mais on la
+   repère d'un coup d'œil grâce à l'imprimante et à la teinte orange. */
+.gal-hero-imprimer {
+  display: inline-flex; align-items: center; gap: 8px;
+  border-color: rgba(236,91,51,.55); background: rgba(236,91,51,.16);
+}
+
+/* L'évocation de la finition sur les aperçus de la commande. */
+.tir-tirage[class*="fini-"] .tir-image::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+}
+.tir-tirage.fini-brillante .tir-image::after {
+  background: linear-gradient(118deg, rgba(255,255,255,0) 28%, rgba(255,255,255,.42) 40%, rgba(255,255,255,.08) 47%, rgba(255,255,255,0) 58%);
+}
+.tir-tirage.fini-satinee .tir-image::after {
+  background: linear-gradient(160deg, rgba(255,250,240,.16), rgba(255,250,240,.04) 60%);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .tir-tirage.fini-brillante .tir-image::after { animation: tir-reflet .6s ease both; }
+  @keyframes tir-reflet { from { opacity: 0; transform: translateX(-12%); } to { opacity: 1; transform: none; } }
+}
+
+/* Deux boutons à droite de la barre compacte (Imprimez, Créer) : on les
+   resserre, et les compteurs restent sur une ligne, pour que le nom de la
+   soirée garde sa place. */
+.gal-compact .gal-creer { min-width: 0; padding: 4px 3px; font-size: 13px; }
+.gal-compact .gal-creer i { font-size: 7.5px; letter-spacing: .08em; }
+.gal-compact-sous { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 400px) { .gal-compact { gap: 8px; } }
