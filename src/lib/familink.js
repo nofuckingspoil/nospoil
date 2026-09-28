@@ -104,3 +104,14 @@ export async function lireCommandeFamilink(pk) {
   // Une lettre de La Poste : pas de numéro de suivi.
   return { id: data.pk, etape: data.status || '', expediee: data.status === 'Shipped', colis: { transporteur: 'La Poste' } }
 }
+
+// Le jeton est-il accepté ? On demande une commande qui n'existe pas :
+// « introuvable » (404) veut dire que Familink nous a reconnus, 401 ou 403
+// que le jeton est refusé. Rien n'est commandé.
+export async function verifierAccesFamilink() {
+  const res = await fetch(`${API}ZZ00ZZ/`, {
+    headers: { Authorization: `Token ${process.env.FAMILINK_API_TOKEN}` },
+    cache: 'no-store',
+  }).catch(() => null)
+  return { statut: res?.status ?? 0, accepte: res?.status === 404 || res?.status === 200 }
+}
