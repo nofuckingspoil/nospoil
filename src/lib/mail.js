@@ -579,7 +579,7 @@ export function tiragesConfirmationEmail({ prenom, eventName, nombre, formatNom,
           ${ligneRecap('Total payé', total)}
         </table>
         <div style="font-size:14px;line-height:1.7;color:#5f5341;">
-          Vos photos sont imprimées sous 2 à 3 jours, puis expédiées. <strong>Vous recevrez un second mail avec le lien de suivi du colis</strong> dès son départ.
+          Vos tirages sont imprimés en France puis postés depuis Rouen : comptez <strong>3 à 4 jours ouvrés</strong> après leur départ. Vous recevrez un second mail le jour où ils partent.
         </div>
         ${lienAlbum ? `<div style="padding-top:22px;">${bigButton(lienAlbum, 'Revoir l\'album →')}</div>` : ''}`,
       footer: `Commande n° ${reference}. Une question sur votre commande ? Écrivez-nous à ${CONTACT_EMAIL}.`,
@@ -593,9 +593,10 @@ export function tiragesExpeditionEmail({ prenom, nombre, transporteur, suiviUrl,
     html: layout({
       logo: true,
       title: 'Vos tirages sont en chemin',
-      intro: `${prenom ? `Bonjour ${prenom}, v` : 'V'}os ${nombre} tirage${nombre > 1 ? 's' : ''} viennent de partir${transporteur ? ` avec <strong>${transporteur}</strong>` : ''}. Comptez quelques jours avant de les trouver dans votre boîte aux lettres.`,
+      intro: `${prenom ? `Bonjour ${prenom}, v` : 'V'}os ${nombre} tirage${nombre > 1 ? 's' : ''} viennent de partir${transporteur ? ` avec <strong>${transporteur}</strong>` : ''}. Comptez 3 à 4 jours ouvrés avant de les trouver dans votre boîte aux lettres.`,
       body: `${suiviUrl ? bigButton(suiviUrl, 'Suivre mon colis →') : ''}
-        ${suiviNumero ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:${suiviUrl ? 18 : 0}px;">Numéro de suivi : <strong style="font-family:ui-monospace,Menlo,monospace;">${suiviNumero}</strong></div>` : ''}`,
+        ${suiviNumero ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:${suiviUrl ? 18 : 0}px;">Numéro de suivi : <strong style="font-family:ui-monospace,Menlo,monospace;">${suiviNumero}</strong></div>` : ''}
+        ${!suiviUrl && !suiviNumero ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;">Ils voyagent en lettre, comme une carte postale : il n'y a donc pas de numéro de suivi. Si rien n'est arrivé dans 10 jours, écrivez-nous à ${CONTACT_EMAIL}.</div>` : ''}`,
       footer: `Commande n° ${reference}. Une question sur votre commande ? Écrivez-nous à ${CONTACT_EMAIL}.`,
     }),
   }

@@ -274,7 +274,7 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
               <label htmlFor="tir-codePostal">Code postal<input {...champ('codePostal')} autoComplete="postal-code" maxLength={10} /></label>
               <label htmlFor="tir-ville">Ville<input {...champ('ville')} autoComplete="address-level2" /></label>
             </div>
-            <label htmlFor="tir-email"><span>Mail <em>(confirmation et suivi du colis)</em></span><input {...champ('email')} type="email" autoComplete="email" required /></label>
+            <label htmlFor="tir-email"><span>Mail <em>(confirmation et avis d&apos;expédition)</em></span><input {...champ('email')} type="email" autoComplete="email" required /></label>
           </div>
         </fieldset>
 
@@ -316,8 +316,8 @@ export function MerciTirages({ photos = [], pelli = null, date = false, nombre, 
             ? 'Votre commande est bien payée. Un souci technique l\'a retenue avant l\'impression : nous la relançons nous-mêmes, vous n\'avez rien à faire.'
             : <>
               {nombre} tirage{nombre > 1 ? 's' : ''} {formatNom}, imprimé{nombre > 1 ? 's' : ''} sur vrai papier photo.
-              {enCours ? ' Le paiement est reçu, votre commande part à l\'impression.' : ''} Comptez une semaine environ
-              avant de les trouver dans votre boîte aux lettres.
+              {enCours ? ' Le paiement est reçu, votre commande part à l\'impression.' : ''} Ils sont postés depuis Rouen
+              et arrivent en 3 à 4 jours ouvrés dans votre boîte aux lettres.
             </>}
         </p>
         {simule && cout == null && (
