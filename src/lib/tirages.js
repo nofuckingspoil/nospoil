@@ -27,32 +27,50 @@ export const FINITIONS = [
   { id: 'mate', nom: 'Mate', sous: 'Douce, sans reflets ni traces de doigts' },
 ]
 
-// Un prix de port par pays, quel que soit le nombre de tirages (Prodigi nous
-// facture 4,42 € vers la France, d'où 4,90 €) : une
-// enveloppe de 10 ou de 60 photos part au même tarif. Hors de France, les
-// montants sont provisoires : à caler sur les tarifs réels de Prodigi.
+// La livraison suit les enveloppes de l'imprimeur (Familink, à Rouen) : une
+// lettre jusqu'à 5 tirages 10 × 15, une plus grande jusqu'à 20, une enveloppe
+// cartonnée au-delà. Chaque palier couvre ce que Familink nous facture pour
+// l'envoi, TVA comprise, avec une petite marge. Deux zones seulement : la
+// France métropolitaine, et le reste de l'Union européenne (la Suisse, le
+// Royaume-Uni et la Norvège sont écartés : hors UE, la douane compliquerait
+// tout).
+//
+// [jusqu'à N tirages, prix France, prix Union européenne]
+const PALIERS_PORT = {
+  '10x15': [[5, 3.9, 4.9], [20, 4.9, 6.9], [62, 5.9, 11.9], [Infinity, 7.9, 15.9]],
+  '15x20': [[8, 4.9, 6.9], [31, 5.9, 11.9], [Infinity, 7.9, 15.9]],
+}
+
+const UE = 'ue'
 export const PAYS = [
-  { code: 'FR', nom: 'France métropolitaine', port: 4.9 },
-  { code: 'BE', nom: 'Belgique', port: 5.9 },
-  { code: 'LU', nom: 'Luxembourg', port: 5.9 },
-  { code: 'CH', nom: 'Suisse', port: 7.9 },
-  { code: 'DE', nom: 'Allemagne', port: 5.9 },
-  { code: 'ES', nom: 'Espagne', port: 5.9 },
-  { code: 'IT', nom: 'Italie', port: 5.9 },
-  { code: 'PT', nom: 'Portugal', port: 5.9 },
-  { code: 'NL', nom: 'Pays-Bas', port: 5.9 },
-  { code: 'AT', nom: 'Autriche', port: 5.9 },
-  { code: 'IE', nom: 'Irlande', port: 5.9 },
-  { code: 'DK', nom: 'Danemark', port: 5.9 },
-  { code: 'SE', nom: 'Suède', port: 5.9 },
-  { code: 'FI', nom: 'Finlande', port: 5.9 },
-  { code: 'PL', nom: 'Pologne', port: 5.9 },
-  { code: 'CZ', nom: 'Tchéquie', port: 5.9 },
-  { code: 'GR', nom: 'Grèce', port: 5.9 },
-  { code: 'GB', nom: 'Royaume-Uni', port: 7.9 },
-  { code: 'NO', nom: 'Norvège', port: 7.9 },
+  { code: 'FR', nom: 'France métropolitaine', zone: 'fr' },
+  { code: 'BE', nom: 'Belgique', zone: UE },
+  { code: 'LU', nom: 'Luxembourg', zone: UE },
+  { code: 'DE', nom: 'Allemagne', zone: UE },
+  { code: 'ES', nom: 'Espagne', zone: UE },
+  { code: 'IT', nom: 'Italie', zone: UE },
+  { code: 'PT', nom: 'Portugal', zone: UE },
+  { code: 'NL', nom: 'Pays-Bas', zone: UE },
+  { code: 'AT', nom: 'Autriche', zone: UE },
+  { code: 'IE', nom: 'Irlande', zone: UE },
+  { code: 'DK', nom: 'Danemark', zone: UE },
+  { code: 'SE', nom: 'Suède', zone: UE },
+  { code: 'FI', nom: 'Finlande', zone: UE },
+  { code: 'PL', nom: 'Pologne', zone: UE },
+  { code: 'CZ', nom: 'Tchéquie', zone: UE },
+  { code: 'GR', nom: 'Grèce', zone: UE },
 ]
-export const PORT = PAYS[0].port
+
+// Le prix de la livraison (en euros) pour une commande donnée.
+export function prixPort(formatId, nombre, paysCode = 'FR') {
+  const paliers = PALIERS_PORT[formatId] || PALIERS_PORT['10x15']
+  const palier = paliers.find(([max]) => nombre <= max) || paliers[paliers.length - 1]
+  const pays = PAYS.find((p) => p.code === paysCode) || PAYS[0]
+  return pays.zone === 'fr' ? palier[1] : palier[2]
+}
+
+// Le plus petit prix de livraison en France, affiché avant le choix du format.
+export const PORT = PALIERS_PORT['10x15'][0][1]
 
 export function paysLivraison(code) {
   return PAYS.find((p) => p.code === code) || null
@@ -74,7 +92,7 @@ export function devisTirages(nombre, formatId, paysCode = 'FR') {
   const pays = paysLivraison(paysCode) || PAYS[0]
   const n = Math.max(0, Math.min(TIRAGES_MAX, Math.floor(nombre) || 0))
   const photos = n * Math.round(f.prix * 100)
-  const port = n > 0 ? Math.round(pays.port * 100) : 0
+  const port = n > 0 ? Math.round(prixPort(f.id, n, pays.code) * 100) : 0
   return { nombre: n, format: f, pays, photos, port, total: photos + port }
 }
 

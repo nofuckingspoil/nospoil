@@ -234,7 +234,7 @@ const cgv = {
 <h3>20.1 Objet</h3>
 <p>Depuis l'album d'un Événement révélé, tout Organisateur ou Participant (l'« <strong>Acheteur</strong> ») peut commander des tirages photo papier des photographies de cet Événement. Les tirages sont destinés à un usage strictement privé.</p>
 <h3>20.2 Prix</h3>
-<p>Les prix sont indiqués en euros, toutes taxes comprises : un prix par tirage, selon le format, et des frais de livraison selon le pays de destination. Le détail (nombre de tirages, format, finition, rendu, livraison, total) est affiché avant le paiement, puis repris dans le courrier électronique de confirmation.</p>
+<p>Les prix sont indiqués en euros, toutes taxes comprises : un prix par tirage, selon le format, et des frais de livraison selon le pays de destination et le nombre de tirages. La livraison est proposée en France métropolitaine et dans les pays de l'Union européenne listés lors de la commande. Le détail (nombre de tirages, format, finition, rendu, livraison, total) est affiché avant le paiement, puis repris dans le courrier électronique de confirmation.</p>
 <h3>20.3 Commande et paiement</h3>
 <p>La commande est payable en ligne, au moyen des modes proposés par notre prestataire de paiement Stripe. Le contrat est formé au moment où le paiement est accepté ; l'Acheteur en reçoit la confirmation par courrier électronique.</p>
 <h3>20.4 Fabrication et livraison</h3>
