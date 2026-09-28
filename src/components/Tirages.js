@@ -17,7 +17,8 @@
 //  Les prix viennent de lib/tirages, les mêmes que ceux du serveur.
 // ============================================================
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { noterEtape } from '../lib/etapes'
 import {
   FORMATS_TIRAGE, FINITIONS, PROPORTIONS, BORDURE_MM, LARGEUR_MM, EXEMPLAIRES_MAX, devisTirages, euros,
   formatsTirage, finitions, listePays, prixAppel,
@@ -126,6 +127,9 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
   // l'album (ce qu'on voyait en cochant), et on peut en changer sans y revenir.
   const [pelliId, setPelliId] = useState(pelli?.id || 'aucune')
   const [dateOn, setDateOn] = useState(!!avecDate)
+  useEffect(() => {
+    noterEtape('tirages_ecran', { eventId, detail: `${photos.length} photo${photos.length > 1 ? 's' : ''}` })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
   const rendu = PELLICULES.find((f) => f.id === pelliId) || PELLICULES[0]
   const effet = !!rendu.canaux || dateOn
   const [exemplaires, setExemplaires] = useState(() => Object.fromEntries(photos.map((p) => [p.id, 1])))
@@ -166,7 +170,10 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
       const d = await r.json().catch(() => ({}))
       if (!r.ok) throw new Error(d.error || t({ fr: 'La commande n\'a pas pu partir. Réessayez dans un instant.', en: 'Your order could not be sent. Please try again in a moment.', de: 'Die Bestellung konnte nicht gesendet werden. Bitte versuchen Sie es gleich noch einmal.' }))
       // Le paiement se fait chez Stripe, qui ramène ensuite sur l'album.
-      if (d.url) { setEtat('paiement'); window.location.href = d.url; return }
+      if (d.url) {
+        noterEtape('tirages_paiement', { eventId, detail: `${nombre} × ${format}` })
+        setEtat('paiement'); window.location.href = d.url; return
+      }
       setSimule(!!d.simule)
       setCoutImprimeur(d.imprimeur?.cout || null)
       setEtat('fait')

@@ -993,7 +993,10 @@ export default function Gallery({ params }) {
     if (invitDejaVue || invitTirages || montrerAvis || !peutRepondre) return
     const verifier = () => {
       const cible = repereTirages.current
-      if (cible && cible.getBoundingClientRect().top < window.innerHeight * 0.5) setInvitTirages(true)
+      if (cible && cible.getBoundingClientRect().top < window.innerHeight * 0.5) {
+        setInvitTirages(true)
+        noterEtape('tirages_invitation', { eventId: id })
+      }
     }
     window.addEventListener('scroll', verifier, { passive: true })
     return () => window.removeEventListener('scroll', verifier)
@@ -1007,7 +1010,9 @@ export default function Gallery({ params }) {
 
   // Entrer dans la sélection pour imprimer. Ses favoris sont déjà cochés :
   // ce sont les photos qu'on a mises de côté, donc celles qu'on veut sur papier.
-  function lancerTirages() {
+  // `source` : le bouton par lequel on arrive (suivi du parcours).
+  function lancerTirages(source) {
+    noterEtape('tirages_selection', { eventId: id, detail: source })
     if (invitTirages) fermerInvitTirages()
     const visibles = new Set((data?.photos || []).filter((p) => !p.hidden).map((p) => p.id))
     setBut('tirages')
@@ -1035,7 +1040,10 @@ export default function Gallery({ params }) {
       body: JSON.stringify({ sessionId: sp.get('commande') }),
     })
       .then((r) => r.json())
-      .then((d) => setMerci(d.error ? { erreurLecture: d.error } : d))
+      .then((d) => {
+        if (!d.error) noterEtape('tirages_paye', { eventId: id, detail: `${d.nombre} × ${d.format}` })
+        setMerci(d.error ? { erreurLecture: d.error } : d)
+      })
       .catch(() => setMerci({ erreurLecture: t({ fr: 'Connexion impossible.', en: 'Unable to connect.', de: 'Keine Verbindung möglich.' }) }))
   }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1047,7 +1055,7 @@ export default function Gallery({ params }) {
     if (new URLSearchParams(window.location.search).get('tirages') !== '1') return
     lienTirages.current = true
     setMontrerWrap(false)
-    lancerTirages()
+    lancerTirages('mail')
   }, [data?.tirages]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function toggleFav(photoId) {
@@ -1469,7 +1477,7 @@ export default function Gallery({ params }) {
                 : t({ fr: `Tout télécharger (${data.photos.length})`, en: `Download all (${data.photos.length})`, de: `Alle herunterladen (${data.photos.length})` })}
             </button>
             {data.tirages && data.photos.length > 0 && (
-              <button className="gal-hero-revoir gal-hero-imprimer" onClick={lancerTirages}>
+              <button className="gal-hero-revoir gal-hero-imprimer" onClick={() => lancerTirages('facade')}>
                 <IconeImprimante size={15} /> {t({ fr: 'Commander mon tirage photo', en: 'Order my photo prints', de: 'Meine Fotoabzüge bestellen' })}
               </button>
             )}
@@ -1504,7 +1512,7 @@ export default function Gallery({ params }) {
         {/* Les tirages, à portée de pouce pendant qu'on défile : le bouton
             de la façade disparaît dès la première photo passée. */}
         {data.tirages && data.photos.length > 0 && (
-          <button className="gal-creer" onClick={lancerTirages}>
+          <button className="gal-creer" onClick={() => lancerTirages('barre')}>
             <IconeImprimante size={15} /><i>{t({ fr: 'Imprimez', en: 'Print', de: 'Drucken' })}</i>
           </button>
         )}
@@ -1982,7 +1990,10 @@ export default function Gallery({ params }) {
                   sélection est déjà faite, il ne reste qu'un appui. */}
               {data.tirages && (
                 <button className="gal-bar-imp" disabled={!!zip || aTelecharger.length === 0}
-                  onClick={() => { setBut('tirages'); setCommande(true) }}>
+                  onClick={() => {
+                    noterEtape('tirages_selection', { eventId: id, detail: 'telechargement' })
+                    setBut('tirages'); setCommande(true)
+                  }}>
                   {t({ fr: 'Commander', en: 'Order', de: 'Bestellen' })}
                 </button>
               )}
@@ -1997,7 +2008,7 @@ export default function Gallery({ params }) {
           nbFavoris={[...favs].filter((f) => data.photos.some((p) => p.id === f && !p.hidden)).length}
           pelli={pelli}
           avecDate={avecDate}
-          onChoisir={lancerTirages}
+          onChoisir={() => lancerTirages('invitation')}
           onFermer={fermerInvitTirages}
         />
       )}

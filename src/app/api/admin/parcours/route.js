@@ -20,7 +20,7 @@
 // ============================================================
 import { selectRows } from '../../../../lib/supabase'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
-import { ETAPES_INVITE, ETAPES_PROBLEME, ETAPES_ORGA, SUPPORTS } from '../../../../lib/etapes-liste'
+import { ETAPES_INVITE, ETAPES_PROBLEME, ETAPES_ORGA, ETAPES_TIRAGES, SUPPORTS } from '../../../../lib/etapes-liste'
 
 export const runtime = 'nodejs'
 
@@ -139,8 +139,19 @@ export async function GET(request) {
   const invites = new Map()
   const problemes = Object.fromEntries(ETAPES_PROBLEME.map((e) => [e.id, []]))
   let albumTotal = 0
+  // --- Tirages : une personne = un appareil dans une soirée, depuis l'album.
+  const tirages = new Map()
   for (const l of lignesInvites) {
     if (exclus.has(l.event_id)) continue
+    if (l.etape !== 'album' && !l.etape.startsWith('tirages_')) continue
+    const cle = `${l.visiteur}|${l.event_id}`
+    const p = tirages.get(cle) || {}
+    if (!p[l.etape]) p[l.etape] = l
+    tirages.set(cle, p)
+  }
+  for (const l of lignesInvites) {
+    if (exclus.has(l.event_id)) continue
+    if (l.etape.startsWith('tirages_')) continue
     if (problemes[l.etape]) { problemes[l.etape].push(l); continue }
     if (l.etape === 'album') albumTotal++
     const cle = `${l.visiteur}|${l.event_id}`
@@ -175,5 +186,6 @@ export async function GET(request) {
       }),
     },
     orgas: entonnoir(orgas, ETAPES_ORGA, 'crea_ouverture'),
+    tirages: entonnoir(tirages, ETAPES_TIRAGES, 'album'),
   })
 }

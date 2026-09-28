@@ -54,9 +54,22 @@ export const ETAPES_ORGA = [
   { id: 'crea_termine', label: 'Événement créé', chaine: true },
 ]
 
+// Les tirages papier, depuis l'album révélé. Le départ est l'ouverture de
+// l'album ; la fenêtre d'invitation se compte à part (on peut commander sans
+// l'avoir vue, par le bouton du haut ou le mail). `tirages_selection` note par
+// où l'on est arrivé (detail : invitation | facade | barre | selection | mail).
+export const ETAPES_TIRAGES = [
+  { id: 'album', label: "Ouvre l'album après la révélation", chaine: true },
+  { id: 'tirages_invitation', label: 'Voit la fenêtre « Et en vrai, sur papier ? »', chaine: false },
+  { id: 'tirages_selection', label: 'Commence à choisir ses tirages', chaine: true },
+  { id: 'tirages_ecran', label: "Ouvre l'écran de commande", chaine: true },
+  { id: 'tirages_paiement', label: 'Part vers le paiement', chaine: true },
+  { id: 'tirages_paye', label: 'A payé', chaine: true },
+]
+
 export const SUPPORTS = ['site', 'app', 'clip']
 
-const TOUTES = [...ETAPES_INVITE, ...ETAPES_PROBLEME, ...ETAPES_ORGA].map((e) => e.id)
+const TOUTES = [...ETAPES_INVITE, ...ETAPES_PROBLEME, ...ETAPES_ORGA, ...ETAPES_TIRAGES].map((e) => e.id)
 
 export function etapeConnue(id) {
   return TOUTES.includes(id)
