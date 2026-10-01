@@ -7,6 +7,7 @@ import Pellicules from '../../components/Pellicules'
 import { SelecteurLangue } from '../../components/Langue'
 import { TIERS, TOP_TIER } from '../../lib/pricing'
 import { prix } from '../../lib/lp'
+import { FORMATS_TIRAGE } from '../../lib/tirages'
 import { t } from '../../lib/i18n'
 import { langueDeParams, alternates, lien } from '../../lib/langue-lien'
 
@@ -125,6 +126,45 @@ const FAQ = {
     { q: 'Ist das ein Abo?', a: 'Nein. Sie zahlen einmal für Ihr Event, je nach Anzahl der Gäste. Nichts verlängert sich.' },
   ],
 }
+
+// Cinq affiches tirées du générateur, mêmes prénoms partout : on compare les
+// modèles, pas les textes. Chaque langue a ses affiches (fr-1.webp, en-1.webp…).
+// Le bandeau tourne en boucle : la liste est posée deux fois à la suite, la
+// seconde cachée aux lecteurs d'écran.
+const AFFICHES = {
+  fr: [
+    'Affiche QR code au feuillage vert, prénoms en lettres calligraphiées',
+    'Affiche QR code rose poudré dans un double cadre',
+    'Affiche QR code bleu nuit et or, un cœur au centre du code',
+    'Affiche QR code en arche beige, typographie classique',
+    'Affiche QR code bordeaux, le code posé sur une carte inclinée',
+  ],
+  en: [
+    'QR code poster with green foliage and calligraphy names',
+    'Powder pink QR code poster in a double frame',
+    'Navy and gold QR code poster with a heart in the middle of the code',
+    'QR code poster with a beige arch and classic lettering',
+    'Burgundy QR code poster, the code set on a tilted card',
+  ],
+  de: [
+    'QR-Code-Poster mit grünen Zweigen und kalligrafischen Vornamen',
+    'Puderrosa QR-Code-Poster in einem doppelten Rahmen',
+    'QR-Code-Poster in Nachtblau und Gold mit einem Herz in der Mitte des Codes',
+    'QR-Code-Poster mit beigem Bogen und klassischer Schrift',
+    'Bordeauxrotes QR-Code-Poster, der Code auf einer schräg gelegten Karte',
+  ],
+}
+
+// Trois vraies photos d'un même mariage, prises au téléphone par les invités
+// (la cour au crépuscule, l'ouverture du bal, et le selfie posé devant).
+// Le prix d'appel des tirages suit la grille : le plus petit format.
+const TIRAGE_DES = Math.round(Math.min(...FORMATS_TIRAGE.map((f) => f.prix)) * 100)
+
+const TIRAGES = [
+  { img: '/accueil/tirages/tirage-1.webp', rot: -8 },
+  { img: '/accueil/tirages/tirage-2.webp', rot: 7 },
+  { img: '/accueil/tirages/tirage-3.webp', rot: -1.5 },
+]
 
 function PriceCard({ tier, lang }) {
   const isFree = tier.priceCents === 0
@@ -252,6 +292,33 @@ export default async function Home({ params }) {
                 <p>{s.sub}</p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* L'AFFICHE : l'étape 1 dit « scannez le QR », encore faut-il que le
+            QR soit sur les tables. On montre ici à quoi il peut ressembler.
+            Pas de lien vers le générateur : il fait sortir du parcours
+            d'achat, l'affiche se personnalise une fois l'événement créé. */}
+        <section className="section">
+          <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>{t({ fr: 'Avant la fête', en: 'Before the party', de: 'Vor der Feier' }, lang)}</div>
+          <h2 className="section-title">{t({ fr: 'Un QR code à votre image', en: 'A QR code that looks like you', de: 'Ein QR-Code ganz in Ihrem Stil' }, lang)}</h2>
+          <div className="section-sub">
+            {t({
+              fr: 'Vos prénoms, votre date, vos couleurs : dès votre événement créé, choisissez un modèle et votre affiche est prête à imprimer, à poser sur les tables ou à glisser dans un cadre.',
+              en: 'Your names, your date, your colours: as soon as your event is created, pick a design and your poster is ready to print, to set on the tables or slip into a frame.',
+              de: 'Ihre Vornamen, Ihr Datum, Ihre Farben: Sobald Ihr Event erstellt ist, wählen Sie ein Design, und Ihr Poster ist bereit zum Drucken, für die Tische oder für einen Bilderrahmen.',
+            }, lang)}
+          </div>
+          <div className="affiches-defile">
+            <div className="affiches-piste">
+              {[...AFFICHES[lang], ...AFFICHES[lang]].map((alt, i) => {
+                const n = AFFICHES[lang].length
+                return (
+                  <img key={i} src={`/accueil/affiches/${lang}-${(i % n) + 1}.webp`} width="480" height="679" loading="lazy"
+                    alt={i < n ? alt : ''} aria-hidden={i >= n || undefined} />
+                )
+              })}
+            </div>
           </div>
         </section>
 
@@ -400,6 +467,63 @@ export default async function Home({ params }) {
                   }, lang)}
                 </div></li>
               </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* SUR PAPIER : la suite logique de l'album révélé. Le prix d'appel est
+            dit franchement : c'est une option payante, en plus de la formule. */}
+        <section className="section">
+          <div className="split split-inverse">
+            <div className="split-text">
+              <div className="eyebrow-mute" style={{ marginBottom: 10 }}>{t({ fr: 'Sur papier', en: 'On paper', de: 'Auf Papier' }, lang)}</div>
+              <h2>{t({ fr: 'Vos meilleurs clichés, en vrais tirages*', en: 'Your best shots, as real prints*', de: 'Ihre besten Aufnahmen als echte Abzüge*' }, lang)}</h2>
+              <p>
+                {t({
+                  fr: "Une fois l'album révélé, chaque participant peut commander lui-même ses photos préférées, directement depuis l'album, sans passer par vous. Il les reçoit chez lui, imprimées comme au temps des pellicules.",
+                  en: 'Once the album is revealed, every guest can order their own favourite photos straight from the album, without going through you. They get them delivered at home, printed just like in the days of film.',
+                  de: 'Sobald das Album enthüllt ist, kann jeder Gast seine Lieblingsfotos selbst bestellen, direkt im Album, ohne über Sie zu gehen. Er bekommt sie nach Hause geschickt, gedruckt wie zu Zeiten des Films.',
+                }, lang)}
+              </p>
+              <ul className="split-list">
+                <li><span className="ic">🎞️</span><div>
+                  {t({
+                    fr: <><b>Avec votre pellicule</b> : le rendu choisi et la date incrustée se retrouvent sur le papier.</>,
+                    en: <><b>With your film look</b>: the chosen style and the date stamp carry over onto the paper.</>,
+                    de: <><b>Mit Ihrem Filmlook</b>: der gewählte Stil und der Datumsstempel landen mit auf dem Papier.</>,
+                  }, lang)}
+                </div></li>
+                <li><span className="ic">🖼️</span><div>
+                  {t({
+                    fr: <><b>Deux formats</b> : 10×15 ou 15×20, en finition brillante ou mate.</>,
+                    en: <><b>Two sizes</b>: 10×15 or 15×20 cm, with a glossy or matte finish.</>,
+                    de: <><b>Zwei Formate</b>: 10×15 oder 15×20 cm, glänzend oder matt.</>,
+                  }, lang)}
+                </div></li>
+                <li><span className="ic">📮</span><div>
+                  {t({
+                    fr: <><b>Livré dans la boîte aux lettres</b> : imprimé en France, envoyé partout dans l'Union européenne.</>,
+                    en: <><b>Delivered to your letterbox</b>: printed in France, sent anywhere in the European Union.</>,
+                    de: <><b>Direkt in den Briefkasten</b>: in Frankreich gedruckt, in die ganze Europäische Union verschickt.</>,
+                  }, lang)}
+                </div></li>
+              </ul>
+              {/* L'astérisque du titre renvoie ici : les tirages sont payés à
+                  part, en plus de la formule. */}
+              <p className="mono small muted" style={{ marginTop: 18 }}>
+                {t({
+                  fr: `* En option : à partir de ${prix(TIRAGE_DES, lang)} la photo, hors frais de livraison.`,
+                  en: `* Optional extra: from ${prix(TIRAGE_DES, lang)} per photo, plus delivery.`,
+                  de: `* Optional: ab ${prix(TIRAGE_DES, lang)} pro Foto, zuzüglich Versand.`,
+                }, lang)}
+              </p>
+            </div>
+            <div className="tirages-tas" aria-hidden="true">
+              {TIRAGES.map((tir, i) => (
+                <div key={i} className="tirage" style={{ '--rot': `${tir.rot}deg` }}>
+                  <img src={tir.img} width="450" height="600" loading="lazy" alt="" />
+                </div>
+              ))}
             </div>
           </div>
         </section>

@@ -4364,3 +4364,33 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 
 .tir-cgv { margin-bottom: 8px; font-size: 11.5px; line-height: 1.4; color: var(--text3); text-align: center; }
 .tir-cgv a { color: inherit; }
+
+/* Accueil : bandeau d'affiches QR qui défile en continu. La piste contient la
+   liste deux fois ; reculer de moitié ramène pile au point de départ (d'où
+   la marge à droite de chaque affiche plutôt qu'un gap, qui fausserait la moitié). */
+.affiches-defile { overflow: hidden; margin: 0 -16px;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+          mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent); }
+.affiches-piste { display: flex; width: max-content; padding: 14px 0 24px;
+  animation: affiches-defile 25s linear infinite; }
+.affiches-defile:hover .affiches-piste { animation-play-state: paused; }
+.affiches-piste img { display: block; width: 210px; height: auto; margin-right: 22px; border-radius: 6px;
+  box-shadow: 0 14px 32px rgba(34,26,18,.16), 0 1px 3px rgba(34,26,18,.12); }
+@media (max-width: 600px) { .affiches-piste img { width: 160px; margin-right: 16px; } }
+@keyframes affiches-defile { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .affiches-piste { animation: none; }
+  .affiches-defile { overflow-x: auto; }
+}
+
+/* Accueil : trois tirages posés en éventail, bordure blanche comme ceux
+   livrés. Tout tient dans la boîte, rotations comprises : un tirage qui
+   dépassait venait couper le filet de la section suivante. */
+.tirages-tas { position: relative; width: 100%; max-width: 330px; margin: 0 auto; aspect-ratio: 1 / 1; }
+.tirage { position: absolute; width: 48%; padding: 4% 4% 4.5%; background: #fff;
+  border-radius: 3px; transform: rotate(var(--rot));
+  box-shadow: 0 14px 30px rgba(34,26,18,.20), 0 1px 3px rgba(34,26,18,.14); }
+.tirage img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
+.tirage:nth-child(1) { left: 3%; top: 10%; }
+.tirage:nth-child(2) { right: 3%; top: 6%; }
+.tirage:nth-child(3) { left: 26%; top: 18%; }
