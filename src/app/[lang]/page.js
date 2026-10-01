@@ -480,9 +480,9 @@ export default async function Home({ params }) {
               <h2>{t({ fr: 'Vos meilleurs clichés, en vrais tirages*', en: 'Your best shots, as real prints*', de: 'Ihre besten Aufnahmen als echte Abzüge*' }, lang)}</h2>
               <p>
                 {t({
-                  fr: "Une fois l'album révélé, chaque participant peut commander lui-même ses photos préférées, directement depuis l'album, sans passer par vous. Il les reçoit chez lui, imprimées comme au temps des pellicules.",
-                  en: 'Once the album is revealed, every guest can order their own favourite photos straight from the album, without going through you. They get them delivered at home, printed just like in the days of film.',
-                  de: 'Sobald das Album enthüllt ist, kann jeder Gast seine Lieblingsfotos selbst bestellen, direkt im Album, ohne über Sie zu gehen. Er bekommt sie nach Hause geschickt, gedruckt wie zu Zeiten des Films.',
+                  fr: "Une fois l'album révélé, chaque participant peut commander lui-même ses photos préférées (frais supplémentaires à prévoir), directement depuis l'album, sans passer par vous. Il les reçoit chez lui, imprimées comme au temps des pellicules.",
+                  en: 'Once the album is revealed, every guest can order their own favourite photos (at an extra cost) straight from the album, without going through you. They get them delivered at home, printed just like in the days of film.',
+                  de: 'Sobald das Album enthüllt ist, kann jeder Gast seine Lieblingsfotos selbst bestellen (gegen Aufpreis), direkt im Album, ohne über Sie zu gehen. Er bekommt sie nach Hause geschickt, gedruckt wie zu Zeiten des Films.',
                 }, lang)}
               </p>
               <ul className="split-list">
