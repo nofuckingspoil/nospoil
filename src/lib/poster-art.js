@@ -47,7 +47,6 @@ export const POSTER_DEFAULTS = {
   pied: 'Aucune application à installer',
   titreFont: 'didone',
   texteFont: 'sans',
-  plaque: false,
 }
 
 // ---------- Textes traduits ----------
@@ -220,7 +219,32 @@ export function fondDuCode(o) {
 }
 
 
+// La pastille claire n'est plus une case à cocher : on la pose quand le code,
+// tel quel sur le papier, risquerait de ne pas être lu (trop peu de contraste,
+// ou pixels clairs sur fond foncé, que les vieux téléphones lisent mal).
+// Sur la pastille blanche d'une affiche foncée, l'encre claire des textes
+// disparaîtrait : les pixels prennent alors la couleur du papier, ce qui garde
+// l'affiche dans ses teintes. Les textes, eux, gardent leur encre.
+const lisible = (fg, eye, fond) => contrast(fg, fond) >= 4.5 && contrast(eye, fond) >= 4.5
+  && luminance(fg) <= luminance(fond)
+
+export function reglageCode(o) {
+  const sans = fondDuCode({ ...o, plaque: false })
+  if (lisible(o.fg, o.eye, sans)) return { plaque: false, fg: o.fg, eye: o.eye }
+
+  const fond = fondDuCode({ ...o, plaque: true })
+  const sombre = (c) => contrast(c, fond) >= 4.5 && luminance(c) <= luminance(fond)
+  const fg = sombre(o.fg) ? o.fg : (sombre(o.bg) ? o.bg : '#14161F')
+  const eye = sombre(o.eye) ? o.eye : fg
+  const score = (a, b, f) => Math.min(contrast(a, f), contrast(b, f))
+  // On ne garde la pastille que si elle améliore vraiment les choses.
+  if (score(fg, eye, fond) > score(o.fg, o.eye, sans)) return { plaque: true, fg, eye }
+  return { plaque: false, fg: o.fg, eye: o.eye }
+}
+
 export function buildPoster(o) {
+  const code = reglageCode(o)
+  o = { ...o, plaque: code.plaque }
   const fmt = FORMATS.find((f) => f.key === o.format) || FORMATS[0]
   const modele = o.modele
 
@@ -241,7 +265,7 @@ export function buildPoster(o) {
   const fTexte = font(o.texteFont)
 
   // Le code lui-même, dessiné à part puis posé comme un bloc.
-  const qr = buildPlan(o.target, { ...o, frame: 'none', bg: plaque, transparent: false })
+  const qr = buildPlan(o.target, { ...o, fg: code.fg, eye: code.eye, frame: 'none', bg: plaque, transparent: false })
 
   // --- Fond et décor ---
   shapes.push({ t: 'rect', x: 0, y: 0, w: W, h: H, fill: papier })
@@ -446,24 +470,18 @@ export function buildSheet(poster, fmt) {
 export function diagnosePoster(o, langue) {
   const fmt = FORMATS.find((f) => f.key === o.format) || FORMATS[0]
   if (fmt.bare) return null
-  const sombre = luminance(o.bg) < 0.35
-  const fond = fondDuCode(o)
-  const c = contrast(o.fg, fond)
-  const ce = contrast(o.eye, fond)
+  const code = reglageCode(o)
+  const fond = fondDuCode({ ...o, plaque: code.plaque })
+  const c = contrast(code.fg, fond)
+  const ce = contrast(code.eye, fond)
   if (c < 3 || ce < 3) {
     return {
       level: 'bad',
-      text: sombre && !o.plaque
-        ? t({
-          fr: "Le code se fond dans l'affiche. Activez la pastille claire derrière le QR, ou foncez la couleur des pixels.",
-          en: 'The code blends into the poster. Turn on the light patch behind the QR code, or make the pixels darker.',
-          de: 'Der Code verschwindet im Poster. Aktivieren Sie das helle Feld hinter dem QR-Code oder dunkeln Sie die Pixel ab.',
-        }, langue)
-        : t({
-          fr: "Ce QR ne sera pas lu : la couleur des pixels est trop proche du fond de l'affiche.",
-          en: 'This QR code won’t scan: the colour of the pixels is too close to the poster background.',
-          de: 'Dieser QR-Code wird nicht gelesen: Die Farbe der Pixel ist dem Hintergrund des Posters zu ähnlich.',
-        }, langue),
+      text: t({
+        fr: "Ce QR ne sera pas lu : la couleur des pixels est trop proche du fond de l'affiche.",
+        en: 'This QR code won’t scan: the colour of the pixels is too close to the poster background.',
+        de: 'Dieser QR-Code wird nicht gelesen: Die Farbe der Pixel ist dem Hintergrund des Posters zu ähnlich.',
+      }, langue),
     }
   }
   if (c < 5 || ce < 4.5) {
@@ -473,7 +491,7 @@ export function diagnosePoster(o, langue) {
       de: 'Knapper Kontrast zwischen Code und Poster: Auf dem Bildschirm klappt es, gedruckt kann es scheitern. Testen Sie den Scan, bevor Sie bestellen.',
     }, langue) }
   }
-  if (luminance(o.fg) > luminance(fond)) {
+  if (luminance(code.fg) > luminance(fond)) {
     return { level: 'warn', text: t({
       fr: 'QR clair sur fond foncé : les téléphones récents y arrivent, les plus anciens non. Testez avant d’imprimer.',
       en: 'Light QR code on a dark background: recent phones can read it, older ones can’t. Test before printing.',
