@@ -65,7 +65,7 @@ function dateHeure(iso, locale = 'fr-FR') {
 
 export default function PrintKit({ params }) {
   const { id } = use(params)
-  const { t, lang, locale } = useLangue()
+  const { t, lang, locale, lien } = useLangue()
   const [ev, setEv] = useState(null)
   const [error, setError] = useState('')
   const [qr, setQr] = useState('')
@@ -168,6 +168,21 @@ export default function PrintKit({ params }) {
   const shots = ev.shotsPerGuest
   const reveal = dateHeure(ev.revealAt, locale)
 
+  // Le générateur arrive avec le nom et la date de l'événement à la place de
+  // l'exemple « Léa & Tom ». Le surtitre « Le mariage de » est vidé : rien ne
+  // dit que c'est un mariage, et le nom le précise souvent déjà.
+  let jour = ''
+  try {
+    jour = new Date(ev.startsAt).toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' })
+  } catch {}
+  const lienGenerateur = lien('/generateur-qr-code-mariage') + '?' + new URLSearchParams({
+    url: `${window.location.origin}/j/${id}`,
+    verrou: '1',
+    titre: (ev.name || '').slice(0, 40),
+    surtitre: '',
+    date: jour,
+  })
+
   // Bande de pellicule. En SVG et non en fond CSS : les navigateurs suppriment
   // les fonds à l'impression quand « graphiques d'arrière-plan » est décoché,
   // alors qu'un dessin SVG sort toujours.
@@ -263,6 +278,21 @@ export default function PrintKit({ params }) {
               <span className="nn">{t(f.per)}</span>
             </button>
           ))}
+          {/* Cinquième choix, qui mène ailleurs : le générateur public sait
+              habiller l'affiche (couleurs, polices, mises en page). Il reçoit
+              le lien de l'album verrouillé, seule chose qui ne doit pas bouger.
+              Nouvel onglet : le générateur n'a pas de retour vers ce kit, on
+              revient ici simplement en refermant l'onglet. */}
+          <a className="pk-format" href={lienGenerateur} target="_blank" rel="noopener"
+            style={{ textDecoration: 'none', paddingRight: 110 }}>
+            <span className="tt">{t({ fr: 'Affiche personnalisée', en: 'Custom poster', de: 'Eigenes Poster' })}</span>
+            <span className="ss">{t({ fr: 'Vos couleurs, vos polices, six mises en page', en: 'Your colours, your fonts, six layouts', de: 'Ihre Farben, Ihre Schriften, sechs Layouts' })}</span>
+            <span style={{
+              position: 'absolute', top: '50%', right: 14, transform: 'translateY(-50%)',
+              background: 'var(--accent)', color: '#fff', borderRadius: 999, padding: '8px 16px',
+              fontWeight: 700, fontSize: 14, whiteSpace: 'nowrap',
+            }}>{t({ fr: 'Créer →', en: 'Create →', de: 'Erstellen →' })}</span>
+          </a>
         </div>
 
         <button className="btn btn-accent" style={{ marginTop: 18 }} onClick={() => window.print()}>

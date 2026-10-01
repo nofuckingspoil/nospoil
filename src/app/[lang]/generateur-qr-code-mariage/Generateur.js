@@ -17,7 +17,7 @@ import {
   pickStyle, buildPlan, toSVG, drawOn, normalizeUrl, fileName,
 } from '../../../lib/qr-art'
 import {
-  formatsDe, modelesDe, posterDefaults, buildPoster, buildSheet, diagnosePoster,
+  formatsDe, modelesDe, posterDefaults, buildPoster, buildSheet, diagnosePoster, reglageCode,
 } from '../../../lib/poster-art'
 import { useLangue } from '../../../components/Langue'
 
@@ -85,6 +85,9 @@ export default function Generateur() {
   // Les mesures de texte demandent un vrai navigateur : on ne compose
   // l'affiche qu'une fois la page vivante.
   const [pret, setPret] = useState(false)
+  // Arrivée depuis le kit d'impression d'un événement : le lien de l'album
+  // est déjà le bon, on évite qu'une retouche maladroite le casse.
+  const [verrou, setVerrou] = useState(false)
   const canvasRef = useRef(null)
 
   const set = (patch) => setO((prev) => ({ ...prev, ...patch }))
@@ -92,8 +95,15 @@ export default function Generateur() {
   useEffect(() => {
     // Adresse pré-remplie par un lien (?url=…) : on arrive avec son album
     // déjà branché, depuis un mail ou un article.
-    const p = new URLSearchParams(window.location.search).get('url')
+    const q = new URLSearchParams(window.location.search)
+    const p = q.get('url')
     if (p) setO((prev) => ({ ...prev, url: p }))
+    if (p && q.get('verrou') === '1') setVerrou(true)
+    // Venant d'un événement : son nom et sa date remplacent l'exemple. Un
+    // paramètre présent mais vide efface le texte d'exemple correspondant.
+    const textes = {}
+    for (const k of ['titre', 'surtitre', 'date']) if (q.has(k)) textes[k] = q.get(k)
+    if (Object.keys(textes).length) setO((prev) => ({ ...prev, ...textes }))
     // Les polices doivent être chargées avant de mesurer les titres.
     const go = () => setPret(true)
     if (document.fonts?.ready) document.fonts.ready.then(go)
@@ -128,6 +138,7 @@ export default function Generateur() {
     [planche, unit, titrePlanche],
   )
   const alerte = useMemo(() => diagnosePoster(o, lang), [o, lang])
+  const pastille = useMemo(() => !fmt.bare && reglageCode(o).plaque, [o, fmt])
   const ok = Boolean(target) && Boolean(plan)
 
   async function download(ext) {
@@ -186,20 +197,30 @@ export default function Generateur() {
               en: 'link to your photo album, your wedding website…',
               de: 'Link zu Ihrem Fotoalbum, Ihrer Hochzeitswebsite…',
             })}
-            value={o.url} onChange={(e) => set({ url: e.target.value })}
+            value={o.url} onChange={(e) => { if (!verrou) set({ url: e.target.value }) }}
+            readOnly={verrou}
+            style={verrou ? { opacity: 0.7, cursor: 'not-allowed' } : undefined}
             aria-label={t({
               fr: 'Adresse vers laquelle mène le QR code',
               en: 'Address the QR code leads to',
               de: 'Adresse, zu der der QR-Code führt',
             })}
           />
-          <p className="qg-hint">
+          {verrou ? (
+            <p className="qg-hint">
+              {t({
+                fr: '🔒 C’est le lien de votre album : il est verrouillé pour que vos invités arrivent au bon endroit. Il ne vous reste qu’à habiller l’affiche.',
+                en: '🔒 This is your album link: it is locked so your guests land in the right place. All that’s left is to style the poster.',
+                de: '🔒 Das ist der Link zu Ihrem Album: Er ist gesperrt, damit Ihre Gäste am richtigen Ort landen. Sie müssen nur noch das Poster gestalten.',
+              })}
+            </p>
+          ) : <p className="qg-hint">
             {t({
               fr: 'Un album photo, votre site de mariage, une playlist, une cagnotte, un plan d’accès… Rien n’est enregistré : tout reste dans votre navigateur.',
               en: 'A photo album, your wedding website, a playlist, a gift fund, a map… Nothing is saved: everything stays in your browser.',
               de: 'Ein Fotoalbum, Ihre Hochzeitswebsite, eine Playlist, eine Geldsammlung, eine Anfahrtsskizze… Nichts wird gespeichert: Alles bleibt in Ihrem Browser.',
             })}
-          </p>
+          </p>}
         </section>
 
         <section className="qg-block">
@@ -284,17 +305,11 @@ export default function Generateur() {
             <ColorField label={fmt.bare ? t({ fr: 'Le fond', en: 'The background', de: 'Der Hintergrund' }) : t({ fr: 'Le papier', en: 'The paper', de: 'Das Papier' })} value={o.bg}
               onChange={(v) => set({ bg: v, style: '' })} />
           </div>
-          {fmt.bare ? (
+          {fmt.bare && (
             <label className="qg-switch">
               <input type="checkbox" checked={o.transparent}
                 onChange={(e) => set({ transparent: e.target.checked })} />
               <span>{t({ fr: 'Fond transparent', en: 'Transparent background', de: 'Transparenter Hintergrund' })} <em>{t({ fr: '(pour poser le code sur une photo)', en: '(to place the code on a photo)', de: '(um den Code auf ein Foto zu setzen)' })}</em></span>
-            </label>
-          ) : (
-            <label className="qg-switch">
-              <input type="checkbox" checked={o.plaque}
-                onChange={(e) => set({ plaque: e.target.checked })} />
-              <span>{t({ fr: 'Pastille claire derrière le code', en: 'Light patch behind the code', de: 'Helles Feld hinter dem Code' })} <em>{t({ fr: '(indispensable sur un fond foncé)', en: '(essential on a dark background)', de: '(unverzichtbar auf dunklem Hintergrund)' })}</em></span>
             </label>
           )}
         </section>
@@ -365,6 +380,16 @@ export default function Generateur() {
               : <p className="muted">{t({ fr: 'Composition…', en: 'Laying out…', de: 'Wird gestaltet…' })}</p>}
           </div>
 
+          {pastille && !alerte && (
+            <p className="qg-hint center">
+              {t({
+                fr: 'Nous avons ajouté un fond blanc derrière le QR code pour que son contraste soit suffisant.',
+                en: 'We added a white background behind the QR code so its contrast is high enough.',
+                de: 'Wir haben einen weißen Hintergrund hinter den QR-Code gesetzt, damit der Kontrast ausreicht.',
+              })}
+            </p>
+          )}
+
           {alerte && (
             <div className={`qg-alert ${alerte.level}`}>
               <strong>{alerte.level === 'bad' ? t({ fr: 'Illisible', en: 'Unreadable', de: 'Unlesbar' }) : t({ fr: 'Attention', en: 'Warning', de: 'Achtung' })}</strong>
@@ -416,7 +441,7 @@ export default function Generateur() {
                   })}
               </p>}
 
-          <div className="qg-cross">
+          {!verrou && <div className="qg-cross">
             <strong>{t({ fr: 'Pas encore d’album pour vos photos ?', en: 'No album for your photos yet?', de: 'Noch kein Album für Ihre Fotos?' })}</strong>
             <p>
               {t({
@@ -426,7 +451,7 @@ export default function Generateur() {
               })}
             </p>
             <Link href={lien('/create?tier=5')} className="btn btn-accent">{t({ fr: 'Créer mon album →', en: 'Create my album →', de: 'Mein Album erstellen →' })}</Link>
-          </div>
+          </div>}
         </div>
       </div>
 
