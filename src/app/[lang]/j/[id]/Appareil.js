@@ -116,6 +116,11 @@ export default function GuestCamera({ params }) {
   const [busy, setBusy] = useState(false)
   const [flashFx, setFlashFx] = useState(false)
   const [shutterFx, setShutterFx] = useState(false)
+  // « C'est dans la boîte ! » : une courte pause après chaque photo gardée.
+  // Sans elle, on ne savait pas si le déclic avait pris, et l'on refaisait la
+  // même photo deux ou trois fois (retour d'une mariée, octobre 2026).
+  const [dansLaBoite, setDansLaBoite] = useState(false)
+  const minuteurBoite = useRef(null)
   const [flashOn, setFlashOn] = useState(false)
   const [screenFlash, setScreenFlash] = useState(false) // flash écran (selfie) pendant la capture
   const [liveCam, setLiveCam] = useState(false)
@@ -808,9 +813,16 @@ export default function GuestCamera({ params }) {
    * la photo : un message d'erreur, et il fallait la reprendre. Dans une salle
    * de réception, ça arrive tout le temps.
    */
+  function montrerDansLaBoite() {
+    clearTimeout(minuteurBoite.current)
+    setDansLaBoite(true)
+    minuteurBoite.current = setTimeout(() => setDansLaBoite(false), 1400)
+  }
+
   async function capture(blob) {
     // Rien à faire pour le compteur : la molette compte déjà les photos en
     // file (voir `prises`). Le pousser ici les compterait deux fois.
+    montrerDansLaBoite()
     try {
       // Mini-version légère (~640px) pour l'affichage de l'album, économise la data
       let thumbBlob = null
@@ -828,6 +840,8 @@ export default function GuestCamera({ params }) {
         thumb: thumbBlob,
       })
     } catch {
+      clearTimeout(minuteurBoite.current)
+      setDansLaBoite(false)
       setEnPrise((n) => Math.max(0, n - 1))
       // La mémoire du navigateur a refusé la photo (mode privé, disque plein) :
       // on le dit, c'est le seul cas où elle est réellement perdue.
@@ -847,7 +861,7 @@ export default function GuestCamera({ params }) {
   }
 
   async function snap() {
-    if (busy || !videoRef.current) return
+    if (busy || dansLaBoite || !videoRef.current) return
     // Les photos en route comptent : sans elles, on pouvait déclencher une
     // pose de trop, que le serveur refusait ensuite.
     if (remaining <= 0) { setError(PLEINE()); return }
@@ -1371,6 +1385,11 @@ export default function GuestCamera({ params }) {
         <div className="vf-reticle"><div /></div>
         {shutterFx && <div className="cam-shutter-fx" />}
         {flashFx && <div className="cam-flash" />}
+        {dansLaBoite && (
+          <div className="cam-dans-la-boite" role="status" aria-live="polite">
+            <span>{t({ fr: 'C’est dans la boîte ! 📸', en: 'Got it! 📸', de: 'Im Kasten! 📸' })}</span>
+          </div>
+        )}
 
         {/* Le message part dans la feuille de style : téléphone couché, il se
             redresse pour rester lisible sans avoir à tourner l'appareil. */}
@@ -1528,11 +1547,11 @@ export default function GuestCamera({ params }) {
         </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           {liveCam ? (
-            <button className="shutter" onClick={snap} disabled={busy || full} aria-label={t({ fr: 'Déclencher', en: 'Take the shot', de: 'Auslösen' })}><span /></button>
+            <button className="shutter" onClick={snap} disabled={busy || full || dansLaBoite} aria-label={t({ fr: 'Déclencher', en: 'Take the shot', de: 'Auslösen' })}><span /></button>
           ) : (
             <>
               <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFilePicked} style={{ display: 'none' }} />
-              <button className="shutter" disabled={busy || full} onClick={ouvrirAppareilPhoto} aria-label={t({ fr: 'Prendre une photo', en: 'Take a photo', de: 'Foto aufnehmen' })}><span /></button>
+              <button className="shutter" disabled={busy || full || dansLaBoite} onClick={ouvrirAppareilPhoto} aria-label={t({ fr: 'Prendre une photo', en: 'Take a photo', de: 'Foto aufnehmen' })}><span /></button>
             </>
           )}
         </div>
@@ -1546,7 +1565,7 @@ export default function GuestCamera({ params }) {
       {importAutorise && (
         <>
           <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
-          <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full}>
+          <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full || dansLaBoite}>
             🖼️ {t({ fr: 'Importer une photo de ma galerie', en: 'Import a photo from my gallery', de: 'Foto aus meiner Galerie importieren' })}
           </button>
         </>

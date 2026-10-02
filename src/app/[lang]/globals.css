@@ -797,6 +797,10 @@ a.cam-pile:active { transform: scale(.94); }
 
 /* Effet d'obturateur (volet noir qui se ferme/ouvre) */
 .cam-shutter-fx { position: absolute; inset: 0; background: #0a0b0e; z-index: 79; pointer-events: none; transform-origin: center; animation: dc-shutter .22s ease forwards; }
+.cam-dans-la-boite { position: absolute; inset: 0; z-index: 81; display: flex; align-items: center; justify-content: center; pointer-events: none; background: rgba(10,8,6,.35); animation: dc-boite 1.4s ease forwards; }
+.cam-dans-la-boite span { background: rgba(10,8,6,.82); color: #fff; border: 1px solid rgba(255,255,255,.18); border-radius: 999px; padding: 12px 22px; font-family: var(--font-body); font-weight: 700; font-size: 17px; box-shadow: 0 10px 30px rgba(0,0,0,.35); animation: dc-boite-pop .32s cubic-bezier(.2,1.4,.4,1) both; }
+@keyframes dc-boite { 0% { opacity: 0 } 12% { opacity: 1 } 80% { opacity: 1 } 100% { opacity: 0 } }
+@keyframes dc-boite-pop { from { transform: scale(.82) } to { transform: scale(1) } }
 .roll-frame { border: none; cursor: pointer; }
 .roll-frame.pending { animation: dc-develop .9s ease both; }
 .cam-full-hint { font-family: var(--font-mono); font-size: 11px; color: var(--amber); text-align: center; margin-top: 12px; letter-spacing: .03em; }
