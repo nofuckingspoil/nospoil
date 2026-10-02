@@ -72,7 +72,7 @@ function Fiche({ a }) {
         <span className="avis-etiq">{a.role === 'organisateur' ? 'orga' : 'participant'}</span>
         {/* D'où vient la réponse : c'est ce qui permet de comparer ceux qui
             sont allés jusqu'à l'album et ceux qu'il a fallu relancer. */}
-        <span className="avis-etiq">{a.canal === 'mail' ? 'par mail' : 'dans l’album'}</span>
+        <span className="avis-etiq">{{ mail: 'par mail', app: 'dans l’app', extrait: 'dans l’extrait' }[a.canal] || 'dans l’album'}</span>
         {a.eventName && (
           a.eventId
             ? <Link href={`/admin/event/${a.eventId}`} style={{ color: 'var(--text3)' }}>{a.eventName}</Link>
@@ -151,7 +151,7 @@ function AvisInner() {
   const stats = useMemo(() => {
     const orga = avis.filter((a) => a.role === 'organisateur')
     const invites = avis.filter((a) => a.role === 'invite')
-    const parAlbum = invites.filter((a) => a.canal === 'album')
+    const parAlbum = invites.filter((a) => a.canal !== 'mail')
     const parMail = invites.filter((a) => a.canal === 'mail')
 
     const compter = (liste, extrait) => {
@@ -260,8 +260,8 @@ function AvisInner() {
         {avis.length === 0 ? (
           <div className="notice">
             Aucun avis pour l&apos;instant. Les questionnaires partent deux jours après
-            la révélation pour les organisateurs, trois jours pour les participants qui
-            ne sont jamais allés jusqu&apos;à l&apos;album.
+            la révélation pour les organisateurs, le lendemain pour les participants qui
+            n&apos;ont pas encore répondu dans l&apos;album ou l&apos;app.
           </div>
         ) : (
           <>
@@ -273,7 +273,7 @@ function AvisInner() {
               </div>
               <div className="avis-carte">
                 <div className="lbl">Note moyenne</div>
-                <div className="val">{nb(stats.note)}<span style={{ fontSize: 15, color: 'var(--text4)' }}>/4</span></div>
+                <div className="val">{nb(stats.note)}<span style={{ fontSize: 15, color: 'var(--text4)' }}>/5</span></div>
                 <div className="note">sur les quatre visages</div>
               </div>
               <div className="avis-carte">

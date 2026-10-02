@@ -3,15 +3,14 @@
 //
 //  Trois choses, dans cet ordre :
 //   1. J+2 après la révélation → questionnaire à l'organisateur ;
-//   2. J+3 → questionnaire aux participants qui ne sont JAMAIS allés jusqu'à
-//      l'album, et à eux seuls ;
+//   2. J+1 → questionnaire à tous les participants qui ont laissé leur
+//      adresse et n'ont pas encore répondu ;
 //   3. le récap de ce qui est arrivé depuis la veille.
 //
-//  Le point 2 est le cœur du dispositif. La question posée dans l'album ne
-//  voit, par construction, que les gens qui y sont arrivés : c'est-à-dire pas
-//  ceux qui ont buté sur le QR code, sur la caméra ou sur le lien perdu.
-//  Ceux-là sont exactement ceux qu'il faut entendre, et le seul moyen de les
-//  joindre est le mail. On marque leur réponse comme venue « par mail » : si
+//  La question posée dans l'album ne voit, par construction, que les gens qui
+//  y sont arrivés : pas ceux qui ont buté sur le QR code, sur la caméra ou sur
+//  le lien perdu. Le mail les rattrape, avec ceux qui ont fermé la fenêtre de
+//  l'album sans répondre. On marque leur réponse comme venue « par mail » : si
 //  leurs notes sont plus basses, la comparaison le dira noir sur blanc.
 // ============================================================
 import 'server-only'
@@ -86,15 +85,25 @@ export async function enqueteOrganisateurs(now = new Date()) {
   return envoyes
 }
 
-// ---------- 2. Les participants qui ne sont jamais venus jusqu'à l'album ----------
-// Un jour après le mail d'album, pour ne pas empiler deux messages le même
-// matin. Envoyé une seule fois, sans aucune relance.
+// ---------- 2. Les participants, le lendemain de la révélation ----------
+// Tous ceux qui ont laissé leur adresse et n'ont pas encore répondu, qu'ils
+// aient vu l'album ou non. Jusqu'au 02/10/2026 seuls les non-ouvreurs le
+// recevaient : la fenêtre de l'album devait suffire aux autres. Mais l'app et
+// l'extrait d'app n'avaient plus que la note d'Apple, dont on ne lit rien, et
+// les avis s'étaient taris (2 réponses pour 261 participants en septembre).
+// Le lendemain plutôt que trois jours après : c'est encore frais. Envoyé une
+// seule fois, sans aucune relance.
 export async function enqueteInvites(now = new Date()) {
-  const seuil = new Date(now.getTime() - 3 * JOUR).toISOString()
+  const seuil = new Date(now.getTime() - 1 * JOUR).toISOString()
+  // Une soirée vieille de plus de dix jours ne reçoit plus rien : un « qu'en
+  // avez-vous pensé ? » qui arrive des semaines après tombe à plat, et cela
+  // évite d'arroser d'un coup tout l'historique au déploiement.
+  const plancher = new Date(now.getTime() - 10 * JOUR).toISOString()
   const { ok, data } = await selectRows(
     'events',
     'select=id,name,reveal_at,reveal_paused,max_guests,langue' +
       `&reveal_at=lte.${seuil}` +
+      `&reveal_at=gte.${plancher}` +
       '&reveal_paused=is.false' +
       '&purged_at=is.null' +
       '&is_demo=is.false' +
@@ -113,8 +122,7 @@ export async function enqueteInvites(now = new Date()) {
       'guests',
       `event_id=eq.${ev.id}` +
         '&email=not.is.null' +
-        '&album_opened_at=is.null' +   // le cœur du filtre : ceux qui ne sont jamais venus
-        '&feedback_at=is.null' +       // et qui n'ont pas déjà répondu autrement
+        '&feedback_at=is.null' +       // ceux qui n'ont pas déjà répondu dans l'album
         '&survey_mailed_at=is.null' +
         '&survey_optout=is.false' +
         '&select=id,email,token,langue&order=created_at.asc'

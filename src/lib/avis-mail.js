@@ -78,7 +78,7 @@ export function surveyOrgaEmail({ eventName, link, langue }) {
   }
 }
 
-// ---------- Vers le participant qui n'a jamais ouvert l'album ----------
+// ---------- Vers le participant, le lendemain de la révélation ----------
 // Ceux-là sont invisibles pour la question posée dans l'album, et ce sont
 // probablement ceux qui ont rencontré le plus de difficultés : c'est
 // exactement pour eux que ce mail existe.
@@ -148,7 +148,7 @@ export async function alerterAdmin({ avis, eventName, guestName }) {
   const corps = `<table role="presentation" cellpadding="0" cellspacing="0" width="100%">
     ${ligne('Événement', eventName || '-')}
     ${ligne('Qui', qui)}
-    ${ligne('Arrivé par', avis.canal === 'mail' ? 'le mail d’enquête' : 'l’album')}
+    ${ligne('Arrivé par', { mail: 'le mail d’enquête', app: 'l’app iPhone', extrait: 'l’extrait d’app' }[avis.canal] || 'l’album (site)')}
     ${ligne('Note', noteLisible(avis.rating))}
     ${ligne('Recommandation', Number.isFinite(avis.nps) ? `${avis.nps}/10` : null)}
     ${ligne('Pourquoi', avis.nps_reason)}
@@ -208,7 +208,7 @@ export async function recapAdmin(avisDuJour) {
     body: `<table role="presentation" cellpadding="0" cellspacing="0" width="100%" style="background:#FCF8F0;border:1px solid rgba(34,26,18,.12);border-radius:14px;">
         <tr>
           ${stat(liste.length, 'avis')}
-          ${stat(moyenne ? `${moyenne}/4` : '-', 'note moyenne')}
+          ${stat(moyenne ? `${moyenne}/5` : '-', 'note moyenne')}
           ${stat(npsMoyen ? `${npsMoyen}/10` : '-', 'recommandation')}
           ${stat(problemes, problemes > 1 ? 'problèmes' : 'problème')}
         </tr>

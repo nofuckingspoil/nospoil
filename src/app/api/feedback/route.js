@@ -4,6 +4,8 @@ import { after } from 'next/server'
 //
 //  Trois portes d'entrée, une seule table :
 //   - l'encart de l'album           → { eventId, deviceToken }
+//     (depuis l'app ou l'extrait d'app, la même chose avec support: 'app' |
+//     'extrait', pour savoir d'où vient chaque avis)
 //   - le mail d'enquête participant      → { i: jeton de participant }
 //   - le mail d'enquête organisateur → { o: jeton organisateur }
 //
@@ -75,7 +77,8 @@ async function resoudre(body) {
   if (!ev) return null
   // Sans fiche de participant (album ouvert depuis un appareil qui n'a jamais joué),
   // l'avis compte quand même : c'est un regard sur l'album, il vaut d'être lu.
-  return { role: 'invite', canal: 'album', ev, guest: g }
+  const canal = ['app', 'extrait'].includes(body.support) ? body.support : 'album'
+  return { role: 'invite', canal, ev, guest: g }
 }
 
 async function evenement(id) {
