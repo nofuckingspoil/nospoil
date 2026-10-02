@@ -957,6 +957,12 @@ export default function Gallery({ params }) {
   const repereDixieme = useRef(null)
   useEffect(() => {
     if (!montrerAvis || assezVu || avisFerme) return
+    // Un petit album n'a pas de dixième photo : la question ne venait jamais.
+    // Là, on la pose après quelques secondes passées à regarder.
+    if ((data?.photos?.length || 0) < 10) {
+      const minuteur = setTimeout(() => setAssezVu(true), 8000)
+      return () => clearTimeout(minuteur)
+    }
     // On regarde à chaque défilement plutôt qu'avec un guetteur d'intersection :
     // celui-ci ne prévient qu'au moment où l'élément traverse l'écran, et
     // quelqu'un qui descend d'un grand coup de pouce le manque complètement.
