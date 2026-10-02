@@ -13,9 +13,12 @@ import { langueRequete } from '../../../../lib/langue-serveur'
 export const runtime = 'nodejs'
 
 export async function POST(request) {
-  const body = await request.json().catch(() => ({}))
+  // Deux appelants : la page /avis (JSON), et la messagerie elle-même, quand
+  // on touche « Se désabonner » (formulaire « List-Unsubscribe=One-Click »,
+  // jeton dans l'adresse).
+  const body = await request.clone().json().catch(() => ({}))
   const langue = langueValide(body.langue) || langueRequete(request)
-  const token = (body.t || '').toString().trim()
+  const token = (body.t || new URL(request.url).searchParams.get('t') || '').toString().trim()
   if (!token) return Response.json({ error: t({ fr: 'Lien incomplet.', en: 'Incomplete link.', de: 'Unvollständiger Link.' }, langue) }, { status: 400 })
 
   const { data } = await selectRows('guests', `token=eq.${encodeURIComponent(token)}&select=id&limit=1`)

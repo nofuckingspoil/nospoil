@@ -21,7 +21,7 @@ import 'server-only'
 import sharp from 'sharp'
 import { selectRows, signPhotos } from './supabase'
 import { sendMail, tiragesEmail, siteUrl } from './mail'
-import { lienAvisInvite } from './avis-mail'
+import { lienAvisInvite, lienDesinscription } from './avis-mail'
 import { PRIX_APPEL, prixAppel } from './tirages'
 import { langueDe } from './langue-serveur'
 
@@ -114,7 +114,10 @@ export async function envoyerRelanceTirages(ev) {
       langue,
       stopLink: g.token ? `${lienAvisInvite(g.token)}&stop=1` : null,
     })
-    const res = await sendMail({ to: g.email, subject: mail.subject, html: mail.html })
+    const res = await sendMail({
+      to: g.email, subject: mail.subject, html: mail.html,
+      desinscription: g.token ? lienDesinscription(g.token) : undefined,
+    })
     if (res?.ok) envoyes++
     else echecs++
   }

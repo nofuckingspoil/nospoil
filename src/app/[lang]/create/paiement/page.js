@@ -91,7 +91,7 @@ function PaiementInner() {
         sessionStorage.removeItem(COVERPOS_KEY)
         sessionStorage.removeItem(EMAIL_KEY)
 
-        router.replace(`/event/${data.id}`)
+        router.replace(`/event/${data.id}?cree=1`)
       } catch (err) { if (!done) setError(err.message) }
     })()
     return () => { done = true }

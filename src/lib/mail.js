@@ -40,8 +40,29 @@ export function siteUrl() {
   return brut
 }
 
+// La version texte d'un mail HTML, quand l'appelant n'en fournit pas. Un mail
+// sans version texte est plus suspect aux yeux des filtres anti-spam.
+function texteDepuisHtml(html) {
+  return String(html || '')
+    .replace(/<(style|head)[\s\S]*?<\/\1>/gi, '')
+    .replace(/<a [^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi, (_, url, txt) => `${txt.replace(/<[^>]+>/g, '').trim()} (${url})`)
+    .replace(/<br\s*\/?>/gi, '\n')
+    .replace(/<\/(p|div|tr|h[1-6]|li|table)>/gi, '\n')
+    .replace(/<[^>]+>/g, '')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
+    .replace(/^[ \t]+|[ \t]+$/gm, '').replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n')
+    .trim()
+}
+
 // Envoie un mail. Ne fait jamais planter l'appelant : renvoie { ok, error }.
-export async function sendMail({ to, subject, html, text }) {
+//
+// `desinscription` : l'adresse qui désinscrit en un clic (mails aux
+// participants qu'ils n'ont pas réclamés). Gmail et Yahoo l'exigent des
+// expéditeurs réguliers, et l'affichent en haut du mail : la personne qui ne
+// veut plus de nos messages se désinscrit au lieu de cliquer sur « Spam », ce
+// qui abîmerait la réputation de tout le domaine. Sans elle, une adresse de
+// contact fait office de désinscription.
+export async function sendMail({ to, subject, html, text, desinscription }) {
   const key = process.env.BREVO_API_KEY
   const from = process.env.BREVO_SENDER_EMAIL
   if (!key || !from) {
@@ -52,22 +73,37 @@ export async function sendMail({ to, subject, html, text }) {
     console.warn('mail: adresse de démonstration ignorée', to)
     return { ok: false, error: 'test-address' }
   }
+  const corps = {
+    sender: { email: from, name: BRAND.name },
+    to: [{ email: to }],
+    subject,
+    htmlContent: html,
+    // Version texte : elle sert aux clients qui n'affichent pas le HTML,
+    // et surtout aux téléphones, qui y lisent le code sans se battre avec
+    // la mise en page pour proposer « Saisir le code » au-dessus du clavier.
+    textContent: text || texteDepuisHtml(html),
+  }
+  const enTetes = desinscription
+    ? {
+        'List-Unsubscribe': `<${desinscription}>, <mailto:${CONTACT_EMAIL}?subject=Desinscription>`,
+        'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+      }
+    : { 'List-Unsubscribe': `<mailto:${CONTACT_EMAIL}?subject=Desinscription>` }
+  const poster = (body) => fetch(API, {
+    method: 'POST',
+    headers: { 'api-key': key, 'Content-Type': 'application/json', accept: 'application/json' },
+    body: JSON.stringify(body),
+    cache: 'no-store',
+  })
   try {
-    const res = await fetch(API, {
-      method: 'POST',
-      headers: { 'api-key': key, 'Content-Type': 'application/json', accept: 'application/json' },
-      body: JSON.stringify({
-        sender: { email: from, name: BRAND.name },
-        to: [{ email: to }],
-        subject,
-        htmlContent: html,
-        // Version texte : elle sert aux clients qui n'affichent pas le HTML,
-        // et surtout aux téléphones, qui y lisent le code sans se battre avec
-        // la mise en page pour proposer « Saisir le code » au-dessus du clavier.
-        ...(text ? { textContent: text } : {}),
-      }),
-      cache: 'no-store',
-    })
+    let res = await poster({ ...corps, headers: enTetes })
+    // Filet de sécurité : si Brevo refusait un jour les en-têtes de
+    // désinscription, le mail part quand même sans eux. Un code de
+    // vérification qui n'arrive pas bloque toute création d'événement.
+    if (res.status === 400) {
+      console.error('mail: en-têtes refusés par Brevo, renvoi sans', await res.text().catch(() => ''))
+      res = await poster(corps)
+    }
     if (res.status >= 300) {
       const detail = await res.text().catch(() => '')
       console.error('mail: échec Brevo', res.status, detail)

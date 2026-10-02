@@ -131,6 +131,17 @@ export default function EventManage({ params }) {
   const [adminFirst, setAdminFirst] = useState('')
   const [adminLast, setAdminLast] = useState('')
   const [adminEmail, setAdminEmail] = useState('')
+  // Arrivée juste après la création (?cree=1) : le mail d'accès vient de
+  // partir, et il tombe trop souvent dans les indésirables. On le dit tout de
+  // suite, tant que la personne est là pour aller le chercher.
+  const [vientDeCreer, setVientDeCreer] = useState(false)
+  useEffect(() => {
+    const u = new URL(window.location.href)
+    if (u.searchParams.get('cree') !== '1') return
+    setVientDeCreer(true)
+    u.searchParams.delete('cree')
+    window.history.replaceState(null, '', u.pathname + u.search + u.hash)
+  }, [])
   const [adminMsg, setAdminMsg] = useState('')
   const [addingAdmin, setAddingAdmin] = useState(false)
   const [editing, setEditing] = useState('') // 'name' | 'start' | 'fin' | 'reveal' | 'shots' | 'rappels' | ''
@@ -981,6 +992,23 @@ export default function EventManage({ params }) {
 
       {/* Avant et pendant la fête seulement : une fois finie, il n'y a plus de
           photos à prendre, l'organisateur vérifie et valide l'album. */}
+      {vientDeCreer && ev.ownerEmail && (
+        <div className="db-mail-parti" role="status">
+          <span className="db-mail-parti-ic" aria-hidden="true">📬</span>
+          <div>
+            <strong>{t({ fr: 'Votre accès organisateur est parti par mail', en: 'Your host access has been emailed to you', de: 'Ihr Veranstalterzugang wurde per E-Mail verschickt' })}</strong>
+            <p>
+              {t({
+                fr: <>Il vient de partir à <b>{ev.ownerEmail}</b>. Pas reçu d’ici quelques minutes ? Regardez dans vos <b>spams</b> (ou l’onglet « Promotions ») et marquez-le comme « Non spam » : les prochains mails arriveront au bon endroit.</>,
+                en: <>It has just been sent to <b>{ev.ownerEmail}</b>. Nothing within a few minutes? Check your <b>spam</b> folder (or the “Promotions” tab) and mark it as “Not spam”: the next emails will land in the right place.</>,
+                de: <>Sie wurde gerade an <b>{ev.ownerEmail}</b> geschickt. Nach ein paar Minuten nichts erhalten? Schauen Sie im <b>Spam</b>-Ordner (oder im Tab „Werbung“) nach und markieren Sie sie als „Kein Spam“: Dann landen die nächsten E-Mails am richtigen Ort.</>,
+              })}
+            </p>
+          </div>
+          <button type="button" className="db-mail-parti-x" onClick={() => setVientDeCreer(false)} aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}>×</button>
+        </div>
+      )}
+
       {phase !== APRES && <ProposerAppIPhone email={ev.ownerEmail} />}
 
       {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque

@@ -27,6 +27,12 @@ export function lienAvisOrga(ownerToken) {
   return `${siteUrl()}/avis?o=${encodeURIComponent(ownerToken)}`
 }
 
+// Désinscription en un clic, appelée directement par la messagerie (bouton
+// « Se désabonner » de Gmail) : voir /api/feedback/stop.
+export function lienDesinscription(token) {
+  return `${siteUrl()}/api/feedback/stop?t=${encodeURIComponent(token)}`
+}
+
 export function lienAvisInvite(token) {
   return `${siteUrl()}/avis?i=${encodeURIComponent(token)}`
 }

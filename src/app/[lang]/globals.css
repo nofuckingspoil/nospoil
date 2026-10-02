@@ -2964,6 +2964,11 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-contact-val { font-family: var(--font-mono); font-size: 12px; color: var(--text2);
   text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .db-contact-ok { font-style: normal; color: var(--ok); }
+.db-mail-parti { position: relative; display: flex; gap: 12px; align-items: flex-start; margin: 0 0 18px; padding: 14px 40px 14px 16px; border-radius: 14px; background: rgba(242,176,115,.14); border: 1px solid rgba(242,176,115,.45); }
+.db-mail-parti-ic { font-size: 22px; line-height: 1; }
+.db-mail-parti strong { display: block; font-size: 15px; margin-bottom: 4px; }
+.db-mail-parti p { margin: 0; font-size: 13.5px; line-height: 1.5; opacity: .85; overflow-wrap: anywhere; }
+.db-mail-parti-x { position: absolute; top: 8px; right: 10px; background: none; border: 0; font-size: 22px; line-height: 1; cursor: pointer; color: inherit; opacity: .6; }
 .db-contact-ko { font-style: normal; color: #b23b2e; }
 
 /* ============================================================

@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { Suspense, useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../../../components/Logo'
@@ -94,6 +94,16 @@ function CreateForm() {
   const [revealAt, setRevealAt] = useState(() => toInputValue(atDay(REVELATION_PROPOSEE.days, REVELATION_PROPOSEE.hour, depart)))
 
   const [loading, setLoading] = useState(false)
+
+  // Retour arrière depuis la page de paiement Stripe : le navigateur ressort
+  // la page de sa mémoire, telle qu'on l'avait quittée, bouton « en cours »
+  // compris. On rend la main, sinon on restait bloqué (pour ajouter un code
+  // promo, par exemple).
+  useEffect(() => {
+    const auRetour = (e) => { if (e.persisted) setLoading(false) }
+    window.addEventListener('pageshow', auRetour)
+    return () => window.removeEventListener('pageshow', auRetour)
+  }, [])
   const [error, setError] = useState('')
   const [code, setCode] = useState('')
 
@@ -246,7 +256,7 @@ function CreateForm() {
       saveAccount(email.trim().toLowerCase())
       // Publicité : événement gratuit créé.
       track('Lead', { content_name: `Formule ${tier.maxGuests} invités` }, { eventID: `lead_${data.id}` })
-      router.push(`/event/${data.id}`)
+      router.push(`/event/${data.id}?cree=1`)
     } catch (err) { setError(err.message); setLoading(false) }
   }
 

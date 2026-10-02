@@ -23,7 +23,7 @@ import { t } from './i18n'
 import { langueDe } from './langue-serveur'
 import {
   surveyOrgaEmail, surveyInviteEmail, recapAdmin,
-  lienAvisOrga, lienAvisInvite,
+  lienAvisOrga, lienAvisInvite, lienDesinscription,
 } from './avis-mail'
 
 const JOUR = 24 * 60 * 60 * 1000
@@ -152,7 +152,7 @@ export async function enqueteInvites(now = new Date()) {
         link: lienAvisInvite(token),
         stopLink: `${lienAvisInvite(token)}&stop=1`,
       })
-      const envoi = await sendMail({ to: g.email, subject: mail.subject, html: mail.html })
+      const envoi = await sendMail({ to: g.email, subject: mail.subject, html: mail.html, desinscription: lienDesinscription(token) })
       await updateRow('guests', `id=eq.${g.id}`, { survey_mailed_at: now.toISOString() })
       if (envoi?.ok) envoyes++
     }

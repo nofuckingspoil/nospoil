@@ -185,6 +185,16 @@ function CreateForm() {
   const glisseRef = useRef(null)
 
   const [loading, setLoading] = useState(false)
+
+  // Retour arrière depuis la page de paiement Stripe : le navigateur ressort
+  // la page de sa mémoire, telle qu'on l'avait quittée, bouton « en cours »
+  // compris. On rend la main, sinon on restait bloqué (pour ajouter un code
+  // promo, par exemple).
+  useEffect(() => {
+    const auRetour = (e) => { if (e.persisted) setLoading(false) }
+    window.addEventListener('pageshow', auRetour)
+    return () => window.removeEventListener('pageshow', auRetour)
+  }, [])
   const [error, setError] = useState('')
   const [code, setCode] = useState('')
 
@@ -464,7 +474,7 @@ function CreateForm() {
         } catch {}
       }
 
-      router.push(`/event/${data.id}`)
+      router.push(`/event/${data.id}?cree=1`)
     } catch (err) { setError(err.message); setLoading(false) }
   }
 
