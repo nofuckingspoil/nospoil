@@ -146,7 +146,8 @@ export async function GET(request, { params }) {
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
     payload.publishedAt = ev.published_at || null // album validé par l'organisateur
     payload.revealPaused = !!ev.reveal_paused // frein d'urgence
-    payload.quotaLocked = quotaLocked(dates) // le nb de photos/participant est-il figé ?
+    // Le nb de photos/participant est-il figé ? Pas tant que personne n'a photographié.
+    payload.quotaLocked = quotaLocked(dates) && photoCount > 0
 
     // Formule souscrite et dépassement éventuel. Si la formule est trop petite,
     // on indique déjà celle qu'il faut viser et ce qu'il reste à régler : le
@@ -206,6 +207,12 @@ export async function GET(request, { params }) {
   }
 
   return Response.json(payload)
+}
+
+// Personne n'a encore pris de photo dans cette soirée.
+async function aucunePhoto(eventId) {
+  const { ok, data } = await selectRows('photos', `event_id=eq.${eventId}&select=id&limit=1`)
+  return ok && Array.isArray(data) && data.length === 0
 }
 
 // Modification de réglages (réservée à l'organisateur/admin) : date de révélation, code galerie
@@ -315,9 +322,12 @@ export async function PATCH(request, { params }) {
   }
 
   // Photos par participant : modifiable tant que la soirée n'a pas commencé.
-  // Après, tout le monde n'aurait pas joué au même jeu.
+  // Après, tout le monde n'aurait pas joué au même jeu. Sauf si personne n'a
+  // encore photographié : une soirée créée « maintenant » doit pouvoir être
+  // réglée juste après le paiement, et la règle ne lèse alors personne.
+  const figee = async () => quotaLocked({ startsAt: patch.starts_at || ev.starts_at }) && !(await aucunePhoto(id))
   if (body.shotsPerGuest !== undefined) {
-    if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
+    if (await figee()) {
       return Response.json({ error: t({ fr: 'La soirée a commencé : le nombre de photos est figé.', en: 'The party has started: the number of photos is locked.', de: 'Die Feier hat begonnen: Die Anzahl der Fotos steht fest.' }, langue) }, { status: 409 })
     }
     // Mêmes bornes que le formulaire de création (src/lib/pricing.js) et que
@@ -332,7 +342,7 @@ export async function PATCH(request, { params }) {
   // Recharge unique : 0 pour la refuser, jusqu'à 5 photos sinon. Modifiable
   // tant que la soirée n'a pas commencé, comme le nombre de prises.
   if (body.bonusShots !== undefined) {
-    if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
+    if (await figee()) {
       return Response.json({ error: t({ fr: 'La soirée a commencé : la recharge est figée.', en: 'The party has started: the top-up is locked.', de: 'Die Feier hat begonnen: Das Nachladen steht fest.' }, langue) }, { status: 409 })
     }
     const n = parseInt(body.bonusShots, 10)

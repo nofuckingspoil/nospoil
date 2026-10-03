@@ -15,7 +15,7 @@ import { noterEtape } from '../../../lib/etapes'
 import TierPicker from '../../../components/TierPicker'
 import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
-import { useLangue } from '../../../components/Langue'
+import { useLangue, SelecteurLangue } from '../../../components/Langue'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -137,7 +137,7 @@ const ETAPES = [
 const PARCOURS = {
   long: ETAPES,
   court: ['nom', 'debut', 'fin', 'formule', 'final'],
-  apres: ['bravo', 'revelation', 'cliches', 'revoir', 'couverture'],
+  apres: ['bravo', 'revelation', 'cliches', 'bonus', 'revoir', 'couverture'],
 }
 
 // ---------- Assistant ----------
@@ -172,7 +172,9 @@ export function CreateForm({ parcours = 'long' }) {
   // Une soirée déjà commencée a son nombre de clichés figé (règle des CGV) :
   // l'écran disparaît plutôt que de refuser à chaque essai.
   const [dejaCommence, setDejaCommence] = useState(false)
-  const etapes = (PARCOURS[parcours] || ETAPES).filter((e) => !(apres && dejaCommence && e === 'cliches'))
+  const etapes = (PARCOURS[parcours] || ETAPES).filter((e) => !(apres && dejaCommence && (e === 'cliches' || e === 'bonus')))
+  // La recharge : des photos en plus, offertes une fois la pellicule finie.
+  const [bonus, setBonus] = useState(0)
   const TOTAL = etapes.length
 
   const [name, setName] = useState('')
@@ -257,10 +259,10 @@ export function CreateForm({ parcours = 'long' }) {
       .then((d) => {
         if (d.error) { setError(d.error); return }
         setName(d.name || '')
-        if (d.startsAt) {
-          setStartsAt(toInputValue(new Date(d.startsAt)))
-          setDejaCommence(new Date(d.startsAt).getTime() <= Date.now())
-        }
+        if (d.startsAt) setStartsAt(toInputValue(new Date(d.startsAt)))
+        // Figé seulement si la soirée a commencé ET qu'une photo a été prise.
+        setDejaCommence(d.quotaLocked === true)
+        setBonus(d.bonusShots ?? 0)
         if (d.endsAt) setEndsAt(toInputValue(new Date(d.endsAt)))
         if (d.revealAt) {
           const lue = toInputValue(new Date(d.revealAt))
@@ -295,6 +297,7 @@ export function CreateForm({ parcours = 'long' }) {
     }).then(async (r) => { if (!r.ok) throw new Error((await r.json().catch(() => ({}))).error || t({ fr: 'Erreur.', en: 'Error.', de: 'Fehler.' })) })
     if (estEcran('revelation')) return patch({ revealAt: new Date(revealAt).toISOString() })
     if (estEcran('cliches')) return patch({ shotsPerGuest: shots })
+    if (estEcran('bonus')) return patch({ bonusShots: bonus })
     if (estEcran('revoir')) return patch({ photoMode })
     if (estEcran('couverture') && coverFile) {
       const img = await fileToImage(coverFile)
@@ -587,7 +590,13 @@ export function CreateForm({ parcours = 'long' }) {
 
   return (
     <main className="screen screen-cream">
-      <Link href={lien('/')} style={{ alignSelf: 'flex-start', textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
+      <div className="wiz-haut">
+        <Link href={lien('/')} style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
+        {/* Changer de langue recharge la page : pendant la création, on ne le
+            propose qu'au premier écran pour ne rien faire perdre. Les réglages
+            d'après paiement, eux, sont relus depuis la soirée. */}
+        {(apres || step === 1) && <SelecteurLangue />}
+      </div>
 
       {/* Barre de progression */}
       <div className="wiz-head">
@@ -782,6 +791,39 @@ export function CreateForm({ parcours = 'long' }) {
       )}
 
       {/* Ce que chacun revoit de ses propres photos */}
+      {estEcran('bonus') && (
+        <form className="card wiz-card" onSubmit={nextStep}>
+          <h2 className="wiz-q">{t({ fr: 'Des photos bonus quand la pellicule est finie ?', en: 'Bonus photos once the film runs out?', de: 'Bonusfotos, wenn der Film voll ist?' })}</h2>
+          <p className="wiz-sub">{t({
+            fr: "Un participant qui a pris toutes ses photos pourra en demander quelques-unes de plus, une seule fois. C'est offert, mais ça rend chaque cliché un peu moins rare : à vous de voir.",
+            en: 'A guest who has used all their photos can ask for a few more, just once. It is free, but it makes each shot a little less rare: your call.',
+            de: 'Ein Gast, der alle Fotos aufgenommen hat, kann einmalig ein paar weitere anfordern. Das ist kostenlos, macht aber jede Aufnahme etwas weniger selten: Sie entscheiden.',
+          })}</p>
+          <div className="wiz-opts">
+            <button type="button" className={`wiz-opt ${bonus === 0 ? 'on' : ''}`} onClick={() => setBonus(0)}>
+              <span className="em">🎞️</span>
+              <span><span className="tt">{t({ fr: 'Pas de bonus', en: 'No bonus', de: 'Kein Bonus' })}</span><span className="ss">{t({ fr: 'La pellicule finie, c’est fini', en: 'When the film is done, it is done', de: 'Film voll, Schluss' })}</span></span>
+            </button>
+            <button type="button" className={`wiz-opt ${bonus > 0 ? 'on' : ''}`} onClick={() => setBonus((n) => (n > 0 ? n : 2))}>
+              <span className="em">🎁</span>
+              <span><span className="tt">{t({ fr: 'Offrir des photos bonus', en: 'Give bonus photos', de: 'Bonusfotos schenken' })}</span><span className="ss">{t({ fr: 'Une recharge par participant, gratuite', en: 'One free top-up per guest', de: 'Eine kostenlose Aufstockung pro Gast' })}</span></span>
+            </button>
+          </div>
+          {bonus > 0 && (
+            <div className="stepper" style={{ marginTop: 14 }}>
+              <button type="button" aria-label={t({ fr: 'Moins', en: 'Fewer', de: 'Weniger' })} onClick={() => setBonus((n) => Math.max(1, n - 1))}>−</button>
+              <span className="val">+{bonus}</span>
+              <button type="button" aria-label={t({ fr: 'Plus', en: 'More', de: 'Mehr' })} onClick={() => setBonus((n) => Math.min(5, n + 1))}>+</button>
+            </div>
+          )}
+          {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label={t({ fr: 'Retour', en: 'Back', de: 'Zurück' })}>←</button>
+            <button className="btn btn-accent" type="submit" disabled={loading}>{t({ fr: 'Continuer →', en: 'Continue →', de: 'Weiter →' })}</button>
+          </div>
+        </form>
+      )}
+
       {estEcran('revoir') && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">{t({ fr: 'Peuvent-ils revoir leurs propres photos pendant la fête ?', en: 'Can guests look back at their own photos during the party?', de: 'Dürfen die Gäste ihre eigenen Fotos während der Feier ansehen?' })}</h2>

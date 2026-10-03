@@ -582,7 +582,8 @@ export default function EventManage({ params }) {
   const libelleRappel = (m) => (autreJourQueLeDebut(ev.startsAt, m)
     ? `${heureDuRappel(ev.startsAt, m, lang)} (${jourDuRappel(ev.startsAt, m, true, lang)})`
     : heureDuRappel(ev.startsAt, m, lang))
-  const locked = quotaLocked(ev, now)
+  // Figé une fois la soirée commencée ET une première photo prise (même règle que le serveur).
+  const locked = quotaLocked(ev, now) && (ev.photoCount || 0) > 0
   const published = !!ev.publishedAt
   const paused = !!ev.revealPaused
   const shotsLeft = Math.max(0, (ev.guestCount || 0) * (ev.shotsPerGuest || 0) - (ev.photoCount || 0))

@@ -4437,3 +4437,4 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .wiz-bravo .wiz-nav { justify-content: center; }
 .wiz-bravo-ic { font-size: 54px; line-height: 1; margin: 6px 0 10px; }
 .wiz-bravo-nom { font-weight: 700; font-size: 17px; margin: 0 0 10px; }
+.wiz-haut { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
