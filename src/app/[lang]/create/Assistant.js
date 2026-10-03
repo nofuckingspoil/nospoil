@@ -256,7 +256,15 @@ export function CreateForm({ parcours = 'long' }) {
         setName(d.name || '')
         if (d.startsAt) setStartsAt(toInputValue(new Date(d.startsAt)))
         if (d.endsAt) setEndsAt(toInputValue(new Date(d.endsAt)))
-        if (d.revealAt) setRevealAt(toInputValue(new Date(d.revealAt)))
+        if (d.revealAt) {
+          const lue = toInputValue(new Date(d.revealAt))
+          setRevealAt(lue)
+          // La proposition qui correspond à la date enregistrée, sinon « autre date ».
+          const debut = d.startsAt ? toInputValue(new Date(d.startsAt)) : startsAt
+          const fin = d.endsAt ? toInputValue(new Date(d.endsAt)) : endsAt
+          const egale = REVEAL_PRESETS.find((p) => p.key !== 'custom' && toInputValue(apresLaFete(p.days, p.hour, debut, fin)) === lue)
+          setRevealKey(egale ? egale.key : 'custom')
+        }
         if (d.shotsPerGuest) { setShots(d.shotsPerGuest); setShotsCustom(!SHOT_PRESETS.some((p) => p.n === d.shotsPerGuest)) }
         if (d.photoMode) setPhotoMode(d.photoMode)
         if (d.maxGuests) setMaxGuests(d.maxGuests)
@@ -925,6 +933,13 @@ export function CreateForm({ parcours = 'long' }) {
 
           <div className="wiz-recap">
             <div className="wiz-recap-title">{t({ fr: 'Récapitulatif', en: 'Summary', de: 'Zusammenfassung' })}</div>
+            {parcours === 'court' && (
+              <p className="hint" style={{ margin: '4px 0 8px' }}>{t({
+                fr: 'Révélation, clichés, photos revues et couverture : nos propositions, que vous pourrez changer juste après.',
+                en: 'Reveal, shots, photos seen again and cover: our suggestions, which you can change right afterwards.',
+                de: 'Enthüllung, Aufnahmen, wieder sichtbare Fotos und Titelbild: unsere Vorschläge, die Sie gleich danach ändern können.',
+              })}</p>
+            )}
             <div className="wiz-recap-row">
               <span>{t({ fr: 'Événement', en: 'Event', de: 'Event' })}</span>
               <span>{name} {etapes.includes('nom') && <button type="button" className="linklike" onClick={() => allerA('nom')}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button>}</span>
