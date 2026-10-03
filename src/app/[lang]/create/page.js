@@ -16,6 +16,7 @@ import TierPicker from '../../../components/TierPicker'
 import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
 import { useLangue } from '../../../components/Langue'
+import { exempleNom } from '../../../lib/occasions'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -143,6 +144,9 @@ function CreateForm() {
   const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
   const [tierOpen, setTierOpen] = useState(false)
   const tier = tierByGuests(maxGuests)
+  // Venu d'une page d'occasion (/anniversaire-30-ans…) : l'exemple de nom
+  // parle de sa fête, pas d'un mariage.
+  const occasion = sp.get('occasion')
 
   // Un code promo change le montant réellement dû : c'est lui qui décide s'il
   // y a paiement, et ce qu'annonce le bouton final.
@@ -233,7 +237,7 @@ function CreateForm() {
   function pickTier(n) {
     setMaxGuests(n)
     setError('')
-    try { window.history.replaceState(null, '', `/create?tier=${n}`) } catch {}
+    try { window.history.replaceState(null, '', `/create?tier=${n}${occasion ? `&occasion=${encodeURIComponent(occasion)}` : ''}`) } catch {}
   }
 
   // --- Recadrage : on déplace la photo dans son cadre, en pourcentages.
@@ -546,7 +550,7 @@ function CreateForm() {
           </p>
           <div className="field">
             <label>{t({ fr: "Nom de l'événement", en: 'Event name', de: 'Name des Events' })}</label>
-            <input type="text" placeholder={t({ fr: 'Ex : Mariage de Marie & Paul', en: "E.g. Mary & Paul's wedding", de: 'Z. B. Hochzeit von Marie & Paul' })} value={name}
+            <input type="text" placeholder={exempleNom(occasion, lang) || t({ fr: 'Ex : Mariage de Marie & Paul', en: "E.g. Mary & Paul's wedding", de: 'Z. B. Hochzeit von Marie & Paul' })} value={name}
               onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
           </div>
 

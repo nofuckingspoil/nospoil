@@ -9,7 +9,7 @@
 
 import Link from 'next/link'
 import SiteNav from '../../../components/SiteNav'
-import ConsentReset from '../../../components/ConsentReset'
+import SitePied from '../../../components/SitePied'
 import { BRAND } from '../../../lib/brand'
 import { LOCALES } from '../../../lib/i18n'
 import { langueDeParams, alternates, lien, localeOG, SITE_URL } from '../../../lib/langue-lien'
@@ -132,7 +132,6 @@ const TEXTES = {
     CTA_H: 'Et derrière l’affiche, vos photos ?',
     CTA_P: 'Chaque invité devient photographe, avec un nombre de clichés compté. Gratuit jusqu’à 5 invités, sans carte bancaire.',
     CTA_BTN: 'Créer mon album',
-    PIED: { blog: 'Blog', aide: 'Aide', mentions: 'Mentions légales', confid: 'Confidentialité', copy: '© 2026 · Hébergé en UE · RGPD' },
   },
 
   en: {
@@ -250,7 +249,6 @@ const TEXTES = {
     CTA_H: 'And behind the poster, your photos?',
     CTA_P: 'Every guest becomes a photographer, with a limited number of shots. Free for up to 5 guests, no bank card required.',
     CTA_BTN: 'Create my album',
-    PIED: { blog: 'Blog', aide: 'Help', mentions: 'Legal notice', confid: 'Privacy', copy: '© 2026 · Hosted in the EU · GDPR' },
   },
 
   de: {
@@ -370,7 +368,6 @@ const TEXTES = {
     CTA_H: 'Und hinter dem Poster: Ihre Fotos?',
     CTA_P: 'Jeder Gast wird zum Fotografen, mit einer begrenzten Anzahl an Aufnahmen. Kostenlos bis 5 Gäste, ohne Kreditkarte.',
     CTA_BTN: 'Mein Album erstellen',
-    PIED: { blog: 'Blog', aide: 'Hilfe', mentions: 'Impressum', confid: 'Datenschutz', copy: '© 2026 · Gehostet in der EU · DSGVO' },
   },
 }
 
@@ -494,19 +491,7 @@ export default async function GenerateurPage({ params }) {
         </div>
       </main>
 
-      <footer className="vfooter">
-        <div className="vfooter-inner">
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff', fontSize: 15 }}>{BRAND.name}</span>
-          <nav className="vfooter-links">
-            <Link href={lien('/journal', lang)}>{T.PIED.blog}</Link>
-            <Link href={lien('/aide', lang)}>{T.PIED.aide}</Link>
-            <Link href={lien('/mentions-legales', lang)}>{T.PIED.mentions}</Link>
-            <Link href={lien('/politique-de-confidentialite', lang)}>{T.PIED.confid}</Link>
-            <ConsentReset />
-          </nav>
-          <span className="mono">{T.PIED.copy}</span>
-        </div>
-      </footer>
+      <SitePied lang={lang} />
     </div>
   )
 }

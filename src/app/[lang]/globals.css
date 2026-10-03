@@ -1945,6 +1945,44 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .vfooter-links a { color: rgba(255,255,255,.68); text-decoration: none; font-size: 12.5px; }
 .vfooter-links a:hover { color: #fff; text-decoration: underline; }
 
+/* Pages par occasion (/anniversaire, /evjf-evg…) : les idées et les
+   conseils se lisent comme un article, dans une colonne étroite. */
+.occ-idees { list-style: none; counter-reset: idee; max-width: 720px; margin: 0 auto; padding: 0; display: grid; gap: 12px; }
+.occ-idees li { counter-increment: idee; position: relative; background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; padding: 18px 20px 18px 62px; }
+.occ-idees li::before { content: counter(idee, decimal-leading-zero); position: absolute; left: 20px; top: 18px; font-family: var(--f-mono, monospace); font-size: 13px; font-weight: 700; color: var(--accent); }
+.occ-idees h3 { font-size: 16.5px; margin-bottom: 6px; }
+.occ-idees p { font-size: 14.5px; color: var(--text2); line-height: 1.55; }
+.occ-texte p { max-width: 720px; margin: 0 auto 14px; font-size: 15.5px; color: var(--text2); line-height: 1.65; }
+.occ-articles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.occ-article { display: block; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; overflow: hidden; }
+.occ-article-media { height: 120px; }
+.occ-article-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.occ-article-body { padding: 14px 16px 16px; }
+.occ-article-body h3 { font-size: 15.5px; margin-top: 4px; line-height: 1.35; }
+.occ-article:hover h3 { text-decoration: underline; }
+.occ-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.occ-tuile { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 14px; text-decoration: none; color: inherit; font-weight: 600; font-size: 14.5px; }
+.occ-tuile:hover { border-color: var(--accent); }
+.occ-tuile-ic { font-size: 20px; }
+@media (max-width: 520px) {
+  .occ-idees li { padding: 16px 16px 16px 48px; }
+  .occ-idees li::before { left: 14px; top: 17px; }
+}
+
+/* Pied de page riche (SitePied) : trois colonnes de liens au-dessus de la
+   ligne légale. Sur téléphone, les colonnes s'empilent. */
+.vfooter-riche { padding-top: 36px; }
+.vfooter-cols { max-width: 1040px; margin: 0 auto 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 32px; }
+.vfooter-col-h { font-family: var(--f-mono, monospace); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+.vfooter-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.vfooter-col a { color: rgba(255,255,255,.78); text-decoration: none; font-size: 13.5px; }
+.vfooter-col a:hover { color: #fff; text-decoration: underline; }
+.vfooter-riche .vfooter-inner { border-top: 1px solid rgba(255,255,255,.1); padding-top: 18px; }
+@media (max-width: 720px) {
+  .vfooter-cols { grid-template-columns: 1fr 1fr; }
+  .vfooter-cols .vfooter-col:last-child { grid-column: 1 / -1; }
+}
+
 .qr-print-link {
   display: block; text-align: center; margin-top: 14px; padding-top: 14px;
   border-top: 1px solid rgba(255,255,255,.12);
@@ -4406,3 +4444,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .tirage:nth-child(1) { left: 3%; top: 10%; }
 .tirage:nth-child(2) { right: 3%; top: 6%; }
 .tirage:nth-child(3) { left: 26%; top: 18%; }
+
+/* Accueil : la ligne des occasions, dont chaque mot mène à sa page. */
+.hero-occasions a { color: inherit; text-decoration: underline; text-decoration-color: rgba(0,0,0,.25); text-underline-offset: 3px; }
+.hero-occasions a:hover { color: var(--accent); text-decoration-color: currentColor; }

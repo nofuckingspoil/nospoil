@@ -1,10 +1,9 @@
 import Link from 'next/link'
 import { BRAND, marque } from '../../lib/brand'
 import SiteNav from '../../components/SiteNav'
+import SitePied from '../../components/SitePied'
 import TryQR from '../../components/TryQR'
-import ConsentReset from '../../components/ConsentReset'
 import Pellicules from '../../components/Pellicules'
-import { SelecteurLangue } from '../../components/Langue'
 import { TIERS, TOP_TIER } from '../../lib/pricing'
 import { prix } from '../../lib/lp'
 import { FORMATS_TIRAGE } from '../../lib/tirages'
@@ -232,13 +231,24 @@ export default async function Home({ params }) {
             <Link href="/essai" className="hero-try">
               {t({ fr: "✱ Essayer l'appareil photo tout de suite", en: '✱ Try the camera right now', de: '✱ Die Kamera sofort ausprobieren' }, lang)}
             </Link>
-            {/* « Que pour les mariages ? » : la réponse tient sur une ligne. */}
-            <div className="mono small muted" style={{ marginTop: 20 }}>
-              {t({
-                fr: 'Mariages · Anniversaires · Baptêmes · EVJF · Vacances · Séminaires',
-                en: 'Weddings · Birthdays · Christenings · Hen & stag dos · Holidays · Company retreats',
-                de: 'Hochzeiten · Geburtstage · Taufen · JGA · Urlaub · Firmenevents',
-              }, lang)}
+            {/* « Que pour les mariages ? » : la réponse tient sur une ligne.
+                Chaque occasion qui a sa page y mène : c'est le lien le plus
+                fort qu'on puisse leur donner, depuis la page la plus visitée. */}
+            <div className="mono small muted hero-occasions" style={{ marginTop: 20 }}>
+              {[
+                ['/appareil-jetable-mariage', { fr: 'Mariages', en: 'Weddings', de: 'Hochzeiten' }],
+                ['/anniversaire', { fr: 'Anniversaires', en: 'Birthdays', de: 'Geburtstage' }],
+                [null, { fr: 'Baptêmes', en: 'Christenings', de: 'Taufen' }],
+                ['/evjf-evg', { fr: 'EVJF', en: 'Hen & stag dos', de: 'JGA' }],
+                ['/vacances-entre-amis', { fr: 'Vacances', en: 'Holidays', de: 'Urlaub' }],
+                ['/depart-retraite', { fr: 'Retraites', en: 'Retirements', de: 'Ruhestand' }],
+                ['/occasions', { fr: 'Et plus', en: 'And more', de: 'Und mehr' }],
+              ].map(([href, nom], i) => (
+                <span key={i}>
+                  {i > 0 && ' · '}
+                  {href ? <Link href={lien(href, lang)}>{t(nom, lang)}</Link> : t(nom, lang)}
+                </span>
+              ))}
             </div>
           </div>
           {/* Voir l'appareil vaut mieux que le décrire, et un viseur vide ne
@@ -568,22 +578,7 @@ export default async function Home({ params }) {
         </section>
       </main>
 
-      <footer className="vfooter">
-        <div className="vfooter-inner">
-          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, color: '#fff', fontSize: 15 }}>{BRAND.name}</span>
-          <nav className="vfooter-links">
-            <Link href={lien('/generateur-qr-code-mariage', lang)}>{t({ fr: 'Générateur de QR code', en: 'QR code generator', de: 'QR-Code-Generator' }, lang)}</Link>
-            <Link href={lien('/aide', lang)}>{t({ fr: 'Aide', en: 'Help', de: 'Hilfe' }, lang)}</Link>
-            <Link href={lien('/mentions-legales', lang)}>{t({ fr: 'Mentions légales', en: 'Legal notice', de: 'Impressum' }, lang)}</Link>
-            <Link href={lien('/cgv', lang)}>{t({ fr: 'CGV', en: 'Terms of sale', de: 'AGB' }, lang)}</Link>
-            <Link href={lien('/politique-de-confidentialite', lang)}>{t({ fr: 'Confidentialité', en: 'Privacy', de: 'Datenschutz' }, lang)}</Link>
-            <ConsentReset />
-          </nav>
-          {/* Le choix de la langue, en blanc sur le fond sombre du pied. */}
-          <SelecteurLangue style={{ color: '#fff' }} />
-          <span className="mono">{t({ fr: '© 2026 · Hébergé en UE · RGPD', en: '© 2026 · Hosted in the EU · GDPR', de: '© 2026 · In der EU gehostet · DSGVO' }, lang)}</span>
-        </div>
-      </footer>
+      <SitePied lang={lang} />
     </div>
   )
 }

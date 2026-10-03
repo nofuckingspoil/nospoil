@@ -1,6 +1,7 @@
 import { Fragment } from 'react'
 import Link from 'next/link'
 import SiteNav from '../../../components/SiteNav'
+import SitePied from '../../../components/SitePied'
 import { BRAND } from '../../../lib/brand'
 import { guideDe, chapitresDe, checklistDe } from '../../../lib/guide'
 import { t, LOCALES } from '../../../lib/i18n'
@@ -149,6 +150,7 @@ export default async function GuidePage({ params }) {
           </div>
         </div>
       </div>
+      <SitePied lang={lang} />
     </main>
   )
 }

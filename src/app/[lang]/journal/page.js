@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import SiteNav from '../../../components/SiteNav'
+import SitePied from '../../../components/SitePied'
 import { BRAND } from '../../../lib/brand'
 import { CATEGORIES, categorieLabel, postsEnLangue, gradientFor, avatarColor, formatDate } from '../../../lib/journal'
 import { langueDeParams, alternates, lien, localeOG, SITE_URL } from '../../../lib/langue-lien'
@@ -137,6 +138,7 @@ export default async function JournalIndex({ params, searchParams }) {
           </div>
         </div>
       </div>
+      <SitePied lang={lang} />
     </main>
   )
 }

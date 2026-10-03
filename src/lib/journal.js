@@ -8,6 +8,7 @@ import { lien } from './langue-lien'
 import { LOCALES } from './i18n'
 import { POSTS_EN } from './journal-en'
 import { POSTS_DE } from './journal-de'
+import { POSTS_OCCASIONS, POSTS_OCCASIONS_EN, POSTS_OCCASIONS_DE } from './journal-occasions'
 
 // Dégradés "argentiques" placeholder (repris du handoff design), choisis de
 // façon déterministe par le slug → chaque article garde toujours sa couleur.
@@ -42,7 +43,9 @@ export function formatDate(iso, langue = 'fr') {
 // Les catégories, dans l'ordre d'affichage des filtres.
 // Ces valeurs françaises servent aussi de clé (filtre ?cat=) dans les trois
 // langues ; seul le libellé affiché change (categorieLabel).
-export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulisses']
+// Anniversaire, Entre amis et Retraite : les rubriques des autres occasions
+// (03/10/2026), le reste du journal parle de mariage.
+export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulisses', 'Anniversaire', 'Entre amis', 'Retraite']
 
 const LIBELLES_CATEGORIES = {
   Tous: { en: 'All', de: 'Alle' },
@@ -50,6 +53,9 @@ const LIBELLES_CATEGORIES = {
   Organisation: { en: 'Planning', de: 'Planung' },
   Souvenirs: { en: 'Memories', de: 'Erinnerungen' },
   Coulisses: { en: 'Behind the scenes', de: 'Hinter den Kulissen' },
+  Anniversaire: { en: 'Birthdays', de: 'Geburtstag' },
+  'Entre amis': { en: 'With friends', de: 'Mit Freunden' },
+  Retraite: { en: 'Retirement', de: 'Ruhestand' },
 }
 export function categorieLabel(cat, langue = 'fr') {
   if (langue === 'fr') return cat
@@ -241,7 +247,8 @@ const ALL_POSTS = [
     excerpt: 'Le petit jetable posé sur les tables a bercé des générations de mariages. Voici ce que sa version numérique change vraiment.',
     author: 'Camille Rouzaud',
     date: '2026-07-26',
-    read: '6 min',
+    updated: '2026-10-03',
+    read: '8 min',
     caption: 'Appareils photo jetables posés sur une table de mariage',
     image: '/journal/appareil-photo-jetable-mariage-vs-appli.webp',
     body: `
@@ -263,9 +270,33 @@ const ALL_POSTS = [
 <h2>La version numérique : le charme, sans la logistique</h2>
 <p>Un jetable numérique, c’est le même esprit (nombre de photos limité, esthétique pellicule, révélation différée), mais sur le téléphone que tes invités ont déjà en main. Pas d’appareil à acheter ni à ramasser, pas de labo, aucune photo perdue : tout arrive au même endroit. Il te suffit d’un QR code sur les tables (voir <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>).</p>
 
+<h2>Un appareil jetable de mariage personnalisé</h2>
+<p>Les jetables en carton personnalisés existent : une étiquette à vos prénoms collée sur la boîte. C’est joli, mais il faut commander à l’avance, payer plus cher que les modèles standards, et le développement reste le même casse-tête. La version numérique, elle, se personnalise de bout en bout :</p>
+<ul>
+<li><strong>Une affiche à vos prénoms et à votre date.</strong> Le QR code que tes invités scannent est posé sur une affiche que tu personnalises, prête à imprimer pour les tables ou l’entrée. Le <a href="/generateur-qr-code-mariage">générateur d’affiche QR code</a> s’en charge en quelques minutes.</li>
+<li><strong>Le nom de votre mariage dans l’appareil.</strong> Quand un invité ouvre l’appareil, il voit le nom de votre mariage : il sait tout de suite où partent ses photos.</li>
+<li><strong>La date incrustée sur chaque photo.</strong> Dans l’album, la pellicule « Jetable » donne aux photos un rendu chaud, contrasté et granuleux, avec la date incrustée dans le coin, comme sur les tirages des vrais jetables. Le rendu est conservé dans les photos téléchargées.</li>
+<li><strong>Le nombre de poses que tu choisis.</strong> Entre 3 et 15 photos par invité : peu pour un grand mariage où chaque cliché compte, davantage pour un petit comité. Une recharge reste possible en cours de route.</li>
+</ul>
+<p>Tout est détaillé sur notre page <a href="/appareil-jetable-mariage">appareil photo jetable de mariage</a>.</p>
+
 <p>Le carton a l’avantage de la nostalgie ; le numérique a l’avantage de te garantir de <em>récupérer</em> les souvenirs. Si tu hésites encore entre les différentes formules, on les compare toutes dans <a href="/journal/comparatif-animations-photo-mariage">photobooth, borne, miroir ou jetable</a>. Avec une <a href="/">application photo de mariage comme Time to Flash</a>, tu gardes le meilleur des deux : la contrainte argentique, sans la crainte de tout perdre au développement.</p>
 <p>Tu veux comparer les applis qui font vraiment jetable (Scene, POV, Reveal…) ? Tout est dans <a href="/journal/application-appareil-photo-jetable-mariage">notre comparatif des applis appareil photo jetable</a>.</p>
 `,
+    faq: [
+      {
+        q: 'Peut-on personnaliser un appareil photo jetable de mariage ?',
+        a: 'Oui. Les jetables en carton se personnalisent avec une étiquette, à commander à l’avance. La version numérique se personnalise entièrement : une affiche QR code à vos prénoms et à votre date, le nom du mariage dans l’appareil, le nombre de poses par invité et une pellicule « Jetable » qui incruste la date sur chaque photo.',
+      },
+      {
+        q: 'Combien de photos prévoir par invité avec un appareil jetable ?',
+        a: 'Un jetable en carton compte 27 poses, partagées par toute une table. En version numérique, chaque invité a ses propres poses : entre 5 et 15 est l’idéal, assez pour couvrir la journée, assez peu pour que chaque photo compte.',
+      },
+      {
+        q: 'Combien coûte un appareil photo jetable pour un mariage ?',
+        a: 'Un jetable en carton coûte 10 à 15 € pièce, plus le développement. En version numérique, Time to Flash est gratuit jusqu’à 5 participants, puis c’est un paiement unique pour tout le mariage : par exemple 29,99 € jusqu’à 100 participants, sans abonnement.',
+      },
+    ],
   },
   {
     slug: 'alternative-photobooth-mariage',
@@ -274,7 +305,8 @@ const ALL_POSTS = [
     excerpt: 'Le photobooth, c’est cher, encombrant, et ça fait la queue. Voici comment obtenir les mêmes photos fun, partout dans la salle.',
     author: 'Léa Ferrand',
     date: '2026-07-19',
-    read: '5 min',
+    updated: '2026-10-03',
+    read: '6 min',
     caption: 'Coin photo lors d’un mariage',
     image: '/journal/alternative-photobooth-mariage-invites.webp',
     body: `
@@ -288,8 +320,28 @@ const ALL_POSTS = [
 <strong>La logistique :</strong> une table, une prise, un fond, parfois un technicien.<br>
 <strong>Le goulot d’étranglement :</strong> une seule borne pour 100 invités = une file, et des photos concentrées à un seul endroit. Tu rates tout ce qui se passe ailleurs.</p>
 
-<h2>L’alternative : transformer chaque invité en photobooth ambulant</h2>
-<p>Au lieu d’une borne fixe, tu donnes à chacun un appareil photo, sur son téléphone, via un QR code. Résultat : des photos fun prises <em>partout</em>, au vin d’honneur, à table, sur la piste, dehors. Pas de file, pas de matériel, et un seul album commun à la fin.</p>
+<h2>Comment remplacer un photobooth : 5 alternatives</h2>
+<p>Remplacer un photobooth ne veut pas dire renoncer aux photos fun. Il existe cinq alternatives, et elles ne conviennent pas aux mêmes mariages.</p>
+
+<h3>1. Les appareils photo jetables en carton</h3>
+<p>Un jetable sur chaque table, et les invités s’en servent toute la soirée. Le charme de la pellicule est réel. Mais il faut compter 10 à 15 € par appareil, plus le développement, et on n’en récupère jamais tous (on fait le point dans <a href="/journal/appareil-photo-jetable-mariage">jetable de mariage : le carton ou l’appli ?</a>). <strong>Pour qui :</strong> les amoureux de l’argentique, sur un mariage de taille modeste.</p>
+
+<h3>2. L’appli appareil photo jetable</h3>
+<p>Le même esprit, sur le téléphone des invités : un QR code, quelques poses chacun, et un album commun qui se révèle le lendemain. Rien à installer, rien à ramasser. <strong>Pour qui :</strong> ceux qui veulent des photos de toute la soirée, partout dans la salle, pour un petit budget. C’est notre préférée, on la détaille juste après.</p>
+
+<h3>3. Le coin photo fait maison</h3>
+<p>Un fond (un tissu, une guirlande lumineuse, un mur de verdure), un trépied, un téléphone avec le retardateur ou une petite télécommande Bluetooth, et une caisse d’accessoires. Ajoute une lampe d’appoint si la salle est sombre. Pour quelques dizaines d’euros, tu retrouves l’ambiance du photobooth. <strong>Pour qui :</strong> les mariés bricoleurs, avec un ami prêt à surveiller le matériel. Pense à récupérer les photos sur le téléphone du trépied le lendemain.</p>
+
+<h3>4. Le photographe d’ambiance</h3>
+<p>Un second photographe, ou ton photographe principal qui reste plus tard, consacre une heure à la soirée : portraits sur la piste, petits groupes, photos posées devant un fond. Compte 300 à 600 € pour un second photographe. <strong>Pour qui :</strong> les grands mariages, et ceux qui veulent des images de qualité professionnelle jusque tard dans la nuit.</p>
+
+<h3>5. Le livre d’or photo</h3>
+<p>Un appareil instantané posé à côté du livre d’or : chaque invité se prend en photo, colle le tirage et écrit un mot à côté. Tu repars avec un objet unique, rempli le soir même. Prévois assez de recharges de film, qui coûtent vite cher sur 100 invités. <strong>Pour qui :</strong> ceux qui tiennent à l’objet souvenir plus qu’au nombre de photos.</p>
+
+<p>Ces options se combinent très bien : un livre d’or photo pour l’objet, une appli jetable pour couvrir toute la soirée. On compare aussi borne, miroir et jetable dans <a href="/journal/comparatif-animations-photo-mariage">photobooth, borne, miroir ou jetable : lequel choisir ?</a></p>
+
+<h2>Notre préférée : transformer chaque invité en photobooth ambulant</h2>
+<p>Au lieu d’une borne fixe, tu donnes à chacun un appareil photo, sur son téléphone, via un QR code. Résultat : des photos fun prises <em>partout</em>, au vin d’honneur, à table, sur la piste, dehors. Pas de file, pas de matériel, et un seul album commun à la fin. On compare les deux formules point par point sur notre page <a href="/photobooth-mariage">alternative au photobooth de mariage</a>.</p>
 
 <blockquote class="dj-quote">« On a annulé le photobooth. Nos invités ont pris deux fois plus de photos, et bien plus variées. »
   <cite>Léa &amp; Marius · 2026</cite>
@@ -298,36 +350,134 @@ const ALL_POSTS = [
 <h2>Comment le mettre en place</h2>
 <p>Un QR code sur les tables et à l’entrée, une contrainte de quelques photos par personne pour que ça reste soigné, et une révélation le lendemain. Pour que tout le monde joue le jeu, glisse un mot sur le faire-part (on t’a préparé <a href="/journal/brief-invites">le brief invités à copier-coller</a>). C’est exactement ce que propose <a href="/">notre application photo de mariage</a> : l’effet photobooth, dans toute la salle, pour une fraction du prix.</p>
 `,
+    faq: [
+      {
+        q: 'Comment remplacer un photobooth à un mariage ?',
+        a: 'Cinq alternatives existent : les appareils jetables en carton, une appli appareil photo jetable sur le téléphone des invités, un coin photo fait maison avec un fond et un trépied, un photographe d’ambiance pour la soirée, ou un livre d’or photo avec un appareil instantané. Elles se combinent facilement.',
+      },
+      {
+        q: 'Quelle est l’alternative la moins chère au photobooth ?',
+        a: 'L’appli appareil photo jetable : avec Time to Flash, c’est gratuit jusqu’à 5 participants, puis un paiement unique selon le nombre de participants (29,99 € jusqu’à 100). Le coin photo fait maison coûte quelques dizaines d’euros, mais demande du matériel et quelqu’un pour le surveiller.',
+      },
+      {
+        q: 'Peut-on faire un photobooth soi-même pour son mariage ?',
+        a: 'Oui : un fond (tissu, guirlande, verdure), un trépied, un téléphone avec retardateur ou télécommande Bluetooth, une lampe d’appoint et quelques accessoires suffisent. Confie la surveillance du coin à un ami, et pense à récupérer les photos le lendemain.',
+      },
+    ],
   },
   {
     slug: 'partager-photos-mariage-invites',
     cat: 'Souvenirs',
-    title: 'Comment partager les photos de mariage avec tous les invités',
-    excerpt: 'Fini les 6 groupes WhatsApp et les albums à moitié perdus. La méthode pour tout centraliser et tout redistribuer.',
+    title: 'Partager les photos de mariage avec les invités : 5 façons',
+    excerpt: 'WhatsApp, Google Photos, lien de transfert, appli ou jetable partagé : 5 façons de récupérer les photos des invités et de les partager à tous.',
     author: 'Tom Bréval',
     date: '2026-07-12',
-    read: '5 min',
+    updated: '2026-10-03',
+    read: '7 min',
     caption: 'Album de mariage partagé sur un téléphone',
     image: '/journal/partager-photos-mariage-invites.webp',
     body: `
-<p>Après le mariage, les photos existent, mais éparpillées dans dix téléphones, trois groupes WhatsApp, et l’AirDrop qu’on n’a jamais fini d’envoyer. Voici comment éviter que tes souvenirs se perdent dans la nature.</p>
+<p>Le lendemain du mariage, les photos existent. Elles sont même des centaines. Le problème, c’est qu’elles dorment dans quatre-vingts téléphones différents, et que personne ne pense à te les envoyer. Partager les photos de mariage avec les invités, c’est en réalité deux choses : <strong>récupérer</strong> les photos de chacun, puis <strong>redistribuer</strong> l’ensemble à tout le monde. Voici les cinq façons de s’y prendre, ce qu’elles valent vraiment, et la marche à suivre avant, pendant et après le jour J.</p>
 
-<h2>Le problème : la dispersion</h2>
-<p>Chaque invité repart avec ses photos. Certains les envoient, la plupart oublient. Toi, tu passes les semaines suivantes à réclamer « tu peux me renvoyer la photo de… ? », et à recevoir des images compressées, sans les meilleures.</p>
+<h2>Pourquoi c’est plus compliqué qu’il n’y paraît</h2>
+<p>Sur le papier, rien de plus simple : chacun envoie ses photos, tu les rassembles. Dans les faits, trois obstacles reviennent à chaque mariage.</p>
+<ul>
+<li><strong>L’oubli.</strong> Le soir même, tout le monde promet d’envoyer ses photos. Une semaine plus tard, la fête est loin, et seuls quelques proches l’ont fait.</li>
+<li><strong>La dispersion.</strong> Les photos arrivent par WhatsApp, par SMS, par mail, par AirDrop. Tu passes des soirées à tout rapatrier dans un même dossier, et il en manque toujours.</li>
+<li><strong>La qualité.</strong> Les messageries compressent les images à l’envoi. Une photo qui semblait parfaite sur l’écran du téléphone devient floue une fois imprimée.</li>
+</ul>
+<p>La règle qui découle de tout ça est simple : plus tu demandes d’efforts à tes invités <em>après</em> la fête, moins tu récupères de photos. La bonne méthode est celle qui collecte <em>pendant</em> la fête, sans rien demander de compliqué.</p>
 
-<h2>La solution : un seul album, dès le départ</h2>
-<p>La clé, c’est de centraliser <em>pendant</em> la fête, pas après (on compare les trois méthodes possibles dans <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos ou appli dédiée ?</a>). Si toutes les photos tombent automatiquement dans un même album partagé, tu n’as plus rien à réclamer : tout est déjà là, en pleine qualité. C’est le principe d’un appareil photo collaboratif à QR code.</p>
+<h2>Les 5 façons de récupérer et partager les photos des invités</h2>
 
-<blockquote class="dj-quote">« Personne n’a eu à m’envoyer quoi que ce soit. Le lendemain, les 300 photos étaient déjà réunies. »
-  <cite>Tom &amp; Inès · 2026</cite>
-</blockquote>
+<h3>1. Le groupe WhatsApp</h3>
+<p>C’est le réflexe de tout le monde : un groupe avec les invités, et chacun y poste ses photos. Son gros avantage : tout le monde l’a déjà, personne n’a rien à apprendre. Mais les photos sont compressées, noyées entre les messages et les vocaux, et il faut le numéro de chaque invité. Pratique pour échanger trois photos le soir même, beaucoup moins pour constituer l’album du mariage.</p>
 
-<h2>Redistribuer à tout le monde, en un lien</h2>
-<p>Une fois l’album constitué, tu partages un seul lien : chaque invité voit l’intégralité des photos et télécharge celles qu’il veut, en qualité complète. Pas d’inscription, pas d’appli. Tes proches qui n’étaient pas là peuvent aussi revivre la journée.</p>
+<h3>2. L’album partagé Google Photos ou iCloud</h3>
+<p>Tu crées un album partagé, tu envoies le lien, et chacun y dépose ses photos. La qualité est bien meilleure que sur une messagerie, et tout est rangé au même endroit. Le hic : pour ajouter des photos, il faut en général un compte Google ou un appareil Apple, ce qui laisse de côté une partie de tes invités selon la solution choisie. Et surtout, l’album est passif : il faut que chacun y pense, une fois la fête finie. On a comparé ces deux premières options en détail dans <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos ou appli dédiée ?</a></p>
 
-<h2>Et pour toi ?</h2>
-<p>Tu télécharges l’album entier d’un coup, et tu le ranges à deux endroits. Ensuite, tri tranquille (on t’explique <a href="/journal/300-photos-lendemain">comment trier les 300 photos du lendemain</a>). Avec une <a href="/">appli photo de mariage comme Time to Flash</a>, la centralisation et le partage sont automatiques : tu n’as littéralement rien à gérer.</p>
+<h3>3. Le lien de transfert ou le dossier partagé</h3>
+<p>Un dossier en ligne ou un service d’envoi de gros fichiers : chaque invité t’envoie son lot de photos. C’est la méthode qui abîme le moins les fichiers, et elle convient bien aux quelques proches motivés, ou au cousin qui avait apporté son reflex. Mais c’est aussi celle qui demande le plus d’efforts : trier ses photos, les envoyer, parfois créer un compte. Dans les faits, peu d’invités le font.</p>
+
+<h3>4. Les applications galeries de mariage</h3>
+<p>Ce sont des albums en ligne pensés pour les mariages : un QR code, une page où l’on dépose ses photos, parfois un diaporama. C’est plus simple qu’un dossier partagé, et tout est réuni au même endroit. Mais le principe reste le même : les invités prennent leurs photos avec leur appareil habituel, puis doivent penser à les <em>déposer</em>. Certaines demandent d’installer une application, d’autres limitent le téléchargement dans leur version gratuite. On les a passées en revue dans <a href="/journal/application-photo-mariage">le comparatif des applications photo de mariage</a>.</p>
+
+<h3>5. L’appareil photo jetable partagé</h3>
+<p>Ici, on inverse la logique : au lieu de demander aux invités de déposer leurs photos après coup, on leur donne un appareil photo dont chaque cliché arrive directement dans l’album commun. Ils scannent un QR code, l’appareil s’ouvre dans le navigateur, sans application ni compte, et chaque photo prise part dans l’album. Comme avec un vrai jetable, chacun a un nombre de poses compté et ne voit pas ses photos tout de suite : elles se révèlent toutes ensemble, à l’heure que tu as choisie, le lendemain matin par exemple. C’est une animation pendant la soirée, et la collecte se fait toute seule. C’est ce que fait <a href="/photos-mariage-invites">Time to Flash pour les photos des invités</a>.</p>
+
+<h2>Le comparatif en un coup d’œil</h2>
+<table>
+<thead><tr><th>Méthode</th><th>Effort pour l’invité</th><th>Qualité</th><th>Photos récupérées</th><th>Prix</th></tr></thead>
+<tbody>
+<tr><td>Groupe WhatsApp</td><td>Faible</td><td>Compressée</td><td>Quelques-unes</td><td>Gratuit</td></tr>
+<tr><td>Google Photos / iCloud</td><td>Moyen (compte)</td><td>Bonne</td><td>Celles des plus motivés</td><td>Gratuit</td></tr>
+<tr><td>Lien de transfert</td><td>Élevé</td><td>Très bonne</td><td>Peu</td><td>Gratuit ou presque</td></tr>
+<tr><td>Appli galerie</td><td>Moyen</td><td>Bonne</td><td>Variable</td><td>Gratuit à payant</td></tr>
+<tr><td>Jetable partagé</td><td>Très faible</td><td>Bonne</td><td>Toutes celles prises</td><td>Gratuit jusqu’à 5, puis paiement unique</td></tr>
+</tbody>
+</table>
+<p>Aucune méthode n’est parfaite partout. Mais une seule ne dépend pas de la bonne volonté des invités une fois rentrés chez eux : celle où la photo arrive dans l’album au moment même où elle est prise.</p>
+
+<h2>Étape par étape : avant, pendant et après le mariage</h2>
+
+<h3>Avant le mariage</h3>
+<ol>
+<li><strong>Choisis une seule méthode.</strong> Deux solutions en parallèle, c’est la garantie que les photos se dispersent à nouveau.</li>
+<li><strong>Prépare le QR code.</strong> Imprime-le sur les menus, les marque-places, un panneau à l’entrée. Le <a href="/generateur-qr-code-mariage">générateur d’affiche QR code de mariage</a> te prépare une affiche prête à imprimer, et on t’explique <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a> pour qu’il soit vraiment scanné.</li>
+<li><strong>Préviens tes invités.</strong> Une ligne sur le faire-part ou le site du mariage suffit : « le jour J, scannez le QR code sur votre table ».</li>
+<li><strong>Teste toi-même.</strong> Scanne ton propre QR code, prends une photo, vérifie qu’elle arrive. Si la salle capte mal, repère où le réseau passe.</li>
+</ol>
+
+<h3>Pendant le mariage</h3>
+<ol>
+<li><strong>Fais-le annoncer.</strong> Deux phrases du témoin au micro, au début du dîner, font plus que dix panneaux.</li>
+<li><strong>Confie le relais à quelqu’un.</strong> Un témoin ou un ami peut montrer le QR code aux tables qui n’ont pas encore joué, notamment aux plus âgés.</li>
+<li><strong>Ne t’en occupe pas.</strong> C’est ta journée. Si la collecte dépend de toi pendant la fête, c’est que la méthode n’est pas la bonne.</li>
+</ol>
+
+<h3>Après le mariage</h3>
+<ol>
+<li><strong>Récupère le reste rapidement.</strong> Le photographe, le cousin au reflex : demande-leur leurs fichiers dans la semaine, pendant que tout le monde est encore motivé.</li>
+<li><strong>Télécharge et sauvegarde tout.</strong> Range l’album complet à deux endroits (ton ordinateur et un cloud, ou un disque dur).</li>
+<li><strong>Trie à ton rythme.</strong> Une heure suffit pour garder l’essentiel : la méthode est dans <a href="/journal/300-photos-lendemain">que faire des 300 photos du lendemain</a>.</li>
+</ol>
+
+<h2>Comment partager ensuite les photos avec tous les invités</h2>
+<p>Une fois les photos réunies, il reste à les rendre à ceux qui les ont prises. La règle d’or : <strong>un seul lien, pour tout le monde</strong>. Pas un envoi par personne, pas une sélection différente pour chaque table.</p>
+<ul>
+<li><strong>Envoie le lien là où tout le monde le verra</strong> : le groupe WhatsApp des invités, un mail groupé, ou le site du mariage.</li>
+<li><strong>Choisis un album privé.</strong> Accessible avec le lien, pas visible sur internet ni indexé sur Google. Les photos de tes invités ne regardent qu’eux (on fait le point sur les règles dans <a href="/journal/droit-image-photos-mariage">droit à l’image et photos de mariage</a>).</li>
+<li><strong>Laisse chacun télécharger ce qu’il veut.</strong> Les invités ne veulent pas tout : ils cherchent les photos où ils apparaissent, et celles de leur table.</li>
+<li><strong>Pense aux absents.</strong> La grand-tante qui n’a pas pu venir sera ravie de recevoir le lien, ou mieux, quelques tirages papier.</li>
+<li><strong>Préviens de la durée.</strong> Un album en ligne n’est pas éternel : invite chacun à télécharger ses photos préférées sans attendre.</li>
+</ul>
+<p>Avec un appareil jetable partagé, cette étape est déjà faite : à l’heure de la révélation, tous les participants découvrent l’album en même temps, sur leur téléphone, et peuvent télécharger les photos ou commander des tirages. Chez Time to Flash, l’album reste privé, hébergé en Europe, et il est conservé six mois (tu es prévenu avant sa suppression, le temps de tout télécharger). Pour aller plus loin, lis <a href="/journal/album-photo-partage-mariage">notre guide de l’album photo partagé de mariage</a>.</p>
+
+<h2>Ce qu’on te conseille</h2>
+<p>Si tu ne retiens qu’une chose : <strong>collecte pendant la fête, pas après</strong>. Le groupe WhatsApp et l’album Google Photos sont parfaits pour échanger quelques photos ou pour archiver, mais ils comptent sur la bonne volonté de chacun une fois la fête finie. Un appareil jetable partagé fait de la photo un jeu de la soirée : les invités participent parce que c’est amusant, et tu récupères tout sans rien réclamer. Tu peux <a href="/create">créer ton événement</a> en deux minutes, gratuitement jusqu’à 5 participants pour faire un essai.</p>
 `,
+    faq: [
+      {
+        q: 'Comment récupérer les photos de mariage prises par les invités ?',
+        a: 'Le plus fiable est de collecter les photos pendant la fête plutôt qu’après. Avec un QR code posé sur les tables, chaque invité ouvre un appareil photo partagé dans son navigateur, et chaque cliché arrive directement dans l’album commun. Les méthodes qui demandent d’envoyer ses photos après coup (WhatsApp, album partagé, lien de transfert) ne récupèrent en général que les photos des invités les plus motivés.',
+      },
+      {
+        q: 'Quelle est la meilleure application pour partager les photos de mariage ?',
+        a: 'Tout dépend de ce que tu cherches. Une application galerie rassemble les photos que les invités pensent à déposer. Une animation appareil photo jetable comme Time to Flash fait prendre les photos pendant la soirée, avec quelques poses par invité, et les révèle toutes ensemble le lendemain dans un album privé. Le comparatif complet est dans notre article sur les applications photo de mariage.',
+      },
+      {
+        q: 'Comment partager les photos de mariage sans que les invités installent une application ?',
+        a: 'Choisis une solution qui s’ouvre dans le navigateur. Avec Time to Flash, les invités scannent un QR code et l’appareil photo s’ouvre directement, sans application ni compte. Pour redistribuer les photos, un seul lien vers l’album suffit : chacun le consulte et télécharge les photos qu’il veut.',
+      },
+      {
+        q: 'Comment partager les photos de mariage sans perdre en qualité ?',
+        a: 'Évite de faire circuler les photos par messagerie : WhatsApp et les SMS compressent les images à l’envoi. Préfère un album partagé, un lien de transfert ou un appareil photo partagé qui enregistre les photos directement dans l’album, puis télécharge l’ensemble pour le garder à deux endroits.',
+      },
+      {
+        q: 'Combien de temps les invités peuvent-ils accéder à l’album du mariage ?',
+        a: 'Cela dépend du service. Chez Time to Flash, l’album privé est conservé six mois après l’événement, et l’organisateur est prévenu avant sa suppression. Le plus simple est d’inviter chacun à télécharger ses photos préférées dans les semaines qui suivent le mariage.',
+      },
+    ],
   },
   {
     slug: 'photos-mariage-effet-argentique',
@@ -353,7 +503,8 @@ const ALL_POSTS = [
 </blockquote>
 
 <h2>L’obtenir sans matériel argentique</h2>
-<p>Pas besoin de vrais appareils à pellicule (chers, aléatoires ; voir <a href="/journal/appareil-photo-jetable-mariage">carton ou appli ?</a>). Un filtre argentique appliqué automatiquement à toutes les photos de tes invités donne à l’album entier une cohérence et un cachet immédiats. Avec <a href="/">Time to Flash</a>, chaque cliché pris par tes invités hérite de ce rendu, sans qu’ils aient rien à régler.</p>
+<p>Pas besoin de vrais appareils à pellicule (chers, aléatoires ; voir <a href="/journal/appareil-photo-jetable-mariage">carton ou appli ?</a>). Un filtre argentique appliqué automatiquement à toutes les photos de tes invités donne à l’album entier une cohérence et un cachet immédiats. Avec <a href="/">Time to Flash</a>, chaque cliché pris par tes invités hérite de ce rendu, sans qu’ils aient rien à régler : c’est tout le principe de notre <a href="/appareil-jetable-mariage">appareil photo jetable de mariage</a>.</p>
+<p>Et la nuit tombée, garde le flash : c’est lui qui donne aux photos de fête ce rendu direct si typique (nos conseils dans <a href="/journal/photos-soiree-dansante-telephone">réussir ses photos de soirée dansante au téléphone</a>).</p>
 `,
   },
   {
@@ -380,7 +531,7 @@ const ALL_POSTS = [
 </blockquote>
 
 <h2>Comment bien la régler</h2>
-<p>Fixe la révélation au lendemain matin plutôt qu’en pleine nuit : tout le monde est reposé, et ça crée un vrai rituel. C’est ce que permet <a href="/">Time to Flash</a> : les photos restent cachées comme une pellicule qu’on développe, puis s’ouvrent au moment que tu choisis.</p>
+<p>Fixe la révélation au lendemain matin plutôt qu’en pleine nuit : tout le monde est reposé, et ça crée un vrai rituel. C’est ce que permet <a href="/">Time to Flash</a> : les photos restent cachées comme une pellicule qu’on développe, puis s’ouvrent au moment que tu choisis. Et c’est l’un des plus petits postes de la journée (on fait le tour dans <a href="/journal/budget-photo-mariage">budget photo de mariage</a>).</p>
 `,
   },
   {
@@ -470,7 +621,7 @@ const ALL_POSTS = [
   <cite>Léa &amp; Marius · mai 2026</cite>
 </blockquote>
 
-<p>Un dernier point : si ton lieu capte mal, place le code là où le réseau passe (voir <a href="/journal/pas-de-reseau-salle-mariage">pas de réseau dans la salle</a>). Le secret, ce n'est pas UN emplacement parfait, mais la <strong>répétition</strong> : plus le code est présent, plus il devient un réflexe. Avec Time to Flash, tu génères ce QR code en 2 minutes et tu l'imprimes autant de fois que tu veux.</p>
+<p>Un dernier point : si ton lieu capte mal, place le code là où le réseau passe (voir <a href="/journal/pas-de-reseau-salle-mariage">pas de réseau dans la salle</a>). Le secret, ce n'est pas UN emplacement parfait, mais la <strong>répétition</strong> : plus le code est présent, plus il devient un réflexe. Avec Time to Flash, tu génères ce QR code en 2 minutes et tu l'imprimes autant de fois que tu veux. Pour l’affiche elle-même, le <a href="/generateur-qr-code-mariage">générateur d’affiche QR code de mariage</a> te prépare un modèle personnalisable, prêt à imprimer.</p>
 `,
   },
   {
@@ -527,7 +678,7 @@ const ALL_POSTS = [
 </blockquote>
 
 <h2>Le bon chiffre</h2>
-<p>D'expérience, entre 5 et 15 clichés par invité est l'idéal : assez pour couvrir la journée, assez peu pour que chaque déclenchement compte. C'est exactement ce que permet <a href="/">l'application photo de mariage Time to Flash</a> : tu fixes le nombre de photos par personne, et la contrainte fait le reste.</p>
+<p>D'expérience, entre 5 et 15 clichés par invité est l'idéal : assez pour couvrir la journée, assez peu pour que chaque déclenchement compte. Garde-en toujours deux ou trois pour la fin de soirée (nos conseils pour <a href="/journal/photos-soiree-dansante-telephone">réussir ses photos de soirée dansante</a>). C'est exactement ce que permet <a href="/">l'application photo de mariage Time to Flash</a> : tu fixes le nombre de photos par personne, et la contrainte fait le reste.</p>
 `,
   },
   {
@@ -545,6 +696,8 @@ const ALL_POSTS = [
 
 <h2>Sur le faire-part / le site de mariage</h2>
 <p><em>« Cette année, pas d'appareil jetable en carton : on t'offre le nôtre, version numérique. Le jour J, scanne le QR code sur ta table, prends tes 10 photos de la soirée, et découvre l'album complet le lendemain. Aucune appli à installer. »</em></p>
+
+<p>Pourquoi 10 photos, et pas illimité ? On l’explique dans <a href="/journal/dix-cliches">pourquoi 10 clichés valent mieux que 300</a>.</p>
 
 <h2>Dans le discours du témoin (deux lignes)</h2>
 <p><em>« Un dernier truc : sur chaque table, il y a un QR code. Scannez-le, vous avez 10 photos chacun. On veut voir la soirée par vos yeux, surtout les moments qu'on va rater ! »</em></p>
@@ -590,7 +743,7 @@ const ALL_POSTS = [
 <p>Les mariages où chaque invité avait un nombre de clichés <em>limité</em> ont produit, en proportion, beaucoup plus de photos « gardées ». La contrainte pousse à choisir, et ce sont les choix qui font les souvenirs.</p>
 
 <h2>Ce que ça change pour toi</h2>
-<p>Trois décisions simples ressortent de tout ça : <strong>limite le nombre de photos</strong> par invité, <strong>retire toute appli à installer</strong>, et <strong>diffère la révélation</strong> au lendemain. C'est exactement la philosophie de <a href="/">notre application photo de mariage</a>, parce que ces trois réglages font, à eux seuls, la différence entre 300 photos oubliées et 40 souvenirs qu'on encadre.</p>
+<p>Trois décisions simples ressortent de tout ça : <strong>limite le nombre de photos</strong> par invité, <strong>retire toute appli à installer</strong>, et <strong>diffère la révélation</strong> au lendemain. C'est exactement la philosophie de <a href="/">notre application photo de mariage</a>, parce que ces trois réglages font, à eux seuls, la différence entre 300 photos oubliées et 40 souvenirs qu'on encadre. Et pas seulement pour les mariages : anniversaires, week-ends entre amis, départs en retraite (voir <a href="/occasions">toutes les occasions</a>).</p>
 `,
   },
   {
@@ -603,7 +756,7 @@ const ALL_POSTS = [
     slug: 'application-photo-mariage',
     cat: 'Organisation',
     title: 'Application photo mariage : le comparatif 2026',
-    excerpt: 'La plupart des applis photo de mariage sont des galeries où l’on dépose ses photos. On les compare (prix, installation, limites), et on te présente l’autre option : l’animation appareil jetable.',
+    excerpt: 'Les applis photo de mariage comparées (prix, installation, limites), et l’autre option à connaître : l’animation appareil photo jetable.',
     author: 'Léa Ferrand',
     date: '2026-07-30',
     updated: '2026-09-17',
@@ -832,7 +985,7 @@ const ALL_POSTS = [
 <h2>L’album partagé (Google Photos, iCloud, Drive)</h2>
 <p><strong>Ce qui marche :</strong> gratuit, la qualité est préservée, tout est rangé au même endroit et reste accessible des années.</p>
 <p><strong>Ce qui coince :</strong> il faut un compte. Un album iCloud exclut tes invités sous Android, un album Google exclut une partie des utilisateurs d’iPhone. Il faut envoyer un lien par mail ou SMS à chacun, et surtout : <strong>il faut y penser</strong>. Un album partagé est passif : personne n’y dépose spontanément ses photos un soir de fête. Dans les faits, tu récupères les photos de six invités sur quatre-vingts.</p>
-<p><strong>Verdict :</strong> excellent pour <em>archiver</em> une fois que tu as les photos. Mauvais pour les <em>collecter</em>.</p>
+<p><strong>Verdict :</strong> excellent pour <em>archiver</em> une fois que tu as les photos. Mauvais pour les <em>collecter</em>. Les autres façons de monter un album commun sont dans <a href="/journal/album-photo-partage-mariage">l’album photo partagé de mariage</a>.</p>
 
 <h2>L’appareil jetable numérique</h2>
 <p><strong>Ce qui marche :</strong> un QR code posé sur les tables, une page qui s’ouvre dans le navigateur, un prénom à taper. Rien à installer, aucun compte. Tout le monde participe, y compris les grands-parents. Les photos arrivent toutes dans un seul album, et le jeu (nombre de clichés limité, révélation le lendemain) fait qu’on y pense pendant la fête.</p>
@@ -893,7 +1046,7 @@ const ALL_POSTS = [
 
 <h2>Comment choisir en une question</h2>
 <p>Demande-toi ce que tu veux vraiment : <strong>un objet à emporter le soir même</strong>, ou <strong>le maximum de souvenirs de toute la journée</strong> ?</p>
-<p>Si c’est le premier, prends une borne : c’est ce qu’elle fait le mieux, et le prix se justifie. Si c’est le second, une borne est un mauvais investissement : elle coûte cher et ne voit qu’un mètre carré de ta soirée.</p>
+<p>Si c’est le premier, prends une borne : c’est ce qu’elle fait le mieux, et le prix se justifie (on compare les deux formules sur notre page <a href="/photobooth-mariage">photobooth de mariage</a>). Si c’est le second, une borne est un mauvais investissement : elle coûte cher et ne voit qu’un mètre carré de ta soirée.</p>
 
 <h2>Et si tu veux les deux ?</h2>
 <p>C’est possible, et c’est même la combinaison la plus maligne : une borne d’occasion ou en formule minimale pour l’impression, et un appareil jetable numérique pour la couverture générale. Tu restes bien en dessous du prix d’une borne haut de gamme seule.</p>
@@ -943,17 +1096,18 @@ const ALL_POSTS = [
 <p><strong>1. Préviens à l’avance</strong> qu’il y aura un album photo partagé, et à quoi il servira.<br>
 <strong>2. Garde l’album privé</strong> : accessible par lien, pas indexé sur Google.<br>
 <strong>3. Demande avant de publier</strong> une photo hors du cercle des invités.</p>
-<p>Chez <a href="/">Time to Flash</a>, l’album n’est accessible qu’avec ton lien, les photos sont hébergées en Europe, chaque invité peut supprimer ses propres clichés avant la révélation, et rien n’est utilisé à d’autres fins. Tes photos restent les tiennes.</p>
+<p>Chez <a href="/">Time to Flash</a>, l’album n’est accessible qu’avec ton lien, les photos sont hébergées en Europe, chaque invité peut supprimer ses propres clichés avant la révélation, et rien n’est utilisé à d’autres fins. Tes photos restent les tiennes (tout est expliqué sur notre page <a href="/photos-mariage-invites">photos de mariage des invités</a>).</p>
 `,
   },
   {
     slug: 'shot-list-mariage',
     cat: 'Photo',
-    title: 'La shot list : 50 photos de mariage à ne pas rater',
+    title: 'Shot list mariage : la liste des 50 photos à ne pas rater',
     excerpt: 'La liste complète, moment par moment : celles que ton photographe gère, et celles que seuls tes invités peuvent prendre.',
     author: 'Camille Rouzaud',
     date: '2026-06-21',
-    read: '8 min',
+    updated: '2026-10-03',
+    read: '9 min',
     caption: 'Photographe et invités pendant une cérémonie de mariage',
     image: '/journal/shot-list-photos-mariage.webp',
     body: `
@@ -1022,6 +1176,21 @@ const ALL_POSTS = [
 49. La fin de soirée, chaussures à la main.<br>
 50. La toute dernière photo, quand il ne reste plus que dix personnes.</p>
 
+<h2>Dans quel ordre faire les photos de mariage ?</h2>
+<p>La liste ci-dessus suit déjà le fil de la journée. Voici le déroulé type, à caler avec ton photographe sur ton propre programme (les moments sont donnés pour une cérémonie en début d’après-midi) :</p>
+<ol>
+<li><strong>Les préparatifs</strong>, en fin de matinée : les détails d’abord (robe, alliances, faire-part), puis l’habillage, puis les premiers regards des proches.</li>
+<li><strong>La découverte</strong>, si vous en prévoyez une : vous vous voyez pour la première fois avant la cérémonie, en petit comité. Elle permet d’avancer une partie de la séance de couple.</li>
+<li><strong>La cérémonie</strong> : l’arrivée, les vœux, les alliances, le baiser, la sortie.</li>
+<li><strong>Les photos de groupe</strong>, juste après la sortie, tant que tout le monde est là : une vingtaine de minutes (la méthode est dans <a href="/journal/photos-de-groupe-mariage">réussir les photos de groupe</a>).</li>
+<li><strong>Le vin d’honneur</strong> : les retrouvailles, les rires, la décoration avant que tout le monde ne s’installe.</li>
+<li><strong>La séance de couple</strong>, vingt à trente minutes pendant le vin d’honneur, ou plus tard, dans la lumière dorée de la fin de journée.</li>
+<li><strong>Le dîner</strong> : votre entrée, les discours et vos réactions, la table qui rit le plus fort.</li>
+<li><strong>Le gâteau</strong>, puis <strong>la première danse</strong>.</li>
+<li><strong>La soirée</strong> : les parents et les grands-parents sur la piste, le lancer de bouquet, et la toute fin de nuit.</li>
+</ol>
+<p>Deux conseils pour que cet ordre tienne. D’abord, donne ce déroulé à ton photographe avec les horaires réels de ta journée : il saura où être, et quand. Ensuite, garde de la marge juste après la cérémonie : c’est toujours là que le planning glisse, entre les félicitations et les embrassades.</p>
+
 <h2>Celles que ton photographe ne prendra pas</h2>
 <p>Regarde la liste : les numéros 32, 33, 34, 41, 48 et 50 sont presque toujours manquantes. Pas par négligence : le photographe est simplement ailleurs, ou déjà parti. Ce sont exactement les photos que tes invités, eux, prennent naturellement.</p>
 
@@ -1080,46 +1249,93 @@ const ALL_POSTS = [
   {
     slug: 'photos-de-groupe-mariage',
     cat: 'Photo',
-    title: 'Réussir les photos de groupe en 20 minutes',
-    excerpt: 'Le moment le plus redouté de la journée devient simple avec une liste, une personne dédiée et un ordre bien choisi.',
+    title: 'Photo de groupe mariage : la liste, l’ordre, les poses',
+    excerpt: 'Quelles photos de groupe faire au mariage, dans quel ordre, et comment les boucler en 20 minutes : la liste, l’organisation et des idées de poses.',
     author: 'Camille Rouzaud',
     date: '2026-06-07',
-    read: '6 min',
+    updated: '2026-10-03',
+    read: '7 min',
     caption: 'Photo de groupe lors d’un mariage',
     image: '/journal/photos-de-groupe-mariage.webp',
     body: `
-<p>Les photos de groupe ont mauvaise réputation, et c’est mérité : elles s’éternisent, on cherche les gens partout, le vin d’honneur se vide, et personne ne sourit vraiment sur la vingtième. Pourtant, ce sont les photos que ta famille regardera le plus longtemps. Voici comment les expédier en vingt minutes.</p>
+<p>Les photos de groupe ont mauvaise réputation, et c’est mérité : elles s’éternisent, on cherche les gens partout, le vin d’honneur se vide, et personne ne sourit vraiment sur la vingtième. Pourtant, ce sont les photos que ta famille regardera le plus longtemps. Voici la liste des photos de groupe à faire au mariage, dans le bon ordre, des idées de poses, et la méthode pour tout boucler en vingt minutes.</p>
 
-<h2>1. Écris la liste, à l’avance</h2>
-<p>C’est 90 % du travail. Une liste écrite, avec des noms : pas « la famille », mais « papa, maman, ma sœur, son mari, les deux enfants ». Vise 8 à 12 groupes maximum. Au-delà, tu y passeras une heure.</p>
-<p>Une base qui marche : les mariés seuls · famille de l’un · famille de l’autre · les deux familles ensemble · les grands-parents · les témoins · les amis d’enfance · les collègues · les enfants · le grand groupe.</p>
+<h2>La liste des photos de groupe, dans l’ordre</h2>
+<p>Voici les photos de groupe classiques d’un mariage, dans l’ordre où on te conseille de les enchaîner. Elles partent du cercle le plus proche et s’élargissent petit à petit : chaque nouveau groupe ajoute du monde au précédent, et personne n’attend pour rien.</p>
+<ol>
+<li><strong>Les mariés avec leurs parents</strong>, un côté puis l’autre.</li>
+<li><strong>La famille proche</strong> : parents, frères et sœurs, leurs conjoints et leurs enfants, grands-parents. Un côté, puis l’autre, puis les deux familles réunies.</li>
+<li><strong>Les familles élargies</strong> : oncles, tantes, cousins. C’est souvent le plus grand groupe familial, prévois de la place.</li>
+<li><strong>Les témoins</strong>, et le cortège s’il y en a un (demoiselles d’honneur, garçons d’honneur, enfants d’honneur).</li>
+<li><strong>Les amis</strong>, par bande : amis d’enfance, d’études, du sport, de la colocation. Chaque bande a son histoire, et mérite sa photo.</li>
+<li><strong>Les collègues</strong>, de l’un puis de l’autre.</li>
+<li><strong>Tous les invités</strong> : la grande photo qui clôt la série (on y revient plus bas).</li>
+</ol>
+<p>Pourquoi la famille d’abord ? Parce que les grands-parents et les personnes âgées peuvent ensuite aller s’asseoir, et que les enfants ne sont pas encore fatigués. Tes amis, eux, attendront sans problème un verre à la main. Cette liste détaille la partie « groupes » de <a href="/journal/shot-list-mariage">la shot list des 50 photos de mariage</a>.</p>
 
-<h2>2. Désigne quelqu’un pour rassembler</h2>
-<p>L’erreur classique est de laisser le photographe appeler les gens : il ne connaît personne. Confie ce rôle à un témoin ou à un frère qui a une bonne voix et qui connaît tout le monde. Il appelle le groupe suivant <em>pendant</em> que le groupe en cours pose. Tu ne perds jamais une seconde.</p>
+<h2>1. Écris la liste, avec des noms</h2>
+<p>C’est 90 % du travail. Une liste écrite, avec des noms : pas « la famille », mais « papa, maman, ma sœur, son mari, les deux enfants ». Vise 8 à 12 groupes maximum. Au-delà, tu y passeras une heure. Imprime-la en deux exemplaires : un pour le photographe, un pour la personne qui rassemble les gens.</p>
 
-<h2>3. Choisis le bon ordre</h2>
-<p>Commence par les grands-parents et les personnes âgées, puis les enfants, puis les grands groupes, et finis par tes amis. Les plus fragiles repartent s’asseoir tout de suite, les enfants ne sont pas encore fatigués, et tes amis, eux, attendront sans problème.</p>
+<h2>2. Nomme un régisseur</h2>
+<p>L’erreur classique est de laisser le photographe appeler les gens : il ne connaît personne. Confie ce rôle de régisseur à un témoin ou à un frère qui a une bonne voix et qui connaît tout le monde. Liste en main, il appelle le groupe suivant <em>pendant</em> que le groupe en cours pose. Tu ne perds jamais une seconde, et toi, tu n’as plus qu’à sourire.</p>
 
-<h2>4. Trouve l’endroit avant</h2>
+<h2>3. Trouve l’endroit avant</h2>
 <p>Un lieu à l’ombre, avec un fond simple (un mur, une haie, une façade), à moins de deux minutes de marche du vin d’honneur. Le plein soleil creuse les yeux et fait plisser tout le monde. Un ciel blanc en arrière-plan brûle la photo. Repère cet endroit lors de la visite du lieu, pas le jour J.</p>
 
-<h2>5. Le bon créneau</h2>
-<p>Juste après la cérémonie, quand tout le monde est encore réuni au même endroit et personne n’a encore commencé à circuler. Si tu attends le milieu du vin d’honneur, tu passeras vingt minutes à chercher trois personnes.</p>
+<h2>4. Le bon créneau : le début du vin d’honneur</h2>
+<p>Juste après la cérémonie, quand tout le monde est encore réuni au même endroit et que personne n’a commencé à circuler. Fais-le annoncer à la sortie : « photos de groupe pendant vingt minutes, on vous rejoint juste après ». Pendant ce temps, le vin d’honneur commence pour les autres : ils ont un verre et de quoi grignoter, personne ne s’ennuie. Si tu attends le milieu du vin d’honneur, tu passeras vingt minutes à chercher trois personnes.</p>
+<p>Un découpage qui tient : une dizaine de minutes pour les familles, cinq pour les témoins, les amis et les collègues, et quelques minutes pour la grande photo de tous les invités.</p>
 
-<h2>6. La règle des 90 secondes</h2>
+<h2>5. La règle des 90 secondes</h2>
 <p>Un groupe = 90 secondes. Le photographe prend trois ou quatre images, et on passe au suivant. C’est largement suffisant : au-delà, les sourires se figent et le groupe se disperse. Douze groupes à 90 secondes, ça fait dix-huit minutes.</p>
 
 <blockquote class="dj-quote">« On a annoncé au micro : photos de groupe, vingt minutes, on commence par les grands-parents. Personne ne s’est plaint. »
   <cite>Léa &amp; Marius · 2026</cite>
 </blockquote>
 
-<h2>7. Le petit supplément qui vaut le coup</h2>
-<p>Juste après la photo « officielle » de chaque groupe, demande une deuxième prise complètement libre : tout le monde bouge, crie, saute, se serre. C’est presque toujours celle-là qu’on garde.</p>
+<h2>La grande photo de tous les invités</h2>
+<p>C’est la photo la plus spectaculaire, et la plus difficile : cent personnes ne tiennent pas dans un cadre pris à hauteur d’homme. Le secret, c’est la <strong>hauteur</strong>.</p>
+<ul>
+<li><strong>Un balcon ou une fenêtre d’étage</strong> : le photographe se place au-dessus, les invités se serrent en dessous et lèvent la tête. Tout le monde est visible, même au dernier rang.</li>
+<li><strong>Un escalier</strong> : les invités s’installent sur les marches, et chaque rang se retrouve naturellement plus haut que le précédent.</li>
+<li><strong>Un escabeau solide</strong>, si le lieu n’a ni balcon ni escalier. Deux ou trois marches suffisent déjà à changer la photo.</li>
+</ul>
+<p>Trois consignes à faire passer par le régisseur : on se serre beaucoup plus qu’on ne le croit, les plus petits et les enfants devant, et tout le monde regarde l’objectif, pas les mariés. Prends une version sage, puis une où tout le monde lève les bras en criant : c’est souvent celle-là qu’on encadre. Et repère le balcon ou l’escalier pendant la visite du lieu, comme le reste.</p>
+
+<h2>Des idées de poses de groupe originales</h2>
+<p>Juste après la photo « officielle » de chaque groupe, demande une deuxième prise, plus libre. C’est presque toujours celle-là qu’on garde. Quelques idées qui marchent :</p>
+<ul>
+<li><strong>Le saut</strong> : tout le monde saute au signal. Il faut trois ou quatre essais, et les ratés font rire autant que la réussie.</li>
+<li><strong>La marche</strong> : le groupe avance vers l’objectif en discutant, comme s’il ne posait pas.</li>
+<li><strong>Le regard vers les mariés</strong> : tout le groupe se tourne vers vous deux pendant que vous vous embrassez.</li>
+<li><strong>Le cercle vu d’en haut</strong> : les invités en rond, têtes rapprochées, le photographe au-dessus (depuis un balcon ou un escabeau).</li>
+<li><strong>Les lunettes de soleil</strong> : tout le monde les met au même moment, effet pochette d’album garanti.</li>
+<li><strong>La photo de classe</strong> : un rang assis, un rang debout, bras croisés, l’air très sérieux. Elle fera rire dans vingt ans.</li>
+</ul>
+<p>Une seule idée par groupe, pas plus : l’objectif reste de tenir les vingt minutes.</p>
 
 <h2>Et pendant ce temps-là</h2>
-<p>Tes invités qui attendent leur tour sont, eux, en train de photographier tout le reste : les fous rires en coulisses, les enfants qui s’échappent, l’organisation elle-même. Ce sont souvent les images les plus vivantes de la journée (voir <a href="/journal/invites-photographe">tes invités voient ce que le photographe ne voit pas</a>).</p>
-<p>La liste complète des photos à ne pas rater est dans <a href="/journal/shot-list-mariage">la shot list des 50 photos</a>. Et avec <a href="/">Time to Flash</a>, tout ce que tes invités captent pendant ces vingt minutes atterrit dans le même album que le reste.</p>
+<p>Tes invités qui attendent leur tour sont, eux, en train de photographier tout le reste : les fous rires en coulisses, les enfants qui s’échappent, l’organisation elle-même. Ce sont souvent les images les plus vivantes de la journée (voir <a href="/journal/invites-photographe">tes invités voient ce que le photographe ne voit pas</a>). Et le soir venu, les meilleures photos de groupe se font souvent toutes seules, entre amis sur la piste : nos conseils pour qu’elles ne soient pas toutes noires sont dans <a href="/journal/photos-soiree-dansante-telephone">réussir ses photos de soirée dansante au téléphone</a>.</p>
+<p>Avec <a href="/">Time to Flash</a>, tout ce que tes invités captent pendant ces vingt minutes, et tout le reste de la journée, atterrit dans le même album, révélé le lendemain.</p>
 `,
+    faq: [
+      {
+        q: 'Combien de photos de groupe prévoir à un mariage ?',
+        a: 'Vise 8 à 12 groupes, pas plus. À raison de 90 secondes par groupe, cela représente une vingtaine de minutes. Au-delà, les invités se dispersent et les sourires se figent.',
+      },
+      {
+        q: 'Quand faire les photos de groupe du mariage ?',
+        a: 'Juste après la cérémonie, au début du vin d’honneur, quand tout le monde est encore réuni au même endroit. Les autres invités profitent du cocktail pendant ce temps, et personne ne s’ennuie.',
+      },
+      {
+        q: 'Dans quel ordre faire les photos de groupe ?',
+        a: 'Du cercle le plus proche au plus large : les mariés avec leurs parents, la famille proche, les familles élargies, les témoins, les amis, les collègues, puis tous les invités. Les personnes âgées peuvent ainsi aller s’asseoir rapidement.',
+      },
+      {
+        q: 'Comment faire une photo de groupe avec tous les invités ?',
+        a: 'Prends de la hauteur : un balcon, une fenêtre d’étage, un escalier ou un escabeau solide. Les invités se serrent, les plus petits devant, et tout le monde regarde l’objectif. Fais une version sage, puis une plus folle.',
+      },
+    ],
   },
   {
     slug: 'budget-photo-mariage',
@@ -1148,12 +1364,12 @@ const ALL_POSTS = [
 <p>Les tarifs varient fortement selon la région et la saison. Prends toujours deux ou trois devis.</p>
 
 <h2>Où il ne faut pas économiser</h2>
-<p><strong>Le photographe principal.</strong> C’est le seul poste vraiment irrattrapable. Un mauvais traiteur se raconte en riant ; des photos ratées ne se refont pas.</p>
+<p><strong>Le photographe principal.</strong> C’est le seul poste vraiment irrattrapable. Un mauvais traiteur se raconte en riant ; des photos ratées ne se refont pas. C’est aussi lui qui orchestre les moments qu’on ne rejoue pas, comme <a href="/journal/photos-de-groupe-mariage">les photos de groupe du mariage</a>.</p>
 <p><strong>Le nombre d’heures.</strong> L’erreur la plus fréquente est de prendre une formule qui s’arrête à 22 h, avant la vraie soirée. Or le pic d’émotion (et de photos) tombe bien plus tard (voir <a href="/journal/120-mariages">ce qu’on a appris sur 120 mariages</a>). Mieux vaut un photographe un peu moins réputé qui reste jusqu’à 1 h, qu’un excellent qui part au dessert.</p>
 
 <h2>Où l’on peut économiser sans regret</h2>
 <p><strong>1. L’album fourni par le photographe.</strong> Prends les fichiers, fais l’album toi-même : tu économises souvent 400 € pour un résultat très proche (voir <a href="/journal/livre-photo-mariage-invites">faire un livre photo avec les photos des invités</a>).</p>
-<p><strong>2. La borne photo.</strong> C’est le poste au plus mauvais rapport prix/souvenirs de toute la liste. Les mêmes photos amusantes s’obtiennent pour vingt fois moins cher, et partout dans la salle plutôt qu’à un seul endroit.</p>
+<p><strong>2. La borne photo.</strong> C’est le poste au plus mauvais rapport prix/souvenirs de toute la liste. Les mêmes photos amusantes s’obtiennent pour vingt fois moins cher, et partout dans la salle plutôt qu’à un seul endroit (on fait le calcul sur notre page <a href="/photobooth-mariage">alternative au photobooth de mariage</a>).</p>
 <p><strong>3. Le second photographe.</strong> Utile sur un très grand mariage. Sur 80 invités, tes invités eux-mêmes couvrent déjà tout ce qu’un second photographe irait chercher, à condition de leur donner un cadre.</p>
 
 <blockquote class="dj-quote">« On a supprimé la borne et gardé le photographe une heure de plus. C’est la meilleure décision de tout le budget. »
@@ -1258,14 +1474,17 @@ const ALL_POSTS = [
 ]
 
 // Ordre d'affichage : du plus récent au plus ancien.
-export const POSTS = [...ALL_POSTS].sort((a, b) => b.date.localeCompare(a.date))
+export const POSTS = [...ALL_POSTS, ...POSTS_OCCASIONS].sort((a, b) => b.date.localeCompare(a.date))
 
 export function getPost(slug) {
   return POSTS.find((p) => p.slug === slug) || null
 }
 
 // ---- Versions traduites ----------------------------------------------------
-const TRADUCTIONS = { en: POSTS_EN, de: POSTS_DE }
+const TRADUCTIONS = {
+  en: { ...POSTS_EN, ...POSTS_OCCASIONS_EN },
+  de: { ...POSTS_DE, ...POSTS_OCCASIONS_DE },
+}
 
 // Durée de lecture : « 9 min » → « 9 min read » / « 9 Min. Lesezeit ».
 function dureeLecture(read, langue) {

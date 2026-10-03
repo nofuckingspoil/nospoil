@@ -6,9 +6,9 @@
 //  (quelques centaines d'euros) : il ne reste qu'à montrer que la borne est
 //  la mauvaise façon d'obtenir ce qu'il veut.
 //
-//  Désindexée volontairement : le journal a déjà deux articles sur ces mots
-//  (/journal/alternative-photobooth-mariage, /journal/prix-photobooth-mariage)
-//  et deux pages du même site sur la même recherche se nuisent.
+//  Indexable depuis le 07/08/2026, et reliée au reste du site depuis le
+//  03/10/2026 (pied de page, articles du journal) : sans publicité en cours,
+//  c'est Google qui doit lui amener ses visiteurs.
 //
 //  En anglais et en allemand, le titre vise « wedding photo booth
 //  alternative » et « Fotobox Hochzeit Alternative ».
