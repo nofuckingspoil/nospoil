@@ -24,11 +24,11 @@ export default function QuestionDecouverte({ onEnvoyer, onPasser, envoi = false 
   const [autre, setAutre] = useState('')
 
   const OPTIONS = [
-    ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook'],
+    ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook'], ['youtube', 'YouTube'],
     ['bouche', t({ fr: 'Bouche-à-oreille', en: 'Word of mouth', de: 'Mundpropaganda' })],
     ['invite', t({ fr: "J'étais invité à une soirée Time to Flash", en: 'I was a guest at a Time to Flash event', de: 'Ich war Gast bei einem Time-to-Flash-Event' })],
     ['google', t({ fr: 'Recherche Google', en: 'Google search', de: 'Google-Suche' })],
-    ['ia', t({ fr: 'Assistant IA (ChatGPT…)', en: 'AI assistant (ChatGPT…)', de: 'KI-Assistent (ChatGPT…)' })],
+    ['ia', t({ fr: 'Assistant IA (ChatGPT, Claude, Gemini, etc.)', en: 'AI assistant (ChatGPT, Claude, Gemini, etc.)', de: 'KI-Assistent (ChatGPT, Claude, Gemini usw.)' })],
     ['autre', t({ fr: 'Autre', en: 'Other', de: 'Sonstiges' })],
   ]
 

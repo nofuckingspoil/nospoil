@@ -17,7 +17,7 @@ const KEY_STORE = 'declic_admin_key'
 const PERIODES = [['7', '7 jours'], ['30', '30 jours'], ['90', '90 jours'], ['tout', 'Tout']]
 const VIA = { qr: 'QR code', bouton: 'bouton « Essayer »', direct: 'lien direct' }
 const DECOUVERTE = {
-  instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', bouche: 'Bouche-à-oreille',
+  instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', youtube: 'YouTube', bouche: 'Bouche-à-oreille',
   invite: 'Invité à une soirée Time to Flash', google: 'Recherche Google', ia: 'Assistant IA', autre: 'Autre',
 }
 

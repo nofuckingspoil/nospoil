@@ -16,7 +16,7 @@ import { langueRequete } from '../../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
-const CHOIX = ['instagram', 'tiktok', 'facebook', 'bouche', 'invite', 'google', 'ia', 'autre']
+const CHOIX = ['instagram', 'tiktok', 'facebook', 'youtube', 'bouche', 'invite', 'google', 'ia', 'autre']
 
 const court = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '') || null
 
