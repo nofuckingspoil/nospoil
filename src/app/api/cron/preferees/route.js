@@ -1,4 +1,7 @@
 // ============================================================
+//  HORS SERVICE depuis le 03/10/2026 : retiré de vercel.json. Ce mail est
+//  fondu dans le mail de révélation (voir albumReadyEmail dans lib/mail.js).
+//
 //  Le mail des photos préférées, deux jours après la révélation.
 //
 //  Une tâche par jour suffit : ce mail n'a rien d'urgent, et le classement

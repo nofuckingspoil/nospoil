@@ -119,7 +119,7 @@ export async function GET(request, { params }) {
     // pour pouvoir justement en retirer un (règle 1.2 d'Apple).
     const list = await selectRows(
       'guests',
-      `event_id=eq.${id}&blocked=is.false&select=id,display_name,email,phone,notified_at,notify_failed&order=created_at.asc`
+      `event_id=eq.${id}&blocked=is.false&select=id,display_name,email,phone,notified_at,notify_failed,email_ko_at,email_desinscrit_at&order=created_at.asc`
     )
     payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({
       id: g.id,
@@ -128,6 +128,12 @@ export async function GET(request, { params }) {
       phone: g.phone || null,
       notified: !!g.notified_at,
       failed: !!g.notify_failed,
+      // Adresse qui ne recevra jamais rien (domaine inexistant, boîte
+      // inconnue) : l'organisateur doit prévenir ce participant autrement.
+      ko: !!g.email && !!g.email_ko_at,
+      koAt: g.email_ko_at || null,
+      // Désinscrit : il a demandé à ne plus rien recevoir, y compris l'album.
+      desinscrit: !!g.email && !!g.email_desinscrit_at,
     }))
 
     const admins = await selectRows('event_admins', `event_id=eq.${id}&select=id,name,email,invited_at,joined_at&order=created_at.asc`)

@@ -1,8 +1,10 @@
 // ============================================================
 //  Envoi du lien de l'album aux participants qui ont laissé leur adresse.
 //
-//  C'est la contrepartie de la collecte : ils ont donné leur mail pour ça,
-//  et pour rien d'autre. L'envoi part tout seul dès la révélation.
+//  C'est la contrepartie de la collecte : ils ont donné leur mail pour ça.
+//  L'envoi part tout seul dès la révélation. Depuis le 03/10/2026 c'est le
+//  dernier mail du participant : il porte aussi les cœurs, les tirages et
+//  l'avis (voir albumReadyEmail).
 //
 //  Appelé de deux endroits :
 //   - la tâche planifiée quotidienne (filet de sécurité) ;
@@ -12,6 +14,10 @@
 import 'server-only'
 import { selectRows, updateRow } from './supabase'
 import { sendMail, albumReadyEmail, siteUrl } from './mail'
+import { lienAvisInvite } from './avis-mail'
+import { tiragesActifs, prixAppel } from './tirages'
+import { PROMESSE_SERVICES } from './relance-tirages'
+import { vignettesAlbum } from './vignettes-album'
 import { isRevealed } from './phase'
 import { langueDe } from './langue-serveur'
 
@@ -42,25 +48,40 @@ export async function notifyGuestsOfAlbum(ev) {
   const { ok, data } = await selectRows(
     'guests',
     `event_id=eq.${ev.id}&email=not.is.null&notified_at=is.null` +
-      `&select=id,display_name,email,langue&order=created_at.asc&limit=${BATCH}`
+      `&select=id,display_name,email,langue,token,created_at,feedback_at,survey_optout&order=created_at.asc&limit=${BATCH}`
   )
   if (!ok || !Array.isArray(data) || !data.length) return { envoyes: 0, echecs: 0 }
 
   const photos = await selectRows('photos', `select=id&event_id=eq.${ev.id}&hidden=is.false`)
   const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
   const galleryUrl = `${siteUrl()}/g/${ev.id}`
+  // Trois photos pour voter depuis le mail, choisies une fois pour tous.
+  // Sans elles, le mail reste complet : il dit simplement où est le cœur.
+  let vignettes = []
+  try { vignettes = await vignettesAlbum(ev.id) } catch (err) { console.error('vignettes du mail:', err) }
 
   let envoyes = 0
   let echecs = 0
   for (const g of data) {
     if (!g.email) continue
+    const langue = langueDe(g, langueDe(ev))
+    // Les tirages : seulement pour ceux qui ont lu « et nos services autour
+    // de vos photos » sous le champ mail. Les inscrits d'avant ont accepté
+    // une promesse plus étroite, et elle les engage.
+    const tiragesOk = tiragesActifs() && !g.survey_optout &&
+      !!g.created_at && g.created_at >= PROMESSE_SERVICES
     const mail = albumReadyEmail({
       eventName: ev.name,
       galleryUrl,
       photoCount,
       guestName: g.display_name,
+      vignettes,
+      tiragesLien: tiragesOk ? `${galleryUrl}?tirages=1` : null,
+      prixTirage: tiragesOk ? prixAppel(langue) : null,
+      // L'avis : pas à celui qui l'a déjà donné, ni à celui qui a dit non.
+      avisLien: g.token && !g.feedback_at && !g.survey_optout ? lienAvisInvite(g.token) : null,
       // La langue du participant, sinon celle de l'événement.
-      langue: langueDe(g, langueDe(ev)),
+      langue,
     })
     const res = await sendMail({ to: g.email, subject: mail.subject, html: mail.html })
     // On horodate dans tous les cas : un échec ne doit pas déclencher une

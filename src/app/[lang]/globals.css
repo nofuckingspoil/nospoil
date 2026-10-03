@@ -2970,6 +2970,9 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-mail-parti p { margin: 0; font-size: 13.5px; line-height: 1.5; opacity: .85; overflow-wrap: anywhere; }
 .db-mail-parti-x { position: absolute; top: 8px; right: 10px; background: none; border: 0; font-size: 22px; line-height: 1; cursor: pointer; color: inherit; opacity: .6; }
 .db-contact-ko { font-style: normal; color: #b23b2e; }
+.db-contact-badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 11.5px; font-style: normal; font-weight: 600; background: var(--line); color: var(--text2); vertical-align: 1px; }
+.db-contact-badge.ko { background: rgba(178,59,46,.12); color: #b23b2e; }
+.db-ko-alerte { background: rgba(178,59,46,.08); border-color: rgba(178,59,46,.35); padding-right: 16px; margin-bottom: 12px; }
 
 /* ============================================================
    Guide de l'organisateur (/guide) — réutilise l'univers du blog (.dj)
