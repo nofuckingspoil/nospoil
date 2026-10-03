@@ -17,6 +17,7 @@ import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
 import { useLangue, SelecteurLangue } from '../../../components/Langue'
 import { lireProvenance } from '../../../lib/provenance'
+import QuestionDecouverte from '../../../components/QuestionDecouverte'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -177,8 +178,6 @@ export function CreateForm({ parcours = 'long' }) {
   // La recharge : des photos en plus, offertes une fois la pellicule finie.
   const [bonus, setBonus] = useState(0)
   const [mailOrga, setMailOrga] = useState('')
-  const [decouverte, setDecouverte] = useState(null)
-  const [autreDetail, setAutreDetail] = useState('')
   const TOTAL = etapes.length
 
   const [name, setName] = useState('')
@@ -363,15 +362,16 @@ export function CreateForm({ parcours = 'long' }) {
     })
   }
 
-  async function envoyerDecouverte(choix, detail = '') {
-    setDecouverte(choix)
+  async function envoyerDecouverte(reponse) {
+    setLoading(true)
     try {
       await fetch(`/api/events/${eventId}/decouverte`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(eventId) || getDeviceToken() },
-        body: JSON.stringify({ decouverte: choix, detail, provenance: lireProvenance() || {} }),
+        body: JSON.stringify({ ...reponse, provenance: lireProvenance() || {} }),
       })
     } catch {}
+    setLoading(false)
     suivant()
   }
 
@@ -1048,41 +1048,7 @@ export function CreateForm({ parcours = 'long' }) {
         <div className="card wiz-card">
           <h2 className="wiz-q">{t({ fr: 'Une dernière question : comment avez-vous découvert Time to Flash ?', en: 'One last question: how did you hear about Time to Flash?', de: 'Eine letzte Frage: Wie haben Sie Time to Flash entdeckt?' })}</h2>
           <p className="wiz-sub">{t({ fr: 'Ça nous aide énormément à faire connaître le service.', en: 'It helps us a lot to spread the word.', de: 'Das hilft uns sehr, den Dienst bekannter zu machen.' })}</p>
-          <div className="avis-choix">
-            {[
-              ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook'],
-              ['bouche', t({ fr: 'Bouche-à-oreille', en: 'Word of mouth', de: 'Mundpropaganda' })],
-              ['invite', t({ fr: "J'étais invité à une soirée Time to Flash", en: 'I was a guest at a Time to Flash event', de: 'Ich war Gast bei einem Time-to-Flash-Event' })],
-              ['google', t({ fr: 'Recherche Google', en: 'Google search', de: 'Google-Suche' })],
-              ['ia', t({ fr: 'Assistant IA (ChatGPT…)', en: 'AI assistant (ChatGPT…)', de: 'KI-Assistent (ChatGPT…)' })],
-              ['autre', t({ fr: 'Autre', en: 'Other', de: 'Sonstiges' })],
-            ].map(([id, label]) => (
-              <button key={id} type="button" className={`avis-opt ${decouverte === id ? 'on' : ''}`} aria-pressed={decouverte === id}
-                onClick={() => (id === 'ia' || id === 'autre' ? setDecouverte(id) : envoyerDecouverte(id))}>{label}</button>
-            ))}
-          </div>
-          {decouverte === 'ia' && (
-            <div style={{ marginTop: 14 }}>
-              <div className="hint" style={{ marginBottom: 8 }}>{t({ fr: 'Lequel ?', en: 'Which one?', de: 'Welcher?' })}</div>
-              <div className="avis-choix">
-                {['ChatGPT', 'Gemini', 'Claude', 'Perplexity', 'Copilot', 'Mistral'].map((nom) => (
-                  <button key={nom} type="button" className="avis-opt" onClick={() => envoyerDecouverte('ia', nom)}>{nom}</button>
-                ))}
-                <button type="button" className="avis-opt" onClick={() => envoyerDecouverte('ia', '')}>{t({ fr: 'Un autre', en: 'Another one', de: 'Ein anderer' })}</button>
-              </div>
-            </div>
-          )}
-          {decouverte === 'autre' && (
-            <form style={{ marginTop: 14, display: 'flex', gap: 8 }} onSubmit={(e) => { e.preventDefault(); envoyerDecouverte('autre', autreDetail) }}>
-              <input type="text" value={autreDetail} onChange={(e) => setAutreDetail(e.target.value)} maxLength={120} autoFocus
-                placeholder={t({ fr: 'Un salon, un article, un prestataire…', en: 'A fair, an article, a supplier…', de: 'Eine Messe, ein Artikel, ein Dienstleister…' })} />
-              <button type="submit" className="btn btn-dark" style={{ width: 'auto', padding: '0 18px' }}>OK</button>
-            </form>
-          )}
-          <div className="wiz-nav">
-            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label={t({ fr: 'Retour', en: 'Back', de: 'Zurück' })}>←</button>
-          </div>
-          <button type="button" className="linklike wiz-skip" onClick={suivant}>{t({ fr: 'Passer cette question', en: 'Skip this question', de: 'Diese Frage überspringen' })}</button>
+          <QuestionDecouverte envoi={loading} onEnvoyer={envoyerDecouverte} onPasser={suivant} />
         </div>
       )}
 

@@ -168,10 +168,10 @@ export default function AdminEssaisPage() {
         ) : (
           <>
             <div className="essais-table">
-              {Object.entries(d.reponses.reduce((acc, r) => { acc[r.choix] = (acc[r.choix] || 0) + 1; return acc }, {}))
+              {Object.entries(d.reponses.reduce((acc, r) => { for (const c of r.choix) acc[c] = (acc[c] || 0) + 1; return acc }, {}))
                 .sort((a, b) => b[1] - a[1])
                 .map(([choix, n]) => {
-                  const details = d.reponses.filter((r) => r.choix === choix && r.detail).map((r) => r.detail)
+                  const details = choix === 'ia' || choix === 'autre' ? d.reponses.filter((r) => r.choix.includes(choix) && r.detail).map((r) => r.detail) : []
                   return (
                     <div key={choix} className="essais-ligne">
                       <span>{DECOUVERTE[choix] || choix}{details.length ? <span className="muted"> · {[...new Set(details)].join(', ')}</span> : null}</span>
@@ -189,7 +189,7 @@ export default function AdminEssaisPage() {
                   <div key={i} className="essais-ligne essais-personne">
                     <span><strong>{r.soiree}</strong></span>
                     <span className="muted">{fmtDate(r.le)}</span>
-                    <span>{DECOUVERTE[r.choix] || r.choix}{r.detail ? ` (${r.detail})` : ''}</span>
+                    <span>{r.choix.map((c) => DECOUVERTE[c] || c).join(', ')}{r.detail ? ` (${r.detail})` : ''}</span>
                     <span className="muted">mesuré : {r.mesure || 'inconnu'}{r.euros ? ` · ${r.euros.toFixed(2).replace('.', ',')} €` : ' · gratuit'}</span>
                   </div>
                 ))}

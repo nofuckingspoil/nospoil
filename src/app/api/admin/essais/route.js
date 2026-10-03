@@ -89,11 +89,11 @@ export async function GET(request) {
   // « Comment avez-vous découvert Time to Flash ? », posée après la création.
   const { data: repondus } = await selectRows(
     'events',
-    `select=name,decouverte,decouverte_detail,decouverte_at,prov_source,paid_cents&decouverte=not.is.null&is_demo=is.false&is_test=is.false${depuis.replace('created_at', 'decouverte_at')}&order=decouverte_at.desc&limit=2000`
+    `select=name,decouverte,decouvertes,decouverte_detail,decouverte_at,prov_source,paid_cents&decouverte=not.is.null&is_demo=is.false&is_test=is.false${depuis.replace('created_at', 'decouverte_at')}&order=decouverte_at.desc&limit=2000`
   )
   const reponses = (Array.isArray(repondus) ? repondus : []).map((e) => ({
     soiree: e.name,
-    choix: e.decouverte,
+    choix: Array.isArray(e.decouvertes) && e.decouvertes.length ? e.decouvertes : [e.decouverte],
     detail: e.decouverte_detail,
     le: e.decouverte_at,
     mesure: e.prov_source,
