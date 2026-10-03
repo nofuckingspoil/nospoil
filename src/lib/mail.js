@@ -75,7 +75,7 @@ async function adresseEcartee(to) {
   } catch { return false }
 }
 
-export async function sendMail({ to, subject, html, text, desinscription }) {
+export async function sendMail({ to, subject, html, text, desinscription, expediteur, repondreA }) {
   const key = process.env.BREVO_API_KEY
   const from = process.env.BREVO_SENDER_EMAIL
   if (!key || !from) {
@@ -99,7 +99,11 @@ export async function sendMail({ to, subject, html, text, desinscription }) {
     return { ok: false, error: 'opted-out' }
   }
   const corps = {
-    sender: { email: from, name: BRAND.name },
+    // `expediteur` : un nom de personne (« Clément de Time to Flash ») pour
+    // les mails écrits à la première personne ; `repondreA` : où arrivent les
+    // réponses, puisqu'on invite à répondre directement.
+    sender: { email: from, name: expediteur || BRAND.name },
+    ...(repondreA ? { replyTo: { email: repondreA, name: expediteur || BRAND.name } } : {}),
     to: [{ email: to }],
     subject,
     htmlContent: html,
@@ -869,7 +873,7 @@ function lienEncart(url, label) {
 }
 
 // Cinq étoiles, chacune un lien : un seul geste suffit à répondre.
-function etoilesAvis(lienAvis, mots) {
+export function etoilesAvis(lienAvis, mots) {
   const sep = lienAvis.includes('?') ? '&' : '?'
   const cases = [1, 2, 3, 4, 5].map((n) => `<td align="center" style="width:20%;">
       <a href="${lienAvis}${sep}note=${n}" style="text-decoration:none;display:block;">

@@ -148,6 +148,10 @@ export async function GET(request, { params }) {
     payload.revealPaused = !!ev.reveal_paused // frein d'urgence
     // Parcours court : le réglage où en est l'organisateur (null = terminé).
     payload.reglagesEtape = ev.reglages_etape || null
+    // L'organisateur a-t-il déjà donné son avis ? Sinon, le tableau de bord le
+    // lui demande à sa première visite après la révélation.
+    const avisOrga = await selectRows('feedback', `event_id=eq.${ev.id}&role=eq.organisateur&select=id&limit=1`)
+    payload.avisOrgaDonne = Array.isArray(avisOrga.data) && avisOrga.data.length > 0
     // Le nb de photos/participant est-il figé ? Pas tant que personne n'a photographié.
     payload.quotaLocked = quotaLocked(dates) && photoCount > 0
 

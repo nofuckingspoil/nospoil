@@ -50,7 +50,8 @@ async function resoudre(body) {
     )
     const ev = Array.isArray(data) ? data[0] : null
     if (!ev) return null
-    return { role: 'organisateur', canal: 'mail', ev, guest: null }
+    // Depuis le tableau de bord (support: 'tableau') ou depuis le mail.
+    return { role: 'organisateur', canal: body.support === 'tableau' ? 'tableau' : 'mail', ev, guest: null }
   }
 
   const jetonInvite = texte(body.i)

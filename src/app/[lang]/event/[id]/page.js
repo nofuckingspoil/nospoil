@@ -9,6 +9,7 @@
 //  simplement replié, pour qu'on retrouve toujours ce qu'on cherche.
 // ============================================================
 
+import Avis from '../../../../components/Avis'
 import ApresCreation from '../../../../components/ApresCreation'
 import { use, useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -137,6 +138,9 @@ export default function EventManage({ params }) {
   // suite, tant que la personne est là pour aller le chercher.
   const [vientDeCreer, setVientDeCreer] = useState(false)
   const [creationCourte, setCreationCourte] = useState(false)
+  // L'avis organisateur fermé sur cet appareil : on ne le repropose pas.
+  const [avisFerme, setAvisFerme] = useState(true)
+  useEffect(() => { try { setAvisFerme(!!localStorage.getItem(`ttf_avis_orga_${id}`)) } catch { setAvisFerme(false) } }, [id])
   useEffect(() => {
     const u = new URL(window.location.href)
     if (u.searchParams.get('cree') !== '1') return
@@ -1027,6 +1031,17 @@ export default function EventManage({ params }) {
       {/* Juste après la création : la question « comment nous avez-vous
           connus », et, après la création courte, l'invitation à régler le
           reste. Pas pour un co-organisateur, qui n'a rien créé. */}
+      {/* Après la révélation, à la première visite : l'avis de l'organisateur,
+          avec les mêmes questions que le mail. Une fois donné, ou fermé, on
+          ne le redemande plus. */}
+      {revealedTime && ev.role === 'owner' && !ev.avisOrgaDonne && !avisFerme && (ev.photoCount || 0) > 0 && (
+        <div className="apres-crea">
+          <Avis role="organisateur" compact
+            payload={{ o: getOwnerToken(id), support: 'tableau' }}
+            onClose={() => { setAvisFerme(true); try { localStorage.setItem(`ttf_avis_orga_${id}`, '1') } catch {} }} />
+        </div>
+      )}
+
       {vientDeCreer && ev.isOwner !== false && (
         <ApresCreation eventId={id} court={creationCourte}
           onPersonnaliser={() => allerA('reglages', 'sec-reglages')} />
