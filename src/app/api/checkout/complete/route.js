@@ -7,6 +7,7 @@ import { modeValide } from '../../../../lib/photo-mode'
 import { ensureAccount } from '../../../../lib/account'
 import { consumePromo } from '../../../../lib/promo'
 import { t, langueValide } from '../../../../lib/i18n'
+import { resumeAppareil } from '../../../../lib/avis'
 import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
@@ -102,6 +103,12 @@ export async function POST(request) {
     // Parcours court : réglages à faire. Le lien du mail y ramène tant qu'ils
     // ne sont pas terminés.
     reglages_etape: m.parcours === 'court' ? 'bravo' : null,
+    prov_source: m.prov_source || null,
+    prov_medium: m.prov_medium || null,
+    prov_campagne: m.prov_campagne || null,
+    prov_page: m.prov_page || null,
+    // Appel fait par le navigateur de l'organisateur au retour du paiement.
+    appareil_orga: resumeAppareil(request.headers.get('user-agent')),
     langue,
   })
   if (!ok || !data?.id) {

@@ -572,6 +572,8 @@ export function CreateForm({ parcours = 'long' }) {
       revealAt: new Date(revealAt).toISOString(), shotsPerGuest: shots, photoMode,
       maxGuests: tier.maxGuests,
       flow: parcours === 'court' ? 'nouveau' : 'long',
+      // D'où vient l'organisateur (site, campagne, page d'arrivée).
+      provenance: lireProvenance() || {},
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,

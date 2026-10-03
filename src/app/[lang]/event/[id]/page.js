@@ -353,9 +353,9 @@ export default function EventManage({ params }) {
       const d = await r.json().catch(() => ({}))
       if (d.error) throw new Error(d.error)
       await reload()
-      // Le cadrage n'existe qu'ici, dans la foulée de l'envoi : c'est le moment
-      // où l'on regarde sa photo et où l'on voit si elle tombe juste. En faire
-      // une option permanente ajoutait un bouton pour un geste rarement repris.
+      // Le cadrage s'ouvre dans la foulée de l'envoi : c'est le moment où l'on
+      // regarde sa photo. Il reste ensuite accessible par « Recadrer » (ajouté
+      // le 03/10/2026 : une couverture posée à la création ne se recadrait plus).
       setPos('50% 50%')
       setRecadrage(true)
     } catch (err) {
@@ -1274,6 +1274,13 @@ export default function EventManage({ params }) {
                 <input type="file" accept="image/*" hidden
                   onChange={(e) => uploadCover(e.target.files?.[0])} />
               </label>
+              {/* Recadrer à tout moment : une photo posée pendant la création, ou
+                  il y a trois jours, doit pouvoir se recentrer sans la renvoyer. */}
+              {ev.coverUrl && (
+                <button className="btn btn-ghost" onClick={() => { setPos(ev.coverPos || '50% 50%'); setRecadrage(true) }}>
+                  ✥ {t({ fr: 'Recadrer', en: 'Reframe', de: 'Zuschneiden' })}
+                </button>
+              )}
               <button className="btn btn-ghost" onClick={() => {
                 setEditing('name'); setDraftName(lang !== 'fr' && ev.name === DEFAULT_EVENT_NAME ? '' : (ev.name || ''))
               }}>✎ {t({ fr: 'Modifier le nom', en: 'Edit the name', de: 'Namen ändern' })}</button>

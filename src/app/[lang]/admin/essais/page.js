@@ -161,6 +161,27 @@ export default function AdminEssaisPage() {
           </>
         )}
 
+        {/* Chaque soirée créée : d'où venait l'organisateur, sur quelle page il
+            est arrivé, et ce qu'il a déclaré. */}
+        <h2 className="h3" style={{ margin: '30px 0 10px' }}>Les soirées créées et leur provenance</h2>
+        {d.soirees.length === 0 ? (
+          <div className="notice">Aucune soirée créée sur la période.</div>
+        ) : (
+          <div className="essais-table">
+            {d.soirees.map((e, i) => (
+              <div key={i} className="essais-ligne essais-personne">
+                <span><strong>{e.nom}</strong><br /><span className="muted">{fmtDate(e.le)}{e.euros ? ` · ${e.euros.toFixed(2).replace('.', ',')} €` : ' · gratuit'}{e.appareil ? ` · ${e.appareil}` : ''}</span></span>
+                <span>{e.source || <span className="muted">inconnue</span>}{e.campagne ? <span className="muted"> · {e.campagne}</span> : null}</span>
+                <span className="muted" style={{ wordBreak: 'break-all' }}>{e.page || '-'}</span>
+                <span>{e.declare.length ? e.declare.map((c) => DECOUVERTE[c] || c).join(', ') : <span className="muted">pas répondu</span>}{e.detail ? <span className="muted"> ({e.detail})</span> : null}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        <p className="muted small" style={{ marginTop: 8 }}>
+          Colonnes : soirée, provenance mesurée, page d&apos;arrivée sur le site, réponse déclarée. La page d&apos;arrivée est enregistrée depuis le 3 octobre 2026.
+        </p>
+
         {/* Ce que les clients déclarent, juste après avoir créé leur soirée. */}
         <h2 className="h3" style={{ margin: '30px 0 10px' }}>Comment les clients vous ont découvert</h2>
         {d.reponses.length === 0 ? (

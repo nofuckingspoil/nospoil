@@ -45,10 +45,17 @@ export async function POST(request, { params }) {
     decouvertes: choix,
     decouverte_detail: precisions.length ? precisions.join(' · ').slice(0, 300) : null,
     decouverte_at: new Date().toISOString(),
-    prov_source: court(prov.s, 80),
-    prov_medium: court(prov.m, 80),
-    prov_campagne: court(prov.c, 120),
   })
+  // La provenance est normalement posée à la création ; pour les soirées
+  // d'avant, on la complète ici, sans jamais écraser ce qui est déjà connu.
+  if (ok && (prov.s || prov.p)) {
+    await updateRow('events', `id=eq.${id}&prov_source=is.null&prov_page=is.null`, {
+      prov_source: court(prov.s, 80),
+      prov_medium: court(prov.m, 80),
+      prov_campagne: court(prov.c, 120),
+      prov_page: court(prov.p, 200),
+    })
+  }
   if (!ok) return Response.json({ error: t({ fr: 'Erreur serveur.', en: 'Server error.', de: 'Serverfehler.' }, langue) }, { status: 500 })
   return Response.json({ ok: true })
 }

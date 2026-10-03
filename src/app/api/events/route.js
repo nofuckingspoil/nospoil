@@ -9,6 +9,14 @@ import { LEGAL_UPDATED } from '../../../lib/legal'
 import { modeValide } from '../../../lib/photo-mode'
 import { t, langueValide } from '../../../lib/i18n'
 import { langueRequete } from '../../../lib/langue-serveur'
+import { resumeAppareil } from '../../../lib/avis'
+
+// D'où vient l'organisateur : retenu par son navigateur (lib/provenance.js).
+function provenanceDe(p) {
+  const court = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '') || null
+  if (!p || typeof p !== 'object') return {}
+  return { prov_source: court(p.s, 80), prov_medium: court(p.m, 80), prov_campagne: court(p.c, 120), prov_page: court(p.p, 200) }
+}
 
 export async function POST(request) {
   const body = await request.json().catch(() => ({}))
@@ -122,6 +130,9 @@ export async function POST(request) {
     is_test: isTest,
     // Parcours court : réglages à faire juste après (voir /create/parametrer).
     reglages_etape: body.flow === 'nouveau' ? 'bravo' : null,
+    ...provenanceDe(body.provenance),
+    // iPhone, Android ou ordinateur, et le navigateur : rien de plus.
+    appareil_orga: resumeAppareil(request.headers.get('user-agent')),
     langue,
   })
 

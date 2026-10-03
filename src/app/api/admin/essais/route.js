@@ -100,8 +100,28 @@ export async function GET(request) {
     euros: (e.paid_cents || 0) / 100,
   }))
 
+  // Toutes les soirées créées sur la période, avec leur provenance mesurée et
+  // leur réponse déclarée : c'est là qu'on voit ce qui amène les clients.
+  const { data: crees } = await selectRows(
+    'events',
+    `select=name,created_at,paid_cents,appareil_orga,prov_source,prov_medium,prov_campagne,prov_page,decouvertes,decouverte,decouverte_detail&is_demo=is.false&is_test=is.false${depuis}&order=created_at.desc&limit=2000`
+  )
+  const soireesCreees = (Array.isArray(crees) ? crees : []).map((e) => ({
+    nom: e.name,
+    le: e.created_at,
+    euros: (e.paid_cents || 0) / 100,
+    appareil: e.appareil_orga,
+    source: e.prov_source,
+    medium: e.prov_medium,
+    campagne: e.prov_campagne,
+    page: e.prov_page,
+    declare: Array.isArray(e.decouvertes) && e.decouvertes.length ? e.decouvertes : (e.decouverte ? [e.decouverte] : []),
+    detail: e.decouverte_detail,
+  }))
+
   return Response.json({
     periode: p in PERIODES ? p : '30',
+    soirees: soireesCreees,
     entonnoir,
     via: { qr: compter((e) => e.via === 'qr'), bouton: compter((e) => e.via === 'bouton'), direct: compter((e) => e.via === 'direct') },
     provenances,

@@ -165,6 +165,11 @@ export async function POST(request) {
         promo_code: promo ? promo.code : '',
         // Parcours court : les réglages se font au retour du paiement.
         parcours: body.flow === 'nouveau' ? 'court' : '',
+        // D'où vient l'organisateur (Stripe limite chaque valeur à 500 caractères).
+        prov_source: String(body.provenance?.s || '').slice(0, 80),
+        prov_medium: String(body.provenance?.m || '').slice(0, 80),
+        prov_campagne: String(body.provenance?.c || '').slice(0, 120),
+        prov_page: String(body.provenance?.p || '').slice(0, 200),
         is_test: promo && promo.marksTest ? '1' : '',
         // La langue de l'organisateur, mémorisée sur l'événement au retour.
         langue,
