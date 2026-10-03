@@ -15,7 +15,7 @@ import { sendMail, eventDayEmail, afterPartyEmail, siteUrl } from '../../../../l
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { quotaExceeded } from '../../../../lib/phase'
 import { finDe } from '../../../../lib/rappels'
-import { enqueteOrganisateurs, enqueteInvites, recapDuJour } from '../../../../lib/avis-envoi'
+import { enqueteOrganisateurs, recapDuJour } from '../../../../lib/avis-envoi'
 import { equipeDe } from '../../../../lib/equipe'
 import { LOCALES } from '../../../../lib/i18n'
 import { langueDe } from '../../../../lib/langue-serveur'
@@ -198,7 +198,8 @@ export async function GET(request) {
   let avisInvites = { envoyes: 0, reportes: 0 }
   let recap = 0
   try { avisOrga = await enqueteOrganisateurs(now) } catch (err) { console.error('cron/nudge: enquête organisateurs', err) }
-  try { avisInvites = await enqueteInvites(now) } catch (err) { console.error('cron/nudge: enquête participants', err) }
+  // L'enquête aux participants ne part plus en mail séparé depuis le
+  // 03/10/2026 : elle est dans le mail de révélation (voir albumReadyEmail).
   try { recap = await recapDuJour() } catch (err) { console.error('cron/nudge: récap avis', err) }
 
   return Response.json({

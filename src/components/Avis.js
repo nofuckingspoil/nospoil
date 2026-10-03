@@ -18,7 +18,7 @@
 //  à demander à tout le monde de lire sept cases qui ne concernent qu'une
 //  personne sur cinq.
 // ============================================================
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { notes, referait as referaitListe, preferees, sources, probleme, souciDe, reactionA } from '../lib/avis'
 import { useLangue } from './Langue'
 
@@ -40,7 +40,7 @@ function Choix({ options, valeur, onChange, cle = 'id' }) {
   )
 }
 
-export default function Avis({ role = 'invite', payload = {}, onClose = null, compact = false, accroche = null }) {
+export default function Avis({ role = 'invite', payload = {}, onClose = null, compact = false, accroche = null, noteInitiale = null }) {
   const { t, lang } = useLangue()
   const NOTES = notes(lang)
   const orga = role === 'organisateur'
@@ -109,9 +109,9 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
   // referme la pop-up juste après a quand même répondu à la seule question
   // obligatoire : ne rien garder reviendrait à perdre l'essentiel pour avoir
   // réclamé le détail.
-  async function poserLaNote(v) {
+  async function poserLaNote(v, sauver = compact) {
     setNote(v)
-    if (!compact || ligneId) return
+    if (!sauver || ligneId) return
     try {
       const r = await fetch('/api/feedback', {
         method: 'POST',
@@ -122,6 +122,17 @@ export default function Avis({ role = 'invite', payload = {}, onClose = null, co
       if (d.id) setLigneId(d.id)
     } catch {}
   }
+
+  // Une étoile touchée dans le mail de révélation arrive ici (`?note=4`) :
+  // ce clic EST la réponse, on l'enregistre tout de suite. Le reste du
+  // questionnaire reste proposé, sans être exigé.
+  const noteMail = useRef(false)
+  useEffect(() => {
+    const n = Number(noteInitiale)
+    if (noteMail.current || !Number.isInteger(n) || n < 1 || n > 5) return
+    noteMail.current = true
+    poserLaNote(n, true)
+  }, [noteInitiale]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function envoyer() {
     if (!note || envoi) return

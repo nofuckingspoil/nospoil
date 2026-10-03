@@ -8,6 +8,9 @@ import { CONTACT_EMAIL } from './pricing'
 import { t, langueValide, LOCALES } from './i18n'
 import { lien } from './langue-lien'
 import { nomAffiche } from './event-defaults'
+import { adresseSansMessagerie } from './email-domaine'
+import { selectRows } from './supabase'
+import { notes } from './avis'
 
 const API = 'https://api.brevo.com/v3/smtp/email'
 
@@ -62,6 +65,16 @@ function texteDepuisHtml(html) {
 // veut plus de nos messages se désinscrit au lieu de cliquer sur « Spam », ce
 // qui abîmerait la réputation de tout le domaine. Sans elle, une adresse de
 // contact fait office de désinscription.
+// Dans le doute (base injoignable), on envoie : un code de connexion
+// perdu coûte plus cher qu'un refus de Brevo.
+async function adresseEcartee(to) {
+  try {
+    const e = encodeURIComponent(String(to || '').trim().toLowerCase())
+    const { data } = await selectRows('guests', `email=eq.${e}&or=(email_ko_at.not.is.null,email_desinscrit_at.not.is.null)&select=id&limit=1`)
+    return Array.isArray(data) && data.length > 0
+  } catch { return false }
+}
+
 export async function sendMail({ to, subject, html, text, desinscription }) {
   const key = process.env.BREVO_API_KEY
   const from = process.env.BREVO_SENDER_EMAIL
@@ -72,6 +85,18 @@ export async function sendMail({ to, subject, html, text, desinscription }) {
   if (adresseFictive(to)) {
     console.warn('mail: adresse de démonstration ignorée', to)
     return { ok: false, error: 'test-address' }
+  }
+  // Domaine sans messagerie (« hotmail.fom ») : Brevo le classe en rejet
+  // temporaire et le retente à chaque envoi, sans jamais le bloquer.
+  if (await adresseSansMessagerie(to)) {
+    console.warn('mail: domaine sans messagerie, envoi annulé', to)
+    return { ok: false, error: 'dead-domain' }
+  }
+  // Adresse désinscrite ou morte d'après Brevo (voir lib/adresses-brevo) :
+  // Brevo refuserait l'envoi, et chaque refus abîme un peu la réputation.
+  if (await adresseEcartee(to)) {
+    console.warn('mail: adresse désinscrite ou incorrecte, envoi annulé', to)
+    return { ok: false, error: 'opted-out' }
   }
   const corps = {
     sender: { email: from, name: BRAND.name },
@@ -823,11 +848,66 @@ function piedParticipant(langue) {
 // ---------- Envoi du lien de l'album aux participants qui ont laissé leur mail ----------
 // C'est la seule raison pour laquelle on demande leur adresse : le message
 // le dit, et le pied de page le rappelle.
-export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName, langue }) {
+// Un encart du mail de révélation : icône, titre, phrase, et ce qu'on y fait.
+function encartAlbum({ icone, titre, texte, action, fond = '#FBF4EA', bord = '#EFE2CF' }) {
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:14px;border-collapse:separate;"><tr>
+    <td style="background:${fond};border:1px solid ${bord};border-radius:16px;padding:18px 20px;">
+      <table role="presentation" cellpadding="0" cellspacing="0" width="100%"><tr>
+        <td style="width:44px;vertical-align:top;"><div style="width:34px;height:34px;line-height:34px;text-align:center;border-radius:10px;background:#fff;font-size:18px;">${icone}</div></td>
+        <td style="vertical-align:top;">
+          <div style="font-size:16px;font-weight:800;color:#221A12;margin-bottom:3px;">${titre}</div>
+          <div style="font-size:14px;line-height:1.55;color:#5f5341;">${texte}</div>
+        </td>
+      </tr></table>
+      ${action ? `<div style="padding-top:14px;">${action}</div>` : ''}
+    </td>
+  </tr></table>`
+}
+
+function lienEncart(url, label) {
+  return `<a href="${url}" style="display:inline-block;background:#221A12;color:#fff;text-decoration:none;font-size:14px;font-weight:700;padding:11px 18px;border-radius:11px;">${label}</a>`
+}
+
+// Cinq étoiles, chacune un lien : un seul geste suffit à répondre.
+function etoilesAvis(lienAvis, mots) {
+  const sep = lienAvis.includes('?') ? '&' : '?'
+  const cases = [1, 2, 3, 4, 5].map((n) => `<td align="center" style="width:20%;">
+      <a href="${lienAvis}${sep}note=${n}" style="text-decoration:none;display:block;">
+        <div style="font-size:34px;line-height:1;color:#EC5B33;">★</div>
+        <div style="font-size:11px;color:#8a7c69;padding-top:4px;">${mots[n - 1]}</div>
+      </a></td>`).join('')
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;padding:10px 4px;"><tr>${cases}</tr></table>`
+}
+
+// Trois photos de la soirée en polaroïds. Chacune ouvre l'album sur elle,
+// le cœur déjà posé : voter est le premier geste, pas une consigne à retenir.
+function polaroidsVote(galleryUrl, vignettes, labelCoeur) {
+  const sep = galleryUrl.includes('?') ? '&' : '?'
+  const cases = vignettes.map((v, i) => {
+    const pente = [-2, 1.5, -1][i % 3]
+    return `<td align="center" valign="top" style="width:33.33%;padding:0 5px;">
+      <a href="${galleryUrl}${sep}coeur=${encodeURIComponent(v.id)}" style="text-decoration:none;display:block;background:#fff;padding:6px 6px 0;border-radius:4px;box-shadow:0 3px 10px rgba(34,26,18,.14);transform:rotate(${pente}deg);">
+        <img src="${v.url}" width="130" alt="" style="display:block;width:100%;height:auto;border-radius:2px;" />
+        <div style="font-size:12px;font-weight:700;color:#EC5B33;padding:7px 0 8px;">♥ ${labelCoeur}</div>
+      </a></td>`
+  }).join('')
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:4px 0 0;"><tr>${cases}</tr></table>`
+}
+
+// Depuis le 03/10/2026, c'est aussi le DERNIER mail que reçoit un participant :
+// les cœurs, les tirages et l'avis, qui partaient en trois mails dans la
+// semaine, sont dits ici une fois pour toutes. Cinq mails en huit jours
+// faisaient se désinscrire ceux qui étaient juste venus à un mariage.
+// `tiragesLien` et `avisLien` sont vides quand ils ne s'appliquent pas
+// (inscrit avant la promesse des services, avis déjà donné, désinscrit).
+// `vignettes` : trois photos [{ id, url }] (voir lib/vignettes-album.js).
+export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName, vignettes = [], tiragesLien, prixTirage, avisLien, langue }) {
   eventName = nomAffiche(eventName, langue) // « Mon événement » traduit
   const bonjour = guestName
     ? tx({ fr: `Bonjour ${guestName},`, en: `Hello ${guestName},`, de: `Hallo ${guestName},` }, langue)
     : tx({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue)
+  const avecPhotos = Array.isArray(vignettes) && vignettes.length >= 3
+  const nb = `${photoCount} photo${photoCount > 1 ? 's' : ''}`
   return {
     subject: tx({
       fr: `Les photos de « ${eventName} » sont en ligne 📸`,
@@ -836,30 +916,43 @@ export function albumReadyEmail({ eventName, galleryUrl, photoCount, guestName, 
     }, langue),
     html: layout({
       langue,
-      title: tx({ fr: `Les photos sont sorties`, en: `The photos are out`, de: `Die Fotos sind da` }, langue),
+      title: tx({ fr: 'Les photos sont sorties 🎉', en: 'The photos are out 🎉', de: 'Die Fotos sind da 🎉' }, langue),
       intro: tx({
-        fr: `${bonjour} l'album de « <strong>${eventName}</strong> » vient de s'ouvrir : <strong>${photoCount} photo${photoCount > 1 ? 's' : ''}</strong> prises par tous les participants, y compris les vôtres.`,
+        fr: `${bonjour} l'album de « <strong>${eventName}</strong> » vient de s'ouvrir : <strong>${nb}</strong> prises par tous les participants, y compris les vôtres.`,
         en: `${bonjour} the album for “<strong>${eventName}</strong>” has just opened: <strong>${photoCount} photo${photoCount > 1 ? 's' : ''}</strong> taken by all the guests, including yours.`,
         de: `${bonjour} das Album von „<strong>${eventName}</strong>“ ist gerade geöffnet worden: <strong>${photoCount} ${photoCount > 1 ? 'Fotos' : 'Foto'}</strong>, aufgenommen von allen Gästen, auch von Ihnen.`,
       }, langue),
-      body: `${bigButton(galleryUrl, tx({ fr: "Voir l'album →", en: 'See the album →', de: 'Album ansehen →' }, langue))}
-        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
-          ${tx({
-            fr: `Vous pouvez les regarder, les télécharger, et retrouver celles que vous avez prises.`,
-            en: `You can look through them, download them, and find the ones you took.`,
-            de: `Sie können sie ansehen, herunterladen und Ihre eigenen Aufnahmen wiederfinden.`,
-          }, langue)}
+      body: `${avecPhotos ? `
+        <div style="font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:#EC5B33;text-align:center;padding-bottom:14px;">
+          ${tx({ fr: 'Votez pour vos préférées', en: 'Vote for your favourites', de: 'Stimmen Sie für Ihre Lieblingsfotos' }, langue)}
         </div>
-        <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;">
-          ${tx({
-            fr: `Une photo vous marque ? Touchez le <strong>cœur</strong> en bas à droite.
-          Les préférées du groupe seront réunies et vous seront envoyées dans quelques jours.`,
-            en: `A photo you love? Tap the <strong>heart</strong> at the bottom right.
-          The group's favourites will be gathered together and sent to you in a few days.`,
-            de: `Ein Foto, das Ihnen gefällt? Tippen Sie unten rechts auf das <strong>Herz</strong>.
-          Die Lieblingsfotos der Gruppe werden gesammelt und Ihnen in ein paar Tagen zugeschickt.`,
-          }, langue)}
-        </div>`,
+        ${polaroidsVote(galleryUrl, vignettes.slice(0, 3), tx({ fr: 'J’aime', en: 'Love it', de: 'Gefällt mir' }, langue))}
+        <div style="height:26px;line-height:26px;">&nbsp;</div>` : ''}
+        ${bigButton(galleryUrl, tx({ fr: "Voir l'album →", en: 'See the album →', de: 'Album ansehen →' }, langue))}
+        ${avecPhotos ? '' : `<div style="font-size:13px;line-height:1.6;color:#8a7c69;text-align:center;padding-top:10px;">
+          ${tx({ fr: 'Touchez le ♥ sous vos préférées : les plus aimées remontent en tête de l’album.', en: 'Tap the ♥ under your favourites: the most loved rise to the top of the album.', de: 'Tippen Sie auf das ♥ unter Ihren Lieblingsfotos: Die beliebtesten rücken im Album nach oben.' }, langue)}
+        </div>`}
+        ${tiragesLien ? encartAlbum({
+          icone: '🎞️',
+          titre: tx({ fr: 'Faites-vous livrer vos photos', en: 'Get your photos delivered', de: 'Lassen Sie sich Ihre Fotos liefern' }, langue),
+          texte: tx({
+            fr: `Vos préférées en vrais tirages, livrés dans votre boîte aux lettres${prixTirage ? `, dès <strong>${prixTirage}</strong> la photo` : ''}.`,
+            en: `Your favourites as real prints, delivered to your letterbox${prixTirage ? `, from <strong>${prixTirage}</strong> per photo` : ''}.`,
+            de: `Ihre Lieblingsfotos als echte Abzüge, direkt in Ihren Briefkasten${prixTirage ? `, ab <strong>${prixTirage}</strong> pro Foto` : ''}.`,
+          }, langue),
+          action: lienEncart(tiragesLien, tx({ fr: 'Choisir mes tirages →', en: 'Choose my prints →', de: 'Abzüge auswählen →' }, langue)),
+        }) : ''}
+        ${avisLien ? encartAlbum({
+          icone: '⭐',
+          titre: tx({ fr: 'Et Time to Flash, alors ?', en: 'So, what did you think of Time to Flash?', de: 'Und, wie fanden Sie Time to Flash?' }, langue),
+          texte: tx({
+            fr: 'Vous faites partie de nos 1000 premiers utilisateurs. Une étoile suffit, ça nous aide énormément.',
+            en: 'You are one of our first 1,000 users. One star is all it takes, and it helps us enormously.',
+            de: 'Sie gehören zu unseren ersten 1.000 Nutzern. Ein Stern genügt, und es hilft uns enorm.',
+          }, langue),
+          action: etoilesAvis(avisLien, notes(langue).map((n) => n.mot)),
+          fond: '#FDEEE6', bord: '#F6D3C2',
+        }) : ''}`,
       // Le pied de page ne peut plus dire « uniquement pour cela » : le mail des
       // photos préférées part quelques jours plus tard. Il dit maintenant la
       // même chose que la phrase affichée quand on laisse son adresse.

@@ -111,6 +111,7 @@ export default function GuestCamera({ params }) {
   const [confirmSansMail, setConfirmSansMail] = useState(false) // question posée une fois, champ vide
   const mailRef = useRef(null)
   const [checkingMail, setCheckingMail] = useState(false)
+  const [mailAverti, setMailAverti] = useState(false) // adresse douteuse signalée une fois au moment d'entrer
   const [guest, setGuest] = useState(null)       // { guestId, shotsTaken, shotsPerGuest }
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
@@ -618,30 +619,48 @@ export default function GuestCamera({ params }) {
   // avant qu'il ait à revenir dessus. Ne bloque jamais : l'adresse est facultative.
   async function verifierMail(value) {
     const v = (value || '').trim()
-    if (!v) { setMailCheck(null); return }
+    if (!v) { setMailCheck(null); return null }
     setCheckingMail(true)
     try {
       const r = await fetch('/api/email/check', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Langue': lang },
         body: JSON.stringify({ email: v }),
       })
-      setMailCheck(await r.json())
-    } catch { setMailCheck(null) } finally { setCheckingMail(false) }
+      const d = await r.json()
+      setMailCheck(d)
+      return d
+    } catch { setMailCheck(null); return null } finally { setCheckingMail(false) }
   }
 
   function accepterSuggestion() {
     if (!mailCheck?.suggestion) return
     setEmail(mailCheck.suggestion)
+    setMailAverti(false)
     verifierMail(mailCheck.suggestion)
   }
 
   // Le champ mail vide n'est presque jamais un refus : c'est une ligne sautée
   // par vitesse, dans une soirée. On montre une fois ce qu'elle coûte, puis on
   // laisse passer : l'adresse reste facultative, et le dire est une obligation.
-  function soumettreArrivee(e) {
+  //
+  // Une adresse douteuse (« hotmail.fom ») ne passe pas en silence non plus.
+  // La vérification part quand on quitte le champ, mais le doigt qui quitte le
+  // champ est souvent celui qui appuie sur « Entrer » : la correction arrivait
+  // une fois le participant déjà dans la soirée, et l'adresse morte restait en
+  // base. On attend donc la réponse, on la montre une fois, puis on laisse
+  // passer : celui qui insiste connaît son adresse mieux que nous.
+  async function soumettreArrivee(e) {
     e.preventDefault()
     if (!name.trim()) return
     if (!email.trim() && !confirmSansMail) { setConfirmSansMail(true); return }
+    if (email.trim() && !mailAverti) {
+      const verdict = mailCheck || await verifierMail(email)
+      if (['suggestion', 'invalide', 'domaine-inconnu'].includes(verdict?.status)) {
+        setMailAverti(true)
+        mailRef.current?.focus()
+        return
+      }
+    }
     join(name.trim(), email)
   }
 
@@ -1257,7 +1276,7 @@ export default function GuestCamera({ params }) {
               servent le plus, celui où l'on tape sa propre adresse. */}
           <input type="email" inputMode="email" autoComplete="email" autoCapitalize="off"
             spellCheck="false" placeholder={t({ fr: 'vous@exemple.fr', en: 'you@example.com', de: 'sie@beispiel.de' })} value={email} ref={mailRef}
-            onChange={(e) => { setEmail(e.target.value); setMailCheck(null); setConfirmSansMail(false) }}
+            onChange={(e) => { setEmail(e.target.value); setMailCheck(null); setConfirmSansMail(false); setMailAverti(false) }}
             onBlur={(e) => verifierMail(e.target.value)} maxLength={160} />
         </div>
 

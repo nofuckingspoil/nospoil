@@ -584,6 +584,8 @@ export default function EventManage({ params }) {
   // Le nom provisoire (« Mon événement ») s'affiche dans la langue de la page ;
   // la valeur enregistrée, elle, ne change pas.
   const nomEv = nomAffiche(ev.name, lang)
+  // Les adresses qui ne recevront jamais rien (voir lib/adresses-brevo).
+  const koListe = (Array.isArray(ev.contacts) ? ev.contacts : []).filter((c) => c.ko)
   const nbVisibles = ev.visibleCount ?? ev.photoCount
   const messageDeBase = revealed
     ? t({
@@ -1837,9 +1839,31 @@ export default function EventManage({ params }) {
       </Section>
 
       {Array.isArray(ev.contacts) && ev.contacts.length > 0 && (
-        <Section id="sec-invites" title={t({ fr: 'Participants inscrits', en: 'Registered guests', de: 'Angemeldete Gäste' })} badge={String(ev.contacts.length)}
+        <Section id="sec-invites" title={t({ fr: 'Participants inscrits', en: 'Registered guests', de: 'Angemeldete Gäste' })} badge={koListe.length ? `${ev.contacts.length} · ⚠️ ${koListe.length}` : String(ev.contacts.length)}
           hint={t({ fr: 'Tous les participants, avec ou sans adresse', en: 'All guests, with or without an email address', de: 'Alle Gäste, mit oder ohne Adresse' })}
           open={openSec === 'contacts'} onToggle={() => toggleSec('contacts')}>
+          {koListe.length > 0 && (
+            <div className="db-mail-parti db-ko-alerte" role="status">
+              <span className="db-mail-parti-ic" aria-hidden="true">⚠️</span>
+              <div>
+                <strong>
+                  {koListe.length > 1
+                    ? t({ fr: `${koListe.length} adresses incorrectes`, en: `${koListe.length} incorrect email addresses`, de: `${koListe.length} fehlerhafte E-Mail-Adressen` })
+                    : t({ fr: 'Une adresse incorrecte', en: 'An incorrect email address', de: 'Eine fehlerhafte E-Mail-Adresse' })}
+                </strong>
+                <p>
+                  {t({
+                    fr: <><b>{koListe.map((c) => c.name).join(', ')}</b> ne {koListe.length > 1 ? 'recevront' : 'recevra'} pas le lien de l’album : l’adresse laissée n’existe pas. Prévenez {koListe.length > 1 ? 'ces participants' : 'ce participant'} autrement, le message et le lien sont dans{' '}</>,
+                    en: <><b>{koListe.map((c) => c.name).join(', ')}</b> won’t get the album link: the address they left doesn’t exist. Let {koListe.length > 1 ? 'them' : 'this guest'} know another way: the message and link are in{' '}</>,
+                    de: <><b>{koListe.map((c) => c.name).join(', ')}</b> {koListe.length > 1 ? 'erhalten' : 'erhält'} den Album-Link nicht: Die hinterlassene Adresse existiert nicht. Benachrichtigen Sie {koListe.length > 1 ? 'diese Gäste' : 'diesen Gast'} auf anderem Weg, Nachricht und Link finden Sie im{' '}</>,
+                  })}
+                  <button type="button" className="linklike" onClick={() => allerA('album', 'sec-album')}>
+                    {t({ fr: "la section L'album", en: 'the Album section', de: 'Bereich „Album“' })}
+                  </button>.
+                </p>
+              </div>
+            </div>
+          )}
           <div className="notice small" style={{ marginBottom: 12 }}>
             ✉️ {t({
               fr: <>Ceux qui ont laissé leur adresse reçoivent le lien de l'album <strong>tout seuls</strong>, dès la révélation. Pour les autres, partagez le lien depuis{' '}</>,
@@ -1858,13 +1882,15 @@ export default function EventManage({ params }) {
                   {/* Sans adresse, le participant ne recevra rien : c'est justement ce
                       qu'il faut voir pour penser à le prévenir autrement. */}
                   {c.email || c.phone || <em className="db-contact-sans">{t({ fr: 'à prévenir vous-même', en: 'let them know yourself', de: 'selbst benachrichtigen' })}</em>}
-                  {c.email && c.failed && <em className="db-contact-ko">{t({ fr: ' · non distribué', en: ' · not delivered', de: ' · nicht zugestellt' })}</em>}
-                  {c.email && c.notified && !c.failed && <em className="db-contact-ok">{t({ fr: ' · envoyé ✓', en: ' · sent ✓', de: ' · gesendet ✓' })}</em>}
+                  {c.ko && <em className="db-contact-badge ko">{t({ fr: 'adresse incorrecte', en: 'incorrect address', de: 'fehlerhafte Adresse' })}</em>}
+                  {!c.ko && c.desinscrit && <em className="db-contact-badge">{t({ fr: 'désinscrit des mails', en: 'unsubscribed from emails', de: 'von E-Mails abgemeldet' })}</em>}
+                  {c.email && c.failed && !c.ko && <em className="db-contact-ko">{t({ fr: ' · non distribué', en: ' · not delivered', de: ' · nicht zugestellt' })}</em>}
+                  {c.email && c.notified && !c.failed && !c.ko && !c.desinscrit && <em className="db-contact-ok">{t({ fr: ' · envoyé ✓', en: ' · sent ✓', de: ' · gesendet ✓' })}</em>}
                 </span>
               </div>
             ))}
           </div>
-          {ev.contacts.some((c) => c.failed) && (
+          {ev.contacts.some((c) => c.failed && !c.ko) && (
             <div className="notice small" style={{ marginTop: 12, background: '#fdf3e6', borderColor: 'var(--accent)' }}>
               ⚠️ {t({
                 fr: "Une ou plusieurs adresses n'ont pas pu être livrées. Prévenez ces participants autrement : le message et le lien sont dans",

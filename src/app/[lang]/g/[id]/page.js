@@ -1115,6 +1115,26 @@ export default function Gallery({ params }) {
   }
   useEffect(() => { load() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Une photo touchée dans le mail de révélation arrive ici (`?coeur=<photo>`) :
+  // le cœur est posé, la photo s'ouvre en grand. Voter devient le geste qui
+  // fait entrer dans l'album, au lieu d'une consigne qu'on oublie en route.
+  const coeurMail = useRef(false)
+  useEffect(() => {
+    if (coeurMail.current || !(data?.revealed || data?.ownerPreview) || !Array.isArray(data.photos)) return
+    const u = new URL(window.location.href)
+    const pid = u.searchParams.get('coeur')
+    if (!pid) return
+    coeurMail.current = true
+    u.searchParams.delete('coeur')
+    window.history.replaceState(null, '', u)
+    const i = data.photos.findIndex((p) => p.id === pid)
+    if (i < 0) return
+    // L'introduction animée passerait devant la photo : on vient pour elle.
+    setMontrerWrap(false)
+    if (!favs.has(pid)) toggleFav(pid)
+    setDiapo(i)
+  }, [data]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // Compteur de parcours : l'album révélé est à l'écran, pour un invité (pas
   // pour l'organisateur, pas derrière la porte du code). Le détail dit si
   // cette personne avait participé depuis ce téléphone ou vient seulement voir.

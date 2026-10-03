@@ -1,6 +1,8 @@
 import { after } from 'next/server'
 import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
+import { adresseSansMessagerie } from '../../../lib/email-domaine'
+import { adminEmail } from '../../../lib/avis-mail'
 import { sendMail, guestAccessEmail, quotaEmail, siteUrl } from '../../../lib/mail'
 import { makeToken, ensureAccount } from '../../../lib/account'
 import { estSuspendu, messageSuspendu, ADMIN } from '../../../lib/authz'
@@ -143,8 +145,13 @@ export async function POST(request) {
   // Dernier filet : le navigateur peut être contourné, pas le serveur.
   // Une adresse mal formée n'est jamais enregistrée : mieux vaut aucun
   // contact qu'un contact qui ne recevra rien.
+  // Un domaine qui n'existe pas (« hotmail.fom ») est un autre cas : le
+  // participant a déjà été prévenu à la porte, et a choisi de passer outre.
+  // On garde l'adresse, marquée incorrecte, sans jamais rien y envoyer :
+  // l'organisateur la voit dans sa liste et peut le prévenir autrement.
   const forme = checkEmailShape(body.email, langue)
   const email = forme.ok && !forme.empty ? forme.email : ''
+  const emailMort = !!email && await adresseSansMessagerie(email)
 
   // ---- La porte ----
   // Refuser quelqu'un en pleine soirée n'est acceptable qu'à trois conditions,
@@ -252,7 +259,12 @@ export async function POST(request) {
   // revient sans la resaisir ne doit pas perdre son inscription à l'album.
   try {
     const patch = { last_active_at: new Date().toISOString(), langue }
-    if (email) patch.email = email
+    if (email) {
+      patch.email = email
+      // Une adresse corrigée efface l'alerte de la précédente.
+      patch.email_ko_at = emailMort ? new Date().toISOString() : null
+      patch.email_ko_raison = emailMort ? 'domaine-inconnu' : null
+    }
     await updateRow('guests', `id=eq.${data.guest_id}`, patch)
   } catch {}
 
@@ -260,7 +272,7 @@ export async function POST(request) {
   // l'invité attendait l'envoi du mail, près de deux secondes, devant un écran
   // « Chargement… » avant de voir l'appareil photo. Rien de ce qu'on lui
   // renvoie n'en dépend.
-  if (email) {
+  if (email && !emailMort) {
     after(async () => {
       try {
         // Un participant qui laisse son adresse est une personne comme une
@@ -293,7 +305,25 @@ export async function POST(request) {
   try { token = await jetonPersonnel(data.guest_id) }
   catch (err) { console.error('jeton participant:', err) }
 
-  if (email) {
+  // Adresse morte : Brevo n'en saura jamais rien (on n'y envoie pas), donc
+  // son alerte habituelle ne partira pas. On prévient nous-mêmes, une fois.
+  if (emailMort) {
+    after(async () => {
+      const ech = (v) => String(v || '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]))
+      try {
+        await sendMail({
+          to: adminEmail(),
+          subject: `[Alerte] Adresse incorrecte : ${email}`,
+          html: `<div style="font-family:-apple-system,Segoe UI,sans-serif;font-size:15px;line-height:1.5">
+            <p><strong>${ech(displayName) || 'Un participant'}</strong> s'est inscrit à « ${ech(data.event_name)} » avec l'adresse
+            <strong>${ech(email)}</strong>, dont le domaine n'existe pas. Il a été prévenu à l'entrée et a choisi de continuer.</p>
+            <p>Rien ne lui sera envoyé. L'organisateur voit l'alerte dans la section « Participants inscrits ».</p></div>`,
+        })
+      } catch (err) { console.error('alerte adresse incorrecte:', err) }
+    })
+  }
+
+  if (email && !emailMort) {
     after(async () => {
       try { await sendGuestAccess(data.guest_id, data.event_name, data.shots_per_guest, email, data.reveal_at, token, langue) }
       catch (err) { console.error('mail accès participant:', err) }

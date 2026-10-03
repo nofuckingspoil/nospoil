@@ -39,6 +39,7 @@ function AvisInner() {
   const jetonOrga = sp.get('o')
   const jetonInvite = sp.get('i')
   const veutArreter = sp.get('stop') === '1'
+  const noteMail = sp.get('note')
 
   const [etat, setEtat] = useState('chargement') // chargement | ok | deja | erreur | desinscrit
   const [info, setInfo] = useState(null)
@@ -141,6 +142,7 @@ function AvisInner() {
         <Avis
           role={orga ? 'organisateur' : 'invite'}
           payload={orga ? { o: jetonOrga } : { i: jetonInvite }}
+          noteInitiale={orga ? null : noteMail}
         />
       </div>
       {!orga && jetonInvite && (
