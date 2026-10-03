@@ -9,7 +9,7 @@ import { useLangue } from './Langue'
 //  Choix multiple : on découvre souvent par deux chemins à la fois (une pub
 //  Instagram, puis un ami qui en parle). L'assistant IA demande lequel, « Autre »
 //  ouvre un champ libre. Le bouton Valider reste grisé tant que rien n'est
-//  coché ; la question, elle, peut toujours se passer.
+//  coché. `onPasser` facultatif : sans lui, la question est obligatoire.
 //
 //  Utilisé à la fin des réglages (création courte) et sur le tableau de bord
 //  (création classique). `onEnvoyer({ choix, ia, autre })`, `onPasser()`.
@@ -54,32 +54,38 @@ export default function QuestionDecouverte({ onEnvoyer, onPasser, envoi = false 
   return (
     <form onSubmit={valider}>
       <div className="hint" style={{ marginBottom: 8 }}>{t({ fr: 'Plusieurs réponses possibles.', en: 'You can choose more than one.', de: 'Mehrere Antworten möglich.' })}</div>
-      <div className="avis-choix">
+      <div className="cases">
         {OPTIONS.map(([cle, label]) => (
-          <button key={cle} type="button" className={`avis-opt ${choix.has(cle) ? 'on' : ''}`}
-            aria-pressed={choix.has(cle)} onClick={() => basculerChoix(cle)}>{label}</button>
+          <div key={cle}>
+            <label className={`case ${choix.has(cle) ? 'on' : ''}`}>
+              <input type="checkbox" checked={choix.has(cle)} onChange={() => basculerChoix(cle)} />
+              <span>{label}</span>
+            </label>
+
+            {/* La précision s'ouvre juste sous la case qui la demande. */}
+            {cle === 'ia' && choix.has('ia') && (
+              <div className="cases-suite">
+                <div className="hint" style={{ marginBottom: 8 }}>{t({ fr: 'Lequel ou lesquels ?', en: 'Which one(s)?', de: 'Welcher oder welche?' })}</div>
+                <div className="cases cases-2">
+                  {IA_NOMS.map((nom) => (
+                    <label key={nom} className={`case ${ia.has(nom) ? 'on' : ''}`}>
+                      <input type="checkbox" checked={ia.has(nom)} onChange={() => basculerIa(nom)} />
+                      <span>{nom}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+            {cle === 'autre' && choix.has('autre') && (
+              <div className="field cases-suite">
+                <label>{t({ fr: 'Précisez', en: 'Please specify', de: 'Bitte angeben' })}</label>
+                <input type="text" value={autre} onChange={(e) => setAutre(e.target.value)} maxLength={200} autoFocus
+                  placeholder={t({ fr: 'Un salon, un article, un prestataire…', en: 'A fair, an article, a supplier…', de: 'Eine Messe, ein Artikel, ein Dienstleister…' })} />
+              </div>
+            )}
+          </div>
         ))}
       </div>
-
-      {choix.has('ia') && (
-        <div style={{ marginTop: 14 }}>
-          <div className="hint" style={{ marginBottom: 8 }}>{t({ fr: 'Lequel ou lesquels ?', en: 'Which one(s)?', de: 'Welcher oder welche?' })}</div>
-          <div className="avis-choix">
-            {IA_NOMS.map((nom) => (
-              <button key={nom} type="button" className={`avis-opt ${ia.has(nom) ? 'on' : ''}`}
-                aria-pressed={ia.has(nom)} onClick={() => basculerIa(nom)}>{nom}</button>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {choix.has('autre') && (
-        <div className="field" style={{ marginTop: 14 }}>
-          <label>{t({ fr: 'Précisez', en: 'Please specify', de: 'Bitte angeben' })}</label>
-          <input type="text" value={autre} onChange={(e) => setAutre(e.target.value)} maxLength={200}
-            placeholder={t({ fr: 'Un salon, un article, un prestataire…', en: 'A fair, an article, a supplier…', de: 'Eine Messe, ein Artikel, ein Dienstleister…' })} />
-        </div>
-      )}
 
       <button className="btn btn-accent" type="submit" disabled={!choix.size || envoi} style={{ marginTop: 18, width: '100%' }}>
         {envoi ? t({ fr: 'Envoi…', en: 'Sending…', de: 'Wird gesendet…' }) : t({ fr: 'Valider', en: 'Submit', de: 'Bestätigen' })}

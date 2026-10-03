@@ -1048,7 +1048,7 @@ export function CreateForm({ parcours = 'long' }) {
         <div className="card wiz-card">
           <h2 className="wiz-q">{t({ fr: 'Une dernière question : comment avez-vous découvert Time to Flash ?', en: 'One last question: how did you hear about Time to Flash?', de: 'Eine letzte Frage: Wie haben Sie Time to Flash entdeckt?' })}</h2>
           <p className="wiz-sub">{t({ fr: 'Ça nous aide énormément à faire connaître le service.', en: 'It helps us a lot to spread the word.', de: 'Das hilft uns sehr, den Dienst bekannter zu machen.' })}</p>
-          <QuestionDecouverte envoi={loading} onEnvoyer={envoyerDecouverte} onPasser={suivant} />
+          <QuestionDecouverte envoi={loading} onEnvoyer={envoyerDecouverte} />
         </div>
       )}
 
