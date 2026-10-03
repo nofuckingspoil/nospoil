@@ -13,8 +13,8 @@ export const POSTS_OCCASIONS = [
     author: 'Léa Ferrand',
     date: '2026-10-03',
     read: '8 min',
-    caption: 'L’album partagé d’un mariage ouvert sur un téléphone',
-    image: '/accueil/album-partage.webp',
+    caption: 'Le lendemain du mariage, des invités découvrent les photos ensemble au brunch',
+    image: '/journal/album-photo-partage-mariage.webp',
     body: `
 <p>Le lendemain d’un mariage, la même question revient toujours : « Tu peux m’envoyer tes photos ? ». Chaque invité a pris une poignée d’images, et elles dorment dans quatre-vingts téléphones différents. Un album photo partagé de mariage règle ce problème : un seul endroit où toutes les photos des invités se retrouvent, que tout le monde peut regarder et télécharger.</p>
 <p>Sur le papier, c’est simple. Dans les faits, la plupart des albums partagés restent à moitié vides. Voici comment choisir le bon outil, le mettre en place, et surtout faire en sorte que tes invités y participent vraiment.</p>
@@ -131,8 +131,8 @@ export const POSTS_OCCASIONS = [
     author: 'Camille Rouzaud',
     date: '2026-10-02',
     read: '7 min',
-    caption: 'Deux amis éclatent de rire pendant une soirée',
-    image: '/journal/photos-soiree-dansante-mariage.webp',
+    caption: 'Des amis dansent sous les confettis à une soirée de 30 ans',
+    image: '/journal/idees-anniversaire-30-ans.webp',
     body: `
 <p>Trente ans, c’est l’anniversaire qu’on a envie de marquer sans en faire une montagne. Assez rond pour mériter une vraie fête, assez jeune pour qu’elle ressemble encore à une soirée entre amis. Voici 15 idées concrètes, classées par envie, pour organiser ses 30 ans ou ceux de quelqu’un d’autre.</p>
 
@@ -246,8 +246,8 @@ export const POSTS_OCCASIONS = [
     author: 'Tom Bréval',
     date: '2026-10-01',
     read: '7 min',
-    caption: 'Des collègues réunis autour d’une table applaudissent',
-    image: '/journal/photos-invites-mariage-moments-spontanes.webp',
+    caption: 'Des collègues lèvent leur verre pour une collègue qui part en retraite',
+    image: '/journal/idees-pot-de-depart-retraite.webp',
     body: `
 <p>Un départ à la retraite, ce n’est pas un pot comme les autres. C’est la fin de dizaines d’années de travail, parfois dans la même entreprise, et la personne qui part s’en souviendra longtemps. Bonne nouvelle : un pot réussi ne demande pas un gros budget, juste un peu d’organisation. Voici le mode d’emploi, des idées d’animation et de cadeau collectif, et les pièges à éviter.</p>
 
@@ -344,8 +344,8 @@ export const POSTS_OCCASIONS = [
     author: 'Léa Ferrand',
     date: '2026-09-30',
     read: '6 min',
-    caption: 'Les photos d’un groupe d’amis dans un album partagé',
-    image: '/accueil/revelation.webp',
+    caption: 'Une bande d’amis sur les marches d’une maison de campagne au coucher du soleil',
+    image: '/journal/photos-week-end-entre-amis.webp',
     body: `
 <p>Un week-end entre amis se termine toujours de la même façon. Dans la voiture du retour, quelqu’un écrit « envoyez vos photos ! » dans le groupe. Pendant deux jours, 400 images arrivent en vrac, entre les messages et les vocaux. Trois semaines plus tard, personne ne retrouve la photo du coucher de soleil, et l’album dont tout le monde parlait n’existe pas.</p>
 <p>Voici comment partager les photos d’un week-end ou de vacances entre amis sans ce chaos, et comment en faire un album qu’on aura envie de rouvrir.</p>
@@ -437,8 +437,8 @@ export const POSTS_OCCASIONS = [
     author: 'Camille Rouzaud',
     date: '2026-09-29',
     read: '6 min',
-    caption: 'Un téléphone transformé en appareil photo jetable',
-    image: '/accueil/declencheur.webp',
+    caption: 'Un EVJF dans une ruelle, une amie vise le groupe avec un appareil jetable',
+    image: '/journal/appareil-photo-jetable-evjf.webp',
     body: `
 <p>L’appareil photo jetable est devenu un classique de l’EVJF et de l’EVG. On en glisse un dans chaque sac, on se lance des défis, et on découvre les photos plus tard. Reste une question pratique : vrais jetables en carton, ou application sur le téléphone ? Voici le comparatif honnête, avec le budget, les inconvénients, et des idées de défis pour en profiter.</p>
 
@@ -542,7 +542,7 @@ export const POSTS_OCCASIONS_EN = {
   'album-photo-partage-mariage': {
     title: 'Shared wedding photo album: how to set one up',
     excerpt: 'Shared wedding photo album: Google Photos, iCloud, WhatsApp or an app? The options, a step-by-step setup and how to get every guest to join in.',
-    caption: 'A wedding’s shared album open on a phone',
+    caption: 'The day after the wedding, guests discover the photos together over brunch',
     body: `
 <p>The day after a wedding, the same question always comes up: “Can you send me your photos?” Every guest took a handful of pictures, and they are now sleeping on eighty different phones. A shared wedding photo album solves this: one place where all the guests’ photos end up, which everyone can browse and download.</p>
 <p>On paper, it is simple. In practice, most shared albums stay half empty. Here is how to choose the right tool, set it up, and above all make sure your guests actually take part.</p>
@@ -653,7 +653,7 @@ export const POSTS_OCCASIONS_EN = {
   'idees-anniversaire-30-ans': {
     title: '30th birthday ideas: 15 ways to celebrate turning 30',
     excerpt: '30th birthday ideas: 15 practical ideas for venues, themes, party activities and group gifts to celebrate turning 30 without breaking the bank.',
-    caption: 'Two friends burst out laughing at a party',
+    caption: 'Friends dancing under confetti at a 30th birthday party',
     body: `
 <p>Thirty is the birthday you want to mark without making a huge fuss. Round enough to deserve a proper party, young enough for it to still feel like a night out with friends. Here are 15 practical ideas, sorted by mood, for planning your own 30th or someone else’s.</p>
 
@@ -761,7 +761,7 @@ export const POSTS_OCCASIONS_EN = {
   'idees-pot-de-depart-retraite': {
     title: 'Retirement party ideas: planning, speeches and gifts',
     excerpt: 'Retirement party ideas: how to plan it, speeches, activities, group gifts and the mistakes to avoid for a send-off your colleague will remember.',
-    caption: 'Colleagues gathered around a table applaud',
+    caption: 'Colleagues raise their glasses to a colleague who is retiring',
     body: `
 <p>A retirement send-off is not like any other leaving do. It marks the end of decades of work, sometimes at the same company, and the person leaving will remember it for a long time. The good news: a great retirement party doesn’t need a big budget, just a bit of organisation. Here is how to plan it, with ideas for activities and group gifts, and the mistakes to avoid.</p>
 
@@ -852,7 +852,7 @@ export const POSTS_OCCASIONS_EN = {
   'photos-week-end-entre-amis': {
     title: 'How to share photos from a weekend away with friends',
     excerpt: 'Sharing photos from a weekend or holiday with friends: alternatives to the 400-photo WhatsApp chaos, and how to make a group album you’ll reopen.',
-    caption: 'Photos of a group of friends in a shared album',
+    caption: 'A group of friends on the steps of a country house at sunset',
     body: `
 <p>A weekend away with friends always ends the same way. In the car on the way back, someone writes “send your photos!” in the group chat. For two days, 400 pictures pour in, mixed up with messages and voice notes. Three weeks later, nobody can find the sunset photo, and the album everyone talked about doesn’t exist.</p>
 <p>Here is how to share photos from a weekend or holiday with friends without the chaos, and turn them into an album you will actually want to reopen.</p>
@@ -938,7 +938,7 @@ export const POSTS_OCCASIONS_EN = {
   'appareil-photo-jetable-evjf': {
     title: 'Hen party disposable camera: film or app?',
     excerpt: 'Disposable cameras for a hen or stag do: the real cost of film cameras, their drawbacks, the digital alternative and photo challenge ideas.',
-    caption: 'A phone turned into a disposable camera',
+    caption: 'A hen party in a narrow street, one friend aiming a disposable camera at the group',
     body: `
 <p>The disposable camera has become a hen and stag do classic. You slip one into everyone’s bag, set a few challenges, and discover the photos later. That leaves a practical question: real film cameras, or an app on the phone? Here is an honest comparison, with the budget, the drawbacks, and challenge ideas to make the most of it.</p>
 
@@ -1041,7 +1041,7 @@ export const POSTS_OCCASIONS_DE = {
   'album-photo-partage-mariage': {
     title: 'Gemeinsames Hochzeitsfotoalbum: so klappt es',
     excerpt: 'Gemeinsames Hochzeitsfotoalbum: Google Fotos, iCloud, WhatsApp oder App? Die Optionen, die Einrichtung Schritt für Schritt und wie alle Gäste mitmachen.',
-    caption: 'Das gemeinsame Album einer Hochzeit auf einem Handy',
+    caption: 'Am Tag nach der Hochzeit entdecken Gäste die Fotos gemeinsam beim Brunch',
     body: `
 <p>Am Tag nach einer Hochzeit kommt immer dieselbe Frage: „Kannst du mir deine Fotos schicken?“ Jeder Gast hat eine Handvoll Bilder gemacht, und die schlummern jetzt auf achtzig verschiedenen Handys. Ein gemeinsames Hochzeitsfotoalbum löst dieses Problem: ein einziger Ort, an dem alle Fotos der Gäste landen und den alle ansehen und herunterladen können.</p>
 <p>Auf dem Papier ist das einfach. In der Praxis bleiben die meisten geteilten Alben halb leer. So wählen Sie das richtige Werkzeug, richten es ein und sorgen vor allem dafür, dass Ihre Gäste wirklich mitmachen.</p>
@@ -1152,7 +1152,7 @@ export const POSTS_OCCASIONS_DE = {
   'idees-anniversaire-30-ans': {
     title: 'Ideen zum 30. Geburtstag: 15 Ideen zum Feiern',
     excerpt: 'Ideen zum 30. Geburtstag: 15 konkrete Ideen für Location, Motto, Programm und Gruppengeschenk, um den 30. zu feiern, ohne pleite zu gehen.',
-    caption: 'Zwei Freunde lachen auf einer Party laut los',
+    caption: 'Freunde tanzen im Konfetti auf einer Feier zum 30. Geburtstag',
     body: `
 <p>Der 30. ist der Geburtstag, den man feiern möchte, ohne gleich ein Riesending daraus zu machen. Rund genug für ein richtiges Fest, jung genug, dass es sich noch wie ein Abend unter Freunden anfühlt. Hier sind 15 konkrete Ideen, sortiert nach Stimmung, um den eigenen 30. oder den eines anderen zu planen.</p>
 
@@ -1260,7 +1260,7 @@ export const POSTS_OCCASIONS_DE = {
   'idees-pot-de-depart-retraite': {
     title: 'Abschiedsfeier zum Ruhestand: Ideen und Planung',
     excerpt: 'Ideen für die Abschiedsfeier zum Ruhestand: Planung, Rede, Programm, Gruppengeschenk und Fehler, die Sie vermeiden sollten.',
-    caption: 'Kollegen sitzen um einen Tisch und applaudieren',
+    caption: 'Kollegen stoßen auf eine Kollegin an, die in den Ruhestand geht',
     body: `
 <p>Ein Abschied in den Ruhestand ist kein Ausstand wie jeder andere. Er markiert das Ende von Jahrzehnten Arbeit, manchmal im selben Unternehmen, und die Person, die geht, wird sich lange daran erinnern. Die gute Nachricht: Eine gelungene Abschiedsfeier braucht kein großes Budget, nur etwas Organisation. Hier die Anleitung, mit Ideen für Programm und Gruppengeschenk und den Fehlern, die Sie vermeiden sollten.</p>
 
@@ -1351,7 +1351,7 @@ export const POSTS_OCCASIONS_DE = {
   'photos-week-end-entre-amis': {
     title: 'Fotos vom Wochenende mit Freunden teilen, ohne Chaos',
     excerpt: 'Fotos vom Wochenende oder Urlaub mit Freunden teilen: Lösungen gegen das WhatsApp-Chaos mit 400 Bildern und Tipps für ein schönes Gruppenalbum.',
-    caption: 'Fotos einer Freundesgruppe in einem gemeinsamen Album',
+    caption: 'Eine Freundesgruppe auf den Stufen eines Landhauses bei Sonnenuntergang',
     body: `
 <p>Ein Wochenende mit Freunden endet immer gleich. Im Auto auf der Rückfahrt schreibt jemand in die Gruppe: „Schickt eure Fotos!“ Zwei Tage lang trudeln 400 Bilder ein, vermischt mit Nachrichten und Sprachnachrichten. Drei Wochen später findet niemand mehr das Sonnenuntergangsfoto, und das Album, von dem alle gesprochen haben, gibt es nicht.</p>
 <p>So teilen Sie die Fotos vom Wochenende oder Urlaub mit Freunden ohne dieses Chaos, und machen daraus ein Album, das Sie gern wieder öffnen.</p>
@@ -1437,7 +1437,7 @@ export const POSTS_OCCASIONS_DE = {
   'appareil-photo-jetable-evjf': {
     title: 'Einwegkamera für den JGA: analog oder App?',
     excerpt: 'Einwegkamera für den Junggesellenabschied: die echten Kosten der analogen Kamera, ihre Nachteile, die digitale Alternative und Foto-Challenges.',
-    caption: 'Ein Handy, das zur Einwegkamera wird',
+    caption: 'Ein JGA in einer Gasse, eine Freundin richtet eine Einwegkamera auf die Gruppe',
     body: `
 <p>Die Einwegkamera ist ein JGA-Klassiker geworden. Man steckt jedem eine in die Tasche, stellt ein paar Aufgaben und entdeckt die Fotos später. Bleibt eine praktische Frage: echte analoge Einwegkameras oder eine App auf dem Handy? Hier der ehrliche Vergleich, mit Budget, Nachteilen und Ideen für Foto-Challenges.</p>
 

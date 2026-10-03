@@ -1969,6 +1969,22 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .occ-idees li::before { left: 14px; top: 17px; }
 }
 
+/* Pages par occasion : la photo de la fête, en tirage, derrière l'appareil. */
+.occ-duo .phone-avant { width: 52%; top: 18%; }
+.occ-tirage { position: absolute; right: 0; top: 0; width: 74%; margin: 0; z-index: 1; transform: rotate(3.5deg);
+  background: #fbf8f2; padding: 9px 9px 30px; border-radius: 3px;
+  box-shadow: 0 24px 55px rgba(34,26,18,.26), 0 2px 6px rgba(34,26,18,.18); }
+.occ-tirage img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
+/* L'album : quatre photos côte à côte, deux par deux sur téléphone. */
+.occ-album { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.occ-album img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; display: block; }
+.occ-album img:nth-child(odd) { transform: rotate(-1.2deg); }
+.occ-album img:nth-child(even) { transform: rotate(1.2deg); }
+@media (max-width: 720px) { .occ-album { grid-template-columns: 1fr 1fr; } }
+.occ-tuile { flex-direction: column; align-items: stretch; padding: 0; overflow: hidden; gap: 0; }
+.occ-tuile img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.occ-tuile-nom { padding: 11px 14px 13px; }
+
 /* Pied de page riche (SitePied) : trois colonnes de liens au-dessus de la
    ligne légale. Sur téléphone, les colonnes s'empilent. */
 .vfooter-riche { padding-top: 36px; }

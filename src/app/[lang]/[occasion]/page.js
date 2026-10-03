@@ -12,7 +12,7 @@ import SiteNav from '../../../components/SiteNav'
 import SitePied from '../../../components/SitePied'
 import { Pellicules, Confiance } from '../../../components/lp/Blocs'
 import {
-  Hero, Cartes, Etapes, Idees, Texte, Tarifs, Faq, faqLd, Articles, AutresOccasions, CtaFinal,
+  Hero, Album, Cartes, Etapes, Idees, Texte, Tarifs, Faq, faqLd, Articles, AutresOccasions, CtaFinal,
 } from '../../../components/occasions/Blocs'
 import { BRAND } from '../../../lib/brand'
 import { LOCALES, LANGUES } from '../../../lib/i18n'
@@ -59,9 +59,10 @@ export default async function PageOccasion({ params }) {
       <SiteNav />
 
       <main className="site-inner">
-        <Hero T={T} slug={slug} tier={o.tier} lang={lang} />
+        <Hero T={T} slug={slug} tier={o.tier} lang={lang} photo={`/occasions/${slug}/hero.webp`} />
         <Cartes titre={T.pourquoiTitre} sous={T.pourquoiSous} cartes={T.pourquoi} />
         <Etapes etapes={T.etapes} lang={lang} />
+        <Album slug={slug} lang={lang} />
         <Idees T={T} />
         <Pellicules lang={lang} />
         <Texte titre={T.conseilsTitre} paragraphes={T.conseils} />

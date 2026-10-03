@@ -32,7 +32,7 @@ export function Bouton({ slug, tier, lang, children }) {
   )
 }
 
-export function Hero({ T, slug, tier, lang }) {
+export function Hero({ T, slug, tier, lang, photo }) {
   return (
     <section className="hero hero-split">
       <div>
@@ -47,7 +47,7 @@ export function Hero({ T, slug, tier, lang }) {
           {T.ticks.map((x, i) => <li key={i}>{x}</li>)}
         </ul>
       </div>
-      <div className="hero-duo">
+      <div className="hero-duo occ-duo">
         <div className="phone phone-avant">
           <img src="/accueil/appareil-photo.webp" width="640" height="1385"
             alt={t({
@@ -56,14 +56,35 @@ export function Hero({ T, slug, tier, lang }) {
               de: 'Die Einwegkamera im Browser: Sucher, Bildzähler und Auslöser.',
             }, lang)} />
         </div>
-        <div className="phone phone-arriere">
-          <img src="/accueil/galerie-photos.webp" width="640" height="1385" fetchPriority="low"
-            alt={t({
-              fr: "L'album révélé après la fête : les photos de tous les participants réunies.",
-              en: "The album revealed after the party: everyone's photos together.",
-              de: 'Das nach der Feier enthüllte Album: die Fotos aller Gäste an einem Ort.',
-            }, lang)} />
-        </div>
+        {/* La fête elle-même, en tirage : on voit tout de suite de quelle
+            occasion parle la page, là où deux captures d'appli se
+            ressemblaient d'une page à l'autre. */}
+        <figure className="occ-tirage">
+          <img src={photo || '/accueil/galerie-photos.webp'} width="900" height="1200" fetchPriority="high" alt={T.h1} />
+        </figure>
+      </div>
+    </section>
+  )
+}
+
+// « À quoi ressemblera l'album » : quatre photos d'une même fête, comme on
+// les découvre le lendemain. C'est ce qui vend : le résultat, pas l'outil.
+export function Album({ slug, lang }) {
+  return (
+    <section className="section">
+      <h2 className="section-title">{t({ fr: 'Ce que vous découvrirez le lendemain', en: "What you'll discover the next day", de: 'Was Sie am nächsten Tag entdecken' }, lang)}</h2>
+      <div className="section-sub">
+        {t({
+          fr: "Des photos prises par vos invités, sur le vif, que personne n'avait vues avant la révélation.",
+          en: "Photos taken by your guests, in the moment, that nobody had seen before the reveal.",
+          de: 'Fotos Ihrer Gäste, mitten aus dem Moment, die vor der Enthüllung niemand gesehen hat.',
+        }, lang)}
+      </div>
+      <div className="occ-album">
+        {[1, 2, 3, 4].map((i) => (
+          <img key={i} src={`/occasions/${slug}/album-${i}.webp`} width="720" height="960" loading="lazy" decoding="async"
+            alt={t({ fr: `Photo ${i} de l'album, prise par un invité`, en: `Album photo ${i}, taken by a guest`, de: `Albumfoto ${i}, von einem Gast aufgenommen` }, lang)} />
+        ))}
       </div>
     </section>
   )
@@ -246,8 +267,8 @@ export function Articles({ slugs, lang }) {
 // Les autres occasions, et le mariage, pour que chaque page mène aux autres.
 export function AutresOccasions({ sauf, lang, titre, sous }) {
   const liste = [
-    ...OCCASIONS.filter((o) => o.slug !== sauf).map((o) => ({ href: `/${o.slug}`, ic: o.ic, nom: t(o.nom, lang) })),
-    { href: '/appareil-jetable-mariage', ic: '💍', nom: t({ fr: 'Mariage', en: 'Wedding', de: 'Hochzeit' }, lang) },
+    ...OCCASIONS.filter((o) => o.slug !== sauf).map((o) => ({ href: `/${o.slug}`, ic: o.ic, nom: t(o.nom, lang), img: `/occasions/${o.slug}/hero.webp` })),
+    { href: '/appareil-jetable-mariage', ic: '💍', nom: t({ fr: 'Mariage', en: 'Wedding', de: 'Hochzeit' }, lang), img: '/occasions/tuile-mariage.webp' },
   ]
   return (
     <section className="section">
@@ -256,8 +277,8 @@ export function AutresOccasions({ sauf, lang, titre, sous }) {
       <div className="occ-grille">
         {liste.map((o) => (
           <Link key={o.href} href={lien(o.href, lang)} className="occ-tuile">
-            <span className="occ-tuile-ic" aria-hidden="true">{o.ic}</span>
-            <span>{o.nom}</span>
+            <img src={o.img} alt="" width="360" height="270" loading="lazy" decoding="async" />
+            <span className="occ-tuile-nom"><span aria-hidden="true">{o.ic}</span> {o.nom}</span>
           </Link>
         ))}
       </div>

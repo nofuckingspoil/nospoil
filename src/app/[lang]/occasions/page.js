@@ -62,7 +62,7 @@ export default async function PageOccasions({ params }) {
       <SiteNav />
 
       <main className="site-inner">
-        <Hero T={T} tier={5} lang={lang} />
+        <Hero T={T} tier={5} lang={lang} photo="/occasions/occasions/hero.webp" />
         <AutresOccasions lang={lang} titre={T.occasionsTitre} sous={T.occasionsSous} />
         <Etapes etapes={ETAPES[lang] || ETAPES.fr} lang={lang} />
         <Texte titre={T.commentTitre} paragraphes={T.comment} />
