@@ -1105,13 +1105,6 @@ export function CreateForm({ parcours = 'long' }) {
 
           <div className="wiz-recap">
             <div className="wiz-recap-title">{t({ fr: 'Récapitulatif', en: 'Summary', de: 'Zusammenfassung' })}</div>
-            {parcours === 'court' && (
-              <p className="hint" style={{ margin: '4px 0 8px' }}>{t({
-                fr: 'Révélation, clichés, photos revues et couverture : nos propositions, que vous pourrez changer juste après.',
-                en: 'Reveal, shots, photos seen again and cover: our suggestions, which you can change right afterwards.',
-                de: 'Enthüllung, Aufnahmen, wieder sichtbare Fotos und Titelbild: unsere Vorschläge, die Sie gleich danach ändern können.',
-              })}</p>
-            )}
             <div className="wiz-recap-row">
               <span>{t({ fr: 'Événement', en: 'Event', de: 'Event' })}</span>
               <span>{name} {etapes.includes('nom') && <button type="button" className="linklike" onClick={() => allerA('nom')}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button>}</span>
@@ -1131,6 +1124,14 @@ export function CreateForm({ parcours = 'long' }) {
               <span>{t({ fr: 'Fin', en: 'End', de: 'Ende' })}</span>
               <span>{frDate(endsAt, locale)} {etapes.includes('fin') && <button type="button" className="linklike" onClick={() => allerA('fin')}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button>}</span>
             </div>
+            {/* Parcours court : ces réglages viennent après le paiement. */}
+            {parcours === 'court' ? (
+              <p className="hint" style={{ margin: '10px 0 2px' }}>{t({
+                fr: 'Les réglages de votre événement se font juste après le paiement.',
+                en: 'You will set up your event right after payment.',
+                de: 'Die Einstellungen Ihres Events nehmen Sie direkt nach der Zahlung vor.',
+              })}</p>
+            ) : (<>
             <div className="wiz-recap-row">
               <span>{t({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' })}</span>
               <span>{frDate(revealAt, locale)} {etapes.includes('revelation') && <button type="button" className="linklike" onClick={() => allerA('revelation')}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button>}</span>
@@ -1150,6 +1151,7 @@ export function CreateForm({ parcours = 'long' }) {
               <span>{t({ fr: 'Couverture', en: 'Cover', de: 'Titelbild' })}</span>
               <span>{coverPreview ? t({ fr: 'Ajoutée', en: 'Added', de: 'Hinzugefügt' }) : t({ fr: 'Aucune', en: 'None', de: 'Keines' })} {etapes.includes('couverture') && <button type="button" className="linklike" onClick={() => allerA('couverture')}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button>}</span>
             </div>
+            </>)}
             {tier.priceCents > 0 && (
               <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
             )}
