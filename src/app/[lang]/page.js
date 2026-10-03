@@ -282,17 +282,6 @@ export default async function Home({ params }) {
           </div>
         </section>
 
-        {/* PAS QUE POUR LES MARIAGES : un tiers des événements créés sont des
-            anniversaires, des week-ends, des départs en retraite. Chaque fête
-            a sa page ; l'accueil, la page la plus visitée, y mène en photo. */}
-        <AutresOccasions lang={lang}
-          titre={t({ fr: 'Pas que pour les mariages', en: 'Not just for weddings', de: 'Nicht nur für Hochzeiten' }, lang)}
-          sous={t({
-            fr: 'Anniversaire, baptême, EVJF, week-end entre amis, pot de départ : choisissez votre fête.',
-            en: 'Birthday, christening, hen party, weekend away, retirement: pick your occasion.',
-            de: 'Geburtstag, Taufe, JGA, Wochenende mit Freunden, Ruhestand: Wählen Sie Ihren Anlass.',
-          }, lang)} />
-
         {/* COMMENT ÇA MARCHE */}
         <section className="section">
           <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>{t({ fr: 'Comment ça marche', en: 'How it works', de: "So funktioniert's" }, lang)}</div>
@@ -582,6 +571,17 @@ export default async function Home({ params }) {
             </div>
           ))}
         </section>
+
+        {/* PAS QUE POUR LES MARIAGES : l'accueil parle de mariage du début à
+            la fin (c'est sa recherche Google). Juste avant l'appel final, une
+            ouverture vers les autres fêtes, qui ont chacune leur page. */}
+        <AutresOccasions lang={lang}
+          titre={t({ fr: 'Pas que pour les mariages', en: 'Not just for weddings', de: 'Nicht nur für Hochzeiten' }, lang)}
+          sous={t({
+            fr: 'Anniversaire, baptême, EVJF, week-end entre amis, pot de départ : choisissez votre fête.',
+            en: 'Birthday, christening, hen party, weekend away, retirement: pick your occasion.',
+            de: 'Geburtstag, Taufe, JGA, Wochenende mit Freunden, Ruhestand: Wählen Sie Ihren Anlass.',
+          }, lang)} />
 
         {/* CTA FINAL */}
         <section className="cta-band">
