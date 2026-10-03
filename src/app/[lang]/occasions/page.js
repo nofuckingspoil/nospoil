@@ -10,8 +10,10 @@ import SiteNav from '../../../components/SiteNav'
 import SitePied from '../../../components/SitePied'
 import { Pellicules, Confiance } from '../../../components/lp/Blocs'
 import { Hero, Etapes, Texte, Faq, faqLd, AutresOccasions, CtaFinal } from '../../../components/occasions/Blocs'
+import { EcranAppareil, EcranAffiche, EcranAlbum } from '../../../components/occasions/Ecrans'
+import { JOUR_DEMO } from '../../../lib/occasions'
 import { BRAND } from '../../../lib/brand'
-import { LOCALES } from '../../../lib/i18n'
+import { LOCALES, t } from '../../../lib/i18n'
 import { langueDeParams, alternates, localeOG, lien, SITE_URL } from '../../../lib/langue-lien'
 import { textesPageOccasions } from '../../../lib/occasions-textes'
 
@@ -56,17 +58,25 @@ const ETAPES = {
 export default async function PageOccasions({ params }) {
   const lang = await langueDeParams(params)
   const T = textesPageOccasions(lang)
+  // Les écrans de l'appli, avec des photos de plusieurs fêtes : cette page
+  // les réunit toutes.
+  const titreFete = t({ fr: 'Votre événement', en: 'Your event', de: 'Ihr Event' }, lang)
+  const visuels = [
+    <EcranAffiche key="a" titre={titreFete} lang={lang} />,
+    <EcranAppareil key="b" titre={titreFete} photo="/occasions/evjf-evg/album-1.webp" lang={lang} />,
+    <EcranAlbum key="c" photos={['/occasions/anniversaire/album-2.webp', '/occasions/week-end-entre-amis/album-1.webp']} prenoms={['Camille', 'Léo']} jour={JOUR_DEMO} lang={lang} />,
+  ]
   return (
     <div className="site">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd(T.faq, LOCALES[lang] || 'fr-FR')) }} />
       <SiteNav />
 
       <main className="site-inner">
-        <Hero T={T} tier={5} lang={lang} photo="/occasions/occasions/hero.webp" />
+        <Hero T={T} tier={5} lang={lang} photo="/occasions/occasions/hero.webp" viseur="/occasions/anniversaire-30-ans/album-1.webp" titreFete={titreFete} />
         <AutresOccasions lang={lang} titre={T.occasionsTitre} sous={T.occasionsSous} />
-        <Etapes etapes={ETAPES[lang] || ETAPES.fr} lang={lang} />
+        <Etapes etapes={ETAPES[lang] || ETAPES.fr} lang={lang} visuels={visuels} />
         <Texte titre={T.commentTitre} paragraphes={T.comment} />
-        <Pellicules lang={lang} />
+        <Pellicules lang={lang} dossier="/occasions/anniversaire/pellicules" />
         <Faq faq={T.faq} lang={lang} />
         <Confiance lang={lang} />
         <CtaFinal titre={T.ctaTitre} sous={T.ctaSous} tier={5} lang={lang} />

@@ -238,7 +238,7 @@ export default async function Home({ params }) {
               {[
                 ['/appareil-jetable-mariage', { fr: 'Mariages', en: 'Weddings', de: 'Hochzeiten' }],
                 ['/anniversaire', { fr: 'Anniversaires', en: 'Birthdays', de: 'Geburtstage' }],
-                [null, { fr: 'Baptêmes', en: 'Christenings', de: 'Taufen' }],
+                ['/bapteme', { fr: 'Baptêmes', en: 'Christenings', de: 'Taufen' }],
                 ['/evjf-evg', { fr: 'EVJF', en: 'Hen & stag dos', de: 'JGA' }],
                 ['/vacances-entre-amis', { fr: 'Vacances', en: 'Holidays', de: 'Urlaub' }],
                 ['/depart-retraite', { fr: 'Retraites', en: 'Retirements', de: 'Ruhestand' }],

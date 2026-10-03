@@ -14,6 +14,7 @@ import { TIERS } from '../../lib/pricing'
 import { prix } from '../../lib/lp'
 import { OCCASIONS } from '../../lib/occasions'
 import { getPostEnLangue, gradientFor } from '../../lib/journal'
+import { EcranAppareil } from './Ecrans'
 
 // L'adresse de création depuis une occasion : la bonne formule, et l'exemple
 // de nom qui va avec (« Ex : Les 30 ans de Thomas »).
@@ -32,7 +33,7 @@ export function Bouton({ slug, tier, lang, children }) {
   )
 }
 
-export function Hero({ T, slug, tier, lang, photo }) {
+export function Hero({ T, slug, tier, lang, photo, viseur, titreFete }) {
   return (
     <section className="hero hero-split">
       <div>
@@ -49,12 +50,14 @@ export function Hero({ T, slug, tier, lang, photo }) {
       </div>
       <div className="hero-duo occ-duo">
         <div className="phone phone-avant">
-          <img src="/accueil/appareil-photo.webp" width="640" height="1385"
-            alt={t({
-              fr: "L'appareil photo jetable ouvert dans le navigateur : le viseur, le compteur de poses et le déclencheur.",
-              en: 'The disposable camera open in the browser: viewfinder, shot counter and shutter button.',
-              de: 'Die Einwegkamera im Browser: Sucher, Bildzähler und Auslöser.',
-            }, lang)} />
+          {viseur
+            ? <EcranAppareil titre={titreFete} photo={viseur} lang={lang} />
+            : <img src="/accueil/appareil-photo.webp" width="640" height="1385"
+                alt={t({
+                  fr: "L'appareil photo jetable ouvert dans le navigateur : le viseur, le compteur de poses et le déclencheur.",
+                  en: 'The disposable camera open in the browser: viewfinder, shot counter and shutter button.',
+                  de: 'Die Einwegkamera im Browser: Sucher, Bildzähler und Auslöser.',
+                }, lang)} />}
         </div>
         {/* La fête elle-même, en tirage : on voit tout de suite de quelle
             occasion parle la page, là où deux captures d'appli se
@@ -114,7 +117,7 @@ const IMAGES_ETAPES = [
   { img: '/accueil/revelation.webp', pos: 'center center' },
 ]
 
-export function Etapes({ etapes, lang }) {
+export function Etapes({ etapes, lang, visuels }) {
   return (
     <section className="section">
       <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>{t({ fr: 'Comment ça marche', en: 'How it works', de: "So funktioniert's" }, lang)}</div>
@@ -123,9 +126,9 @@ export function Etapes({ etapes, lang }) {
       <div className="steps-grid">
         {etapes.map((s, i) => (
           <div key={i} className="step-card">
-            <div className="step-shot">
+            <div className={`step-shot ${visuels?.[i] ? 'step-shot-ecran' : ''}`}>
               <span className="step-num">{String(i + 1).padStart(2, '0')}</span>
-              <img src={IMAGES_ETAPES[i]?.img} alt="" loading="lazy" style={{ objectPosition: IMAGES_ETAPES[i]?.pos }} />
+              {visuels?.[i] || <img src={IMAGES_ETAPES[i]?.img} alt="" loading="lazy" style={{ objectPosition: IMAGES_ETAPES[i]?.pos }} />}
             </div>
             <h3>{s.t}</h3>
             <p>{s.s}</p>

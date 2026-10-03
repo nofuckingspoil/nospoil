@@ -2,8 +2,9 @@
 // Voir occasions.js pour la liste et ce qui sert ailleurs.
 import { ANNIVERSAIRES } from './occasions/anniversaires'
 import { AUTRES_OCCASIONS, PAGE_OCCASIONS } from './occasions/autres'
+import { BAPTEME } from './occasions/bapteme'
 
-const TEXTES = { ...ANNIVERSAIRES, ...AUTRES_OCCASIONS }
+const TEXTES = { ...ANNIVERSAIRES, ...AUTRES_OCCASIONS, ...BAPTEME }
 
 // Les textes d'une occasion dans une langue (repli sur le français).
 export function textesOccasion(slug, langue = 'fr') {

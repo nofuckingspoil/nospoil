@@ -1985,6 +1985,60 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .occ-tuile img { width: 100%; height: 120px; object-fit: cover; display: block; }
 .occ-tuile-nom { padding: 11px 14px 13px; }
 
+/* Écrans de l'appli redessinés (components/occasions/Ecrans.js). Tailles en
+   cqw : chaque écran se dessine pareil, quelle que soit sa largeur. */
+.ecr { container-type: inline-size; }
+.ecr-app { width: 100%; aspect-ratio: 640 / 1385; background: #14161F; border-radius: 28px; overflow: hidden; color: #fff; }
+.ecr-app-in { height: 100%; display: flex; flex-direction: column; padding: 3.8cqw 4.7cqw 4cqw; box-sizing: border-box; }
+.ecr-app-tete { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; margin-bottom: 3.6cqw; }
+.ecr-app-bouton { width: 10.6cqw; height: 10.6cqw; flex: none; border-radius: 3cqw; border: 1px solid rgba(255,255,255,.18);
+  display: grid; place-items: center; font-size: 4.4cqw; color: rgba(255,255,255,.85); }
+.ecr-app-titres { text-align: center; min-width: 0; }
+.ecr-app-titres b { display: block; font-family: var(--font-display); font-size: 4.3cqw; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ecr-app-titres span { display: block; font-family: var(--font-mono); font-size: 2.6cqw; color: rgba(255,255,255,.55); margin-top: .8cqw; }
+.ecr-app-viseur { position: relative; aspect-ratio: 580 / 903; border-radius: 4.7cqw; background-size: cover; background-position: center;
+  font-family: var(--font-mono); text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.ecr-app-flash, .ecr-app-num { position: absolute; top: 4.5cqw; font-size: 2.7cqw; letter-spacing: .2em; color: rgba(255,255,255,.85); }
+.ecr-app-flash { left: 4.4cqw; } .ecr-app-num { right: 4.4cqw; letter-spacing: .05em; }
+.ecr-app-coin { position: absolute; width: 6.5cqw; height: 6.5cqw; border: 0 solid rgba(255,255,255,.85); }
+.ecr-app-coin-hg { left: 4.4cqw; top: 10cqw; border-left-width: 2px; border-top-width: 2px; }
+.ecr-app-coin-hd { right: 4.4cqw; top: 10cqw; border-right-width: 2px; border-top-width: 2px; }
+.ecr-app-coin-bg { left: 4.4cqw; bottom: 4.5cqw; border-left-width: 2px; border-bottom-width: 2px; }
+.ecr-app-coin-bd { right: 4.4cqw; bottom: 4.5cqw; border-right-width: 2px; border-bottom-width: 2px; }
+.ecr-app-mise { position: absolute; left: 50%; top: 50%; width: 29cqw; height: 29cqw; transform: translate(-50%, -50%);
+  border: 2px solid rgba(255,255,255,.7); border-radius: 3cqw; }
+.ecr-app-mise span { position: absolute; inset: 22%; border: 1px solid rgba(255,255,255,.55); border-radius: 2cqw; }
+.ecr-app-reste { position: absolute; left: 4.4cqw; bottom: 4.6cqw; font-size: 2.8cqw; color: rgba(255,255,255,.8); }
+.ecr-app-reste b { font-size: 7cqw; color: #fff; margin-right: 1cqw; }
+.ecr-app-outils { display: flex; justify-content: space-between; align-items: center; margin-top: 3.4cqw; }
+.ecr-app-pilule { font-family: var(--font-mono); font-size: 2.8cqw; padding: 1.6cqw 3.6cqw; border-radius: 99px; border: 1px solid rgba(255,255,255,.2); }
+.ecr-app-rond { width: 10cqw; height: 10cqw; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); display: grid; place-items: center; font-size: 4.4cqw; }
+.ecr-app-declencheur { margin: 2cqw auto 0; width: 22cqw; height: 22cqw; border-radius: 50%; background: #4a2016; display: grid; place-items: center; }
+.ecr-app-declencheur span { width: 80%; height: 80%; border-radius: 50%; background: #EC5B33; box-shadow: inset 0 0 0 1.2cqw #EC5B33, inset 0 0 0 1.6cqw rgba(255,255,255,.75); }
+
+.ecr-affiche { width: 62%; margin: 6% auto 0; container-type: inline-size; background: #fff; box-shadow: 0 10px 30px rgba(34,26,18,.18); text-align: center; color: #14161F; }
+.ecr-affiche-film { display: block; height: 4.6cqw; background: #14161F radial-gradient(circle, #f3ede3 32%, transparent 34%) 0 50% / 6cqw 100% repeat-x; }
+.ecr-affiche-corps { padding: 7cqw 6cqw 8cqw; display: flex; flex-direction: column; align-items: center; gap: 2.4cqw; }
+.ecr-affiche-sur { font-family: var(--font-mono); font-size: 3cqw; letter-spacing: .18em; text-transform: uppercase; color: #C2502F; }
+.ecr-affiche-titre { font-family: var(--font-display); font-size: 7.4cqw; line-height: 1.05; }
+.ecr-affiche-corps i { font-size: 3.6cqw; color: #5f5341; font-weight: 600; }
+.ecr-affiche-qr { width: 52%; margin: 2cqw 0; }
+.ecr-affiche-qr svg { display: block; width: 100%; height: auto; }
+.ecr-affiche-mots { font-family: var(--font-mono); font-size: 2.7cqw; letter-spacing: .14em; text-transform: uppercase; }
+.ecr-affiche-cliches { font-size: 3.2cqw; font-weight: 700; color: #C2502F; border: 1.5px solid #C2502F; border-radius: 99px; padding: 1.6cqw 4cqw; }
+
+.ecr-album { width: 100%; height: 100%; }
+.ecr-album-in { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw; padding: 4cqw; box-sizing: border-box; }
+.ecr-album-carte { background: #FCF8F0; border-radius: 3cqw; padding: 2cqw; box-shadow: 0 2px 8px rgba(34,26,18,.08); }
+.ecr-album-photo { position: relative; aspect-ratio: 3 / 4; border-radius: 2cqw; background-size: cover; background-position: center; }
+.ecr-album-date { position: absolute; left: 3cqw; bottom: 2.6cqw; font-family: var(--font-mono); font-size: 3.4cqw; font-weight: 700; color: #FF9A3C; text-shadow: 0 0 4px rgba(255,120,40,.6); }
+.ecr-album-coeur { position: absolute; right: 2.4cqw; bottom: 2.2cqw; font-size: 3cqw; color: #fff; background: rgba(0,0,0,.35); border-radius: 99px; padding: .8cqw 2cqw; }
+.ecr-album-legende { display: flex; justify-content: space-between; align-items: baseline; padding: 2.2cqw 1cqw .6cqw; }
+.ecr-album-legende b { font-family: var(--font-display); font-size: 3.6cqw; }
+.ecr-album-legende span { font-family: var(--font-mono); font-size: 2.5cqw; color: #6E6252; }
+.step-shot-ecran { background: #EFE7DA; }
+.step-shot-ecran .ecr-app { width: 46%; margin: 5% auto 0; border-radius: 14px; }
+
 /* Pied de page riche (SitePied) : trois colonnes de liens au-dessus de la
    ligne légale. Sur téléphone, les colonnes s'empilent. */
 .vfooter-riche { padding-top: 36px; }

@@ -17,6 +17,7 @@
 export const OCCASIONS = [
   {
     slug: 'anniversaire',
+    ecran: { viseur: 2, album: [1, 3], prenoms: ['Camille', 'Hugo'] },
     tier: 30,
     tiers: [10, 30, 50, 100],
     ic: '🎂',
@@ -26,6 +27,7 @@ export const OCCASIONS = [
   },
   {
     slug: 'anniversaire-30-ans',
+    ecran: { viseur: 1, album: [2, 4], prenoms: ['Inès', 'Max'] },
     tier: 30,
     tiers: [10, 30, 50, 100],
     ic: '🥳',
@@ -35,6 +37,7 @@ export const OCCASIONS = [
   },
   {
     slug: 'anniversaire-40-ans',
+    ecran: { viseur: 1, album: [2, 3], prenoms: ['Claire', 'Julien'] },
     tier: 50,
     tiers: [30, 50, 100, 150],
     ic: '🎉',
@@ -44,6 +47,7 @@ export const OCCASIONS = [
   },
   {
     slug: 'anniversaire-50-ans',
+    ecran: { viseur: 2, album: [1, 4], prenoms: ['Anne', 'Lucas'] },
     tier: 50,
     tiers: [30, 50, 100, 150],
     ic: '🥂',
@@ -53,6 +57,7 @@ export const OCCASIONS = [
   },
   {
     slug: 'evjf-evg',
+    ecran: { viseur: 1, album: [3, 2], prenoms: ['Manon', 'Sarah'] },
     tier: 30,
     tiers: [10, 30, 50],
     ic: '👯',
@@ -62,6 +67,7 @@ export const OCCASIONS = [
   },
   {
     slug: 'week-end-entre-amis',
+    ecran: { viseur: 3, album: [1, 4], prenoms: ['Léo', 'Chloé'] },
     tier: 10,
     tiers: [5, 10, 30, 50],
     ic: '🏡',
@@ -71,6 +77,7 @@ export const OCCASIONS = [
   },
   {
     slug: 'vacances-entre-amis',
+    ecran: { viseur: 1, album: [3, 4], prenoms: ['Emma', 'Nico'] },
     tier: 10,
     tiers: [5, 10, 30, 50],
     ic: '🌴',
@@ -79,7 +86,18 @@ export const OCCASIONS = [
     articles: ['photos-week-end-entre-amis', 'whatsapp-google-photos-mariage', 'livre-photo-mariage-invites'],
   },
   {
+    slug: 'bapteme',
+    ecran: { viseur: 1, album: [2, 3], prenoms: ['Hélène', 'Paul'] },
+    tier: 30,
+    tiers: [10, 30, 50, 100],
+    ic: '🕊️',
+    nom: { fr: 'Baptême', en: 'Christening', de: 'Taufe' },
+    exemple: { fr: 'Ex : Le baptême de Louise', en: "E.g. Louise's christening", de: 'Z. B. Taufe von Louise' },
+    articles: ['livre-photo-mariage-invites', 'photos-de-groupe-mariage', 'droit-image-photos-mariage'],
+  },
+  {
     slug: 'depart-retraite',
+    ecran: { viseur: 3, album: [2, 4], prenoms: ['Sandrine', 'Karim'] },
     tier: 50,
     tiers: [30, 50, 100, 150],
     ic: '🎁',
@@ -94,6 +112,17 @@ export const SLUGS_OCCASIONS = OCCASIONS.map((o) => o.slug)
 export function occasion(slug) {
   return OCCASIONS.find((o) => o.slug === slug) || null
 }
+
+// Le nom de la fête affiché sur les écrans redessinés (« Les 30 ans de
+// Thomas ») : l'exemple de la création, sans son « Ex : ».
+export function nomFete(slug, langue = 'fr') {
+  const e = exempleNom(slug, langue)
+  return e ? e.replace(/^(Ex :|E\.g\.|Z\. B\.)\s*/, '') : null
+}
+
+// La date incrustée sur les photos de démonstration (façon jetable) et
+// l'heure affichée sous les cartes de l'album.
+export const JOUR_DEMO = { tampon: "14 6 '26", texte: { fr: '14 juin', en: '14 June', de: '14. Juni' } }
 
 // L'exemple de nom à proposer à la création (« Ex : Les 30 ans de Thomas »),
 // ou null pour garder l'exemple de mariage.
