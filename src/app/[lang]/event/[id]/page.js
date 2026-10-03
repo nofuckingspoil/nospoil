@@ -1923,7 +1923,16 @@ export default function EventManage({ params }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {ev.contacts.map((c, i) => (
               <div key={i} className="db-contact">
-                <span className="db-contact-name">{c.name}</span>
+                <span className="db-contact-name">
+                  {c.name}
+                  <span className={`db-contact-photos${c.photos ? '' : ' zero'}`}>
+                    {c.photos > 1
+                      ? t({ fr: `${c.photos} photos`, en: `${c.photos} photos`, de: `${c.photos} Fotos` })
+                      : c.photos === 1
+                        ? t({ fr: '1 photo', en: '1 photo', de: '1 Foto' })
+                        : t({ fr: 'aucune photo', en: 'no photos', de: 'keine Fotos' })}
+                  </span>
+                </span>
                 <span className="db-contact-val">
                   {/* Sans adresse, le participant ne recevra rien : c'est justement ce
                       qu'il faut voir pour penser à le prévenir autrement. */}

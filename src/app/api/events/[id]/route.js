@@ -56,7 +56,7 @@ export async function GET(request, { params }) {
     // est rendue, et l'afficher autrement laisserait croire à un quota atteint
     // alors que le siège est libre.
     selectRows('guests', `event_id=eq.${id}&blocked=is.false&select=id`),
-    selectRows('photos', `event_id=eq.${id}&select=id,hidden`),
+    selectRows('photos', `event_id=eq.${id}&select=id,hidden,guest_id`),
   ])
   const guestCount = Array.isArray(guests.data) ? guests.data.length : 0
   const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
@@ -121,9 +121,16 @@ export async function GET(request, { params }) {
       'guests',
       `event_id=eq.${id}&blocked=is.false&select=id,display_name,email,phone,notified_at,notify_failed,email_ko_at,email_desinscrit_at&order=created_at.asc`
     )
+    // Photos arrivées dans l'album pour chacun : l'organisateur voit d'un
+    // coup d'œil qui a joué le jeu et qui n'a encore rien pris.
+    const parGuest = {}
+    for (const p of Array.isArray(photos.data) ? photos.data : []) {
+      if (p.guest_id) parGuest[p.guest_id] = (parGuest[p.guest_id] || 0) + 1
+    }
     payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({
       id: g.id,
       name: g.display_name,
+      photos: parGuest[g.id] || 0,
       email: g.email || null,
       phone: g.phone || null,
       notified: !!g.notified_at,
