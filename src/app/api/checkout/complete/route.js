@@ -7,6 +7,7 @@ import { modeValide } from '../../../../lib/photo-mode'
 import { ensureAccount } from '../../../../lib/account'
 import { consumePromo } from '../../../../lib/promo'
 import { t, langueValide } from '../../../../lib/i18n'
+import { resumeAppareil } from '../../../../lib/avis'
 import { langueRequete } from '../../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
@@ -35,7 +36,7 @@ export async function POST(request) {
   // Déjà créé pour ce paiement ? On renvoie l'événement existant.
   const existing = await selectRows(
     'events',
-    `stripe_session_id=eq.${encodeURIComponent(sessionId)}&select=id,owner_token,owner_email,paid_cents,is_test`
+    `stripe_session_id=eq.${encodeURIComponent(sessionId)}&select=id,owner_token,owner_email,paid_cents,is_test,reglages_etape`
   )
   const found = Array.isArray(existing.data) ? existing.data[0] : null
   if (found) {
@@ -46,6 +47,7 @@ export async function POST(request) {
       // Montant encaissé : sert à déclarer la vente à la publicité.
       paidCents: found.paid_cents ?? 0,
       isTest: !!found.is_test,
+      reglagesEtape: found.reglages_etape || null,
     })
   }
 
@@ -98,6 +100,15 @@ export async function POST(request) {
     promo_code: m.promo_code || null,
     paid_cents: session.amount_total ?? null, // ce qui a réellement été encaissé, remise déduite
     is_test: m.is_test === '1',
+    // Parcours court : réglages à faire. Le lien du mail y ramène tant qu'ils
+    // ne sont pas terminés.
+    reglages_etape: m.parcours === 'court' ? 'bravo' : null,
+    prov_source: m.prov_source || null,
+    prov_medium: m.prov_medium || null,
+    prov_campagne: m.prov_campagne || null,
+    prov_page: m.prov_page || null,
+    // Appel fait par le navigateur de l'organisateur au retour du paiement.
+    appareil_orga: resumeAppareil(request.headers.get('user-agent')),
     langue,
   })
   if (!ok || !data?.id) {
@@ -139,5 +150,6 @@ export async function POST(request) {
     // Montant encaissé : sert à déclarer la vente à la publicité.
     paidCents: session.amount_total ?? 0,
     isTest: m.is_test === '1',
+    reglagesEtape: m.parcours === 'court' ? 'bravo' : null,
   })
 }

@@ -91,7 +91,7 @@ export async function POST(request) {
 
   // Variante du tunnel d'où vient la demande. Liste fermée : le client ne doit
   // pas pouvoir faire pointer l'annulation vers n'importe quelle adresse.
-  const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct' }
+  const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct', nouveau: '/create' }
   const cancelPath = CANCEL_PATHS[body.flow] || CANCEL_PATHS.long
 
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
@@ -163,6 +163,13 @@ export async function POST(request) {
         // Le code voyage avec le paiement : il ne sera décompté qu'au retour,
         // une fois l'événement réellement créé.
         promo_code: promo ? promo.code : '',
+        // Parcours court : les réglages se font au retour du paiement.
+        parcours: body.flow === 'nouveau' ? 'court' : '',
+        // D'où vient l'organisateur (Stripe limite chaque valeur à 500 caractères).
+        prov_source: String(body.provenance?.s || '').slice(0, 80),
+        prov_medium: String(body.provenance?.m || '').slice(0, 80),
+        prov_campagne: String(body.provenance?.c || '').slice(0, 120),
+        prov_page: String(body.provenance?.p || '').slice(0, 200),
         is_test: promo && promo.marksTest ? '1' : '',
         // La langue de l'organisateur, mémorisée sur l'événement au retour.
         langue,

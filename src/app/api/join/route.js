@@ -282,6 +282,24 @@ export async function POST(request) {
         const estEssai = Array.isArray(evData) && !!evData[0]?.is_demo
         const compte = await ensureAccount(email, displayName, { demo: estEssai, langue })
         if (compte) await updateRow('guests', `id=eq.${data.guest_id}`, { account_id: compte })
+        // Un essai : son carnet apprend qu'une adresse a été laissée, et si la
+        // case « recevoir des nouvelles » a été cochée. Ce n'est qu'avec
+        // cette case qu'on a le droit d'écrire pour autre chose que l'essai.
+        if (estEssai && compte) {
+          const maintenant = new Date().toISOString()
+          const nouvelles = body.nouvelles === true
+          await updateRow('essais', `event_id=eq.${eventId}`, {
+            compte_id: compte,
+            mail_at: maintenant,
+            ...(nouvelles ? { nouvelles_at: maintenant } : {}),
+          })
+          if (nouvelles) {
+            // La date du premier accord fait foi ; une nouvelle case cochée
+            // annule en revanche une désinscription passée.
+            await updateRow('accounts', `id=eq.${compte}&news_ok_at=is.null`, { news_ok_at: maintenant })
+            await updateRow('accounts', `id=eq.${compte}`, { news_optout_at: null })
+          }
+        }
       } catch (err) { console.error('compte participant:', err) }
     })
   }

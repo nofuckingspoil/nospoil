@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests,is_demo,reglages_etape`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
@@ -56,7 +56,7 @@ export async function GET(request, { params }) {
     // est rendue, et l'afficher autrement laisserait croire à un quota atteint
     // alors que le siège est libre.
     selectRows('guests', `event_id=eq.${id}&blocked=is.false&select=id`),
-    selectRows('photos', `event_id=eq.${id}&select=id,hidden`),
+    selectRows('photos', `event_id=eq.${id}&select=id,hidden,guest_id`),
   ])
   const guestCount = Array.isArray(guests.data) ? guests.data.length : 0
   const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
@@ -82,6 +82,9 @@ export async function GET(request, { params }) {
     hostNames: ev.host_names,
     coverUrl,
     coverPos: ev.cover_pos || null,
+    // Une soirée d'essai du site : le formulaire d'arrivée y propose de
+    // recevoir des nouvelles de Time to Flash, et nulle part ailleurs.
+    essai: !!ev.is_demo,
     shotsPerGuest: ev.shots_per_guest,
     bonusShots: ev.bonus_shots ?? 0,
     // Ce que le participant a le droit de revoir de ses propres photos avant la
@@ -116,11 +119,20 @@ export async function GET(request, { params }) {
     // pour pouvoir justement en retirer un (règle 1.2 d'Apple).
     const list = await selectRows(
       'guests',
-      `event_id=eq.${id}&blocked=is.false&select=id,display_name,email,phone,notified_at,notify_failed,email_ko_at,email_desinscrit_at&order=created_at.asc`
+      `event_id=eq.${id}&blocked=is.false&select=id,display_name,bonus_shots,email,phone,notified_at,notify_failed,email_ko_at,email_desinscrit_at&order=created_at.asc`
     )
+    // Photos arrivées dans l'album pour chacun : l'organisateur voit d'un
+    // coup d'œil qui a joué le jeu et qui n'a encore rien pris.
+    const parGuest = {}
+    for (const p of Array.isArray(photos.data) ? photos.data : []) {
+      if (p.guest_id) parGuest[p.guest_id] = (parGuest[p.guest_id] || 0) + 1
+    }
     payload.contacts = (Array.isArray(list.data) ? list.data : []).map((g) => ({
       id: g.id,
       name: g.display_name,
+      photos: parGuest[g.id] || 0,
+      // Sur combien : ses clichés, plus les photos bonus qu'il a reçues.
+      total: (ev.shots_per_guest || 0) + (g.bonus_shots || 0),
       email: g.email || null,
       phone: g.phone || null,
       notified: !!g.notified_at,
@@ -143,7 +155,14 @@ export async function GET(request, { params }) {
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
     payload.publishedAt = ev.published_at || null // album validé par l'organisateur
     payload.revealPaused = !!ev.reveal_paused // frein d'urgence
-    payload.quotaLocked = quotaLocked(dates) // le nb de photos/participant est-il figé ?
+    // Parcours court : le réglage où en est l'organisateur (null = terminé).
+    payload.reglagesEtape = ev.reglages_etape || null
+    // L'organisateur a-t-il déjà donné son avis ? Sinon, le tableau de bord le
+    // lui demande à sa première visite après la révélation.
+    const avisOrga = await selectRows('feedback', `event_id=eq.${ev.id}&role=eq.organisateur&select=id&limit=1`)
+    payload.avisOrgaDonne = Array.isArray(avisOrga.data) && avisOrga.data.length > 0
+    // Le nb de photos/participant est-il figé ? Pas tant que personne n'a photographié.
+    payload.quotaLocked = quotaLocked(dates) && photoCount > 0
 
     // Formule souscrite et dépassement éventuel. Si la formule est trop petite,
     // on indique déjà celle qu'il faut viser et ce qu'il reste à régler : le
@@ -205,6 +224,12 @@ export async function GET(request, { params }) {
   return Response.json(payload)
 }
 
+// Personne n'a encore pris de photo dans cette soirée.
+async function aucunePhoto(eventId) {
+  const { ok, data } = await selectRows('photos', `event_id=eq.${eventId}&select=id&limit=1`)
+  return ok && Array.isArray(data) && data.length === 0
+}
+
 // Modification de réglages (réservée à l'organisateur/admin) : date de révélation, code galerie
 export async function PATCH(request, { params }) {
   const { id } = await params
@@ -247,6 +272,13 @@ export async function PATCH(request, { params }) {
 
   // Nom de l'événement : s'affiche chez les participants, donc modifiable à tout moment
   // (une faute de frappe ne doit pas rester figée jusqu'à la révélation).
+  // Parcours court : où en sont les réglages d'après paiement. Null quand c'est
+  // fini ; tant que ce n'est pas le cas, le lien du mail y ramène.
+  if (body.reglagesEtape !== undefined) {
+    const e = body.reglagesEtape
+    patch.reglages_etape = ['bravo', 'revelation', 'cliches', 'bonus', 'revoir', 'couverture', 'decouverte', 'termine'].includes(e) ? e : null
+  }
+
   if (body.name !== undefined) {
     const clean = String(body.name).trim().slice(0, 80)
     if (!clean) return Response.json({ error: t({ fr: 'Donnez un nom à votre événement.', en: 'Give your event a name.', de: 'Geben Sie Ihrem Event einen Namen.' }, langue) }, { status: 400 })
@@ -312,9 +344,12 @@ export async function PATCH(request, { params }) {
   }
 
   // Photos par participant : modifiable tant que la soirée n'a pas commencé.
-  // Après, tout le monde n'aurait pas joué au même jeu.
+  // Après, tout le monde n'aurait pas joué au même jeu. Sauf si personne n'a
+  // encore photographié : une soirée créée « maintenant » doit pouvoir être
+  // réglée juste après le paiement, et la règle ne lèse alors personne.
+  const figee = async () => quotaLocked({ startsAt: patch.starts_at || ev.starts_at }) && !(await aucunePhoto(id))
   if (body.shotsPerGuest !== undefined) {
-    if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
+    if (await figee()) {
       return Response.json({ error: t({ fr: 'La soirée a commencé : le nombre de photos est figé.', en: 'The party has started: the number of photos is locked.', de: 'Die Feier hat begonnen: Die Anzahl der Fotos steht fest.' }, langue) }, { status: 409 })
     }
     // Mêmes bornes que le formulaire de création (src/lib/pricing.js) et que
@@ -329,7 +364,7 @@ export async function PATCH(request, { params }) {
   // Recharge unique : 0 pour la refuser, jusqu'à 5 photos sinon. Modifiable
   // tant que la soirée n'a pas commencé, comme le nombre de prises.
   if (body.bonusShots !== undefined) {
-    if (quotaLocked({ startsAt: patch.starts_at || ev.starts_at })) {
+    if (await figee()) {
       return Response.json({ error: t({ fr: 'La soirée a commencé : la recharge est figée.', en: 'The party has started: the top-up is locked.', de: 'Die Feier hat begonnen: Das Nachladen steht fest.' }, langue) }, { status: 409 })
     }
     const n = parseInt(body.bonusShots, 10)

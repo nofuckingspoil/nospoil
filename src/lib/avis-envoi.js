@@ -16,12 +16,14 @@
 import 'server-only'
 import { selectRows, updateRow } from './supabase'
 import { sendMail } from './mail'
+import { CONTACT_EMAIL } from './pricing'
 import { makeToken } from './account'
 import { isRevealed } from './phase'
 import { t } from './i18n'
 import { langueDe } from './langue-serveur'
 import {
   surveyOrgaEmail, surveyInviteEmail, recapAdmin,
+  avisOrgaEmail, essaiEmail, lienRetourEssai, EXPEDITEUR_CLEMENT,
   lienAvisOrga, lienAvisInvite, lienDesinscription,
 } from './avis-mail'
 
@@ -37,10 +39,15 @@ const PLAFOND_INVITES = 60
 
 // ---------- 1. L'organisateur, deux jours après la révélation ----------
 // Ni le jour même (il est dans l'émotion, il note bien et ne se souvient de
-// rien de précis), ni une semaine après (il a tout oublié). À J+2 il a
-// partagé l'album, vu les réactions, et sait encore ce qui a coincé.
+// rien de précis), ni une semaine après (il a tout oublié).
+//
+// Depuis le 03/10/2026 : le lendemain de la révélation (et non plus J+2), un
+// mail personnel signé Clément, étoiles cliquables dans le mail. 2 réponses
+// sur 24 avec l'ancien questionnaire. Pas d'avis demandé sur une soirée sans
+// aucune photo (les essais gratuits ont leur propre question, voir plus bas),
+// ni à qui a déjà répondu depuis son tableau de bord.
 export async function enqueteOrganisateurs(now = new Date()) {
-  const seuil = new Date(now.getTime() - 2 * JOUR).toISOString()
+  const seuil = new Date(now.getTime() - 1 * JOUR).toISOString()
   const { ok, data } = await selectRows(
     'events',
     'select=id,name,owner_email,owner_token,reveal_at,reveal_paused,max_guests,langue' +
@@ -70,13 +77,27 @@ export async function enqueteOrganisateurs(now = new Date()) {
     })
     if (!ouvert) continue
 
+    const [photos, dejaDonne] = await Promise.all([
+      selectRows('photos', `event_id=eq.${ev.id}&select=id&limit=1`),
+      selectRows('feedback', `event_id=eq.${ev.id}&role=eq.organisateur&select=id&limit=1`),
+    ])
+    const aucunePhoto = Array.isArray(photos.data) && photos.data.length === 0
+    const aRepondu = Array.isArray(dejaDonne.data) && dejaDonne.data.length > 0
+    if (aucunePhoto || aRepondu) {
+      await updateRow('events', `id=eq.${ev.id}`, { survey_mailed_at: now.toISOString() })
+      continue
+    }
+
     const langue = langueDe(ev)
-    const mail = surveyOrgaEmail({
+    const mail = avisOrgaEmail({
       langue,
       eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
       link: lienAvisOrga(ev.owner_token),
     })
-    const res = await sendMail({ to: ev.owner_email, subject: mail.subject, html: mail.html })
+    const res = await sendMail({
+      to: ev.owner_email, subject: mail.subject, html: mail.html,
+      expediteur: EXPEDITEUR_CLEMENT, repondreA: CONTACT_EMAIL,
+    })
     // Marqué même en cas d'échec : une enquête n'est pas un service dû, et
     // mieux vaut la manquer qu'entrer dans une boucle de renvoi quotidien.
     await updateRow('events', `id=eq.${ev.id}`, { survey_mailed_at: now.toISOString() })
@@ -188,4 +209,48 @@ export async function recapDuJour() {
     await updateRow('feedback', `id=in.(${ids.join(',')})`, { digested_at: new Date().toISOString() })
   }
   return res?.ok ? data.length : 0
+}
+
+
+// ---------- 4. Les essais : soirée gratuite, aucune photo ----------
+// « Vous avez pu essayer ? » le lendemain matin de la création (le cron
+// passe chaque matin), puis une dernière fois une fois la soirée révélée, si
+// toujours aucune photo ni réponse. Une réponse arrête tout.
+export async function relanceEssais(now = new Date()) {
+  const il = (h) => new Date(now.getTime() - h * 3600 * 1000).toISOString()
+  const commun = 'select=id,name,owner_email,owner_token,langue,created_at,reveal_at' +
+    '&paid_cents=eq.0&is_demo=is.false&is_test=is.false&purged_at=is.null' +
+    '&owner_email=not.is.null&essai_reponse=is.null'
+  const [premiers, derniers] = await Promise.all([
+    // Créées depuis plus de 12 h (donc la veille au plus tard), moins de 7 jours.
+    selectRows('events', `${commun}&essai_mailed_at=is.null&created_at=lte.${il(12)}&created_at=gte.${il(24 * 7)}&limit=${LOT}`),
+    // Déjà relancées, révélées depuis moins de 7 jours.
+    selectRows('events', `${commun}&essai_mailed_at=not.is.null&essai_relance_at=is.null&reveal_at=lte.${now.toISOString()}&reveal_at=gte.${il(24 * 7)}&limit=${LOT}`),
+  ])
+
+  let envoyes = 0
+  const traiter = async (ev, relance) => {
+    const photos = await selectRows('photos', `event_id=eq.${ev.id}&select=id&limit=1`)
+    if (!Array.isArray(photos.data) || photos.data.length > 0) {
+      // Des photos : ce n'est plus un essai resté en plan, on ne dit rien.
+      if (!relance) await updateRow('events', `id=eq.${ev.id}`, { essai_mailed_at: now.toISOString(), essai_relance_at: now.toISOString() })
+      return
+    }
+    const langue = langueDe(ev)
+    const mail = essaiEmail({
+      langue,
+      relance,
+      eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
+      lien: lienRetourEssai(ev.owner_token),
+    })
+    const res = await sendMail({
+      to: ev.owner_email, subject: mail.subject, html: mail.html,
+      expediteur: EXPEDITEUR_CLEMENT, repondreA: CONTACT_EMAIL,
+    })
+    await updateRow('events', `id=eq.${ev.id}`, relance ? { essai_relance_at: now.toISOString() } : { essai_mailed_at: now.toISOString() })
+    if (res?.ok) envoyes++
+  }
+  for (const ev of Array.isArray(premiers.data) ? premiers.data : []) await traiter(ev, false)
+  for (const ev of Array.isArray(derniers.data) ? derniers.data : []) await traiter(ev, true)
+  return envoyes
 }

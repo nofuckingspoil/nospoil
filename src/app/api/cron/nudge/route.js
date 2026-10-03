@@ -15,7 +15,7 @@ import { sendMail, eventDayEmail, afterPartyEmail, siteUrl } from '../../../../l
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { quotaExceeded } from '../../../../lib/phase'
 import { finDe } from '../../../../lib/rappels'
-import { enqueteOrganisateurs, recapDuJour } from '../../../../lib/avis-envoi'
+import { enqueteOrganisateurs, recapDuJour, relanceEssais } from '../../../../lib/avis-envoi'
 import { equipeDe } from '../../../../lib/equipe'
 import { LOCALES } from '../../../../lib/i18n'
 import { langueDe } from '../../../../lib/langue-serveur'
@@ -200,11 +200,15 @@ export async function GET(request) {
   try { avisOrga = await enqueteOrganisateurs(now) } catch (err) { console.error('cron/nudge: enquête organisateurs', err) }
   // L'enquête aux participants ne part plus en mail séparé depuis le
   // 03/10/2026 : elle est dans le mail de révélation (voir albumReadyEmail).
+  // Les essais gratuits restés sans photo : « Vous avez pu essayer ? ».
+  let essais = 0
+  try { essais = await relanceEssais(now) } catch (err) { console.error('cron/nudge: relance essais', err) }
   try { recap = await recapDuJour() } catch (err) { console.error('cron/nudge: récap avis', err) }
 
   return Response.json({
     ok: true, jourJ, lendemain, albums,
     avisOrga,
+    essais,
     avisInvites: avisInvites.envoyes,
     // Ce que le plafond du jour a laissé de côté : il repartira demain. On le
     // dit plutôt que de le taire : un envoi tronqué en silence se lit comme

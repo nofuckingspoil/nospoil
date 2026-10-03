@@ -12,8 +12,8 @@
 import 'server-only'
 import { BRAND } from './brand'
 import { CONTACT_EMAIL } from './pricing'
-import { sendMail, layout, bigButton, siteUrl } from './mail'
-import { accroche, libelle, resumeAppareil, NOTES } from './avis'
+import { sendMail, layout, bigButton, siteUrl, etoilesAvis } from './mail'
+import { accroche, libelle, resumeAppareil, NOTES, notes } from './avis'
 import { t } from './i18n'
 import { nomAffiche } from './event-defaults'
 
@@ -222,4 +222,131 @@ export async function recapAdmin(avisDuJour) {
   })
 
   return sendMail({ to: adminEmail(), subject: `${liste.length} avis hier | ${BRAND.name}`, html })
+}
+
+// ============================================================
+//  Les mails de Clément (03/10/2026)
+//
+//  Écrits à la première personne, signés, sans gros visuels : on répond plus
+//  volontiers à quelqu'un qu'à un formulaire, et un mail sobre tombe moins
+//  souvent dans les indésirables. On peut y répondre directement : la réponse
+//  arrive sur l'adresse de contact.
+// ============================================================
+
+export const EXPEDITEUR_CLEMENT = 'Clément de Time to Flash'
+
+function mailPersonnel({ langue, paragraphes, apres = '', footer }) {
+  const p = (txt) => `<p style="margin:0 0 16px;font-size:16px;line-height:1.6;color:#221A12;">${txt}</p>`
+  const signature = t({
+    fr: 'Clément<br><span style="color:#8a7c69;">Fondateur de Time to Flash</span>',
+    en: 'Clément<br><span style="color:#8a7c69;">Founder of Time to Flash</span>',
+    de: 'Clément<br><span style="color:#8a7c69;">Gründer von Time to Flash</span>',
+  }, langue)
+  return `<!doctype html><html lang="${langue || 'fr'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:28px 18px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:520px;"><tr><td>
+${paragraphes.map(p).join('\n')}
+${apres}
+<p style="margin:22px 0 0;font-size:16px;line-height:1.5;color:#221A12;">${signature}</p>
+${footer ? `<p style="margin:28px 0 0;font-size:12px;line-height:1.6;color:#a0937f;">${footer}</p>` : ''}
+</td></tr></table>
+</td></tr></table>
+</body></html>`
+}
+
+// ---------- L'avis de l'organisateur, le lendemain de la révélation ----------
+// Les étoiles sont dans le mail : un clic, la note est enregistrée, et la
+// page qui s'ouvre propose la suite (facultative).
+export function avisOrgaEmail({ eventName, link, langue }) {
+  eventName = nomAffiche(eventName, langue)
+  const mots = notes(langue).map((n) => n.mot)
+  return {
+    subject: t({
+      fr: `${eventName} : qu'en avez-vous pensé ?`,
+      en: `${eventName}: what did you think?`,
+      de: `${eventName}: Wie fanden Sie es?`,
+    }, langue),
+    html: mailPersonnel({
+      langue,
+      paragraphes: [
+        t({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue),
+        t({
+          fr: `Je suis Clément, le fondateur de Time to Flash. Les photos de « <strong>${eventName}</strong> » viennent d'être révélées, et j'aimerais beaucoup savoir comment ça s'est passé pour vous.`,
+          en: `I'm Clément, the founder of Time to Flash. The photos from “<strong>${eventName}</strong>” have just been revealed, and I'd really love to know how it went for you.`,
+          de: `Ich bin Clément, der Gründer von Time to Flash. Die Fotos von „<strong>${eventName}</strong>“ wurden gerade enthüllt, und ich würde sehr gern wissen, wie es für Sie gelaufen ist.`,
+        }, langue),
+        t({
+          fr: 'Un clic sur une étoile suffit :',
+          en: 'One click on a star is all it takes:',
+          de: 'Ein Klick auf einen Stern genügt:',
+        }, langue),
+      ],
+      apres: `${etoilesAvis(link, mots)}
+<p style="margin:16px 0 0;font-size:15px;line-height:1.6;color:#5f5341;">${t({
+        fr: "Et si vous avez deux minutes de plus, dites-moi ce qui vous a plu et ce qui a coincé, ou répondez simplement à ce mail : je lis tout, personnellement.",
+        en: 'And if you have two more minutes, tell me what you liked and what went wrong, or simply reply to this email: I read everything myself.',
+        de: 'Und wenn Sie zwei Minuten mehr haben, sagen Sie mir, was Ihnen gefallen hat und was gehakt hat, oder antworten Sie einfach auf diese E-Mail: Ich lese alles persönlich.',
+      }, langue)}</p>`,
+      footer: t({
+        fr: "Vous ne recevrez ce message qu'une seule fois.",
+        en: 'You will only receive this message once.',
+        de: 'Sie erhalten diese Nachricht nur ein einziges Mal.',
+      }, langue),
+    }),
+  }
+}
+
+// ---------- Les essais : soirée gratuite, aucune photo ----------
+// Le lendemain matin de la création (`relance: false`), puis une dernière
+// fois si la soirée s'est terminée sans photo ni réponse (`relance: true`).
+// Quatre réponses, chacune un lien : un clic et c'est dit.
+export function essaiEmail({ eventName, lien, langue, relance = false }) {
+  eventName = nomAffiche(eventName, langue)
+  const sep = lien.includes('?') ? '&' : '?'
+  const choix = [
+    ['test', t({ fr: 'Je teste avant ma vraie soirée', en: "I'm testing before my real event", de: 'Ich teste vor meinem echten Event' }, langue)],
+    ['temps', t({ fr: "Je n'ai pas encore eu le temps", en: "I haven't had the time yet", de: 'Ich hatte noch keine Zeit' }, langue)],
+    ['souci', t({ fr: "J'ai eu un souci", en: 'I ran into a problem', de: 'Ich hatte ein Problem' }, langue)],
+    ['pas_pour_moi', t({ fr: "Ce n'est pas pour moi", en: "It's not for me", de: 'Das ist nichts für mich' }, langue)],
+  ]
+  const boutons = choix.map(([cle, label]) => `<tr><td style="padding:0 0 10px;">
+  <a href="${lien}${sep}r=${cle}" style="display:block;background:#F4EBDA;color:#221A12;text-decoration:none;font-size:15px;font-weight:600;padding:14px 16px;border-radius:12px;border:1px solid #e3d6bf;">${label} →</a>
+</td></tr>`).join('')
+  return {
+    subject: relance
+      ? t({ fr: `${eventName} : que s'est-il passé ?`, en: `${eventName}: what happened?`, de: `${eventName}: Was ist passiert?` }, langue)
+      : t({ fr: 'Vous avez pu essayer Time to Flash ?', en: 'Did you get to try Time to Flash?', de: 'Konnten Sie Time to Flash ausprobieren?' }, langue),
+    html: mailPersonnel({
+      langue,
+      paragraphes: [
+        t({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue),
+        relance
+          ? t({
+              fr: `C'est Clément, le fondateur de Time to Flash. Votre soirée « <strong>${eventName}</strong> » est terminée, et aucune photo n'a été prise. Ça arrive, et j'aimerais comprendre pourquoi, pour améliorer le service.`,
+              en: `It's Clément, the founder of Time to Flash. Your event “<strong>${eventName}</strong>” is over, and no photos were taken. It happens, and I'd like to understand why, to improve the service.`,
+              de: `Hier ist Clément, der Gründer von Time to Flash. Ihr Event „<strong>${eventName}</strong>“ ist vorbei, und es wurden keine Fotos aufgenommen. Das kommt vor, und ich möchte verstehen, warum, um den Dienst zu verbessern.`,
+            }, langue)
+          : t({
+              fr: `Je suis Clément, le fondateur de Time to Flash. Vous avez créé « <strong>${eventName}</strong> » hier, et je voulais savoir si vous aviez pu l'essayer.`,
+              en: `I'm Clément, the founder of Time to Flash. You created “<strong>${eventName}</strong>” yesterday, and I wanted to know if you got to try it.`,
+              de: `Ich bin Clément, der Gründer von Time to Flash. Sie haben gestern „<strong>${eventName}</strong>“ erstellt, und ich wollte wissen, ob Sie es ausprobieren konnten.`,
+            }, langue),
+        t({ fr: 'Où en êtes-vous ? Un clic suffit :', en: 'Where are you at? One click is enough:', de: 'Wie sieht es aus? Ein Klick genügt:' }, langue),
+      ],
+      apres: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${boutons}</table>
+<p style="margin:12px 0 0;font-size:15px;line-height:1.6;color:#5f5341;">${t({
+        fr: 'Vous pouvez aussi répondre directement à ce mail, je lis tout personnellement.',
+        en: 'You can also reply directly to this email, I read everything myself.',
+        de: 'Sie können auch direkt auf diese E-Mail antworten, ich lese alles persönlich.',
+      }, langue)}</p>`,
+      footer: relance
+        ? t({ fr: 'Ce sera mon dernier message à ce sujet.', en: 'This will be my last message about this.', de: 'Das ist meine letzte Nachricht dazu.' }, langue)
+        : t({ fr: "Si vous ne répondez pas, je ne vous écrirai qu'une dernière fois, après la date de votre soirée.", en: "If you don't reply, I'll only write once more, after the date of your event.", de: 'Wenn Sie nicht antworten, schreibe ich Ihnen nur noch einmal, nach dem Datum Ihres Events.' }, langue),
+    }),
+  }
+}
+
+export function lienRetourEssai(ownerToken) {
+  return `${siteUrl()}/retour-essai?o=${encodeURIComponent(ownerToken)}`
 }

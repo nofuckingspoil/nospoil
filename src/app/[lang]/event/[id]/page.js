@@ -9,6 +9,8 @@
 //  simplement replié, pour qu'on retrouve toujours ce qu'on cherche.
 // ============================================================
 
+import Avis from '../../../../components/Avis'
+import ApresCreation from '../../../../components/ApresCreation'
 import { use, useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -135,10 +137,20 @@ export default function EventManage({ params }) {
   // partir, et il tombe trop souvent dans les indésirables. On le dit tout de
   // suite, tant que la personne est là pour aller le chercher.
   const [vientDeCreer, setVientDeCreer] = useState(false)
+  const [creationCourte, setCreationCourte] = useState(false)
+  // L'avis organisateur fermé sur cet appareil : on ne le repropose pas.
+  const [avisFerme, setAvisFerme] = useState(true)
+  useEffect(() => { try { setAvisFerme(!!localStorage.getItem(`ttf_avis_orga_${id}`)) } catch { setAvisFerme(false) } }, [id])
   useEffect(() => {
     const u = new URL(window.location.href)
     if (u.searchParams.get('cree') !== '1') return
     setVientDeCreer(true)
+    // La création courte (/create/express) laisse une marque : c'est elle qui
+    // dit s'il faut inviter à régler ce qu'on n'a pas demandé.
+    try {
+      if (sessionStorage.getItem('ttf_creation_courte') === '1') setCreationCourte(true)
+      sessionStorage.removeItem('ttf_creation_courte')
+    } catch {}
     u.searchParams.delete('cree')
     window.history.replaceState(null, '', u.pathname + u.search + u.hash)
   }, [])
@@ -183,6 +195,10 @@ export default function EventManage({ params }) {
       const r = await fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } })
       const d = await r.json()
       if (d.error) setError(d.error)
+      // Parcours court : tant que les réglages d'après paiement ne sont pas
+      // terminés, le tableau de bord (et donc le lien du mail) y ramène, au
+      // réglage où l'on s'était arrêté.
+      else if (d.reglagesEtape && d.isOwner) router.replace(lien(`/create/parametrer?event=${id}`))
       else setEv(d)
     } catch { setError(choisir({ fr: "Impossible de charger l'événement.", en: 'Could not load the event.', de: 'Das Event konnte nicht geladen werden.' })) }
   }, [id])
@@ -341,9 +357,9 @@ export default function EventManage({ params }) {
       const d = await r.json().catch(() => ({}))
       if (d.error) throw new Error(d.error)
       await reload()
-      // Le cadrage n'existe qu'ici, dans la foulée de l'envoi : c'est le moment
-      // où l'on regarde sa photo et où l'on voit si elle tombe juste. En faire
-      // une option permanente ajoutait un bouton pour un geste rarement repris.
+      // Le cadrage s'ouvre dans la foulée de l'envoi : c'est le moment où l'on
+      // regarde sa photo. Il reste ensuite accessible par « Recadrer » (ajouté
+      // le 03/10/2026 : une couverture posée à la création ne se recadrait plus).
       setPos('50% 50%')
       setRecadrage(true)
     } catch (err) {
@@ -574,7 +590,8 @@ export default function EventManage({ params }) {
   const libelleRappel = (m) => (autreJourQueLeDebut(ev.startsAt, m)
     ? `${heureDuRappel(ev.startsAt, m, lang)} (${jourDuRappel(ev.startsAt, m, true, lang)})`
     : heureDuRappel(ev.startsAt, m, lang))
-  const locked = quotaLocked(ev, now)
+  // Figé une fois la soirée commencée ET une première photo prise (même règle que le serveur).
+  const locked = quotaLocked(ev, now) && (ev.photoCount || 0) > 0
   const published = !!ev.publishedAt
   const paused = !!ev.revealPaused
   const shotsLeft = Math.max(0, (ev.guestCount || 0) * (ev.shotsPerGuest || 0) - (ev.photoCount || 0))
@@ -1011,6 +1028,25 @@ export default function EventManage({ params }) {
         </div>
       )}
 
+      {/* Juste après la création : la question « comment nous avez-vous
+          connus », et, après la création courte, l'invitation à régler le
+          reste. Pas pour un co-organisateur, qui n'a rien créé. */}
+      {/* Après la révélation, à la première visite : l'avis de l'organisateur,
+          avec les mêmes questions que le mail. Une fois donné, ou fermé, on
+          ne le redemande plus. */}
+      {revealedTime && ev.role === 'owner' && !ev.avisOrgaDonne && !avisFerme && (ev.photoCount || 0) > 0 && (
+        <div style={{ marginBottom: 18 }}>
+          <Avis role="organisateur" compact
+            payload={{ o: getOwnerToken(id), support: 'tableau' }}
+            onClose={() => { setAvisFerme(true); try { localStorage.setItem(`ttf_avis_orga_${id}`, '1') } catch {} }} />
+        </div>
+      )}
+
+      {vientDeCreer && ev.isOwner !== false && (
+        <ApresCreation eventId={id} court={creationCourte}
+          onPersonnaliser={() => allerA('reglages', 'sec-reglages')} />
+      )}
+
       {phase !== APRES && <ProposerAppIPhone email={ev.ownerEmail} />}
 
       {/* Deux situations, un seul bloc. « Pleine » prévient avant que quiconque
@@ -1253,6 +1289,13 @@ export default function EventManage({ params }) {
                 <input type="file" accept="image/*" hidden
                   onChange={(e) => uploadCover(e.target.files?.[0])} />
               </label>
+              {/* Recadrer à tout moment : une photo posée pendant la création, ou
+                  il y a trois jours, doit pouvoir se recentrer sans la renvoyer. */}
+              {ev.coverUrl && (
+                <button className="btn btn-ghost" onClick={() => { setPos(ev.coverPos || '50% 50%'); setRecadrage(true) }}>
+                  ✥ {t({ fr: 'Recadrer', en: 'Reframe', de: 'Zuschneiden' })}
+                </button>
+              )}
               <button className="btn btn-ghost" onClick={() => {
                 setEditing('name'); setDraftName(lang !== 'fr' && ev.name === DEFAULT_EVENT_NAME ? '' : (ev.name || ''))
               }}>✎ {t({ fr: 'Modifier le nom', en: 'Edit the name', de: 'Namen ändern' })}</button>
@@ -1511,8 +1554,11 @@ export default function EventManage({ params }) {
                     onClick={() => setDraftBonus((n) => Math.max(1, n - 1))}>−</button>
                   <span className="val">+{draftBonus}</span>
                   <button type="button" aria-label={t({ fr: 'Plus', en: 'More', de: 'Mehr' })}
-                    onClick={() => setDraftBonus((n) => Math.min(5, n + 1))}>+</button>
+                    onClick={() => setDraftBonus((n) => Math.min(5, n + 1))} disabled={draftBonus >= 5}>+</button>
                 </div>
+              )}
+              {draftBonus >= 5 && (
+                <p className="hint" style={{ marginTop: 8 }}>{t({ fr: "+5, c'est le maximum.", en: '+5 is the maximum.', de: '+5 ist das Maximum.' })}</p>
               )}
             </div>
 
@@ -1877,7 +1923,14 @@ export default function EventManage({ params }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {ev.contacts.map((c, i) => (
               <div key={i} className="db-contact">
-                <span className="db-contact-name">{c.name}</span>
+                <span className="db-contact-name">
+                  {c.name}
+                  <span className={`db-contact-photos${c.photos ? '' : ' zero'}`}>
+                    {c.photos} / {c.total} {c.total > 1
+                      ? t({ fr: 'photos', en: 'photos', de: 'Fotos' })
+                      : t({ fr: 'photo', en: 'photo', de: 'Foto' })}
+                  </span>
+                </span>
                 <span className="db-contact-val">
                   {/* Sans adresse, le participant ne recevra rien : c'est justement ce
                       qu'il faut voir pour penser à le prévenir autrement. */}

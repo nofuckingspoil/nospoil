@@ -1,7 +1,9 @@
 import Link from 'next/link'
+import LienEssai from '../../components/LienEssai'
 import { BRAND, marque } from '../../lib/brand'
 import SiteNav from '../../components/SiteNav'
 import SitePied from '../../components/SitePied'
+import { AutresOccasions } from '../../components/occasions/Blocs'
 import TryQR from '../../components/TryQR'
 import Pellicules from '../../components/Pellicules'
 import { TIERS, TOP_TIER } from '../../lib/pricing'
@@ -228,9 +230,9 @@ export default async function Home({ params }) {
             {/* Sur téléphone, la pastille flottante « Essayer » tombait pile sous
                 le bouton « Créer mon événement ». L'essai se propose donc ici,
                 dans la lecture, plutôt qu'en bas de l'écran. */}
-            <Link href="/essai" className="hero-try">
+            <LienEssai className="hero-try">
               {t({ fr: "✱ Essayer l'appareil photo tout de suite", en: '✱ Try the camera right now', de: '✱ Die Kamera sofort ausprobieren' }, lang)}
-            </Link>
+            </LienEssai>
             {/* « Que pour les mariages ? » : la réponse tient sur une ligne.
                 Chaque occasion qui a sa page y mène : c'est le lien le plus
                 fort qu'on puisse leur donner, depuis la page la plus visitée. */}
@@ -279,6 +281,17 @@ export default async function Home({ params }) {
             </div>
           </div>
         </section>
+
+        {/* PAS QUE POUR LES MARIAGES : un tiers des événements créés sont des
+            anniversaires, des week-ends, des départs en retraite. Chaque fête
+            a sa page ; l'accueil, la page la plus visitée, y mène en photo. */}
+        <AutresOccasions lang={lang}
+          titre={t({ fr: 'Pas que pour les mariages', en: 'Not just for weddings', de: 'Nicht nur für Hochzeiten' }, lang)}
+          sous={t({
+            fr: 'Anniversaire, baptême, EVJF, week-end entre amis, pot de départ : choisissez votre fête.',
+            en: 'Birthday, christening, hen party, weekend away, retirement: pick your occasion.',
+            de: 'Geburtstag, Taufe, JGA, Wochenende mit Freunden, Ruhestand: Wählen Sie Ihren Anlass.',
+          }, lang)} />
 
         {/* COMMENT ÇA MARCHE */}
         <section className="section">

@@ -400,6 +400,10 @@ const confidentialite = {
 <p>Un questionnaire n'est envoyé par courrier électronique qu'<strong>une seule fois</strong>, et aucune relance ne suit. Chaque message comporte un lien permettant de ne plus recevoir de sollicitation de ce type, avec effet immédiat ; ce refus ne fait pas obstacle à l'envoi du lien de l'album, qui reste dû au Participant ayant laissé son adresse. Ces messages ne comportent aucune offre commerciale.</p>
 <p>Les réponses sont conservées après la suppression de l'événement auquel elles se rapportent, mais <strong>détachées de celui-ci</strong> : elles ne permettent alors plus d'identifier l'événement ni son organisateur, et ne servent qu'à mesurer l'évolution de la qualité du service dans le temps.</p>
 
+<h3>3.4 Essai du service et nouvelles de Time to Flash</h3>
+<p>Le QR code et le bouton « Essayer » de la page d'accueil créent une soirée d'essai personnelle, supprimée avec ses photographies le lendemain. Pour savoir ce qui amène les visiteurs à essayer, BLACK BY C conserve, <strong>sans aucune donnée d'identification</strong>, la provenance de l'essai (site ou campagne d'origine, page d'arrivée) et les étapes franchies (ouverture, prénom donné, photo prise, album vu). Cette provenance est mémorisée dans le navigateur du visiteur, sans cookie publicitaire, et n'est transmise qu'au lancement d'un essai. Base légale : intérêt légitime de BLACK BY C à comprendre l'usage de son site.</p>
+<p>L'adresse électronique laissée pendant un essai sert à l'essai lui-même. Elle n'est utilisée pour adresser des <strong>nouvelles de Time to Flash</strong> (idées, nouveautés, offres) que si la personne a coché la case prévue à cet effet, qui n'est jamais cochée par défaut. Base légale : consentement. Chaque message comporte un lien de désinscription, avec effet immédiat. Sans nouvelle activité de sa part pendant trois ans, plus aucun message ne lui est adressé.</p>
+
 <h2>4. Destinataires et sous-traitants</h2>
 <p>Les données ne sont ni vendues, ni louées, ni communiquées à des tiers à des fins publicitaires ou commerciales.</p>
 <p>Elles sont accessibles aux prestataires techniques suivants, agissant sur instruction de BLACK BY C :</p>
@@ -828,6 +832,10 @@ const confidentialiteEn = {
 <p>A questionnaire is sent by email <strong>once only</strong>, and no reminder follows. Each message contains a link to stop receiving requests of this kind, with immediate effect; this refusal does not prevent the album link from being sent, which remains due to any Guest who left their address. These messages contain no commercial offer.</p>
 <p>Answers are kept after the deletion of the event to which they relate, but <strong>detached from it</strong>: they can then no longer identify the event or its host, and are used only to measure changes in the quality of the service over time.</p>
 
+<h3>3.4 Trying the service and news from Time to Flash</h3>
+<p>The QR code and the “Try” button on the home page create a personal trial event, deleted with its photographs the following day. To understand what brings visitors to try the service, BLACK BY C keeps, <strong>without any identifying data</strong>, where the trial came from (originating site or campaign, landing page) and the steps reached (opening, first name given, photo taken, album viewed). This origin is stored in the visitor's browser, without any advertising cookie, and is only sent when a trial is started. Legal basis: BLACK BY C's legitimate interest in understanding how its website is used.</p>
+<p>The email address left during a trial is used for the trial itself. It is only used to send <strong>news from Time to Flash</strong> (ideas, new features, offers) if the person has ticked the box provided for this purpose, which is never ticked by default. Legal basis: consent. Every message includes an unsubscribe link, effective immediately. If there is no further activity on their part for three years, no more messages are sent to them.</p>
+
 <h2>4. Recipients and processors</h2>
 <p>Data is not sold, rented or disclosed to third parties for advertising or commercial purposes.</p>
 <p>It is accessible to the following technical providers, acting on the instructions of BLACK BY C:</p>
@@ -1251,6 +1259,10 @@ const confidentialiteDe = {
 <p>Die Teilnahme an der Umfrage ist <strong>völlig freiwillig</strong> und keine Voraussetzung für den Zugang zu irgendeiner Funktion: Eine Ablehnung oder ausbleibende Antwort hat keinerlei Auswirkung auf den erbrachten Dienst.</p>
 <p>Ein Fragebogen wird <strong>nur ein einziges Mal</strong> per E-Mail versandt, ohne anschließende Erinnerung. Jede Nachricht enthält einen Link, über den Sie mit sofortiger Wirkung keine solchen Anfragen mehr erhalten; diese Ablehnung verhindert nicht die Zusendung des Album-Links, die dem Gast, der seine Adresse hinterlassen hat, weiterhin zusteht. Diese Nachrichten enthalten keine kommerziellen Angebote.</p>
 <p>Die Antworten werden nach der Löschung des zugehörigen Events aufbewahrt, jedoch <strong>von diesem getrennt</strong>: Sie lassen dann weder das Event noch seinen Gastgeber erkennen und dienen nur dazu, die Entwicklung der Qualität des Dienstes im Zeitverlauf zu messen.</p>
+
+<h3>3.4 Ausprobieren des Dienstes und Neuigkeiten von Time to Flash</h3>
+<p>Der QR-Code und die Schaltfläche „Ausprobieren“ auf der Startseite erstellen ein persönliches Test-Event, das am Folgetag mitsamt seinen Fotos gelöscht wird. Um zu verstehen, was Besucher zum Ausprobieren bringt, speichert BLACK BY C <strong>ohne identifizierende Daten</strong> die Herkunft des Tests (Ursprungsseite oder Kampagne, Einstiegsseite) und die erreichten Schritte (Öffnen, Vorname angegeben, Foto aufgenommen, Album angesehen). Diese Herkunft wird im Browser des Besuchers gespeichert, ohne Werbe-Cookie, und erst beim Start eines Tests übermittelt. Rechtsgrundlage: berechtigtes Interesse von BLACK BY C, die Nutzung seiner Website zu verstehen.</p>
+<p>Die während eines Tests angegebene E-Mail-Adresse dient dem Test selbst. Sie wird nur dann für <strong>Neuigkeiten von Time to Flash</strong> (Ideen, Neuheiten, Angebote) verwendet, wenn die Person das dafür vorgesehene Kästchen angekreuzt hat, das nie vorausgewählt ist. Rechtsgrundlage: Einwilligung. Jede Nachricht enthält einen Abmeldelink mit sofortiger Wirkung. Gibt es drei Jahre lang keine weitere Aktivität der Person, erhält sie keine Nachrichten mehr.</p>
 
 <h2>4. Empfänger und Auftragsverarbeiter</h2>
 <p>Die Daten werden weder verkauft noch vermietet noch zu Werbe- oder Geschäftszwecken an Dritte weitergegeben.</p>

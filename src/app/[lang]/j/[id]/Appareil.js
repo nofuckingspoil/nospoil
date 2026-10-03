@@ -15,6 +15,7 @@ import { ajouterALaFile, brancherLesReveils, demarrerFileEnvoi, sabonnerALaFile,
 import OuvrirDansApp from '../../../../components/OuvrirDansApp'
 import { useLangue } from '../../../../components/Langue'
 import { t as tr } from '../../../../lib/i18n'
+import { lien } from '../../../../lib/langue-lien'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
@@ -109,6 +110,7 @@ export default function GuestCamera({ params }) {
   const [mailCheck, setMailCheck] = useState(null) // {status, suggestion?, reason?}
   const [monJeton, setMonJeton] = useState('')     // clé personnelle, pour le lien qu'on se garde
   const [confirmSansMail, setConfirmSansMail] = useState(false) // question posée une fois, champ vide
+  const [nouvelles, setNouvelles] = useState(false) // essai du site : accepte de recevoir des nouvelles
   const mailRef = useRef(null)
   const [checkingMail, setCheckingMail] = useState(false)
   const [mailAverti, setMailAverti] = useState(false) // adresse douteuse signalée une fois au moment d'entrer
@@ -671,7 +673,7 @@ export default function GuestCamera({ params }) {
     try {
       const res = await envoyer('/api/join', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Langue': lang },
-        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, email: emailVal, langue: lang }),
+        body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), displayName, email: emailVal, langue: lang, nouvelles: !!(meta?.essai && nouvelles && emailVal) }),
       }, t({
         fr: 'Connexion perdue. Vérifie ta connexion et réessaie.',
         en: 'Connection lost. Check your connection and try again.',
@@ -1320,6 +1322,20 @@ export default function GuestCamera({ params }) {
             de: 'Für Informationen zu Ihrem Event, etwa Ihren Zugangslink oder den Link zum Album, sobald die Fotos enthüllt sind, sowie unsere Angebote rund um Ihre Fotos.',
           })}
         </p>
+        {/* Seulement dans un essai du site : la personne découvre Time to Flash
+            et n'a encore aucune soirée. C'est le seul endroit où l'on propose
+            des nouvelles, décochées par défaut, comme l'exige le RGPD : sans
+            cette case, son adresse ne sert qu'à son essai. */}
+        {meta?.essai && (
+          <label className="avis-case" style={{ margin: '14px 2px 0', fontSize: 13.5 }}>
+            <input type="checkbox" checked={nouvelles} onChange={(e) => setNouvelles(e.target.checked)} />
+            <span>{t({
+              fr: <>Recevoir des nouvelles de Time to Flash (idées, nouveautés, offres). Un mail de temps en temps, désinscription en un clic. <Link href={lien('/politique-de-confidentialite', lang)} className="linklike">Confidentialité</Link></>,
+              en: <>Get news from Time to Flash (ideas, new features, offers). An email now and then, unsubscribe in one click. <Link href={lien('/politique-de-confidentialite', lang)} className="linklike">Privacy</Link></>,
+              de: <>Neuigkeiten von Time to Flash erhalten (Ideen, Neuheiten, Angebote). Ab und zu eine E-Mail, Abmeldung mit einem Klick. <Link href={lien('/politique-de-confidentialite', lang)} className="linklike">Datenschutz</Link></>,
+            })}</span>
+          </label>
+        )}
         {error && <div className="err" style={{ marginTop: 12 }}>{error}</div>}
         {confirmSansMail ? (
           <div className="mail-stop">

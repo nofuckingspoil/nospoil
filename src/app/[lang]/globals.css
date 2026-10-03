@@ -3069,6 +3069,8 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-contact { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
   padding: 10px 12px; border-radius: 12px; background: var(--screen); }
 .db-contact-name { font-weight: 600; flex: 0 0 auto; }
+.db-contact-photos { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: var(--text2); }
+.db-contact-photos.zero { color: var(--text3); }
 .db-contact-val { font-family: var(--font-mono); font-size: 12px; color: var(--text2);
   text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .db-contact-ok { font-style: normal; color: var(--ok); }
@@ -4518,3 +4520,44 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 /* Accueil : la ligne des occasions, dont chaque mot mène à sa page. */
 .hero-occasions a { color: inherit; text-decoration: underline; text-decoration-color: rgba(0,0,0,.25); text-underline-offset: 3px; }
 .hero-occasions a:hover { color: var(--accent); text-decoration-color: currentColor; }
+
+/* ---------- Admin : les essais du site ---------- */
+.essais-periodes { display: flex; gap: 8px; flex-wrap: wrap; }
+.essais-table { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--card, #fff); }
+.essais-ligne { display: grid; grid-template-columns: minmax(150px, 1.4fr) 2fr 52px 52px; gap: 12px; align-items: center; padding: 10px 14px; font-size: 14px; border-top: 1px solid var(--line); }
+.essais-ligne:first-child { border-top: 0; }
+.essais-barre { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.essais-barre i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.essais-prov, .essais-tete { grid-template-columns: 1.4fr 1.4fr 60px 60px 60px; }
+.essais-tete { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); }
+.essais-personne { grid-template-columns: minmax(180px, 1.6fr) 100px 110px 2fr; }
+@media (max-width: 640px) {
+  .essais-ligne, .essais-prov, .essais-tete, .essais-personne { grid-template-columns: 1fr auto; }
+  .essais-ligne > :nth-child(n+3) { grid-column: auto; }
+  .essais-barre { grid-column: 1 / -1; order: 5; }
+}
+
+/* ---------- Tableau de bord : juste après la création ---------- */
+.apres-crea { position: relative; margin: 0 0 18px; padding: 16px 40px 16px 16px; border-radius: 14px; background: var(--card, #fff); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 16px; }
+.apres-crea-bloc strong { display: block; font-size: 15px; }
+.apres-crea-bloc p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--text2); }
+.apres-crea-bloc + .apres-crea-bloc { padding-top: 16px; border-top: 1px solid var(--line); }
+.apres-crea-btn { margin-top: 12px; width: auto; padding-left: 20px; padding-right: 20px; }
+
+/* ---------- Création : paramétrage après paiement (version test) ---------- */
+.wiz-apres-intro { margin-top: 18px; }
+.wiz-apres-passer { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 18px; font-size: 14.5px; }
+.wiz-bravo { text-align: center; }
+.wiz-bravo .wiz-nav { justify-content: center; }
+.wiz-bravo-ic { font-size: 54px; line-height: 1; margin: 6px 0 10px; }
+.wiz-bravo-nom { font-weight: 700; font-size: 17px; margin: 0 0 10px; }
+.wiz-haut { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; }
+
+/* ---------- Cases à cocher (question « comment nous avez-vous découverts ») ---------- */
+.cases { display: flex; flex-direction: column; gap: 8px; }
+.cases-2 { display: grid; grid-template-columns: 1fr 1fr; }
+.case { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 12px; background: var(--card, #fff); cursor: pointer; font-size: 15px; line-height: 1.35; color: var(--ink); }
+.case.on { border-color: var(--accent); background: rgba(236, 91, 51, .06); }
+.case input { width: 20px; height: 20px; flex: 0 0 20px; margin: 0; accent-color: var(--accent-btn, #CB4E2C); }
+.cases-suite { margin: 10px 0 4px 10px; padding-left: 12px; border-left: 2px solid var(--line); }
+.cases-2 .case { padding: 10px 12px; font-size: 14.5px; }

@@ -1,3 +1,4 @@
+import { after } from 'next/server'
 import { insertRow } from '../../lib/supabase'
 import { langueRequete } from '../../lib/langue-serveur'
 import { lien } from '../../lib/langue-lien'
@@ -60,6 +61,28 @@ export async function GET(request) {
     console.error('création démo impossible:', data)
     return Response.redirect(`${base}${lien('/', langue)}?essai=indisponible`, 302)
   }
+
+  // Le carnet de l'essai : d'où vient la personne, et plus tard jusqu'où elle
+  // est allée (voir /api/etape). Il survit au ménage du lendemain, qui efface
+  // la soirée d'essai elle-même : c'est ce qui permet de compter dans la durée.
+  const q = new URL(request.url).searchParams
+  const court = (cle, max) => (q.get(cle) || '').trim().slice(0, max) || null
+  const via = ['qr', 'bouton'].includes(q.get('via')) ? q.get('via') : 'direct'
+  after(async () => {
+    try {
+      await insertRow('essais', {
+        event_id: data.id,
+        via,
+        source: court('s', 80),
+        medium: court('m', 80),
+        campagne: court('c', 120),
+        page_arrivee: court('p', 200),
+        langue,
+      })
+    } catch (err) {
+      console.error('essai : carnet', err)
+    }
+  })
 
   return Response.redirect(`${base}/j/${data.id}`, 302)
 }

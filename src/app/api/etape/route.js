@@ -32,7 +32,7 @@
 //     débit, qui l'efface au bout d'un jour), ni prénom, ni mail ; aucun cookie.
 // ============================================================
 import { after } from 'next/server'
-import { insertIgnore, selectRows } from '../../../lib/supabase'
+import { insertIgnore, selectRows, updateRow } from '../../../lib/supabase'
 import { estUuid } from '../../../lib/params'
 import { ipDe, tropDeDemandes } from '../../../lib/rate-limit'
 import { etapeConnue, etapeInvite, SUPPORTS } from '../../../lib/etapes-liste'
@@ -69,6 +69,15 @@ function lire(corps) {
   }
 }
 
+// Les étapes d'un essai qui valent d'être comptées, et leur colonne dans le
+// carnet des essais.
+const ETAPES_ESSAI = {
+  ouverture: 'ouvert_at',
+  inscrit: 'inscrit_at',
+  photo: 'photo_at',
+  album: 'album_at',
+}
+
 export async function POST(request) {
   try {
     // sendBeacon n'envoie pas toujours le bon type : on lit le texte brut.
@@ -93,7 +102,16 @@ export async function POST(request) {
             `id=eq.${ligne.event_id}&select=is_test,is_demo&limit=1`
           )
           const ev = Array.isArray(data) ? data[0] : null
-          if (!ev || ev.is_test || ev.is_demo) return
+          // Un essai a son propre carnet, à part : on y note l'heure de
+          // l'étape franchie, la première fois seulement.
+          if (ev?.is_demo) {
+            const colonne = ETAPES_ESSAI[ligne.etape]
+            if (colonne) {
+              await updateRow('essais', `event_id=eq.${ligne.event_id}&${colonne}=is.null`, { [colonne]: new Date().toISOString() })
+            }
+            return
+          }
+          if (!ev || ev.is_test) return
         }
         await insertIgnore('etapes', ligne, 'cle')
       } catch (err) {
