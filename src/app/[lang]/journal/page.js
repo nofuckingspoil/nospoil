@@ -2,7 +2,7 @@ import Link from 'next/link'
 import SiteNav from '../../../components/SiteNav'
 import SitePied from '../../../components/SitePied'
 import { BRAND } from '../../../lib/brand'
-import { CATEGORIES, categorieLabel, postsEnLangue, gradientFor, avatarColor, formatDate } from '../../../lib/journal'
+import { RUBRIQUES, rubriqueDe, categorieLabel, postsEnLangue, gradientFor, avatarColor, formatDate } from '../../../lib/journal'
 import { langueDeParams, alternates, lien, localeOG, SITE_URL } from '../../../lib/langue-lien'
 import { t } from '../../../lib/i18n'
 import NewsletterForm from './NewsletterForm'
@@ -50,10 +50,10 @@ function Card({ p, lang }) {
 export default async function JournalIndex({ params, searchParams }) {
   const lang = await langueDeParams(params)
   const sp = (await searchParams) || {}
-  const cat = typeof sp.cat === 'string' && CATEGORIES.includes(sp.cat) ? sp.cat : 'Tous'
+  const cat = typeof sp.cat === 'string' && RUBRIQUES.includes(sp.cat) ? sp.cat : 'Tous'
 
   const posts = postsEnLangue(lang)
-  const list = cat === 'Tous' ? posts : posts.filter((p) => p.cat === cat)
+  const list = cat === 'Tous' ? posts : posts.filter((p) => rubriqueDe(p) === cat)
   const feat = list[0]
   const rest = list.slice(1)
   const nb = list.length
@@ -67,20 +67,20 @@ export default async function JournalIndex({ params, searchParams }) {
       <div className="dj-wrap dj-head">
         <span className="dj-eyebrow">blog</span>
         <h1>{t({
-          fr: <>Tout ce qu’on aurait aimé savoir<br />avant le grand jour.</>,
-          en: <>Everything we wish we’d known<br />before the big day.</>,
-          de: <>Alles, was wir gern vor dem<br />großen Tag gewusst hätten.</>,
+          fr: <>Tout ce qu’on aurait aimé savoir<br />avant la fête.</>,
+          en: <>Everything we wish we’d known<br />before the party.</>,
+          de: <>Alles, was wir gern vor der<br />Feier gewusst hätten.</>,
         }, lang)}</h1>
         <p>{t({
-          fr: 'Photo, organisation, souvenirs d’invités. Des articles courts, écrits avec des mariés et des photographes.',
-          en: 'Photos, planning, guests’ memories. Short articles, written with couples and photographers.',
-          de: 'Fotos, Planung, Erinnerungen der Gäste. Kurze Artikel, geschrieben mit Brautpaaren und Fotografen.',
+          fr: 'Mariage, anniversaire, week-end entre amis, pot de départ : des articles courts pour réussir les photos de vos fêtes.',
+          en: 'Weddings, birthdays, weekends away, retirement parties: short articles to get great photos at every party.',
+          de: 'Hochzeit, Geburtstag, Wochenende mit Freunden, Abschiedsfeier: kurze Artikel für gelungene Fotos bei jeder Feier.',
         }, lang)}</p>
       </div>
 
       <div className="dj-wrap">
         <div className="dj-cats" role="group" aria-label={t({ fr: 'Filtrer par catégorie', en: 'Filter by category', de: 'Nach Kategorie filtern' }, lang)}>
-          {CATEGORIES.map((c) => (
+          {RUBRIQUES.map((c) => (
             <Link key={c} className="dj-cat" aria-pressed={c === cat}
               href={c === 'Tous' ? lien('/journal', lang) : lien(`/journal?cat=${encodeURIComponent(c)}`, lang)}>
               {categorieLabel(c, lang)}

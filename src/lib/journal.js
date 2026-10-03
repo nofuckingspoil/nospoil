@@ -49,6 +49,7 @@ export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulis
 
 const LIBELLES_CATEGORIES = {
   Tous: { en: 'All', de: 'Alle' },
+  Mariage: { en: 'Wedding', de: 'Hochzeit' },
   Photo: { en: 'Photo', de: 'Foto' },
   Organisation: { en: 'Planning', de: 'Planung' },
   Souvenirs: { en: 'Memories', de: 'Erinnerungen' },
@@ -57,6 +58,19 @@ const LIBELLES_CATEGORIES = {
   'Entre amis': { en: 'With friends', de: 'Mit Freunden' },
   Retraite: { en: 'Retirement', de: 'Ruhestand' },
 }
+// Les filtres du blog, par occasion. Les rubriques d'origine (Photo,
+// Organisation, Souvenirs, Coulisses) parlent toutes de mariage : elles se
+// rangent sous « Mariage », et restent écrites sur les cartes.
+export const RUBRIQUES = ['Tous', 'Mariage', 'Anniversaire', 'Entre amis', 'Retraite']
+const RUBRIQUES_OCCASION = ['Anniversaire', 'Entre amis', 'Retraite']
+export function rubriqueDe(p) {
+  return RUBRIQUES_OCCASION.includes(p.cat) ? p.cat : 'Mariage'
+}
+function libelleCarte(p, langue) {
+  const cat = categorieLabel(p.cat, langue)
+  return rubriqueDe(p) === 'Mariage' ? `${categorieLabel('Mariage', langue)} · ${cat}` : cat
+}
+
 export function categorieLabel(cat, langue = 'fr') {
   if (langue === 'fr') return cat
   return LIBELLES_CATEGORIES[cat]?.[langue] || cat
@@ -1512,17 +1526,17 @@ export function postEnLangue(p, langue = 'fr') {
     body: localiserLiens(tr.body || p.body, langue),
     faq: tr.faq || p.faq,
     read: dureeLecture(p.read, langue),
-    catLabel: categorieLabel(p.cat, langue),
+    catLabel: libelleCarte(p, langue),
   }
 }
 
 // Tous les articles, triés, dans la langue demandée.
 export function postsEnLangue(langue = 'fr') {
-  return POSTS.map((p) => (langue === 'fr' ? { ...p, catLabel: p.cat } : postEnLangue(p, langue)))
+  return POSTS.map((p) => (langue === 'fr' ? { ...p, catLabel: libelleCarte(p, 'fr') } : postEnLangue(p, langue)))
 }
 
 export function getPostEnLangue(slug, langue = 'fr') {
   const p = getPost(slug)
   if (!p) return null
-  return langue === 'fr' ? { ...p, catLabel: p.cat } : postEnLangue(p, langue)
+  return langue === 'fr' ? { ...p, catLabel: libelleCarte(p, 'fr') } : postEnLangue(p, langue)
 }
