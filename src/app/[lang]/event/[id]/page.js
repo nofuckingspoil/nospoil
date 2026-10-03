@@ -1035,7 +1035,7 @@ export default function EventManage({ params }) {
           avec les mêmes questions que le mail. Une fois donné, ou fermé, on
           ne le redemande plus. */}
       {revealedTime && ev.role === 'owner' && !ev.avisOrgaDonne && !avisFerme && (ev.photoCount || 0) > 0 && (
-        <div className="apres-crea">
+        <div style={{ marginBottom: 18 }}>
           <Avis role="organisateur" compact
             payload={{ o: getOwnerToken(id), support: 'tableau' }}
             onClose={() => { setAvisFerme(true); try { localStorage.setItem(`ttf_avis_orga_${id}`, '1') } catch {} }} />
