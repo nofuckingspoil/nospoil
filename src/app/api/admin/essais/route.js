@@ -86,12 +86,27 @@ export async function GET(request) {
   }
   const provenances = Object.values(groupes).sort((a, b) => b.n - a.n)
 
+  // « Comment avez-vous découvert Time to Flash ? », posée après la création.
+  const { data: repondus } = await selectRows(
+    'events',
+    `select=name,decouverte,decouverte_detail,decouverte_at,prov_source,paid_cents&decouverte=not.is.null&is_demo=is.false&is_test=is.false${depuis.replace('created_at', 'decouverte_at')}&order=decouverte_at.desc&limit=2000`
+  )
+  const reponses = (Array.isArray(repondus) ? repondus : []).map((e) => ({
+    soiree: e.name,
+    choix: e.decouverte,
+    detail: e.decouverte_detail,
+    le: e.decouverte_at,
+    mesure: e.prov_source,
+    euros: (e.paid_cents || 0) / 100,
+  }))
+
   return Response.json({
     periode: p in PERIODES ? p : '30',
     entonnoir,
     via: { qr: compter((e) => e.via === 'qr'), bouton: compter((e) => e.via === 'bouton'), direct: compter((e) => e.via === 'direct') },
     provenances,
     personnes,
+    reponses,
     // La date de mise en route du carnet : avant elle, seules les adresses
     // laissées existent, sans provenance ni étapes.
     carnetDepuis: '2026-10-03',

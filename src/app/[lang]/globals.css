@@ -4419,3 +4419,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
   .essais-ligne > :nth-child(n+3) { grid-column: auto; }
   .essais-barre { grid-column: 1 / -1; order: 5; }
 }
+
+/* ---------- Tableau de bord : juste après la création ---------- */
+.apres-crea { position: relative; margin: 0 0 18px; padding: 16px 40px 16px 16px; border-radius: 14px; background: var(--card, #fff); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 16px; }
+.apres-crea-bloc strong { display: block; font-size: 15px; }
+.apres-crea-bloc p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--text2); }
+.apres-crea-bloc + .apres-crea-bloc { padding-top: 16px; border-top: 1px solid var(--line); }
+.apres-crea-btn { margin-top: 12px; width: auto; padding-left: 20px; padding-right: 20px; }

@@ -83,3 +83,8 @@ export function parametresProvenance() {
     return ''
   }
 }
+
+/** La provenance retenue, telle quelle : { s, m, c, p } ou null. */
+export function lireProvenance() {
+  try { return JSON.parse(localStorage.getItem(CLE) || 'null') } catch { return null }
+}

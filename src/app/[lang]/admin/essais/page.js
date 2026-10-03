@@ -16,6 +16,10 @@ import Logo from '../../../../components/Logo'
 const KEY_STORE = 'declic_admin_key'
 const PERIODES = [['7', '7 jours'], ['30', '30 jours'], ['90', '90 jours'], ['tout', 'Tout']]
 const VIA = { qr: 'QR code', bouton: 'bouton « Essayer »', direct: 'lien direct' }
+const DECOUVERTE = {
+  instagram: 'Instagram', tiktok: 'TikTok', facebook: 'Facebook', bouche: 'Bouche-à-oreille',
+  invite: 'Invité à une soirée Time to Flash', google: 'Recherche Google', ia: 'Assistant IA', autre: 'Autre',
+}
 
 const pct = (n, total) => (total ? Math.round((n / total) * 100) : 0)
 
@@ -101,7 +105,7 @@ export default function AdminEssaisPage() {
 
       <div className="site-inner" style={{ paddingBottom: 60 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, margin: '20px 0 6px', flexWrap: 'wrap' }}>
-          <h1 className="h2" style={{ margin: 0 }}>Essais</h1>
+          <h1 className="h2" style={{ margin: 0 }}>Essais et découverte</h1>
           <Link href="/admin" className="linklike" style={{ fontSize: 14 }}>← Tableau de bord</Link>
         </div>
         <p className="muted small" style={{ marginBottom: 18 }}>
@@ -154,6 +158,43 @@ export default function AdminEssaisPage() {
               « direct » : adresse tapée, favori, ou application qui ne dit pas d&apos;où elle vient (souvent WhatsApp ou un mail).
               Pour suivre une pub précisément, ajoutez à son lien <code>?utm_source=instagram&amp;utm_campaign=nom-de-la-pub</code>.
             </p>
+          </>
+        )}
+
+        {/* Ce que les clients déclarent, juste après avoir créé leur soirée. */}
+        <h2 className="h3" style={{ margin: '30px 0 10px' }}>Comment les clients vous ont découvert</h2>
+        {d.reponses.length === 0 ? (
+          <div className="notice">Aucune réponse sur la période. La question est posée juste après la création d&apos;une soirée.</div>
+        ) : (
+          <>
+            <div className="essais-table">
+              {Object.entries(d.reponses.reduce((acc, r) => { acc[r.choix] = (acc[r.choix] || 0) + 1; return acc }, {}))
+                .sort((a, b) => b[1] - a[1])
+                .map(([choix, n]) => {
+                  const details = d.reponses.filter((r) => r.choix === choix && r.detail).map((r) => r.detail)
+                  return (
+                    <div key={choix} className="essais-ligne">
+                      <span>{DECOUVERTE[choix] || choix}{details.length ? <span className="muted"> · {[...new Set(details)].join(', ')}</span> : null}</span>
+                      <span className="essais-barre"><i style={{ width: `${pct(n, d.reponses.length)}%` }} /></span>
+                      <strong>{n}</strong>
+                      <span className="muted">{pct(n, d.reponses.length)} %</span>
+                    </div>
+                  )
+                })}
+            </div>
+            <details style={{ marginTop: 10 }}>
+              <summary className="small muted" style={{ cursor: 'pointer' }}>Voir le détail par soirée ({d.reponses.length})</summary>
+              <div className="essais-table" style={{ marginTop: 8 }}>
+                {d.reponses.map((r, i) => (
+                  <div key={i} className="essais-ligne essais-personne">
+                    <span><strong>{r.soiree}</strong></span>
+                    <span className="muted">{fmtDate(r.le)}</span>
+                    <span>{DECOUVERTE[r.choix] || r.choix}{r.detail ? ` (${r.detail})` : ''}</span>
+                    <span className="muted">mesuré : {r.mesure || 'inconnu'}{r.euros ? ` · ${r.euros.toFixed(2).replace('.', ',')} €` : ' · gratuit'}</span>
+                  </div>
+                ))}
+              </div>
+            </details>
           </>
         )}
 

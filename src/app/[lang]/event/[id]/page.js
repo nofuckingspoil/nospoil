@@ -9,6 +9,7 @@
 //  simplement replié, pour qu'on retrouve toujours ce qu'on cherche.
 // ============================================================
 
+import ApresCreation from '../../../../components/ApresCreation'
 import { use, useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -135,10 +136,17 @@ export default function EventManage({ params }) {
   // partir, et il tombe trop souvent dans les indésirables. On le dit tout de
   // suite, tant que la personne est là pour aller le chercher.
   const [vientDeCreer, setVientDeCreer] = useState(false)
+  const [creationCourte, setCreationCourte] = useState(false)
   useEffect(() => {
     const u = new URL(window.location.href)
     if (u.searchParams.get('cree') !== '1') return
     setVientDeCreer(true)
+    // La création courte (/create/express) laisse une marque : c'est elle qui
+    // dit s'il faut inviter à régler ce qu'on n'a pas demandé.
+    try {
+      if (sessionStorage.getItem('ttf_creation_courte') === '1') setCreationCourte(true)
+      sessionStorage.removeItem('ttf_creation_courte')
+    } catch {}
     u.searchParams.delete('cree')
     window.history.replaceState(null, '', u.pathname + u.search + u.hash)
   }, [])
@@ -1007,6 +1015,14 @@ export default function EventManage({ params }) {
           </div>
           <button type="button" className="db-mail-parti-x" onClick={() => setVientDeCreer(false)} aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}>×</button>
         </div>
+      )}
+
+      {/* Juste après la création : la question « comment nous avez-vous
+          connus », et, après la création courte, l'invitation à régler le
+          reste. Pas pour un co-organisateur, qui n'a rien créé. */}
+      {vientDeCreer && ev.isOwner !== false && (
+        <ApresCreation eventId={id} court={creationCourte}
+          onPersonnaliser={() => allerA('reglages', 'sec-reglages')} />
       )}
 
       {phase !== APRES && <ProposerAppIPhone email={ev.ownerEmail} />}

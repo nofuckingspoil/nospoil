@@ -240,6 +240,7 @@ function CreateForm() {
         })
         const data = await res.json()
         if (!res.ok) throw new Error(data.error || t({ fr: 'Erreur.', en: 'Error.', de: 'Fehler.' }))
+        try { sessionStorage.setItem('ttf_creation_courte', '1') } catch {}
         window.location.href = data.url // redirection vers la page de paiement Stripe
         return
       } catch (err) { setError(err.message); setLoading(false); return }
@@ -256,6 +257,7 @@ function CreateForm() {
       saveAccount(email.trim().toLowerCase())
       // Publicité : événement gratuit créé.
       track('Lead', { content_name: `Formule ${tier.maxGuests} invités` }, { eventID: `lead_${data.id}` })
+      try { sessionStorage.setItem('ttf_creation_courte', '1') } catch {}
       router.push(`/event/${data.id}?cree=1`)
     } catch (err) { setError(err.message); setLoading(false) }
   }
