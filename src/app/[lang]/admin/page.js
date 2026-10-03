@@ -330,6 +330,7 @@ export default function Admin() {
           <Link href="/admin/codes" className="linklike" style={{ fontSize: 14 }}>Codes promo →</Link>
           <Link href="/admin/avis" className="linklike" style={{ fontSize: 14 }}>Avis →</Link>
           <Link href="/admin/parcours" className="linklike" style={{ fontSize: 14 }}>Parcours →</Link>
+          <Link href="/admin/essais" className="linklike" style={{ fontSize: 14 }}>Essais →</Link>
         </div>
 
         {/* Chiffres clés */}

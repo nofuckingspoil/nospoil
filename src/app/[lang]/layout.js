@@ -5,6 +5,7 @@ import { LANGUES } from '../../lib/i18n'
 import { alternates, langueDeParams, localeOG } from '../../lib/langue-lien'
 import { LangueProvider } from '../../components/Langue'
 import PromoCapture from '../../components/PromoCapture'
+import ProvenanceCapture from '../../components/ProvenanceCapture'
 import GuideBanner from '../../components/GuideBanner'
 import MetaPixel from '../../components/MetaPixel'
 import GoogleTag from '../../components/GoogleTag'
@@ -177,6 +178,7 @@ export default async function RootLayout({ children, params }) {
         <GoogleTag />
         {/* Mémorise un éventuel ?promo=… dès la première page visitée. */}
         <PromoCapture />
+        <ProvenanceCapture />
         {/* Bandeau du guide : au-dessus de la barre du site, donc avant le
             contenu. Pages vitrines uniquement, écartable d'un clic. */}
         <GuideBanner />

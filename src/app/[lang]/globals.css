@@ -4403,3 +4403,19 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .tirage:nth-child(1) { left: 3%; top: 10%; }
 .tirage:nth-child(2) { right: 3%; top: 6%; }
 .tirage:nth-child(3) { left: 26%; top: 18%; }
+
+/* ---------- Admin : les essais du site ---------- */
+.essais-periodes { display: flex; gap: 8px; flex-wrap: wrap; }
+.essais-table { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--card, #fff); }
+.essais-ligne { display: grid; grid-template-columns: minmax(150px, 1.4fr) 2fr 52px 52px; gap: 12px; align-items: center; padding: 10px 14px; font-size: 14px; border-top: 1px solid var(--line); }
+.essais-ligne:first-child { border-top: 0; }
+.essais-barre { height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+.essais-barre i { display: block; height: 100%; background: var(--accent); border-radius: 99px; }
+.essais-prov, .essais-tete { grid-template-columns: 1.4fr 1.4fr 60px 60px 60px; }
+.essais-tete { font-size: 12px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); }
+.essais-personne { grid-template-columns: minmax(180px, 1.6fr) 100px 110px 2fr; }
+@media (max-width: 640px) {
+  .essais-ligne, .essais-prov, .essais-tete, .essais-personne { grid-template-columns: 1fr auto; }
+  .essais-ligne > :nth-child(n+3) { grid-column: auto; }
+  .essais-barre { grid-column: 1 / -1; order: 5; }
+}

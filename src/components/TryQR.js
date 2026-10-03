@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import QRCode from 'qrcode'
+import { parametresProvenance } from '../lib/provenance'
 import { useLangue } from './Langue'
 
 // Le QR mène à une adresse fixe qui fabrique un album d'essai neuf à chaque
@@ -10,10 +11,13 @@ import { useLangue } from './Langue'
 export default function TryQR() {
   const { t } = useLangue()
   const [qr, setQr] = useState('')
-  const [href, setHref] = useState('/essai')
+  const [href, setHref] = useState('/essai?via=qr')
 
   useEffect(() => {
-    const url = `${window.location.origin}/essai`
+    // Le QR se scanne avec un autre téléphone : il emporte la provenance de
+    // celui qui regarde la page, sinon on ne saurait jamais d'où il venait.
+    const prov = parametresProvenance()
+    const url = `${window.location.origin}/essai?via=qr${prov ? `&${prov}` : ''}`
     setHref(url)
     QRCode.toDataURL(url, {
       margin: 1,

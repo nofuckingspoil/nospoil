@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import LienEssai from '../../components/LienEssai'
 import { BRAND, marque } from '../../lib/brand'
 import SiteNav from '../../components/SiteNav'
 import TryQR from '../../components/TryQR'
@@ -229,9 +230,9 @@ export default async function Home({ params }) {
             {/* Sur téléphone, la pastille flottante « Essayer » tombait pile sous
                 le bouton « Créer mon événement ». L'essai se propose donc ici,
                 dans la lecture, plutôt qu'en bas de l'écran. */}
-            <Link href="/essai" className="hero-try">
+            <LienEssai className="hero-try">
               {t({ fr: "✱ Essayer l'appareil photo tout de suite", en: '✱ Try the camera right now', de: '✱ Die Kamera sofort ausprobieren' }, lang)}
-            </Link>
+            </LienEssai>
             {/* « Que pour les mariages ? » : la réponse tient sur une ligne. */}
             <div className="mono small muted" style={{ marginTop: 20 }}>
               {t({

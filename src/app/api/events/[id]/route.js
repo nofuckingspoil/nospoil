@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests,is_demo`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
@@ -82,6 +82,9 @@ export async function GET(request, { params }) {
     hostNames: ev.host_names,
     coverUrl,
     coverPos: ev.cover_pos || null,
+    // Une soirée d'essai du site : le formulaire d'arrivée y propose de
+    // recevoir des nouvelles de Time to Flash, et nulle part ailleurs.
+    essai: !!ev.is_demo,
     shotsPerGuest: ev.shots_per_guest,
     bonusShots: ev.bonus_shots ?? 0,
     // Ce que le participant a le droit de revoir de ses propres photos avant la
