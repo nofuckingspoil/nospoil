@@ -1528,8 +1528,11 @@ export default function EventManage({ params }) {
                     onClick={() => setDraftBonus((n) => Math.max(1, n - 1))}>−</button>
                   <span className="val">+{draftBonus}</span>
                   <button type="button" aria-label={t({ fr: 'Plus', en: 'More', de: 'Mehr' })}
-                    onClick={() => setDraftBonus((n) => Math.min(5, n + 1))}>+</button>
+                    onClick={() => setDraftBonus((n) => Math.min(5, n + 1))} disabled={draftBonus >= 5}>+</button>
                 </div>
+              )}
+              {draftBonus >= 5 && (
+                <p className="hint" style={{ marginTop: 8 }}>{t({ fr: "+5, c'est le maximum.", en: '+5 is the maximum.', de: '+5 ist das Maximum.' })}</p>
               )}
             </div>
 

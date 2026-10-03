@@ -812,8 +812,11 @@ export function CreateForm({ parcours = 'long' }) {
             <div className="stepper" style={{ marginTop: 14 }}>
               <button type="button" aria-label={t({ fr: 'Moins', en: 'Fewer', de: 'Weniger' })} onClick={() => setBonus((n) => Math.max(1, n - 1))}>−</button>
               <span className="val">+{bonus}</span>
-              <button type="button" aria-label={t({ fr: 'Plus', en: 'More', de: 'Mehr' })} onClick={() => setBonus((n) => Math.min(5, n + 1))}>+</button>
+              <button type="button" aria-label={t({ fr: 'Plus', en: 'More', de: 'Mehr' })} onClick={() => setBonus((n) => Math.min(5, n + 1))} disabled={bonus >= 5}>+</button>
             </div>
+          )}
+          {bonus >= 5 && (
+            <p className="hint" style={{ marginTop: 8 }}>{t({ fr: "+5, c'est le maximum.", en: '+5 is the maximum.', de: '+5 ist das Maximum.' })}</p>
           )}
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
           <div className="wiz-nav">
