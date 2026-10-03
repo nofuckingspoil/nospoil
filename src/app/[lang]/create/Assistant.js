@@ -795,9 +795,9 @@ export function CreateForm({ parcours = 'long' }) {
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">{t({ fr: 'Des photos bonus quand la pellicule est finie ?', en: 'Bonus photos once the film runs out?', de: 'Bonusfotos, wenn der Film voll ist?' })}</h2>
           <p className="wiz-sub">{t({
-            fr: "Un participant qui a pris toutes ses photos pourra en demander quelques-unes de plus, une seule fois. C'est offert, mais ça rend chaque cliché un peu moins rare : à vous de voir.",
-            en: 'A guest who has used all their photos can ask for a few more, just once. It is free, but it makes each shot a little less rare: your call.',
-            de: 'Ein Gast, der alle Fotos aufgenommen hat, kann einmalig ein paar weitere anfordern. Das ist kostenlos, macht aber jede Aufnahme etwas weniger selten: Sie entscheiden.',
+            fr: "Un participant qui a pris toutes ses photos pourra en demander quelques-unes de plus, une seule fois. C'est offert et permet aux personnes qui adorent les photos d'avoir une surprise 🙂",
+            en: 'A guest who has used all their photos can ask for a few more, just once. It is free, and gives the people who love taking photos a nice surprise 🙂',
+            de: 'Ein Gast, der alle Fotos aufgenommen hat, kann einmalig ein paar weitere anfordern. Das ist kostenlos und schenkt allen, die gern fotografieren, eine kleine Überraschung 🙂',
           })}</p>
           <div className="wiz-opts">
             <button type="button" className={`wiz-opt ${bonus === 0 ? 'on' : ''}`} onClick={() => setBonus(0)}>
