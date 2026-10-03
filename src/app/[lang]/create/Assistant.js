@@ -1126,11 +1126,17 @@ export function CreateForm({ parcours = 'long' }) {
             </div>
             {/* Parcours court : ces réglages viennent après le paiement. */}
             {parcours === 'court' ? (
-              <p className="hint" style={{ margin: '10px 0 2px' }}>{t({
-                fr: 'Les réglages de votre événement se font juste après le paiement.',
-                en: 'You will set up your event right after payment.',
-                de: 'Die Einstellungen Ihres Events nehmen Sie direkt nach der Zahlung vor.',
-              })}</p>
+              <p className="hint" style={{ margin: '10px 0 2px' }}>{isPaid && PAYMENTS_ENABLED
+                ? t({
+                    fr: 'Les réglages de votre événement se font juste après le paiement.',
+                    en: 'You will set up your event right after payment.',
+                    de: 'Die Einstellungen Ihres Events nehmen Sie direkt nach der Zahlung vor.',
+                  })
+                : t({
+                    fr: 'Les réglages de votre événement se font juste après la création.',
+                    en: 'You will set up your event right after creating it.',
+                    de: 'Die Einstellungen Ihres Events nehmen Sie direkt nach der Erstellung vor.',
+                  })}</p>
             ) : (<>
             <div className="wiz-recap-row">
               <span>{t({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' })}</span>
