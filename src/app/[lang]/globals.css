@@ -4426,3 +4426,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .apres-crea-bloc p { margin: 6px 0 0; font-size: 14px; line-height: 1.5; color: var(--text2); }
 .apres-crea-bloc + .apres-crea-bloc { padding-top: 16px; border-top: 1px solid var(--line); }
 .apres-crea-btn { margin-top: 12px; width: auto; padding-left: 20px; padding-right: 20px; }
+
+/* ---------- Création : paramétrage après paiement (version test) ---------- */
+.wiz-apres-intro { margin-top: 18px; }
+.wiz-apres-passer { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-top: 18px; font-size: 14.5px; }

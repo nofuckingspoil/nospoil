@@ -91,7 +91,7 @@ export async function POST(request) {
 
   // Variante du tunnel d'où vient la demande. Liste fermée : le client ne doit
   // pas pouvoir faire pointer l'annulation vers n'importe quelle adresse.
-  const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct' }
+  const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct', nouveau: '/create/court' }
   const cancelPath = CANCEL_PATHS[body.flow] || CANCEL_PATHS.long
 
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
