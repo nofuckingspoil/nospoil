@@ -1926,11 +1926,9 @@ export default function EventManage({ params }) {
                 <span className="db-contact-name">
                   {c.name}
                   <span className={`db-contact-photos${c.photos ? '' : ' zero'}`}>
-                    {c.photos > 1
-                      ? t({ fr: `${c.photos} photos`, en: `${c.photos} photos`, de: `${c.photos} Fotos` })
-                      : c.photos === 1
-                        ? t({ fr: '1 photo', en: '1 photo', de: '1 Foto' })
-                        : t({ fr: 'aucune photo', en: 'no photos', de: 'keine Fotos' })}
+                    {c.photos} / {c.total} {c.total > 1
+                      ? t({ fr: 'photos', en: 'photos', de: 'Fotos' })
+                      : t({ fr: 'photo', en: 'photo', de: 'Foto' })}
                   </span>
                 </span>
                 <span className="db-contact-val">

@@ -119,7 +119,7 @@ export async function GET(request, { params }) {
     // pour pouvoir justement en retirer un (règle 1.2 d'Apple).
     const list = await selectRows(
       'guests',
-      `event_id=eq.${id}&blocked=is.false&select=id,display_name,email,phone,notified_at,notify_failed,email_ko_at,email_desinscrit_at&order=created_at.asc`
+      `event_id=eq.${id}&blocked=is.false&select=id,display_name,bonus_shots,email,phone,notified_at,notify_failed,email_ko_at,email_desinscrit_at&order=created_at.asc`
     )
     // Photos arrivées dans l'album pour chacun : l'organisateur voit d'un
     // coup d'œil qui a joué le jeu et qui n'a encore rien pris.
@@ -131,6 +131,8 @@ export async function GET(request, { params }) {
       id: g.id,
       name: g.display_name,
       photos: parGuest[g.id] || 0,
+      // Sur combien : ses clichés, plus les photos bonus qu'il a reçues.
+      total: (ev.shots_per_guest || 0) + (g.bonus_shots || 0),
       email: g.email || null,
       phone: g.phone || null,
       notified: !!g.notified_at,
