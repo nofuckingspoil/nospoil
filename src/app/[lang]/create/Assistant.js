@@ -137,7 +137,7 @@ const ETAPES = [
 const PARCOURS = {
   long: ETAPES,
   court: ['nom', 'debut', 'fin', 'formule', 'final'],
-  apres: ['revelation', 'cliches', 'revoir', 'couverture'],
+  apres: ['bravo', 'revelation', 'cliches', 'revoir', 'couverture'],
 }
 
 // ---------- Assistant ----------
@@ -168,8 +168,11 @@ export function CreateForm({ parcours = 'long' }) {
   // `step` est le rang dans ETAPES (1 = le premier écran), plus 'code' pour la
   // vérification par mail, qui vit en dehors du parcours.
   const [step, setStep] = useState(1)
-  const etapes = PARCOURS[parcours] || ETAPES
   const apres = parcours === 'apres'
+  // Une soirée déjà commencée a son nombre de clichés figé (règle des CGV) :
+  // l'écran disparaît plutôt que de refuser à chaque essai.
+  const [dejaCommence, setDejaCommence] = useState(false)
+  const etapes = (PARCOURS[parcours] || ETAPES).filter((e) => !(apres && dejaCommence && e === 'cliches'))
   const TOTAL = etapes.length
 
   const [name, setName] = useState('')
@@ -254,7 +257,10 @@ export function CreateForm({ parcours = 'long' }) {
       .then((d) => {
         if (d.error) { setError(d.error); return }
         setName(d.name || '')
-        if (d.startsAt) setStartsAt(toInputValue(new Date(d.startsAt)))
+        if (d.startsAt) {
+          setStartsAt(toInputValue(new Date(d.startsAt)))
+          setDejaCommence(new Date(d.startsAt).getTime() <= Date.now())
+        }
         if (d.endsAt) setEndsAt(toInputValue(new Date(d.endsAt)))
         if (d.revealAt) {
           const lue = toInputValue(new Date(d.revealAt))
@@ -597,7 +603,7 @@ export function CreateForm({ parcours = 'long' }) {
               demeure. Ailleurs, il s'ouvre sur place : l'ancien lien vers la
               grille de tarifs quittait la page et faisait perdre la saisie. */}
           {apres && (
-            <span className="wiz-tier">{t({ fr: `Réglage ${step} sur ${TOTAL}`, en: `Setting ${step} of ${TOTAL}`, de: `Einstellung ${step} von ${TOTAL}` })}</span>
+            !estEcran('bravo') && <span className="wiz-tier">{t({ fr: `Réglage ${step - 1} sur ${TOTAL - 1}`, en: `Setting ${step - 1} of ${TOTAL - 1}`, de: `Einstellung ${step - 1} von ${TOTAL - 1}` })}</span>
           )}
           {!apres && !estEcran('formule') && (
             <span className="wiz-tier">
@@ -613,16 +619,22 @@ export function CreateForm({ parcours = 'long' }) {
         )}
       </div>
 
-      {/* Après le paiement : la soirée existe, on règle le reste à son rythme. */}
-      {apres && step === 1 && (
-        <div className="wiz-apres-intro">
-          <h1 className="h2" style={{ margin: '4px 0 6px' }}>{t({ fr: '🎉 Votre soirée est créée', en: '🎉 Your event is created', de: '🎉 Ihr Event ist erstellt' })}</h1>
-          <p className="muted" style={{ margin: 0 }}>{t({
-            fr: 'Il reste quatre réglages, déjà remplis avec nos propositions. Changez ce que vous voulez, ou passez : tout se modifie ensuite depuis votre tableau de bord.',
-            en: 'Four settings left, already filled in with our suggestions. Change what you like, or skip: everything can be changed later from your dashboard.',
-            de: 'Noch vier Einstellungen, bereits mit unseren Vorschlägen ausgefüllt. Ändern Sie, was Sie möchten, oder überspringen Sie: Alles lässt sich später im Dashboard ändern.',
+      {/* Après le paiement : d'abord le dire, ensuite seulement régler. */}
+      {estEcran('bravo') && (
+        <form className="card wiz-card wiz-bravo" onSubmit={nextStep}>
+          <div className="wiz-bravo-ic" aria-hidden="true">🎉</div>
+          <h2 className="wiz-q">{t({ fr: 'Félicitations, votre soirée est créée !', en: 'Congratulations, your event is created!', de: 'Glückwunsch, Ihr Event ist erstellt!' })}</h2>
+          {name && <p className="wiz-bravo-nom">« {name} »</p>}
+          <p className="wiz-sub">{t({
+            fr: 'Votre accès organisateur vient de partir par mail. Il reste quelques réglages, déjà remplis avec nos propositions : comptez une minute. Vous pouvez passer chacun d’eux, tout se change ensuite depuis votre tableau de bord.',
+            en: 'Your host access has just been emailed to you. A few settings are left, already filled in with our suggestions: allow a minute. You can skip any of them, everything can be changed later from your dashboard.',
+            de: 'Ihr Veranstalterzugang wurde gerade per E-Mail verschickt. Es bleiben ein paar Einstellungen, bereits mit unseren Vorschlägen ausgefüllt: Rechnen Sie mit einer Minute. Sie können jede überspringen, alles lässt sich später im Dashboard ändern.',
           })}</p>
-        </div>
+          <div className="wiz-nav">
+            <button className="btn btn-accent" type="submit" disabled={!reglagesLus}>{t({ fr: 'Faire les réglages →', en: 'Go to the settings →', de: 'Zu den Einstellungen →' })}</button>
+          </div>
+          <button type="button" className="linklike wiz-skip" onClick={terminerReglages}>{t({ fr: 'Plus tard, aller au tableau de bord', en: 'Later, go to the dashboard', de: 'Später, zum Dashboard' })}</button>
+        </form>
       )}
       {apres && !reglagesLus && <p className="muted" style={{ marginTop: 20 }}>{t({ fr: 'Chargement…', en: 'Loading…', de: 'Wird geladen…' })}</p>}
 
@@ -1047,7 +1059,7 @@ export function CreateForm({ parcours = 'long' }) {
         </form>
       )}
 
-      {apres && reglagesLus && (
+      {apres && reglagesLus && !estEcran('bravo') && (
         <div className="wiz-apres-passer">
           <button type="button" className="linklike" onClick={suivant} disabled={loading}>
             {step >= TOTAL
