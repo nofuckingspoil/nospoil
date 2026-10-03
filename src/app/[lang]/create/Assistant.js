@@ -635,14 +635,13 @@ export function CreateForm({ parcours = 'long' }) {
           <h2 className="wiz-q">{t({ fr: 'Félicitations, votre soirée est créée !', en: 'Congratulations, your event is created!', de: 'Glückwunsch, Ihr Event ist erstellt!' })}</h2>
           {name && <p className="wiz-bravo-nom">« {name} »</p>}
           <p className="wiz-sub">{t({
-            fr: 'Votre accès organisateur vient de partir par mail. Il reste quelques réglages, déjà remplis avec nos propositions : comptez une minute. Vous pouvez passer chacun d’eux, tout se change ensuite depuis votre tableau de bord.',
-            en: 'Your host access has just been emailed to you. A few settings are left, already filled in with our suggestions: allow a minute. You can skip any of them, everything can be changed later from your dashboard.',
-            de: 'Ihr Veranstalterzugang wurde gerade per E-Mail verschickt. Es bleiben ein paar Einstellungen, bereits mit unseren Vorschlägen ausgefüllt: Rechnen Sie mit einer Minute. Sie können jede überspringen, alles lässt sich später im Dashboard ändern.',
+            fr: 'Votre accès organisateur vient de partir par mail. Il reste quelques réglages, pour finir de préparer votre événement.',
+            en: 'Your host access has just been emailed to you. A few settings are left to finish preparing your event.',
+            de: 'Ihr Veranstalterzugang wurde gerade per E-Mail verschickt. Es bleiben ein paar Einstellungen, um Ihr Event fertig vorzubereiten.',
           })}</p>
           <div className="wiz-nav">
             <button className="btn btn-accent" type="submit" disabled={!reglagesLus}>{t({ fr: 'Faire les réglages →', en: 'Go to the settings →', de: 'Zu den Einstellungen →' })}</button>
           </div>
-          <button type="button" className="linklike wiz-skip" onClick={terminerReglages}>{t({ fr: 'Plus tard, aller au tableau de bord', en: 'Later, go to the dashboard', de: 'Später, zum Dashboard' })}</button>
         </form>
       )}
       {apres && !reglagesLus && <p className="muted" style={{ marginTop: 20 }}>{t({ fr: 'Chargement…', en: 'Loading…', de: 'Wird geladen…' })}</p>}
@@ -913,7 +912,9 @@ export function CreateForm({ parcours = 'long' }) {
 
           <div className="wiz-nav">
             <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label={t({ fr: 'Retour', en: 'Back', de: 'Zurück' })}>←</button>
-            <button className="btn btn-accent" type="submit">{t({ fr: 'Continuer →', en: 'Continue →', de: 'Weiter →' })}</button>
+            <button className="btn btn-accent" type="submit" disabled={loading}>{apres
+              ? (coverPreview ? t({ fr: 'Terminer →', en: 'Finish →', de: 'Fertig →' }) : t({ fr: 'Terminer sans photo →', en: 'Finish without a photo →', de: 'Ohne Foto abschließen →' }))
+              : t({ fr: 'Continuer →', en: 'Continue →', de: 'Weiter →' })}</button>
           </div>
           {!apres && !coverPreview && (
             <button type="button" className="linklike wiz-skip" onClick={suivant}>{t({ fr: 'Passer cette étape', en: 'Skip this step', de: 'Diesen Schritt überspringen' })}</button>
@@ -1099,21 +1100,6 @@ export function CreateForm({ parcours = 'long' }) {
             <button type="button" onClick={() => allerA('final')} className="linklike">{t({ fr: "Changer d'adresse", en: 'Use a different address', de: 'Andere Adresse verwenden' })}</button>
           </div>
         </form>
-      )}
-
-      {apres && reglagesLus && !estEcran('bravo') && (
-        <div className="wiz-apres-passer">
-          <button type="button" className="linklike" onClick={suivant} disabled={loading}>
-            {step >= TOTAL
-              ? t({ fr: 'Passer et aller au tableau de bord →', en: 'Skip and go to the dashboard →', de: 'Überspringen und zum Dashboard →' })
-              : t({ fr: 'Passer ce réglage →', en: 'Skip this setting →', de: 'Diese Einstellung überspringen →' })}
-          </button>
-          {step < TOTAL && (
-            <button type="button" className="linklike muted" onClick={terminerReglages}>
-              {t({ fr: 'Tout garder tel quel', en: 'Keep everything as it is', de: 'Alles so lassen' })}
-            </button>
-          )}
-        </div>
       )}
 
       {!apres && (estEcran('nom') || estEcran('formule') || estEcran('final')) && (
