@@ -349,6 +349,7 @@ export function CreateForm({ parcours = 'long' }) {
   async function terminerReglages() {
     reglagesFinis.current = true
     setLoading(true)
+    noterEtape('crea_reglages', { eventId })
     try { await noterReglage(null) } catch {}
     router.push(lien(`/event/${eventId}`))
   }

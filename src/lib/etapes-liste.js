@@ -40,18 +40,23 @@ export const ETAPES_PROBLEME = [
 // `crea_code` et `crea_paiement` sont deux branches (formule gratuite : code
 // reçu par mail ; formule payante : départ vers Stripe), pas des marches.
 export const ETAPES_ORGA = [
+  // Le parcours court, la norme depuis le 03/10/2026 : révélation, clichés,
+  // photos revues et couverture se règlent après la création (voir
+  // /create/parametrer), d'où l'étape « crea_reglages » en bout de chaîne.
   { id: 'crea_ouverture', label: 'Arrive sur la création (écran du nom)', chaine: true },
   { id: 'crea_debut', label: 'Écran : date de début', chaine: true },
   { id: 'crea_fin', label: 'Écran : date de fin', chaine: true },
-  { id: 'crea_revelation', label: 'Écran : révélation', chaine: true },
-  { id: 'crea_cliches', label: 'Écran : nombre de clichés', chaine: true },
-  { id: 'crea_revoir', label: 'Écran : revoir ses photos', chaine: true },
-  { id: 'crea_couverture', label: 'Écran : photo de couverture', chaine: true },
   { id: 'crea_formule', label: 'Écran : formule', chaine: true },
   { id: 'crea_final', label: 'Écran : mail et récapitulatif', chaine: true },
   { id: 'crea_code', label: 'Écran : code reçu par mail (gratuit)', chaine: false },
   { id: 'crea_paiement', label: 'Part vers le paiement (payant)', chaine: false },
   { id: 'crea_termine', label: 'Événement créé', chaine: true },
+  { id: 'crea_reglages', label: 'Termine les réglages (révélation, photos, couverture…)', chaine: true },
+  // Écrans de l'ancien parcours long : gardés pour relire l'historique.
+  { id: 'crea_revelation', label: 'Ancien parcours : révélation', chaine: false },
+  { id: 'crea_cliches', label: 'Ancien parcours : nombre de clichés', chaine: false },
+  { id: 'crea_revoir', label: 'Ancien parcours : revoir ses photos', chaine: false },
+  { id: 'crea_couverture', label: 'Ancien parcours : photo de couverture', chaine: false },
 ]
 
 // Les tirages papier, depuis l'album révélé. Le départ est l'ouverture de
