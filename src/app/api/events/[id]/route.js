@@ -23,7 +23,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests,is_demo`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests,is_demo,reglages_etape`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
@@ -146,6 +146,8 @@ export async function GET(request, { params }) {
     payload.downloadCount = ev.download_count || 0 // nb de "Tout télécharger"
     payload.publishedAt = ev.published_at || null // album validé par l'organisateur
     payload.revealPaused = !!ev.reveal_paused // frein d'urgence
+    // Parcours court : le réglage où en est l'organisateur (null = terminé).
+    payload.reglagesEtape = ev.reglages_etape || null
     // Le nb de photos/participant est-il figé ? Pas tant que personne n'a photographié.
     payload.quotaLocked = quotaLocked(dates) && photoCount > 0
 
@@ -257,6 +259,13 @@ export async function PATCH(request, { params }) {
 
   // Nom de l'événement : s'affiche chez les participants, donc modifiable à tout moment
   // (une faute de frappe ne doit pas rester figée jusqu'à la révélation).
+  // Parcours court : où en sont les réglages d'après paiement. Null quand c'est
+  // fini ; tant que ce n'est pas le cas, le lien du mail y ramène.
+  if (body.reglagesEtape !== undefined) {
+    const e = body.reglagesEtape
+    patch.reglages_etape = ['bravo', 'revelation', 'cliches', 'bonus', 'revoir', 'couverture', 'decouverte', 'termine'].includes(e) ? e : null
+  }
+
   if (body.name !== undefined) {
     const clean = String(body.name).trim().slice(0, 80)
     if (!clean) return Response.json({ error: t({ fr: 'Donnez un nom à votre événement.', en: 'Give your event a name.', de: 'Geben Sie Ihrem Event einen Namen.' }, langue) }, { status: 400 })

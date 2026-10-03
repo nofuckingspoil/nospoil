@@ -16,6 +16,7 @@ import TierPicker from '../../../components/TierPicker'
 import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
 import { useLangue, SelecteurLangue } from '../../../components/Langue'
+import { lireProvenance } from '../../../lib/provenance'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -137,7 +138,7 @@ const ETAPES = [
 const PARCOURS = {
   long: ETAPES,
   court: ['nom', 'debut', 'fin', 'formule', 'final'],
-  apres: ['bravo', 'revelation', 'cliches', 'bonus', 'revoir', 'couverture'],
+  apres: ['bravo', 'revelation', 'cliches', 'bonus', 'revoir', 'couverture', 'decouverte', 'termine'],
 }
 
 // ---------- Assistant ----------
@@ -175,6 +176,9 @@ export function CreateForm({ parcours = 'long' }) {
   const etapes = (PARCOURS[parcours] || ETAPES).filter((e) => !(apres && dejaCommence && (e === 'cliches' || e === 'bonus')))
   // La recharge : des photos en plus, offertes une fois la pellicule finie.
   const [bonus, setBonus] = useState(0)
+  const [mailOrga, setMailOrga] = useState('')
+  const [decouverte, setDecouverte] = useState(null)
+  const [autreDetail, setAutreDetail] = useState('')
   const TOTAL = etapes.length
 
   const [name, setName] = useState('')
@@ -252,6 +256,7 @@ export function CreateForm({ parcours = 'long' }) {
   // sien en passant, et chacun peut être passé sans rien changer.
   const eventId = apres ? sp.get('event') : null
   const [reglagesLus, setReglagesLus] = useState(!apres)
+  const reglagesFinis = useRef(false)
   useEffect(() => {
     if (!apres || !eventId) return
     fetch(`/api/events/${eventId}`, { headers: { 'x-owner-token': getOwnerToken(eventId) || getDeviceToken(), 'X-Langue': lang } })
@@ -263,6 +268,14 @@ export function CreateForm({ parcours = 'long' }) {
         // Figé seulement si la soirée a commencé ET qu'une photo a été prise.
         setDejaCommence(d.quotaLocked === true)
         setBonus(d.bonusShots ?? 0)
+        setMailOrga(d.ownerEmail || '')
+        // Où en était-il ? Le lien du mail et le changement de langue ramènent
+        // au même réglage. Rien d'enregistré : arrivée juste après la création
+        // (?debut=1), ou réglages déjà terminés, et alors place au tableau de bord.
+        const ou = d.reglagesEtape
+        const liste = PARCOURS.apres.filter((e) => !(d.quotaLocked === true && (e === 'cliches' || e === 'bonus')))
+        if (ou && liste.includes(ou)) setStep(liste.indexOf(ou) + 1)
+        else if (!ou && sp.get('debut') !== '1') { reglagesFinis.current = true; router.replace(lien(`/event/${eventId}`)); return }
         if (d.endsAt) setEndsAt(toInputValue(new Date(d.endsAt)))
         if (d.revealAt) {
           const lue = toInputValue(new Date(d.revealAt))
@@ -284,8 +297,82 @@ export function CreateForm({ parcours = 'long' }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apres, eventId])
 
-  function terminerReglages() {
-    router.push(lien(`/event/${eventId}?cree=1`))
+  // ---------- Le brouillon de la création ----------
+  //
+  // Changer de langue recharge la page : la saisie est gardée dans l'onglet
+  // (sessionStorage), et l'on revient au même écran. Ni les cases légales ni
+  // le code reçu par mail ne sont gardés : ils se redonnent en connaissance
+  // de cause.
+  const CLE_BROUILLON = `ttf_crea_${parcours}`
+  // Prêt seulement au rendu qui suit la relecture : enregistrer avant
+  // écraserait le brouillon par les valeurs de départ.
+  const [brouillonPret, setBrouillonPret] = useState(false)
+  useEffect(() => {
+    if (apres) return
+    try {
+      const b = JSON.parse(sessionStorage.getItem(CLE_BROUILLON) || 'null')
+      if (b) {
+        if (b.name) setName(b.name)
+        if (b.email) setEmail(b.email)
+        if (b.startsAt) setStartsAt(b.startsAt)
+        if (b.endsAt) setEndsAt(b.endsAt)
+        setFinChoisie(!!b.finChoisie)
+        if (b.revealKey) setRevealKey(b.revealKey)
+        if (b.revealAt) setRevealAt(b.revealAt)
+        if (b.shots) setShots(b.shots)
+        setShotsCustom(!!b.shotsCustom)
+        if (b.photoMode) setPhotoMode(b.photoMode)
+        if (b.maxGuests) setMaxGuests(b.maxGuests)
+        if (Number.isInteger(b.step) && b.step >= 1 && b.step <= TOTAL) setStep(b.step)
+      }
+    } catch {}
+    setBrouillonPret(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  useEffect(() => {
+    if (apres || !brouillonPret) return
+    try {
+      sessionStorage.setItem(CLE_BROUILLON, JSON.stringify({
+        step: step === 'code' ? etapes.indexOf('final') + 1 : step,
+        name, email, startsAt, endsAt, finChoisie, revealKey, revealAt, shots, shotsCustom, photoMode, maxGuests,
+      }))
+    } catch {}
+  }, [apres, brouillonPret, step, name, email, startsAt, endsAt, finChoisie, revealKey, revealAt, shots, shotsCustom, photoMode, maxGuests])
+
+  // Chaque réglage atteint est noté, une fois la soirée relue (sinon on
+  // écraserait l'étape enregistrée par le premier écran).
+  useEffect(() => {
+    if (!apres || !reglagesLus || !eventId || step === 'code' || reglagesFinis.current) return
+    noterReglage(ecran).catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [apres, reglagesLus, ecran])
+
+  async function terminerReglages() {
+    reglagesFinis.current = true
+    setLoading(true)
+    try { await noterReglage(null) } catch {}
+    router.push(lien(`/event/${eventId}`))
+  }
+
+  // L'écran affiché est noté sur la soirée : c'est ce qui permet d'y revenir.
+  function noterReglage(ecranCourant) {
+    return fetch(`/api/events/${eventId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(eventId) || getDeviceToken() },
+      body: JSON.stringify({ reglagesEtape: ecranCourant }),
+    })
+  }
+
+  async function envoyerDecouverte(choix, detail = '') {
+    setDecouverte(choix)
+    try {
+      await fetch(`/api/events/${eventId}/decouverte`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(eventId) || getDeviceToken() },
+        body: JSON.stringify({ decouverte: choix, detail, provenance: lireProvenance() || {} }),
+      })
+    } catch {}
+    suivant()
   }
 
   async function enregistrerReglage() {
@@ -540,6 +627,7 @@ export function CreateForm({ parcours = 'long' }) {
       if (!res.ok) throw new Error(data.error || t({ fr: 'Erreur.', en: 'Error.', de: 'Fehler.' }))
       rememberMyEvent(data.id)
       saveAccount(email.trim().toLowerCase())
+      try { sessionStorage.removeItem(CLE_BROUILLON) } catch {}
       noterEtape('crea_termine', { eventId: data.id, detail: 'gratuit' })
 
       // Publicité : événement gratuit créé. C'est la conversion à optimiser sur
@@ -570,7 +658,7 @@ export function CreateForm({ parcours = 'long' }) {
         } catch {}
       }
 
-      router.push(parcours === 'court' ? lien(`/create/parametrer?event=${data.id}`) : `/event/${data.id}?cree=1`)
+      router.push(parcours === 'court' ? lien(`/create/parametrer?event=${data.id}&debut=1`) : `/event/${data.id}?cree=1`)
     } catch (err) { setError(err.message); setLoading(false) }
   }
 
@@ -592,10 +680,9 @@ export function CreateForm({ parcours = 'long' }) {
     <main className="screen screen-cream">
       <div className="wiz-haut">
         <Link href={lien('/')} style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
-        {/* Changer de langue recharge la page : pendant la création, on ne le
-            propose qu'au premier écran pour ne rien faire perdre. Les réglages
-            d'après paiement, eux, sont relus depuis la soirée. */}
-        {(apres || step === 1) && <SelecteurLangue />}
+        {/* Changer de langue recharge la page : la création garde son
+            brouillon, les réglages d'après paiement leur étape enregistrée. */}
+        {step !== 'code' && <SelecteurLangue />}
       </div>
 
       {/* Barre de progression */}
@@ -612,7 +699,7 @@ export function CreateForm({ parcours = 'long' }) {
               demeure. Ailleurs, il s'ouvre sur place : l'ancien lien vers la
               grille de tarifs quittait la page et faisait perdre la saisie. */}
           {apres && (
-            !estEcran('bravo') && <span className="wiz-tier">{t({ fr: `Réglage ${step - 1} sur ${TOTAL - 1}`, en: `Setting ${step - 1} of ${TOTAL - 1}`, de: `Einstellung ${step - 1} von ${TOTAL - 1}` })}</span>
+            !['bravo', 'decouverte', 'termine'].includes(ecran) && <span className="wiz-tier">{t({ fr: `Réglage ${step - 1} sur ${TOTAL - 3}`, en: `Setting ${step - 1} of ${TOTAL - 3}`, de: `Einstellung ${step - 1} von ${TOTAL - 3}` })}</span>
           )}
           {!apres && !estEcran('formule') && (
             <span className="wiz-tier">
@@ -915,8 +1002,8 @@ export function CreateForm({ parcours = 'long' }) {
 
           <div className="wiz-nav">
             <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label={t({ fr: 'Retour', en: 'Back', de: 'Zurück' })}>←</button>
-            <button className="btn btn-accent" type="submit" disabled={loading}>{apres
-              ? (coverPreview ? t({ fr: 'Terminer →', en: 'Finish →', de: 'Fertig →' }) : t({ fr: 'Terminer sans photo →', en: 'Finish without a photo →', de: 'Ohne Foto abschließen →' }))
+            <button className="btn btn-accent" type="submit" disabled={loading}>{apres && !coverPreview
+              ? t({ fr: 'Continuer sans photo →', en: 'Continue without a photo →', de: 'Ohne Foto weiter →' })
               : t({ fr: 'Continuer →', en: 'Continue →', de: 'Weiter →' })}</button>
           </div>
           {!apres && !coverPreview && (
@@ -956,6 +1043,67 @@ export function CreateForm({ parcours = 'long' }) {
       )}
 
       {/* La formule : combien de participants */}
+      {/* Une dernière question, qu'on peut passer : un geste et c'est fini. */}
+      {estEcran('decouverte') && (
+        <div className="card wiz-card">
+          <h2 className="wiz-q">{t({ fr: 'Une dernière question : comment avez-vous découvert Time to Flash ?', en: 'One last question: how did you hear about Time to Flash?', de: 'Eine letzte Frage: Wie haben Sie Time to Flash entdeckt?' })}</h2>
+          <p className="wiz-sub">{t({ fr: 'Ça nous aide énormément à faire connaître le service.', en: 'It helps us a lot to spread the word.', de: 'Das hilft uns sehr, den Dienst bekannter zu machen.' })}</p>
+          <div className="avis-choix">
+            {[
+              ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook'],
+              ['bouche', t({ fr: 'Bouche-à-oreille', en: 'Word of mouth', de: 'Mundpropaganda' })],
+              ['invite', t({ fr: "J'étais invité à une soirée Time to Flash", en: 'I was a guest at a Time to Flash event', de: 'Ich war Gast bei einem Time-to-Flash-Event' })],
+              ['google', t({ fr: 'Recherche Google', en: 'Google search', de: 'Google-Suche' })],
+              ['ia', t({ fr: 'Assistant IA (ChatGPT…)', en: 'AI assistant (ChatGPT…)', de: 'KI-Assistent (ChatGPT…)' })],
+              ['autre', t({ fr: 'Autre', en: 'Other', de: 'Sonstiges' })],
+            ].map(([id, label]) => (
+              <button key={id} type="button" className={`avis-opt ${decouverte === id ? 'on' : ''}`} aria-pressed={decouverte === id}
+                onClick={() => (id === 'ia' || id === 'autre' ? setDecouverte(id) : envoyerDecouverte(id))}>{label}</button>
+            ))}
+          </div>
+          {decouverte === 'ia' && (
+            <div style={{ marginTop: 14 }}>
+              <div className="hint" style={{ marginBottom: 8 }}>{t({ fr: 'Lequel ?', en: 'Which one?', de: 'Welcher?' })}</div>
+              <div className="avis-choix">
+                {['ChatGPT', 'Gemini', 'Claude', 'Perplexity', 'Copilot', 'Mistral'].map((nom) => (
+                  <button key={nom} type="button" className="avis-opt" onClick={() => envoyerDecouverte('ia', nom)}>{nom}</button>
+                ))}
+                <button type="button" className="avis-opt" onClick={() => envoyerDecouverte('ia', '')}>{t({ fr: 'Un autre', en: 'Another one', de: 'Ein anderer' })}</button>
+              </div>
+            </div>
+          )}
+          {decouverte === 'autre' && (
+            <form style={{ marginTop: 14, display: 'flex', gap: 8 }} onSubmit={(e) => { e.preventDefault(); envoyerDecouverte('autre', autreDetail) }}>
+              <input type="text" value={autreDetail} onChange={(e) => setAutreDetail(e.target.value)} maxLength={120} autoFocus
+                placeholder={t({ fr: 'Un salon, un article, un prestataire…', en: 'A fair, an article, a supplier…', de: 'Eine Messe, ein Artikel, ein Dienstleister…' })} />
+              <button type="submit" className="btn btn-dark" style={{ width: 'auto', padding: '0 18px' }}>OK</button>
+            </form>
+          )}
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-ghost wiz-back" onClick={precedent} aria-label={t({ fr: 'Retour', en: 'Back', de: 'Zurück' })}>←</button>
+          </div>
+          <button type="button" className="linklike wiz-skip" onClick={suivant}>{t({ fr: 'Passer cette question', en: 'Skip this question', de: 'Diese Frage überspringen' })}</button>
+        </div>
+      )}
+
+      {/* La fin : le mail d'organisation, et seulement ensuite le tableau de bord. */}
+      {estEcran('termine') && (
+        <div className="card wiz-card wiz-bravo">
+          <div className="wiz-bravo-ic" aria-hidden="true">📬</div>
+          <h2 className="wiz-q">{t({ fr: "C'est prêt ! Vous avez reçu votre mail d'organisation", en: "All set! You've received your organiser email", de: 'Fertig! Sie haben Ihre Veranstalter-E-Mail erhalten' })}</h2>
+          <p className="wiz-sub">{mailOrga
+            ? t({
+                fr: <>Il est parti à <b>{mailOrga}</b> : il contient votre lien d'accès pour retrouver votre soirée depuis n'importe quel téléphone. Pas reçu d'ici quelques minutes ? Regardez dans vos <b>spams</b> (ou l'onglet « Promotions ») et marquez-le comme « Non spam ».</>,
+                en: <>It was sent to <b>{mailOrga}</b>: it contains your access link to get back to your event from any phone. Nothing within a few minutes? Check your <b>spam</b> folder (or the “Promotions” tab) and mark it as “Not spam”.</>,
+                de: <>Sie wurde an <b>{mailOrga}</b> geschickt: Sie enthält Ihren Zugangslink, um Ihr Event von jedem Handy aus wiederzufinden. Nach ein paar Minuten nichts erhalten? Schauen Sie im <b>Spam</b>-Ordner (oder im Tab „Werbung“) nach und markieren Sie sie als „Kein Spam“.</>,
+              })
+            : t({ fr: "Il contient votre lien d'accès pour retrouver votre soirée depuis n'importe quel téléphone. Pensez à regarder dans vos spams.", en: 'It contains your access link to get back to your event from any phone. Remember to check your spam folder.', de: 'Sie enthält Ihren Zugangslink, um Ihr Event von jedem Handy aus wiederzufinden. Schauen Sie auch im Spam-Ordner nach.' })}</p>
+          <div className="wiz-nav">
+            <button type="button" className="btn btn-accent" onClick={terminerReglages} disabled={loading}>{t({ fr: 'Aller à mon tableau de bord →', en: 'Go to my dashboard →', de: 'Zu meinem Dashboard →' })}</button>
+          </div>
+        </div>
+      )}
+
       {estEcran('formule') && (
         <form className="card wiz-card" onSubmit={nextStep}>
           <h2 className="wiz-q">{t({ fr: 'Combien serez-vous ?', en: 'How many of you will there be?', de: 'Wie viele werden Sie sein?' })}</h2>

@@ -191,6 +191,10 @@ export default function EventManage({ params }) {
       const r = await fetch(`/api/events/${id}`, { headers: { 'x-owner-token': token } })
       const d = await r.json()
       if (d.error) setError(d.error)
+      // Parcours court : tant que les réglages d'après paiement ne sont pas
+      // terminés, le tableau de bord (et donc le lien du mail) y ramène, au
+      // réglage où l'on s'était arrêté.
+      else if (d.reglagesEtape && d.isOwner) router.replace(lien(`/create/parametrer?event=${id}`))
       else setEv(d)
     } catch { setError(choisir({ fr: "Impossible de charger l'événement.", en: 'Could not load the event.', de: 'Das Event konnte nicht geladen werden.' })) }
   }, [id])

@@ -94,7 +94,7 @@ function PaiementInner() {
         // Création courte : le paramétrage vient maintenant, la vente est faite.
         let parametrer = false
         try { parametrer = sessionStorage.getItem('ttf_parametrer') === '1'; sessionStorage.removeItem('ttf_parametrer') } catch {}
-        router.replace(parametrer ? `/create/parametrer?event=${data.id}` : `/event/${data.id}?cree=1`)
+        router.replace(parametrer ? `/create/parametrer?event=${data.id}&debut=1` : `/event/${data.id}?cree=1`)
       } catch (err) { if (!done) setError(err.message) }
     })()
     return () => { done = true }
