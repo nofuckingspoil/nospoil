@@ -4482,6 +4482,29 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-compact .gal-creer { min-width: 0; padding: 4px 3px; font-size: 13px; }
 .gal-compact .gal-creer i { font-size: 7.5px; letter-spacing: .08em; }
 .gal-compact-sous { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* La bulle qui montre où retrouver les tirages, une fois leur fenêtre fermée.
+   Accrochée sous « Imprimez », décalée vers la gauche pour ne pas sortir de
+   l'écran : le bouton est l'avant-dernier de la barre. */
+.gal-tir-ancre { position: relative; display: flex; flex: 0 0 auto; }
+.gal-creer-signal { border-radius: 10px; animation: dc-pulse 1.4s ease-out 3; }
+.gal-tir-fleche {
+  position: absolute; top: calc(100% + 5px); left: 50%; z-index: 21;
+  width: 12px; height: 12px; margin-left: -6px; transform: rotate(45deg);
+  background: var(--accent); border-radius: 2px;
+  animation: dc-fade .25s ease both;
+}
+.gal-tir-bulle {
+  position: absolute; top: calc(100% + 10px); right: -40px; z-index: 21;
+  width: 210px; padding: 10px 13px; border-radius: 12px;
+  background: var(--accent); color: #fff; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600; line-height: 1.35;
+  box-shadow: 0 10px 28px rgba(0,0,0,.45);
+  animation: dc-pop .3s cubic-bezier(.2,.8,.3,1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gal-creer-signal, .gal-tir-fleche, .gal-tir-bulle { animation: none; }
+}
 @media (max-width: 400px) { .gal-compact { gap: 8px; } }
 
 .tir-cgv { margin-bottom: 8px; font-size: 11.5px; line-height: 1.4; color: var(--text3); text-align: center; }

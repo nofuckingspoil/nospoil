@@ -690,6 +690,9 @@ export default function Gallery({ params }) {
   // appareil, qu'on l'ait acceptée ou fermée.
   const [invitTirages, setInvitTirages] = useState(false)
   const [invitDejaVue, setInvitDejaVue] = useState(true)
+  // Fermée, la fenêtre montre où la retrouver : une bulle sous « Imprimez »,
+  // quelques secondes. Sans elle, « Plus tard » voulait dire « jamais ».
+  const [rappelTirages, setRappelTirages] = useState(false)
   // Les réglages mangeaient l'écran entier d'un téléphone : les photos
   // n'apparaissaient qu'après un long défilement. Ils tiennent maintenant dans
   // deux boutons, qui ouvrent chacun leur panneau. null | 'film' | 'qui'
@@ -1013,7 +1016,13 @@ export default function Gallery({ params }) {
     setInvitTirages(false)
     setInvitDejaVue(true)
     try { localStorage.setItem(`ttf_tirages_${id}`, '1') } catch {}
+    setRappelTirages(true)
   }
+  useEffect(() => {
+    if (!rappelTirages) return
+    const minuteur = setTimeout(() => setRappelTirages(false), 7000)
+    return () => clearTimeout(minuteur)
+  }, [rappelTirages])
 
   // Entrer dans la sélection pour imprimer. Ses favoris sont déjà cochés :
   // ce sont les photos qu'on a mises de côté, donc celles qu'on veut sur papier.
@@ -1539,9 +1548,23 @@ export default function Gallery({ params }) {
         {/* Les tirages, à portée de pouce pendant qu'on défile : le bouton
             de la façade disparaît dès la première photo passée. */}
         {data.tirages && data.photos.length > 0 && (
-          <button className="gal-creer" onClick={() => lancerTirages('barre')}>
-            <IconeImprimante size={15} /><i>{t({ fr: 'Imprimez', en: 'Print', de: 'Drucken' })}</i>
-          </button>
+          <span className="gal-tir-ancre">
+            <button className={`gal-creer ${rappelTirages ? 'gal-creer-signal' : ''}`} onClick={() => { setRappelTirages(false); lancerTirages('barre') }}>
+              <IconeImprimante size={15} /><i>{t({ fr: 'Imprimez', en: 'Print', de: 'Drucken' })}</i>
+            </button>
+            {rappelTirages && (
+              <>
+                <span className="gal-tir-fleche" aria-hidden="true" />
+                <span className="gal-tir-bulle" role="status" onClick={() => setRappelTirages(false)}>
+                  {t({
+                    fr: 'Vos tirages vous attendent ici, à tout moment.',
+                    en: 'Your prints are waiting right here, any time.',
+                    de: 'Ihre Abzüge warten hier auf Sie, jederzeit.',
+                  })}
+                </span>
+              </>
+            )}
+          </span>
         )}
         {data.photos.length > 0 && (
           <button className="gal-creer" onClick={() => setMontrerCollage(true)}>
