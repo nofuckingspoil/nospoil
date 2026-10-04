@@ -987,16 +987,17 @@ export default function Gallery({ params }) {
   // --- L'invitation aux tirages ---
   //
   // Elle attend la vingtième photo : c'est en ayant vu défiler la soirée qu'on
-  // a envie de la tenir en main, pas en arrivant. Et elle cède la place à
-  // l'enquête de satisfaction : deux fenêtres dans la même visite, c'est une
-  // de trop. Celle-ci reviendra à la visite suivante.
+  // a envie de la tenir en main, pas en arrivant. Et elle attend que l'enquête
+  // de satisfaction soit refermée : jamais deux fenêtres l'une sur l'autre.
+  // Attendre seulement qu'elle soit refermée, pas qu'on y ait répondu : jusqu'au
+  // 04/10/2026, tout participant qui n'avait pas répondu ne la voyait jamais.
   const repereTirages = useRef(null)
   useEffect(() => {
     if (!id || !data?.tirages) return
     try { setInvitDejaVue(!!localStorage.getItem(`ttf_tirages_${id}`)) } catch { setInvitDejaVue(false) }
   }, [id, data?.tirages])
   useEffect(() => {
-    if (invitDejaVue || invitTirages || montrerAvis || !peutRepondre) return
+    if (invitDejaVue || invitTirages || (montrerAvis && !avisFerme) || !peutRepondre) return
     const verifier = () => {
       const cible = repereTirages.current
       if (cible && cible.getBoundingClientRect().top < window.innerHeight * 0.5) {
@@ -1006,7 +1007,7 @@ export default function Gallery({ params }) {
     }
     window.addEventListener('scroll', verifier, { passive: true })
     return () => window.removeEventListener('scroll', verifier)
-  }, [invitDejaVue, invitTirages, montrerAvis, peutRepondre])
+  }, [invitDejaVue, invitTirages, montrerAvis, avisFerme, peutRepondre])
 
   function fermerInvitTirages() {
     setInvitTirages(false)
