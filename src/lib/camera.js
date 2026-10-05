@@ -144,10 +144,16 @@ export async function decodeImage(file) {
 // Une photo qui ne part pas est une photo perdue : on essaie donc plusieurs
 // fois, de plus en plus modestement, et en dernier recours on envoie le
 // fichier d'origine plutôt que d'abandonner.
+/** La taille des photos envoyées à l'album, la même partout (site, app, extrait). */
+export const TAILLE_ENVOI = { maxSize: 2400, quality: 0.82 }
+
 export async function prepareUpload(file) {
   const MAX_OCTETS = 8 * 1024 * 1024
 
-  for (const essai of [{ maxSize: 1600, quality: 0.82 }, { maxSize: 1000, quality: 0.7 }]) {
+  // 2400 px : de quoi tirer un 15×20 bien net (300 points par pouce sur
+  // 20 cm), pour 0,6 à 0,9 Mo. Le second essai, plus léger, ne sert qu'aux
+  // téléphones à court de mémoire.
+  for (const essai of [TAILLE_ENVOI, { maxSize: 1600, quality: 0.75 }]) {
     let source = null
     try {
       source = await decodeImage(file)

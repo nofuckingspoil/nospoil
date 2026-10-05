@@ -6,7 +6,7 @@ import { initialesDe } from '../../../../lib/initiales'
 import QRCode from 'qrcode'
 import IconeCorbeille from '../../../../components/IconeCorbeille'
 import { getDeviceToken, saveGuest, getGuest, forgetGuest, getOwnerToken, prendrePrenomOrganisateur } from '../../../../lib/device'
-import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, playShutter, etatPermissionCamera, surveillerPermissionCamera, familleNavigateur } from '../../../../lib/camera'
+import { supportsLiveCamera, isInAppBrowser, isAndroidInApp, lienChrome, compressToBlob, decodeImage, prepareUpload, TAILLE_ENVOI, playShutter, etatPermissionCamera, surveillerPermissionCamera, familleNavigateur } from '../../../../lib/camera'
 import { noterEtape, marquerOrganisateur } from '../../../../lib/etapes'
 import CameraBloquee from '../../../../components/CameraBloquee'
 import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../../lib/photo-mode'
@@ -728,7 +728,9 @@ export default function GuestCamera({ params }) {
     stopCamera()
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode, width: { ideal: 1920 }, height: { ideal: 1440 } }, audio: false,
+        // Assez de pixels pour un tirage 15×20 : le téléphone donne ce qu'il
+        // peut au delà de 1920, la photo est ensuite ramenée à 2400 px.
+        video: { facingMode, width: { ideal: 2560 }, height: { ideal: 1920 } }, audio: false,
       })
       streamRef.current = stream
       refusRef.current = 0
@@ -910,7 +912,7 @@ export default function GuestCamera({ params }) {
     setShutterFx(true); setTimeout(() => setShutterFx(false), 240)
     if (flashOn && !useScreenFlash) { setFlashFx(true); setTimeout(() => setFlashFx(false), 420) }
 
-    try { await proposer(await compressToBlob(videoRef.current)) }
+    try { await proposer(await compressToBlob(videoRef.current, TAILLE_ENVOI)) }
     catch (err) {
       if (compte) setEnPrise((n) => Math.max(0, n - 1))
       setError(err.message || t({ fr: 'Erreur.', en: 'Error.', de: 'Fehler.' }))

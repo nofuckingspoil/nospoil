@@ -248,6 +248,10 @@ async function envoyer(e) {
     // renvoie le compteur de la pellicule, qu'il n'écrit qu'après avoir
     // vraiment enregistré la photo.
     if (res.ok && typeof d.shotsTaken === 'number') {
+      // Mesure : une photo qui avait déjà échoué arrive enfin (minutes de retard).
+      if ((e.essais || 0) > 0) {
+        noterEtape('envoi_tardif', { eventId: e.eventId, detail: String(Math.round((Date.now() - (e.creeLe || Date.now())) / 60000)) })
+      }
       await effacer(e.id)
       await diffuser({
         type: 'arrivee',
@@ -396,9 +400,19 @@ async function demanderLaReprise() {
  * de l'onglet au premier plan. Chaque réveil rend leur chance aux photos qui
  * avaient été laissées de côté.
  */
+let attenteNotee = false
+
 export async function demarrerFileEnvoi() {
   if (typeof window === 'undefined') return
   const liste = await toutes()
+  // Mesure : des photos attendaient encore sur ce téléphone à la réouverture.
+  // Sans réseau, le serveur n'en voit rien : c'est le seul moment de le savoir.
+  const photosEnAttente = liste.filter((e) => e.genre !== 'voix')
+  if (photosEnAttente.length && !attenteNotee) {
+    attenteNotee = true
+    const plusVieille = photosEnAttente.reduce((a, b) => ((a.creeLe || 0) <= (b.creeLe || 0) ? a : b))
+    noterEtape('attente_ouverture', { eventId: plusVieille.eventId, detail: String(photosEnAttente.length) })
+  }
   for (const e of liste) {
     if ((e.prochainEssai || 0) > Date.now()) await ecrire({ ...e, prochainEssai: 0 })
   }

@@ -319,6 +319,16 @@ export default function EventManage({ params }) {
   }, [ev, id])
 
   // --- Actions ---
+  // Le partage du téléphone (Messages, WhatsApp…), avec le lien de la soirée.
+  // Sans partage (ordinateur), on copie le lien.
+  async function envoyerLeLien() {
+    const texte = t({ fr: 'Prends des photos avec nous 📸', en: 'Take photos with us 📸', de: 'Machen Sie Fotos mit uns 📸' })
+    if (navigator.share) {
+      try { await navigator.share({ title: ev?.hostNames || ev?.name || 'Time to Flash', text: texte, url: joinUrl }); return } catch { return }
+    }
+    copy(joinUrl, 'join-envoye')
+  }
+
   async function patchEvent(patch) {
     setSettingMsg('')
     const token = getOwnerToken(id)
@@ -2191,7 +2201,16 @@ export default function EventManage({ params }) {
                 <div className="qr-tile" style={{ marginTop: 16 }}>
                   {qrUrl && <img src={qrUrl} alt={t({ fr: "QR code de l'événement", en: "The event's QR code", de: 'QR-Code des Events' })} />}
                 </div>
-                <button className="btn btn-ghost" style={{ marginTop: 14 }} onClick={() => copy(joinUrl, 'join')}>
+                {/* Un QR code scanné sur l'écran d'un autre téléphone ne s'ouvre pas
+                    toujours (reflets, réseau faible) : le lien envoyé par message,
+                    lui, marche à coup sûr. */}
+                <button className="btn btn-dark" style={{ marginTop: 14 }} onClick={envoyerLeLien}>
+                  {flash === 'join-envoye' ? t({ fr: '✓ Lien copié', en: '✓ Link copied', de: '✓ Link kopiert' }) : t({ fr: 'Envoyer le lien →', en: 'Send the link →', de: 'Link senden →' })}
+                </button>
+                <p className="muted small" style={{ marginTop: 8, textAlign: 'center' }}>
+                  {t({ fr: 'Ça ne s’ouvre pas en scannant ? Envoyez-lui le lien.', en: 'Doesn’t open when scanned? Send them the link.', de: 'Öffnet sich beim Scannen nicht? Schicken Sie den Link.' })}
+                </p>
+                <button className="btn btn-ghost" style={{ marginTop: 10 }} onClick={() => copy(joinUrl, 'join')}>
                   {flash === 'join' ? t({ fr: '✓ Copié', en: '✓ Copied', de: '✓ Kopiert' }) : t({ fr: 'Copier le lien', en: 'Copy the link', de: 'Link kopieren' })}
                 </button>
               </>

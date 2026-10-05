@@ -32,6 +32,11 @@ export const ETAPES_PROBLEME = [
   { id: 'camera_secours_site', label: 'Caméra refusée dans l’extrait, repart sur le site' },
   { id: 'camera_secours_app', label: 'Caméra refusée dans l’extrait, va installer l’app' },
   { id: 'envoi_coince', label: "Photo qui n'arrive pas à partir" },
+  // Mesurer les photos restées sur les téléphones : sans réseau, le serveur
+  // ne voit rien. L'appareil le dit à l'ouverture suivante (detail = combien
+  // attendent), puis quand la première arrive enfin (detail = minutes de retard).
+  { id: 'attente_ouverture', label: 'Photos encore sur le téléphone à la réouverture' },
+  { id: 'envoi_tardif', label: 'Photo arrivée en retard (après coup)' },
 ]
 
 // Les organisateurs : le tunnel /create, un écran après l'autre (voir la
