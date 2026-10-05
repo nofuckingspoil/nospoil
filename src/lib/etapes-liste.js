@@ -37,6 +37,9 @@ export const ETAPES_PROBLEME = [
   // attendent), puis quand la première arrive enfin (detail = minutes de retard).
   { id: 'attente_ouverture', label: 'Photos encore sur le téléphone à la réouverture' },
   { id: 'envoi_tardif', label: 'Photo arrivée en retard (après coup)' },
+  // Le micro du livre d'or qui refuse de démarrer : detail = le message exact
+  // de l'iPhone (« repli ok » si le second essai, réglages d'Apple, a pris).
+  { id: 'livre_or_erreur', label: "Enregistrement du livre d'or qui ne démarre pas" },
 ]
 
 // Les organisateurs : le tunnel /create, un écran après l'autre (voir la
