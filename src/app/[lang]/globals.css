@@ -1945,6 +1945,114 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .vfooter-links a { color: rgba(255,255,255,.68); text-decoration: none; font-size: 12.5px; }
 .vfooter-links a:hover { color: #fff; text-decoration: underline; }
 
+/* Pages par occasion (/anniversaire, /evjf-evg…) : les idées et les
+   conseils se lisent comme un article, dans une colonne étroite. */
+.occ-idees { list-style: none; counter-reset: idee; max-width: 720px; margin: 0 auto; padding: 0; display: grid; gap: 12px; }
+.occ-idees li { counter-increment: idee; position: relative; background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; padding: 18px 20px 18px 62px; }
+.occ-idees li::before { content: counter(idee, decimal-leading-zero); position: absolute; left: 20px; top: 18px; font-family: var(--f-mono, monospace); font-size: 13px; font-weight: 700; color: var(--accent); }
+.occ-idees h3 { font-size: 16.5px; margin-bottom: 6px; }
+.occ-idees p { font-size: 14.5px; color: var(--text2); line-height: 1.55; }
+.occ-texte p { max-width: 720px; margin: 0 auto 14px; font-size: 15.5px; color: var(--text2); line-height: 1.65; }
+.occ-articles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.occ-article { display: block; text-decoration: none; color: inherit; background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; overflow: hidden; }
+.occ-article-media { height: 120px; }
+.occ-article-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.occ-article-body { padding: 14px 16px 16px; }
+.occ-article-body h3 { font-size: 15.5px; margin-top: 4px; line-height: 1.35; }
+.occ-article:hover h3 { text-decoration: underline; }
+.occ-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+.occ-tuile { display: flex; align-items: center; gap: 10px; padding: 14px 16px; background: var(--card); border: 1px solid var(--line-soft); border-radius: 14px; text-decoration: none; color: inherit; font-weight: 600; font-size: 14.5px; }
+.occ-tuile:hover { border-color: var(--accent); }
+.occ-tuile-ic { font-size: 20px; }
+@media (max-width: 520px) {
+  .occ-idees li { padding: 16px 16px 16px 48px; }
+  .occ-idees li::before { left: 14px; top: 17px; }
+}
+
+/* Pages par occasion : la photo de la fête, en tirage, derrière l'appareil. */
+.occ-duo .phone-avant { width: 52%; top: 18%; }
+.occ-tirage { position: absolute; right: 0; top: 0; width: 74%; margin: 0; z-index: 1; transform: rotate(3.5deg);
+  background: #fbf8f2; padding: 9px 9px 30px; border-radius: 3px;
+  box-shadow: 0 24px 55px rgba(34,26,18,.26), 0 2px 6px rgba(34,26,18,.18); }
+.occ-tirage img { display: block; width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; }
+/* L'album : quatre photos côte à côte, deux par deux sur téléphone. */
+.occ-album { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.occ-album img { width: 100%; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 6px; display: block; }
+.occ-album img:nth-child(odd) { transform: rotate(-1.2deg); }
+.occ-album img:nth-child(even) { transform: rotate(1.2deg); }
+@media (max-width: 720px) { .occ-album { grid-template-columns: 1fr 1fr; } }
+.occ-tuile { flex-direction: column; align-items: stretch; padding: 0; overflow: hidden; gap: 0; }
+.occ-tuile img { width: 100%; height: 120px; object-fit: cover; display: block; }
+.occ-tuile-nom { padding: 11px 14px 13px; }
+
+/* Écrans de l'appli redessinés (components/occasions/Ecrans.js). Tailles en
+   cqw : chaque écran se dessine pareil, quelle que soit sa largeur. */
+.ecr { container-type: inline-size; }
+.ecr-app { width: 100%; aspect-ratio: 640 / 1385; background: #14161F; border-radius: 28px; overflow: hidden; color: #fff; }
+.ecr-app-in { height: 100%; display: flex; flex-direction: column; padding: 3.8cqw 4.7cqw 4cqw; box-sizing: border-box; }
+.ecr-app-tete { display: flex; align-items: center; justify-content: space-between; gap: 2cqw; margin-bottom: 3.6cqw; }
+.ecr-app-bouton { width: 10.6cqw; height: 10.6cqw; flex: none; border-radius: 3cqw; border: 1px solid rgba(255,255,255,.18);
+  display: grid; place-items: center; font-size: 4.4cqw; color: rgba(255,255,255,.85); }
+.ecr-app-titres { text-align: center; min-width: 0; }
+.ecr-app-titres b { display: block; font-family: var(--font-display); font-size: 4.3cqw; line-height: 1.15; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ecr-app-titres span { display: block; font-family: var(--font-mono); font-size: 2.6cqw; color: rgba(255,255,255,.55); margin-top: .8cqw; }
+.ecr-app-viseur { position: relative; aspect-ratio: 580 / 903; border-radius: 4.7cqw; background-size: cover; background-position: center;
+  font-family: var(--font-mono); text-shadow: 0 1px 2px rgba(0,0,0,.5); }
+.ecr-app-flash, .ecr-app-num { position: absolute; top: 4.5cqw; font-size: 2.7cqw; letter-spacing: .2em; color: rgba(255,255,255,.85); }
+.ecr-app-flash { left: 4.4cqw; } .ecr-app-num { right: 4.4cqw; letter-spacing: .05em; }
+.ecr-app-coin { position: absolute; width: 6.5cqw; height: 6.5cqw; border: 0 solid rgba(255,255,255,.85); }
+.ecr-app-coin-hg { left: 4.4cqw; top: 10cqw; border-left-width: 2px; border-top-width: 2px; }
+.ecr-app-coin-hd { right: 4.4cqw; top: 10cqw; border-right-width: 2px; border-top-width: 2px; }
+.ecr-app-coin-bg { left: 4.4cqw; bottom: 4.5cqw; border-left-width: 2px; border-bottom-width: 2px; }
+.ecr-app-coin-bd { right: 4.4cqw; bottom: 4.5cqw; border-right-width: 2px; border-bottom-width: 2px; }
+.ecr-app-mise { position: absolute; left: 50%; top: 50%; width: 29cqw; height: 29cqw; transform: translate(-50%, -50%);
+  border: 2px solid rgba(255,255,255,.7); border-radius: 3cqw; }
+.ecr-app-mise span { position: absolute; inset: 22%; border: 1px solid rgba(255,255,255,.55); border-radius: 2cqw; }
+.ecr-app-reste { position: absolute; left: 4.4cqw; bottom: 4.6cqw; font-size: 2.8cqw; color: rgba(255,255,255,.8); }
+.ecr-app-reste b { font-size: 7cqw; color: #fff; margin-right: 1cqw; }
+.ecr-app-outils { display: flex; justify-content: space-between; align-items: center; margin-top: 3.4cqw; }
+.ecr-app-pilule { font-family: var(--font-mono); font-size: 2.8cqw; padding: 1.6cqw 3.6cqw; border-radius: 99px; border: 1px solid rgba(255,255,255,.2); }
+.ecr-app-rond { width: 10cqw; height: 10cqw; border-radius: 50%; border: 1px solid rgba(255,255,255,.2); display: grid; place-items: center; font-size: 4.4cqw; }
+.ecr-app-declencheur { margin: 2cqw auto 0; width: 22cqw; height: 22cqw; border-radius: 50%; background: #4a2016; display: grid; place-items: center; }
+.ecr-app-declencheur span { width: 80%; height: 80%; border-radius: 50%; background: #EC5B33; box-shadow: inset 0 0 0 1.2cqw #EC5B33, inset 0 0 0 1.6cqw rgba(255,255,255,.75); }
+
+.ecr-affiche { width: 62%; margin: 6% auto 0; container-type: inline-size; background: #fff; box-shadow: 0 10px 30px rgba(34,26,18,.18); text-align: center; color: #14161F; }
+.ecr-affiche-film { display: block; height: 4.6cqw; background: #14161F radial-gradient(circle, #f3ede3 32%, transparent 34%) 0 50% / 6cqw 100% repeat-x; }
+.ecr-affiche-corps { padding: 7cqw 6cqw 8cqw; display: flex; flex-direction: column; align-items: center; gap: 2.4cqw; }
+.ecr-affiche-sur { font-family: var(--font-mono); font-size: 3cqw; letter-spacing: .18em; text-transform: uppercase; color: #C2502F; }
+.ecr-affiche-titre { font-family: var(--font-display); font-size: 7.4cqw; line-height: 1.05; }
+.ecr-affiche-corps i { font-size: 3.6cqw; color: #5f5341; font-weight: 600; }
+.ecr-affiche-qr { width: 52%; margin: 2cqw 0; }
+.ecr-affiche-qr svg { display: block; width: 100%; height: auto; }
+.ecr-affiche-mots { font-family: var(--font-mono); font-size: 2.7cqw; letter-spacing: .14em; text-transform: uppercase; }
+.ecr-affiche-cliches { font-size: 3.2cqw; font-weight: 700; color: #C2502F; border: 1.5px solid #C2502F; border-radius: 99px; padding: 1.6cqw 4cqw; }
+
+.ecr-album { width: 100%; height: 100%; }
+.ecr-album-in { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw; padding: 4cqw; box-sizing: border-box; }
+.ecr-album-carte { background: #FCF8F0; border-radius: 3cqw; padding: 2cqw; box-shadow: 0 2px 8px rgba(34,26,18,.08); }
+.ecr-album-photo { position: relative; aspect-ratio: 3 / 4; border-radius: 2cqw; background-size: cover; background-position: center; }
+.ecr-album-date { position: absolute; left: 3cqw; bottom: 2.6cqw; font-family: var(--font-mono); font-size: 3.4cqw; font-weight: 700; color: #FF9A3C; text-shadow: 0 0 4px rgba(255,120,40,.6); }
+.ecr-album-coeur { position: absolute; right: 2.4cqw; bottom: 2.2cqw; font-size: 3cqw; color: #fff; background: rgba(0,0,0,.35); border-radius: 99px; padding: .8cqw 2cqw; }
+.ecr-album-legende { display: flex; justify-content: space-between; align-items: baseline; padding: 2.2cqw 1cqw .6cqw; }
+.ecr-album-legende b { font-family: var(--font-display); font-size: 3.6cqw; }
+.ecr-album-legende span { font-family: var(--font-mono); font-size: 2.5cqw; color: #6E6252; }
+.step-shot-ecran { background: #EFE7DA; }
+.step-shot-ecran .ecr-app { width: 46%; margin: 5% auto 0; border-radius: 14px; }
+
+/* Pied de page riche (SitePied) : trois colonnes de liens au-dessus de la
+   ligne légale. Sur téléphone, les colonnes s'empilent. */
+.vfooter-riche { padding-top: 36px; }
+.vfooter-cols { max-width: 1040px; margin: 0 auto 26px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px 32px; }
+.vfooter-col-h { font-family: var(--f-mono, monospace); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 10px; }
+.vfooter-col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 7px; }
+.vfooter-col a { color: rgba(255,255,255,.78); text-decoration: none; font-size: 13.5px; }
+.vfooter-col a:hover { color: #fff; text-decoration: underline; }
+.vfooter-riche .vfooter-inner { border-top: 1px solid rgba(255,255,255,.1); padding-top: 18px; }
+@media (max-width: 720px) {
+  .vfooter-cols { grid-template-columns: 1fr 1fr; }
+  .vfooter-cols .vfooter-col:last-child { grid-column: 1 / -1; }
+}
+
 .qr-print-link {
   display: block; text-align: center; margin-top: 14px; padding-top: 14px;
   border-top: 1px solid rgba(255,255,255,.12);
@@ -2961,6 +3069,8 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .db-contact { display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
   padding: 10px 12px; border-radius: 12px; background: var(--screen); }
 .db-contact-name { font-weight: 600; flex: 0 0 auto; }
+.db-contact-photos { display: block; margin-top: 2px; font-size: 12px; font-weight: 500; color: var(--text2); }
+.db-contact-photos.zero { color: var(--text3); }
 .db-contact-val { font-family: var(--font-mono); font-size: 12px; color: var(--text2);
   text-align: right; min-width: 0; overflow-wrap: anywhere; }
 .db-contact-ok { font-style: normal; color: var(--ok); }
@@ -4372,6 +4482,29 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .gal-compact .gal-creer { min-width: 0; padding: 4px 3px; font-size: 13px; }
 .gal-compact .gal-creer i { font-size: 7.5px; letter-spacing: .08em; }
 .gal-compact-sous { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* La bulle qui montre où retrouver les tirages, une fois leur fenêtre fermée.
+   Accrochée sous « Imprimez », décalée vers la gauche pour ne pas sortir de
+   l'écran : le bouton est l'avant-dernier de la barre. */
+.gal-tir-ancre { position: relative; display: flex; flex: 0 0 auto; }
+.gal-creer-signal { border-radius: 10px; animation: dc-pulse 1.4s ease-out 3; }
+.gal-tir-fleche {
+  position: absolute; top: calc(100% + 5px); left: 50%; z-index: 21;
+  width: 12px; height: 12px; margin-left: -6px; transform: rotate(45deg);
+  background: var(--accent); border-radius: 2px;
+  animation: dc-fade .25s ease both;
+}
+.gal-tir-bulle {
+  position: absolute; top: calc(100% + 10px); right: -40px; z-index: 21;
+  width: 210px; padding: 10px 13px; border-radius: 12px;
+  background: var(--accent); color: #fff; cursor: pointer;
+  font-family: var(--font-body); font-size: 13px; font-weight: 600; line-height: 1.35;
+  box-shadow: 0 10px 28px rgba(0,0,0,.45);
+  animation: dc-pop .3s cubic-bezier(.2,.8,.3,1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gal-creer-signal, .gal-tir-fleche, .gal-tir-bulle { animation: none; }
+}
 @media (max-width: 400px) { .gal-compact { gap: 8px; } }
 
 .tir-cgv { margin-bottom: 8px; font-size: 11.5px; line-height: 1.4; color: var(--text3); text-align: center; }
@@ -4406,6 +4539,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .tirage:nth-child(1) { left: 3%; top: 10%; }
 .tirage:nth-child(2) { right: 3%; top: 6%; }
 .tirage:nth-child(3) { left: 26%; top: 18%; }
+
+/* Accueil : la ligne des occasions, dont chaque mot mène à sa page. */
+.hero-occasions a { color: inherit; text-decoration: underline; text-decoration-color: rgba(0,0,0,.25); text-underline-offset: 3px; }
+.hero-occasions a:hover { color: var(--accent); text-decoration-color: currentColor; }
 
 /* ---------- Admin : les essais du site ---------- */
 .essais-periodes { display: flex; gap: 8px; flex-wrap: wrap; }

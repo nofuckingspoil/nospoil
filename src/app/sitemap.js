@@ -7,6 +7,7 @@
 import { POSTS } from '../lib/journal'
 import { LEGAL_DOCS } from '../lib/legal'
 import { LANGUES } from '../lib/i18n'
+import { SLUGS_OCCASIONS } from '../lib/occasions'
 import { lien } from '../lib/langue-lien'
 
 const BASE = 'https://timetoflash.fr'
@@ -32,6 +33,12 @@ export default function sitemap() {
     ['/journal', { lastModified: now, changeFrequency: 'weekly', priority: 0.8 }],
     ['/guide', { lastModified: now, changeFrequency: 'monthly', priority: 0.8 }],
     ['/generateur-qr-code-mariage', { lastModified: now, changeFrequency: 'monthly', priority: 0.8 }],
+    // Les 9 pannes des participants : « QR code ne scanne pas », « caméra
+    // bloquée dans Instagram »… de vraies recherches. Absente jusqu'au 03/10/2026.
+    ['/aide', { lastModified: now, changeFrequency: 'monthly', priority: 0.5 }],
+    // Les pages par occasion (anniversaire, EVJF, week-end, retraite…).
+    ['/occasions', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],
+    ...SLUGS_OCCASIONS.map((slug) => [`/${slug}`, { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }]),
     ['/photos-mariage-invites', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],
     ['/cadeau-mariage-temoins', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],
     ['/appareil-jetable-mariage', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],

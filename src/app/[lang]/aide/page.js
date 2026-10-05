@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import SiteNav from '../../../components/SiteNav'
+import SitePied from '../../../components/SitePied'
 import { BRAND } from '../../../lib/brand'
 import { aideDe } from '../../../lib/aide'
 import { t } from '../../../lib/i18n'
@@ -72,6 +73,7 @@ export default async function AidePage({ params }) {
           </div>
         </div>
       </div>
+      <SitePied lang={lang} />
     </main>
   )
 }

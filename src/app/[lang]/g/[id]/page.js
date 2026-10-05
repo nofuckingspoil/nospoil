@@ -700,6 +700,9 @@ export default function Gallery({ params }) {
   // appareil, qu'on l'ait acceptée ou fermée.
   const [invitTirages, setInvitTirages] = useState(false)
   const [invitDejaVue, setInvitDejaVue] = useState(true)
+  // Fermée, la fenêtre montre où la retrouver : une bulle sous « Imprimez »,
+  // quelques secondes. Sans elle, « Plus tard » voulait dire « jamais ».
+  const [rappelTirages, setRappelTirages] = useState(false)
   // Les réglages mangeaient l'écran entier d'un téléphone : les photos
   // n'apparaissaient qu'après un long défilement. Ils tiennent maintenant dans
   // deux boutons, qui ouvrent chacun leur panneau. null | 'film' | 'qui'
@@ -997,16 +1000,17 @@ export default function Gallery({ params }) {
   // --- L'invitation aux tirages ---
   //
   // Elle attend la vingtième photo : c'est en ayant vu défiler la soirée qu'on
-  // a envie de la tenir en main, pas en arrivant. Et elle cède la place à
-  // l'enquête de satisfaction : deux fenêtres dans la même visite, c'est une
-  // de trop. Celle-ci reviendra à la visite suivante.
+  // a envie de la tenir en main, pas en arrivant. Et elle attend que l'enquête
+  // de satisfaction soit refermée : jamais deux fenêtres l'une sur l'autre.
+  // Attendre seulement qu'elle soit refermée, pas qu'on y ait répondu : jusqu'au
+  // 04/10/2026, tout participant qui n'avait pas répondu ne la voyait jamais.
   const repereTirages = useRef(null)
   useEffect(() => {
     if (!id || !data?.tirages) return
     try { setInvitDejaVue(!!localStorage.getItem(`ttf_tirages_${id}`)) } catch { setInvitDejaVue(false) }
   }, [id, data?.tirages])
   useEffect(() => {
-    if (invitDejaVue || invitTirages || montrerAvis || !peutRepondre) return
+    if (invitDejaVue || invitTirages || (montrerAvis && !avisFerme) || !peutRepondre) return
     const verifier = () => {
       const cible = repereTirages.current
       if (cible && cible.getBoundingClientRect().top < window.innerHeight * 0.5) {
@@ -1016,13 +1020,19 @@ export default function Gallery({ params }) {
     }
     window.addEventListener('scroll', verifier, { passive: true })
     return () => window.removeEventListener('scroll', verifier)
-  }, [invitDejaVue, invitTirages, montrerAvis, peutRepondre])
+  }, [invitDejaVue, invitTirages, montrerAvis, avisFerme, peutRepondre])
 
   function fermerInvitTirages() {
     setInvitTirages(false)
     setInvitDejaVue(true)
     try { localStorage.setItem(`ttf_tirages_${id}`, '1') } catch {}
+    setRappelTirages(true)
   }
+  useEffect(() => {
+    if (!rappelTirages) return
+    const minuteur = setTimeout(() => setRappelTirages(false), 7000)
+    return () => clearTimeout(minuteur)
+  }, [rappelTirages])
 
   // Entrer dans la sélection pour imprimer. Ses favoris sont déjà cochés :
   // ce sont les photos qu'on a mises de côté, donc celles qu'on veut sur papier.
@@ -1548,9 +1558,23 @@ export default function Gallery({ params }) {
         {/* Les tirages, à portée de pouce pendant qu'on défile : le bouton
             de la façade disparaît dès la première photo passée. */}
         {data.tirages && data.photos.length > 0 && (
-          <button className="gal-creer" onClick={() => lancerTirages('barre')}>
-            <IconeImprimante size={15} /><i>{t({ fr: 'Imprimez', en: 'Print', de: 'Drucken' })}</i>
-          </button>
+          <span className="gal-tir-ancre">
+            <button className={`gal-creer ${rappelTirages ? 'gal-creer-signal' : ''}`} onClick={() => { setRappelTirages(false); lancerTirages('barre') }}>
+              <IconeImprimante size={15} /><i>{t({ fr: 'Imprimez', en: 'Print', de: 'Drucken' })}</i>
+            </button>
+            {rappelTirages && (
+              <>
+                <span className="gal-tir-fleche" aria-hidden="true" />
+                <span className="gal-tir-bulle" role="status" onClick={() => setRappelTirages(false)}>
+                  {t({
+                    fr: 'Vos tirages vous attendent ici, à tout moment.',
+                    en: 'Your prints are waiting right here, any time.',
+                    de: 'Ihre Abzüge warten hier auf Sie, jederzeit.',
+                  })}
+                </span>
+              </>
+            )}
+          </span>
         )}
         {data.photos.length > 0 && (
           <button className="gal-creer" onClick={() => setMontrerCollage(true)}>

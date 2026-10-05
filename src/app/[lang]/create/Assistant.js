@@ -18,6 +18,7 @@ import PromoField from '../../../components/PromoField'
 import { useLangue, SelecteurLangue } from '../../../components/Langue'
 import { lireProvenance } from '../../../lib/provenance'
 import QuestionDecouverte from '../../../components/QuestionDecouverte'
+import { exempleNom } from '../../../lib/occasions'
 
 // ---------- Petits utilitaires de date ----------
 
@@ -153,6 +154,9 @@ export function CreateForm({ parcours = 'long' }) {
   // La formule venue de la page d'accueil n'est qu'un point de départ : elle se
   // choisit sur le premier écran, et se change sans quitter l'assistant.
   const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
+  // Venu d'une page d'occasion (/anniversaire-30-ans…) : l'exemple de nom
+  // parle de sa fête, pas d'un mariage.
+  const occasion = sp.get('occasion')
   const [tierOpen, setTierOpen] = useState(false)
   const tier = tierByGuests(maxGuests)
 
@@ -404,7 +408,7 @@ export function CreateForm({ parcours = 'long' }) {
   function pickTier(n) {
     setMaxGuests(n)
     setError('')
-    try { window.history.replaceState(null, '', `${window.location.pathname}?tier=${n}`) } catch {}
+    try { window.history.replaceState(null, '', `${window.location.pathname}?tier=${n}${occasion ? `&occasion=${encodeURIComponent(occasion)}` : ''}`) } catch {}
   }
 
   // --- Recadrage : on déplace la photo dans son cadre, en pourcentages.
@@ -759,7 +763,7 @@ export function CreateForm({ parcours = 'long' }) {
           </p>
           <div className="field">
             <label>{t({ fr: "Nom de l'événement", en: 'Event name', de: 'Name des Events' })}</label>
-            <input type="text" placeholder={t({ fr: 'Ex : Mariage de Marie & Paul', en: "E.g. Mary & Paul's wedding", de: 'Z. B. Hochzeit von Marie & Paul' })} value={name}
+            <input type="text" placeholder={exempleNom(occasion, lang) || t({ fr: 'Ex : Mariage de Marie & Paul', en: "E.g. Mary & Paul's wedding", de: 'Z. B. Hochzeit von Marie & Paul' })} value={name}
               onChange={(e) => setName(e.target.value)} maxLength={80} autoFocus />
           </div>
 

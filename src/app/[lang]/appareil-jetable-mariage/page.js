@@ -5,10 +5,9 @@
 //  cent téléphones déjà dans les poches de vos invités deviennent cent
 //  appareils jetables. Rien à louer, rien à distribuer, rien à ramasser.
 //
-//  Désindexée volontairement : le journal a déjà un article sur ce mot-clé
-//  (/journal/appareil-photo-jetable-mariage), et deux pages du même site qui
-//  visent la même recherche se privent mutuellement de position. Le trafic
-//  d'une page publicitaire vient de la publicité, pas de Google.
+//  Indexable depuis le 07/08/2026, et reliée au reste du site depuis le
+//  03/10/2026 (pied de page, articles du journal, accueil) : sans publicité
+//  en cours, c'est Google qui doit lui amener ses visiteurs.
 //
 //  En anglais et en allemand, le titre vise « wedding disposable camera app »
 //  et « Einwegkamera Hochzeit App ».

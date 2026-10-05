@@ -185,9 +185,33 @@ export const POSTS_DE = {
 <h2>Die digitale Version: der Charme, ohne den Aufwand</h2>
 <p>Eine digitale Einwegkamera hat denselben Geist (begrenzte Zahl an Fotos, Film-Ästhetik, verzögerte Enthüllung), aber auf dem Handy, das Ihre Gäste ohnehin in der Hand haben. Keine Kamera zu kaufen oder einzusammeln, kein Labor, kein verlorenes Foto: Alles landet am selben Ort. Sie brauchen nur einen QR-Code auf den Tischen (siehe <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>).</p>
 
+<h2>Eine personalisierte Einwegkamera zur Hochzeit</h2>
+<p>Personalisierte Einwegkameras aus Pappe gibt es: ein Etikett mit Ihren Namen auf der Verpackung. Das sieht hübsch aus, aber man muss vorab bestellen, mehr bezahlen als für Standardmodelle, und das Entwickeln bleibt dasselbe Ärgernis. Die digitale Version lässt sich von Anfang bis Ende personalisieren:</p>
+<ul>
+<li><strong>Ein Plakat mit Ihren Namen und Ihrem Datum.</strong> Der QR-Code, den Ihre Gäste scannen, steht auf einem Plakat, das Sie personalisieren, druckfertig für die Tische oder den Eingang. Der <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator</a> erledigt das in wenigen Minuten.</li>
+<li><strong>Der Name Ihrer Hochzeit in der Kamera.</strong> Wenn ein Gast die Kamera öffnet, sieht er den Namen Ihrer Hochzeit: Er weiß sofort, wohin seine Fotos gehen.</li>
+<li><strong>Das Datum auf jedem Foto.</strong> Im Album gibt der Film „Einweg“ den Fotos einen warmen, kontrastreichen, körnigen Look, mit dem Datum in der Ecke, wie auf den Abzügen echter Einwegkameras. Der Look bleibt in den heruntergeladenen Fotos erhalten.</li>
+<li><strong>Die Zahl der Aufnahmen, die Sie wählen.</strong> Zwischen 3 und 15 Fotos pro Gast: wenige bei einer großen Hochzeit, bei der jede Aufnahme zählt, mehr im kleinen Kreis. Nachladen ist unterwegs weiterhin möglich.</li>
+</ul>
+<p>Alles Weitere steht auf unserer Seite <a href="/appareil-jetable-mariage">Einwegkamera zur Hochzeit</a>.</p>
+
 <p>Die Pappe hat die Nostalgie auf ihrer Seite; die digitale Version garantiert Ihnen, dass Sie die Erinnerungen auch wirklich <em>bekommen</em>. Wenn Sie noch zwischen den Möglichkeiten schwanken, vergleichen wir alle in <a href="/journal/comparatif-animations-photo-mariage">Fotobox, Spiegel oder Einwegkamera</a>. Mit einer <a href="/">Hochzeitsfoto-App wie Time to Flash</a> bekommen Sie das Beste aus beiden Welten: die Beschränkung des Films, ohne die Angst, beim Entwickeln alles zu verlieren.</p>
 <p>Sie möchten die Apps vergleichen, die wirklich wie eine Einwegkamera funktionieren (Scene, POV, Reveal…)? Alles steht in <a href="/journal/application-appareil-photo-jetable-mariage">unserem Vergleich der Einwegkamera-Apps</a>.</p>
 `,
+    faq: [
+      {
+        q: 'Kann man eine Einwegkamera zur Hochzeit personalisieren?',
+        a: 'Ja. Einwegkameras aus Pappe lassen sich mit einem Etikett personalisieren, das man vorab bestellt. Die digitale Version lässt sich ganz personalisieren: ein QR-Code-Plakat mit Ihren Namen und Ihrem Datum, der Name der Hochzeit in der Kamera, die Zahl der Aufnahmen pro Gast und ein Film „Einweg“, der das Datum auf jedes Foto setzt.',
+      },
+      {
+        q: 'Wie viele Aufnahmen sollte jeder Gast mit einer Einwegkamera haben?',
+        a: 'Eine Einwegkamera aus Pappe hat 27 Aufnahmen, die sich ein ganzer Tisch teilt. In der digitalen Version hat jeder Gast seine eigenen Aufnahmen: 5 bis 15 sind ideal, genug für den ganzen Tag und wenig genug, damit jedes Foto zählt.',
+      },
+      {
+        q: 'Was kostet eine Einwegkamera für die Hochzeit?',
+        a: 'Eine Einwegkamera aus Pappe kostet 10 bis 15 € pro Stück, plus Entwicklung. In der digitalen Version ist Time to Flash bis 5 Teilnehmer kostenlos, danach zahlen Sie einmalig für die ganze Hochzeit: zum Beispiel 29,99 € für bis zu 100 Teilnehmer, ohne Abo.',
+      },
+    ],
   },
 
   'alternative-photobooth-mariage': {
@@ -205,8 +229,28 @@ export const POSTS_DE = {
 <strong>Die Logistik:</strong> ein Tisch, eine Steckdose, ein Hintergrund, manchmal ein Techniker.<br>
 <strong>Der Engpass:</strong> eine einzige Box für 100 Gäste bedeutet eine Schlange, und alle Fotos entstehen an einem einzigen Ort. Alles, was anderswo passiert, verpassen Sie.</p>
 
-<h2>Die Alternative: jeden Gast in eine wandelnde Fotobox verwandeln</h2>
-<p>Statt einer festen Box geben Sie jedem eine Kamera, auf seinem Handy, per QR-Code. Das Ergebnis: lustige Fotos, die <em>überall</em> entstehen, beim Sektempfang, am Tisch, auf der Tanzfläche, draußen. Keine Schlange, keine Technik und am Ende ein einziges gemeinsames Album.</p>
+<h2>Wie man eine Fotobox ersetzt: 5 Alternativen</h2>
+<p>Eine Fotobox zu ersetzen heißt nicht, auf lustige Fotos zu verzichten. Es gibt fünf Alternativen, und sie passen nicht zu denselben Hochzeiten.</p>
+
+<h3>1. Einwegkameras aus Pappe</h3>
+<p>Eine Einwegkamera auf jedem Tisch, und die Gäste nutzen sie den ganzen Abend. Der Charme des Films ist echt. Aber rechnen Sie mit 10 bis 15 € pro Kamera plus Entwicklung, und zurück bekommen Sie nie alle (mehr dazu in <a href="/journal/appareil-photo-jetable-mariage">Einwegkamera zur Hochzeit: Pappe oder App?</a>). <strong>Für wen:</strong> Analog-Fans, bei einer eher kleinen Hochzeit.</p>
+
+<h3>2. Die Einwegkamera-App</h3>
+<p>Derselbe Geist, auf den Handys der Gäste: ein QR-Code, ein paar Aufnahmen pro Person und ein gemeinsames Album, das am nächsten Tag enthüllt wird. Nichts zu installieren, nichts einzusammeln. <strong>Für wen:</strong> Paare, die Fotos vom ganzen Abend wollen, überall im Saal, bei kleinem Budget. Das ist unsere Lieblingslösung, wir stellen sie gleich genauer vor.</p>
+
+<h3>3. Die selbst gebaute Fotoecke</h3>
+<p>Ein Hintergrund (ein Stoff, eine Lichterkette, eine Pflanzenwand), ein Stativ, ein Handy mit Selbstauslöser oder kleiner Bluetooth-Fernbedienung und eine Kiste mit Requisiten. Dazu eine Lampe, wenn der Saal dunkel ist. Für ein paar Dutzend Euro haben Sie die Fotobox-Stimmung. <strong>Für wen:</strong> Paare mit Bastelfreude und einem Freund, der ein Auge auf die Technik hat. Denken Sie daran, die Fotos am nächsten Tag vom Stativ-Handy zu holen.</p>
+
+<h3>4. Der Fotograf für die Party</h3>
+<p>Ein zweiter Fotograf, oder Ihr Hauptfotograf bleibt länger, widmet der Party eine Stunde: Porträts auf der Tanzfläche, kleine Gruppen, gestellte Fotos vor einem Hintergrund. Rechnen Sie mit 300 bis 600 € für einen zweiten Fotografen. <strong>Für wen:</strong> große Hochzeiten und Paare, die bis spät in die Nacht Bilder in Profiqualität möchten.</p>
+
+<h3>5. Das Foto-Gästebuch</h3>
+<p>Eine Sofortbildkamera neben dem Gästebuch: Jeder Gast fotografiert sich, klebt den Abzug ein und schreibt ein paar Worte dazu. Sie gehen mit einem einzigartigen Erinnerungsstück nach Hause, noch am selben Abend gefüllt. Planen Sie genug Filmnachschub ein, der bei 100 Gästen schnell ins Geld geht. <strong>Für wen:</strong> Paare, denen das Erinnerungsstück wichtiger ist als die Zahl der Fotos.</p>
+
+<p>Diese Möglichkeiten lassen sich gut kombinieren: ein Foto-Gästebuch für das Erinnerungsstück, eine Einwegkamera-App für den ganzen Abend. Fotobox, Spiegel und Einwegkamera vergleichen wir außerdem in <a href="/journal/comparatif-animations-photo-mariage">Fotobox, Selfie-Box, Spiegel oder Einwegkamera: Was passt?</a></p>
+
+<h2>Unsere Lieblingslösung: jeden Gast in eine wandelnde Fotobox verwandeln</h2>
+<p>Statt einer festen Box geben Sie jedem eine Kamera, auf seinem Handy, per QR-Code. Das Ergebnis: lustige Fotos, die <em>überall</em> entstehen, beim Sektempfang, am Tisch, auf der Tanzfläche, draußen. Keine Schlange, keine Technik und am Ende ein einziges gemeinsames Album. Beide Varianten vergleichen wir Punkt für Punkt auf unserer Seite <a href="/photobooth-mariage">Fotobox-Alternative für die Hochzeit</a>.</p>
 
 <blockquote class="dj-quote">„Wir haben die Fotobox abgesagt. Unsere Gäste haben doppelt so viele Fotos gemacht, und viel abwechslungsreichere.“
   <cite>Léa &amp; Marius · 2026</cite>
@@ -215,31 +259,128 @@ export const POSTS_DE = {
 <h2>So setzen Sie es um</h2>
 <p>Ein QR-Code auf den Tischen und am Eingang, eine Begrenzung auf ein paar Fotos pro Person, damit es sorgfältig bleibt, und eine Enthüllung am nächsten Tag. Damit alle mitspielen, schreiben Sie einen Satz in die Einladung (wir haben <a href="/journal/brief-invites">einen Text für Ihre Gäste zum Kopieren</a> vorbereitet). Genau das bietet <a href="/">unsere Hochzeitsfoto-App</a>: den Fotobox-Effekt im ganzen Saal, zu einem Bruchteil des Preises.</p>
 `,
+    faq: [
+      {
+        q: 'Wie kann man eine Fotobox bei der Hochzeit ersetzen?',
+        a: 'Es gibt fünf Alternativen: Einwegkameras aus Pappe, eine Einwegkamera-App auf den Handys der Gäste, eine selbst gebaute Fotoecke mit Hintergrund und Stativ, ein Fotograf für die Party oder ein Foto-Gästebuch mit Sofortbildkamera. Sie lassen sich leicht kombinieren.',
+      },
+      {
+        q: 'Was ist die günstigste Alternative zur Fotobox?',
+        a: 'Die Einwegkamera-App: Mit Time to Flash ist sie bis 5 Teilnehmer kostenlos, danach zahlen Sie einmalig je nach Teilnehmerzahl (29,99 € für bis zu 100). Eine selbst gebaute Fotoecke kostet ein paar Dutzend Euro, braucht aber Ausrüstung und jemanden, der darauf aufpasst.',
+      },
+      {
+        q: 'Kann man eine Fotobox für die Hochzeit selbst bauen?',
+        a: 'Ja: Ein Hintergrund (Stoff, Lichterkette, Pflanzen), ein Stativ, ein Handy mit Selbstauslöser oder Bluetooth-Fernbedienung, eine Lampe und ein paar Requisiten genügen. Bitten Sie einen Freund, sich um die Ecke zu kümmern, und holen Sie die Fotos am nächsten Tag ab.',
+      },
+    ],
   },
 
   'partager-photos-mariage-invites': {
-    title: 'So teilen Sie die Hochzeitsfotos mit allen Gästen',
-    excerpt: 'Schluss mit 6 WhatsApp-Gruppen und halb verlorenen Alben. Die Methode, um alles zu sammeln und an alle weiterzugeben.',
+    title: 'Hochzeitsfotos mit den Gästen teilen: 5 Möglichkeiten',
+    excerpt: 'WhatsApp, Google Fotos, Transferlink, App oder gemeinsame Einwegkamera: 5 Wege, die Hochzeitsfotos der Gäste zu sammeln und mit allen zu teilen.',
     caption: 'Ein geteiltes Hochzeitsalbum auf einem Handy',
     body: `
-<p>Nach der Hochzeit gibt es die Fotos, aber verstreut auf zehn Handys, in drei WhatsApp-Gruppen und im AirDrop, das nie fertig verschickt wurde. So verhindern Sie, dass Ihre Erinnerungen in alle Winde verstreut werden.</p>
+<p>Am Tag nach der Hochzeit gibt es die Fotos. Hunderte sogar. Das Problem: Sie liegen auf achtzig verschiedenen Handys, und niemand denkt daran, sie Ihnen zu schicken. Hochzeitsfotos mit den Gästen teilen bedeutet eigentlich zweierlei: die Fotos aller <strong>einsammeln</strong> und dann alles an alle <strong>zurückgeben</strong>. Hier sind die fünf Möglichkeiten, was sie wirklich taugen, und wie Sie vor, während und nach dem großen Tag vorgehen.</p>
 
-<h2>Das Problem: die Zerstreuung</h2>
-<p>Jeder Gast fährt mit seinen Fotos nach Hause. Manche schicken sie, die meisten vergessen es. Sie verbringen die folgenden Wochen damit, nachzufragen („Kannst du mir das Foto von … schicken?“), und bekommen komprimierte Bilder, ohne die besten.</p>
+<h2>Warum es schwieriger ist, als es aussieht</h2>
+<p>Auf dem Papier ist es ganz einfach: Jeder schickt seine Fotos, Sie sammeln sie. In der Praxis tauchen bei jeder Hochzeit dieselben drei Hindernisse auf.</p>
+<ul>
+<li><strong>Das Vergessen.</strong> Am Abend versprechen alle, ihre Fotos zu schicken. Eine Woche später ist die Feier weit weg, und nur ein paar enge Freunde haben es getan.</li>
+<li><strong>Die Zerstreuung.</strong> Die Fotos kommen per WhatsApp, SMS, E-Mail und AirDrop. Sie verbringen Abende damit, alles in einen Ordner zu holen, und es fehlt immer etwas.</li>
+<li><strong>Die Qualität.</strong> Messenger komprimieren Bilder beim Senden. Ein Foto, das auf dem Handydisplay perfekt aussah, wird im Druck unscharf.</li>
+</ul>
+<p>Daraus folgt eine einfache Regel: Je mehr Aufwand Sie Ihren Gästen <em>nach</em> der Feier abverlangen, desto weniger Fotos bekommen Sie. Die richtige Methode sammelt die Fotos <em>während</em> der Feier, ohne etwas Kompliziertes zu verlangen.</p>
 
-<h2>Die Lösung: ein einziges Album, von Anfang an</h2>
-<p>Der Schlüssel ist, <em>während</em> der Feier zu sammeln, nicht danach (die drei möglichen Methoden vergleichen wir in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Fotos oder eigene App?</a>). Wenn alle Fotos automatisch im selben geteilten Album landen, müssen Sie nichts mehr einfordern: Alles ist schon da, in voller Qualität. Das ist das Prinzip einer gemeinsamen Kamera per QR-Code.</p>
+<h2>5 Wege, die Fotos der Gäste zu sammeln und zu teilen</h2>
 
-<blockquote class="dj-quote">„Niemand musste mir irgendetwas schicken. Am nächsten Tag waren die 300 Fotos schon beisammen.“
-  <cite>Tom &amp; Inès · 2026</cite>
-</blockquote>
+<h3>1. Die WhatsApp-Gruppe</h3>
+<p>Der erste Reflex aller: eine Gruppe mit den Gästen, in die jeder seine Fotos stellt. Ihr großer Vorteil: Jeder hat WhatsApp schon, niemand muss etwas lernen. Aber die Fotos werden komprimiert, gehen zwischen Nachrichten und Sprachnachrichten unter, und man braucht die Nummer jedes Gastes. Praktisch, um am Abend drei Fotos auszutauschen, aber kaum geeignet, um das Hochzeitsalbum zusammenzustellen.</p>
 
-<h2>An alle weitergeben, mit einem Link</h2>
-<p>Ist das Album komplett, teilen Sie einen einzigen Link: Jeder Gast sieht alle Fotos und lädt die herunter, die er möchte, in voller Qualität. Keine Anmeldung, keine App. Auch Ihre Lieben, die nicht dabei waren, können den Tag noch einmal erleben.</p>
+<h3>2. Das geteilte Album in Google Fotos oder iCloud</h3>
+<p>Sie legen ein geteiltes Album an, verschicken den Link, und jeder fügt seine Fotos hinzu. Die Qualität ist viel besser als im Messenger, und alles liegt an einem Ort. Der Haken: Um Fotos hinzuzufügen, braucht man meist ein Google-Konto oder ein Apple-Gerät, sodass je nach Lösung ein Teil Ihrer Gäste außen vor bleibt. Vor allem ist das Album passiv: Jeder muss nach der Feier selbst daran denken. Diese ersten beiden Möglichkeiten vergleichen wir ausführlich in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Fotos oder eigene App?</a></p>
 
-<h2>Und für Sie?</h2>
-<p>Sie laden das ganze Album auf einmal herunter und bewahren es an zwei Orten auf. Danach sortieren Sie in Ruhe (wir erklären, <a href="/journal/300-photos-lendemain">wie Sie die 300 Fotos am Tag danach sortieren</a>). Mit einer <a href="/">Hochzeitsfoto-App wie Time to Flash</a> geschehen Sammeln und Teilen automatisch: Sie müssen sich buchstäblich um nichts kümmern.</p>
+<h3>3. Der Transferlink oder geteilte Ordner</h3>
+<p>Ein Online-Ordner oder ein Dienst zum Versenden großer Dateien: Jeder Gast schickt Ihnen seinen Stapel Fotos. Diese Methode schont die Dateien am meisten und passt gut zu den wenigen engagierten Verwandten oder zum Cousin mit der Spiegelreflexkamera. Sie verlangt aber auch den meisten Aufwand: Fotos auswählen, verschicken, manchmal ein Konto anlegen. In der Praxis machen es nur wenige Gäste.</p>
+
+<h3>4. Hochzeits-Galerie-Apps</h3>
+<p>Das sind Online-Alben für Hochzeiten: ein QR-Code, eine Seite, auf der man seine Fotos hochlädt, manchmal eine Diashow. Einfacher als ein geteilter Ordner, und alles landet an einem Ort. Das Prinzip bleibt aber dasselbe: Die Gäste fotografieren mit ihrer normalen Kamera und müssen dann daran denken, die Fotos <em>hochzuladen</em>. Manche verlangen eine App-Installation, andere begrenzen den Download in der kostenlosen Version. Wir haben sie in <a href="/journal/application-photo-mariage">unserem Vergleich der Hochzeitsfoto-Apps</a> unter die Lupe genommen.</p>
+
+<h3>5. Die gemeinsame Einwegkamera</h3>
+<p>Hier wird die Logik umgedreht: Statt die Gäste zu bitten, ihre Fotos hinterher hochzuladen, geben Sie ihnen eine Kamera, deren Aufnahmen direkt im gemeinsamen Album landen. Sie scannen einen QR-Code, die Kamera öffnet sich im Browser, ohne App und ohne Konto, und jedes Foto geht ins Album. Wie bei einer echten Einwegkamera hat jeder eine begrenzte Zahl an Aufnahmen und sieht seine Fotos nicht sofort: Sie werden alle gemeinsam enthüllt, zu dem Zeitpunkt, den Sie gewählt haben, zum Beispiel am nächsten Morgen. Das ist eine Aktion während der Feier, und das Sammeln erledigt sich von selbst. Genau das macht <a href="/photos-mariage-invites">Time to Flash mit den Fotos Ihrer Gäste</a>.</p>
+
+<h2>Der Vergleich auf einen Blick</h2>
+<table>
+<thead><tr><th>Methode</th><th>Aufwand für Gäste</th><th>Qualität</th><th>Gesammelte Fotos</th><th>Preis</th></tr></thead>
+<tbody>
+<tr><td>WhatsApp-Gruppe</td><td>Gering</td><td>Komprimiert</td><td>Einige</td><td>Kostenlos</td></tr>
+<tr><td>Google Fotos / iCloud</td><td>Mittel (Konto)</td><td>Gut</td><td>Die der Engagiertesten</td><td>Kostenlos</td></tr>
+<tr><td>Transferlink</td><td>Hoch</td><td>Sehr gut</td><td>Wenige</td><td>Kostenlos oder fast</td></tr>
+<tr><td>Galerie-App</td><td>Mittel</td><td>Gut</td><td>Unterschiedlich</td><td>Kostenlos bis kostenpflichtig</td></tr>
+<tr><td>Gemeinsame Einwegkamera</td><td>Sehr gering</td><td>Gut</td><td>Jedes aufgenommene</td><td>Kostenlos bis 5, dann Einmalzahlung</td></tr>
+</tbody>
+</table>
+<p>Keine Methode ist überall perfekt. Aber nur eine hängt nicht vom guten Willen der Gäste ab, wenn sie wieder zu Hause sind: die, bei der das Foto in dem Moment im Album landet, in dem es aufgenommen wird.</p>
+
+<h2>Schritt für Schritt: vor, während und nach der Hochzeit</h2>
+
+<h3>Vor der Hochzeit</h3>
+<ol>
+<li><strong>Entscheiden Sie sich für eine einzige Methode.</strong> Zwei Lösungen parallel sind die Garantie, dass sich die Fotos wieder verstreuen.</li>
+<li><strong>Bereiten Sie den QR-Code vor.</strong> Drucken Sie ihn auf Menükarten, Platzkarten und ein Schild am Eingang. Der <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator für Hochzeiten</a> erstellt Ihnen ein druckfertiges Plakat, und wir erklären, <a href="/journal/ou-poser-le-qr-code">wo der QR-Code hingehört</a>, damit er wirklich gescannt wird.</li>
+<li><strong>Sagen Sie es Ihren Gästen.</strong> Ein Satz auf der Einladung oder der Hochzeitswebsite reicht: „Scannt am großen Tag den QR-Code auf eurem Tisch.“</li>
+<li><strong>Testen Sie es selbst.</strong> Scannen Sie Ihren eigenen QR-Code, machen Sie ein Foto und prüfen Sie, ob es ankommt. Wenn der Saal schlechten Empfang hat, finden Sie heraus, wo das Netz funktioniert.</li>
+</ol>
+
+<h3>Während der Hochzeit</h3>
+<ol>
+<li><strong>Lassen Sie es ankündigen.</strong> Zwei Sätze des Trauzeugen am Mikrofon, zu Beginn des Essens, bewirken mehr als zehn Schilder.</li>
+<li><strong>Geben Sie die Aufgabe ab.</strong> Eine Trauzeugin oder ein Freund kann den Tischen, die noch nicht mitmachen, den QR-Code zeigen, vor allem den älteren Gästen.</li>
+<li><strong>Kümmern Sie sich nicht selbst darum.</strong> Es ist Ihr Tag. Wenn das Sammeln während der Feier von Ihnen abhängt, ist die Methode die falsche.</li>
+</ol>
+
+<h3>Nach der Hochzeit</h3>
+<ol>
+<li><strong>Holen Sie den Rest schnell ein.</strong> Den Fotografen, den Cousin mit der großen Kamera: Bitten Sie innerhalb einer Woche um die Dateien, solange alle noch motiviert sind.</li>
+<li><strong>Laden Sie alles herunter und sichern Sie es.</strong> Bewahren Sie das komplette Album an zwei Orten auf (Computer und Cloud oder eine Festplatte).</li>
+<li><strong>Sortieren Sie in Ihrem Tempo.</strong> Eine Stunde reicht für das Wesentliche: Die Methode steht in <a href="/journal/300-photos-lendemain">Was tun mit 300 Fotos am Tag danach</a>.</li>
+</ol>
+
+<h2>So teilen Sie die Fotos danach mit allen Gästen</h2>
+<p>Sind die Fotos beisammen, müssen sie noch zu denen zurück, die sie gemacht haben. Die goldene Regel: <strong>ein einziger Link für alle</strong>. Keine Nachricht pro Person, keine eigene Auswahl für jeden Tisch.</p>
+<ul>
+<li><strong>Schicken Sie den Link dorthin, wo ihn alle sehen</strong>: in die WhatsApp-Gruppe der Gäste, per Sammel-E-Mail oder auf die Hochzeitswebsite.</li>
+<li><strong>Wählen Sie ein privates Album.</strong> Per Link zugänglich, nicht öffentlich im Internet und nicht bei Google indexiert. Die Fotos Ihrer Gäste gehen nur sie etwas an (die Regeln erklären wir in <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild bei Hochzeitsfotos</a>).</li>
+<li><strong>Lassen Sie jeden herunterladen, was er möchte.</strong> Die Gäste wollen nicht alles: Sie suchen die Fotos, auf denen sie zu sehen sind, und die von ihrem Tisch.</li>
+<li><strong>Denken Sie an die, die nicht da waren.</strong> Die Großtante, die nicht kommen konnte, freut sich über den Link, oder noch mehr über ein paar Abzüge.</li>
+<li><strong>Sagen Sie, wie lange es verfügbar ist.</strong> Ein Online-Album ist nicht für die Ewigkeit: Bitten Sie alle, ihre Lieblingsfotos bald herunterzuladen.</li>
+</ul>
+<p>Mit einer gemeinsamen Einwegkamera ist dieser Schritt schon erledigt: Zur Enthüllung entdecken alle Teilnehmer das Album gleichzeitig auf ihrem Handy und können die Fotos herunterladen oder Abzüge bestellen. Bei Time to Flash bleibt das Album privat, wird in Europa gespeichert und sechs Monate lang aufbewahrt (Sie werden vor dem Löschen benachrichtigt, damit Sie alles herunterladen können). Mehr dazu in <a href="/journal/album-photo-partage-mariage">unserem Ratgeber zum gemeinsamen Hochzeitsalbum</a>.</p>
+
+<h2>Unsere Empfehlung</h2>
+<p>Wenn Sie sich nur eines merken: <strong>Sammeln Sie während der Feier, nicht danach</strong>. Eine WhatsApp-Gruppe und ein Google-Fotos-Album sind ideal, um ein paar Fotos auszutauschen oder zu archivieren, aber sie setzen auf den guten Willen aller, wenn die Feier vorbei ist. Eine gemeinsame Einwegkamera macht das Fotografieren zum Spiel des Abends: Die Gäste machen mit, weil es Spaß macht, und Sie bekommen alles, ohne nachzuhaken. Sie können <a href="/create">Ihr Event</a> in zwei Minuten erstellen, zum Ausprobieren kostenlos bis 5 Teilnehmer.</p>
 `,
+    faq: [
+      {
+        q: 'Wie bekomme ich die Hochzeitsfotos, die meine Gäste gemacht haben?',
+        a: 'Am zuverlässigsten ist es, die Fotos während der Feier zu sammeln statt danach. Mit einem QR-Code auf den Tischen öffnet jeder Gast eine gemeinsame Kamera im Browser, und jede Aufnahme landet direkt im gemeinsamen Album. Methoden, bei denen die Gäste ihre Fotos hinterher schicken sollen (WhatsApp, geteiltes Album, Transferlink), bringen meist nur die Fotos der engagiertesten Gäste.',
+      },
+      {
+        q: 'Welche App eignet sich am besten, um Hochzeitsfotos zu teilen?',
+        a: 'Das hängt davon ab, was Sie suchen. Eine Galerie-App sammelt die Fotos, an deren Hochladen die Gäste denken. Eine Einwegkamera-Aktion wie Time to Flash sorgt dafür, dass während der Feier fotografiert wird, mit ein paar Aufnahmen pro Gast, und enthüllt alle Fotos am nächsten Tag in einem privaten Album. Den vollständigen Vergleich finden Sie in unserem Artikel über Hochzeitsfoto-Apps.',
+      },
+      {
+        q: 'Wie teile ich Hochzeitsfotos, ohne dass die Gäste eine App installieren müssen?',
+        a: 'Wählen Sie eine Lösung, die sich im Browser öffnet. Bei Time to Flash scannen die Gäste einen QR-Code, und die Kamera öffnet sich sofort, ohne App und ohne Konto. Um die Fotos zurückzugeben, genügt ein einziger Link zum Album: Jeder sieht es sich an und lädt die Fotos herunter, die er möchte.',
+      },
+      {
+        q: 'Wie teile ich Hochzeitsfotos ohne Qualitätsverlust?',
+        a: 'Verschicken Sie die Fotos nicht über Messenger: WhatsApp und SMS komprimieren Bilder beim Senden. Nutzen Sie ein geteiltes Album, einen Transferlink oder eine gemeinsame Kamera, die die Fotos direkt im Album speichert, und laden Sie danach alles herunter, um es an zwei Orten aufzubewahren.',
+      },
+      {
+        q: 'Wie lange können die Gäste auf das Hochzeitsalbum zugreifen?',
+        a: 'Das hängt vom Dienst ab. Bei Time to Flash wird das private Album sechs Monate nach dem Event aufbewahrt, und der Organisator wird vor dem Löschen benachrichtigt. Am einfachsten ist es, alle zu bitten, ihre Lieblingsfotos in den Wochen nach der Hochzeit herunterzuladen.',
+      },
+    ],
   },
 
   'photos-mariage-effet-argentique': {
@@ -260,7 +401,8 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>Der Look ohne analoge Kamera</h2>
-<p>Echte Filmkameras brauchen Sie nicht (teuer und unberechenbar; siehe <a href="/journal/appareil-photo-jetable-mariage">Pappe oder App?</a>). Ein analoger Filter, der automatisch auf alle Fotos Ihrer Gäste angewendet wird, gibt dem ganzen Album sofort einen einheitlichen Look und Charakter. Mit <a href="/">Time to Flash</a> bekommt jede Aufnahme Ihrer Gäste diesen Look, ohne dass sie etwas einstellen müssen.</p>
+<p>Echte Filmkameras brauchen Sie nicht (teuer und unberechenbar; siehe <a href="/journal/appareil-photo-jetable-mariage">Pappe oder App?</a>). Ein analoger Filter, der automatisch auf alle Fotos Ihrer Gäste angewendet wird, gibt dem ganzen Album sofort einen einheitlichen Look und Charakter. Mit <a href="/">Time to Flash</a> bekommt jede Aufnahme Ihrer Gäste diesen Look, ohne dass sie etwas einstellen müssen: Das ist das ganze Prinzip unserer <a href="/appareil-jetable-mariage">Einwegkamera zur Hochzeit</a>.</p>
+<p>Und wenn es dunkel wird, lassen Sie den Blitz an: Er gibt Partyfotos diesen direkten, typischen Look (unsere Tipps in <a href="/journal/photos-soiree-dansante-telephone">Gute Partyfotos mit dem Handy</a>).</p>
 `,
   },
 
@@ -282,7 +424,7 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>So stellen Sie sie richtig ein</h2>
-<p>Legen Sie die Enthüllung auf den nächsten Morgen statt mitten in die Nacht: Alle sind ausgeschlafen, und es entsteht ein echtes Ritual. Genau das ermöglicht <a href="/">Time to Flash</a>: Die Fotos bleiben verborgen wie ein Film, der entwickelt wird, und öffnen sich dann zu dem Zeitpunkt, den Sie wählen.</p>
+<p>Legen Sie die Enthüllung auf den nächsten Morgen statt mitten in die Nacht: Alle sind ausgeschlafen, und es entsteht ein echtes Ritual. Genau das ermöglicht <a href="/">Time to Flash</a>: Die Fotos bleiben verborgen wie ein Film, der entwickelt wird, und öffnen sich dann zu dem Zeitpunkt, den Sie wählen. Und es ist einer der kleinsten Posten des Tages (den Überblick gibt es in <a href="/journal/budget-photo-mariage">Fotobudget für die Hochzeit</a>).</p>
 `,
   },
 
@@ -357,7 +499,7 @@ export const POSTS_DE = {
   <cite>Léa &amp; Marius · Mai 2026</cite>
 </blockquote>
 
-<p>Ein letzter Punkt: Wenn Ihre Location schlechten Empfang hat, platzieren Sie den Code dort, wo das Netz funktioniert (siehe <a href="/journal/pas-de-reseau-salle-mariage">Kein Netz im Saal</a>). Das Geheimnis ist nicht EIN perfekter Ort, sondern die <strong>Wiederholung</strong>: Je präsenter der Code, desto mehr wird er zum Reflex. Mit Time to Flash erstellen Sie diesen QR-Code in 2 Minuten und drucken ihn so oft aus, wie Sie möchten.</p>
+<p>Ein letzter Punkt: Wenn Ihre Location schlechten Empfang hat, platzieren Sie den Code dort, wo das Netz funktioniert (siehe <a href="/journal/pas-de-reseau-salle-mariage">Kein Netz im Saal</a>). Das Geheimnis ist nicht EIN perfekter Ort, sondern die <strong>Wiederholung</strong>: Je präsenter der Code, desto mehr wird er zum Reflex. Mit Time to Flash erstellen Sie diesen QR-Code in 2 Minuten und drucken ihn so oft aus, wie Sie möchten. Für das Plakat selbst bereitet Ihnen der <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator für Hochzeiten</a> eine anpassbare, druckfertige Vorlage vor.</p>
 `,
   },
 
@@ -404,7 +546,7 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>Die richtige Zahl</h2>
-<p>Erfahrungsgemäß sind 5 bis 15 Aufnahmen pro Gast ideal: genug, um den Tag abzudecken, wenig genug, damit jedes Auslösen zählt. Genau das ermöglicht <a href="/">die Hochzeitsfoto-App Time to Flash</a>: Sie legen die Zahl der Fotos pro Person fest, und die Beschränkung erledigt den Rest.</p>
+<p>Erfahrungsgemäß sind 5 bis 15 Aufnahmen pro Gast ideal: genug, um den Tag abzudecken, wenig genug, damit jedes Auslösen zählt. Heben Sie immer zwei oder drei für das Ende des Abends auf (unsere Tipps für <a href="/journal/photos-soiree-dansante-telephone">gute Partyfotos mit dem Handy</a>). Genau das ermöglicht <a href="/">die Hochzeitsfoto-App Time to Flash</a>: Sie legen die Zahl der Fotos pro Person fest, und die Beschränkung erledigt den Rest.</p>
 `,
   },
 
@@ -417,6 +559,8 @@ export const POSTS_DE = {
 
 <h2>Auf der Einladung oder der Hochzeitswebsite</h2>
 <p><em>„Dieses Jahr gibt es keine Einwegkamera aus Pappe: Wir schenken euch unsere, in der digitalen Version. Scannt am großen Tag den QR-Code auf eurem Tisch, macht eure 10 Fotos vom Abend und entdeckt am nächsten Tag das ganze Album. Keine App zu installieren.“</em></p>
+
+<p>Warum 10 Fotos und nicht unbegrenzt? Das erklären wir in <a href="/journal/dix-cliches">Warum 10 Aufnahmen besser sind als 300</a>.</p>
 
 <h2>In der Rede der Trauzeugen (zwei Zeilen)</h2>
 <p><em>„Noch eine letzte Sache: Auf jedem Tisch liegt ein QR-Code. Scannt ihn, jeder von euch hat 10 Fotos. Wir wollen den Abend mit euren Augen sehen, vor allem die Momente, die wir verpassen werden!“</em></p>
@@ -457,13 +601,13 @@ export const POSTS_DE = {
 <p>Hochzeiten, bei denen jeder Gast eine <em>begrenzte</em> Zahl an Aufnahmen hatte, brachten anteilig viel mehr „behaltene“ Fotos hervor. Die Beschränkung zwingt zur Auswahl, und aus Entscheidungen werden Erinnerungen.</p>
 
 <h2>Was das für Sie bedeutet</h2>
-<p>Drei einfache Entscheidungen ergeben sich daraus: <strong>Begrenzen Sie die Zahl der Fotos</strong> pro Gast, <strong>verzichten Sie auf jede App zum Installieren</strong> und <strong>verschieben Sie die Enthüllung</strong> auf den nächsten Tag. Genau das ist die Philosophie <a href="/">unserer Hochzeitsfoto-App</a>, denn diese drei Einstellungen allein machen den Unterschied zwischen 300 vergessenen Fotos und 40 Erinnerungen, die man einrahmt.</p>
+<p>Drei einfache Entscheidungen ergeben sich daraus: <strong>Begrenzen Sie die Zahl der Fotos</strong> pro Gast, <strong>verzichten Sie auf jede App zum Installieren</strong> und <strong>verschieben Sie die Enthüllung</strong> auf den nächsten Tag. Genau das ist die Philosophie <a href="/">unserer Hochzeitsfoto-App</a>, denn diese drei Einstellungen allein machen den Unterschied zwischen 300 vergessenen Fotos und 40 Erinnerungen, die man einrahmt. Und das nicht nur bei Hochzeiten: Geburtstage, Wochenenden mit Freunden, Abschiedsfeiern zum Ruhestand (siehe <a href="/occasions">alle Anlässe</a>).</p>
 `,
   },
 
   'application-photo-mariage': {
     title: 'Hochzeitsfoto-App: der Vergleich 2026',
-    excerpt: 'Die meisten Hochzeitsfoto-Apps sind Galerien, in die man Fotos hochlädt. Wir vergleichen sie (Preis, Installation, Grenzen) und stellen Ihnen die andere Möglichkeit vor: die Einwegkamera als Aktion.',
+    excerpt: 'Hochzeitsfoto-Apps im Vergleich (Preis, Installation, Grenzen), dazu die andere Möglichkeit: die Einwegkamera als Aktion.',
     caption: 'Gäste fotografieren eine Hochzeit mit ihren Handys',
     body: `
 <p>Sie möchten die Fotos Ihrer Gäste bekommen, und wenn Sie nach „Hochzeitsfoto-App“ suchen, stoßen Sie auf ein Dutzend Dienste, die alle dasselbe versprechen. Wir haben sie uns angesehen: was sie kosten, was sie Ihren Gästen abverlangen und was sie auf ihrer Startseite nicht sagen. Und wir stellen Ihnen die Möglichkeit vor, die die meisten Vergleiche vergessen: die Einwegkamera als Aktion, die wir mit Time to Flash gebaut haben.</p>
@@ -672,7 +816,7 @@ export const POSTS_DE = {
 <h2>Das geteilte Album (Google Fotos, iCloud, Drive)</h2>
 <p><strong>Was funktioniert:</strong> kostenlos, die Qualität bleibt erhalten, alles liegt an einem Ort und bleibt jahrelang zugänglich.</p>
 <p><strong>Was hakt:</strong> Man braucht ein Konto. Ein iCloud-Album schließt Ihre Android-Gäste aus, ein Google-Album einen Teil der iPhone-Nutzer. Sie müssen jedem einen Link per E-Mail oder SMS schicken, und vor allem: <strong>Man muss daran denken</strong>. Ein geteiltes Album ist passiv: Niemand lädt an einem Festabend von sich aus seine Fotos hoch. In der Praxis bekommen Sie die Fotos von sechs von achtzig Gästen.</p>
-<p><strong>Fazit:</strong> hervorragend zum <em>Archivieren</em>, sobald Sie die Fotos haben. Schlecht zum <em>Sammeln</em>.</p>
+<p><strong>Fazit:</strong> hervorragend zum <em>Archivieren</em>, sobald Sie die Fotos haben. Schlecht zum <em>Sammeln</em>. Die anderen Wege zu einem gemeinsamen Album stehen in <a href="/journal/album-photo-partage-mariage">Das gemeinsame Hochzeitsalbum</a>.</p>
 
 <h2>Die digitale Einwegkamera</h2>
 <p><strong>Was funktioniert:</strong> ein QR-Code auf den Tischen, eine Seite, die sich im Browser öffnet, ein Vorname zum Eintippen. Nichts zu installieren, kein Konto. Alle machen mit, auch die Großeltern. Alle Fotos landen in einem einzigen Album, und das Spiel (begrenzte Aufnahmen, Enthüllung am nächsten Tag) sorgt dafür, dass man während der Feier daran denkt.</p>
@@ -728,7 +872,7 @@ export const POSTS_DE = {
 
 <h2>Die Entscheidung mit einer einzigen Frage</h2>
 <p>Fragen Sie sich, was Sie wirklich wollen: <strong>etwas zum Mitnehmen noch am selben Abend</strong> oder <strong>möglichst viele Erinnerungen vom ganzen Tag</strong>?</p>
-<p>Wenn Ersteres, nehmen Sie eine Fotobox: Das kann sie am besten, und der Preis ist gerechtfertigt. Wenn Letzteres, ist eine Fotobox eine schlechte Investition: Sie ist teuer und sieht nur einen Quadratmeter Ihrer Feier.</p>
+<p>Wenn Ersteres, nehmen Sie eine Fotobox: Das kann sie am besten, und der Preis ist gerechtfertigt (beide Varianten vergleichen wir auf unserer Seite <a href="/photobooth-mariage">Fotobox zur Hochzeit</a>). Wenn Letzteres, ist eine Fotobox eine schlechte Investition: Sie ist teuer und sieht nur einen Quadratmeter Ihrer Feier.</p>
 
 <h2>Und wenn Sie beides wollen?</h2>
 <p>Das geht, und es ist sogar die klügste Kombination: eine gebrauchte Fotobox oder ein Minimalpaket für den Druck und eine digitale Einwegkamera für den Rest. So bleiben Sie deutlich unter dem Preis einer einzigen High-End-Fotobox.</p>
@@ -773,12 +917,12 @@ export const POSTS_DE = {
 <p><strong>1. Kündigen Sie vorher an</strong>, dass es ein gemeinsames Fotoalbum geben wird und wofür es dient.<br>
 <strong>2. Halten Sie das Album privat</strong>: per Link zugänglich, nicht bei Google indexiert.<br>
 <strong>3. Fragen Sie, bevor Sie veröffentlichen</strong>, sobald ein Foto den Kreis der Gäste verlässt.</p>
-<p>Bei <a href="/">Time to Flash</a> ist das Album nur mit Ihrem Link zugänglich, die Fotos werden in Europa gespeichert, jeder Gast kann seine eigenen Aufnahmen vor der Enthüllung löschen, und nichts wird zu anderen Zwecken genutzt. Ihre Fotos bleiben Ihre.</p>
+<p>Bei <a href="/">Time to Flash</a> ist das Album nur mit Ihrem Link zugänglich, die Fotos werden in Europa gespeichert, jeder Gast kann seine eigenen Aufnahmen vor der Enthüllung löschen, und nichts wird zu anderen Zwecken genutzt. Ihre Fotos bleiben Ihre (alles Weitere auf unserer Seite <a href="/photos-mariage-invites">Hochzeitsfotos der Gäste</a>).</p>
 `,
   },
 
   'shot-list-mariage': {
-    title: 'Die Shot-Liste: 50 Hochzeitsfotos, die Sie nicht verpassen sollten',
+    title: 'Shot-Liste Hochzeit: 50 Fotos, die nicht fehlen dürfen',
     excerpt: 'Die vollständige Liste, Moment für Moment: die Fotos, um die sich Ihr Fotograf kümmert, und die, die nur Ihre Gäste machen können.',
     caption: 'Fotograf und Gäste während einer Trauung',
     body: `
@@ -847,6 +991,21 @@ export const POSTS_DE = {
 49. Das Ende des Abends, Schuhe in der Hand.<br>
 50. Das allerletzte Foto, wenn nur noch zehn Leute da sind.</p>
 
+<h2>In welcher Reihenfolge macht man die Hochzeitsfotos?</h2>
+<p>Die Liste oben folgt bereits dem Ablauf des Tages. Hier ist ein typischer Ablauf, den Sie mit Ihrem Fotografen an Ihr eigenes Programm anpassen (ausgehend von einer Trauung am frühen Nachmittag):</p>
+<ol>
+<li><strong>Die Vorbereitungen</strong>, am späten Vormittag: zuerst die Details (Kleid, Ringe, Einladung), dann das Ankleiden, dann die ersten Blicke der Liebsten.</li>
+<li><strong>Das First Look</strong>, wenn Sie eines planen: Sie sehen sich vor der Trauung zum ersten Mal, im kleinen Kreis. So lässt sich ein Teil des Paarshootings vorziehen.</li>
+<li><strong>Die Trauung</strong>: der Einzug, das Eheversprechen, die Ringe, der Kuss, der Auszug.</li>
+<li><strong>Die Gruppenfotos</strong>, direkt nach dem Auszug, solange alle da sind: etwa zwanzig Minuten (die Methode steht in <a href="/journal/photos-de-groupe-mariage">Gruppenfotos in 20 Minuten</a>).</li>
+<li><strong>Der Sektempfang</strong>: Wiedersehen, Lachen, die Deko, bevor sich alle setzen.</li>
+<li><strong>Das Paarshooting</strong>, zwanzig bis dreißig Minuten während des Sektempfangs, oder später im goldenen Licht am Ende des Tages.</li>
+<li><strong>Das Essen</strong>: Ihr Einzug, die Reden und Ihre Reaktionen, der Tisch, der am lautesten lacht.</li>
+<li><strong>Die Torte</strong>, dann <strong>der Eröffnungstanz</strong>.</li>
+<li><strong>Die Party</strong>: Eltern und Großeltern auf der Tanzfläche, der Brautstraußwurf und das Ende der Nacht.</li>
+</ol>
+<p>Zwei Tipps, damit dieser Ablauf hält. Erstens: Geben Sie ihn Ihrem Fotografen mit den echten Uhrzeiten Ihres Tages, dann weiß er, wo er wann sein muss. Zweitens: Planen Sie direkt nach der Trauung Puffer ein. Genau dort gerät der Zeitplan immer ins Rutschen, zwischen Glückwünschen und Umarmungen.</p>
+
 <h2>Die Fotos, die Ihr Fotograf nicht machen wird</h2>
 <p>Schauen Sie sich die Liste an: Die Nummern 32, 33, 34, 41, 48 und 50 fehlen fast immer. Nicht aus Nachlässigkeit: Der Fotograf ist einfach woanders oder schon gegangen. Genau diese Fotos machen Ihre Gäste ganz von selbst.</p>
 
@@ -899,42 +1058,88 @@ export const POSTS_DE = {
   },
 
   'photos-de-groupe-mariage': {
-    title: 'Gruppenfotos in 20 Minuten',
-    excerpt: 'Der gefürchtetste Moment des Tages wird einfach, mit einer Liste, einer zuständigen Person und der richtigen Reihenfolge.',
+    title: 'Gruppenfotos bei der Hochzeit: Liste, Reihenfolge, Posen',
+    excerpt: 'Welche Gruppenfotos bei der Hochzeit, in welcher Reihenfolge, und wie Sie sie in 20 Minuten schaffen: die Liste, die Organisation und Ideen für Posen.',
     caption: 'Gruppenfoto auf einer Hochzeit',
     body: `
-<p>Gruppenfotos haben einen schlechten Ruf, und zu Recht: Sie ziehen sich hin, man sucht die Leute überall, der Sektempfang leert sich, und beim zwanzigsten lächelt niemand mehr wirklich. Dabei sind es die Fotos, die Ihre Familie am längsten anschauen wird. So erledigen Sie sie in zwanzig Minuten.</p>
+<p>Gruppenfotos haben einen schlechten Ruf, und zu Recht: Sie ziehen sich hin, man sucht die Leute überall, der Sektempfang leert sich, und beim zwanzigsten lächelt niemand mehr wirklich. Dabei sind es die Fotos, die Ihre Familie am längsten anschauen wird. Hier ist die Liste der Gruppenfotos für Ihre Hochzeit, in der richtigen Reihenfolge, dazu Ideen für Posen und die Methode, alles in zwanzig Minuten zu erledigen.</p>
 
-<h2>1. Schreiben Sie die Liste, im Voraus</h2>
-<p>Das sind 90 % der Arbeit. Eine schriftliche Liste mit Namen: nicht „die Familie“, sondern „Papa, Mama, meine Schwester, ihr Mann, die beiden Kinder“. Planen Sie höchstens 8 bis 12 Gruppen. Mehr, und Sie brauchen eine Stunde.</p>
-<p>Eine Grundlage, die funktioniert: das Brautpaar allein · die Familie der einen Seite · die Familie der anderen Seite · beide Familien zusammen · die Großeltern · die Trauzeugen · die Freunde aus Kindertagen · die Kollegen · die Kinder · die große Gruppe.</p>
+<h2>Die Liste der Gruppenfotos, in der richtigen Reihenfolge</h2>
+<p>Das sind die klassischen Gruppenfotos einer Hochzeit, in der Reihenfolge, die wir empfehlen. Sie beginnen im engsten Kreis und werden Schritt für Schritt größer: Jede neue Gruppe ergänzt die vorherige, und niemand wartet umsonst.</p>
+<ol>
+<li><strong>Das Brautpaar mit den Eltern</strong>, erst die eine Seite, dann die andere.</li>
+<li><strong>Die engste Familie</strong>: Eltern, Geschwister mit Partnern und Kindern, Großeltern. Erst eine Seite, dann die andere, dann beide Familien zusammen.</li>
+<li><strong>Die erweiterte Familie</strong>: Onkel, Tanten, Cousins und Cousinen. Oft die größte Familiengruppe, planen Sie also Platz ein.</li>
+<li><strong>Die Trauzeugen</strong>, und das Gefolge, falls es eines gibt (Brautjungfern, Blumenkinder).</li>
+<li><strong>Die Freunde</strong>, Clique für Clique: Kindheitsfreunde, Studienfreunde, der Sportverein, die alte WG. Jede Clique hat ihre Geschichte und verdient ihr eigenes Foto.</li>
+<li><strong>Die Kollegen</strong>, erst von der einen, dann von der anderen Seite.</li>
+<li><strong>Alle Gäste</strong>: das große Foto, das die Serie abschließt (mehr dazu weiter unten).</li>
+</ol>
+<p>Warum die Familie zuerst? Weil sich die Großeltern und älteren Gäste danach setzen können und die Kinder noch nicht müde sind. Ihre Freunde warten problemlos mit einem Glas in der Hand. Diese Liste vertieft den Abschnitt „Gruppen“ in <a href="/journal/shot-list-mariage">der Shot-Liste mit 50 Hochzeitsfotos</a>.</p>
 
-<h2>2. Bestimmen Sie jemanden, der die Leute zusammenholt</h2>
-<p>Der klassische Fehler ist, den Fotografen die Leute rufen zu lassen: Er kennt niemanden. Geben Sie diese Aufgabe einem Trauzeugen oder einem Bruder mit kräftiger Stimme, der alle kennt. Er ruft die nächste Gruppe, <em>während</em> die aktuelle Gruppe posiert. Sie verlieren keine Sekunde.</p>
+<h2>1. Schreiben Sie die Liste, mit Namen</h2>
+<p>Das sind 90 % der Arbeit. Eine schriftliche Liste mit Namen: nicht „die Familie“, sondern „Papa, Mama, meine Schwester, ihr Mann, die beiden Kinder“. Planen Sie höchstens 8 bis 12 Gruppen. Mehr, und Sie brauchen eine Stunde. Drucken Sie sie zweimal aus: einmal für den Fotografen, einmal für die Person, die die Leute zusammenholt.</p>
 
-<h2>3. Wählen Sie die richtige Reihenfolge</h2>
-<p>Beginnen Sie mit den Großeltern und älteren Gästen, dann die Kinder, dann die großen Gruppen, und zum Schluss Ihre Freunde. Die Gebrechlichsten können sich gleich wieder setzen, die Kinder sind noch nicht müde, und Ihre Freunde warten problemlos.</p>
+<h2>2. Bestimmen Sie einen Regisseur</h2>
+<p>Der klassische Fehler ist, den Fotografen die Leute rufen zu lassen: Er kennt niemanden. Geben Sie diese Regisseur-Rolle einem Trauzeugen oder einem Bruder mit kräftiger Stimme, der alle kennt. Mit der Liste in der Hand ruft er die nächste Gruppe, <em>während</em> die aktuelle Gruppe posiert. Sie verlieren keine Sekunde und müssen nur noch lächeln.</p>
 
-<h2>4. Suchen Sie den Ort vorher aus</h2>
+<h2>3. Suchen Sie den Ort vorher aus</h2>
 <p>Ein schattiger Platz mit schlichtem Hintergrund (eine Mauer, eine Hecke, eine Fassade), weniger als zwei Minuten Fußweg vom Sektempfang entfernt. Pralle Sonne wirft Schatten unter die Augen und lässt alle blinzeln. Ein weißer Himmel im Hintergrund überstrahlt das Foto. Suchen Sie diesen Ort bei der Besichtigung der Location aus, nicht am großen Tag.</p>
 
-<h2>5. Das richtige Zeitfenster</h2>
-<p>Direkt nach der Trauung, wenn alle noch an einem Ort versammelt sind und niemand angefangen hat, herumzulaufen. Wenn Sie bis zur Mitte des Sektempfangs warten, suchen Sie zwanzig Minuten lang drei Personen.</p>
+<h2>4. Das richtige Zeitfenster: der Beginn des Sektempfangs</h2>
+<p>Direkt nach der Trauung, wenn alle noch an einem Ort versammelt sind und niemand angefangen hat, herumzulaufen. Lassen Sie es beim Auszug ankündigen: „Zwanzig Minuten Gruppenfotos, dann sind wir bei euch.“ In dieser Zeit beginnt für alle anderen der Sektempfang: Sie haben ein Glas und etwas zu knabbern, niemand langweilt sich. Wenn Sie bis zur Mitte des Sektempfangs warten, suchen Sie zwanzig Minuten lang drei Personen.</p>
+<p>Eine Aufteilung, die funktioniert: etwa zehn Minuten für die Familien, fünf für Trauzeugen, Freunde und Kollegen und ein paar Minuten für das große Foto mit allen Gästen.</p>
 
-<h2>6. Die 90-Sekunden-Regel</h2>
+<h2>5. Die 90-Sekunden-Regel</h2>
 <p>Eine Gruppe = 90 Sekunden. Der Fotograf macht drei oder vier Bilder, und weiter geht’s zur nächsten. Das reicht völlig: Danach erstarrt das Lächeln, und die Gruppe löst sich auf. Zwölf Gruppen à 90 Sekunden ergeben achtzehn Minuten.</p>
 
 <blockquote class="dj-quote">„Wir haben am Mikrofon angekündigt: Gruppenfotos, zwanzig Minuten, wir beginnen mit den Großeltern. Niemand hat sich beschwert.“
   <cite>Léa &amp; Marius · 2026</cite>
 </blockquote>
 
-<h2>7. Das kleine Extra, das sich lohnt</h2>
-<p>Bitten Sie direkt nach dem „offiziellen“ Foto jeder Gruppe um eine zweite, völlig freie Aufnahme: Alle bewegen sich, rufen, springen, rücken zusammen. Fast immer ist es diese, die man behält.</p>
+<h2>Das große Foto mit allen Gästen</h2>
+<p>Es ist das spektakulärste Foto und das schwierigste: Hundert Menschen passen nicht in einen Bildausschnitt auf Augenhöhe. Das Geheimnis ist die <strong>Höhe</strong>.</p>
+<ul>
+<li><strong>Ein Balkon oder ein Fenster im Obergeschoss</strong>: Der Fotograf steht oben, die Gäste rücken unten zusammen und schauen hoch. Alle sind zu sehen, auch in der letzten Reihe.</li>
+<li><strong>Eine Treppe</strong>: Die Gäste stellen sich auf die Stufen, und jede Reihe steht ganz von selbst höher als die vordere.</li>
+<li><strong>Eine stabile Trittleiter</strong>, wenn die Location weder Balkon noch Treppe hat. Zwei oder drei Stufen verändern das Foto schon deutlich.</li>
+</ul>
+<p>Drei Anweisungen, die der Regisseur weitergibt: viel enger zusammenrücken als gedacht, die Kleinsten und die Kinder nach vorn, und alle schauen in die Kamera, nicht zum Brautpaar. Machen Sie eine brave Version und dann eine, bei der alle die Arme hochreißen und jubeln: Oft ist es diese, die man einrahmt. Und suchen Sie Balkon oder Treppe bei der Besichtigung aus, wie alles andere auch.</p>
+
+<h2>Originelle Ideen für Gruppenposen</h2>
+<p>Bitten Sie direkt nach dem „offiziellen“ Foto jeder Gruppe um eine zweite, freiere Aufnahme. Fast immer ist es diese, die man behält. Ein paar Ideen, die funktionieren:</p>
+<ul>
+<li><strong>Der Sprung</strong>: Alle springen auf Kommando. Es braucht drei oder vier Versuche, und die missglückten sind genauso lustig wie der gelungene.</li>
+<li><strong>Der Spaziergang</strong>: Die Gruppe geht plaudernd auf die Kamera zu, als würde sie gar nicht posieren.</li>
+<li><strong>Alle Blicke aufs Brautpaar</strong>: Die ganze Gruppe dreht sich zu Ihnen beiden, während Sie sich küssen.</li>
+<li><strong>Der Kreis von oben</strong>: Die Gäste im Kreis, Köpfe zusammen, der Fotograf darüber (vom Balkon oder von der Trittleiter).</li>
+<li><strong>Sonnenbrillen auf</strong>: Alle setzen sie im selben Moment auf, und schon sieht es aus wie ein Plattencover.</li>
+<li><strong>Das Klassenfoto</strong>: eine Reihe sitzend, eine stehend, Arme verschränkt, todernste Miene. In zwanzig Jahren lachen alle darüber.</li>
+</ul>
+<p>Eine Idee pro Gruppe, nicht mehr: Das Ziel bleibt, die zwanzig Minuten einzuhalten.</p>
 
 <h2>Und in der Zwischenzeit</h2>
-<p>Ihre Gäste, die auf ihren Einsatz warten, fotografieren derweil alles andere: die Lachanfälle hinter den Kulissen, die Kinder, die ausbüxen, die Organisation selbst. Das sind oft die lebendigsten Bilder des Tages (siehe <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>).</p>
-<p>Die vollständige Liste der Fotos, die Sie nicht verpassen sollten, steht in <a href="/journal/shot-list-mariage">der Shot-Liste mit 50 Fotos</a>. Und mit <a href="/">Time to Flash</a> landet alles, was Ihre Gäste in diesen zwanzig Minuten festhalten, im selben Album wie der Rest.</p>
+<p>Ihre Gäste, die auf ihren Einsatz warten, fotografieren derweil alles andere: die Lachanfälle hinter den Kulissen, die Kinder, die ausbüxen, die Organisation selbst. Das sind oft die lebendigsten Bilder des Tages (siehe <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>). Und später am Abend entstehen die schönsten Gruppenfotos oft ganz von selbst, unter Freunden auf der Tanzfläche: Unsere Tipps, damit sie nicht alle dunkel werden, stehen in <a href="/journal/photos-soiree-dansante-telephone">Gute Partyfotos mit dem Handy</a>.</p>
+<p>Mit <a href="/">Time to Flash</a> landet alles, was Ihre Gäste in diesen zwanzig Minuten und am Rest des Tages festhalten, im selben Album, das am nächsten Tag enthüllt wird.</p>
 `,
+    faq: [
+      {
+        q: 'Wie viele Gruppenfotos sollte man bei einer Hochzeit einplanen?',
+        a: 'Planen Sie 8 bis 12 Gruppen, nicht mehr. Bei 90 Sekunden pro Gruppe sind das etwa zwanzig Minuten. Danach verstreuen sich die Gäste, und das Lächeln erstarrt.',
+      },
+      {
+        q: 'Wann macht man die Gruppenfotos bei der Hochzeit?',
+        a: 'Direkt nach der Trauung, zu Beginn des Sektempfangs, wenn alle noch an einem Ort versammelt sind. Die übrigen Gäste genießen in der Zeit den Empfang, und niemand langweilt sich.',
+      },
+      {
+        q: 'In welcher Reihenfolge macht man die Gruppenfotos?',
+        a: 'Vom engsten zum weitesten Kreis: das Brautpaar mit den Eltern, die engste Familie, die erweiterte Familie, die Trauzeugen, die Freunde, die Kollegen und zum Schluss alle Gäste. So können sich die älteren Gäste schnell wieder setzen.',
+      },
+      {
+        q: 'Wie macht man ein Gruppenfoto mit allen Hochzeitsgästen?',
+        a: 'Gehen Sie in die Höhe: ein Balkon, ein Fenster im Obergeschoss, eine Treppe oder eine stabile Trittleiter. Die Gäste rücken eng zusammen, die Kleinsten vorn, und alle schauen in die Kamera. Machen Sie eine brave und dann eine ausgelassene Version.',
+      },
+    ],
   },
 
   'budget-photo-mariage': {
@@ -958,12 +1163,12 @@ export const POSTS_DE = {
 <p>Die Preise schwanken stark je nach Region und Saison. Holen Sie immer zwei oder drei Angebote ein.</p>
 
 <h2>Wo Sie nicht sparen sollten</h2>
-<p><strong>Beim Hauptfotografen.</strong> Das ist der einzige Posten, der sich wirklich nicht nachholen lässt. Über einen schlechten Caterer lacht man später; misslungene Fotos lassen sich nicht wiederholen.</p>
+<p><strong>Beim Hauptfotografen.</strong> Das ist der einzige Posten, der sich wirklich nicht nachholen lässt. Über einen schlechten Caterer lacht man später; misslungene Fotos lassen sich nicht wiederholen. Er ist es auch, der die Momente lenkt, die man nicht wiederholen kann, etwa <a href="/journal/photos-de-groupe-mariage">die Gruppenfotos der Hochzeit</a>.</p>
 <p><strong>Bei der Zahl der Stunden.</strong> Der häufigste Fehler ist ein Paket, das um 22 Uhr endet, vor der eigentlichen Party. Dabei kommt der Höhepunkt der Gefühle (und der Fotos) viel später (siehe <a href="/journal/120-mariages">Was wir aus 120 Hochzeiten gelernt haben</a>). Lieber ein etwas weniger bekannter Fotograf, der bis 1 Uhr bleibt, als ein hervorragender, der beim Dessert geht.</p>
 
 <h2>Wo Sie ohne Reue sparen können</h2>
 <p><strong>1. Beim Album des Fotografen.</strong> Nehmen Sie die Dateien und gestalten Sie das Album selbst: Oft sparen Sie 400 € bei einem sehr ähnlichen Ergebnis (siehe <a href="/journal/livre-photo-mariage-invites">Ein Fotobuch mit den Fotos der Gäste</a>).</p>
-<p><strong>2. Bei der Fotobox.</strong> Sie hat das schlechteste Verhältnis von Preis zu Erinnerungen auf der ganzen Liste. Dieselben lustigen Fotos bekommen Sie zwanzigmal günstiger, und zwar im ganzen Saal statt an einem einzigen Ort.</p>
+<p><strong>2. Bei der Fotobox.</strong> Sie hat das schlechteste Verhältnis von Preis zu Erinnerungen auf der ganzen Liste. Dieselben lustigen Fotos bekommen Sie zwanzigmal günstiger, und zwar im ganzen Saal statt an einem einzigen Ort (die Rechnung steht auf unserer Seite <a href="/photobooth-mariage">Fotobox-Alternative für die Hochzeit</a>).</p>
 <p><strong>3. Beim zweiten Fotografen.</strong> Nützlich bei einer sehr großen Hochzeit. Bei 80 Gästen decken Ihre Gäste selbst schon alles ab, was ein zweiter Fotograf suchen würde, vorausgesetzt, Sie geben ihnen einen Rahmen.</p>
 
 <blockquote class="dj-quote">„Wir haben die Fotobox gestrichen und den Fotografen eine Stunde länger behalten. Die beste Entscheidung des ganzen Budgets.“

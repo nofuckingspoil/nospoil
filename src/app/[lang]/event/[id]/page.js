@@ -1945,7 +1945,14 @@ export default function EventManage({ params }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
             {ev.contacts.map((c, i) => (
               <div key={i} className="db-contact">
-                <span className="db-contact-name">{c.name}</span>
+                <span className="db-contact-name">
+                  {c.name}
+                  <span className={`db-contact-photos${c.photos ? '' : ' zero'}`}>
+                    {c.photos} / {c.total} {c.total > 1
+                      ? t({ fr: 'photos', en: 'photos', de: 'Fotos' })
+                      : t({ fr: 'photo', en: 'photo', de: 'Foto' })}
+                  </span>
+                </span>
                 <span className="db-contact-val">
                   {/* Sans adresse, le participant ne recevra rien : c'est justement ce
                       qu'il faut voir pour penser à le prévenir autrement. */}

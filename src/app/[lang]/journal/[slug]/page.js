@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import SiteNav from '../../../../components/SiteNav'
+import SitePied from '../../../../components/SitePied'
 import { BRAND } from '../../../../lib/brand'
 import { POSTS, getPostEnLangue, postsEnLangue, gradientFor, avatarColor, formatDate } from '../../../../lib/journal'
 import { langueDeParams, alternates, lien, localeOG, SITE_URL } from '../../../../lib/langue-lien'
@@ -37,12 +38,66 @@ export async function generateMetadata({ params }) {
   }
 }
 
-// « À lire ensuite » : même catégorie d'abord, puis les plus récents, hors article courant.
+// « À lire ensuite » : même catégorie d'abord, puis les plus récents, hors
+// article courant. Dans la catégorie, on prend les articles qui SUIVENT
+// l'article courant (en boucle) : avant, tous les articles d'une catégorie
+// montraient les trois mêmes, et dix articles n'étaient suggérés nulle part.
 function relatedPosts(current, lang) {
-  const others = postsEnLangue(lang).filter((p) => p.slug !== current.slug)
-  const sameCat = others.filter((p) => p.cat === current.cat)
-  const rest = others.filter((p) => p.cat !== current.cat)
-  return [...sameCat, ...rest].slice(0, 3)
+  const tous = postsEnLangue(lang)
+  const memeCat = tous.filter((p) => p.cat === current.cat)
+  const i = memeCat.findIndex((p) => p.slug === current.slug)
+  const suivants = [...memeCat.slice(i + 1), ...memeCat.slice(0, Math.max(i, 0))]
+  const rest = tous.filter((p) => p.cat !== current.cat)
+  return [...suivants, ...rest].slice(0, 3)
+}
+
+// La page vitrine qui prolonge chaque article : la page mariage qui colle au
+// sujet, ou la page de l'occasion. Sans ce lien, les pages mariage n'étaient
+// reliées à aucune page du site.
+const PAGES_LIEES = [
+  {
+    href: '/appareil-jetable-mariage',
+    slugs: ['appareil-photo-jetable-mariage', 'application-appareil-photo-jetable-mariage', 'photos-mariage-effet-argentique', 'dix-cliches', 'revelation-photos-lendemain-mariage'],
+    titre: { fr: "L'appareil photo jetable de ton mariage", en: 'The disposable camera for your wedding', de: 'Die Einwegkamera für Ihre Hochzeit' },
+  },
+  {
+    href: '/photobooth-mariage',
+    slugs: ['prix-photobooth-mariage', 'alternative-photobooth-mariage', 'comparatif-animations-photo-mariage', 'budget-photo-mariage'],
+    titre: { fr: 'Une alternative au photobooth, pour 14,99 €', en: 'A photo booth alternative for €14.99', de: 'Eine Fotobox-Alternative für 14,99 €' },
+  },
+  {
+    href: '/cadeau-mariage-temoins',
+    slugs: ['brief-invites', '120-mariages', 'mariage-sans-telephone-unplugged', 'ou-poser-le-qr-code', 'pas-de-reseau-salle-mariage', 'evenement-cree-et-maintenant'],
+    titre: { fr: 'Témoin ? Offre-leur les photos de leurs invités', en: 'In the wedding party? Give them their guests’ photos', de: 'Trauzeuge? Schenken Sie dem Paar die Fotos seiner Gäste' },
+  },
+  {
+    href: '/anniversaire-30-ans',
+    slugs: ['idees-anniversaire-30-ans'],
+    titre: { fr: 'Un appareil jetable partagé pour tes 30 ans', en: 'A shared disposable camera for your 30th', de: 'Eine geteilte Einwegkamera für Ihren 30.' },
+  },
+  {
+    href: '/depart-retraite',
+    slugs: ['idees-pot-de-depart-retraite'],
+    titre: { fr: "L'album photo du pot de départ", en: 'The photo album of the retirement party', de: 'Das Fotoalbum der Abschiedsfeier' },
+  },
+  {
+    href: '/evjf-evg',
+    slugs: ['appareil-photo-jetable-evjf'],
+    titre: { fr: "L'appareil jetable de l'EVJF, sans le carton", en: 'The hen party disposable camera, minus the cardboard', de: 'Die JGA-Einwegkamera, ohne Pappe' },
+  },
+  {
+    href: '/week-end-entre-amis',
+    slugs: ['photos-week-end-entre-amis'],
+    titre: { fr: 'Les photos du week-end, révélées le lundi', en: 'The weekend photos, revealed on Monday', de: 'Die Wochenendfotos, enthüllt am Montag' },
+  },
+]
+// Par défaut (les autres articles de mariage) : les photos des invités.
+const PAGE_LIEE_DEFAUT = {
+  href: '/photos-mariage-invites',
+  titre: { fr: 'Les photos de ton mariage, vues par tes invités', en: 'Your wedding, seen through your guests’ eyes', de: 'Ihre Hochzeit, mit den Augen Ihrer Gäste' },
+}
+function pageLiee(slug) {
+  return PAGES_LIEES.find((x) => x.slugs.includes(slug)) || PAGE_LIEE_DEFAUT
 }
 
 export default async function Article({ params }) {
@@ -80,6 +135,7 @@ export default async function Article({ params }) {
   } : null
 
   const related = relatedPosts(p, lang)
+  const liee = pageLiee(p.slug)
 
   return (
     <main className="dj" id="journal" aria-label={p.title}>
@@ -132,14 +188,14 @@ export default async function Article({ params }) {
 
           <div className="dj-cta">
             <div>
-              <h3>{t({ fr: 'Essaie sur ton mariage', en: 'Try it at your wedding', de: 'Probieren Sie es auf Ihrer Hochzeit aus' }, lang)}</h3>
+              <h3>{t(liee.titre, lang)}</h3>
               <span>{t({
                 fr: 'Un appareil jetable partagé, prêt en 2 minutes. Paiement unique.',
                 en: 'A shared disposable camera, ready in 2 minutes. One-off payment.',
                 de: 'Eine gemeinsame Einwegkamera, in 2 Minuten bereit. Einmalige Zahlung.',
               }, lang)}</span>
             </div>
-            <Link className="dj-btn dj-btn--dark" href={lien('/create', lang)}>{t({ fr: 'Créer le mien', en: 'Create mine', de: 'Meine erstellen' }, lang)}</Link>
+            <Link className="dj-btn dj-btn--dark" href={lien(liee.href, lang)}>{t({ fr: 'Découvrir', en: 'Find out more', de: 'Mehr erfahren' }, lang)}</Link>
           </div>
 
           {/* Pas encore prêt à créer son événement ? Le guide récupère ceux
@@ -176,6 +232,7 @@ export default async function Article({ params }) {
           </div>
         </div>
       </div>
+      <SitePied lang={lang} />
     </main>
   )
 }

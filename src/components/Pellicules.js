@@ -46,7 +46,9 @@ const PELLICULES_APERCU = [
   },
 ]
 
-export default function Pellicules() {
+// `dossier` : où trouver les cinq rendus (une page d'occasion montre une
+// photo de sa propre fête).
+export default function Pellicules({ dossier = '/pellicules' }) {
   const { t } = useLangue()
   return (
     <section className="section">
@@ -67,7 +69,7 @@ export default function Pellicules() {
       <div className="lp-films">
         {PELLICULES_APERCU.map((p) => (
           <figure key={p.id} className="lp-film">
-            <img src={`/pellicules/${p.id}.webp`} width="540" height="720" loading="lazy"
+            <img src={`${dossier}/${p.id}.webp`} width="540" height="720" loading="lazy"
               alt={t({
                 fr: `La même photo rendue avec la pellicule ${p.nom.fr}`,
                 en: `The same photo with the ${p.nom.en} film style`,
