@@ -5,12 +5,13 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Logo from '../../../../components/Logo'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise } from '../../../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise, LIVRE_OR_CENTS } from '../../../../lib/pricing'
 import { MODE_PROPOSE } from '../../../../lib/photo-mode'
 import { track } from '../../../../lib/tracking'
 import TierPicker from '../../../../components/TierPicker'
 import SelecteurDate from '../../../../components/SelecteurDate'
 import PromoField from '../../../../components/PromoField'
+import OptionLivreOr from '../../../../components/OptionLivreOr'
 import { atDay, maintenant, finProposee, REVELATION_PROPOSEE } from '../../../../lib/event-defaults'
 import { useLangue } from '../../../../components/Langue'
 
@@ -70,6 +71,9 @@ function CreateForm() {
   const [promo, setPromo] = useState(null)
   const priceCents = promo ? promo.priceCents : tier.priceCents
   const isPaid = priceCents > 0
+  // L'option livre d'or s'ajoute au prix de la formule (payante seulement).
+  const [livreOr, setLivreOr] = useState(false)
+  const totalCents = priceCents + (isPaid && livreOr ? LIVRE_OR_CENTS : 0)
 
   // Sur une formule payante, Stripe collecte déjà l'adresse pendant le paiement :
   // la demander en plus ferait saisir deux fois la même chose. On ne la demande
@@ -217,6 +221,7 @@ function CreateForm() {
       maxGuests: tier.maxGuests,
       flow: 'court', // variante d'où l'on vient (retour d'annulation Stripe)
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
+      livreOr: isPaid && livreOr,
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
       promo: promo?.code || undefined,
@@ -229,7 +234,7 @@ function CreateForm() {
       try {
         // Publicité : départ vers le paiement.
         track('InitiateCheckout', {
-          value: priceCents / 100,
+          value: totalCents / 100,
           currency: 'EUR',
           content_name: `Formule ${tier.maxGuests} invités`,
         })
@@ -265,7 +270,7 @@ function CreateForm() {
   const finalLabel = isPaid && PAYMENTS_ENABLED
     ? (loading
         ? t({ fr: 'Redirection vers le paiement…', en: 'Taking you to payment…', de: 'Weiterleitung zur Zahlung…' })
-        : t({ fr: `Payer ${formatPrice(priceCents, lang)} →`, en: `Pay ${formatPrice(priceCents, lang)} →`, de: `${formatPrice(priceCents, lang)} bezahlen →` }))
+        : t({ fr: `Payer ${formatPrice(totalCents, lang)} →`, en: `Pay ${formatPrice(totalCents, lang)} →`, de: `${formatPrice(totalCents, lang)} bezahlen →` }))
     : (loading
         ? t({ fr: 'Création…', en: 'Creating…', de: 'Wird erstellt…' })
         : t({ fr: 'Créer mon événement →', en: 'Create my event →', de: 'Mein Event erstellen →' }))
@@ -447,6 +452,7 @@ function CreateForm() {
             {tier.priceCents > 0 && (
               <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
             )}
+            {isPaid && PAYMENTS_ENABLED && <OptionLivreOr checked={livreOr} onChange={setLivreOr} />}
           </div>
 
           {/* Le doute juste avant de payer, c'est « et si je me suis trompé ? ».

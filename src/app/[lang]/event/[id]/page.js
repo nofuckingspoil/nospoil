@@ -21,7 +21,7 @@ import Logo from '../../../../components/Logo'
 import InstallPrompt from '../../../../components/InstallPrompt'
 import ProposerAppIPhone from '../../../../components/ProposerAppIPhone'
 import { eventPhase, isRevealed, quotaLocked, AVANT, JOUR_J, APRES } from '../../../../lib/phase'
-import { formatPrice, SHOTS_MIN, SHOTS_MAX } from '../../../../lib/pricing'
+import { formatPrice, SHOTS_MIN, SHOTS_MAX, LIVRE_OR_CENTS } from '../../../../lib/pricing'
 import { purgeDate } from '../../../../lib/retention'
 import { rappelsAutomatiques, heureDuRappel, jourDuRappel, autreJourQueLeDebut, minutesDepuisHeure, dureeMin } from '../../../../lib/rappels'
 import { fileToImage, compressToBlob } from '../../../../lib/camera'
@@ -175,6 +175,8 @@ export default function EventManage({ params }) {
   const [pos, setPos] = useState(null)
   const glisseRef = useRef(null)
   const [upgradeMsg, setUpgradeMsg] = useState('')
+  const [livreOrMsg, setLivreOrMsg] = useState('') // '' | 'ok' | message d'erreur
+  const [achatLivreOr, setAchatLivreOr] = useState(false)
   const [upgrading, setUpgrading] = useState(false)
   const [galleryCodeInput, setGalleryCodeInput] = useState('')
   const [protecting, setProtecting] = useState(false)
@@ -238,6 +240,27 @@ export default function EventManage({ params }) {
           }
         })
         .catch(() => setUpgradeMsg(choisir({ fr: 'La mise à niveau n’a pas pu être appliquée. Réessayez.', en: 'The upgrade could not be applied. Please try again.', de: 'Das Upgrade konnte nicht angewendet werden. Bitte versuchen Sie es erneut.' })))
+        .finally(reload)
+    }
+    // Retour du paiement du livre d'or : on l'active, puis on ouvre sa section.
+    const lo = sp.get('livre_or_session')
+    if (lo) {
+      window.history.replaceState(null, '', `/event/${id}`)
+      setOpenSec('livre-or')
+      fetch('/api/checkout/livre-or/complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ sessionId: lo }),
+      })
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.error) { setLivreOrMsg(d.error); return }
+          setLivreOrMsg('ok')
+          if (!d.deja && (d.paidCents || 0) > 0) {
+            track('Purchase', { value: d.paidCents / 100, currency: 'EUR', content_name: 'Livre d’or audio' }, { eventID: `livre_or_${lo}` })
+          }
+        })
+        .catch(() => setLivreOrMsg(choisir({ fr: 'Le livre d’or n’a pas pu être activé. Réessayez.', en: 'The guestbook could not be turned on. Please try again.', de: 'Das Gästebuch konnte nicht aktiviert werden. Bitte versuchen Sie es erneut.' })))
         .finally(reload)
     }
     const m = sp.get('moment')
@@ -313,6 +336,27 @@ export default function EventManage({ params }) {
   }
 
   // Agrandir la formule : direction Stripe pour régler la seule différence.
+  // Acheter le livre d'or après coup : direction Stripe, comme l'agrandissement.
+  async function acheterLivreOr() {
+    setLivreOrMsg('')
+    setAchatLivreOr(true)
+    try {
+      const r = await fetch('/api/checkout/livre-or', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-owner-token': getOwnerToken(id) },
+        body: JSON.stringify({ eventId: id, langue: lang }),
+      })
+      const d = await r.json()
+      if (d.error) throw new Error(d.error)
+      // Déjà réglé (onglet fermé avant le retour) : le serveur vient de l'activer.
+      if (d.alreadyActive) { setLivreOrMsg('ok'); setAchatLivreOr(false); await reload(); return }
+      window.location.href = d.url
+    } catch (err) {
+      setLivreOrMsg(err.message || choisir({ fr: 'Paiement impossible. Réessayez.', en: 'Payment not possible. Please try again.', de: 'Zahlung nicht möglich. Bitte erneut versuchen.' }))
+      setAchatLivreOr(false)
+    }
+  }
+
   async function startUpgrade() {
     if (!ev?.upgrade) return
     setUpgradeMsg('')
@@ -1802,9 +1846,9 @@ export default function EventManage({ params }) {
           voit combien de messages sont arrivés, on va les écouter. */}
       <Section id="sec-livre-or" title={t({ fr: 'Livre d’or audio', en: 'Audio guestbook', de: 'Audio-Gästebuch' })}
         hint={ev.livreOrActif
-          ? t({ fr: 'Activé · vous seuls écoutez les messages', en: 'On · only you can hear the messages', de: 'Aktiv · nur Sie hören die Nachrichten' })
-          : t({ fr: 'Désactivé · un message vocal de chaque invité', en: 'Off · a voice message from each guest', de: 'Aus · eine Sprachnachricht von jedem Gast' })}
-        badge={t({
+          ? t({ fr: 'Inclus · vous seuls écoutez les messages', en: 'Included · only you can hear the messages', de: 'Enthalten · nur Sie hören die Nachrichten' })
+          : t({ fr: `Option à ${formatPrice(LIVRE_OR_CENTS, lang)} · un message vocal de chaque invité`, en: `${formatPrice(LIVRE_OR_CENTS, lang)} option · a voice message from each guest`, de: `Option für ${formatPrice(LIVRE_OR_CENTS, lang)} · eine Sprachnachricht von jedem Gast` })}
+        badge={!ev.livreOrActif ? undefined : t({
           fr: `${ev.livreOrCount || 0} message${(ev.livreOrCount || 0) > 1 ? 's' : ''}`,
           en: `${ev.livreOrCount || 0} message${(ev.livreOrCount || 0) !== 1 ? 's' : ''}`,
           de: `${ev.livreOrCount || 0} ${(ev.livreOrCount || 0) !== 1 ? 'Nachrichten' : 'Nachricht'}`,
@@ -1819,19 +1863,28 @@ export default function EventManage({ params }) {
           })}
         </p>
 
-        <div className="db-set">
-          <div className="db-set-l">
-            <span className="db-set-lbl">🎙️ {t({ fr: 'Micro des invités', en: 'Guests’ microphone', de: 'Mikrofon der Gäste' })}</span>
-            <span className="db-set-val">
-              {ev.livreOrActif
-                ? t({ fr: 'Activé : le bouton est sur leur appareil jusqu’à la fin de la soirée.', en: 'On: the button is on their camera until the end of the party.', de: 'Aktiv: Der Knopf ist bis zum Ende der Feier an ihrer Kamera.' })
-                : t({ fr: 'Désactivé : vos invités ne voient pas le bouton.', en: 'Off: your guests don’t see the button.', de: 'Aus: Ihre Gäste sehen den Knopf nicht.' })}
-            </span>
+        {/* Une option, pas un interrupteur : acquise, elle est active ; sinon,
+            on peut l'acheter ici, même après la création. */}
+        {ev.livreOrActif ? (
+          <div className="notice" style={{ marginBottom: 4 }}>
+            ✅ {t({ fr: <><strong>Inclus dans votre soirée.</strong> Le bouton micro est sur l’appareil de vos invités jusqu’à la fin de la fête.</>, en: <><strong>Included in your event.</strong> The microphone button is on your guests’ camera until the end of the party.</>, de: <><strong>In Ihrem Event enthalten.</strong> Der Mikrofon-Knopf ist bis zum Ende der Feier an der Kamera Ihrer Gäste.</> })}
           </div>
-          <button className="db-set-act" onClick={() => patchEvent({ livreOr: !ev.livreOrActif })}>
-            {ev.livreOrActif ? t({ fr: 'Désactiver', en: 'Turn off', de: 'Ausschalten' }) : t({ fr: 'Activer', en: 'Turn on', de: 'Einschalten' })}
-          </button>
-        </div>
+        ) : (
+          <>
+            <button className="btn btn-accent" onClick={acheterLivreOr} disabled={achatLivreOr}>
+              {achatLivreOr
+                ? t({ fr: 'Un instant…', en: 'One moment…', de: 'Einen Moment…' })
+                : t({ fr: `Ajouter le livre d’or (${formatPrice(LIVRE_OR_CENTS, lang)}) →`, en: `Add the guestbook (${formatPrice(LIVRE_OR_CENTS, lang)}) →`, de: `Gästebuch hinzufügen (${formatPrice(LIVRE_OR_CENTS, lang)}) →` })}
+            </button>
+            <p className="muted small" style={{ marginTop: 8 }}>
+              {t({ fr: 'Paiement unique, pour cette soirée. Le bouton micro apparaît aussitôt sur l’appareil de vos invités.', en: 'One-off payment, for this event. The microphone button appears straight away on your guests’ camera.', de: 'Einmalige Zahlung für dieses Event. Der Mikrofon-Knopf erscheint sofort an der Kamera Ihrer Gäste.' })}
+            </p>
+          </>
+        )}
+        {livreOrMsg === 'ok' && (
+          <div className="notice" style={{ marginTop: 10 }}>🎙️ {t({ fr: 'C’est fait : le livre d’or est activé.', en: 'Done: the guestbook is on.', de: 'Erledigt: Das Gästebuch ist aktiviert.' })}</div>
+        )}
+        {livreOrMsg && livreOrMsg !== 'ok' && <div className="err" style={{ marginTop: 10 }}>{livreOrMsg}</div>}
 
         {(ev.livreOrActif || (ev.livreOrCount || 0) > 0) && (
           <Link href={`/g/${id}?onglet=livre-or`} className="btn btn-dark" style={{ marginTop: 14 }}>
@@ -1841,18 +1894,11 @@ export default function EventManage({ params }) {
           </Link>
         )}
 
-        {/* Couper le micro n'efface rien : le dire évite qu'on n'ose pas. */}
-        {!ev.livreOrActif && (ev.livreOrCount || 0) > 0 && (
-          <p className="muted small" style={{ marginTop: 10 }}>
-            {t({ fr: 'Les messages déjà reçus restent là, même désactivé.', en: 'Messages already received stay here, even when turned off.', de: 'Bereits erhaltene Nachrichten bleiben erhalten, auch wenn deaktiviert.' })}
-          </p>
-        )}
         {finAlbum && (ev.livreOrCount || 0) > 0 && (
           <p className="db-alb-fin">
             {t({ fr: `Les messages sont supprimés avec les photos, le ${formatJour(finAlbum, locale)}.`, en: `The messages are deleted along with the photos, on ${formatJour(finAlbum, locale)}.`, de: `Die Nachrichten werden zusammen mit den Fotos am ${formatJour(finAlbum, locale)} gelöscht.` })}
           </p>
         )}
-        {settingMsg && openSec === 'livre-or' && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
       <Section title={t({ fr: 'Co-organisateurs', en: 'Co-hosts', de: 'Mitveranstalter' })} hint={t({ fr: "Partager la gestion de l'événement", en: 'Share the running of the event', de: 'Die Verwaltung des Events teilen' })}

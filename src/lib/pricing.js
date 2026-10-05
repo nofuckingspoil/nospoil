@@ -60,6 +60,11 @@ export const TIERS = [
 // au-delà, le tarif se fait à la main, et on invite à nous écrire.
 export const TOP_TIER = TIERS[TIERS.length - 1]
 
+// Le livre d'or audio : une option, la même pour toutes les formules. Prise à
+// la création ou achetée plus tard depuis le tableau de bord. Offerte aux
+// soirées créées avec un code qui offre la formule, et aux soirées de test.
+export const LIVRE_OR_CENTS = 999
+
 // Adresse à laquelle on négocie les événements hors barème.
 export const CONTACT_EMAIL = 'support@timetoflash.fr'
 

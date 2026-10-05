@@ -1,6 +1,6 @@
 import { getStripe, paymentsLive } from '../../../lib/stripe'
 import { normalizeEmail, isValidEmail, verifyAndConsumeCode } from '../../../lib/account'
-import { tierByGuests, EMAIL_VERIFICATION_PAID, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { tierByGuests, EMAIL_VERIFICATION_PAID, SHOTS_MIN, SHOTS_MAX, LIVRE_OR_CENTS } from '../../../lib/pricing'
 import { modeValide } from '../../../lib/photo-mode'
 import { siteUrl } from '../../../lib/mail'
 import { LEGAL_UPDATED } from '../../../lib/legal'
@@ -94,6 +94,9 @@ export async function POST(request) {
   const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct', nouveau: '/create' }
   const cancelPath = CANCEL_PATHS[body.flow] || CANCEL_PATHS.long
 
+  // L'option livre d'or : un booléen, rien d'autre. Le prix vient d'ici.
+  const avecLivreOr = body.livreOr === true
+
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
   const cleanName = name.trim().slice(0, 80)
   const base = siteUrl()
@@ -136,7 +139,21 @@ export async function POST(request) {
             de: `Time to Flash, „${cleanName}“ (bis zu ${tier.maxGuests} Gäste)`,
           }, langue) },
         },
-      }],
+      },
+      // Le livre d'or audio, sur sa propre ligne : l'organisateur voit ce
+      // qu'il paie, et le reçu le détaille.
+      ...(avecLivreOr ? [{
+        quantity: 1,
+        price_data: {
+          currency: 'eur',
+          unit_amount: LIVRE_OR_CENTS,
+          product_data: { name: t({
+            fr: `Livre d'or audio, « ${cleanName} »`,
+            en: `Audio guestbook, “${cleanName}”`,
+            de: `Audio-Gästebuch, „${cleanName}“`,
+          }, langue) },
+        },
+      }] : [])],
       success_url: `${base}/create/paiement?session_id={CHECKOUT_SESSION_ID}`,
       // Une annulation doit ramener sur la variante d'où l'on vient, sinon la
       // comparaison entre les tunnels est faussée.
@@ -171,6 +188,7 @@ export async function POST(request) {
         prov_campagne: String(body.provenance?.c || '').slice(0, 120),
         prov_page: String(body.provenance?.p || '').slice(0, 200),
         is_test: promo && promo.marksTest ? '1' : '',
+        livre_or: avecLivreOr ? '1' : '',
         // La langue de l'organisateur, mémorisée sur l'événement au retour.
         langue,
       },

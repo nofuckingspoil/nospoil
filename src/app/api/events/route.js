@@ -128,6 +128,10 @@ export async function POST(request) {
     promo_code: promoCode,
     paid_cents: 0, // création sans paiement : formule gratuite, ou offerte par un code
     is_test: isTest,
+    // Un code qui offre la formule offre aussi le livre d'or (codes
+    // fondateur) ; une soirée de test l'a d'office.
+    livre_or_actif: !!promoCode,
+    livre_or_option: isTest ? 'test' : promoCode ? 'offert' : null,
     // Parcours court : réglages à faire juste après (voir /create/parametrer).
     reglages_etape: body.flow === 'nouveau' ? 'bravo' : null,
     ...provenanceDe(body.provenance),

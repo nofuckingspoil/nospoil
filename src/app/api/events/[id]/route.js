@@ -5,7 +5,7 @@ import { roleFor, canManage, canDelete, ADMIN, messageSuspendu } from '../../../
 import { eventPhase, isRevealed, quotaLocked, quotaExceeded, JOUR_J } from '../../../../lib/phase'
 import { finDe, planRappels, nettoyerRappels, dureeMin } from '../../../../lib/rappels'
 // (isRevealed sert aussi à figer les dates une fois l'album ouvert, voir PATCH)
-import { upgradeFor, SHOTS_MIN, SHOTS_MAX, BONUS_MAX, CONTACT_EMAIL } from '../../../../lib/pricing'
+import { upgradeFor, SHOTS_MIN, SHOTS_MAX, BONUS_MAX, CONTACT_EMAIL, LIVRE_OR_CENTS } from '../../../../lib/pricing'
 import { notifyGuestsOfAlbum } from '../../../../lib/notify-guests'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
 import { PHOTO_MODES, modeValide } from '../../../../lib/photo-mode'
@@ -112,6 +112,7 @@ export async function GET(request, { params }) {
     // encore : voir lib/livre-or).
     livreOr: !!ev.livre_or_actif && Date.now() <= finDe(dates),
     livreOrActif: !!ev.livre_or_actif,
+    livreOrPrix: LIVRE_OR_CENTS,
   }
 
   // Numéros collectés + liste des admins : réservés à l'organisateur
@@ -394,12 +395,6 @@ export async function PATCH(request, { params }) {
       return Response.json({ error: t({ fr: 'Mode photo inconnu.', en: 'Unknown photo mode.', de: 'Unbekannter Fotomodus.' }, langue) }, { status: 400 })
     }
     patch.photo_mode = m
-  }
-
-  // Livre d'or audio : l'interrupteur des mariés. Le couper ne supprime aucun
-  // message déjà reçu, il ferme seulement le micro des participants.
-  if (body.livreOr !== undefined) {
-    patch.livre_or_actif = body.livreOr === true
   }
 
   // Validation de l'album par l'organisateur. Facultative : sans elle, la

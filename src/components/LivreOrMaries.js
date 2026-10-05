@@ -223,9 +223,9 @@ export default function LivreOrMaries({ eventId, onCompte }) {
                 de: 'Ihre Gäste finden einen Mikrofon-Knopf an ihrer Kamera. Ihre Nachrichten kommen hier im Laufe des Abends an.',
               })
             : t({
-                fr: 'Le livre d’or est désactivé. Activez-le dans les réglages du tableau de bord pour que vos invités puissent vous laisser un message vocal.',
-                en: 'The guestbook is turned off. Turn it on in the dashboard settings so your guests can leave you a voice message.',
-                de: 'Das Gästebuch ist deaktiviert. Aktivieren Sie es in den Einstellungen des Dashboards, damit Ihre Gäste Ihnen eine Sprachnachricht hinterlassen können.',
+                fr: 'Le livre d’or n’est pas inclus dans cette soirée. Ajoutez-le depuis votre tableau de bord, section « Livre d’or audio », pour que vos invités puissent vous laisser un message vocal.',
+                en: 'The guestbook isn’t included in this event. Add it from your dashboard, in the “Audio guestbook” section, so your guests can leave you a voice message.',
+                de: 'Das Gästebuch ist in diesem Event nicht enthalten. Fügen Sie es in Ihrem Dashboard im Bereich „Audio-Gästebuch“ hinzu, damit Ihre Gäste Ihnen eine Sprachnachricht hinterlassen können.',
               })}
         </div>
       )}

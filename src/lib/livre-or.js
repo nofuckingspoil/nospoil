@@ -25,7 +25,7 @@ import { spawn } from 'node:child_process'
 import { writeFile, readFile, unlink } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { selectRows, deletePhotos } from './supabase'
+import { selectRows, updateRow, deletePhotos } from './supabase'
 import { GRACE_ENVOI_MS } from './authz'
 import { finDe } from './rappels'
 
@@ -40,12 +40,11 @@ export const SELFIE_MAX_OCTETS = 4 * 1024 * 1024
 /**
  * Le livre d'or est-il ouvert pour cet événement ?
  *
- * Il faut l'interrupteur des mariés, et que la fête ne soit pas finie depuis
- * plus longtemps que la grâce des photos : un message enregistré hors réseau
+ * Il faut que l'option soit acquise (`livre_or_actif` : achetée à la création
+ * ou après coup, ou offerte), et que la fête ne soit pas finie depuis plus
+ * longtemps que la grâce des photos : un message enregistré hors réseau
  * pendant la soirée doit pouvoir arriver le lendemain matin.
- *
- * `livre_or_option` est réservé à une future option payante : rien ne le lit
- * encore. Le jour où il comptera, c'est ici qu'il faudra l'ajouter.
+ * `livre_or_option` dit seulement d'où elle vient (creation, achat, offert, test).
  */
 export function livreOrActif(ev) {
   return !!ev?.livre_or_actif
@@ -170,4 +169,24 @@ export function ondeValide(brut) {
   try { v = JSON.parse(String(brut || '')) } catch { return null }
   if (!Array.isArray(v) || !v.length) return null
   return v.slice(0, 48).map((n) => Math.max(0, Math.min(100, Math.round(Number(n) || 0))))
+}
+
+/**
+ * Activer le livre d'or après un achat réglé.
+ *
+ * Réclamé de deux endroits, comme l'agrandissement de formule (voir
+ * lib/upgrade) : au retour de Stripe, et à l'ouverture d'un nouveau paiement
+ * quand on découvre qu'un précédent a été réglé sans être appliqué (il n'y a
+ * pas de webhook Stripe : qui paie puis ferme l'onglet n'avait rien).
+ * Idempotent : déjà actif, il ne change rien.
+ */
+export async function activerLivreOrPaye(ev, session) {
+  if (ev.livre_or_actif) return { ok: true, deja: true }
+  const upd = await updateRow('events', `id=eq.${ev.id}`, {
+    livre_or_actif: true,
+    livre_or_option: 'achat',
+    livre_or_session: session.id,
+    livre_or_session_at: null,
+  })
+  return { ok: upd.ok }
 }

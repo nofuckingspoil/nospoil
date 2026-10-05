@@ -6,7 +6,7 @@ import Link from 'next/link'
 import Logo from '../../../components/Logo'
 import { getDeviceToken, getOwnerToken, rememberMyEvent, saveAccount } from '../../../lib/device'
 import { modeOptions, MODE_PROPOSE } from '../../../lib/photo-mode'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise, SHOTS_MIN, SHOTS_MAX } from '../../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise, SHOTS_MIN, SHOTS_MAX, LIVRE_OR_CENTS } from '../../../lib/pricing'
 import { fileToImage, compressToBlob } from '../../../lib/camera'
 import { DUREE_PROPOSEE_MIN } from '../../../lib/rappels'
 import { maintenant, finProposee, REVELATION_PROPOSEE } from '../../../lib/event-defaults'
@@ -15,6 +15,7 @@ import { noterEtape } from '../../../lib/etapes'
 import TierPicker from '../../../components/TierPicker'
 import SelecteurDate from '../../../components/SelecteurDate'
 import PromoField from '../../../components/PromoField'
+import OptionLivreOr from '../../../components/OptionLivreOr'
 import { useLangue, SelecteurLangue } from '../../../components/Langue'
 import { lireProvenance } from '../../../lib/provenance'
 import QuestionDecouverte from '../../../components/QuestionDecouverte'
@@ -165,6 +166,9 @@ export function CreateForm({ parcours = 'long' }) {
   const [promo, setPromo] = useState(null)
   const priceCents = promo ? promo.priceCents : tier.priceCents
   const isPaid = priceCents > 0
+  // L'option livre d'or s'ajoute au prix de la formule (payante seulement).
+  const [livreOr, setLivreOr] = useState(false)
+  const totalCents = priceCents + (isPaid && livreOr ? LIVRE_OR_CENTS : 0)
 
   // Neuf écrans plutôt que cinq, et pourtant l'assistant paraît plus court :
   // ce qui fatigue n'est pas le nombre d'écrans, c'est le nombre de décisions
@@ -579,6 +583,7 @@ export function CreateForm({ parcours = 'long' }) {
       // D'où vient l'organisateur (site, campagne, page d'arrivée).
       provenance: lireProvenance() || {},
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
+      livreOr: isPaid && livreOr,
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
       promo: promo?.code || undefined,
@@ -608,7 +613,7 @@ export function CreateForm({ parcours = 'long' }) {
         // Publicité : départ vers le paiement. C'est l'étape qui dit à Meta
         // « celui-là était à deux doigts d'acheter ».
         track('InitiateCheckout', {
-          value: priceCents / 100,
+          value: totalCents / 100,
           currency: 'EUR',
           content_name: `Formule ${tier.maxGuests} invités`,
         })
@@ -672,7 +677,7 @@ export function CreateForm({ parcours = 'long' }) {
   const finalLabel = isPaid && PAYMENTS_ENABLED
     ? (loading
         ? t({ fr: 'Redirection vers le paiement…', en: 'Taking you to payment…', de: 'Weiterleitung zur Zahlung…' })
-        : t({ fr: `Payer ${formatPrice(priceCents, lang)} →`, en: `Pay ${formatPrice(priceCents, lang)} →`, de: `${formatPrice(priceCents, lang)} bezahlen →` }))
+        : t({ fr: `Payer ${formatPrice(totalCents, lang)} →`, en: `Pay ${formatPrice(totalCents, lang)} →`, de: `${formatPrice(totalCents, lang)} bezahlen →` }))
     : (loading
         ? t({ fr: 'Création…', en: 'Creating…', de: 'Wird erstellt…' })
         : t({ fr: 'Créer mon événement →', en: 'Create my event →', de: 'Mein Event erstellen →' }))
@@ -1168,6 +1173,7 @@ export function CreateForm({ parcours = 'long' }) {
             {tier.priceCents > 0 && (
               <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
             )}
+            {isPaid && PAYMENTS_ENABLED && <OptionLivreOr checked={livreOr} onChange={setLivreOr} />}
           </div>
 
           <div className="wiz-legal">

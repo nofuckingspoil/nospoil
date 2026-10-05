@@ -6,8 +6,9 @@ import Link from 'next/link'
 import Logo from '../../../../components/Logo'
 import TierPicker from '../../../../components/TierPicker'
 import PromoField from '../../../../components/PromoField'
+import OptionLivreOr from '../../../../components/OptionLivreOr'
 import { getDeviceToken, rememberMyEvent, saveAccount } from '../../../../lib/device'
-import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise } from '../../../../lib/pricing'
+import { tierByGuests, formatPrice, PAYMENTS_ENABLED, verificationRequise, LIVRE_OR_CENTS } from '../../../../lib/pricing'
 import { track } from '../../../../lib/tracking'
 import { DEFAULT_EVENT_NAME, DEFAULT_SHOTS, maintenant, finProposee, revelationProposee } from '../../../../lib/event-defaults'
 import { MODE_PROPOSE } from '../../../../lib/photo-mode'
@@ -37,6 +38,9 @@ function ExpressForm() {
   const [promo, setPromo] = useState(null)
   const priceCents = promo ? promo.priceCents : tier.priceCents
   const isPaid = priceCents > 0
+  // L'option livre d'or s'ajoute au prix de la formule (payante seulement).
+  const [livreOr, setLivreOr] = useState(false)
+  const totalCents = priceCents + (isPaid && livreOr ? LIVRE_OR_CENTS : 0)
 
   // Sur une formule payante, Stripe collecte l'adresse pendant le paiement.
   const needEmail = !PAYMENTS_ENABLED || !isPaid || verificationRequise(priceCents)
@@ -130,6 +134,7 @@ function ExpressForm() {
       photoMode: MODE_PROPOSE,
       maxGuests: tier.maxGuests,
       flow: 'express', // variante d'où l'on vient (retour d'annulation Stripe)
+      livreOr: isPaid && livreOr,
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
       promo: promo?.code || undefined,
@@ -140,7 +145,7 @@ function ExpressForm() {
       try {
         // Publicité : départ vers le paiement.
         track('InitiateCheckout', {
-          value: priceCents / 100,
+          value: totalCents / 100,
           currency: 'EUR',
           content_name: `Formule ${tier.maxGuests} invités`,
         })
@@ -174,7 +179,7 @@ function ExpressForm() {
   const label = isPaid && PAYMENTS_ENABLED
     ? (loading
         ? t({ fr: 'Redirection vers le paiement…', en: 'Taking you to payment…', de: 'Weiterleitung zur Zahlung…' })
-        : t({ fr: `Payer ${formatPrice(priceCents, lang)} →`, en: `Pay ${formatPrice(priceCents, lang)} →`, de: `${formatPrice(priceCents, lang)} bezahlen →` }))
+        : t({ fr: `Payer ${formatPrice(totalCents, lang)} →`, en: `Pay ${formatPrice(totalCents, lang)} →`, de: `${formatPrice(totalCents, lang)} bezahlen →` }))
     : (loading
         ? t({ fr: 'Création…', en: 'Creating…', de: 'Wird erstellt…' })
         : t({ fr: 'Créer mon événement →', en: 'Create my event →', de: 'Mein Event erstellen →' }))
@@ -236,6 +241,8 @@ function ExpressForm() {
         {tier.priceCents > 0 && (
           <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
         )}
+
+        {isPaid && PAYMENTS_ENABLED && <OptionLivreOr checked={livreOr} onChange={setLivreOr} />}
 
         {needEmail && (
           <div className="field" style={{ marginTop: 22 }}>

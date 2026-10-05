@@ -100,6 +100,9 @@ export async function POST(request) {
     promo_code: m.promo_code || null,
     paid_cents: session.amount_total ?? null, // ce qui a réellement été encaissé, remise déduite
     is_test: m.is_test === '1',
+    // Le livre d'or, payé avec la formule, ou offert à une soirée de test.
+    livre_or_actif: m.livre_or === '1' || m.is_test === '1',
+    livre_or_option: m.livre_or === '1' ? 'creation' : m.is_test === '1' ? 'test' : null,
     // Parcours court : réglages à faire. Le lien du mail y ramène tant qu'ils
     // ne sont pas terminés.
     reglages_etape: m.parcours === 'court' ? 'bravo' : null,
