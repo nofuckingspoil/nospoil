@@ -123,6 +123,7 @@ async function effacer(id) {
 // ------------------------------------------------------------ les abonnés
 
 function apercu(e) {
+  if (!e.blob) return null
   let url = apercus.get(e.id)
   if (!url) {
     url = URL.createObjectURL(e.blob)
@@ -131,14 +132,27 @@ function apercu(e) {
   return url
 }
 
+// Ce que la page reçoit : les photos d'un côté, les messages du livre d'or de
+// l'autre. Un message vocal n'est pas une pose : le mêler aux photos ferait
+// descendre le compteur de la pellicule.
+function etatDeLaFile(liste) {
+  const triee = liste.sort((a, b) => a.creeLe - b.creeLe)
+  return {
+    type: 'file',
+    enAttente: triee
+      .filter((e) => e.genre !== 'voix')
+      .map((e) => ({ id: e.id, eventId: e.eventId, url: apercu(e), essais: e.essais || 0 })),
+    voixEnAttente: triee
+      .filter((e) => e.genre === 'voix')
+      .map((e) => ({ id: e.id, eventId: e.eventId, essais: e.essais || 0, durationMs: e.durationMs })),
+  }
+}
+
 async function diffuser(ev) {
-  const liste = await toutes()
-  const file = liste
-    .sort((a, b) => a.creeLe - b.creeLe)
-    .map((e) => ({ id: e.id, eventId: e.eventId, url: apercu(e), essais: e.essais || 0 }))
+  const etat = etatDeLaFile(await toutes())
   for (const fn of Array.from(abonnes)) {
     try {
-      fn({ type: 'file', enAttente: file })
+      fn(etat)
       if (ev) fn(ev)
     } catch {}
   }
@@ -151,10 +165,7 @@ async function diffuser(ev) {
 export function sabonnerALaFile(fn) {
   abonnes.add(fn)
   toutes().then((liste) => {
-    const file = liste
-      .sort((a, b) => a.creeLe - b.creeLe)
-      .map((e) => ({ id: e.id, eventId: e.eventId, url: apercu(e), essais: e.essais || 0 }))
-    try { fn({ type: 'file', enAttente: file }) } catch {}
+    try { fn(etatDeLaFile(liste)) } catch {}
   })
   return () => abonnes.delete(fn)
 }
@@ -207,6 +218,8 @@ async function envoyer(e) {
     return
   }
 
+  if (e.genre === 'voix') return envoyerVoix(e)
+
   try {
     const fd = new FormData()
     fd.append('file', e.blob, 'photo.jpg')
@@ -254,6 +267,46 @@ async function envoyer(e) {
   }
 }
 
+// Un message du livre d'or : même file, même patience, autre adresse.
+async function envoyerVoix(e) {
+  try {
+    const fd = new FormData()
+    fd.append('audio', e.audio, e.nomAudio || 'message')
+    if (e.selfie) fd.append('selfie', e.selfie, 'selfie.jpg')
+    fd.append('durationMs', String(e.durationMs || 0))
+    if (e.onde) fd.append('waveform', JSON.stringify(e.onde))
+    fd.append('eventId', e.eventId)
+    fd.append('guestId', e.guestId)
+    fd.append('deviceToken', e.deviceToken)
+
+    const res = await fetch('/api/voix', {
+      method: 'POST',
+      body: fd,
+      headers: { 'X-Langue': e.langue || langueCourante() },
+    })
+    const d = await res.json().catch(() => ({}))
+
+    // Refus définitif (livre d'or coupé ou fermé, participant inconnu) : le
+    // garder ne servirait à rien, personne ne l'acceptera.
+    if (res.status === 410 || res.status === 403) {
+      await effacer(e.id)
+      await diffuser({ type: 'voix-refus', id: e.id, eventId: e.eventId, message: d.error || '' })
+      return
+    }
+    // Même prudence que pour les photos : un 200 du wifi de la salle n'est pas
+    // un succès. Seule la réponse du serveur, qui n'arrive qu'une fois le
+    // message rangé, en est un.
+    if (res.ok && d.ok === true) {
+      await effacer(e.id)
+      await diffuser({ type: 'voix-arrivee', id: e.id, eventId: e.eventId, voix: d.voix })
+      return
+    }
+    await reporter(e, d.error)
+  } catch {
+    await reporter(e)
+  }
+}
+
 async function reporter(e, message) {
   const essais = (e.essais || 0) + 1
   // On cesse d'insister, sans rien détruire : la photo repartira à la
@@ -286,6 +339,30 @@ export async function ajouterALaFile({ eventId, guestId, deviceToken, blob, thum
   // La langue est rangée avec la photo : le veilleur (public/sw.js), qui peut
   // reprendre l'envoi page fermée, s'en sert pour sa notification.
   const entree = { id, eventId, guestId, deviceToken, blob, thumb: thumb || null, creeLe: Date.now(), essais: 0, prochainEssai: 0, langue: langueCourante() }
+  await ecrire(entree)
+  await diffuser()
+  planifier(0)
+  void demanderLaReprise()
+  return id
+}
+
+/**
+ * Ranger un message du livre d'or et rendre la main tout de suite.
+ *
+ * Un seul message par participant et par soirée : un message encore en
+ * attente pour cette soirée est remplacé par le nouveau, il ne partirait que
+ * pour être aussitôt écrasé.
+ */
+export async function ajouterVoixALaFile({ eventId, guestId, deviceToken, audio, selfie, durationMs, nomAudio, onde }) {
+  for (const e of await toutes()) {
+    if (e.genre === 'voix' && e.eventId === eventId) await effacer(e.id)
+  }
+  const id = `v-${Date.now().toString(36)}-${++_n}`
+  const entree = {
+    id, genre: 'voix', eventId, guestId, deviceToken,
+    audio, selfie: selfie || null, durationMs, nomAudio: nomAudio || 'message', onde: onde || null,
+    creeLe: Date.now(), essais: 0, prochainEssai: 0, langue: langueCourante(),
+  }
   await ecrire(entree)
   await diffuser()
   planifier(0)
@@ -344,5 +421,5 @@ export function brancherLesReveils() {
 
 /** Combien de photos attendent, tous événements confondus. */
 export async function combienEnAttente() {
-  return (await toutes()).length
+  return (await toutes()).filter((e) => e.genre !== 'voix').length
 }

@@ -24,6 +24,7 @@
 import 'server-only'
 import { selectRows, updateRow, deleteRows } from './supabase'
 import { deletePhotos } from './r2'
+import { effacerFichiersLivreOr } from './livre-or'
 import { normalizeEmail } from './account'
 
 /** Le prénom qui remplace celui d'une personne partie. */
@@ -51,6 +52,7 @@ async function supprimerEvenement(id) {
   if (couverture) fichiers.push(couverture)
 
   if (fichiers.length) await deletePhotos(fichiers)
+  await effacerFichiersLivreOr(id)
 
   // Les enfants d'abord, l'événement ensuite : les clés étrangères l'imposent.
   await deleteRows('favorites', `event_id=eq.${id}`)

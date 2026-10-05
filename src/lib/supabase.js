@@ -65,6 +65,26 @@ export async function insertIgnore(table, row, colonne) {
   return { ok: res.status < 300, status: res.status }
 }
 
+// --- Insertion qui remplace la ligne existante ---
+// Si une ligne porte déjà les mêmes valeurs dans les colonnes uniques
+// `colonnes` (ex. « event_id,guest_id »), elle est écrasée au lieu d'être
+// doublée. Renvoie la ligne écrite.
+export async function upsertRow(table, row, colonnes) {
+  assertConfig()
+  const res = await fetch(`${URL}/rest/v1/${table}?on_conflict=${encodeURIComponent(colonnes)}`, {
+    method: 'POST',
+    headers: {
+      ...authHeaders(),
+      'Content-Type': 'application/json',
+      Prefer: 'resolution=merge-duplicates,return=representation',
+    },
+    body: JSON.stringify(row),
+    cache: 'no-store',
+  })
+  const data = await res.json().catch(() => null)
+  return { ok: res.status < 300, status: res.status, data: Array.isArray(data) ? data[0] : data }
+}
+
 // --- Mise à jour de ligne(s) filtrée(s) (PATCH) ---
 export async function updateRow(table, query, patch) {
   assertConfig()

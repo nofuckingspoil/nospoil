@@ -9,6 +9,7 @@
 //  « Authorization: Bearer $CRON_SECRET » quand la variable existe.
 // ============================================================
 import { selectRows, updateRow, deleteRows, deletePhotos, deletePhoto } from '../../../../lib/supabase'
+import { effacerFichiersLivreOr } from '../../../../lib/livre-or'
 import { sendMail, purgeWarningEmail, siteUrl } from '../../../../lib/mail'
 import { WARNINGS, formatPurgeDate, libelleAlerte } from '../../../../lib/retention'
 import { langueDe } from '../../../../lib/langue-serveur'
@@ -110,6 +111,8 @@ async function purgeExpired(now) {
     const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path, p.view_path]).filter(Boolean)
     if (paths.length) await deletePhotos(paths)
     if (ev.cover_url) await deletePhoto(ev.cover_url)
+    // Le livre d'or suit la même règle que les photos : six mois, puis plus rien.
+    await effacerFichiersLivreOr(ev.id)
 
     // Lignes en base : les photos d'abord (elles référencent les participants).
     await deleteRows('photos', `event_id=eq.${ev.id}`)
@@ -151,6 +154,7 @@ async function purgeDemos(now) {
     const paths = rows.flatMap((p) => [p.storage_path, p.thumb_path, p.view_path]).filter(Boolean)
     if (paths.length) await deletePhotos(paths)
     if (ev.cover_url) await deletePhoto(ev.cover_url)
+    await effacerFichiersLivreOr(ev.id)
 
     await deleteRows('photos', `event_id=eq.${ev.id}`)
     await deleteRows('guests', `event_id=eq.${ev.id}`)

@@ -1626,6 +1626,28 @@ export default function EventManage({ params }) {
           )
         })()}
 
+        {/* Livre d'or audio : chaque invité peut laisser un message vocal aux
+            mariés, signé d'un selfie. Un interrupteur, rien de plus : le
+            couper ferme le micro des invités sans effacer les messages reçus. */}
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">🎙️ {t({ fr: 'Livre d’or audio', en: 'Audio guestbook', de: 'Audio-Gästebuch' })}</span>
+            <span className="db-set-val">
+              {ev.livreOrActif
+                ? t({ fr: 'Activé : vos invités peuvent vous laisser un message vocal, que vous seuls écoutez.', en: 'On: your guests can leave you a voice message that only you will hear.', de: 'Aktiv: Ihre Gäste können Ihnen eine Sprachnachricht hinterlassen, die nur Sie hören.' })
+                : t({ fr: 'Désactivé : un bouton micro permettrait à chaque invité de vous laisser un message vocal.', en: 'Off: a microphone button would let each guest leave you a voice message.', de: 'Aus: Ein Mikrofon-Knopf würde jedem Gast erlauben, Ihnen eine Sprachnachricht zu hinterlassen.' })}
+            </span>
+            {ev.livreOrActif && (
+              <Link href={`/g/${id}?onglet=livre-or`} className="linklike" style={{ fontSize: 13.5, marginTop: 4 }}>
+                {t({ fr: 'Écouter le livre d’or →', en: 'Listen to the guestbook →', de: 'Gästebuch anhören →' })}
+              </Link>
+            )}
+          </div>
+          <button className="db-set-act" onClick={() => patchEvent({ livreOr: !ev.livreOrActif })}>
+            {ev.livreOrActif ? t({ fr: 'Désactiver', en: 'Turn off', de: 'Ausschalten' }) : t({ fr: 'Activer', en: 'Turn on', de: 'Einschalten' })}
+          </button>
+        </div>
+
         {/* Date de révélation */}
         <div className="db-set">
           <div className="db-set-l">

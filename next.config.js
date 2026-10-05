@@ -13,7 +13,14 @@ const nextConfig = {
   // sharp taille les mini-versions des photos arrivées sans (celles de l'app
   // native). C'est du code natif : il doit rester en dehors du paquet compilé,
   // sinon la mise en ligne se retrouve avec un module illisible.
-  serverExternalPackages: ['sharp'],
+  serverExternalPackages: ['sharp', 'ffmpeg-static'],
+
+  // Le livre d'or convertit les messages vocaux en m4a avec ffmpeg. Le
+  // programme est un fichier à part, que l'analyse du code ne voit pas : on
+  // l'embarque à la main dans la fonction qui en a besoin.
+  outputFileTracingIncludes: {
+    '/api/voix': ['./node_modules/ffmpeg-static/ffmpeg'],
+  },
 
   // Redirige l'ancien domaine no-spoil.fr vers timetoflash.fr (301, en gardant le chemin).
   // Les anciens liens / QR codes partagés continuent donc de fonctionner.

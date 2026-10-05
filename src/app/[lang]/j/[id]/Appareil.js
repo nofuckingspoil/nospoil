@@ -13,6 +13,7 @@ import { revoitSesPhotos, peutSupprimer, demandeConfirmation } from '../../../..
 import { pushPossible, pushEtat, dejaPropose, marquerPropose, activerPush } from '../../../../lib/push'
 import { ajouterALaFile, brancherLesReveils, demarrerFileEnvoi, sabonnerALaFile, ESSAIS_COINCE } from '../../../../lib/file-envoi-web'
 import OuvrirDansApp from '../../../../components/OuvrirDansApp'
+import LivreOrInvite from '../../../../components/LivreOrInvite'
 import { useLangue } from '../../../../components/Langue'
 import { t as tr } from '../../../../lib/i18n'
 import { lien } from '../../../../lib/langue-lien'
@@ -179,6 +180,9 @@ export default function GuestCamera({ params }) {
   const [qrUrl, setQrUrl] = useState('')
   const [qrCopied, setQrCopied] = useState(false)
   const [now, setNow] = useState(() => Date.now())  // pour le compte à rebours
+  const [livreOrOccupe, setLivreOrOccupe] = useState(false) // le livre d'or tient la caméra (selfie)
+  const [demandeLivreOr, setDemandeLivreOr] = useState(0)   // l'invitation en grand l'ouvre
+  const [livreOrStatut, setLivreOrStatut] = useState('aucun') // aucun | attente | envoye
 
   const refusRef = useRef(0)  // refus d'affilée : au deuxième, le blocage est durable
   const videoRef = useRef(null)
@@ -298,11 +302,13 @@ export default function GuestCamera({ params }) {
     if (phase === 'name') noterEtape('formulaire', { eventId: id })
   }, [phase, id])
 
+  // Le livre d'or ouvert, l'appareil lâche la caméra : un iPhone ne filme
+  // qu'avec une seule à la fois, et le selfie de signature en a besoin.
   useEffect(() => {
-    if (phase === 'camera' && liveCam) startCamera()
+    if (phase === 'camera' && liveCam && !livreOrOccupe) startCamera()
     return stopCamera
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, liveCam, facingMode])
+  }, [phase, liveCam, facingMode, livreOrOccupe])
 
   // À la 1re ouverture de la caméra (par appareil + événement), on rappelle au participant
   // de garder son lien pour revenir finir ses photos. Affiché une seule fois.
@@ -1468,6 +1474,17 @@ export default function GuestCamera({ params }) {
                 {t({ fr: `Recharger ma pellicule (+${meta.bonusShots}) →`, en: `Reload my film roll (+${meta.bonusShots}) →`, de: `Meinen Film nachladen (+${meta.bonusShots}) →` })}
               </button>
             )}
+            {/* Pellicule terminée : le moment où l'on a encore envie de dire
+                quelque chose. L'invitation du livre d'or passe en grand. */}
+            {meta?.livreOr && livreOrStatut === 'aucun' && (
+              <button className="lo-invitation" onClick={() => setDemandeLivreOr((n) => n + 1)}>
+                <span className="lo-invitation-ic">🎙️</span>
+                <span>
+                  <b>{t({ fr: 'Laisse un mot aux mariés', en: 'Leave a word for the couple', de: 'Hinterlassen Sie dem Paar ein paar Worte' })}</b>
+                  <em>{t({ fr: 'Un message vocal, rien que pour eux', en: 'A voice message, just for them', de: 'Eine Sprachnachricht, nur für sie' })}</em>
+                </span>
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -1590,7 +1607,22 @@ export default function GuestCamera({ params }) {
             </>
           )}
         </div>
-        <div className="cam-vues" aria-hidden="true" style={{ pointerEvents: 'none' }} />
+        {/* À droite, le livre d'or : un micro, et une coche une fois le
+            message laissé. Sans livre d'or, la place reste vide et garde le
+            déclencheur au centre. */}
+        <div className="cam-vues">
+          {guest?.guestId && (
+            <LivreOrInvite
+              eventId={id}
+              guestId={guest.guestId}
+              ouvert={!!meta?.livreOr}
+              demande={demandeLivreOr}
+              masquerBulle={showSaveTip || showPushTip || showAlbum || showQR || !!aConfirmer || camBlocked}
+              onOccupe={setLivreOrOccupe}
+              onStatut={setLivreOrStatut}
+            />
+          )}
+        </div>
       </div>
 
       {/* L'import depuis la photothèque n'existe que dans l'album ouvert. En
@@ -1731,6 +1763,17 @@ export default function GuestCamera({ params }) {
                   })}</p>
                   {!bonusUsed && (meta?.bonusShots > 0) && (
                     <button onClick={grantBonus}>{t({ fr: `Recharger ma pellicule (+${meta.bonusShots}) →`, en: `Reload my film roll (+${meta.bonusShots}) →`, de: `Meinen Film nachladen (+${meta.bonusShots}) →` })}</button>
+                  )}
+                  {/* La pellicule est finie, il reste quelque chose à offrir :
+                      un mot pour les mariés. */}
+                  {meta?.livreOr && livreOrStatut === 'aucun' && (
+                    <button className="lo-invitation" style={{ margin: '14px auto 0' }} onClick={() => setDemandeLivreOr((n) => n + 1)}>
+                      <span className="lo-invitation-ic">🎙️</span>
+                      <span>
+                        <b>{t({ fr: 'Laisse un mot aux mariés', en: 'Leave a word for the couple', de: 'Hinterlassen Sie dem Paar ein paar Worte' })}</b>
+                        <em>{t({ fr: 'Un message vocal, rien que pour eux', en: 'A voice message, just for them', de: 'Eine Sprachnachricht, nur für sie' })}</em>
+                      </span>
+                    </button>
                   )}
                 </div>
               ) : (

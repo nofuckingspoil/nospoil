@@ -14,7 +14,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status,expires_at,cover_url,starts_at`
+    `id=eq.${id}&select=id,name,host_names,reveal_at,reveal_paused,owner_token,gallery_code,max_guests,status,expires_at,cover_url,starts_at,livre_or_actif`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
@@ -180,6 +180,8 @@ export async function GET(request, { params }) {
     revealed,
     isOwner,
     ownerPreview: isOwner && !revealed, // aperçu organisateur avant révélation
+    // Le livre d'or ne regarde que les mariés : l'onglet n'existe pas pour les autres.
+    livreOr: isOwner ? !!ev.livre_or_actif : undefined,
     name: ev.name,
     hostNames: ev.host_names,
     coverUrl: couverture,

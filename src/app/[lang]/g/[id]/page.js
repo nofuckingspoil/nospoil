@@ -15,6 +15,7 @@ import Avis from '../../../../components/Avis'
 import { accroche } from '../../../../lib/avis'
 import { useLangue } from '../../../../components/Langue'
 import OuvrirDansApp from '../../../../components/OuvrirDansApp'
+import LivreOrMaries from '../../../../components/LivreOrMaries'
 import { InvitationTirages, CommandeTirages, MerciTirages } from '../../../../components/Tirages'
 
 // Une imprimante au trait, dans le style des autres icônes de l'album.
@@ -638,6 +639,15 @@ export default function Gallery({ params }) {
   useEffect(() => () => clearTimeout(minuteur.current), [])
   // Choix des photos à emporter : sans lui, c'était tout l'album ou une par une.
   const [vue, setVue] = useState('toutes') // organisateur : toutes | visibles | masquees
+  // Mariés : l'album photo, ou le livre d'or audio. On y arrive directement
+  // depuis le tableau de bord par « ?onglet=livre-or ».
+  // Lu après l'affichage : la page sort d'abord du serveur, qui ne connaît pas
+  // l'adresse, et React garderait sinon sa première valeur.
+  const [onglet, setOnglet] = useState('photos')
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get('onglet') === 'livre-or') setOnglet('livre-or')
+  }, [])
+  const [nbMessages, setNbMessages] = useState(null)
   const [chercheQui, setChercheQui] = useState('')
   const filtresRef = useRef(null)
 
@@ -1553,6 +1563,24 @@ export default function Gallery({ params }) {
         {/* Trois boutons plutôt que trois rangées de pastilles : les réglages
             occupaient le premier écran d'un téléphone, et les photos
             commençaient hors champ. Chacun dit son état, et ouvre son panneau. */}
+      {/* Les mariés seuls ont deux onglets : leurs photos, et le livre d'or
+          que leurs invités leur ont laissé. */}
+      {data.isOwner && (data.livreOr || nbMessages > 0 || onglet === 'livre-or') && (
+        <div className="lo-onglets" role="tablist">
+          <button type="button" role="tab" aria-selected={onglet === 'photos'} className={onglet === 'photos' ? 'on' : ''} onClick={() => setOnglet('photos')}>
+            📷 {t({ fr: 'Photos', en: 'Photos', de: 'Fotos' })}
+          </button>
+          <button type="button" role="tab" aria-selected={onglet === 'livre-or'} className={onglet === 'livre-or' ? 'on' : ''} onClick={() => { setOnglet('livre-or'); setPanneau(null) }}>
+            🎙️ {t({ fr: 'Livre d’or', en: 'Guestbook', de: 'Gästebuch' })}{nbMessages > 0 ? ` (${nbMessages})` : ''}
+          </button>
+        </div>
+      )}
+
+      {/* Le compte des messages fait vivre l'onglet même sans l'ouvrir. */}
+      {data.isOwner && onglet === 'livre-or' && <LivreOrMaries eventId={id} onCompte={setNbMessages} />}
+      {data.isOwner && onglet !== 'livre-or' && nbMessages === null && <CompteLivreOr eventId={id} onCompte={setNbMessages} />}
+
+      {onglet !== 'livre-or' && (<>
       {panneau && <div className="gal-fond" onClick={() => { if (panneau === 'qui') setChercheQui(''); setPanneau(null) }} />}
 
         <div className="gal-filtres" ref={filtresRef}>
@@ -1882,6 +1910,7 @@ export default function Gallery({ params }) {
               : t({ fr: `Tout télécharger (${photos.length})`, en: `Download all (${photos.length})`, de: `Alle herunterladen (${photos.length})` })}
         </button>
       )}
+      </>)}
 
       {/* La question monte du bas une fois dix photos dépassées. Elle était
           posée en fin de page : au bout de cent dix-sept tirages, personne n'y
@@ -2130,4 +2159,18 @@ export default function Gallery({ params }) {
 
     </main>
   )
+}
+
+// Le nombre de messages du livre d'or, pour l'étiquette de l'onglet, sans
+// charger les messages eux-mêmes tant que les mariés regardent leurs photos.
+function CompteLivreOr({ eventId, onCompte }) {
+  useEffect(() => {
+    let vivant = true
+    fetch(`/api/events/${eventId}/livre-or`, { headers: { 'x-owner-token': getOwnerToken(eventId) } })
+      .then((r) => r.json())
+      .then((d) => { if (vivant && Array.isArray(d?.messages)) onCompte(d.messages.length) })
+      .catch(() => {})
+    return () => { vivant = false }
+  }, [eventId, onCompte])
+  return null
 }

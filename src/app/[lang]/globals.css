@@ -4447,3 +4447,105 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .case input { width: 20px; height: 20px; flex: 0 0 20px; margin: 0; accent-color: var(--accent-btn, #CB4E2C); }
 .cases-suite { margin: 10px 0 4px 10px; padding-left: 12px; border-left: 2px solid var(--line); }
 .cases-2 .case { padding: 10px 12px; font-size: 14.5px; }
+
+/* ============================================================
+   Livre d'or audio
+   Côté participant : le micro en bas à droite de l'appareil, et l'écran
+   d'enregistrement par-dessus. Côté mariés : l'onglet « Livre d'or » de
+   l'album, une carte par invité.
+   ============================================================ */
+.lo-onde { display: flex; align-items: center; gap: 2px; width: 100%; }
+.lo-onde span { flex: 1 1 0; min-width: 2px; border-radius: 2px; transition: height .08s linear, background .15s; }
+.lo-onde-vivante span { transition: height .07s linear; }
+
+.lo-ancre { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.lo-micro { position: relative; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.28); background: rgba(255,255,255,.1); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+.lo-micro:active { transform: scale(.94); }
+.lo-micro-fait { background: var(--ok); border-color: transparent; }
+.lo-micro-point { position: absolute; top: 2px; right: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--amber); border: 2px solid var(--dark); animation: lo-pulse 1.2s ease-in-out infinite; }
+.lo-micro-legende { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55); white-space: nowrap; }
+.lo-bulle { position: absolute; bottom: calc(100% + 10px); right: -6px; width: max-content; max-width: 200px; background: #fff; color: var(--ink); border: none; border-radius: 14px; padding: 10px 13px; font-family: var(--font-body); font-weight: 700; font-size: 13.5px; line-height: 1.3; text-align: left; box-shadow: 0 10px 28px rgba(0,0,0,.35); cursor: pointer; animation: lo-bulle 5.5s ease both; z-index: 20; }
+.lo-bulle::after { content: ''; position: absolute; top: 100%; right: 26px; border: 7px solid transparent; border-top-color: #fff; }
+@keyframes lo-bulle { 0% { opacity: 0; transform: translateY(6px) scale(.96); } 6% { opacity: 1; transform: none; } 90% { opacity: 1; } 100% { opacity: 0; } }
+@keyframes lo-pulse { 0%,100% { opacity: 1; } 50% { opacity: .35; } }
+
+.lo-invitation { margin-top: 16px; display: flex; align-items: center; gap: 12px; text-align: left; background: #fff; color: var(--ink); border: none; border-radius: 18px; padding: 14px 18px; cursor: pointer; box-shadow: 0 10px 26px rgba(0,0,0,.3); max-width: 290px; }
+.lo-invitation-ic { font-size: 28px; }
+.lo-invitation b { display: block; font-family: var(--font-display); font-size: 16.5px; }
+.lo-invitation em { display: block; font-style: normal; font-size: 12.5px; color: var(--text3); margin-top: 2px; }
+
+.lo-ecran { position: fixed; inset: 0; z-index: 300; background: radial-gradient(120% 80% at 50% 0%, #2a2230 0%, var(--dark) 60%); color: #fff; display: flex; flex-direction: column; padding: max(16px, env(safe-area-inset-top)) 18px max(20px, env(safe-area-inset-bottom)); overflow-y: auto; }
+.lo-haut { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lo-fermer { width: 38px; height: 38px; border-radius: 50%; border: none; background: rgba(255,255,255,.12); color: #fff; font-size: 16px; cursor: pointer; }
+.lo-prive { font-size: 12.5px; font-weight: 600; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.14); padding: 7px 12px; border-radius: 999px; }
+.lo-corps { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; max-width: 420px; width: 100%; margin: 0 auto; padding: 20px 0; }
+.lo-titre { font-size: 26px; color: #fff; }
+.lo-texte { color: rgba(255,255,255,.72); font-size: 14.5px; line-height: 1.45; margin: 0; }
+.lo-vu { width: 100%; max-width: 300px; margin-top: 14px; }
+.lo-decompte { font-family: var(--font-mono); font-size: 34px; letter-spacing: .04em; color: var(--amber); }
+.lo-decompte-fin { color: var(--accent-lt); }
+.lo-rec { width: 84px; height: 84px; border-radius: 50%; border: 4px solid rgba(255,255,255,.85); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; margin-top: 8px; }
+.lo-rec span { width: 62px; height: 62px; border-radius: 50%; background: var(--accent); transition: all .2s ease; }
+.lo-rec-on span { width: 30px; height: 30px; border-radius: 7px; }
+.lo-rec-on { animation: lo-rec 1.6s ease-in-out infinite; }
+@keyframes lo-rec { 0%,100% { box-shadow: 0 0 0 0 rgba(236,91,51,.45); } 50% { box-shadow: 0 0 0 14px rgba(236,91,51,0); } }
+.lo-aide { color: rgba(255,255,255,.55); font-size: 12.5px; margin: 0; }
+.lo-alerte { margin-top: 10px; background: rgba(255,196,120,.12); border: 1px solid rgba(255,196,120,.35); border-radius: 14px; padding: 14px; text-align: left; display: flex; flex-direction: column; gap: 8px; font-size: 13px; line-height: 1.5; }
+.lo-alerte strong { font-size: 14.5px; }
+.lo-alerte button { align-self: flex-start; background: #fff; color: var(--ink); border: none; border-radius: 999px; padding: 9px 16px; font-weight: 700; cursor: pointer; }
+.lo-lecteur { display: flex; align-items: center; gap: 14px; width: 100%; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 12px 16px; margin-top: 8px; }
+.lo-play { flex: 0 0 48px; width: 48px; height: 48px; border-radius: 50%; border: none; background: var(--accent-btn); color: #fff; font-size: 16px; cursor: pointer; }
+.lo-actions { display: flex; gap: 10px; width: 100%; margin-top: 14px; }
+.lo-btn { flex: 1; border: none; border-radius: 999px; padding: 14px 16px; font-weight: 700; font-size: 15px; background: var(--accent-btn); color: #fff; cursor: pointer; }
+.lo-btn-ghost { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,.35); }
+.lo-selfie { position: relative; width: min(78vw, 300px); aspect-ratio: 3 / 4; border-radius: 6px; overflow: hidden; background: #000; border: 8px solid #f6f1e6; border-bottom-width: 26px; box-shadow: 0 16px 40px rgba(0,0,0,.45); transform: rotate(-1.5deg); }
+.lo-selfie video, .lo-selfie img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.lo-selfie-petit { width: 150px; }
+.lo-selfie-vide { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 54px; background: #1b1d26; }
+.lo-shutter { margin-top: 12px; }
+.lo-passer { background: none; border: none; color: rgba(255,255,255,.5); font-size: 13.5px; text-decoration: underline; cursor: pointer; padding: 6px; }
+
+/* Côté mariés */
+.lo-onglets { display: flex; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 4px; width: max-content; max-width: 100%; margin: 0 auto 18px; }
+.lo-onglets button { border: none; background: transparent; border-radius: 999px; padding: 9px 16px; font-weight: 700; font-size: 14px; color: var(--text3); cursor: pointer; }
+.lo-onglets button.on { background: var(--ink); color: #fff; }
+.lo-livre-tete { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 14px; }
+.lo-livre-tete p { color: var(--text3); font-size: 14px; margin: 0; }
+.lo-livre-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+.lo-livre-btns button { border-radius: 999px; padding: 10px 16px; font-weight: 700; font-size: 14px; cursor: pointer; border: 1.5px solid var(--ink); background: transparent; color: var(--ink); }
+.lo-livre-btns button.plein { background: var(--accent-btn); border-color: var(--accent-btn); color: #fff; }
+.lo-livre-btns button:disabled { opacity: .5; }
+.lo-cartes { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; }
+.lo-carte { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+.lo-carte.joue { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(236,91,51,.18); }
+.lo-carte-tete { display: flex; align-items: center; gap: 12px; }
+.lo-visage { flex: 0 0 56px; width: 56px; height: 56px; border-radius: 12px; overflow: hidden; background: var(--line-soft); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 22px; color: #fff; }
+.lo-visage img { width: 100%; height: 100%; object-fit: cover; }
+.lo-carte-nom { font-weight: 700; font-size: 16px; }
+.lo-carte-meta { font-size: 12.5px; color: var(--text3); font-family: var(--font-mono); }
+.lo-carte-lecteur { display: flex; align-items: center; gap: 12px; color: var(--accent); }
+.lo-carte-lecteur .lo-play { flex-basis: 42px; width: 42px; height: 42px; font-size: 14px; }
+.lo-carte-dl { align-self: flex-start; background: none; border: none; padding: 0; color: var(--text3); font-size: 12.5px; text-decoration: underline; cursor: pointer; }
+.lo-vide { text-align: center; padding: 40px 16px; color: var(--text3); background: var(--card); border: 1px dashed var(--line); border-radius: 18px; }
+.lo-vide b { display: block; color: var(--ink); font-size: 17px; margin-bottom: 6px; }
+.lo-scene { position: fixed; inset: 0; z-index: 300; background: var(--dark); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; padding: 24px 18px; text-align: center; }
+.lo-scene .lo-selfie { width: min(80vw, 380px); }
+.lo-scene .lo-visage-grand { width: min(60vw, 260px); aspect-ratio: 1; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 96px; }
+.lo-scene-nom { font-family: var(--font-display); font-size: 26px; font-weight: 800; }
+.lo-scene-meta { color: rgba(255,255,255,.6); font-family: var(--font-mono); font-size: 13px; }
+.lo-scene-onde { width: min(86vw, 420px); color: var(--accent); }
+.lo-scene-btns { display: flex; gap: 10px; }
+.lo-scene-btns button { border-radius: 999px; padding: 11px 18px; font-weight: 700; border: 1.5px solid rgba(255,255,255,.35); background: transparent; color: #fff; cursor: pointer; }
+.lo-selfie .vignette { position: absolute; inset: 0; box-shadow: inset 0 0 70px rgba(0,0,0,.55); pointer-events: none; }
+/* L'album est sombre : le livre d'or des mariés s'y fond. */
+.gal-page .lo-onglets { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.14); }
+.gal-page .lo-onglets button { color: rgba(255,255,255,.72); }
+.gal-page .lo-onglets button.on { background: #fff; color: var(--ink); }
+.gal-page .lo-livre-tete p { color: rgba(255,255,255,.62); }
+.gal-page .lo-livre-btns button { border-color: rgba(255,255,255,.4); color: #fff; }
+.gal-page .lo-livre-btns button.plein { border-color: var(--accent-btn); }
+.gal-page .lo-carte { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.1); color: #fff; }
+.gal-page .lo-carte-meta, .gal-page .lo-carte-dl { color: rgba(255,255,255,.55); }
+.gal-page .lo-vide { background: rgba(255,255,255,.05); border-color: rgba(255,255,255,.16); color: rgba(255,255,255,.65); }
+.gal-page .lo-vide b { color: #fff; }
+.pellicule-pleine .lo-invitation { background: #fff; color: var(--ink); border-radius: 16px; padding: 12px 16px; font-size: inherit; font-weight: inherit; }

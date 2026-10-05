@@ -11,6 +11,7 @@ import { estUuid, identifiantInvalide } from '../../../../lib/params'
 import { PHOTO_MODES, modeValide } from '../../../../lib/photo-mode'
 import { t } from '../../../../lib/i18n'
 import { langueRequete } from '../../../../lib/langue-serveur'
+import { effacerFichiersLivreOr } from '../../../../lib/livre-or'
 
 // Un participant est considéré « en train de jouer » si son appareil a donné signe
 // de vie récemment (scan ou photo).
@@ -23,7 +24,7 @@ export async function GET(request, { params }) {
 
   const { ok, data } = await selectRows(
     'events',
-    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests,is_demo,reglages_etape`
+    `id=eq.${id}&select=id,name,host_names,cover_url,cover_pos,shots_per_guest,bonus_shots,photo_mode,starts_at,ends_at,reminder_offsets,reveal_at,published_at,reveal_paused,status,owner_token,owner_email,owner_name,gallery_code,download_count,max_guests,is_demo,reglages_etape,livre_or_actif`
   )
   if (!ok || !Array.isArray(data) || !data[0]) {
     return Response.json({ error: t({ fr: 'Événement introuvable.', en: 'Event not found.', de: 'Event nicht gefunden.' }, langue) }, { status: 404 })
@@ -106,6 +107,11 @@ export async function GET(request, { params }) {
     revealed: isRevealed(dates),
     phase: eventPhase(dates),
     isOwner,
+    // Livre d'or audio : l'appareil n'affiche le micro que s'il est ouvert.
+    // Fermé une fois la fête finie (les messages en route, eux, passent
+    // encore : voir lib/livre-or).
+    livreOr: !!ev.livre_or_actif && Date.now() <= finDe(dates),
+    livreOrActif: !!ev.livre_or_actif,
   }
 
   // Numéros collectés + liste des admins : réservés à l'organisateur
@@ -378,6 +384,12 @@ export async function PATCH(request, { params }) {
     patch.photo_mode = m
   }
 
+  // Livre d'or audio : l'interrupteur des mariés. Le couper ne supprime aucun
+  // message déjà reçu, il ferme seulement le micro des participants.
+  if (body.livreOr !== undefined) {
+    patch.livre_or_actif = body.livreOr === true
+  }
+
   // Validation de l'album par l'organisateur. Facultative : sans elle, la
   // révélation part quand même à l'heure prévue.
   if (body.published !== undefined) {
@@ -476,6 +488,9 @@ export async function DELETE(request, { params }) {
   const paths = (Array.isArray(ph.data) ? ph.data : []).map((p) => p.storage_path).filter(Boolean)
   if (ev.cover_url) paths.push(ev.cover_url)
   if (paths.length) await deletePhotos(paths)
+  // Les messages du livre d'or : leurs lignes partent avec l'événement, leurs
+  // fichiers non.
+  await effacerFichiersLivreOr(id)
 
   // Lignes liées d'abord (contraintes de clés), puis l'événement
   await deleteRows('photos', `event_id=eq.${id}`)

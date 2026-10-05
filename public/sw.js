@@ -134,6 +134,27 @@ function viderLaFile() {
         var suite = Promise.resolve()
         liste.forEach(function (e) {
           suite = suite.then(function () {
+            // Un message du livre d'or voyage dans la même file que les photos,
+            // vers sa propre adresse. Il ne compte pas dans la notification :
+            // elle parle de photos.
+            if (e.genre === 'voix') {
+              var fv = new FormData()
+              fv.append('audio', e.audio, e.nomAudio || 'message')
+              if (e.selfie) fv.append('selfie', e.selfie, 'selfie.jpg')
+              fv.append('durationMs', String(e.durationMs || 0))
+              if (e.onde) fv.append('waveform', JSON.stringify(e.onde))
+              fv.append('eventId', e.eventId)
+              fv.append('guestId', e.guestId)
+              fv.append('deviceToken', e.deviceToken)
+              return fetch('/api/voix', { method: 'POST', body: fv, headers: { 'X-Langue': e.langue || langue } })
+                .then(function (r) { return r.json().catch(function () { return {} }).then(function (d) { return { r: r, d: d } }) })
+                .then(function (rep) {
+                  // Refus définitif (livre d'or fermé) ou arrivé : on le retire.
+                  if (rep.r.status === 410 || rep.r.status === 403) return effacerUnEnvoi(base, e.id)
+                  if (rep.r.ok && rep.d.ok === true) return effacerUnEnvoi(base, e.id)
+                })
+                .catch(function () {})
+            }
             var fd = new FormData()
             fd.append('file', e.blob, 'photo.jpg')
             if (e.thumb) fd.append('thumb', e.thumb, 'thumb.jpg')
