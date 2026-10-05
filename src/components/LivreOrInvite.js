@@ -101,6 +101,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   const videoRef = useRef(null)
   const fluxCamera = useRef(null)
   const fichierSelfie = useRef(null)
+  const dejaRange = useRef(false) // ce message est-il déjà dans la file ?
 
   // L'appareil photo doit lâcher la caméra tant que le livre d'or est ouvert :
   // un iPhone ne filme qu'avec une caméra à la fois, et le selfie en a besoin.
@@ -166,6 +167,8 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   }
 
   function fermer() {
+    // Fermé sur l'écran du selfie : le message, lui, est déjà parti.
+    if (etape === 'selfie' && dejaRange.current) montrerParti()
     arreterEnregistrement(true)
     arreterCamera()
     audioRef.current?.pause()
@@ -214,6 +217,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
     }
     fluxMicro.current = flux
     libererPrise()
+    dejaRange.current = false
 
     const format = choisirFormat()
     let rec
@@ -309,8 +313,16 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
     fluxCamera.current = null
   }
 
+  // Le message est rangé dès « Valider », AVANT le selfie. Un invité qui
+  // fermait l'onglet sur l'écran du selfie perdait tout : le message n'avait
+  // jamais quitté la page (retour d'une soirée, octobre 2026). Le selfie, s'il
+  // vient, remplace ensuite ce dépôt par le même message signé.
   async function allerAuSelfie() {
     audioRef.current?.pause()
+    if (!dejaRange.current) {
+      if (!(await ranger(null))) return
+      dejaRange.current = true
+    }
     setSelfie(null)
     setSelfieSansCamera(false)
     setEtape('selfie')
@@ -372,33 +384,51 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
 
   // ---------------------------------------------------------------- l'envoi
 
-  async function envoyer(avecSelfie) {
-    if (!prise) return
+  // Range le message dans la file d'attente, avec ou sans selfie. Un second
+  // dépôt pour la même soirée remplace le premier (dans la file comme sur le
+  // serveur) : ajouter le selfie après coup ne crée pas de doublon.
+  async function ranger(selfieBlob) {
+    if (!prise) return false
     try {
       await ajouterVoixALaFile({
         eventId,
         guestId,
         deviceToken: getDeviceToken(),
         audio: prise.blob,
-        selfie: avecSelfie && selfie ? selfie.blob : null,
+        selfie: selfieBlob || null,
         durationMs: prise.dureeMs,
         nomAudio: `message.${prise.ext}`,
         onde: prise.onde,
       })
     } catch {
       setErreur(t({ fr: 'Ton message n’a pas pu être gardé. Réessaie.', en: 'Your message couldn’t be kept. Try again.', de: 'Ihre Nachricht konnte nicht gespeichert werden. Versuchen Sie es erneut.' }))
-      return
+      return false
     }
-    arreterCamera()
     // Le message gardé en mémoire sert à le réécouter tant qu'il n'est pas arrivé.
-    setMien((m) => ({ ...(m || {}), local: prise.url, selfieLocal: avecSelfie && selfie ? selfie.url : null, durationMs: prise.dureeMs, onde: prise.onde }))
+    setMien((m) => ({ ...(m || {}), local: prise.url, selfieLocal: selfieBlob && selfie ? selfie.url : null, durationMs: prise.dureeMs, onde: prise.onde }))
     setStatut('attente')
-    setEtape(null)
+    return true
+  }
+
+  function montrerParti() {
     setParti(true)
     setTimeout(() => setParti(false), 2200)
   }
 
+  // « Envoyer » avec le selfie, ou « Passer » : le message est déjà rangé
+  // depuis « Valider », il ne reste qu'à y joindre la signature.
+  async function envoyer(avecSelfie) {
+    if (!prise) return
+    if (avecSelfie && selfie) {
+      if (!(await ranger(selfie.blob))) return
+    }
+    arreterCamera()
+    setEtape(null)
+    montrerParti()
+  }
+
   function refaire() {
+    dejaRange.current = false
     audioRef.current?.pause()
     setLecture({ joue: false, progression: 0 })
     setEtape('intro')
@@ -513,7 +543,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
           {etape === 'selfie' && (
             <div className="lo-corps">
               <h2 className="lo-titre">{t({ fr: 'Signe ton message avec un selfie', en: 'Sign your message with a selfie', de: 'Unterschreiben Sie Ihre Nachricht mit einem Selfie' })}</h2>
-              <p className="lo-texte">{t({ fr: 'Il ne compte pas dans ta pellicule.', en: 'It doesn’t count towards your film roll.', de: 'Es zählt nicht zu Ihrem Film.' })}</p>
+              <p className="lo-texte">{t({ fr: 'Ton message est bien parti ✓ Le selfie ne compte pas dans ta pellicule.', en: 'Your message has been sent ✓ The selfie doesn’t count towards your film roll.', de: 'Ihre Nachricht ist unterwegs ✓ Das Selfie zählt nicht zu Ihrem Film.' })}</p>
 
               <div className="lo-selfie">
                 {selfie ? (
