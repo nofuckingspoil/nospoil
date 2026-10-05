@@ -23,8 +23,10 @@ export function adminEmail() {
   return (process.env.ADMIN_EMAIL || '').trim() || CONTACT_EMAIL
 }
 
-export function lienAvisOrga(ownerToken) {
-  return `${siteUrl()}/avis?o=${encodeURIComponent(ownerToken)}`
+// Le lien porte la clé d'avis de l'événement, jamais celle de l'organisateur :
+// un mail se transfère, et cette clé-là n'ouvre que le questionnaire.
+export function lienAvisOrga(cleAvis) {
+  return `${siteUrl()}/avis?o=${encodeURIComponent(cleAvis)}`
 }
 
 // Désinscription en un clic, appelée directement par la messagerie (bouton
@@ -347,6 +349,6 @@ export function essaiEmail({ eventName, lien, langue, relance = false }) {
   }
 }
 
-export function lienRetourEssai(ownerToken) {
-  return `${siteUrl()}/retour-essai?o=${encodeURIComponent(ownerToken)}`
+export function lienRetourEssai(cleAvis) {
+  return `${siteUrl()}/retour-essai?o=${encodeURIComponent(cleAvis)}`
 }

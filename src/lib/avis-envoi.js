@@ -50,7 +50,7 @@ export async function enqueteOrganisateurs(now = new Date()) {
   const seuil = new Date(now.getTime() - 1 * JOUR).toISOString()
   const { ok, data } = await selectRows(
     'events',
-    'select=id,name,owner_email,owner_token,reveal_at,reveal_paused,max_guests,langue' +
+    'select=id,name,owner_email,avis_token,reveal_at,reveal_paused,max_guests,langue' +
       `&reveal_at=lte.${seuil}` +
       '&survey_mailed_at=is.null' +
       '&owner_email=not.is.null' +
@@ -92,7 +92,7 @@ export async function enqueteOrganisateurs(now = new Date()) {
     const mail = avisOrgaEmail({
       langue,
       eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
-      link: lienAvisOrga(ev.owner_token),
+      link: lienAvisOrga(ev.avis_token),
     })
     const res = await sendMail({
       to: ev.owner_email, subject: mail.subject, html: mail.html,
@@ -218,7 +218,7 @@ export async function recapDuJour() {
 // toujours aucune photo ni réponse. Une réponse arrête tout.
 export async function relanceEssais(now = new Date()) {
   const il = (h) => new Date(now.getTime() - h * 3600 * 1000).toISOString()
-  const commun = 'select=id,name,owner_email,owner_token,langue,created_at,reveal_at' +
+  const commun = 'select=id,name,owner_email,avis_token,langue,created_at,reveal_at' +
     '&paid_cents=eq.0&is_demo=is.false&is_test=is.false&purged_at=is.null' +
     '&owner_email=not.is.null&essai_reponse=is.null'
   const [premiers, derniers] = await Promise.all([
@@ -241,7 +241,7 @@ export async function relanceEssais(now = new Date()) {
       langue,
       relance,
       eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
-      lien: lienRetourEssai(ev.owner_token),
+      lien: lienRetourEssai(ev.avis_token),
     })
     const res = await sendMail({
       to: ev.owner_email, subject: mail.subject, html: mail.html,

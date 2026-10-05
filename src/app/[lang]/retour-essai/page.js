@@ -81,7 +81,7 @@ function RetourInner() {
   if (erreur) return <Cadre><div className="card"><p className="err" style={{ margin: 0 }}>{erreur}</p></div></Cadre>
   if (!ev) return <Cadre><p className="muted" style={{ textAlign: 'center' }}>{t({ fr: 'Un instant…', en: 'One moment…', de: 'Einen Moment…' })}</p></Cadre>
 
-  const tableau = lien(`/event/${ev.id}?k=${encodeURIComponent(jeton)}`)
+  const tableau = lien(`/event/${ev.id}`)
   const appareil = lien(`/j/${ev.id}`)
 
   return (

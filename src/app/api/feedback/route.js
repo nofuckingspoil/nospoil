@@ -44,9 +44,15 @@ function listeDeSoucis(v) {
 async function resoudre(body) {
   const jetonOrga = texte(body.o)
   if (jetonOrga) {
+    // Le jeton entre dans un filtre « or=(…) » : virgules et parenthèses y
+    // seraient lues comme des conditions. Une clé n'est faite que de lettres et
+    // de chiffres.
+    if (!/^[A-Za-z0-9_-]+$/.test(jetonOrga)) return null
     const { data } = await selectRows(
       'events',
-      `owner_token=eq.${encodeURIComponent(jetonOrga)}&select=id,name,owner_email,survey_mailed_at&limit=1`
+      // Clé d'avis (lien du mail) ou clé d'organisateur (tableau de bord).
+      // Les mails partis avant la clé d'avis portent encore la seconde.
+      `or=(avis_token.eq.${encodeURIComponent(jetonOrga)},owner_token.eq.${encodeURIComponent(jetonOrga)})&select=id,name,owner_email,survey_mailed_at&limit=1`
     )
     const ev = Array.isArray(data) ? data[0] : null
     if (!ev) return null

@@ -12,7 +12,7 @@ import Link from 'next/link'
 import QRCode from 'qrcode'
 import Logo from '../../../../../components/Logo'
 import { nomAffiche } from '../../../../../lib/event-defaults'
-import { getOwnerToken, saveOwnerToken } from '../../../../../lib/device'
+import { getOwnerToken } from '../../../../../lib/device'
 import { useLangue } from '../../../../../components/Langue'
 import { t as choisir } from '../../../../../lib/i18n'
 
@@ -114,11 +114,8 @@ export default function PrintKit({ params }) {
   }
 
   useEffect(() => {
-    // Lien organisateur ouvert depuis un autre appareil (on crée sur son téléphone,
-    // on imprime depuis un ordinateur) : ?k=<jeton> → on le mémorise puis on nettoie l'adresse.
-    const k = new URLSearchParams(window.location.search).get('k')
-    if (k) {
-      saveOwnerToken(id, k)
+    // Une clé dans l'adresse (?k=…) n'ouvre plus rien : voir le tableau de bord.
+    if (new URLSearchParams(window.location.search).get('k')) {
       const u = new URL(window.location.href); u.searchParams.delete('k')
       window.history.replaceState(null, '', u.pathname + u.search)
     }

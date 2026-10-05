@@ -26,7 +26,7 @@ import { purgeDate } from '../../../../lib/retention'
 import { rappelsAutomatiques, heureDuRappel, jourDuRappel, autreJourQueLeDebut, minutesDepuisHeure, dureeMin } from '../../../../lib/rappels'
 import { fileToImage, compressToBlob } from '../../../../lib/camera'
 import { DEFAULT_EVENT_NAME, nomAffiche } from '../../../../lib/event-defaults'
-import { getOwnerToken, saveOwnerToken, rememberMyEvent, forgetMyEvent, getGuest, notePrenomOrganisateur } from '../../../../lib/device'
+import { getOwnerToken, forgetMyEvent, getGuest, notePrenomOrganisateur } from '../../../../lib/device'
 import { track } from '../../../../lib/tracking'
 import Bilan from '../../../../components/Bilan'
 import { useLangue } from '../../../../components/Langue'
@@ -206,15 +206,13 @@ export default function EventManage({ params }) {
   }, [id])
 
   useEffect(() => {
-    // Lien privé organisateur ouvert depuis un autre appareil : ?k=<jeton> → on l'enregistre
-    // pour reconnaître cet appareil comme organisateur, puis on nettoie l'adresse.
+    // Les anciens mails portaient la clé de l'organisateur dans l'adresse
+    // (?k=…), et l'ouvrir suffisait à devenir organisateur. Un mail transféré
+    // donnait donc la main à n'importe qui. Désormais la clé ne s'obtient qu'en
+    // se connectant (code reçu par mail) : celle de l'adresse est ignorée, et
+    // effacée pour ne pas traîner dans l'historique.
     const sp = new URLSearchParams(window.location.search)
-    const k = sp.get('k')
-    if (k) {
-      saveOwnerToken(id, k)
-      rememberMyEvent(id)
-      window.history.replaceState(null, '', `/event/${id}`)
-    }
+    if (sp.get('k')) window.history.replaceState(null, '', `/event/${id}`)
     // Retour du paiement d'une mise à niveau de formule : on l'applique, puis on
     // nettoie l'adresse pour qu'un rechargement ne rejoue pas l'opération.
     const up = sp.get('upgrade_session')
@@ -981,26 +979,30 @@ export default function EventManage({ params }) {
     )
   }
 
-  // ---- Écran d'un admin non connecté ----
+  // ---- Appareil non reconnu : il faut se connecter ----
+  // Ouvrir le lien du tableau de bord ne suffit pas : il faut prouver qu'on
+  // relève la boîte mail de l'organisateur (ou d'un co-organisateur). Une fois
+  // le code saisi, cet appareil est retenu et ne redemande plus rien.
   if (!ev.isOwner) {
+    const retour = encodeURIComponent(`/event/${id}`)
     return (
       <main className="screen screen-cream">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link href="/" style={{ textDecoration: 'none' }}><Logo nameSize={22} size={36} /></Link>
         </div>
         <div className="card" style={{ marginTop: 26 }}>
-          <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔑 {t({ fr: 'Vous co-organisez cet événement ?', en: 'Are you co-hosting this event?', de: 'Sie organisieren dieses Event mit?' })}</div>
+          <div className="eyebrow-mute" style={{ marginBottom: 4 }}>🔒 {t({ fr: 'Espace organisateur', en: 'Host area', de: 'Bereich für Gastgeber' })}</div>
           <div style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, marginBottom: 6 }}>
-            {t({ fr: 'Connectez-vous avec votre adresse mail', en: 'Sign in with your email address', de: 'Melden Sie sich mit Ihrer E-Mail-Adresse an' })}
+            {t({ fr: 'Connectez-vous pour ouvrir le tableau de bord', en: 'Sign in to open the dashboard', de: 'Melden Sie sich an, um das Dashboard zu öffnen' })}
           </div>
           <p className="muted small" style={{ marginBottom: 14 }}>
             {t({
-              fr: "Aucun code à retenir : indiquez l'adresse à laquelle vous avez reçu l'invitation, et vous recevrez un lien de connexion.",
-              en: "No code to remember: enter the address where you received the invitation, and you'll get a sign-in link.",
-              de: 'Kein Code nötig: Geben Sie die Adresse an, an die Ihre Einladung ging, und Sie erhalten einen Anmeldelink.',
+              fr: "Cet appareil n'est pas encore reconnu. Indiquez l'adresse mail avec laquelle vous avez créé l'événement (ou reçu l'invitation à le co-organiser) : vous recevrez un code. Ensuite, cet appareil s'en souviendra.",
+              en: "This device isn't recognised yet. Enter the email address you used to create the event (or where you received the co-hosting invitation): you'll get a code. After that, this device will remember you.",
+              de: 'Dieses Gerät ist noch nicht bekannt. Geben Sie die E-Mail-Adresse an, mit der Sie das Event erstellt haben (oder an die die Einladung zum Mitorganisieren ging): Sie erhalten einen Code. Danach merkt sich dieses Gerät Sie.',
             })}
           </p>
-          <a className="btn btn-accent" href="/connexion">{t({ fr: 'Recevoir mon lien de connexion →', en: 'Get my sign-in link →', de: 'Meinen Anmeldelink erhalten →' })}</a>
+          <a className="btn btn-accent" href={lien(`/connexion?next=${retour}`)}>{t({ fr: 'Recevoir mon code →', en: 'Get my code →', de: 'Meinen Code erhalten →' })}</a>
         </div>
         <div className="notice" style={{ marginTop: 16 }}>
           📷 {t({ fr: 'Vous voulez juste prendre des photos ?', en: 'Just want to take photos?', de: 'Sie möchten nur Fotos machen?' })}{' '}

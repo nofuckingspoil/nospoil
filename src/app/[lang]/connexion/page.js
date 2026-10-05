@@ -12,6 +12,8 @@ function Connexion() {
   const router = useRouter()
   const sp = useSearchParams()
   const magicToken = sp.get('t')
+  // Arrivé depuis un tableau de bord verrouillé : on parle à l'organisateur.
+  const versTableau = (sp.get('next') || '').startsWith('/event/')
 
   // 'email' : on demande l'adresse · 'code' : on attend les 6 chiffres · 'magic' : lien cliqué
   const [step, setStep] = useState(magicToken ? 'magic' : 'email')
@@ -64,7 +66,7 @@ function Connexion() {
     try {
       const res = await fetch('/api/auth/request', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: email.trim(), langue: lang }),
+        body: JSON.stringify({ email: email.trim(), langue: lang, next: sp.get('next') || undefined }),
       })
       const d = await res.json()
       if (!res.ok) throw new Error(d.error || t({ fr: 'Envoi impossible.', en: 'Could not send.', de: 'Senden nicht möglich.' }))
@@ -105,6 +107,19 @@ function Connexion() {
       <div className="card" style={{ marginTop: 24, width: '100%' }}>
         {step === 'email' ? (
           <>
+            {versTableau ? (
+              <>
+                <h2 className="h3" style={{ marginBottom: 6 }}>{t({ fr: 'Ouvrir mon tableau de bord', en: 'Open my dashboard', de: 'Mein Dashboard öffnen' })}</h2>
+                <p className="muted small" style={{ marginBottom: 18 }}>
+                  {t({
+                    fr: "Entrez l'adresse mail de l'organisateur ou d'un co-organisateur. Vous recevrez un code à 6 chiffres, et un bouton qui vous ramène directement ici.",
+                    en: 'Enter the email address of the host or a co-host. You will get a 6-digit code, and a button that brings you straight back here.',
+                    de: 'Geben Sie die E-Mail-Adresse des Gastgebers oder eines Mitorganisators ein. Sie erhalten einen 6-stelligen Code und einen Button, der Sie direkt hierher zurückbringt.',
+                  })}
+                </p>
+              </>
+            ) : (
+              <>
             <h2 className="h3" style={{ marginBottom: 6 }}>{t({ fr: 'Retrouver mes photos', en: 'Find my photos', de: 'Meine Fotos wiederfinden' })}</h2>
             {/* Deux publics sur la même page, et c'est voulu : l'organisateur
                 qui revient sur son tableau de bord, et le participant qui a
@@ -117,6 +132,8 @@ function Connexion() {
                 de: 'Geben Sie Ihre E-Mail-Adresse ein. Ob Sie das Event erstellt oder einfach mitfotografiert haben: Sie erhalten einen Link, der Sie zurückbringt. Kein Passwort nötig.',
               })}
             </p>
+              </>
+            )}
             <form onSubmit={requestCode}>
               <div className="field">
                 <label>{t({ fr: 'Votre adresse mail', en: 'Your email address', de: 'Ihre E-Mail-Adresse' })}</label>
@@ -125,7 +142,9 @@ function Connexion() {
               </div>
               {error && <div className="err" style={{ marginTop: 4 }}>{error}</div>}
               <button className="btn btn-accent" type="submit" disabled={loading || !email.trim()}>
-                {loading ? t({ fr: 'Envoi…', en: 'Sending…', de: 'Wird gesendet…' }) : t({ fr: 'Recevoir mon lien de connexion →', en: 'Send me my sign-in link →', de: 'Anmeldelink erhalten →' })}
+                {loading ? t({ fr: 'Envoi…', en: 'Sending…', de: 'Wird gesendet…' }) : (versTableau
+                  ? t({ fr: 'Recevoir mon code →', en: 'Get my code →', de: 'Meinen Code erhalten →' })
+                  : t({ fr: 'Recevoir mon lien de connexion →', en: 'Send me my sign-in link →', de: 'Anmeldelink erhalten →' }))}
               </button>
             </form>
           </>

@@ -136,7 +136,7 @@ export async function POST(request) {
       const mail = eventCreatedEmail({
         langue,
         eventName: m.name,
-        ownerUrl: `${base}/event/${data.id}?k=${m.owner_token}`,
+        ownerUrl: `${base}/event/${data.id}`,
         joinUrl: `${base}/j/${data.id}`,
         revealAt: reveal.toISOString(),
       })

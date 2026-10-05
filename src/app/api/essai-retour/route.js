@@ -29,9 +29,9 @@ export async function POST(request) {
   const langue = langueRequete(request)
   const body = await request.json().catch(() => ({}))
   const jeton = typeof body.o === 'string' ? body.o.trim() : ''
-  if (!jeton) return Response.json({ error: t({ fr: 'Lien incomplet.', en: 'Incomplete link.', de: 'Unvollständiger Link.' }, langue) }, { status: 400 })
+  if (!jeton || !/^[A-Za-z0-9_-]+$/.test(jeton)) return Response.json({ error: t({ fr: 'Lien incomplet.', en: 'Incomplete link.', de: 'Unvollständiger Link.' }, langue) }, { status: 400 })
 
-  const { data } = await selectRows('events', `owner_token=eq.${encodeURIComponent(jeton)}&select=id,name,owner_email,essai_reponse&limit=1`)
+  const { data } = await selectRows('events', `or=(avis_token.eq.${encodeURIComponent(jeton)},owner_token.eq.${encodeURIComponent(jeton)})&select=id,name,owner_email,essai_reponse&limit=1`)
   const ev = Array.isArray(data) ? data[0] : null
   if (!ev) return Response.json({ error: t({ fr: 'Lien inconnu ou expiré.', en: 'Unknown or expired link.', de: 'Unbekannter oder abgelaufener Link.' }, langue) }, { status: 404 })
 

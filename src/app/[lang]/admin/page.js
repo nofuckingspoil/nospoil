@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Logo from '../../../components/Logo'
 import { tierByGuests, formatPrice } from '../../../lib/pricing'
 import { finDe } from '../../../lib/rappels'
+import { saveOwnerToken } from '../../../lib/device'
 
 const KEY_STORE = 'declic_admin_key'
 
@@ -530,7 +531,10 @@ export default function Admin() {
                       il appelle à l'aide. */}
                   <span className="pc-actions">
                     {e.ownerToken && (
-                      <a className="pc-icon" href={`/event/${e.id}?k=${e.ownerToken}`}
+                      // La clé ne passe plus par l'adresse (le tableau de bord
+                      // l'ignore) : on la range sur cet appareil avant d'ouvrir.
+                      <a className="pc-icon" href={`/event/${e.id}`}
+                        onClick={() => saveOwnerToken(e.id, e.ownerToken)}
                         target="_blank" rel="noreferrer" style={{ textDecoration: 'none' }}
                         title="Ouvrir comme l'organisateur" aria-label="Ouvrir comme l'organisateur">
                         <IconeOuvrir />

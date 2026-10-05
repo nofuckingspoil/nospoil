@@ -43,7 +43,7 @@ async function alerteQuota(ev, guestCount, prenom) {
     const mail = quotaEmail({
       langue,
       eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
-      ownerUrl: `${siteUrl()}/event/${ev.id}?k=${p.token}`,
+      ownerUrl: `${siteUrl()}/event/${ev.id}`,
       guestCount,
       maxGuests: ev.max_guests,
       prenom,

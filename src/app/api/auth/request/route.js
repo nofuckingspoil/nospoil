@@ -94,7 +94,11 @@ export async function POST(request) {
     return Response.json({ error: t({ fr: 'Impossible de préparer la connexion. Réessayez.', en: 'Sign-in could not be prepared. Please try again.', de: 'Die Anmeldung konnte nicht vorbereitet werden. Bitte versuchen Sie es erneut.' }, langue) }, { status: 500 })
   }
 
-  const link = `${siteUrl()}/connexion?t=${token}`
+  // Le bouton du mail ramène là où la personne a demandé à se connecter (son
+  // tableau de bord, par exemple). Un chemin du site seulement, jamais une
+  // adresse extérieure.
+  const next = typeof body.next === 'string' && /^\/[A-Za-z0-9/_-]*$/.test(body.next) && !body.next.startsWith('//') ? body.next : ''
+  const link = `${siteUrl()}/connexion?t=${token}${next ? `&next=${encodeURIComponent(next)}` : ''}`
   const mail = loginEmail({ code, link, langue })
   const sent = await sendMail({ to: email, subject: mail.subject, html: mail.html, text: mail.text })
   if (!sent.ok) {

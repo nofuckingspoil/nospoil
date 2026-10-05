@@ -71,7 +71,7 @@ async function nudgeEventDay(now, base) {
       const mail = eventDayEmail({
         langue,
         eventName: ev.name,
-        ownerUrl: `${base}/event/${ev.id}?k=${p.token}`,
+        ownerUrl: `${base}/event/${ev.id}`,
         shotsPerGuest: ev.shots_per_guest,
       })
       const res = await sendMail({ to: p.email, subject: mail.subject, html: mail.html })
@@ -136,7 +136,7 @@ async function nudgeAfterParty(now, base) {
       const mail = afterPartyEmail({
         langue,
         eventName: ev.name,
-        ownerUrl: `${base}/event/${ev.id}?k=${p.token}`,
+        ownerUrl: `${base}/event/${ev.id}`,
         photoCount,
         guestCount,
         revealDate: frDate(ev.reveal_at, langue),
