@@ -1626,28 +1626,6 @@ export default function EventManage({ params }) {
           )
         })()}
 
-        {/* Livre d'or audio : chaque invité peut laisser un message vocal aux
-            mariés, signé d'un selfie. Un interrupteur, rien de plus : le
-            couper ferme le micro des invités sans effacer les messages reçus. */}
-        <div className="db-set">
-          <div className="db-set-l">
-            <span className="db-set-lbl">🎙️ {t({ fr: 'Livre d’or audio', en: 'Audio guestbook', de: 'Audio-Gästebuch' })}</span>
-            <span className="db-set-val">
-              {ev.livreOrActif
-                ? t({ fr: 'Activé : vos invités peuvent vous laisser un message vocal, que vous seuls écoutez.', en: 'On: your guests can leave you a voice message that only you will hear.', de: 'Aktiv: Ihre Gäste können Ihnen eine Sprachnachricht hinterlassen, die nur Sie hören.' })
-                : t({ fr: 'Désactivé : un bouton micro permettrait à chaque invité de vous laisser un message vocal.', en: 'Off: a microphone button would let each guest leave you a voice message.', de: 'Aus: Ein Mikrofon-Knopf würde jedem Gast erlauben, Ihnen eine Sprachnachricht zu hinterlassen.' })}
-            </span>
-            {ev.livreOrActif && (
-              <Link href={`/g/${id}?onglet=livre-or`} className="linklike" style={{ fontSize: 13.5, marginTop: 4 }}>
-                {t({ fr: 'Écouter le livre d’or →', en: 'Listen to the guestbook →', de: 'Gästebuch anhören →' })}
-              </Link>
-            )}
-          </div>
-          <button className="db-set-act" onClick={() => patchEvent({ livreOr: !ev.livreOrActif })}>
-            {ev.livreOrActif ? t({ fr: 'Désactiver', en: 'Turn off', de: 'Ausschalten' }) : t({ fr: 'Activer', en: 'Turn on', de: 'Einschalten' })}
-          </button>
-        </div>
-
         {/* Date de révélation */}
         <div className="db-set">
           <div className="db-set-l">
@@ -1817,6 +1795,64 @@ export default function EventManage({ params }) {
           )}
           {galleryMsg && <div className="err" style={{ marginTop: 8 }}>{galleryMsg}</div>}
         </div>
+      </Section>
+
+      {/* Le livre d'or audio a sa section, comme l'album : c'est un second
+          souvenir de la soirée, pas un réglage parmi d'autres. On l'allume, on
+          voit combien de messages sont arrivés, on va les écouter. */}
+      <Section id="sec-livre-or" title={t({ fr: 'Livre d’or audio', en: 'Audio guestbook', de: 'Audio-Gästebuch' })}
+        hint={ev.livreOrActif
+          ? t({ fr: 'Activé · vous seuls écoutez les messages', en: 'On · only you can hear the messages', de: 'Aktiv · nur Sie hören die Nachrichten' })
+          : t({ fr: 'Désactivé · un message vocal de chaque invité', en: 'Off · a voice message from each guest', de: 'Aus · eine Sprachnachricht von jedem Gast' })}
+        badge={t({
+          fr: `${ev.livreOrCount || 0} message${(ev.livreOrCount || 0) > 1 ? 's' : ''}`,
+          en: `${ev.livreOrCount || 0} message${(ev.livreOrCount || 0) !== 1 ? 's' : ''}`,
+          de: `${ev.livreOrCount || 0} ${(ev.livreOrCount || 0) !== 1 ? 'Nachrichten' : 'Nachricht'}`,
+        })}
+        open={openSec === 'livre-or'} onToggle={() => toggleSec('livre-or')}>
+
+        <p className="muted small" style={{ marginBottom: 12 }}>
+          {t({
+            fr: 'Chaque invité trouve un bouton micro sur son appareil photo. Il vous laisse un message d’une minute au plus, signé d’un selfie. Vous seuls l’écoutez, dès qu’il arrive : pas besoin d’attendre la révélation.',
+            en: 'Each guest finds a microphone button on their camera. They leave you a message of up to one minute, signed with a selfie. Only you hear it, as soon as it arrives: no need to wait for the reveal.',
+            de: 'Jeder Gast findet einen Mikrofon-Knopf an seiner Kamera. Er hinterlässt Ihnen eine Nachricht von höchstens einer Minute, mit einem Selfie unterschrieben. Nur Sie hören sie, sobald sie ankommt: Sie müssen nicht auf die Enthüllung warten.',
+          })}
+        </p>
+
+        <div className="db-set">
+          <div className="db-set-l">
+            <span className="db-set-lbl">🎙️ {t({ fr: 'Micro des invités', en: 'Guests’ microphone', de: 'Mikrofon der Gäste' })}</span>
+            <span className="db-set-val">
+              {ev.livreOrActif
+                ? t({ fr: 'Activé : le bouton est sur leur appareil jusqu’à la fin de la soirée.', en: 'On: the button is on their camera until the end of the party.', de: 'Aktiv: Der Knopf ist bis zum Ende der Feier an ihrer Kamera.' })
+                : t({ fr: 'Désactivé : vos invités ne voient pas le bouton.', en: 'Off: your guests don’t see the button.', de: 'Aus: Ihre Gäste sehen den Knopf nicht.' })}
+            </span>
+          </div>
+          <button className="db-set-act" onClick={() => patchEvent({ livreOr: !ev.livreOrActif })}>
+            {ev.livreOrActif ? t({ fr: 'Désactiver', en: 'Turn off', de: 'Ausschalten' }) : t({ fr: 'Activer', en: 'Turn on', de: 'Einschalten' })}
+          </button>
+        </div>
+
+        {(ev.livreOrActif || (ev.livreOrCount || 0) > 0) && (
+          <Link href={`/g/${id}?onglet=livre-or`} className="btn btn-dark" style={{ marginTop: 14 }}>
+            {(ev.livreOrCount || 0) > 0
+              ? t({ fr: 'Écouter le livre d’or →', en: 'Listen to the guestbook →', de: 'Gästebuch anhören →' })
+              : t({ fr: 'Ouvrir le livre d’or →', en: 'Open the guestbook →', de: 'Gästebuch öffnen →' })}
+          </Link>
+        )}
+
+        {/* Couper le micro n'efface rien : le dire évite qu'on n'ose pas. */}
+        {!ev.livreOrActif && (ev.livreOrCount || 0) > 0 && (
+          <p className="muted small" style={{ marginTop: 10 }}>
+            {t({ fr: 'Les messages déjà reçus restent là, même désactivé.', en: 'Messages already received stay here, even when turned off.', de: 'Bereits erhaltene Nachrichten bleiben erhalten, auch wenn deaktiviert.' })}
+          </p>
+        )}
+        {finAlbum && (ev.livreOrCount || 0) > 0 && (
+          <p className="db-alb-fin">
+            {t({ fr: `Les messages sont supprimés avec les photos, le ${formatJour(finAlbum, locale)}.`, en: `The messages are deleted along with the photos, on ${formatJour(finAlbum, locale)}.`, de: `Die Nachrichten werden zusammen mit den Fotos am ${formatJour(finAlbum, locale)} gelöscht.` })}
+          </p>
+        )}
+        {settingMsg && openSec === 'livre-or' && <div className="err" style={{ marginTop: 10 }}>{settingMsg}</div>}
       </Section>
 
       <Section title={t({ fr: 'Co-organisateurs', en: 'Co-hosts', de: 'Mitveranstalter' })} hint={t({ fr: "Partager la gestion de l'événement", en: 'Share the running of the event', de: 'Die Verwaltung des Events teilen' })}

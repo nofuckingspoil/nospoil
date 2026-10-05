@@ -155,6 +155,9 @@ export async function GET(request, { params }) {
     payload.admins = (Array.isArray(admins.data) ? admins.data : []).map((a) => ({ id: a.id, name: a.name, email: a.email, invitedAt: a.invited_at, joinedAt: a.joined_at }))
 
     payload.role = role // 'owner' | 'admin' : pilote l'accès à la suppression
+    // Combien de messages le livre d'or a reçus : le badge de sa section.
+    const voix = await selectRows('voice_messages', `event_id=eq.${id}&select=id`)
+    payload.livreOrCount = Array.isArray(voix.data) ? voix.data.length : 0
     payload.ownerName = ev.owner_name || null
     payload.ownerEmail = ev.owner_email || null // mail de connexion de l'organisateur
     payload.galleryCode = ev.gallery_code || null // code d'accès à la galerie (si activé)
