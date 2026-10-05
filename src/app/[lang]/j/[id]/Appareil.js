@@ -20,6 +20,13 @@ import { lien } from '../../../../lib/langue-lien'
 
 const COVER_GRAD = 'linear-gradient(150deg,#F7C26B,#EE7A45,#A23D5C)'
 
+// Sur iPhone, une page fermée n'envoie plus rien : il faut la rouvrir. Sur
+// Android, Chrome reprend l'envoi tout seul au retour du réseau.
+function surIPhone() {
+  if (typeof navigator === 'undefined') return false
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+}
+
 function formatReveal(iso, locale = 'fr-FR') {
   try { return new Date(iso).toLocaleString(locale, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) }
   catch { return iso }
@@ -123,8 +130,17 @@ export default function GuestCamera({ params }) {
   // « C'est dans la boîte ! » : une courte pause après chaque photo gardée.
   // Sans elle, on ne savait pas si le déclic avait pris, et l'on refaisait la
   // même photo deux ou trois fois (retour d'une mariée, octobre 2026).
+  //
+  // Il devient « Développement de la photo… » jusqu'à ce qu'on sache ce
+  // qu'elle est devenue : arrivée, pas de réseau, ou envoi qui traîne. Le
+  // déclencheur reste fermé pendant ce temps (10 s au plus) : celui qui range
+  // son téléphone aussitôt après le déclic coupait l'envoi, et la photo
+  // attendait la visite suivante (soirée du 05/10/2026).
   const [dansLaBoite, setDansLaBoite] = useState(false)
   const minuteurBoite = useRef(null)
+  const [envoiPhoto, setEnvoiPhoto] = useState(null) // null | { id, etat: 'envoi' | 'arrivee' | 'reseau' | 'lent' }
+  const envoiRef = useRef(null)
+  const minuteurEnvoi = useRef(null)
   const [flashOn, setFlashOn] = useState(false)
   const [screenFlash, setScreenFlash] = useState(false) // flash écran (selfie) pendant la capture
   const [liveCam, setLiveCam] = useState(false)
@@ -563,7 +579,22 @@ export default function GuestCamera({ params }) {
         idsEnFile.current = new Set(miennes.map((e) => e.id))
         if (entrees) setEnPrise((n) => Math.max(0, n - entrees))
         setPending(miennes.map((e) => ({ tempId: e.id, url: e.url, essais: e.essais })))
+        // La photo qu'on vient de prendre a échoué une première fois : pas de
+        // réseau. On le dit tout de suite, et on rend le déclencheur.
+        const suivie = envoiRef.current
+        if (suivie?.id && (suivie.etat === 'envoi' || suivie.etat === 'lent')) {
+          const e = miennes.find((x) => x.id === suivie.id)
+          if (e && (e.essais || 0) >= 1) {
+            poserEnvoi({ id: suivie.id, etat: 'reseau' })
+            effacerEnvoiDans(7000)
+          }
+        }
         return
+      }
+      // Le sort de la photo qu'on vient de prendre : arrivée, ou refusée.
+      if (ev.id && ev.id === envoiRef.current?.id) {
+        if (ev.type === 'arrivee') { poserEnvoi({ id: ev.id, etat: 'arrivee' }); effacerEnvoiDans(1600) }
+        else if (ev.type === 'refus' || ev.type === 'perdue') poserEnvoi(null)
       }
       if (ev.eventId !== id) return
       // Arrivée : le serveur renvoie son compteur avec la réponse. On le prend
@@ -842,10 +873,26 @@ export default function GuestCamera({ params }) {
    * la photo : un message d'erreur, et il fallait la reprendre. Dans une salle
    * de réception, ça arrive tout le temps.
    */
+  function poserEnvoi(v) {
+    envoiRef.current = v
+    setEnvoiPhoto(v)
+    setDansLaBoite(v?.etat === 'envoi')
+  }
+
+  function effacerEnvoiDans(ms) {
+    clearTimeout(minuteurEnvoi.current)
+    minuteurEnvoi.current = setTimeout(() => poserEnvoi(null), ms)
+  }
+
   function montrerDansLaBoite() {
+    clearTimeout(minuteurEnvoi.current)
     clearTimeout(minuteurBoite.current)
-    setDansLaBoite(true)
-    minuteurBoite.current = setTimeout(() => setDansLaBoite(false), 1400)
+    poserEnvoi({ id: null, etat: 'envoi' })
+    // Dix secondes sans nouvelles : le réseau traîne. On rend le déclencheur
+    // (personne ne doit rester bloqué) et on demande de garder la page ouverte.
+    minuteurBoite.current = setTimeout(() => {
+      if (envoiRef.current?.etat === 'envoi') poserEnvoi({ ...envoiRef.current, etat: 'lent' })
+    }, 10000)
   }
 
   async function capture(blob) {
@@ -861,16 +908,22 @@ export default function GuestCamera({ params }) {
         try { im.close?.() } catch {}
       } catch {}
 
-      await ajouterALaFile({
+      const idFile = await ajouterALaFile({
         eventId: id,
         guestId: guest.guestId,
         deviceToken: getDeviceToken(),
         blob,
         thumb: thumbBlob,
       })
+      if (envoiRef.current && !envoiRef.current.id) envoiRef.current = { ...envoiRef.current, id: idFile }
+      // Hors ligne d'emblée : inutile d'attendre un échec pour le dire.
+      if (typeof navigator !== 'undefined' && navigator.onLine === false) {
+        poserEnvoi({ id: idFile, etat: 'reseau' })
+        effacerEnvoiDans(7000)
+      }
     } catch {
       clearTimeout(minuteurBoite.current)
-      setDansLaBoite(false)
+      poserEnvoi(null)
       setEnPrise((n) => Math.max(0, n - 1))
       // La mémoire du navigateur a refusé la photo (mode privé, disque plein) :
       // on le dit, c'est le seul cas où elle est réellement perdue.
@@ -1428,9 +1481,26 @@ export default function GuestCamera({ params }) {
         <div className="vf-reticle"><div /></div>
         {shutterFx && <div className="cam-shutter-fx" />}
         {flashFx && <div className="cam-flash" />}
-        {dansLaBoite && (
+        {envoiPhoto?.etat === 'envoi' && (
+          <div className="cam-dans-la-boite cam-envoi" role="status" aria-live="polite">
+            <span>
+              {t({ fr: '🎞️ Développement de la photo…', en: '🎞️ Developing the photo…', de: '🎞️ Foto wird entwickelt…' })}
+              <i className="cam-envoi-barre" aria-hidden="true" />
+            </span>
+          </div>
+        )}
+        {envoiPhoto?.etat === 'arrivee' && (
           <div className="cam-dans-la-boite" role="status" aria-live="polite">
-            <span>{t({ fr: 'C’est dans la boîte ! 📸', en: 'Got it! 📸', de: 'Im Kasten! 📸' })}</span>
+            <span>{t({ fr: '✓ Photo arrivée dans l’album', en: '✓ Photo added to the album', de: '✓ Foto im Album angekommen' })}</span>
+          </div>
+        )}
+        {(envoiPhoto?.etat === 'reseau' || envoiPhoto?.etat === 'lent') && (
+          <div className="cam-envoi-mot" role="status" aria-live="polite">
+            {envoiPhoto.etat === 'lent'
+              ? t({ fr: 'Envoi un peu long : garde la page ouverte un instant…', en: 'Upload taking a while: keep the page open for a moment…', de: 'Das Hochladen dauert etwas: Lassen Sie die Seite kurz geöffnet…' })
+              : surIPhone()
+                ? t({ fr: '📵 Pas de réseau : ta photo est gardée sur ton téléphone. Rouvre la page quand tu auras du réseau pour l’envoyer.', en: '📵 No signal: your photo is kept on your phone. Reopen the page when you have signal to send it.', de: '📵 Kein Netz: Ihr Foto bleibt auf Ihrem Handy. Öffnen Sie die Seite erneut, sobald Sie Netz haben, um es zu senden.' })
+                : t({ fr: '📵 Pas de réseau : ta photo est gardée sur ton téléphone et partira dès que le réseau revient.', en: '📵 No signal: your photo is kept on your phone and will be sent as soon as the signal is back.', de: '📵 Kein Netz: Ihr Foto bleibt auf Ihrem Handy und wird gesendet, sobald das Netz zurück ist.' })}
           </div>
         )}
 
