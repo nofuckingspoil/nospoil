@@ -10,7 +10,7 @@
 //
 //  LES RÈGLES
 //  - Un seul message par participant : en refaire un écrase l'ancien.
-//  - Seuls les mariés l'écoutent. Rien ici ne montre le message des autres.
+//  - Seuls les organisateurs l'écoutent. Rien ici ne montre le message des autres.
 //  - Le selfie ne consomme aucune pose de la pellicule.
 //  - La permission du micro n'est demandée qu'au moment où l'on appuie sur
 //    « Enregistrer », jamais au chargement : une fenêtre d'autorisation posée
@@ -136,7 +136,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, guestId])
 
-  // La bulle « Laisse un mot aux mariés », une fois par soirée et par
+  // La bulle « Laisse un mot aux organisateurs », une fois par soirée et par
   // téléphone, quand plus rien d'autre ne se dispute l'écran.
   useEffect(() => {
     if (!ouvert || masquerBulle || statut !== 'aucun') return
@@ -445,7 +445,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
       <div className="lo-ancre">
         {bulle && (
           <button type="button" className="lo-bulle" onClick={ouvrir}>
-            {t({ fr: 'Laisse un mot aux mariés', en: 'Leave a word for the couple', de: 'Hinterlassen Sie dem Paar ein paar Worte' })} 🎙️
+            {t({ fr: 'Laisse un mot aux organisateurs', en: 'Leave a word for the hosts', de: 'Hinterlassen Sie den Gastgebern ein paar Worte' })} 🎙️
           </button>
         )}
         <button
@@ -453,8 +453,8 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
           className={`lo-micro ${statut !== 'aucun' ? 'lo-micro-fait' : ''}`}
           onClick={ouvrir}
           aria-label={statut === 'aucun'
-            ? t({ fr: 'Laisser un message vocal aux mariés', en: 'Leave a voice message for the couple', de: 'Dem Paar eine Sprachnachricht hinterlassen' })
-            : t({ fr: 'Mon message pour les mariés', en: 'My message for the couple', de: 'Meine Nachricht an das Paar' })}
+            ? t({ fr: 'Laisser un message vocal aux organisateurs', en: 'Leave a voice message for the hosts', de: 'Den Gastgebern eine Sprachnachricht hinterlassen' })
+            : t({ fr: 'Mon message pour les organisateurs', en: 'My message for the hosts', de: 'Meine Nachricht an die Gastgeber' })}
         >
           {statut === 'aucun' ? (
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -470,7 +470,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
 
       {parti && (
         <div className="cam-dans-la-boite" role="status" aria-live="polite">
-          <span>{t({ fr: 'Message envoyé aux mariés 💌', en: 'Message sent to the couple 💌', de: 'Nachricht an das Paar gesendet 💌' })}</span>
+          <span>{t({ fr: 'Message envoyé aux organisateurs 💌', en: 'Message sent to the hosts 💌', de: 'Nachricht an die Gastgeber gesendet 💌' })}</span>
         </div>
       )}
 
@@ -478,7 +478,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
         <div className="lo-ecran" role="dialog" aria-modal="true">
           <div className="lo-haut">
             <button type="button" className="lo-fermer" onClick={fermer} aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}>✕</button>
-            <span className="lo-prive">🔒 {t({ fr: 'Seuls les mariés l’écouteront', en: 'Only the couple will hear it', de: 'Nur das Paar wird sie hören' })}</span>
+            <span className="lo-prive">🔒 {t({ fr: 'Seuls les organisateurs l’écouteront', en: 'Only the hosts will hear it', de: 'Nur die Gastgeber werden sie hören' })}</span>
           </div>
 
           {(etape === 'intro' || etape === 'enregistre') && (
@@ -486,7 +486,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
               <h2 className="lo-titre">
                 {etape === 'enregistre'
                   ? t({ fr: 'Je t’écoute…', en: 'Listening…', de: 'Ich höre zu…' })
-                  : t({ fr: 'Laisse un mot aux mariés', en: 'Leave a word for the couple', de: 'Hinterlassen Sie dem Paar ein paar Worte' })}
+                  : t({ fr: 'Laisse un mot aux organisateurs', en: 'Leave a word for the hosts', de: 'Hinterlassen Sie den Gastgebern ein paar Worte' })}
               </h2>
               <p className="lo-texte">
                 {etape === 'enregistre'
@@ -580,11 +580,11 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
 
           {etape === 'mien' && (
             <div className="lo-corps">
-              <h2 className="lo-titre">{t({ fr: 'Ton message pour les mariés', en: 'Your message for the couple', de: 'Ihre Nachricht an das Paar' })}</h2>
+              <h2 className="lo-titre">{t({ fr: 'Ton message pour les organisateurs', en: 'Your message for the hosts', de: 'Ihre Nachricht an die Gastgeber' })}</h2>
               <p className="lo-texte">
                 {statut === 'attente'
                   ? t({ fr: 'En route : il partira dès que le réseau le permettra.', en: 'On its way: it will be sent as soon as the network allows.', de: 'Unterwegs: Sie wird gesendet, sobald das Netz es zulässt.' })
-                  : t({ fr: 'Bien reçu par les mariés ✓', en: 'Received by the couple ✓', de: 'Beim Paar angekommen ✓' })}
+                  : t({ fr: 'Bien reçu par les organisateurs ✓', en: 'Received by the hosts ✓', de: 'Bei den Gastgebern angekommen ✓' })}
               </p>
               {visageMien && <div className="lo-selfie lo-selfie-petit"><img src={visageMien} alt="" /></div>}
               {sourceMien && (

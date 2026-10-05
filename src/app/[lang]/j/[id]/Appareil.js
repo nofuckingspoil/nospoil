@@ -1482,7 +1482,7 @@ export default function GuestCamera({ params }) {
               <button className="lo-invitation" onClick={() => setDemandeLivreOr((n) => n + 1)}>
                 <span className="lo-invitation-ic">🎙️</span>
                 <span>
-                  <b>{t({ fr: 'Laisse un mot aux mariés', en: 'Leave a word for the couple', de: 'Hinterlassen Sie dem Paar ein paar Worte' })}</b>
+                  <b>{t({ fr: 'Laisse un mot aux organisateurs', en: 'Leave a word for the hosts', de: 'Hinterlassen Sie den Gastgebern ein paar Worte' })}</b>
                   <em>{t({ fr: 'Un message vocal, rien que pour eux', en: 'A voice message, just for them', de: 'Eine Sprachnachricht, nur für sie' })}</em>
                 </span>
               </button>
@@ -1767,12 +1767,12 @@ export default function GuestCamera({ params }) {
                     <button onClick={grantBonus}>{t({ fr: `Recharger ma pellicule (+${meta.bonusShots}) →`, en: `Reload my film roll (+${meta.bonusShots}) →`, de: `Meinen Film nachladen (+${meta.bonusShots}) →` })}</button>
                   )}
                   {/* La pellicule est finie, il reste quelque chose à offrir :
-                      un mot pour les mariés. */}
+                      un mot pour les organisateurs. */}
                   {meta?.livreOr && livreOrStatut === 'aucun' && (
                     <button className="lo-invitation" style={{ margin: '14px auto 0' }} onClick={() => setDemandeLivreOr((n) => n + 1)}>
                       <span className="lo-invitation-ic">🎙️</span>
                       <span>
-                        <b>{t({ fr: 'Laisse un mot aux mariés', en: 'Leave a word for the couple', de: 'Hinterlassen Sie dem Paar ein paar Worte' })}</b>
+                        <b>{t({ fr: 'Laisse un mot aux organisateurs', en: 'Leave a word for the hosts', de: 'Hinterlassen Sie den Gastgebern ein paar Worte' })}</b>
                         <em>{t({ fr: 'Un message vocal, rien que pour eux', en: 'A voice message, just for them', de: 'Eine Sprachnachricht, nur für sie' })}</em>
                       </span>
                     </button>
