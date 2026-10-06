@@ -590,7 +590,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
               ) : (
                 <>
                   <h2 className="lo-titre">{t({ fr: 'Signe ton message avec un selfie', en: 'Sign your message with a selfie', de: 'Unterschreiben Sie Ihre Nachricht mit einem Selfie' })}</h2>
-                  <p className="lo-texte">{t({ fr: 'Ton message est bien parti ✓ Le selfie ne compte pas dans ta pellicule.', en: 'Your message has been sent ✓ The selfie doesn’t count towards your film roll.', de: 'Ihre Nachricht ist unterwegs ✓ Das Selfie zählt nicht zu Ihrem Film.' })}</p>
+                  <p className="lo-texte">{t({ fr: 'Ton message est bien parti ✓ Le selfie reste dans le livre d’or : il n’apparaît pas dans l’album.', en: 'Your message has been sent ✓ The selfie stays in the guestbook: it won’t appear in the album.', de: 'Ihre Nachricht ist unterwegs ✓ Das Selfie bleibt im Gästebuch: Es erscheint nicht im Album.' })}</p>
                 </>
               )}
 
