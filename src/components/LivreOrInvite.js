@@ -301,6 +301,17 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
     else a.pause()
   }
 
+  // Le doigt sur l'onde : la lecture repart de là.
+  function chercherLecture(fraction) {
+    const a = audioRef.current
+    if (!a) return
+    const total = Number.isFinite(a.duration) && a.duration > 0 ? a.duration : (prise?.dureeMs || mien?.durationMs || 0) / 1000
+    if (!total) return
+    a.currentTime = Math.min(total - 0.05, fraction * total)
+    if (a.paused || a.ended) a.play().catch(() => {})
+    suivreLecture()
+  }
+
   function suivreLecture() {
     const a = audioRef.current
     if (!a) return
@@ -571,7 +582,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
                 <button type="button" className="lo-play" onClick={basculerLecture} aria-label={lecture.joue ? 'Pause' : t({ fr: 'Écouter', en: 'Play', de: 'Abspielen' })}>
                   {lecture.joue ? '❚❚' : '▶'}
                 </button>
-                <Onde valeurs={prise.onde} progression={lecture.progression} couleur="var(--accent)" fond="rgba(255,255,255,.25)" hauteur={48} />
+                <Onde valeurs={prise.onde} progression={lecture.progression} couleur="var(--accent)" fond="rgba(255,255,255,.25)" hauteur={48} onChercher={chercherLecture} />
               </div>
               <div className="lo-actions">
                 <button type="button" className="lo-btn lo-btn-ghost" onClick={refaire}>↺ {t({ fr: 'Recommencer', en: 'Start over', de: 'Neu beginnen' })}</button>
@@ -643,7 +654,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
                     <button type="button" className="lo-play" onClick={basculerLecture} aria-label={lecture.joue ? 'Pause' : t({ fr: 'Écouter', en: 'Play', de: 'Abspielen' })}>
                       {lecture.joue ? '❚❚' : '▶'}
                     </button>
-                    <Onde valeurs={mien?.onde} progression={lecture.progression} couleur="var(--accent)" fond="rgba(255,255,255,.25)" hauteur={48} />
+                    <Onde valeurs={mien?.onde} progression={lecture.progression} couleur="var(--accent)" fond="rgba(255,255,255,.25)" hauteur={48} onChercher={chercherLecture} />
                   </div>
                 </>
               )}

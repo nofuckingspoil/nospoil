@@ -104,6 +104,37 @@ export default function LivreOrMaries({ eventId, onCompte }) {
     a.play().catch(() => {})
   }
 
+  // Aller à un endroit du message (le doigt sur l'onde). Un autre message que
+  // celui en cours se charge d'abord, puis saute au bon endroit.
+  const saut = useRef(null)
+  function chercher(m, fraction) {
+    const a = audioRef.current
+    if (!a || !m?.url) return
+    if (enCours !== m.id) {
+      setEnchaine(false)
+      setEnCours(m.id)
+      saut.current = fraction
+      setProgression(fraction)
+      a.src = m.url
+      a.play().catch(() => {})
+      return
+    }
+    const total = Number.isFinite(a.duration) && a.duration > 0 ? a.duration : (m.durationMs || 0) / 1000
+    if (!total) { saut.current = fraction; return }
+    a.currentTime = Math.min(total - 0.05, fraction * total)
+    setProgression(fraction)
+    if (a.paused || a.ended) a.play().catch(() => {})
+  }
+
+  function sauterSiDemande() {
+    const a = audioRef.current
+    if (!a || saut.current == null) return
+    if (Number.isFinite(a.duration) && a.duration > 0) {
+      a.currentTime = Math.min(a.duration - 0.05, saut.current * a.duration)
+      saut.current = null
+    }
+  }
+
   function basculer() {
     const a = audioRef.current
     if (!a) return
@@ -189,7 +220,7 @@ export default function LivreOrMaries({ eventId, onCompte }) {
 
   return (
     <section className="lo-livre">
-      <audio ref={audioRef} preload="none" onTimeUpdate={suivre} onPlay={suivre} onPause={suivre} onEnded={fini} />
+      <audio ref={audioRef} preload="none" onLoadedMetadata={sauterSiDemande} onTimeUpdate={suivre} onPlay={suivre} onPause={suivre} onEnded={fini} />
 
       <div className="lo-livre-tete">
         <p>
@@ -244,7 +275,7 @@ export default function LivreOrMaries({ eventId, onCompte }) {
               <button type="button" className="lo-play" onClick={() => jouer(m)} aria-label={enCours === m.id && joue ? 'Pause' : t({ fr: 'Écouter', en: 'Play', de: 'Abspielen' })}>
                 {enCours === m.id && joue ? '❚❚' : '▶'}
               </button>
-              <Onde valeurs={m.onde} progression={enCours === m.id ? progression : 0} couleur="var(--accent)" fond="rgba(255,255,255,.2)" hauteur={36} />
+              <Onde valeurs={m.onde} progression={enCours === m.id ? progression : 0} couleur="var(--accent)" fond="rgba(255,255,255,.2)" hauteur={36} onChercher={(f) => chercher(m, f)} />
             </div>
             <button type="button" className="lo-carte-dl" onClick={() => telechargerUn(m, i)}>
               {t({ fr: 'Télécharger ce message', en: 'Download this message', de: 'Diese Nachricht herunterladen' })}
@@ -262,7 +293,7 @@ export default function LivreOrMaries({ eventId, onCompte }) {
             {messages.findIndex((m) => m.id === courant.id) + 1} / {messages.length} · {heure(courant.createdAt)} · {minutesSecondes(courant.durationMs)}
           </div>
           <div className="lo-scene-onde">
-            <Onde valeurs={courant.onde} progression={progression} couleur="var(--accent)" fond="rgba(255,255,255,.22)" hauteur={54} />
+            <Onde valeurs={courant.onde} progression={progression} couleur="var(--accent)" fond="rgba(255,255,255,.22)" hauteur={54} onChercher={(f) => chercher(courant, f)} />
           </div>
           <div className="lo-scene-btns">
             <button type="button" onClick={basculer}>{joue ? '❚❚ Pause' : `▶ ${t({ fr: 'Reprendre', en: 'Resume', de: 'Fortsetzen' })}`}</button>
