@@ -22,6 +22,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLangue } from './Langue'
 import Onde from './Onde'
+import Vitesse from './Vitesse'
 import { getDeviceToken } from '../lib/device'
 import { ajouterVoixALaFile, sabonnerALaFile } from '../lib/file-envoi-web'
 import { compressToBlob, prepareUpload, playShutter } from '../lib/camera'
@@ -77,6 +78,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false,
   const [etape, setEtape] = useState(null)
   const [statut, setStatut] = useState('aucun') // aucun | attente | envoye
   const [erreur, setErreur] = useState('')
+  const [vitesse, setVitesse] = useState(1) // vitesse de réécoute
   const [micRefuse, setMicRefuse] = useState(false)
   const [ecoule, setEcoule] = useState(0)
   const [niveaux, setNiveaux] = useState(() => Array(28).fill(6))
@@ -296,9 +298,15 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false,
 
   // ------------------------------------------------------------ la réécoute
 
+  function changerVitesse(v) {
+    setVitesse(v)
+    if (audioRef.current) audioRef.current.playbackRate = v
+  }
+
   function basculerLecture() {
     const a = audioRef.current
     if (!a) return
+    a.playbackRate = vitesse
     if (a.paused) a.play().catch(() => {})
     else a.pause()
   }
@@ -586,12 +594,13 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false,
             <div className="lo-corps">
               <h2 className="lo-titre">{t({ fr: 'Réécoute ton message', en: 'Listen to your message', de: 'Hören Sie Ihre Nachricht an' })}</h2>
               <p className="lo-texte">{minutesSecondes(prise.dureeMs)}</p>
-              <audio ref={audioRef} src={prise.url} preload="auto" onTimeUpdate={suivreLecture} onPlay={suivreLecture} onPause={suivreLecture} onEnded={suivreLecture} />
+              <audio ref={audioRef} src={prise.url} preload="auto" onTimeUpdate={suivreLecture} onLoadedMetadata={(e) => { e.currentTarget.playbackRate = vitesse }} onPlay={suivreLecture} onPause={suivreLecture} onEnded={suivreLecture} />
               <div className="lo-lecteur">
                 <button type="button" className="lo-play" onClick={basculerLecture} aria-label={lecture.joue ? 'Pause' : t({ fr: 'Écouter', en: 'Play', de: 'Abspielen' })}>
                   {lecture.joue ? '❚❚' : '▶'}
                 </button>
                 <Onde valeurs={prise.onde} progression={lecture.progression} couleur="var(--accent)" fond="rgba(255,255,255,.25)" hauteur={48} onChercher={chercherLecture} />
+                <Vitesse valeur={vitesse} onChange={changerVitesse} />
               </div>
               <div className="lo-actions">
                 <button type="button" className="lo-btn lo-btn-ghost" onClick={refaire}>↺ {t({ fr: 'Recommencer', en: 'Start over', de: 'Neu beginnen' })}</button>
@@ -680,12 +689,13 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false,
               {visageMien && <div className="lo-selfie lo-selfie-petit"><img src={visageMien} alt="" /></div>}
               {sourceMien && (
                 <>
-                  <audio ref={audioRef} src={sourceMien} preload="auto" onTimeUpdate={suivreLecture} onPlay={suivreLecture} onPause={suivreLecture} onEnded={suivreLecture} />
+                  <audio ref={audioRef} src={sourceMien} preload="auto" onTimeUpdate={suivreLecture} onLoadedMetadata={(e) => { e.currentTarget.playbackRate = vitesse }} onPlay={suivreLecture} onPause={suivreLecture} onEnded={suivreLecture} />
                   <div className="lo-lecteur">
                     <button type="button" className="lo-play" onClick={basculerLecture} aria-label={lecture.joue ? 'Pause' : t({ fr: 'Écouter', en: 'Play', de: 'Abspielen' })}>
                       {lecture.joue ? '❚❚' : '▶'}
                     </button>
                     <Onde valeurs={mien?.onde} progression={lecture.progression} couleur="var(--accent)" fond="rgba(255,255,255,.25)" hauteur={48} onChercher={chercherLecture} />
+                    <Vitesse valeur={vitesse} onChange={changerVitesse} />
                   </div>
                 </>
               )}

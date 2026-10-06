@@ -14,6 +14,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLangue } from './Langue'
 import Onde from './Onde'
+import Vitesse from './Vitesse'
 import { getOwnerToken } from '../lib/device'
 import { avatarColor } from '../lib/brand'
 import { minutesSecondes } from './LivreOrInvite'
@@ -60,6 +61,8 @@ export default function LivreOrMaries({ eventId, onCompte }) {
   const [etat, setEtat] = useState({ charge: false, actif: false, messages: [] })
   const [enCours, setEnCours] = useState(null) // id du message qui joue
   const [progression, setProgression] = useState(0)
+  // La vitesse vaut pour tous les messages : on garde son rythme d'écoute.
+  const [vitesse, setVitesse] = useState(1)
   const [joue, setJoue] = useState(false)
   const [enchaine, setEnchaine] = useState(false) // « Tout écouter »
   const [zip, setZip] = useState(false)
@@ -128,11 +131,17 @@ export default function LivreOrMaries({ eventId, onCompte }) {
 
   function sauterSiDemande() {
     const a = audioRef.current
+    if (a) a.playbackRate = vitesse
     if (!a || saut.current == null) return
     if (Number.isFinite(a.duration) && a.duration > 0) {
       a.currentTime = Math.min(a.duration - 0.05, saut.current * a.duration)
       saut.current = null
     }
+  }
+
+  function changerVitesse(v) {
+    setVitesse(v)
+    if (audioRef.current) audioRef.current.playbackRate = v
   }
 
   function basculer() {
@@ -276,6 +285,7 @@ export default function LivreOrMaries({ eventId, onCompte }) {
                 {enCours === m.id && joue ? '❚❚' : '▶'}
               </button>
               <Onde valeurs={m.onde} progression={enCours === m.id ? progression : 0} couleur="var(--accent)" fond="rgba(255,255,255,.2)" hauteur={36} onChercher={(f) => chercher(m, f)} />
+              <Vitesse valeur={vitesse} onChange={changerVitesse} />
             </div>
             <button type="button" className="lo-carte-dl" onClick={() => telechargerUn(m, i)}>
               {t({ fr: 'Télécharger ce message', en: 'Download this message', de: 'Diese Nachricht herunterladen' })}
@@ -294,6 +304,7 @@ export default function LivreOrMaries({ eventId, onCompte }) {
           </div>
           <div className="lo-scene-onde">
             <Onde valeurs={courant.onde} progression={progression} couleur="var(--accent)" fond="rgba(255,255,255,.22)" hauteur={54} onChercher={(f) => chercher(courant, f)} />
+            <Vitesse valeur={vitesse} onChange={changerVitesse} />
           </div>
           <div className="lo-scene-btns">
             <button type="button" onClick={basculer}>{joue ? '❚❚ Pause' : `▶ ${t({ fr: 'Reprendre', en: 'Resume', de: 'Fortsetzen' })}`}</button>

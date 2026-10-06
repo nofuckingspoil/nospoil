@@ -4594,6 +4594,8 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .lo-onde { display: flex; align-items: center; gap: 2px; width: 100%; }
 .lo-onde span { flex: 1 1 0; min-width: 2px; border-radius: 2px; transition: height .08s linear, background .15s; }
 .lo-onde-vivante span { transition: height .07s linear; }
+.lo-vitesse { flex: none; min-width: 46px; padding: 6px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; font-variant-numeric: tabular-nums; }
+.lo-vitesse.on { background: var(--accent); border-color: transparent; color: #fff; }
 .lo-onde-cherche { cursor: pointer; touch-action: none; padding: 6px 0; box-sizing: content-box; }
 .lo-onde-cherche span { transition: height .08s linear; }
 
@@ -4678,7 +4680,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .lo-scene .lo-visage-grand { width: min(60vw, 260px); aspect-ratio: 1; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 800; font-size: 96px; }
 .lo-scene-nom { font-family: var(--font-display); font-size: 26px; font-weight: 800; }
 .lo-scene-meta { color: rgba(255,255,255,.6); font-family: var(--font-mono); font-size: 13px; }
-.lo-scene-onde { width: min(86vw, 420px); color: var(--accent); }
+.lo-scene-onde { width: min(86vw, 420px); color: var(--accent); display: flex; align-items: center; gap: 12px; }
 .lo-scene-btns { display: flex; gap: 10px; }
 .lo-scene-btns button { border-radius: 999px; padding: 11px 18px; font-weight: 700; border: 1.5px solid rgba(255,255,255,.35); background: transparent; color: #fff; cursor: pointer; }
 .lo-selfie .vignette { position: absolute; inset: 0; box-shadow: inset 0 0 70px rgba(0,0,0,.55); pointer-events: none; }
