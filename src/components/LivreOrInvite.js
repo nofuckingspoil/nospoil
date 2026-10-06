@@ -83,6 +83,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   const [prise, setPrise] = useState(null) // { blob, url, dureeMs, onde, ext }
   const [lecture, setLecture] = useState({ joue: false, progression: 0 })
   const [selfie, setSelfie] = useState(null) // { blob, url }
+  const [selfieSeul, setSelfieSeul] = useState(false) // on ne refait que le selfie
   const [selfieSansCamera, setSelfieSansCamera] = useState(false)
   const [flashEcran, setFlashEcran] = useState(false)
   const [mien, setMien] = useState(null) // ce que le serveur a reçu
@@ -168,7 +169,8 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
 
   function fermer() {
     // Fermé sur l'écran du selfie : le message, lui, est déjà parti.
-    if (etape === 'selfie' && dejaRange.current) montrerParti()
+    if (etape === 'selfie' && dejaRange.current && !selfieSeul) montrerParti()
+    setSelfieSeul(false)
     arreterEnregistrement(true)
     arreterCamera()
     audioRef.current?.pause()
@@ -319,7 +321,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   // vient, remplace ensuite ce dépôt par le même message signé.
   async function allerAuSelfie() {
     audioRef.current?.pause()
-    if (!dejaRange.current) {
+    if (!selfieSeul && !dejaRange.current) {
       if (!(await ranger(null))) return
       dejaRange.current = true
     }
@@ -345,7 +347,8 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   // couleurs) cuite dans le fichier.
   async function declencherSelfie() {
     const v = videoRef.current
-    if (!v) return
+    // Caméra pas encore prête : on ne déclenche pas, sinon le selfie sort noir.
+    if (!v || !v.videoWidth || v.readyState < 2) return
     setFlashEcran(true)
     await new Promise((r) => setTimeout(r, 280))
     playShutter()
@@ -418,6 +421,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   // « Envoyer » avec le selfie, ou « Passer » : le message est déjà rangé
   // depuis « Valider », il ne reste qu'à y joindre la signature.
   async function envoyer(avecSelfie) {
+    if (selfieSeul) return envoyerSelfieSeul(avecSelfie)
     if (!prise) return
     if (avecSelfie && selfie) {
       if (!(await ranger(selfie.blob))) return
@@ -427,8 +431,44 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
     montrerParti()
   }
 
+  // Reprendre seulement le selfie d'un message déjà parti : la voix ne bouge
+  // pas. Si le message attend encore sur le téléphone, le selfie part avec lui.
+  async function envoyerSelfieSeul(avecSelfie) {
+    arreterCamera()
+    if (!avecSelfie || !selfie) { setSelfieSeul(false); setEtape('mien'); return }
+    if (statut === 'attente' && prise) {
+      if (!(await ranger(selfie.blob))) return
+    } else {
+      try {
+        const fd = new FormData()
+        fd.append('selfie', selfie.blob, 'selfie.jpg')
+        fd.append('eventId', eventId)
+        fd.append('guestId', guestId)
+        fd.append('deviceToken', getDeviceToken())
+        fd.append('langue', lang)
+        const res = await fetch('/api/voix/selfie', { method: 'POST', body: fd })
+        const d = await res.json().catch(() => ({}))
+        if (!res.ok || d.ok !== true) throw new Error(d.error || '')
+      } catch (err) {
+        setErreur(err.message || t({ fr: 'Le selfie n’a pas pu être envoyé. Réessaie.', en: 'The selfie couldn’t be sent. Try again.', de: 'Das Selfie konnte nicht gesendet werden. Versuchen Sie es erneut.' }))
+        return
+      }
+      chargerMien()
+    }
+    setSelfieSeul(false)
+    setEtape(null)
+    montrerParti()
+  }
+
+  function reprendreSelfie() {
+    setErreur('')
+    setSelfieSeul(true)
+    allerAuSelfie()
+  }
+
   function refaire() {
     dejaRange.current = false
+    setSelfieSeul(false)
     audioRef.current?.pause()
     setLecture({ joue: false, progression: 0 })
     setEtape('intro')
@@ -542,8 +582,17 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
 
           {etape === 'selfie' && (
             <div className="lo-corps">
-              <h2 className="lo-titre">{t({ fr: 'Signe ton message avec un selfie', en: 'Sign your message with a selfie', de: 'Unterschreiben Sie Ihre Nachricht mit einem Selfie' })}</h2>
-              <p className="lo-texte">{t({ fr: 'Ton message est bien parti ✓ Le selfie ne compte pas dans ta pellicule.', en: 'Your message has been sent ✓ The selfie doesn’t count towards your film roll.', de: 'Ihre Nachricht ist unterwegs ✓ Das Selfie zählt nicht zu Ihrem Film.' })}</p>
+              {selfieSeul ? (
+                <>
+                  <h2 className="lo-titre">{t({ fr: 'Reprends ton selfie', en: 'Retake your selfie', de: 'Nehmen Sie Ihr Selfie neu auf' })}</h2>
+                  <p className="lo-texte">{t({ fr: 'Ton message ne bouge pas, seul le selfie change.', en: 'Your message stays as it is, only the selfie changes.', de: 'Ihre Nachricht bleibt, nur das Selfie ändert sich.' })}</p>
+                </>
+              ) : (
+                <>
+                  <h2 className="lo-titre">{t({ fr: 'Signe ton message avec un selfie', en: 'Sign your message with a selfie', de: 'Unterschreiben Sie Ihre Nachricht mit einem Selfie' })}</h2>
+                  <p className="lo-texte">{t({ fr: 'Ton message est bien parti ✓ Le selfie ne compte pas dans ta pellicule.', en: 'Your message has been sent ✓ The selfie doesn’t count towards your film roll.', de: 'Ihre Nachricht ist unterwegs ✓ Das Selfie zählt nicht zu Ihrem Film.' })}</p>
+                </>
+              )}
 
               <div className="lo-selfie">
                 {selfie ? (
@@ -573,7 +622,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
                 <button type="button" className="shutter lo-shutter" onClick={declencherSelfie} aria-label={t({ fr: 'Prendre le selfie', en: 'Take the selfie', de: 'Selfie aufnehmen' })}><span /></button>
               )}
               {!selfie && (
-                <button type="button" className="lo-passer" onClick={() => envoyer(false)}>{t({ fr: 'Passer', en: 'Skip', de: 'Überspringen' })}</button>
+                <button type="button" className="lo-passer" onClick={() => envoyer(false)}>{selfieSeul ? t({ fr: 'Annuler', en: 'Cancel', de: 'Abbrechen' }) : t({ fr: 'Passer', en: 'Skip', de: 'Überspringen' })}</button>
               )}
             </div>
           )}
@@ -603,6 +652,15 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
                 {ouvert && <button type="button" className="lo-btn lo-btn-ghost" onClick={refaire}>↺ {t({ fr: 'Refaire mon message', en: 'Redo my message', de: 'Nachricht neu aufnehmen' })}</button>}
                 <button type="button" className="lo-btn" onClick={fermer}>{t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}</button>
               </div>
+              {/* Un selfie raté (noir, flou) ne doit jamais rester : on le
+                  refait sans toucher à la voix. */}
+              {ouvert && (
+                <button type="button" className="lo-passer" onClick={reprendreSelfie}>
+                  📸 {visageMien
+                    ? t({ fr: 'Reprendre mon selfie', en: 'Retake my selfie', de: 'Selfie neu aufnehmen' })
+                    : t({ fr: 'Ajouter un selfie', en: 'Add a selfie', de: 'Selfie hinzufügen' })}
+                </button>
+              )}
               {ouvert && <p className="lo-aide">{t({ fr: 'Un nouveau message remplace l’ancien.', en: 'A new message replaces the old one.', de: 'Eine neue Nachricht ersetzt die alte.' })}</p>}
             </div>
           )}
