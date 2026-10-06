@@ -4601,6 +4601,12 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .lo-micro { position: relative; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.28); background: rgba(255,255,255,.1); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
 .lo-micro:active { transform: scale(.94); }
 .lo-micro-fait { background: var(--ok); border-color: transparent; }
+.lo-micro-ferme { background: rgba(255,255,255,.06); color: rgba(255,255,255,.55); border-style: dashed; }
+.vf-terminee { z-index: 6; }
+.vf-decompte { margin: 2px 0 6px; font-family: var(--font-mono); font-size: 34px; font-weight: 600; letter-spacing: .04em; color: #fff; font-variant-numeric: tabular-nums; }
+.vf-terminee-lo { margin: 10px 0 0; font-size: 13px; color: rgba(255,255,255,.65); }
+.lo-ferme-ic { font-size: 44px; line-height: 1; margin-bottom: 4px; }
+.lo-ferme-mot { margin: 2px 0 0; font-size: 13.5px; color: rgba(255,255,255,.7); text-align: center; }
 .lo-micro-point { position: absolute; top: 2px; right: 2px; width: 11px; height: 11px; border-radius: 50%; background: var(--amber); border: 2px solid var(--dark); animation: lo-pulse 1.2s ease-in-out infinite; }
 .lo-micro-legende { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.55); white-space: nowrap; }
 .lo-bulle { position: absolute; bottom: calc(100% + 10px); right: -6px; width: max-content; max-width: 200px; background: #fff; color: var(--ink); border: none; border-radius: 14px; padding: 10px 13px; font-family: var(--font-body); font-weight: 700; font-size: 13.5px; line-height: 1.3; text-align: left; box-shadow: 0 10px 28px rgba(0,0,0,.35); cursor: pointer; animation: lo-bulle 5.5s ease both; z-index: 20; }

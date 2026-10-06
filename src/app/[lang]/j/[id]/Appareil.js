@@ -47,6 +47,18 @@ function countdownToReveal(iso, now, lang = 'fr') {
   return tr({ fr: `révélation dans ${m} min`, en: `reveal in ${m} min`, de: `Enthüllung in ${m} Min.` }, lang)
 }
 
+// Le grand décompte de la soirée terminée : « 2 j 04:12:09 », « 04:12:09 ».
+function decompteLong(iso, now) {
+  const diff = new Date(iso).getTime() - now
+  if (!Number.isFinite(diff) || diff <= 0) return null
+  const s = Math.floor(diff / 1000)
+  const j = Math.floor(s / 86400)
+  const hh = String(Math.floor((s % 86400) / 3600)).padStart(2, '0')
+  const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0')
+  const ss = String(s % 60).padStart(2, '0')
+  return `${j > 0 ? `${j} j ` : ''}${hh}:${mm}:${ss}`
+}
+
 // Le sur-titre de l'album : la date, jamais le type d'événement. La base ne
 // sait pas si c'est un mariage ou un anniversaire, mais elle sait quel jour
 // c'était, et c'est vrai dans tous les cas.
@@ -318,18 +330,29 @@ export default function GuestCamera({ params }) {
     if (phase === 'name') noterEtape('formulaire', { eventId: id })
   }, [phase, id])
 
+  // La soirée est-elle finie ? L'heure de fin vient du serveur (donnée par
+  // l'organisateur, ou estimée), mais l'horloge est celle du téléphone : un
+  // invité resté sur la page voit l'appareil se fermer à l'heure dite, sans
+  // recharger. Entre la fin et la révélation, plus de déclencheur : un
+  // décompte jusqu'à l'album, et le livre d'or fermé, dit clairement.
+  const finFete = meta?.endsAt ? new Date(meta.endsAt).getTime() : NaN
+  const terminee = Number.isFinite(finFete) && now >= finFete && !meta?.revealed
+  const livreOrOuvert = !!meta?.livreOrActif && !!meta?.livreOr && !(Number.isFinite(finFete) && now > finFete)
+
   // Le livre d'or ouvert, l'appareil lâche la caméra : un iPhone ne filme
   // qu'avec une seule à la fois, et le selfie de signature en a besoin.
+  // Soirée finie : plus rien à filmer, la caméra s'éteint aussi.
   useEffect(() => {
-    if (phase === 'camera' && liveCam && !livreOrOccupe) startCamera()
+    if (phase === 'camera' && liveCam && !livreOrOccupe && !terminee) startCamera()
     return stopCamera
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, liveCam, facingMode, livreOrOccupe])
+  }, [phase, liveCam, facingMode, livreOrOccupe, terminee])
 
   // À la 1re ouverture de la caméra (par appareil + événement), on rappelle au participant
   // de garder son lien pour revenir finir ses photos. Affiché une seule fois.
+  // Soirée finie : il n'y a plus de photos à finir, on ne dit rien.
   useEffect(() => {
-    if (phase !== 'camera') return
+    if (phase !== 'camera' || !meta || terminee) return
     try {
       const key = `pellicule_savetip_${id}`
       if (!localStorage.getItem(key)) {
@@ -338,7 +361,7 @@ export default function GuestCamera({ params }) {
       }
     } catch {}
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, id])
+  }, [phase, id, !!meta, terminee])
 
   // LES NOTIFICATIONS DE SOIRÉE, PROPOSÉES APRÈS LA PREMIÈRE PHOTO.
   //
@@ -1506,7 +1529,24 @@ export default function GuestCamera({ params }) {
 
         {/* Le message part dans la feuille de style : téléphone couché, il se
             redresse pour rester lisible sans avoir à tourner l'appareil. */}
-        {camBlocked && (
+        {terminee && (
+          <div className="vf-full vf-terminee">
+            <div className="vf-full-icon">🌙</div>
+            <p className="vf-full-title">{t({ fr: 'La soirée est terminée', en: 'The party is over', de: 'Die Feier ist vorbei' })}</p>
+            <p className="vf-full-sub">{t({ fr: 'Les photos se développent. L’album s’ouvre dans', en: 'The photos are developing. The album opens in', de: 'Die Fotos werden entwickelt. Das Album öffnet sich in' })}</p>
+            <p className="vf-decompte" aria-live="off">
+              {decompteLong(meta?.revealAt, now) || t({ fr: 'Dans un instant…', en: 'Any moment now…', de: 'Gleich ist es so weit…' })}
+            </p>
+            <button className="vf-full-btn" onClick={() => setShowAlbum(true)}>
+              {t({ fr: 'Voir mes photos →', en: 'See my photos →', de: 'Meine Fotos ansehen →' })}
+            </button>
+            {meta?.livreOrActif && (
+              <p className="vf-terminee-lo">🔒 {t({ fr: 'Le livre d’or est fermé.', en: 'The guestbook is closed.', de: 'Das Gästebuch ist geschlossen.' })}</p>
+            )}
+          </div>
+        )}
+
+        {camBlocked && !terminee && (
           <div className="vf-bloque">
             <div className="vf-bloque-in">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.85)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -1522,7 +1562,7 @@ export default function GuestCamera({ params }) {
           </div>
         )}
 
-        {full && !camBlocked && (
+        {full && !camBlocked && !terminee && (
           <div className="vf-full">
             <div className="vf-full-icon">🎞️</div>
             <p className="vf-full-title">{t({ fr: 'Pellicule pleine !', en: 'Film roll full!', de: 'Film voll!' })}</p>
@@ -1548,7 +1588,7 @@ export default function GuestCamera({ params }) {
             )}
             {/* Pellicule terminée : le moment où l'on a encore envie de dire
                 quelque chose. L'invitation du livre d'or passe en grand. */}
-            {meta?.livreOr && livreOrStatut === 'aucun' && (
+            {livreOrOuvert && livreOrStatut === 'aucun' && (
               <button className="lo-invitation" onClick={() => setDemandeLivreOr((n) => n + 1)}>
                 <span className="lo-invitation-ic">🎙️</span>
                 <span>
@@ -1564,7 +1604,7 @@ export default function GuestCamera({ params }) {
       {/* Ouvert depuis une messagerie, sans caméra en direct : la plupart des
           participants arrivent ainsi. Sur iPhone, le bouton marche quand même :
           on se contente de le dire. */}
-      {inApp && !androidInApp && !liveCam && !camBlocked && (
+      {inApp && !androidInApp && !liveCam && !camBlocked && !terminee && (
         <div className="notice" style={{ marginTop: 12, background: 'rgba(255,255,255,.08)', color: 'rgba(255,255,255,.85)', border: '1px solid rgba(255,255,255,.12)' }}>
           📸 {t({
             fr: 'Touche le déclencheur : l’appareil photo de ton téléphone s’ouvre, et ta photo rejoint l’album.',
@@ -1577,7 +1617,7 @@ export default function GuestCamera({ params }) {
       {/* Android + mini-navigateur (le cas des applis de scan de QR code) :
           ni la caméra, ni le déclencheur de secours ne répondent. Inutile de
           rassurer : il faut sortir de là. */}
-      {androidInApp && !liveCam && !camBlocked && (
+      {androidInApp && !liveCam && !camBlocked && !terminee && (
         <div className="notice" style={{ marginTop: 12, background: 'rgba(255,196,120,.14)', color: 'rgba(255,255,255,.92)', border: '1px solid rgba(255,196,120,.34)', textAlign: 'left' }}>
           <p style={{ margin: 0, fontWeight: 700, fontSize: 14 }}>
             {declencheurMuet
@@ -1621,9 +1661,9 @@ export default function GuestCamera({ params }) {
       {/* Refus enregistré par le navigateur : le mode d'emploi s'affiche en clair,
           sans rien à déplier. Refus passager : le bouton du viseur suffit, on
           garde la manipulation sous le coude pour ceux qu'il n'a pas dépannés. */}
-      {camDenied && <CameraBloquee onReessayer={retryCamera} />}
+      {camDenied && !terminee && <CameraBloquee onReessayer={retryCamera} />}
 
-      {camBlocked && !camDenied && (
+      {camBlocked && !camDenied && !terminee && (
         <details style={{ marginTop: 10, color: 'rgba(255,255,255,.6)', fontSize: 12.5 }}>
           <summary style={{ cursor: 'pointer' }}>{t({ fr: 'Toujours bloquée après avoir cliqué ?', en: 'Still blocked after tapping?', de: 'Nach dem Tippen immer noch blockiert?' })}</summary>
           <div style={{ marginTop: 8 }}>
@@ -1671,11 +1711,11 @@ export default function GuestCamera({ params }) {
         </div>
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           {liveCam ? (
-            <button className="shutter" onClick={snap} disabled={busy || full || dansLaBoite} aria-label={t({ fr: 'Déclencher', en: 'Take the shot', de: 'Auslösen' })}><span /></button>
+            <button className="shutter" onClick={snap} disabled={busy || full || dansLaBoite || terminee} aria-label={t({ fr: 'Déclencher', en: 'Take the shot', de: 'Auslösen' })}><span /></button>
           ) : (
             <>
               <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={onFilePicked} style={{ display: 'none' }} />
-              <button className="shutter" disabled={busy || full || dansLaBoite} onClick={ouvrirAppareilPhoto} aria-label={t({ fr: 'Prendre une photo', en: 'Take a photo', de: 'Foto aufnehmen' })}><span /></button>
+              <button className="shutter" disabled={busy || full || dansLaBoite || terminee} onClick={ouvrirAppareilPhoto} aria-label={t({ fr: 'Prendre une photo', en: 'Take a photo', de: 'Foto aufnehmen' })}><span /></button>
             </>
           )}
         </div>
@@ -1687,7 +1727,8 @@ export default function GuestCamera({ params }) {
             <LivreOrInvite
               eventId={id}
               guestId={guest.guestId}
-              ouvert={!!meta?.livreOr}
+              ouvert={livreOrOuvert}
+              ferme={!!meta?.livreOrActif && !livreOrOuvert}
               demande={demandeLivreOr}
               masquerBulle={showSaveTip || showPushTip || showAlbum || showQR || !!aConfirmer || camBlocked}
               onOccupe={setLivreOrOccupe}
@@ -1704,7 +1745,7 @@ export default function GuestCamera({ params }) {
       {importAutorise && (
         <>
           <input ref={galleryInputRef} type="file" accept="image/*" onChange={onGalleryPicked} style={{ display: 'none' }} />
-          <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full || dansLaBoite}>
+          <button className="cam-import" onClick={() => galleryInputRef.current?.click()} disabled={busy || full || dansLaBoite || terminee}>
             🖼️ {t({ fr: 'Importer une photo de ma galerie', en: 'Import a photo from my gallery', de: 'Foto aus meiner Galerie importieren' })}
           </button>
         </>
@@ -1838,7 +1879,7 @@ export default function GuestCamera({ params }) {
                   )}
                   {/* La pellicule est finie, il reste quelque chose à offrir :
                       un mot pour les organisateurs. */}
-                  {meta?.livreOr && livreOrStatut === 'aucun' && (
+                  {livreOrOuvert && livreOrStatut === 'aucun' && (
                     <button className="lo-invitation" style={{ margin: '14px auto 0' }} onClick={() => setDemandeLivreOr((n) => n + 1)}>
                       <span className="lo-invitation-ic">🎙️</span>
                       <span>

@@ -70,7 +70,7 @@ function resumerOnde(mesures) {
   return tranches.map((v) => Math.round(Math.max(6, (v / plafond) * 100)))
 }
 
-export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, masquerBulle = false, onOccupe, onStatut }) {
+export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false, demande = 0, masquerBulle = false, onOccupe, onStatut }) {
   const { t, lang } = useLangue()
 
   // null (fermé) | intro | enregistre | ecoute | selfie | mien
@@ -164,6 +164,8 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
   function ouvrir() {
     setBulle(false)
     setErreur('')
+    // Fermé sans message : on le dit, plutôt qu'un bouton qui ne mène nulle part.
+    if (!ouvert && statut === 'aucun') { setEtape('ferme'); return }
     setEtape(statut === 'aucun' ? 'intro' : 'mien')
   }
 
@@ -485,7 +487,8 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
     setEtape('intro')
   }
 
-  if (!ouvert && statut === 'aucun') return null
+  if (!ouvert && !ferme && statut === 'aucun') return null
+  const verrou = !ouvert && statut === 'aucun'
 
   const restant = Math.max(0, DUREE_MAX_MS - ecoule)
   const sourceMien = mien?.local || mien?.url || null
@@ -501,13 +504,19 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
         )}
         <button
           type="button"
-          className={`lo-micro ${statut !== 'aucun' ? 'lo-micro-fait' : ''}`}
+          className={`lo-micro ${statut !== 'aucun' ? 'lo-micro-fait' : ''} ${verrou ? 'lo-micro-ferme' : ''}`}
           onClick={ouvrir}
-          aria-label={statut === 'aucun'
+          aria-label={verrou
+            ? t({ fr: 'Livre d’or fermé', en: 'Guestbook closed', de: 'Gästebuch geschlossen' })
+            : statut === 'aucun'
             ? t({ fr: 'Laisser un message vocal aux organisateurs', en: 'Leave a voice message for the hosts', de: 'Den Gastgebern eine Sprachnachricht hinterlassen' })
             : t({ fr: 'Mon message pour les organisateurs', en: 'My message for the hosts', de: 'Meine Nachricht an die Gastgeber' })}
         >
-          {statut === 'aucun' ? (
+          {verrou ? (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="5" y="11" width="14" height="10" rx="2" /><path d="M8 11V7a4 4 0 018 0v4" />
+            </svg>
+          ) : statut === 'aucun' ? (
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="9" y="2" width="6" height="12" rx="3" /><path d="M5 10a7 7 0 0014 0M12 17v4M8 21h8" />
             </svg>
@@ -638,6 +647,21 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
             </div>
           )}
 
+          {etape === 'ferme' && (
+            <div className="lo-corps">
+              <div className="lo-ferme-ic" aria-hidden="true">🔒</div>
+              <h2 className="lo-titre">{t({ fr: 'Le livre d’or est fermé', en: 'The guestbook is closed', de: 'Das Gästebuch ist geschlossen' })}</h2>
+              <p className="lo-texte">{t({
+                fr: 'Il était ouvert pendant la soirée. Les organisateurs écouteront les messages laissés pendant la fête.',
+                en: 'It was open during the party. The hosts will listen to the messages left during the celebration.',
+                de: 'Es war während der Feier geöffnet. Die Gastgeber hören sich die dort hinterlassenen Nachrichten an.',
+              })}</p>
+              <div className="lo-actions">
+                <button type="button" className="lo-btn" onClick={fermer}>{t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })}</button>
+              </div>
+            </div>
+          )}
+
           {etape === 'mien' && (
             <div className="lo-corps">
               <h2 className="lo-titre">{t({ fr: 'Ton message pour les organisateurs', en: 'Your message for the hosts', de: 'Ihre Nachricht an die Gastgeber' })}</h2>
@@ -646,6 +670,13 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, demande = 0, m
                   ? t({ fr: 'En route : il partira dès que le réseau le permettra.', en: 'On its way: it will be sent as soon as the network allows.', de: 'Unterwegs: Sie wird gesendet, sobald das Netz es zulässt.' })
                   : t({ fr: 'Bien reçu par les organisateurs ✓', en: 'Received by the hosts ✓', de: 'Bei den Gastgebern angekommen ✓' })}
               </p>
+              {!ouvert && (
+                <p className="lo-ferme-mot">🔒 {t({
+                  fr: 'Le livre d’or est fermé : ton message est gardé pour les organisateurs.',
+                  en: 'The guestbook is closed: your message is kept for the hosts.',
+                  de: 'Das Gästebuch ist geschlossen: Ihre Nachricht bleibt für die Gastgeber aufbewahrt.',
+                })}</p>
+              )}
               {visageMien && <div className="lo-selfie lo-selfie-petit"><img src={visageMien} alt="" /></div>}
               {sourceMien && (
                 <>
