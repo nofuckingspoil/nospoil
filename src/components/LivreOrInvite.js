@@ -619,7 +619,7 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false,
               ) : (
                 <>
                   <h2 className="lo-titre">{t({ fr: 'Signe ton message avec un selfie', en: 'Sign your message with a selfie', de: 'Unterschreiben Sie Ihre Nachricht mit einem Selfie' })}</h2>
-                  <p className="lo-texte">{t({ fr: 'Ton message audio est bien parti ! Le selfie ne compte pas comme une photo et apparaît uniquement dans le livre d’or.', en: 'Your voice message has been sent! The selfie doesn’t count as a photo and only appears in the guestbook.', de: 'Ihre Sprachnachricht ist unterwegs! Das Selfie zählt nicht als Foto und erscheint nur im Gästebuch.' })}</p>
+                  <p className="lo-texte">{t({ fr: 'Ton message audio est bien parti !', en: 'Your voice message has been sent!', de: 'Ihre Sprachnachricht ist unterwegs!' })}<br />{t({ fr: 'Le selfie ne compte pas comme une photo et apparaît uniquement dans le livre d’or.', en: 'The selfie doesn’t count as a photo and only appears in the guestbook.', de: 'Das Selfie zählt nicht als Foto und erscheint nur im Gästebuch.' })}</p>
                 </>
               )}
 

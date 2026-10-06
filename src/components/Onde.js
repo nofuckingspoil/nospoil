@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
 // ============================================================
 //  L'onde sonore d'un message du livre d'or.
@@ -15,32 +15,43 @@ const PAR_DEFAUT = Array.from({ length: 48 }, (_, i) => 30 + Math.round(22 * Mat
 
 // `onChercher(fraction)` : toucher ou faire glisser le doigt sur l'onde
 // déplace la lecture à cet endroit (pour réentendre un passage).
+//
+// Pendant le glissé, seule l'onde suit le doigt (avec un curseur) ; la lecture
+// ne saute qu'une fois, au moment où l'on lâche. Sauter à chaque mouvement du
+// doigt faisait bégayer le son, des dizaines de fois par seconde.
 export default function Onde({ valeurs, progression = 0, couleur = 'currentColor', fond = 'rgba(127,127,127,.35)', hauteur = 34, vivante = false, onChercher }) {
   const barres = Array.isArray(valeurs) && valeurs.length ? valeurs : PAR_DEFAUT
   const n = barres.length
+  const [vise, setVise] = useState(null) // la fraction sous le doigt, pendant le glissé
+  const viseRef = useRef(null)
 
   function viser(ev) {
     const r = ev.currentTarget.getBoundingClientRect()
     if (!r.width) return
-    onChercher(Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width)))
+    const f = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width))
+    viseRef.current = f
+    setVise(f)
   }
-  const appuye = useRef(false)
-  const lacher = () => { appuye.current = false }
+  function lacher(valider) {
+    const f = viseRef.current
+    viseRef.current = null
+    setVise(null)
+    if (valider && f != null) onChercher(f)
+  }
   const glisser = onChercher ? {
     onPointerDown: (ev) => {
-      appuye.current = true
       try { ev.currentTarget.setPointerCapture(ev.pointerId) } catch {}
       viser(ev)
     },
-    onPointerMove: (ev) => { if (appuye.current) viser(ev) },
-    onPointerUp: lacher,
-    onPointerCancel: lacher,
-    onLostPointerCapture: lacher,
+    onPointerMove: (ev) => { if (viseRef.current != null) viser(ev) },
+    onPointerUp: () => lacher(true),
+    onPointerCancel: () => lacher(false),
   } : {}
 
+  const montre = vise ?? progression
   return (
     <div
-      className={`lo-onde ${vivante ? 'lo-onde-vivante' : ''} ${onChercher ? 'lo-onde-cherche' : ''}`}
+      className={`lo-onde ${vivante ? 'lo-onde-vivante' : ''} ${onChercher ? 'lo-onde-cherche' : ''} ${vise != null ? 'lo-onde-vise' : ''}`}
       style={{ height: hauteur }}
       aria-hidden="true"
       {...glisser}
@@ -50,10 +61,11 @@ export default function Onde({ valeurs, progression = 0, couleur = 'currentColor
           key={i}
           style={{
             height: `${Math.max(8, Math.min(100, v))}%`,
-            background: (i + 0.5) / n <= progression ? couleur : fond,
+            background: (i + 0.5) / n <= montre ? couleur : fond,
           }}
         />
       ))}
+      {vise != null && <i className="lo-onde-curseur" style={{ left: `${vise * 100}%` }} />}
     </div>
   )
 }
