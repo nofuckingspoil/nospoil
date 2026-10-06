@@ -179,6 +179,15 @@ export default function LivreOrMaries({ eventId, onCompte }) {
     setJoue(!a.paused && !a.ended)
   }
 
+  // L'onde avance en continu pendant la lecture, et non par à-coups au
+  // rythme de « timeupdate » (quatre fois par seconde).
+  useEffect(() => {
+    if (!joue) return
+    let id = requestAnimationFrame(function tour() { suivre(); id = requestAnimationFrame(tour) })
+    return () => cancelAnimationFrame(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joue])
+
   function fini() {
     setJoue(false)
     if (enchaine) suivant()

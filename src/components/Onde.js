@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 // ============================================================
 //  L'onde sonore d'un message du livre d'or.
@@ -24,6 +24,16 @@ export default function Onde({ valeurs, progression = 0, couleur = 'currentColor
   const n = barres.length
   const [vise, setVise] = useState(null) // la fraction sous le doigt, pendant le glissé
   const viseRef = useRef(null)
+  // Après le lâcher, la bille reste où on l'a posée le temps que le son la
+  // rejoigne : sinon elle revenait une fraction de seconde en arrière.
+  const [cible, setCible] = useState(null)
+
+  useEffect(() => {
+    if (cible == null) return
+    if (Math.abs(progression - cible) < 0.02) { setCible(null); return }
+    const t = setTimeout(() => setCible(null), 1200)
+    return () => clearTimeout(t)
+  }, [cible, progression])
 
   function viser(ev) {
     const r = ev.currentTarget.getBoundingClientRect()
@@ -36,7 +46,7 @@ export default function Onde({ valeurs, progression = 0, couleur = 'currentColor
     const f = viseRef.current
     viseRef.current = null
     setVise(null)
-    if (valider && f != null) onChercher(f)
+    if (valider && f != null) { setCible(f); onChercher(f) }
   }
   const glisser = onChercher ? {
     onPointerDown: (ev) => {
@@ -48,7 +58,10 @@ export default function Onde({ valeurs, progression = 0, couleur = 'currentColor
     onPointerCancel: () => lacher(false),
   } : {}
 
-  const montre = vise ?? progression
+  const montre = vise ?? cible ?? progression
+  // La bille : toujours là dès que le message a commencé (on voit où l'on
+  // en est et qu'on peut l'attraper), plus grosse sous le doigt.
+  const bille = onChercher && (vise != null || montre > 0)
   return (
     <div
       className={`lo-onde ${vivante ? 'lo-onde-vivante' : ''} ${onChercher ? 'lo-onde-cherche' : ''} ${vise != null ? 'lo-onde-vise' : ''}`}
@@ -65,7 +78,7 @@ export default function Onde({ valeurs, progression = 0, couleur = 'currentColor
           }}
         />
       ))}
-      {vise != null && <i className="lo-onde-curseur" style={{ left: `${vise * 100}%` }} />}
+      {bille && <i className={`lo-onde-bille ${vise != null ? 'tenue' : ''}`} style={{ left: `${Math.min(1, montre) * 100}%` }} />}
     </div>
   )
 }

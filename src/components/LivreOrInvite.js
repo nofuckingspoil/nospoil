@@ -329,6 +329,14 @@ export default function LivreOrInvite({ eventId, guestId, ouvert, ferme = false,
     setLecture({ joue: !a.paused && !a.ended, progression: Math.min(1, a.currentTime / total) })
   }
 
+  // L'onde avance en continu pendant la lecture, et non par à-coups.
+  useEffect(() => {
+    if (!lecture.joue) return
+    let id = requestAnimationFrame(function tour() { suivreLecture(); id = requestAnimationFrame(tour) })
+    return () => cancelAnimationFrame(id)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lecture.joue])
+
   // --------------------------------------------------------------- le selfie
 
   function arreterCamera() {

@@ -4594,13 +4594,14 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .lo-onde { display: flex; align-items: center; gap: 2px; width: 100%; }
 .lo-onde span { flex: 1 1 0; min-width: 2px; border-radius: 2px; transition: height .08s linear, background .15s; }
 .lo-onde-vivante span { transition: height .07s linear; }
-.lo-vitesse { flex: none; min-width: 46px; padding: 6px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; font-variant-numeric: tabular-nums; }
+.lo-vitesse { flex: none; width: 54px; text-align: center; padding: 6px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; font-variant-numeric: tabular-nums; }
 .lo-vitesse.on { background: var(--accent); border-color: transparent; color: #fff; }
 .lo-onde-cherche { cursor: pointer; touch-action: none; padding: 6px 0; box-sizing: content-box; }
 .lo-onde-cherche { position: relative; }
 .lo-onde-cherche span { transition: height .08s linear; }
 .lo-onde-vise span { transition: none; }
-.lo-onde-curseur { position: absolute; top: -4px; bottom: -4px; width: 3px; margin-left: -1.5px; border-radius: 2px; background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,.18); pointer-events: none; }
+.lo-onde-bille { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #fff; box-shadow: 0 1px 4px rgba(0,0,0,.35); pointer-events: none; transition: width .12s ease, height .12s ease, margin .12s ease; }
+.lo-onde-bille.tenue { width: 20px; height: 20px; margin: -10px 0 0 -10px; }
 
 .lo-ancre { position: relative; display: flex; flex-direction: column; align-items: center; gap: 4px; }
 .lo-micro { position: relative; width: 52px; height: 52px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.28); background: rgba(255,255,255,.1); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; }
