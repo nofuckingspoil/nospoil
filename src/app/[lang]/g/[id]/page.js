@@ -1956,7 +1956,9 @@ export default function Gallery({ params }) {
           revanche : on ne coupe pas quelqu'un en train de choisir ou de
           regarder. */}
       {montrerAvis && assezVu && !avisFerme && !selecting && diapo === null && !montrerCollage && photos.length > 0 && (
-        <div className="avis-pop" onClick={(e) => { if (e.target === e.currentTarget) fermerAvis() }}>
+        // Le fond ne ferme rien : on répond ou on ferme par la croix, jamais
+        // par un geste qui voulait seulement faire défiler l'album.
+        <div className="avis-pop">
           <div className="avis-pop-carte">
             <Avis
               role="invite"

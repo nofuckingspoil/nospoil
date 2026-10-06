@@ -87,7 +87,8 @@ function Eventail({ photos, pelli, date }) {
 export function InvitationTirages({ photos, nbFavoris, pelli, avecDate, onChoisir, onFermer }) {
   const { t, lang } = useLangue()
   return (
-    <div className="avis-pop" onClick={(e) => { if (e.target === e.currentTarget) onFermer() }}>
+    // Le fond ne ferme rien : on ferme par la croix ou « Plus tard ».
+    <div className="avis-pop">
       <div className="avis-pop-carte tir-invit" role="dialog" aria-labelledby="tir-invit-titre">
         <button className="tir-x" aria-label={t({ fr: 'Fermer', en: 'Close', de: 'Schließen' })} onClick={onFermer}>✕</button>
         <Eventail photos={photos} pelli={pelli} date={avecDate} />
