@@ -687,10 +687,6 @@ export default function Gallery({ params }) {
   // dès l'arrivée, elle recouvrait « Revoir la révélation », le premier écran
   // étant celui que tout le monde voit.
   const [defile, setDefile] = useState(false)
-  // Le bandeau du vote, une fois apparu, reste jusqu'à la croix ou au premier
-  // cœur : il s'effaçait au moindre défilement, avant qu'on ait pu le lire.
-  const [voteAccroche, setVoteAccroche] = useState(false)
-  useEffect(() => { if (defile) setVoteAccroche(true) }, [defile])
   // Le rappel du vote, montré une seule fois par soirée et par appareil.
   const [voteDit, setVoteDit] = useState(false)
   const [lienCopie, setLienCopie] = useState(false)
@@ -2000,7 +1996,7 @@ export default function Gallery({ params }) {
 
       {/* Le rappel du vote, posé au-dessus de la pastille : il parle du cœur
           qui est sur chaque tirage, il doit donc vivre là où on les voit. */}
-      {voteDit && (defile || voteAccroche) && !selecting && photos.length > 0 && !panneau && diapo === null && !montrerCollage && (
+      {voteDit && defile && !selecting && photos.length > 0 && !panneau && diapo === null && !montrerCollage && (
         <BandeauVote classe="gal-vote" onFermer={fermerVote} />
       )}
 
