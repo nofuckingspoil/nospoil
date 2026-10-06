@@ -1,7 +1,7 @@
 import { selectRows, signPhotos } from '../../../../lib/supabase'
 import { isRevealed, quotaExceeded } from '../../../../lib/phase'
 import { upgradeFor, CONTACT_EMAIL } from '../../../../lib/pricing'
-import { messageSuspendu, accesExpire } from '../../../../lib/authz'
+import { messageSuspendu, accesExpire, roleFor, canManage } from '../../../../lib/authz'
 import { estUuid, identifiantInvalide } from '../../../../lib/params'
 import { tiragesActifs } from '../../../../lib/tirages'
 import { t } from '../../../../lib/i18n'
@@ -172,6 +172,8 @@ export async function GET(request, { params }) {
   for (const p of photos) p.favs = compte[p.id] || 0
 
   // Liste des participants (pour le filtre "point de vue")
+  const peutEcouter = isOwner || (!!ownerToken && canManage(await roleFor(id, ownerToken)))
+
   const guestMap = {}
   for (const p of photos) guestMap[p.guestId] = p.who
   const guests = Object.entries(guestMap).map(([id, name]) => ({ id, name }))
@@ -180,8 +182,10 @@ export async function GET(request, { params }) {
     revealed,
     isOwner,
     ownerPreview: isOwner && !revealed, // aperçu organisateur avant révélation
-    // Le livre d'or ne regarde que les mariés : l'onglet n'existe pas pour les autres.
-    livreOr: isOwner ? !!ev.livre_or_actif : undefined,
+    // Le livre d'or ne regarde que les organisateurs (créateur et
+    // co-organisateurs) : l'onglet n'existe pas pour les autres.
+    hote: peutEcouter,
+    livreOr: peutEcouter ? !!ev.livre_or_actif : undefined,
     name: ev.name,
     hostNames: ev.host_names,
     coverUrl: couverture,

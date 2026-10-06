@@ -1589,7 +1589,7 @@ export default function Gallery({ params }) {
             commençaient hors champ. Chacun dit son état, et ouvre son panneau. */}
       {/* Les mariés seuls ont deux onglets : leurs photos, et le livre d'or
           que leurs invités leur ont laissé. */}
-      {data.isOwner && (data.livreOr || nbMessages > 0 || onglet === 'livre-or') && (
+      {(data.isOwner || data.hote) && (data.livreOr || nbMessages > 0 || onglet === 'livre-or') && (
         <div className="lo-onglets" role="tablist">
           <button type="button" role="tab" aria-selected={onglet === 'photos'} className={onglet === 'photos' ? 'on' : ''} onClick={() => setOnglet('photos')}>
             📷 {t({ fr: 'Photos', en: 'Photos', de: 'Fotos' })}
@@ -1601,8 +1601,8 @@ export default function Gallery({ params }) {
       )}
 
       {/* Le compte des messages fait vivre l'onglet même sans l'ouvrir. */}
-      {data.isOwner && onglet === 'livre-or' && <LivreOrMaries eventId={id} onCompte={setNbMessages} />}
-      {data.isOwner && onglet !== 'livre-or' && nbMessages === null && <CompteLivreOr eventId={id} onCompte={setNbMessages} />}
+      {(data.isOwner || data.hote) && onglet === 'livre-or' && <LivreOrMaries eventId={id} onCompte={setNbMessages} />}
+      {(data.isOwner || data.hote) && onglet !== 'livre-or' && nbMessages === null && <CompteLivreOr eventId={id} onCompte={setNbMessages} />}
 
       {onglet !== 'livre-or' && (<>
       {panneau && <div className="gal-fond" onClick={() => { if (panneau === 'qui') setChercheQui(''); setPanneau(null) }} />}
