@@ -34,19 +34,27 @@ export async function POST(request) {
     const res = await selectRows(
       'guests',
       `event_id=eq.${eventId}&device_token=eq.${encodeURIComponent(deviceToken)}` +
-        `&select=id,album_opened_at,feedback_at,survey_optout&limit=1`
+        `&select=id,album_opened_at,feedback_at,survey_optout,avis_ferme_at&limit=1`
     )
     const g = Array.isArray(res.data) ? res.data[0] : null
     // Sans fiche de participant, on ne sait ni qui c'est ni s'il a déjà répondu :
     // mieux vaut se taire que redemander à quelqu'un qui a déjà donné son avis.
     if (!g) return Response.json({ montrer: false })
 
+    // Fermée d'une croix : on ne la repose plus pour cette soirée. Avant, la
+    // fermeture ne vivait que dans l'écran ouvert, et la question revenait à
+    // chaque retour dans l'album (retour de Clément, 06/10/2026).
+    if (body.ferme === true || body.ferme === 'true') {
+      if (!g.avis_ferme_at) await updateRow('guests', `id=eq.${g.id}`, { avis_ferme_at: new Date().toISOString() })
+      return Response.json({ montrer: false })
+    }
+
     // La première visite fait foi : on ne réécrit pas la date à chaque retour.
     if (!g.album_opened_at) {
       await updateRow('guests', `id=eq.${g.id}`, { album_opened_at: new Date().toISOString() })
     }
 
-    return Response.json({ montrer: !g.feedback_at && !g.survey_optout })
+    return Response.json({ montrer: !g.feedback_at && !g.survey_optout && !g.avis_ferme_at })
   } catch (err) {
     console.error('avis : ping album', err)
     // En cas de pépin on ne montre rien : une question qui surgit par erreur

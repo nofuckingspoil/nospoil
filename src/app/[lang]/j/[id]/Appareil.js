@@ -48,7 +48,7 @@ function countdownToReveal(iso, now, lang = 'fr') {
 }
 
 // Le grand décompte de la soirée terminée : « 2 j 04:12:09 », « 04:12:09 ».
-function decompteLong(iso, now) {
+function decompteLong(iso, now, lang = 'fr') {
   const diff = new Date(iso).getTime() - now
   if (!Number.isFinite(diff) || diff <= 0) return null
   const s = Math.floor(diff / 1000)
@@ -56,7 +56,7 @@ function decompteLong(iso, now) {
   const hh = String(Math.floor((s % 86400) / 3600)).padStart(2, '0')
   const mm = String(Math.floor((s % 3600) / 60)).padStart(2, '0')
   const ss = String(s % 60).padStart(2, '0')
-  return `${j > 0 ? `${j} j ` : ''}${hh}:${mm}:${ss}`
+  return `${j > 0 ? `${j} ${tr({ fr: 'j', en: 'd', de: 'T' }, lang)} ` : ''}${hh}:${mm}:${ss}`
 }
 
 // Le sur-titre de l'album : la date, jamais le type d'événement. La base ne
@@ -1535,7 +1535,7 @@ export default function GuestCamera({ params }) {
             <p className="vf-full-title">{t({ fr: 'La soirée est terminée', en: 'The party is over', de: 'Die Feier ist vorbei' })}</p>
             <p className="vf-full-sub">{t({ fr: 'Les photos se développent. L’album s’ouvre dans', en: 'The photos are developing. The album opens in', de: 'Die Fotos werden entwickelt. Das Album öffnet sich in' })}</p>
             <p className="vf-decompte" aria-live="off">
-              {decompteLong(meta?.revealAt, now) || t({ fr: 'Dans un instant…', en: 'Any moment now…', de: 'Gleich ist es so weit…' })}
+              {decompteLong(meta?.revealAt, now, lang) || t({ fr: 'Dans un instant…', en: 'Any moment now…', de: 'Gleich ist es so weit…' })}
             </p>
             <button className="vf-full-btn" onClick={() => setShowAlbum(true)}>
               {t({ fr: 'Voir mes photos →', en: 'See my photos →', de: 'Meine Fotos ansehen →' })}

@@ -945,6 +945,16 @@ export default function Gallery({ params }) {
   const [rejoue, setRejoue] = useState(0) // remonter la grille relance le développement
   const [montrerAvis, setMontrerAvis] = useState(false)
   const [avisFerme, setAvisFerme] = useState(false)
+  // Fermée une fois, la question ne revient plus pour cette soirée : le
+  // serveur le retient, sinon elle reparaissait à chaque retour dans l'album.
+  function fermerAvis() {
+    setAvisFerme(true)
+    fetch('/api/feedback/ping', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ eventId: id, deviceToken: getDeviceToken(), ferme: true }),
+    }).catch(() => {})
+  }
   // La question ne surgit qu'une fois dix tirages passés sous les yeux. Avant,
   // on demande son avis à quelqu'un qui n'a encore rien vu.
   const [assezVu, setAssezVu] = useState(false)
@@ -1942,14 +1952,14 @@ export default function Gallery({ params }) {
           revanche : on ne coupe pas quelqu'un en train de choisir ou de
           regarder. */}
       {montrerAvis && assezVu && !avisFerme && !selecting && diapo === null && !montrerCollage && photos.length > 0 && (
-        <div className="avis-pop" onClick={(e) => { if (e.target === e.currentTarget) setAvisFerme(true) }}>
+        <div className="avis-pop" onClick={(e) => { if (e.target === e.currentTarget) fermerAvis() }}>
           <div className="avis-pop-carte">
             <Avis
               role="invite"
               compact
               accroche={accroche(lang)}
               payload={{ eventId: id, deviceToken: getDeviceToken() }}
-              onClose={() => setAvisFerme(true)}
+              onClose={fermerAvis}
             />
           </div>
         </div>
