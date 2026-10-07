@@ -337,6 +337,11 @@ export function accroche(langue) {
 // s'ouvre pas dans le navigateur d'Instagram sur iPhone »), jamais l'une seule.
 export function resumeAppareil(ua) {
   if (!ua) return null
+  // L'app et l'extrait d'app ne sont pas des navigateurs : leur identité est
+  // celle du moteur réseau du téléphone (« Clip/55 CFNetwork/… Darwin/… » sur
+  // iPhone, « okhttp/4… » sur Android). L'extrait s'appelle « Clip ».
+  if (/CFNetwork|Darwin/i.test(ua)) return /^Clip\//.test(ua) ? "iPhone · extrait d'app" : 'iPhone · app'
+  if (/^okhttp/i.test(ua)) return 'Android · app'
   const machine =
     /iPhone/i.test(ua) ? 'iPhone'
       : /iPad/i.test(ua) ? 'iPad'

@@ -26,7 +26,7 @@ export async function GET(request, { params }) {
   // qui permet de comprendre en un coup d'œil qui a joué le jeu.
   const guestsRes = await selectRows(
     'guests',
-    `event_id=eq.${id}&select=id,display_name,device_token,phone,email,shots_taken,bonus_shots,created_at,last_active_at,notified_at,notify_failed&order=last_active_at.desc.nullslast,created_at.asc`
+    `event_id=eq.${id}&select=id,display_name,device_token,phone,email,shots_taken,bonus_shots,created_at,last_active_at,notified_at,notify_failed,appareil&order=last_active_at.desc.nullslast,created_at.asc`
   )
   const guestRows = Array.isArray(guestsRes.data) ? guestsRes.data : []
   const guests = guestRows.map((g) => ({
@@ -42,6 +42,7 @@ export async function GET(request, { params }) {
     lastActiveAt: g.last_active_at || null,
     notifiedAt: g.notified_at || null,
     notifyFailed: !!g.notify_failed,
+    appareil: g.appareil || null,
   }))
 
   // Numéros collectés (participants ayant laissé un téléphone)

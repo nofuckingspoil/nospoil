@@ -220,6 +220,7 @@ export default function AdminEvent() {
                       <span className="muted small">
                         Arrivé {relTime(g.joinedAt)}
                         {g.lastActiveAt ? ` · vu ${relTime(g.lastActiveAt)}` : ' · jamais revenu'}
+                        {g.appareil ? ` · 📱 ${g.appareil}` : ''}
                       </span>
                       {(g.email || g.phone) && (
                         <span className="mono small muted">

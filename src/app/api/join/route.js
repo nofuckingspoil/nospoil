@@ -3,6 +3,7 @@ import { rpc, updateRow, selectRows } from '../../../lib/supabase'
 import { checkEmailShape } from '../../../lib/email-check'
 import { adresseSansMessagerie } from '../../../lib/email-domaine'
 import { adminEmail } from '../../../lib/avis-mail'
+import { resumeAppareil } from '../../../lib/avis'
 import { sendMail, guestAccessEmail, quotaEmail, siteUrl } from '../../../lib/mail'
 import { makeToken, ensureAccount } from '../../../lib/account'
 import { estSuspendu, messageSuspendu, ADMIN } from '../../../lib/authz'
@@ -259,6 +260,10 @@ export async function POST(request) {
   // revient sans la resaisir ne doit pas perdre son inscription à l'album.
   try {
     const patch = { last_active_at: new Date().toISOString(), langue }
+    // Le téléphone de cette inscription (le dernier en date s'il en change) :
+    // pour savoir si ceux qui ne photographient pas ont un point commun.
+    const appareil = resumeAppareil(request.headers.get('user-agent'))
+    if (appareil) patch.appareil = appareil
     if (email) {
       patch.email = email
       // Une adresse corrigée efface l'alerte de la précédente.
