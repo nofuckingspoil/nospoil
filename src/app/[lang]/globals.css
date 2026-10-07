@@ -4591,8 +4591,10 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
    d'enregistrement par-dessus. Côté mariés : l'onglet « Livre d'or » de
    l'album, une carte par invité.
    ============================================================ */
-.lo-onde { display: flex; align-items: center; gap: 2px; width: 100%; }
-.lo-onde span { flex: 1 1 0; min-width: 2px; border-radius: 2px; transition: height .08s linear, background .15s; }
+/* L'onde prend la place qui reste, et sait rétrécir : à côté de la pastille
+   de vitesse, elle poussait le lecteur hors de sa carte. */
+.lo-onde { display: flex; align-items: center; gap: 2px; flex: 1 1 auto; width: 100%; min-width: 0; }
+.lo-onde span { flex: 1 1 0; min-width: 1px; border-radius: 2px; transition: height .08s linear, background .15s; }
 .lo-onde-vivante span { transition: height .07s linear; }
 .lo-vitesse { flex: none; width: 54px; text-align: center; padding: 6px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.22); background: rgba(255,255,255,.08); color: rgba(255,255,255,.85); font-family: var(--font-mono); font-size: 12px; font-weight: 600; cursor: pointer; font-variant-numeric: tabular-nums; }
 .lo-vitesse.on { background: var(--accent); border-color: transparent; color: #fff; }
