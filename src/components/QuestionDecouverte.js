@@ -7,8 +7,9 @@ import { useLangue } from './Langue'
 //  « Comment avez-vous découvert Time to Flash ? »
 //
 //  Choix multiple : on découvre souvent par deux chemins à la fois (une pub
-//  Instagram, puis un ami qui en parle). L'assistant IA demande lequel, « Autre »
-//  ouvre un champ libre. Le bouton Valider reste grisé tant que rien n'est
+//  Instagram, puis un ami qui en parle). L'assistant IA demande lequel, le
+//  bouche-à-oreille demande qui en a parlé (un prestataire peut devenir un
+//  partenaire : on demande alors lequel), « Autre » ouvre un champ libre. Le bouton Valider reste grisé tant que rien n'est
 //  coché. `onPasser` facultatif : sans lui, la question est obligatoire.
 //
 //  Utilisé à la fin des réglages (création courte) et sur le tableau de bord
@@ -17,11 +18,22 @@ import { useLangue } from './Langue'
 
 export const IA_NOMS = ['ChatGPT', 'Gemini', 'Claude', 'Perplexity', 'Copilot', 'Mistral']
 
+// Qui en a parlé : les clés partent au serveur, qui les remet en clair.
+export const BOUCHE_QUI = ['proche', 'prestataire', 'collegue']
+
 export default function QuestionDecouverte({ onEnvoyer, onPasser, envoi = false }) {
   const { t } = useLangue()
   const [choix, setChoix] = useState(() => new Set())
   const [ia, setIa] = useState(() => new Set())
+  const [qui, setQui] = useState(() => new Set())
+  const [prestataire, setPrestataire] = useState('')
   const [autre, setAutre] = useState('')
+
+  const QUI = {
+    proche: t({ fr: 'Un ami ou un proche', en: 'A friend or relative', de: 'Freunde oder Familie' }),
+    prestataire: t({ fr: 'Un prestataire (photographe, DJ, lieu de réception…)', en: 'A supplier (photographer, DJ, venue…)', de: 'Ein Dienstleister (Fotograf, DJ, Location…)' }),
+    collegue: t({ fr: 'Un collègue', en: 'A colleague', de: 'Kollegen' }),
+  }
 
   const OPTIONS = [
     ['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook'], ['youtube', 'YouTube'],
@@ -40,6 +52,7 @@ export default function QuestionDecouverte({ onEnvoyer, onPasser, envoi = false 
   })
   const basculerChoix = basculer(setChoix)
   const basculerIa = basculer(setIa)
+  const basculerQui = basculer(setQui)
 
   function valider(e) {
     e.preventDefault()
@@ -47,6 +60,8 @@ export default function QuestionDecouverte({ onEnvoyer, onPasser, envoi = false 
     onEnvoyer({
       choix: [...choix],
       ia: choix.has('ia') ? [...ia] : [],
+      qui: choix.has('bouche') ? [...qui] : [],
+      prestataire: choix.has('bouche') && qui.has('prestataire') ? prestataire.trim() : '',
       autre: choix.has('autre') ? autre.trim() : '',
     })
   }
@@ -72,6 +87,28 @@ export default function QuestionDecouverte({ onEnvoyer, onPasser, envoi = false 
                       <input type="checkbox" checked={ia.has(nom)} onChange={() => basculerIa(nom)} />
                       <span>{nom}</span>
                     </label>
+                  ))}
+                </div>
+              </div>
+            )}
+            {cle === 'bouche' && choix.has('bouche') && (
+              <div className="cases-suite">
+                <div className="hint" style={{ marginBottom: 8 }}>{t({ fr: 'Qui vous en a parlé ?', en: 'Who told you about it?', de: 'Wer hat Ihnen davon erzählt?' })}</div>
+                <div className="cases">
+                  {BOUCHE_QUI.map((q) => (
+                    <div key={q}>
+                      <label className={`case ${qui.has(q) ? 'on' : ''}`}>
+                        <input type="checkbox" checked={qui.has(q)} onChange={() => basculerQui(q)} />
+                        <span>{QUI[q]}</span>
+                      </label>
+                      {q === 'prestataire' && qui.has('prestataire') && (
+                        <div className="field cases-suite">
+                          <label>{t({ fr: 'Lequel ? (facultatif)', en: 'Which one? (optional)', de: 'Welcher? (optional)' })}</label>
+                          <input type="text" value={prestataire} onChange={(e) => setPrestataire(e.target.value)} maxLength={120}
+                            placeholder={t({ fr: 'Nom du photographe, du lieu…', en: 'Name of the photographer, venue…', de: 'Name des Fotografen, der Location…' })} />
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               </div>

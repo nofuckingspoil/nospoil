@@ -18,6 +18,9 @@ export const runtime = 'nodejs'
 
 const CHOIX = ['instagram', 'tiktok', 'facebook', 'youtube', 'bouche', 'invite', 'google', 'ia', 'autre']
 
+// Qui en a parlé, remis en clair pour la page /admin/essais.
+const BOUCHE_QUI = { proche: 'un ami ou un proche', prestataire: 'un prestataire', collegue: 'un collègue' }
+
 const court = (v, max) => (typeof v === 'string' ? v.trim().slice(0, max) : '') || null
 
 export async function POST(request, { params }) {
@@ -34,8 +37,12 @@ export async function POST(request, { params }) {
 
   // La précision : les assistants IA cités, et le texte libre de « autre ».
   const ia = Array.isArray(body.ia) ? body.ia.map((x) => court(x, 30)).filter(Boolean) : []
+  const qui = Array.isArray(body.qui) ? [...new Set(body.qui.filter((q) => BOUCHE_QUI[q]))] : []
+  const lequel = qui.includes('prestataire') ? court(body.prestataire, 120) : null
+  const bouche = qui.map((q) => (q === 'prestataire' && lequel ? `${BOUCHE_QUI[q]} (${lequel})` : BOUCHE_QUI[q]))
   const precisions = [
     choix.includes('ia') && ia.length ? `IA : ${ia.join(', ')}` : null,
+    choix.includes('bouche') && bouche.length ? `Bouche-à-oreille : ${bouche.join(', ')}` : null,
     choix.includes('autre') ? court(body.autre ?? body.detail, 200) : null,
   ].filter(Boolean)
 
