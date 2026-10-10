@@ -69,5 +69,9 @@ export default function sitemap() {
       priority: 0.3,
     })
   )
-  return [...vitrines, ...appli, ...articles, ...legal]
+  // Programme partenaires : pages en français seulement (pas de hreflang).
+  const partenaires = ['/pro/wedding-planners', '/pro/lieux-de-reception', '/pro/photographes', '/partenaires']
+    .map((chemin) => ({ url: `${BASE}${chemin}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 }))
+
+  return [...vitrines, ...appli, ...articles, ...legal, ...partenaires]
 }

@@ -33,9 +33,14 @@ function Fiche({ d, adminKey, onSaved }) {
   const [statut, setStatut] = useState(d.statut || 'nouvelle')
   const [code, setCode] = useState(d.code_envoye || '')
   const [note, setNote] = useState(d.note || '')
+  const [publiee, setPubliee] = useState(!!d.publiee)
+  const [slug, setSlug] = useState(d.slug || '')
+  const [description, setDescription] = useState(d.description || '')
+  const estFiche = d.type === 'fiche'
   const [etat, setEtat] = useState('')
   const [busy, setBusy] = useState(false)
   const modifie = statut !== (d.statut || 'nouvelle') || code !== (d.code_envoye || '') || note !== (d.note || '')
+    || (estFiche && (publiee !== !!d.publiee || slug !== (d.slug || '') || description !== (d.description || '')))
 
   async function enregistrer() {
     setBusy(true); setEtat('')
@@ -43,12 +48,13 @@ function Fiche({ d, adminKey, onSaved }) {
       const res = await fetch('/api/admin/pros', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', 'x-admin-key': adminKey },
-        body: JSON.stringify({ id: d.id, statut, code_envoye: code, note }),
+        body: JSON.stringify({ id: d.id, statut, code_envoye: code, note,
+          ...(estFiche ? { ...(publiee !== !!d.publiee ? { publiee } : {}), slug, description } : {}) }),
       })
       const r = await res.json().catch(() => ({}))
       if (!res.ok) throw new Error(r.error || 'Erreur.')
       setEtat('Enregistré.')
-      onSaved(r.demande || { ...d, statut, code_envoye: code || null, note: note || null })
+      onSaved(r.demande ? { ...r.demande, photo_url: d.photo_url } : { ...d, statut, code_envoye: code || null, note: note || null })
     } catch (err) { setEtat(err.message) } finally { setBusy(false) }
   }
 
@@ -71,6 +77,29 @@ function Fiche({ d, adminKey, onSaved }) {
         {d.traite_at && <span>Traitée le : <b>{fmtDate(d.traite_at)}</b></span>}
       </div>
       {d.message && <p className="apro-message">{d.message}</p>}
+
+      {estFiche && (
+        <div className="apro-carte-fiche">
+          {d.photo_url ? <img src={d.photo_url} alt="" className="apro-photo" /> : <div className="apro-photo apro-photo-vide">Pas de photo</div>}
+          <div className="apro-fiche-infos">
+            <span className="apro-fiche-meta">FICHE PARTENAIRE · {d.dept_nom} ({d.departement}){d.adresse ? ` · ${d.adresse}` : ''}</span>
+            <label>Présentation (publique, 220 caractères)
+              <textarea rows={3} maxLength={220} value={description} onChange={(e) => setDescription(e.target.value)} />
+            </label>
+            <span className="small">
+              {[d.instagram && `Instagram ${d.instagram}`, d.tiktok && `TikTok ${d.tiktok}`, d.facebook && `Facebook ${d.facebook}`].filter(Boolean).join(' · ') || 'Aucun réseau'}
+              {!d.accord_publication && ' · ⚠️ publication non acceptée'}
+            </span>
+            <div className="apro-publication">
+              <label className="apro-case"><input type="checkbox" checked={publiee} onChange={(e) => setPubliee(e.target.checked)} /> Publiée sur /partenaires</label>
+              <label>Adresse : /partenaires/
+                <input type="text" value={slug} onChange={(e) => setSlug(e.target.value.toLowerCase())} maxLength={60} />
+              </label>
+              {d.publiee && d.slug && <a href={`/partenaires/${d.slug}`} target="_blank" rel="noopener noreferrer" className="linklike">Voir la fiche publique ↗</a>}
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="apro-suivi">
         <label>Statut
@@ -167,10 +196,12 @@ export default function AdminProsPage() {
           <Link href="/admin" className="linklike" style={{ fontSize: 14 }}>← Tableau de bord</Link>
           <Link href="/admin/codes" className="linklike" style={{ fontSize: 14 }}>Créer un code →</Link>
           <a href="/pro" target="_blank" rel="noopener noreferrer" className="linklike" style={{ fontSize: 14 }}>Voir la page /pro</a>
+          <a href="/partenaires" target="_blank" rel="noopener noreferrer" className="linklike" style={{ fontSize: 14 }}>Voir /partenaires</a>
         </div>
         <p className="muted small" style={{ marginBottom: 16 }}>
-          Les prestataires qui ont rempli le formulaire de la page /pro. Créez le code dans « Codes promo »,
-          envoyez-le par mail, puis notez-le ici et passez la demande en « Code envoyé ».
+          Les prestataires qui ont rempli le formulaire de /pro (ou une fiche partenaire sur /pro/fiche). Créez le code dans « Codes promo »
+          (3 codes par département au maximum), envoyez-le par mail, notez-le ici et passez la demande en « Code envoyé ».
+          Pour une fiche, cochez ensuite « Publiée » : elle apparaît sur /partenaires dans les 5 minutes.
         </p>
 
         {error && <div className="err" style={{ marginBottom: 16 }}>{error}</div>}

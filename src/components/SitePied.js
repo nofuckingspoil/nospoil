@@ -64,6 +64,8 @@ export default function SitePied({ lang = 'fr' }) {
           <Link href={lien('/mentions-legales', lang)}>{t({ fr: 'Mentions légales', en: 'Legal notice', de: 'Impressum' }, lang)}</Link>
           <Link href={lien('/cgv', lang)}>{t({ fr: 'CGV', en: 'Terms of sale', de: 'AGB' }, lang)}</Link>
           <Link href={lien('/politique-de-confidentialite', lang)}>{t({ fr: 'Confidentialité', en: 'Privacy', de: 'Datenschutz' }, lang)}</Link>
+          {lang === 'fr' && <Link href="/partenaires">Partenaires</Link>}
+          <Link href={lien('/pro', lang)}>{t({ fr: 'Espace pro', en: 'For professionals', de: 'Für Profis' }, lang)}</Link>
           <ConsentReset />
         </nav>
         <SelecteurLangue style={{ color: '#fff' }} />

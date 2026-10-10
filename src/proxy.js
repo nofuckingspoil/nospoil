@@ -21,6 +21,11 @@ const UN_AN = 60 * 60 * 24 * 365
 // s'applique sans redirection.
 const PAGES_APPLI = /^\/(j|g|event|admin|connexion|mes-evenements|mes-photos|avis|create)(\/|$)/
 
+// Programme partenaires : pages en français seulement (pas de version /en ni
+// /de). Sans cette exception, un visiteur anglophone tournerait en rond entre
+// /pro/photographes et /en/pro/photographes.
+const PAGES_FR_SEULEMENT = /^\/(pro\/(wedding-planners|lieux-de-reception|photographes|fiche)|partenaires)(\/|$)/
+
 function memoriser(reponse, langue) {
   reponse.cookies.set(COOKIE_LANGUE, langue, { path: '/', maxAge: UN_AN, sameSite: 'lax' })
   return reponse
@@ -50,7 +55,7 @@ export function proxy(request) {
   // Une page vitrine demandée dans une autre langue que le français : on
   // envoie vers son adresse dédiée (/en/..., /de/...), celle que Google
   // référence.
-  if (langue !== LANGUE_PAR_DEFAUT && !PAGES_APPLI.test(pathname) && request.method === 'GET') {
+  if (langue !== LANGUE_PAR_DEFAUT && !PAGES_APPLI.test(pathname) && !PAGES_FR_SEULEMENT.test(pathname) && request.method === 'GET') {
     const cible = url.clone()
     cible.pathname = `/${langue}${pathname === '/' ? '' : pathname}`
     const reponse = NextResponse.redirect(cible, 307)
