@@ -734,8 +734,8 @@ export const POSTS_DE = {
   },
 
   'prix-photobooth-mariage': {
-    title: 'Was kostet eine Fotobox für die Hochzeit 2026?',
-    excerpt: 'Mietpreise, versteckte Kosten und die eigentliche Rechnung: was Sie jedes Foto kostet, das Sie behalten.',
+    title: 'Fotobox Kosten 2026: was eine Fotobox für die Hochzeit wirklich kostet',
+    excerpt: 'Fotobox mieten: 350 bis 900 € pro Abend, dazu versteckte Kosten wie Anfahrt, Betreuung und Kaution. Plus die Rechnung, die kaum jemand macht: der Preis pro Foto.',
     caption: 'Eine Fotobox in einem Hochzeitssaal',
     body: `
 <p>Die Fotobox steht auf jeder Liste von Hochzeitsdienstleistern. Bevor Sie unterschreiben, sollten Sie wissen, was Sie wirklich bezahlen, denn der Preis auf dem Angebot ist fast nie der Endpreis.</p>

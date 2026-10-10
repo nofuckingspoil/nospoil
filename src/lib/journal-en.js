@@ -7,7 +7,7 @@
 
 export const POSTS_EN = {
   'application-appareil-photo-jetable-mariage': {
-    title: 'Disposable camera apps for weddings: the 5 apps compared',
+    title: 'Disposable camera apps: the 5 best for a wedding',
     excerpt: 'Scene, POV, Reveal, Fotify, Time to Flash: which apps really work like a disposable camera, which ones need installing, and what they cost.',
     caption: 'A guest scans the QR code placed on a wedding table',
     body: `

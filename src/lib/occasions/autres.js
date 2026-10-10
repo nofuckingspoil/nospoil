@@ -458,8 +458,8 @@ export const AUTRES_OCCASIONS = {
   },
   'depart-retraite': {
     fr: {
-      titre: 'Animation pot de départ retraite : l’album souvenir',
-      description: 'Une animation pour le pot de départ en retraite : chaque collègue a un appareil jetable sur son téléphone, et l’album devient le cadeau souvenir.',
+      titre: 'Animation originale pour un pot de départ en retraite',
+      description: 'Une animation photo originale pour le pot de départ : chaque collègue devient photographe avec son téléphone, et l’album devient le cadeau souvenir. Dès 4,99 €.',
       eyebrow: 'Départ en retraite',
       h1: 'Une animation photo pour le pot de départ en retraite',
       intro: [

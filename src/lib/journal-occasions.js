@@ -241,7 +241,7 @@ export const POSTS_OCCASIONS = [
     // Vise « idée pot de départ retraite », « organiser un pot de départ à la retraite ».
     slug: 'idees-pot-de-depart-retraite',
     cat: 'Retraite',
-    title: 'Pot de départ à la retraite : idées et organisation',
+    title: 'Pot de départ à la retraite : idées, buffet et organisation',
     excerpt: 'Idées de pot de départ à la retraite : organisation, discours, animations, cadeau collectif et pièges à éviter pour une fête réussie.',
     author: 'Tom Bréval',
     date: '2026-10-01',

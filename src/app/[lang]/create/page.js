@@ -1,17 +1,13 @@
-'use client'
+import PageCreation from './PageCreation'
+import { alternates, langueDeParams } from '../../../lib/langue-lien'
 
-import { Suspense } from 'react'
-import { CreateForm } from './Assistant'
-import { useLangue } from '../../../components/Langue'
+// Adresse canonique sans paramètres : les liens /create?tier=100 (boutons des
+// formules) sortaient dans Google comme une page à part (Search Console, 10/10/2026).
+export async function generateMetadata({ params }) {
+  const lang = await langueDeParams(params)
+  return { alternates: alternates('/create', lang) }
+}
 
-// Depuis le 03/10/2026, la création courte est la norme : nom, dates, formule,
-// paiement, puis les réglages (voir Assistant.js). Le parcours long reste
-// dans Assistant.js (parcours="long") s'il fallait y revenir.
-export default function CreatePage() {
-  const { t } = useLangue()
-  return (
-    <Suspense fallback={<main className="center-screen"><p className="muted">{t({ fr: 'Chargement…', en: 'Loading…', de: 'Wird geladen…' })}</p></main>}>
-      <CreateForm parcours="court" />
-    </Suspense>
-  )
+export default function Page() {
+  return <PageCreation />
 }

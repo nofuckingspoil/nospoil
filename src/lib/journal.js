@@ -9,6 +9,7 @@ import { LOCALES } from './i18n'
 import { POSTS_EN } from './journal-en'
 import { POSTS_DE } from './journal-de'
 import { POSTS_OCCASIONS, POSTS_OCCASIONS_EN, POSTS_OCCASIONS_DE } from './journal-occasions'
+import { POSTS_NOUVEAUX, POSTS_NOUVEAUX_EN, POSTS_NOUVEAUX_DE } from './journal-nouveaux'
 
 // Dégradés "argentiques" placeholder (repris du handoff design), choisis de
 // façon déterministe par le slug → chaque article garde toujours sa couleur.
@@ -45,7 +46,7 @@ export function formatDate(iso, langue = 'fr') {
 // langues ; seul le libellé affiché change (categorieLabel).
 // Anniversaire, Entre amis et Retraite : les rubriques des autres occasions
 // (03/10/2026), le reste du journal parle de mariage.
-export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulisses', 'Anniversaire', 'Entre amis', 'Retraite']
+export const CATEGORIES = ['Tous', 'Photo', 'Organisation', 'Souvenirs', 'Coulisses', 'Anniversaire', 'Entre amis', 'Retraite', 'Prestataires']
 
 const LIBELLES_CATEGORIES = {
   Tous: { en: 'All', de: 'Alle' },
@@ -57,12 +58,15 @@ const LIBELLES_CATEGORIES = {
   Anniversaire: { en: 'Birthdays', de: 'Geburtstag' },
   'Entre amis': { en: 'With friends', de: 'Mit Freunden' },
   Retraite: { en: 'Retirement', de: 'Ruhestand' },
+  Prestataires: { en: 'For wedding pros', de: 'Für Dienstleister' },
 }
 // Les filtres du blog, par occasion. Les rubriques d'origine (Photo,
 // Organisation, Souvenirs, Coulisses) parlent toutes de mariage : elles se
 // rangent sous « Mariage », et restent écrites sur les cartes.
-export const RUBRIQUES = ['Tous', 'Mariage', 'Anniversaire', 'Entre amis', 'Retraite']
-const RUBRIQUES_OCCASION = ['Anniversaire', 'Entre amis', 'Retraite']
+// « Prestataires » (10/10/2026) : articles pour wedding planners, photographes
+// et lieux de réception, signalés aussi par cible: 'pro' (bandeau partenaires).
+export const RUBRIQUES = ['Tous', 'Mariage', 'Anniversaire', 'Entre amis', 'Retraite', 'Prestataires']
+const RUBRIQUES_OCCASION = ['Anniversaire', 'Entre amis', 'Retraite', 'Prestataires']
 export function rubriqueDe(p) {
   return RUBRIQUES_OCCASION.includes(p.cat) ? p.cat : 'Mariage'
 }
@@ -88,8 +92,8 @@ const ALL_POSTS = [
     // sortent. Faits concurrents relevés sur leurs sites le 17/09/2026.
     slug: 'application-appareil-photo-jetable-mariage',
     cat: 'Photo',
-    title: 'App appareil photo jetable mariage : les 5 applis comparées',
-    excerpt: 'Scene, POV, Reveal, Fotify, Time to Flash : quelles applis font vraiment jetable, lesquelles demandent une installation, et combien elles coûtent.',
+    title: 'Appli appareil photo jetable : les 5 meilleures pour un mariage',
+    excerpt: 'Notre avis sur Reveal, Scene, POV, Fotify et Time to Flash : prix, nombre de poses, avec ou sans téléchargement. Le tableau pour choisir en 2 minutes.',
     author: 'Camille Rouzaud',
     date: '2026-09-17',
     read: '9 min',
@@ -1070,8 +1074,8 @@ const ALL_POSTS = [
   {
     slug: 'droit-image-photos-mariage',
     cat: 'Coulisses',
-    title: 'Droit à l’image : ce que dit la loi pour les photos de mariage',
-    excerpt: 'Cercle privé, réseaux sociaux, enfants, contrat du photographe : les règles simples pour ne pas te tromper.',
+    title: 'Droit à l’image au mariage : peut-on publier les photos des invités ?',
+    excerpt: 'Une photo d’invité sur Instagram, des enfants, les photos du photographe : ce qui est permis, ce qui ne l’est pas, et les 3 réflexes pour éviter les fâcheries.',
     author: 'Tom Bréval',
     date: '2026-06-28',
     read: '7 min',
@@ -1488,7 +1492,7 @@ const ALL_POSTS = [
 ]
 
 // Ordre d'affichage : du plus récent au plus ancien.
-export const POSTS = [...ALL_POSTS, ...POSTS_OCCASIONS].sort((a, b) => b.date.localeCompare(a.date))
+export const POSTS = [...ALL_POSTS, ...POSTS_OCCASIONS, ...POSTS_NOUVEAUX].sort((a, b) => b.date.localeCompare(a.date))
 
 export function getPost(slug) {
   return POSTS.find((p) => p.slug === slug) || null
@@ -1496,8 +1500,8 @@ export function getPost(slug) {
 
 // ---- Versions traduites ----------------------------------------------------
 const TRADUCTIONS = {
-  en: { ...POSTS_EN, ...POSTS_OCCASIONS_EN },
-  de: { ...POSTS_DE, ...POSTS_OCCASIONS_DE },
+  en: { ...POSTS_EN, ...POSTS_OCCASIONS_EN, ...POSTS_NOUVEAUX_EN },
+  de: { ...POSTS_DE, ...POSTS_OCCASIONS_DE, ...POSTS_NOUVEAUX_DE },
 }
 
 // Durée de lecture : « 9 min » → « 9 min read » / « 9 Min. Lesezeit ».
