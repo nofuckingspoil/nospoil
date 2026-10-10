@@ -1043,4 +1043,522 @@ export const POSTS_EN = {
   },
 }
 
-export const POSTS_DE = {}
+// DE : « Hochzeit Checkliste », « Hochzeitsplanung Checkliste », « Hochzeit
+// planen Zeitplan », « Hochzeitsplanung Zeitplan », « was muss man 6 Monate
+// vor der Hochzeit erledigen ». Vu dans Google.de (10/10/2026) : C&A, für
+// Sie, desired, Bridebook DE : Checklisten Monat für Monat, rarement avec
+// délais par prestataire ni Standesamt détaillé. Le volet administratif
+// français (mairie, bans, Code civil, impôts) est remplacé par celui de
+// l’Allemagne : Anmeldung der Eheschließung (service.berlin.de : au plus tôt
+// 6 mois avant, valable 6 mois, Geburtenregister ≤ 6 mois, Meldebescheinigung
+// ≤ 14 jours à Berlin, 45 €), témoins facultatifs depuis 1998 (§ 1312 BGB),
+// Ehename (réforme du 01/05/2025, Doppelname commun), Steuerklasse IV/IV
+// automatique (finanzen.hessen.de), Sonderurlaub (§ 616 BGB, souvent 1 jour).
+export const POSTS_DE = {
+  'retroplanning-mariage': {
+    title: 'Hochzeit Checkliste: Zeitplan von 18 Monaten vorher bis danach',
+    excerpt: 'Alle Aufgaben von 18 Monaten vorher bis zum Tag danach: Buchungsfristen je Dienstleister, Standesamt, Budget und ein Express-Plan für 6 oder 3 Monate.',
+    caption: 'Ein Paar beugt sich abends am Küchentisch über ein Notizbuch mit Hochzeitsvorbereitungen',
+    body: `
+<p>Eine <strong>Hochzeit Checkliste</strong> funktioniert wie ein Kalender, den man rückwärts liest: Sie starten beim Hochzeitsdatum und rechnen zurück, um zu wissen, was zu tun ist und vor allem wann. Hier ist unsere, die vollständigste, die wir schreiben konnten. Sie reicht von 18 Monaten vor der Hochzeit bis zum Monat nach der Feier, und für jede Etappe finden Sie die Aufgaben zum Abhaken, den Grund, warum sie genau dann anstehen, und die Falle, in die die meisten Paare tappen.</p>
+<p>Sie haben weniger Zeit? Springen Sie direkt zum <a href="#express-6-mois">Express-Plan für 6 Monate</a> oder zur <a href="#express-3-mois">Version für 3 Monate</a>. Sie suchen nur eine Frist? Die <a href="#delais-prestataires">Tabelle mit den Buchungsfristen</a> und alles zum <a href="#mairie">Standesamt</a> stehen weiter unten.</p>
+
+<p><strong>Inhalt</strong></p>
+<ol>
+  <li><a href="#combien-de-temps">Wie lange dauert die Hochzeitsplanung?</a></li>
+  <li><a href="#m-18">18 bis 12 Monate vorher: das Fundament</a></li>
+  <li><a href="#m-12">12 bis 9 Monate vorher: die gefragten Dienstleister</a></li>
+  <li><a href="#m-9">9 bis 6 Monate vorher: der zweite Kreis</a></li>
+  <li><a href="#m-6">6 bis 4 Monate vorher: Einladungen und Menü</a></li>
+  <li><a href="#m-4">4 bis 2 Monate vorher: Standesamt und Details</a></li>
+  <li><a href="#m-2">2 bis 1 Monat vorher: alles zusammenführen</a></li>
+  <li><a href="#s-3">3 Wochen vorher</a></li>
+  <li><a href="#s-2">2 Wochen vorher</a></li>
+  <li><a href="#semaine-j">Die Hochzeitswoche</a></li>
+  <li><a href="#veille">Der Tag vor der Hochzeit</a></li>
+  <li><a href="#jour-j">Der Hochzeitstag</a></li>
+  <li><a href="#lendemain">Der Tag danach</a></li>
+  <li><a href="#mois-apres">Der Monat danach</a></li>
+  <li><a href="#express-6-mois">Hochzeit in 6 Monaten planen</a></li>
+  <li><a href="#express-3-mois">Hochzeit in 3 Monaten planen</a></li>
+  <li><a href="#delais-prestataires">Wann welcher Dienstleister gebucht sein sollte</a></li>
+  <li><a href="#mairie">Standesamt: Anmeldung, Unterlagen und Fristen in Deutschland</a></li>
+  <li><a href="#budget">Das Budget nach Posten aufteilen</a></li>
+  <li><a href="#qui-fait-quoi">Wer macht was: Brautpaar, Trauzeugen, Familien, Hochzeitsplaner</a></li>
+  <li><a href="#photos">Die Fotos im Zeitplan</a></li>
+  <li><a href="#resume">Der ganze Zeitplan, ein Satz pro Etappe</a></li>
+</ol>
+
+<h2 id="combien-de-temps">Wie lange dauert die Hochzeitsplanung?</h2>
+<p>Die ehrliche Antwort: <strong>12 bis 18 Monate</strong>, wenn Sie Ihre Dienstleister auswählen möchten, statt zu nehmen, wer noch frei ist. Es geht aber auch deutlich kürzer, wenn Sie ein paar Kompromisse akzeptieren.</p>
+<table>
+<thead><tr><th>Zeit bis zur Hochzeit</th><th>Was das bedeutet</th></tr></thead>
+<tbody>
+<tr><td><strong>18 Monate und mehr</strong></td><td>Freie Auswahl: die gefragte Location, ein Samstag im Juni, der Fotograf, in den Sie sich verliebt haben.</td></tr>
+<tr><td><strong>12 Monate</strong></td><td>Der häufigste Rhythmus. Entspannt, wenn Sie beim Datum etwas flexibel bleiben.</td></tr>
+<tr><td><strong>6 bis 9 Monate</strong></td><td>Gut machbar, vor allem außerhalb der Saison oder an einem Freitag. Sie müssen schnell entscheiden.</td></tr>
+<tr><td><strong>3 Monate</strong></td><td>Möglich für eine einfache oder mittelgroße Hochzeit mit einer Location, die (fast) alles aus einer Hand bietet.</td></tr>
+</tbody>
+</table>
+<p>Vier Dinge verschieben diesen Zeitrahmen viel stärker als Ihre Motivation: <strong>die Saison</strong> (die Samstage von Mai bis September sind zuerst weg), <strong>die Gästezahl</strong> (je weniger Locations Sie aufnehmen können, desto früher müssen Sie buchen), <strong>die Art der Location</strong> (ein Gut oder Hotel mit Rundum-Paket vereinfacht alles) und <strong>Ihre Flexibilität beim Datum</strong>.</p>
+
+<h3>Vier Entscheidungen, bevor Sie irgendetwas anderes tun</h3>
+<p>Jeder Dienstleister, den Sie anfragen, stellt dieselben Fragen: welches Datum, wie viele Personen, welches Budget, welche Art von Feier. Beantworten Sie sie, bevor Sie die erste Location besichtigen.</p>
+<ul>
+  <li><strong>Das Gesamtbudget</strong>, und wer sich beteiligt (Sie beide, Ihre Familien). Eine Obergrenze, keine Absichtserklärung.</li>
+  <li><strong>Die Gästezahl</strong>, als Spanne: „zwischen 80 und 110“ reicht für den Anfang.</li>
+  <li><strong>Die Jahreszeit</strong> und zwei oder drei mögliche Termine. Wer auf einem einzigen Datum besteht, verzichtet auf die Hälfte der Locations.</li>
+  <li><strong>Das Format</strong>: nur Standesamt, Standesamt und Kirche, freie Trauung, eine Feier an einem Tag oder ein ganzes Wochenende mit Brunch.</li>
+</ul>
+
+<h3>Ihre eigene Hochzeitscheckliste anlegen</h3>
+<p>Die Checkliste unten ist eine Vorlage. Um sie wirklich abzuarbeiten, geht nichts über eine Tabelle, die Sie beide bearbeiten (Google Sheets oder Ähnliches), mit diesen Spalten:</p>
+<table>
+<thead><tr><th>Aufgabe</th><th>Frist</th><th>Wer</th><th>Status</th><th>Betrag</th><th>Anzahlung</th><th>Rest fällig am</th></tr></thead>
+<tbody>
+<tr><td>Fotograf buchen</td><td>12 Monate vorher</td><td>Lena</td><td>Erledigt</td><td>1.800 €</td><td>540 €</td><td>2 Wochen vorher</td></tr>
+<tr><td>Einladungen verschicken</td><td>5 Monate vorher</td><td>Jonas</td><td>Offen</td><td>320 €</td><td>-</td><td>-</td></tr>
+</tbody>
+</table>
+<p>Zwei Regeln machen den Unterschied: <strong>Jede Aufgabe hat genau eine verantwortliche Person</strong> („wir kümmern uns darum“ heißt „niemand“), und Sie setzen sich jede Woche zu einem festen Termin für dreißig Minuten zusammen, immer am selben Tag. Fügen Sie ein Tabellenblatt für die Gäste und eines für das Budget hinzu, dann haben Sie alles an einem Ort.</p>
+
+<h2 id="m-18">Hochzeit Checkliste 18 bis 12 Monate vorher: das Fundament</h2>
+<p>Die Zeit der großen Entscheidungen. Wenige Aufgaben, aber jede bestimmt alle anderen.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Die Verlobung den engsten Menschen persönlich erzählen (vor den sozialen Netzwerken, das wissen sie zu schätzen).</li>
+  <li>Das Gesamtbudget festlegen, inklusive möglicher Beiträge der Familien.</li>
+  <li>Eine erste Gästeliste schreiben, als Spanne.</li>
+  <li>Jahreszeit und zwei oder drei mögliche Termine wählen. Prüfen Sie Brückentage, Schulferien (die je nach Bundesland anders liegen) und Termine, an denen unverzichtbare Menschen nicht können (eine Geburt, eine andere Hochzeit, Prüfungen).</li>
+  <li>Das Format entscheiden: nur standesamtlich, kirchlich, freie Trauung, ein Tag oder ein Wochenende.</li>
+  <li>Entscheiden, ob Sie einen Hochzeitsplaner engagieren, und in welchem Umfang (komplette Planung oder nur Koordination am Hochzeitstag).</li>
+  <li>Drei bis fünf Locations besichtigen, dann Ihre buchen (Vertrag unterschrieben, Anzahlung geleistet).</li>
+  <li>Beim Standesamt nachfragen, ob ein Trautermin an diesem Datum und zu einer passenden Uhrzeit realistisch ist, und ab wann man ihn reservieren kann (die Regeln unterscheiden sich von Ort zu Ort, Details <a href="#mairie">weiter unten</a>).</li>
+  <li>Für eine kirchliche Trauung Kontakt mit dem Pfarramt aufnehmen.</li>
+  <li>Den Caterer buchen, falls die Location keinen vorgibt.</li>
+  <li>Für einen Samstag zwischen Mai und September schon jetzt Fotograf und Videograf buchen.</li>
+  <li>Sich über eine Hochzeitsversicherung (Ausfallversicherung) informieren und die Ausschlüsse lesen, bevor Sie unterschreiben.</li>
+  <li>Die Planungstabelle anlegen.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Die Location legt das Datum fest, die Kapazität, oft den Caterer und einen großen Teil des Budgets. Alles andere ergibt sich daraus. Die begehrtesten Locations sind für Sommersamstage ein bis zwei Jahre im Voraus ausgebucht.</p>
+<p><strong>Die Falle:</strong> die Location zu buchen, bevor Sie Ihre Gästezahl kennen. Eine Location für 80 Personen, wenn die Liste auf 120 wächst: Das ist die erste Krise der Hochzeit. Die zweite Falle ist, zu unterschreiben, ohne die Bedingungen zu lesen: Ende der Feier, Schallpegelbegrenzer, vorgegebener Caterer, Korkgeld, Übernachtung, Reinigung, Kaution. Wir haben <a href="/journal/questions-lieu-reception-mariage">die Fragen an die Hochzeitslocation</a> zusammengestellt, die Sie vor der Unterschrift stellen sollten.</p>
+
+<h2 id="m-12">12 bis 9 Monate vorher: die gefragten Dienstleister</h2>
+<p>Die Location ist gebucht, das Datum steht. Jetzt kommen die Dienstleister, die nur eine Hochzeit pro Tag begleiten können.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Den Fotografen auswählen und buchen, falls noch nicht geschehen: Treffen Sie ihn und lassen Sie sich die komplette Galerie einer ganzen Hochzeit zeigen.</li>
+  <li>Einen Videografen buchen, wenn Sie einen möchten.</li>
+  <li>DJ oder Band buchen.</li>
+  <li>Einen freien Trauredner oder eine freie Rednerin buchen, wenn Sie eine freie Trauung planen.</li>
+  <li>Ihre Trauzeugen (und Brautjungfern oder Groomsmen) auswählen und persönlich fragen.</li>
+  <li>Die Save-the-Date-Karten verschicken, vor allem wenn ein Teil der Gäste von weit her anreist oder Sie in der Hochsaison heiraten.</li>
+  <li>Eine Hochzeitswebsite einrichten: Datum, Location, Unterkünfte, Anfahrt.</li>
+  <li>Zimmerkontingente für die Gäste reservieren, wenn die Location abgelegen ist (Hotel, Pensionen, Ferienwohnungen).</li>
+  <li>Mit der Brautkleidsuche beginnen, wenn das Kleid auf Bestellung gefertigt wird.</li>
+  <li>Den Stil der Hochzeit festlegen: Farben, Stimmung, ein paar Referenzbilder.</li>
+  <li>In der Hochsaison auch die Floristin oder den Floristen buchen.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Fotografen, Videografen, DJs und Trauredner können nur einen Auftrag pro Tag annehmen. Die Samstage werden in der Reihenfolge der Anfragen vergeben, und die Besten sind oft ein Jahr im Voraus ausgebucht.</p>
+<p><strong>Die Falle:</strong> den Fotografen nach seinen zehn schönsten Instagram-Bildern auszuwählen. Verlangen Sie eine vollständige Reportage, vom Getting Ready bis zur Party, und prüfen Sie, bis wann das Paket gilt: Viele hören auf, bevor die eigentliche Feier beginnt. Wie viel Sie dafür einplanen sollten, steht in unserem Ratgeber zum <a href="/journal/budget-photo-mariage">Fotobudget für die Hochzeit</a>.</p>
+
+<h2 id="m-9">9 bis 6 Monate vorher: der zweite Kreis</h2>
+<p>Das Unverzichtbare ist gebucht. Jetzt kommen Dienstleister, von denen es mehr gibt, die in der Saison aber ebenfalls ausgebucht sind.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Das Brautkleid bestellen, wenn es auf Bestellung gefertigt wird (die Lieferzeiten betragen oft mehrere Monate).</li>
+  <li>Sich nach dem Anzug oder dem Outfit des zweiten Partners umsehen.</li>
+  <li>Die Floristik buchen, falls noch nicht geschehen.</li>
+  <li>Styling (Haare und Make-up) buchen, das Probestyling kommt später.</li>
+  <li>Mietmaterial reservieren: Möbel, Geschirr, Beleuchtung, ein Zelt, falls ein Teil draußen stattfindet.</li>
+  <li>Den Transport planen: Hochzeitsauto, Shuttle für die Gäste, wenn die Location abgelegen ist oder getrunken wird.</li>
+  <li>Eine Wunschliste anlegen oder eine Kasse für die Hochzeitsreise einrichten (in Deutschland schenken viele Gäste ohnehin gern Geld).</li>
+  <li>Die Hochzeitsreise buchen und die Gültigkeit der Reisepässe prüfen.</li>
+  <li>Einen Schlechtwetterplan für alles schreiben, was draußen stattfinden soll (Sektempfang, freie Trauung).</li>
+  <li>Das Design der Einladungskarten auswählen.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Floristen, Visagistinnen und Verleiher haben mehr freie Termine als Fotografen, nur eben nicht im Juni. Und bei der Reise steigen die Preise, je näher das Datum rückt.</p>
+<p><strong>Die Falle:</strong> die Flüge für die Hochzeitsreise auf den künftigen Ehenamen zu buchen. Der Name auf dem Ticket muss mit dem Ausweisdokument übereinstimmen, das Sie beim Boarding vorzeigen, und das ist sehr wahrscheinlich noch Ihr jetziger Name.</p>
+
+<h2 id="m-6">6 bis 4 Monate vorher: Einladungen und Menü</h2>
+<p>Das ist die Antwort auf die Frage „Was muss man 6 Monate vor der Hochzeit erledigen?“: alle offiziell einladen, entscheiden, was serviert wird, und den Weg zum Standesamt vorbereiten.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Die Einladungen verschicken, mit einer Antwortfrist 6 bis 8 Wochen vor der Hochzeit.</li>
+  <li>Das Probeessen beim Caterer machen, das Menü wählen und besondere Ernährungswünsche erfassen (vegetarisch, Allergien, Kindermenüs).</li>
+  <li>Den Anzug bestellen oder leihen.</li>
+  <li>Die Eheringe aussuchen (Gravur und Größenanpassung dauern mehrere Wochen).</li>
+  <li>Den Wunschtermin beim Standesamt reservieren, falls noch nicht geschehen, und fragen, welche Unterlagen es für die Anmeldung braucht. Die Anmeldung selbst ist frühestens sechs Monate vor der Hochzeit möglich.</li>
+  <li>Einen Termin beim Notar machen, wenn Sie einen Ehevertrag schließen möchten.</li>
+  <li>Mit dem Arbeitgeber sprechen: Für die eigene Hochzeit gibt es oft einen Tag bezahlten Sonderurlaub (§ 616 BGB, häufig im Tarif- oder Arbeitsvertrag geregelt, dort aber auch ausschließbar). Prüfen Sie Ihren Vertrag und planen Sie Urlaubstage rund um das Datum ein.</li>
+  <li>Die Hochzeitstorte bestellen.</li>
+  <li>Den freien Trauredner treffen und mit der Zeremonie beginnen.</li>
+  <li>Eine erste Fassung des Tagesablaufs schreiben.</li>
+  <li>Überlegen, was die Gäste zwischen den Höhepunkten machen: Spiele, Gästebuch, eine Fotoaktion (wir haben <a href="/journal/idees-animation-mariage">Ideen für die Unterhaltung bei der Hochzeit</a> gesammelt).</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Eine Einladung geht erst raus, wenn alle praktischen Angaben feststehen (Orte, Uhrzeiten, Unterkünfte). Und der Caterer braucht Zeit, um das Menü nach dem Probeessen anzupassen.</p>
+<p><strong>Die Falle:</strong> die Antwortfrist zu vergessen. Ohne sie kommen Zusagen bis zum Vortag, während Ihr Caterer schon lange vorher eine feste Zahl braucht.</p>
+
+<h2 id="m-4">4 bis 2 Monate vorher: Standesamt und Details</h2>
+<p>Die großen Buchungen sind erledigt. Jetzt kommen die Formalitäten und die Details, die der Hochzeit ihre Persönlichkeit geben.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Die Eheschließung beim Standesamt anmelden, gemeinsam und mit allen Unterlagen (Details <a href="#mairie">weiter unten</a>). Viele Paare tun das drei bis sechs Monate vorher.</li>
+  <li>Bei Gästen nachhaken, die noch nicht geantwortet haben.</li>
+  <li>Mit der Sitzordnung beginnen.</li>
+  <li>Das Probestyling für Haare und Make-up machen.</li>
+  <li>Erste Anprobe des Kleides bei der Schneiderin, Änderungen.</li>
+  <li>Die Musik für die Schlüsselmomente auswählen: Einzug, Auszug, Hochzeitstanz. Schreiben Sie auch eine Liste mit Liedern, die auf keinen Fall laufen dürfen.</li>
+  <li>Ihr Eheversprechen schreiben, wenn die Zeremonie eines vorsieht.</li>
+  <li>Die Papeterie für den Tag vorbereiten: Menükarten, Platzkarten, Sitzplan, Schilder.</li>
+  <li>Die Trauzeugen den Junggesellenabschied (JGA) organisieren lassen und ihnen Ihre Grenzen sagen.</li>
+  <li>Falls Sie einen Polterabend feiern möchten: Termin festlegen. Er findet heute oft einige Wochen vor der Hochzeit statt, nicht mehr unbedingt am Vorabend.</li>
+  <li>Accessoires kaufen (Schuhe, Schleier, Schmuck) und die Schuhe zu Hause einlaufen.</li>
+  <li>Ein Vorbereitungsgespräch mit dem Fotografen einen Monat vor der Hochzeit vereinbaren.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Das Standesamt nimmt die Anmeldung frühestens sechs Monate vorher an, und einige Unterlagen dürfen nur wenige Monate oder sogar Tage alt sein. Zu früh besorgt, verfallen sie; zu spät, und Sie geraten unter Zeitdruck.</p>
+<p><strong>Die Falle:</strong> die Unterlagen zu früh zu besorgen. Der beglaubigte Ausdruck aus dem Geburtenregister darf bei der Anmeldung in der Regel höchstens sechs Monate alt sein, und die erweiterte Meldebescheinigung verlangt zum Beispiel Berlin nicht älter als 14 Tage. Fragen Sie Ihr Standesamt nach seinen Fristen, bevor Sie etwas bestellen.</p>
+
+<h2 id="m-2">2 bis 1 Monat vorher: alles zusammenführen</h2>
+<p>Alles ist gebucht. Jetzt geht es darum, dass jeder Dienstleister dieselbe Version des Tages hat.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Dem Caterer die endgültige Gästezahl mitteilen, zu dem Termin, den der Vertrag vorsieht.</li>
+  <li>Das Vorbereitungsgespräch mit dem Fotografen führen: Ablauf, Orte für das Paarshooting, Menschen, die nicht fehlen dürfen. Bereiten Sie Ihre <a href="/journal/shot-list-mariage">Shotlist für die Hochzeit</a> und die Liste der <a href="/journal/photos-de-groupe-mariage">Gruppenfotos</a> vor.</li>
+  <li>Die Fotoaktion für die Gäste einrichten und ihre Materialien drucken (siehe <a href="#photos">die Fotos im Zeitplan</a>).</li>
+  <li>Die Sitzordnung fertigstellen.</li>
+  <li>Den Ablauf Stunde für Stunde schreiben und an alle Dienstleister schicken (unsere Vorlage für den <a href="/journal/deroule-jour-j-mariage">Ablauf des Hochzeitstages</a> spart Ihnen Zeit).</li>
+  <li>Eine Ansprechperson für den Hochzeitstag bestimmen: einen organisierten Menschen aus Ihrem Umfeld (oder den Hochzeitsplaner), der den Dienstleistern an Ihrer Stelle antwortet.</li>
+  <li>Mit dem Standesamt den Ablauf der Trauung klären: Trauzeugen ja oder nein, Musik, Ringübergabe, Fotos während der Zeremonie.</li>
+  <li>Die Reden planen: wer spricht, wann und wie lange.</li>
+  <li>Den Zeitplan der letzten Zahlungen aufstellen (Restbeträge, Trinkgelder).</li>
+  <li>Gastgeschenke und Geschenke für die Trauzeugen besorgen (ein paar Ideen für <a href="/cadeau-mariage-temoins">Geschenke an die Trauzeugen</a>).</li>
+  <li>Das Notfallset zusammenstellen (siehe <a href="#semaine-j">die Hochzeitswoche</a>).</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Die Dienstleister brauchen einen Monat vorher genaue Informationen, um sich zu organisieren. Und der Caterer bestellt auf Grundlage Ihrer Zahl.</p>
+<p><strong>Die Falle:</strong> den Ablauf nur im Kopf zu haben. Wenn jeder Dienstleister eine andere Uhrzeit für den Sektempfang hat, entsteht ein Loch von vierzig Minuten. Eine einzige Version, an alle verschickt.</p>
+
+<h2 id="s-3">3 Wochen vorher</h2>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Letzte Anprobe von Kleid und Anzug, mit den Schuhen und der Unterwäsche des Tages.</li>
+  <li>Jeden Dienstleister schriftlich bestätigen lassen: Ankunftszeit, genaue Adresse, Ansprechpartner vor Ort, Strombedarf.</li>
+  <li>Mit dem Caterer das Essen für die Dienstleister klären, die den ganzen Abend bleiben (Fotograf, Videograf, DJ).</li>
+  <li>Die Papeterie für den Tag drucken.</li>
+  <li>Die Playlist mit dem DJ abstimmen.</li>
+  <li>Eine Liste schreiben, wer was mitbringt (Deko, Material, Verlängerungskabel).</li>
+  <li>Die Ausweise bereitlegen, die das Standesamt am Tag der Trauung sehen möchte (auch die der Trauzeugen, falls Sie welche haben).</li>
+  <li>Einen Termin beim Friseur für Schnitt oder Farbe machen, zwei bis drei Wochen vorher, niemals am Vortag.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Das ist der letzte Moment, in dem sich eine Änderung, ein misslungener Druck oder ein schlecht informierter Dienstleister ohne Panik korrigieren lassen.</p>
+<p><strong>Die Falle:</strong> jetzt eine neue Gesichtsbehandlung oder eine neue Haarfarbe auszuprobieren. Eine Hautreaktion sieht man auf jedem einzelnen Foto.</p>
+
+<h2 id="s-2">2 Wochen vorher</h2>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Den endgültigen Ablauf an alle Dienstleister und an die Ansprechperson für den Hochzeitstag schicken.</li>
+  <li>Die Trauzeugen über ihre Aufgaben briefen: Ringe, Reden, Kartenbox, Ansage der Fotoaktion am Mikrofon.</li>
+  <li>Umschläge mit Restbetrag und Trinkgeld vorbereiten, beschriftet pro Dienstleister.</li>
+  <li>Den endgültigen Sitzplan drucken.</li>
+  <li>Shuttles und Unterkünfte bestätigen.</li>
+  <li>Die Wettertrends verfolgen und den Schlechtwetterplan mit der Location bestätigen.</li>
+  <li>Die Gastgeschenke verpacken.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Zwei Wochen vorher sollte sich nichts mehr ändern. Was bleibt, ist Übergeben.</p>
+<p><strong>Die Falle:</strong> alles selbst regeln zu wollen. Jede Aufgabe, die Sie jetzt abgeben, ist eine Minute mehr mit Ihren Gästen am Hochzeitstag.</p>
+
+<h2 id="semaine-j">Die Hochzeitswoche</h2>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Kleid und Anzug abholen.</li>
+  <li>Die Deko zur Location bringen, wenn diese es erlaubt.</li>
+  <li>Letztes Telefonat mit dem Caterer (endgültige Zahl, Ernährungswünsche) und mit der Location (Zugangszeiten).</li>
+  <li>Eine Tasche pro Tagesabschnitt packen: Standesamt (Ausweise, Ringe), Zeremonie, Abend, Nacht.</li>
+  <li>Das Notfallset fertigstellen: Nadel und Faden, Sicherheitsnadeln, Pflaster, Schmerztabletten, Taschentücher, Deo, Ladekabel, doppelseitiges Klebeband, bequeme Ersatzschuhe.</li>
+  <li>Den Koffer für die Hochzeitsreise packen.</li>
+  <li>Einer Vertrauensperson die Verantwortung für Kartenbox und Geschenke übertragen.</li>
+  <li>Schlafen, essen, spazieren gehen. Im Ernst.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Alles, was bis Donnerstag fertig ist, schenkt Ihnen einen ruhigen Freitag.</p>
+<p><strong>Die Falle:</strong> in der letzten Woche noch ein neues DIY-Projekt zu beginnen. Die 150 handbeschrifteten Anhänger waren eine Aufgabe für den letzten Monat.</p>
+
+<h2 id="veille">Der Tag vor der Hochzeit</h2>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Die Deko aufbauen oder das Team briefen, das sich darum kümmert.</li>
+  <li>Die QR-Codes der Fotoaktion aufstellen oder jemanden damit beauftragen (wir haben getestet, <a href="/journal/ou-poser-le-qr-code">wo der QR-Code am besten steht</a>, damit er auch gescannt wird).</li>
+  <li>Die freie oder kirchliche Trauung mit Redner oder Pfarrer, Trauzeugen und Blumenkindern proben.</li>
+  <li>Die Ringe dem Trauzeugen oder der Trauzeugin geben, die sie aufbewahrt.</li>
+  <li>Handys und eine Powerbank laden.</li>
+  <li>Das komplette Outfit und alle Accessoires in einem Raum bereitlegen.</li>
+  <li>Leicht zu Abend essen, früh schlafen gehen.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Die Probe nimmt die Nervosität vor der Zeremonie, und wer am Vortag aufbaut, schleppt am Hochzeitsmorgen keine Tische.</p>
+<p><strong>Die Falle:</strong> ein Polterabend oder ein Willkommensabend für die Gäste, der um zwei Uhr nachts endet. Sie heiraten morgen.</p>
+
+<h2 id="jour-j">Der Hochzeitstag</h2>
+<p>Den kompletten Zeitplan, Stunde für Stunde, finden Sie in unserem Artikel zum <a href="/journal/deroule-jour-j-mariage">Ablauf des Hochzeitstages</a>. Hier nur das, was Ihnen nicht entgehen darf.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Richtig frühstücken.</li>
+  <li>Die Ausweise für das Standesamt mitnehmen.</li>
+  <li>Ihr Handy der Ansprechperson geben: Sie ist es, die die Dienstleister anrufen.</li>
+  <li>Sich irgendwann am Tag zehn Minuten nur zu zweit nehmen.</li>
+  <li>Die Fotoaktion von einem Trauzeugen oder dem DJ am Mikrofon ankündigen lassen.</li>
+  <li>Beim Essen wirklich essen, auch wenn alle mit Ihnen reden wollen.</li>
+  <li>Die Ansprechperson am Ende des Abends die Restbeträge und Trinkgelder übergeben lassen.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Weil das der Tag ist, an dem Sie nicht mehr organisieren. Alles davor dient genau dazu.</p>
+<p><strong>Die Falle:</strong> ein Zeitplan ohne Puffer. Rechnen Sie bei jedem Übergang fünfzehn Minuten dazu: Gruppenfotos, Wege und Umarmungen dauern immer länger als geplant.</p>
+
+<h2 id="lendemain">Der Tag danach</h2>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li>Das Katerfrühstück oder der Brunch, wenn Sie einen geplant haben.</li>
+  <li>Aufräumen, Mietmaterial zurückgeben, die Abnahme der Location machen und die Kaution zurückbekommen.</li>
+  <li>Deko, Geschenke und Kartenbox einsammeln.</li>
+  <li>Die Fotos Ihrer Gäste gemeinsam mit ihnen anschauen: der perfekte Moment für eine <a href="/journal/revelation-photos-lendemain-mariage">Fotopräsentation am Tag nach der Hochzeit</a>.</li>
+  <li>Eine erste Dankesnachricht an alle Gäste schicken.</li>
+  <li>Kleid und Anzug für die Reinigung beiseitelegen.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Die meisten Locations müssen am nächsten Tag übergeben werden. Und es ist der Tag, an dem alle die Feier noch einmal erleben wollen.</p>
+<p><strong>Die Falle:</strong> nichts für das Aufräumen zu planen. Bestimmen Sie vor der Hochzeit ein Team, sonst stehen Sie beide allein vor dreihundert Gläsern.</p>
+
+<h2 id="mois-apres">Der Monat danach</h2>
+<p>Die Hochzeit ist vorbei, die Checkliste aber noch nicht ganz.</p>
+<h3>Zum Abhaken</h3>
+<ul>
+  <li><strong>Danksagungen:</strong> die Karten innerhalb von ein bis zwei Monaten verschicken, am besten mit einem Foto von der Hochzeit.</li>
+  <li><strong>Dienstleister:</strong> die letzten Restbeträge begleichen und denen eine Bewertung schreiben, die sie verdient haben (bei Google oder auf Hochzeitsportalen). Davon leben sie.</li>
+  <li><strong>Fotos:</strong> Fotografen liefern meist innerhalb einiger Wochen bis einiger Monate, je nach Vertrag (wir erklären die <a href="/journal/delai-livraison-photos-mariage">Lieferzeiten für Hochzeitsfotos</a>). Sichern Sie alles an zwei verschiedenen Orten und bestellen Sie dann Abzüge oder ein Fotobuch.</li>
+  <li><strong>Das Kleid:</strong> schnell in eine Reinigung bringen, die Erfahrung mit Brautkleidern hat (Wein- und Grasflecken setzen sich mit der Zeit fest), dann in einer Stoffhülle aufbewahren oder verkaufen, solange das Modell aktuell ist.</li>
+  <li><strong>Eheurkunde und Stammbuch:</strong> Die Eheurkunde stellt das Standesamt aus (meist gegen Gebühr, es lohnt sich, gleich mehrere Exemplare zu bestellen). Ein Familienstammbuch ist freiwillig. Bewahren Sie beides bei Ihren wichtigen Unterlagen auf.</li>
+  <li><strong>Der Name:</strong> Die Namenswahl erklären Sie beim Standesamt, bei der Anmeldung oder bei der Trauung. Sie können einen gemeinsamen Ehenamen wählen oder beide Ihren Namen behalten; seit dem 1. Mai 2025 dürfen Sie auch einen gemeinsamen Doppelnamen tragen. Wer seinen Namen ändert, beantragt zeitnah einen neuen Personalausweis und Reisepass und informiert Bank, Arbeitgeber, Krankenkasse und Versicherungen.</li>
+  <li><strong>Steuern:</strong> Das Standesamt meldet die Heirat in der Regel automatisch weiter, und beide erhalten Steuerklasse IV. Eine andere Kombination (III/V oder IV mit Faktor) beantragen Sie beim Finanzamt. Für das Jahr der Hochzeit können Sie die Zusammenveranlagung wählen; im Zweifel hilft eine Steuerberatung oder ein Lohnsteuerhilfeverein.</li>
+</ul>
+<p><strong>Warum jetzt:</strong> Je länger die Danksagungen warten, desto schwerer sind sie zu schreiben. Und eine Bewertung, die man frisch schreibt, hilft künftigen Paaren viel mehr.</p>
+<p><strong>Die Falle:</strong> die Fotos Ihrer Gäste auf fünfzig Handys verstreut zu lassen. Wenn sie niemand innerhalb einer Woche sammelt, verschwinden sie in den Galerien aller.</p>
+
+<h2 id="express-6-mois">Hochzeit in 6 Monaten planen: der Express-Plan</h2>
+<p>Sechs Monate reichen für eine schöne Hochzeit, wenn Sie die Entscheidungen in der richtigen Reihenfolge und schnell treffen. Das Prinzip: Alles, was normalerweise zwischen 18 und 6 Monaten vorher passiert, passt in die ersten sechs Wochen.</p>
+<h3>Monat 1 (6 Monate vorher): das Wesentliche festzurren</h3>
+<ul>
+  <li>Budget, Gästespanne, Format: an einem Wochenende entschieden.</li>
+  <li>Location innerhalb von zwei Wochen gebucht. Bleiben Sie flexibel: Ein Freitag, ein Sonntag oder ein Termin im März öffnen viele Türen, oft zu günstigeren Preisen.</li>
+  <li>Bevorzugen Sie eine Location mit Catering, Möbeln und Geschirr: drei Buchungen in einer.</li>
+  <li>Sofort beim Standesamt den Termin reservieren. Die Anmeldung ist jetzt schon möglich, besorgen Sie die Unterlagen gleich.</li>
+  <li>Direkt danach den Fotografen buchen (er ist am schwersten kurzfristig zu finden).</li>
+  <li>Save the Date per Nachricht verschicken, sobald der Location-Vertrag unterschrieben ist.</li>
+</ul>
+<h3>Monat 2 (5 Monate vorher): die anderen Dienstleister</h3>
+<ul>
+  <li>DJ, freier Trauredner, Floristik, Styling.</li>
+  <li>Kleid: Setzen Sie auf Kleider von der Stange oder Designer mit Lagerware. Maßanfertigung dauert oft zu lange.</li>
+  <li>Einladungen verschicken (digital ist in Ordnung).</li>
+  <li>Trauzeugen auswählen und fragen.</li>
+</ul>
+<h3>Monat 3 (4 Monate vorher): Menü und Outfits</h3>
+<ul>
+  <li>Probeessen, Menü, Anzug, Ringe.</li>
+  <li>Notar, falls Sie einen Ehevertrag möchten.</li>
+  <li>Hochzeitsreise buchen (oder verschieben, das ist auch völlig in Ordnung).</li>
+</ul>
+<h3>Monat 4 bis 6: zurück zum normalen Zeitplan</h3>
+<p>Ab drei Monaten vorher folgen Sie der normalen Checkliste: <a href="#m-4">Standesamt</a>, Sitzordnung, <a href="#m-2">alles zusammenführen</a>, dann die letzten Wochen.</p>
+<p><strong>Die Falle:</strong> den perfekten Dienstleister zu suchen. Im Express-Plan ist ein sehr guter Dienstleister, der frei ist, besser als ein idealer, der ausgebucht ist. Setzen Sie sich eine Regel: höchstens drei Angebote pro Posten, Entscheidung innerhalb von 48 Stunden.</p>
+
+<h2 id="express-3-mois">Hochzeit in 3 Monaten planen</h2>
+<p>Drei Monate sind knapp, aber machbar, unter einer Bedingung: das Format vereinfachen. Weniger Gäste, ein Ort für Trauung und Feier, ein einfacheres Essen (Flying Dinner, Buffet, Foodtrucks).</p>
+<h3>Woche 1 und 2</h3>
+<ul>
+  <li>Budget, kurze Gästeliste, vereinfachtes Format.</li>
+  <li>Standesamt: Rufen Sie sofort an. In Deutschland gibt es kein öffentliches Aufgebot mehr, drei Monate reichen rechtlich also gut. Aber den beglaubigten Geburtenregisterauszug müssen Sie beim Standesamt Ihres Geburtsorts anfordern, und beliebte Samstage sind oft lange im Voraus vergeben.</li>
+  <li>Location mit Rundum-Paket gebucht.</li>
+  <li>Fotograf gebucht: Schauen Sie nach Terminen unter der Woche, am Ende der Saison oder nach Fotografen, die Halbtagespakete anbieten.</li>
+  <li>Einladungen per Nachricht oder digitaler Karte, mit Antwort innerhalb von zwei Wochen.</li>
+</ul>
+<h3>Woche 3 bis 6</h3>
+<ul>
+  <li>Eheschließung angemeldet.</li>
+  <li>Outfits von der Stange oder geliehen, Änderungen sofort in Auftrag geben.</li>
+  <li>Musik: ein freier DJ oder eine gut vorbereitete Playlist und eine gute Box.</li>
+  <li>Blumen: eine Floristin für den Brautstrauß und ein paar Tischgestecke, mehr nicht.</li>
+  <li>Ringe (verzichten Sie auf aufwendige Gravuren).</li>
+</ul>
+<h3>Woche 7 bis 12</h3>
+<ul>
+  <li>Sitzordnung, Ablauf, Ansprechperson für den Hochzeitstag.</li>
+  <li>Fotoaktion für die Gäste: Sie ist in wenigen Minuten eingerichtet, genau die Art von Aufgabe, die man spät erledigen kann.</li>
+  <li>Dann die normale Checkliste ab <a href="#s-3">3 Wochen vorher</a>.</li>
+</ul>
+<p><strong>Die Falle:</strong> eine Hochzeit mit 150 Gästen in drei Monaten zu wollen. Die Zeit lässt sich managen; die Größe viel weniger.</p>
+
+<h2 id="delais-prestataires">Wann welcher Dienstleister gebucht sein sollte</h2>
+<p>Das sind die Fristen für eine Hochzeit an einem Samstag in der Hochsaison (Mai bis September). Außerhalb der Saison oder unter der Woche geht es oft kürzer. Es sind vorsichtige Spannen, abgeleitet aus Empfehlungen von Dienstleistern und Hochzeitsratgebern: Die einzig verlässliche Antwort gibt der Dienstleister, den Sie im Blick haben, also fragen Sie früh.</p>
+<table>
+<thead><tr><th>Dienstleister</th><th>Empfohlene Frist</th><th>Gut zu wissen</th></tr></thead>
+<tbody>
+<tr><td><strong>Hochzeitslocation</strong></td><td>12 bis 18 Monate</td><td>Bis zu zwei Jahre für gefragte Locations an Sommersamstagen.</td></tr>
+<tr><td><strong>Hochzeitsplaner</strong></td><td>12 bis 18 Monate</td><td>Für die komplette Planung. Eine Koordination am Hochzeitstag bucht man eher 3 bis 6 Monate vorher.</td></tr>
+<tr><td><strong>Caterer</strong></td><td>10 bis 14 Monate</td><td>Oft von der Location vorgegeben oder empfohlen: Prüfen Sie das, bevor Sie suchen.</td></tr>
+<tr><td><strong>Fotograf</strong></td><td>10 bis 14 Monate</td><td>Eine Hochzeit pro Tag: Die gefragtesten sind noch früher weg.</td></tr>
+<tr><td><strong>Videograf</strong></td><td>9 bis 12 Monate</td><td>Gleiche Logik wie beim Fotografen.</td></tr>
+<tr><td><strong>DJ oder Band</strong></td><td>8 bis 12 Monate</td><td>Eine Liveband bucht man eher um die 12 Monate vorher.</td></tr>
+<tr><td><strong>Freier Trauredner</strong></td><td>6 bis 12 Monate</td><td>Planen Sie mehrere Vorgespräche vor dem Hochzeitstag ein.</td></tr>
+<tr><td><strong>Brautkleid auf Bestellung</strong></td><td>Bestellung 8 bis 10 Monate vorher</td><td>Von der Stange: 3 bis 4 Monate reichen, Änderungen inklusive.</td></tr>
+<tr><td><strong>Anzug</strong></td><td>4 bis 6 Monate (Maßanfertigung)</td><td>Leihen oder von der Stange: 2 bis 3 Monate.</td></tr>
+<tr><td><strong>Floristik</strong></td><td>6 bis 9 Monate</td><td>Außerhalb der Saison kürzer.</td></tr>
+<tr><td><strong>Haare und Make-up</strong></td><td>6 bis 9 Monate</td><td>Probestyling 2 bis 3 Monate vorher.</td></tr>
+<tr><td><strong>Unterkünfte für Gäste</strong></td><td>6 bis 9 Monate</td><td>Reservieren Sie früh Kontingente, wenn die Location abgelegen ist.</td></tr>
+<tr><td><strong>Einladungskarten</strong></td><td>Bestellung 5 bis 7 Monate vorher</td><td>Versand 4 bis 6 Monate vorher. Save the Date: 8 bis 12 Monate vorher.</td></tr>
+<tr><td><strong>Mietmaterial, Transport</strong></td><td>3 bis 6 Monate</td><td>Früher für ein Zelt oder Shuttles im Juni.</td></tr>
+<tr><td><strong>Hochzeitstorte</strong></td><td>3 bis 6 Monate</td><td>Manchmal im Angebot des Caterers enthalten.</td></tr>
+<tr><td><strong>Eheringe</strong></td><td>3 bis 4 Monate</td><td>Gravur und Größenanpassung dauern mehrere Wochen.</td></tr>
+<tr><td><strong>Fotobox</strong></td><td>3 bis 6 Monate</td><td>Verleiher haben samstags nur eine begrenzte Zahl an Geräten.</td></tr>
+<tr><td><strong>Digitale Einwegkamera</strong></td><td>1 bis 2 Monate</td><td>In wenigen Minuten eingerichtet; die Frist dient vor allem dazu, die QR-Codes zu drucken und die Gäste vorzuwarnen.</td></tr>
+</tbody>
+</table>
+<p>Für die Reihenfolge merken Sie sich eine einfache Regel: <strong>zuerst das Einzigartige</strong> (die Location), <strong>dann alle, die nur eine Hochzeit pro Tag machen</strong> (Fotograf, Videograf, DJ, Trauredner), <strong>dann der Rest</strong>.</p>
+
+<h2 id="mairie">Standesamt: Anmeldung, Unterlagen und Fristen in Deutschland</h2>
+<p>Dieser Abschnitt beschreibt das Verfahren in Deutschland. Rechtlich gültig ist hier nur die standesamtliche Trauung. Seit 2009 ist eine kirchliche Trauung ohne vorherige Standesamtstrauung zwar nicht mehr verboten, sie hat aber keine zivilrechtliche Wirkung, und die Kirchen setzen in der Regel weiterhin die standesamtliche Ehe voraus. Die Angaben unten folgen den Informationen der Standesämter (zum Beispiel Berlin, Stand 2026); jedes Standesamt organisiert sich aber etwas anders, stellen Sie Ihre Fragen also früh. Ist einer von Ihnen ausländischer Staatsangehöriger, oder heiraten Sie im Ausland, gelten zusätzliche Regeln.</p>
+
+<h3>Wo melden Sie die Eheschließung an?</h3>
+<p>Beim Standesamt an Ihrem Wohnsitz, oder am Wohnsitz eines von Ihnen beiden. Heiraten können Sie anschließend bei jedem Standesamt in Deutschland, auch in einer anderen Stadt. Viele Standesämter bieten neben dem Trauzimmer besondere Trauorte an (Schloss, Leuchtturm, Weingut), meist gegen eine zusätzliche Gebühr und oft nur an bestimmten Tagen.</p>
+
+<h3>Wann ist die Anmeldung möglich?</h3>
+<ul>
+  <li><strong>Frühestens sechs Monate</strong> vor dem gewünschten Hochzeitstermin.</li>
+  <li><strong>Die Anmeldung bleibt sechs Monate gültig.</strong> In dieser Zeit müssen Sie heiraten, sonst melden Sie sich neu an.</li>
+  <li><strong>Den Wunschtermin reservieren</strong> lassen viele Standesämter schon vorher, oft online. Wie früh, ist sehr unterschiedlich: manche nehmen Reservierungen für das ganze nächste Jahr an, andere erst sechs Monate vorher. Fragen Sie nach, sobald die Location gebucht ist.</li>
+</ul>
+
+<h3>Die Unterlagen</h3>
+<p>Für ledige deutsche Staatsangehörige ohne Auslandsbezug sind das meist:</p>
+<ul>
+  <li>ein gültiger Personalausweis oder Reisepass für jeden von Ihnen;</li>
+  <li>eine <strong>erweiterte Meldebescheinigung</strong> (Aufenthaltsbescheinigung) vom Bürgeramt, die nur kurz gültig ist (Berlin: höchstens 14 Tage alt; manche Standesämter fragen sie selbst ab);</li>
+  <li>ein <strong>beglaubigter Ausdruck aus dem Geburtenregister</strong>, den Sie beim Standesamt Ihres Geburtsorts anfordern, bei der Anmeldung in der Regel höchstens <strong>sechs Monate alt</strong>;</li>
+  <li>wenn Sie schon verheiratet waren: der Nachweis über die Auflösung der früheren Ehe (zum Beispiel Eheurkunde mit Scheidungsvermerk);</li>
+  <li>wenn Sie gemeinsame Kinder haben: deren Geburtsurkunden.</li>
+</ul>
+<p>Normalerweise erscheinen Sie beide persönlich. Kann einer verhindert sein, ist oft eine schriftliche Vollmacht möglich. Die Gebühren für Anmeldung und Prüfung liegen meist im Bereich von einigen Dutzend Euro (Berlin: 45 €), dazu kommen die Urkunden und gegebenenfalls ein Aufschlag für Samstage oder besondere Trauorte.</p>
+<p>Ist einer von Ihnen ausländischer Staatsangehöriger oder im Ausland geboren, kann das Standesamt weitere Dokumente verlangen (Ehefähigkeitszeugnis, beglaubigte Übersetzungen, Apostille oder Legalisation je nach Land), manchmal auch eine Befreiung durch das Oberlandesgericht. Rechnen Sie dann mit deutlich mehr Zeit.</p>
+
+<h3>Kein Aufgebot mehr, Trauzeugen freiwillig</h3>
+<p>Ein öffentlicher Aushang des Aufgebots wie früher ist nicht mehr vorgesehen: Das Standesamt prüft bei der Anmeldung, ob Sie heiraten dürfen. Und <strong>Trauzeugen sind seit 1998 nicht mehr vorgeschrieben</strong>. Sie können einen oder zwei bestimmen, wenn Sie möchten; sie brauchen am Tag der Trauung einen gültigen Ausweis.</p>
+
+<h3>Der Name</h3>
+<p>Sie erklären gegenüber dem Standesamt, wie Sie heißen werden: ein gemeinsamer Ehename, beide behalten ihren Namen, oder ein Doppelname. Seit dem 1. Mai 2025 können beide Ehegatten einen gemeinsamen Doppelnamen führen. Klären Sie das vor der Anmeldung untereinander, das spart Diskussionen am Schalter.</p>
+
+<h3>Ehevertrag, kirchliche Trauung, freie Trauung</h3>
+<ul>
+  <li><strong>Ehevertrag:</strong> Er muss notariell beurkundet werden, vor oder auch nach der Hochzeit. Ohne Vertrag leben Sie im gesetzlichen Güterstand der Zugewinngemeinschaft. Vereinbaren Sie mindestens zwei bis drei Monate vorher einen Termin, um in Ruhe darüber zu sprechen.</li>
+  <li><strong>Kirchliche Trauung:</strong> Sie findet in der Regel nach der standesamtlichen statt, oft am selben Tag oder einige Tage später. Melden Sie sich etwa ein Jahr vorher beim Pfarramt, für Traugespräch oder Ehevorbereitung und um den Termin zu sichern.</li>
+  <li><strong>Freie Trauung:</strong> Sie hat keine rechtliche Wirkung. Der Gang zum Standesamt bleibt nötig, zum Beispiel ein paar Tage vorher im kleinen Kreis.</li>
+</ul>
+
+<h2 id="budget">Das Budget nach Posten aufteilen</h2>
+<p>Umfragen von Hochzeitsportalen nennen für Deutschland Durchschnittswerte um 15.000 bis 17.000 €, aber die tatsächlichen Budgets gehen weit auseinander, von wenigen Tausend Euro bis zu deutlich mehr. Merken Sie sich statt eines Betrags lieber Anteile. Hier die Spannen, die man in Hochzeitsratgebern am häufigsten findet:</p>
+<table>
+<thead><tr><th>Posten</th><th>Anteil am Budget</th><th>Bei 15.000 €</th></tr></thead>
+<tbody>
+<tr><td><strong>Location</strong></td><td>20 bis 30 %</td><td>3.000 bis 4.500 €</td></tr>
+<tr><td><strong>Catering, Getränke und Service</strong></td><td>20 bis 30 %</td><td>3.000 bis 4.500 €</td></tr>
+<tr><td><strong>Foto und Video</strong></td><td>8 bis 12 %</td><td>1.200 bis 1.800 €</td></tr>
+<tr><td><strong>Outfits und Styling</strong></td><td>5 bis 10 %</td><td>750 bis 1.500 €</td></tr>
+<tr><td><strong>Blumen und Deko</strong></td><td>5 bis 10 %</td><td>750 bis 1.500 €</td></tr>
+<tr><td><strong>Musik und Unterhaltung</strong></td><td>5 bis 10 %</td><td>750 bis 1.500 €</td></tr>
+<tr><td><strong>Eheringe</strong></td><td>2 bis 5 %</td><td>300 bis 750 €</td></tr>
+<tr><td><strong>Papeterie (Save the Date, Einladungen, Menükarten)</strong></td><td>1 bis 3 %</td><td>150 bis 450 €</td></tr>
+<tr><td><strong>Transport und Unterkunft</strong></td><td>1 bis 3 %</td><td>150 bis 450 €</td></tr>
+<tr><td><strong>Puffer für Unvorhergesehenes</strong></td><td>5 bis 10 %</td><td>750 bis 1.500 €</td></tr>
+</tbody>
+</table>
+<p>Diese Spannen ergeben zusammen nicht genau 100 %: Es sind Richtwerte, die Sie an Ihre Prioritäten anpassen. Location und Catering machen bei den meisten Hochzeiten zusammen fast die Hälfte des Budgets aus, deshalb ist die Gästezahl der größte Hebel zum Sparen. Der Puffer ist nicht optional: Irgendetwas kommt in letzter Minute immer dazu.</p>
+<p>Für den Bereich Fotos erklären wir Größenordnungen und Posten, bei denen Sie ohne Reue sparen können, in unserem Artikel zum <a href="/journal/budget-photo-mariage">Fotobudget für die Hochzeit</a>.</p>
+
+<h3>Der Zahlungsplan</h3>
+<p>Das Budget wird nicht auf einmal ausgegeben. Die meisten Dienstleister verlangen bei der Buchung eine Anzahlung (oft 20 bis 50 %), den Rest kurz vor oder direkt nach der Hochzeit. Tragen Sie jede Fälligkeit in Ihre Tabelle ein: So vermeiden Sie die böse Überraschung, fünf Restbeträge in derselben Woche zahlen zu müssen.</p>
+
+<h2 id="qui-fait-quoi">Wer macht was: Brautpaar, Trauzeugen, Familien, Hochzeitsplaner</h2>
+<p>Eine gut organisierte Hochzeit ist vor allem eine gut verteilte Hochzeit. Hier eine Aufteilung, die funktioniert; passen Sie sie an Ihr Umfeld an.</p>
+<table>
+<thead><tr><th>Wer</th><th>Was dazugehört</th></tr></thead>
+<tbody>
+<tr><td><strong>Das Brautpaar</strong></td><td>Die Entscheidungen: Budget, Gästeliste, Auswahl der Dienstleister, Verträge, Standesamt, Eheversprechen. Was man nicht delegiert.</td></tr>
+<tr><td><strong>Die Trauzeugen</strong></td><td>JGA, Unterstützung in den letzten Wochen, Aufbewahrung der Ringe, Reden, Unterschrift bei der Trauung (falls Sie Trauzeugen haben), Ansagen am Mikrofon, Kartenbox.</td></tr>
+<tr><td><strong>Die Familien</strong></td><td>Ihr Teil der Gästeliste, die Begrüßung, Hilfe beim Aufbau und Aufräumen, manchmal ein finanzieller Beitrag.</td></tr>
+<tr><td><strong>Die Ansprechperson am Hochzeitstag</strong></td><td>Ein organisierter Mensch aus Ihrem Umfeld (oder der Hochzeitsplaner): einziger Kontakt für die Dienstleister am Tag selbst, Hüter des Ablaufs.</td></tr>
+<tr><td><strong>Der Hochzeitsplaner</strong></td><td>Je nach Paket: alles von A bis Z, nur ein Teil (Dienstleistersuche, Deko) oder die Koordination am Hochzeitstag.</td></tr>
+</tbody>
+</table>
+<p>Zur Frage „Wer zahlt was?“: Früher übernahmen traditionell die Brauteltern die Feier. Heute finanzieren die meisten Paare den Großteil selbst, und die Familien beteiligen sich, wenn sie möchten. Wichtig ist, offen darüber zu sprechen, wenn Sie das Budget festlegen, nicht erst, wenn die Rechnung kommt.</p>
+<p>Brauchen Sie einen Hochzeitsplaner? Wenn Sie wenig Zeit haben, weit weg von zu Hause heiraten oder viele Gäste einladen, stellt sich die Frage wirklich. Wir erklären, <a href="/journal/services-wedding-planner">was ein Hochzeitsplaner macht und welche Pakete es gibt</a>.</p>
+
+<h2 id="photos">Die Fotos im Zeitplan</h2>
+<p>Fotos gehören zu den wenigen Posten, von denen am Tag danach noch etwas bleibt. Sie haben deshalb an mehreren Stellen der Checkliste ihren Platz, nicht nur bei der Buchung des Fotografen.</p>
+
+<h3>12 Monate vorher: den Fotografen buchen</h3>
+<p>Er gehört zu den ersten Dienstleistern, die Sie nach der Location buchen, aus einem einfachen Grund: Er macht nur eine Hochzeit pro Tag. Prüfen Sie vor der Unterschrift drei Dinge: eine komplette Galerie, die Uhrzeit, bis zu der das Paket gilt, und die Lieferzeit, die im Vertrag steht.</p>
+
+<h3>1 Monat vorher: Shotlist und Gruppenfotos</h3>
+<p>Bringen Sie zum Vorbereitungsgespräch zwei Listen mit: die Momente und Details, die nicht fehlen dürfen (Ihre <a href="/journal/shot-list-mariage">Shotlist für die Hochzeit</a>), und die <a href="/journal/photos-de-groupe-mariage">Gruppenfotos</a>, die Sie möchten, mit Namen. Bestimmen Sie auch jemanden, der beide Familien kennt und die Leute zusammenholt: Der Fotograf weiß nicht, wer Onkel Gerd ist.</p>
+
+<h3>1 bis 2 Monate vorher: die Fotoaktion für die Gäste planen</h3>
+<p>Ihr Fotograf begleitet die offiziellen Momente. Das Gelächter am hintersten Tisch, die Oma um Mitternacht auf der Tanzfläche: Das sehen Ihre Gäste besser als er. Es gibt mehrere Wege, diese Bilder einzufangen: eine Fotobox, Einwegkameras aus Pappe auf den Tischen, ein geteiltes Album, in das alle hinterher ihre Fotos hochladen, oder eine Einwegkamera auf dem Handy jedes Gastes. Wir vergleichen sie in unserem <a href="/journal/comparatif-animations-photo-mariage">Vergleich der Fotoaktionen für Hochzeiten</a>.</p>
+<p>Wenn Sie sich für die digitale Einwegkamera entscheiden, ist jetzt der richtige Moment, sie einzurichten. Mit <a href="/">Time to Flash</a> zum Beispiel:</p>
+<ul>
+  <li><strong>Event anlegen</strong>: die Zahl der Fotos pro Gast (zwischen 3 und 15) und den Präsentationstermin des Albums (standardmäßig der Tag nach der Feier; Sie bestimmen den Zeitpunkt). Kostenlos bis 5 Gäste, genug für einen Test mit Ihren Trauzeugen, danach eine einmalige Zahlung je nach Gästezahl (29,99 € bis 100 Gäste), ohne Abo.</li>
+  <li><strong>QR-Codes drucken</strong>: aus Ihrem Dashboard, oder mit dem kostenlosen <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator</a>, mit Ihren Vornamen und Ihrem Datum.</li>
+  <li><strong>Die Gäste informieren</strong>: eine Zeile auf der Hochzeitswebsite oder der Einladung, zwei Sätze in der Rede der Trauzeugen. Wir haben <a href="/journal/brief-invites">einen Text für Ihre Gäste zum Kopieren</a> geschrieben.</li>
+</ul>
+<p>Der Unterschied zu einem klassischen geteilten Album: Es ist keine Galerie, in die man am nächsten Tag seine Fotos lädt, sondern ein Spiel während der Feier. Jeder Gast hat eine begrenzte Zahl an Aufnahmen, niemand sieht die Fotos vor der Präsentation, und das Album wird für alle gleichzeitig sichtbar.</p>
+
+<h3>Am Hochzeitstag: die QR-Codes aufstellen</h3>
+<p>Am Vortag oder am Morgen stellt jemand die QR-Codes dort auf, wo die Gäste Zeit haben, sie zu scannen: auf den Tischen, an der Bar, am Eingang, sogar auf den Toiletten. Alle unsere Tests stehen in <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code am besten steht</a>. Prüfen Sie bei der Besichtigung auch den Handyempfang in der Location: Wenn er schwach ist, lesen Sie <a href="/journal/pas-de-reseau-salle-mariage">unsere Lösungen, wenn es im Saal kein Netz gibt</a>.</p>
+
+<h3>Am Tag danach: die Präsentation</h3>
+<p>Beim Brunch oder gleich nach dem Aufwachen wird das Album der Gäste für alle gleichzeitig sichtbar. Wie daraus ein echter Moment wird, erzählen wir in <a href="/journal/revelation-photos-lendemain-mariage">der Fotopräsentation am Tag nach der Hochzeit</a>. Die Fotos bleiben 6 Monate verfügbar: Laden Sie sie im Monat danach herunter, zusammen mit denen des Fotografen, und behalten Sie die schönsten für die Dankeskarten.</p>
+
+<h2 id="resume">Der ganze Zeitplan, ein Satz pro Etappe</h2>
+<ul>
+  <li><strong>18 bis 12 Monate:</strong> Budget, Gäste, Datum, Location.</li>
+  <li><strong>12 bis 9 Monate:</strong> Fotograf, Videograf, DJ, Trauredner, Trauzeugen, Save the Date.</li>
+  <li><strong>9 bis 6 Monate:</strong> Kleid, Floristik, Styling, Transport, Hochzeitsreise.</li>
+  <li><strong>6 bis 4 Monate:</strong> Einladungen, Menü, Anzug, Ringe, Notar, Wunschtermin beim Standesamt.</li>
+  <li><strong>4 bis 2 Monate:</strong> Anmeldung beim Standesamt, Sitzordnung, Proben, Musik.</li>
+  <li><strong>2 bis 1 Monat:</strong> endgültige Zahl an den Caterer, Gespräch mit dem Fotografen, Fotoaktion, Ablauf.</li>
+  <li><strong>3 Wochen bis zum Vortag:</strong> bestätigen, übergeben, delegieren, schlafen.</li>
+  <li><strong>Danach:</strong> Präsentation der Fotos, Danksagungen, Bewertungen, Fotos, Papiere.</li>
+</ul>
+<p>Und wenn Sie sich nur eines merken: Buchen Sie zuerst das Einzigartige, geben Sie alles schriftlich weiter und überlassen Sie den Hochzeitstag jemand anderem als sich selbst. Der Rest ergibt sich.</p>
+`,
+    faq: [
+      {
+        q: 'Wann sollte man mit der Hochzeitsplanung anfangen?',
+        a: 'Ideal sind 12 bis 18 Monate vorher, vor allem für einen Samstag zwischen Mai und September: So können Sie Location und Fotograf wirklich auswählen. Es geht auch viel kürzer (6 Monate, sogar 3), wenn Sie beim Datum flexibel bleiben und das Format vereinfachen.',
+      },
+      {
+        q: 'Was muss man 6 Monate vor der Hochzeit erledigen?',
+        a: 'Sechs Monate vorher verschicken Sie die Einladungen mit Antwortfrist, machen das Probeessen beim Caterer, wählen Anzug und Ringe und reservieren den Wunschtermin beim Standesamt. Ab jetzt ist auch die Anmeldung der Eheschließung möglich. Es ist zudem der Moment, mit dem Arbeitgeber über freie Tage zu sprechen und gegebenenfalls einen Notartermin für den Ehevertrag zu machen.',
+      },
+      {
+        q: 'Wann muss man die Eheschließung beim Standesamt anmelden?',
+        a: 'Frühestens sechs Monate vor dem Hochzeitstermin, und die Anmeldung bleibt sechs Monate gültig. Viele Standesämter lassen den Wunschtermin schon vorher reservieren, die Regeln sind aber von Ort zu Ort verschieden. Achten Sie darauf, dass der Geburtenregisterauszug bei der Anmeldung in der Regel nicht älter als sechs Monate ist.',
+      },
+      {
+        q: 'Wann verschickt man Save the Date und Einladungen?',
+        a: 'Die Save-the-Date-Karte geht 8 bis 12 Monate vorher raus, vor allem wenn Gäste von weit her anreisen. Die Einladung folgt 4 bis 6 Monate vorher, mit einer Antwortfrist 6 bis 8 Wochen vor der Hochzeit, damit Sie dem Caterer eine feste Zahl nennen können.',
+      },
+      {
+        q: 'Kann man eine Hochzeit in 3 Monaten planen?',
+        a: 'Ja, wenn Sie vereinfachen: weniger Gäste, eine Location mit Rundum-Paket für Trauung und Feier, Outfits von der Stange. Rufen Sie in der ersten Woche beim Standesamt an: Rechtlich reichen drei Monate gut, aber beliebte Termine sind oft früh vergeben und die Unterlagen brauchen etwas Zeit.',
+      },
+      {
+        q: 'Welche Dienstleister sollte man für die Hochzeit zuerst buchen?',
+        a: 'Zuerst die Location, denn sie legt Datum und Kapazität fest. Dann alle, die nur eine Hochzeit pro Tag begleiten: Fotograf, Videograf, DJ und freier Trauredner, dazu der Caterer, falls ihn die Location nicht vorgibt. Floristik, Styling, Papeterie und Ringe kommen danach.',
+      },
+    ],
+  },
+}

@@ -1615,5 +1615,803 @@ export const POSTS_EN = {
   },
 }
 
-// Version allemande : en attente (vocabulaire en révision).
-export const POSTS_DE = {}
+// Version allemande : adaptation pour l'Allemagne (vouvoiement « Sie »),
+// vocabulaire selon le glossaire du 10/10/2026 (Präsentation, Präsentationstermin).
+export const POSTS_DE = {
+  // DE : « Hochzeitsplaner Leistungen », « Weddingplaner Leistungen »,
+  // « Hochzeitsplaner Kosten ». In Deutschland heißen die Pakete meist
+  // Komplettplanung, Teilplanung und Tagesbegleitung (auch « Wedding Day
+  // Management »). Preise nach deutschen Ratgebern (10/10/2026) : Tagesbegleitung
+  // im unteren vierstelligen Bereich, Komplettplanung etwa 3.000 bis 8.000 €.
+  // Angepasst : Standesamt statt mairie, Pauschalreiserecht statt Atout France,
+  // Junggesellenabschied (JGA) statt EVJF, freie Trauung statt cérémonie laïque.
+  'services-wedding-planner': {
+    title: 'Hochzeitsplaner Leistungen: 12 Zusatzservices, die Sie abheben',
+    excerpt: 'Die drei klassischen Pakete eines Hochzeitsplaners und 12 Zusatzleistungen für Ihr Angebot: was das Brautpaar davon hat, Ihre Marge und wie Sie sie verkaufen.',
+    caption: 'Eine Hochzeitsplanerin legt am Vorabend einer Hochzeit Platzkarten auf eine weiß eingedeckte Tafel, im noch halb aufgebauten Saal',
+    body: `
+<p>Die Leistungen eines Hochzeitsplaners passen oft auf drei Zeilen einer Broschüre: Komplettplanung, Teilplanung, Tagesbegleitung. Brautpaare vergleichen diese drei Zeilen von Planer zu Planer, und das Gespräch landet schnell beim Preis. Aus diesem Vergleich kommen Sie nur heraus, wenn Ihr Angebot nicht aussieht wie das der Konkurrenz.</p>
+<p>Dieser Leitfaden geht zuerst die Grundpakete durch (was hineingehört, wie Sie sie abgrenzen) und stellt dann <strong>12 Zusatzleistungen</strong> vor, mit denen Sie Ihr Angebot erweitern können. Zu jeder Leistung: was das Brautpaar davon hat, welchen Aufwand oder welche Marge sie für Sie bedeutet und wie Sie sie präsentieren, ohne dass es nach Lückenfüller aussieht.</p>
+
+<h2>Leistungen eines Hochzeitsplaners: die drei Grundpakete</h2>
+<p>Fast alle Hochzeitsplaner und Weddingplaner in Deutschland bauen ihr Angebot um dieselben drei Pakete herum. Die Namen unterscheiden sich, der Inhalt deutlich weniger.</p>
+
+<h3>Die Komplettplanung</h3>
+<p>Sie übernehmen das Projekt von Anfang bis Ende, oft 12 bis 18 Monate vor dem Termin: Budget, Locationsuche, Auswahl und Verhandlung der Dienstleister, Verträge und Zahlungsfristen, Gestaltungskonzept, Zeitplan, Gästemanagement und schließlich die Koordination am Hochzeitstag. Pro Hochzeit ist das das lukrativste Paket, aber auch das, was die meisten Stunden frisst: Dutzende Termine, Besichtigungen und E-Mail-Verläufe.</p>
+
+<h3>Die Teilplanung</h3>
+<p>Das Brautpaar hat schon einiges erledigt (meist sind Location und Caterer gebucht) und gibt Ihnen den Rest: ein paar Dienstleister, die Deko, den Ablauf, die Koordination. Bei diesem Paket gerät der Umfang am leichtesten aus dem Ruder. Schreiben Sie ins Angebot, welche Dienstleister Sie genau übernehmen und wie viele Termine enthalten sind.</p>
+
+<h3>Die Tagesbegleitung</h3>
+<p>Der Name täuscht: Niemand koordiniert eine Hochzeit gut, die er erst am Morgen kennenlernt. In der Praxis beginnen Sie ein bis drei Monate vorher: alle Verträge durchsehen, jeden Dienstleister anrufen, die Location technisch besichtigen, den Ablaufplan erstellen und dann vom Morgen bis in die Nacht vor Ort sein. Für viele Paare, die „alles selbst machen“ wollten, ist das der Einstieg: Zwei Monate vor der Hochzeit merken sie, dass sie den Tag nicht damit verbringen möchten, den Caterer zu dirigieren.</p>
+
+<table>
+<thead><tr><th>Paket</th><th>Sie starten</th><th>Was Sie übernehmen</th><th>Übliche Spanne</th></tr></thead>
+<tbody>
+<tr><td><strong>Komplettplanung</strong></td><td>12 bis 18 Monate vorher</td><td>Alles, vom Budget bis zum Hochzeitstag</td><td>Etwa 3.000 bis 8.000&nbsp;€, im Luxussegment deutlich mehr</td></tr>
+<tr><td><strong>Teilplanung</strong></td><td>4 bis 9 Monate vorher</td><td>Ein Teil der Dienstleister, Deko, Ablauf, Hochzeitstag</td><td>Etwa 1.500 bis 4.000&nbsp;€</td></tr>
+<tr><td><strong>Tagesbegleitung</strong></td><td>1 bis 3 Monate vorher</td><td>Übernahme der Planung, Ablaufplan, Präsenz am Hochzeitstag</td><td>Etwa 1.000 bis 2.500&nbsp;€</td></tr>
+</tbody>
+</table>
+<p>Diese Spannen stammen aus veröffentlichten Preisen von Hochzeitsplanern und aus Ratgebern von 2026. Sie hängen stark von Region, Erfahrung und Gästezahl ab: Es sind Größenordnungen, keine Preisliste zum Abschreiben.</p>
+<p><strong>Pauschale oder Prozentsatz?</strong> Manche Planer berechnen einen Anteil am Gesamtbudget (oft genannt werden 10 bis 15&nbsp;%), die meisten arbeiten aber mit Pauschalen. Eine Pauschale gibt dem Brautpaar Sicherheit (es weiß, was es zahlt) und schützt Sie vor dem Verdacht, die Ausgaben hochzutreiben, um Ihr Honorar zu erhöhen.</p>
+
+<h2>Warum sich Zusatzleistungen lohnen</h2>
+<p>Drei Gründe, nach Wichtigkeit geordnet.</p>
+<ul>
+<li><strong>Sie heben sich ab.</strong> Bei den drei Grundpaketen ähneln sich alle Planer. Den Ausschlag gibt oft ein Detail, das das Paar nirgendwo sonst gesehen hat.</li>
+<li><strong>Sie erhöhen den Umsatz pro Hochzeit</strong>, ohne mehr Hochzeiten anzunehmen. Eine Leistung für 300&nbsp;€, die Sie bei der Hälfte Ihrer Paare verkaufen, bringt schnell so viel wie eine zusätzliche Hochzeit im Jahr, mit viel weniger geopferten Wochenenden.</li>
+<li><strong>Sie machen dem Paar das Leben leichter.</strong> Ein Ansprechpartner statt fünf: Genau das kauft man ein, wenn man einen Hochzeitsplaner bucht.</li>
+</ul>
+<p>Vor der Liste eine nützliche Unterscheidung. Eine Zusatzleistung lässt sich auf drei Arten verkaufen:</p>
+<ol>
+<li><strong>Sie erbringen sie selbst</strong> (Papeterie, Gestaltung, Gästemanagement): hohe Marge, aber es ist Ihre Zeit.</li>
+<li><strong>Sie vergeben sie weiter und berechnen sie mit Aufschlag</strong>: wenig Zeitaufwand, aber Sie haften für das Ergebnis.</li>
+<li><strong>Sie empfehlen einen Partner</strong>: kein Risiko, manchmal eine Vermittlungsprovision. Sagen Sie das dem Paar dann offen. Transparenz an dieser Stelle schafft Vertrauen und ist keine Schwäche.</li>
+</ol>
+
+<h2>12 Zusatzleistungen für Hochzeitsplaner</h2>
+
+<h3>1. Gestaltung und Dekorationskonzept</h3>
+<p><strong>Für das Brautpaar:</strong> ein stimmiges Gesamtbild, von der Einladung bis zum Tischschmuck, statt einer Sammlung von Pinterest-Ideen, die nicht zusammenpassen.</p>
+<p><strong>Aufwand und Marge:</strong> eine der am besten bezahlten Leistungen, weil sie auf Ihrem Geschmack und Ihren Kontakten beruht. Sie kostet aber Konzeptionszeit (Moodboard, Aufbauplan, Materialauswahl) und, wenn Sie Deko vermieten, Lagerplatz und Transport.</p>
+<p><strong>So verkaufen Sie sie:</strong> Zeigen Sie Moodboards, die Sie für echte Hochzeiten erstellt haben, und bieten Sie zwei Stufen an: nur das Konzept (das Paar kauft und dekoriert selbst) oder Konzept mit Verleih und Aufbau.</p>
+
+<h3>2. Papeterie</h3>
+<p><strong>Für das Brautpaar:</strong> Einladungen, Menükarten, Platzkarten, Sitzplan, Beschilderung und Kirchenheft oder Programm im selben Design, ohne drei Druckereien hinterherzulaufen.</p>
+<p><strong>Aufwand und Marge:</strong> Wenn Sie ein Layoutprogramm beherrschen, ist die Marge gut. Sonst arbeiten Sie mit einer Grafikerin oder einem Papeterie-Atelier zusammen und berechnen weiter. Vorsicht bei Korrekturschleifen (Schreibweise der Namen, Uhrzeiten): Legen Sie die Zahl der Korrekturen fest.</p>
+<p><strong>So verkaufen Sie sie:</strong> Legen Sie beim ersten Termin ein gedrucktes Stück auf den Tisch. Eine gelungene Menükarte oder ein Sitzplan zum Anfassen verkauft sich besser als eine Datei.</p>
+
+<h3>3. Gästemanagement</h3>
+<p><strong>Für das Brautpaar:</strong> keine Tabelle mehr, die auf drei Handys unterschiedlich aktuell ist. Sie sammeln Zu- und Absagen, Essenswünsche, Kinder, Allergien und Fahrtbedarf, und Sie erstellen mit dem Paar den Sitzplan.</p>
+<p><strong>Aufwand und Marge:</strong> wenig technisch, aber zeitintensiv in den letzten zwei Monaten (Nachzügler, spontane Begleitpersonen). Berechnen Sie eine Pauschale mit einem Stichtag für Änderungen.</p>
+<p><strong>So verkaufen Sie es:</strong> Fragen Sie das Paar, wie viele Nachrichten es schon jetzt von der Familie zur Hochzeit bekommt. Es versteht schnell, was es gewinnt, wenn diese Nachrichten bei Ihnen landen.</p>
+
+<h3>4. Unterkunft und Transport der Gäste</h3>
+<p><strong>Für das Brautpaar:</strong> Die Gäste wissen, wo sie schlafen, wie sie hinkommen und wie sie zurückfahren, und niemand setzt sich um 4&nbsp;Uhr morgens ans Steuer.</p>
+<p><strong>Aufwand und Marge:</strong> Zimmerkontingente verhandeln und Shuttles organisieren braucht wenig Kreativität, aber viel Nachfassen. Ein rechtlicher Punkt, den Sie prüfen sollten: Wenn Sie selbst Transport und Unterkunft als Paket zu einem Gesamtpreis <em>verkaufen</em>, kann das als Pauschalreise gelten. Dann treffen Sie die Pflichten eines Reiseveranstalters, unter anderem eine Insolvenzabsicherung. Am einfachsten ist es meist, Konditionen auszuhandeln und jeden Gast direkt buchen und bezahlen zu lassen.</p>
+<p><strong>So verkaufen Sie es:</strong> Bei einer abgelegenen Location ist das fast ein Sicherheitsargument. Stellen Sie es auch so dar.</p>
+
+<h3>5. Begleitung rund ums Standesamt</h3>
+<p><strong>Für das Brautpaar:</strong> eine Anmeldung zur Eheschließung, die beim ersten Mal vollständig ist. Die Anmeldung ist frühestens sechs Monate vor dem Termin möglich, die nötigen Unterlagen hängen von der persönlichen Situation ab, und bei einem ausländischen Partner kann die Beschaffung der Dokumente Wochen oder Monate dauern. Wer das spät entdeckt, vergisst es nicht.</p>
+<p><strong>Aufwand und Marge:</strong> Die Anmeldung kann das Paar nur selbst erledigen. Sie können aber die Liste der Unterlagen, die Fristen und die Fragen ans Standesamt vorbereiten (Wunschtermin, Trauung an einem Außentrauort, Zahl der Plätze, ob fotografiert werden darf) und sich um die praktische Abstimmung kümmern. Trauzeugen sind übrigens nicht mehr vorgeschrieben, viele Paare wissen das nicht. Geringer Aufwand, sobald Ihre Vorlage steht.</p>
+<p><strong>So verkaufen Sie es:</strong> Statt als kostenpflichtige Option nehmen Sie es lieber in Ihre höherpreisigen Pakete auf. Für Sie kostet es wenig, für das Paar ist es sehr beruhigend.</p>
+
+<h3>6. Die freie Trauung</h3>
+<p><strong>Für das Brautpaar:</strong> eine Zeremonie, die zu ihm passt, gemeinsam geschrieben, mit Mitwirkenden, die wissen, wann sie aufstehen und was sie vorlesen.</p>
+<p><strong>Aufwand und Marge:</strong> Wenn Sie selbst als Traurednerin oder Trauredner auftreten, ist das eine eigene Leistung (Gespräche, Rede schreiben, Probe). Sonst arbeiten Sie mit einem freien Redner zusammen und behalten die Koordination: Bestuhlung, Musik, Einzug, Timing.</p>
+<p><strong>So verkaufen Sie sie:</strong> Zeigen Sie schon beim ersten Termin einen Beispielablauf. Paare, die zwischen „nur Standesamt“ und freier Trauung schwanken, entscheiden sich oft, sobald sie sehen, wie ihre Zeremonie aussehen könnte.</p>
+
+<h3>7. Programm für Sektempfang und Party</h3>
+<p><strong>Für das Brautpaar:</strong> ein Sektempfang, der sich nicht anfühlt wie zwei Stunden Warten, während die Fotos gemacht werden, und eine Party, die nicht nur am DJ hängt.</p>
+<p><strong>Aufwand und Marge:</strong> Livemusik, Karikaturist, Holzspiele, Cocktailbar, Weinprobe: Sie arbeiten mit Partnern, Ihr Wert liegt in Auswahl und Koordination. Viele Ideen haben wir in <a href="/journal/idees-animation-mariage">unseren Ideen für die Hochzeitsunterhaltung</a> gesammelt.</p>
+<p><strong>So verkaufen Sie es:</strong> Schlagen Sie zwei oder drei Programmpunkte vor, die zu den Gästen passen (viele Kinder, viele ältere Gäste, Gäste, die sich nicht kennen), keinen Katalog.</p>
+
+<h3>8. Fotoaktion für die Gäste</h3>
+<p><strong>Für das Brautpaar:</strong> die Fotos, die der Fotograf nicht machen kann. Er ist beim Paarshooting, er sieht den hinteren Tisch nicht, den Lachanfall an der Bar, die Oma um 1&nbsp;Uhr auf der Tanzfläche. Die Gäste dagegen sind überall.</p>
+<p>Dafür gibt es mehrere Wege: eine Fotobox, ein Gästebuch mit Sofortbildkamera, eine geteilte Galerie oder eine digitale Einwegkamera auf den Handys der Gäste. Die Möglichkeiten vergleichen wir in <a href="/journal/comparatif-animations-photo-mariage">Fotobox, Fotospiegel oder Einwegkamera: was passt?</a></p>
+<p>Nehmen wir als Beispiel die Einwegkamera, die wir mit <strong>Time to Flash</strong> gebaut haben. Jeder Gast scannt einen QR-Code, gibt seinen Vornamen ein, und sein Handy wird zur Einwegkamera: keine App zu installieren, eine begrenzte Zahl an Fotos (3 bis 15, frei wählbar), ein analoger Filmlook, und die Fotos bleiben verborgen. Am nächsten Tag wird das Album für alle gleichzeitig sichtbar.</p>
+<p><strong>Was Sie konkret übernehmen:</strong></p>
+<ul>
+<li><strong>Das Event anlegen</strong>: Fotos pro Gast, Präsentationstermin (standardmäßig am nächsten Tag), Filmlook. Sie können das Brautpaar als Mitveranstalter einladen.</li>
+<li><strong>Die Druckvorlagen</strong>: der QR-Code allein, das A4-Plakat, die Tischaufsteller und kleine Kärtchen kommen druckfertig aus dem Dashboard. Sie bauen sie in Ihre Beschilderung ein.</li>
+<li><strong>Die Ansage</strong>: ein Satz im Ablauf für den DJ oder in der kurzen Rede der Trauzeugen beim Sektempfang.</li>
+<li><strong>Die Durchsicht vor der Präsentation</strong>, auf Wunsch mit dem Paar: Wer das Event verwaltet, sieht die Fotos vor allen anderen und kann unpassende entfernen.</li>
+</ul>
+<p><strong>Ihr Zeitaufwand:</strong> In der Praxis reicht eine halbe Stunde Vorbereitung (Anlegen, Drucken, eine Zeile im Ablaufplan), dazu ein paar Minuten am Hochzeitstag, um die Plakate aufzustellen. Kein Aufbau, kein Techniker, keine Kaution.</p>
+<p><strong>Aufwand und Marge:</strong> Die Kosten sind eine einmalige Zahlung je nach Gästezahl, zum Beispiel 34,99&nbsp;€ bis 150 Gäste oder 59,99&nbsp;€ bis 300. Sie können es als Markenzeichen in Ihre Pakete aufnehmen oder als Option anbieten.</p>
+<p><strong>So verkaufen Sie es:</strong> Zeigen Sie es. Lassen Sie das Paar beim Termin den QR-Code scannen und ein Foto machen. Die meisten haben so etwas auf anderen Hochzeiten noch nicht erlebt, und es ergänzt den Fotografen, statt ihm Konkurrenz zu machen.</p>
+
+<h3>9. Programmheft und Gäste-Sets</h3>
+<p><strong>Für das Brautpaar:</strong> Gäste, die wissen, was wann passiert. Das Kirchenheft oder Programm der Trauung, der Wochenendplan und die kleinen Sets, die einen Abend retten (Fächer, Taschentücher, Blasenpflaster, Tanzschuhe).</p>
+<p><strong>Aufwand und Marge:</strong> gering, vor allem zusammen mit der Papeterie. Die Marge kommt aus Sammeleinkauf und Konfektionierung.</p>
+<p><strong>So verkaufen Sie es:</strong> als Ergänzung einer anderen Leistung, nie allein. Ein Körbchen mit Sets an der Garderobe ist genau die Art Detail, von der Gäste dem Paar erzählen.</p>
+
+<h3>10. Das ganze Wochenende: Vorabend und Brunch</h3>
+<p><strong>Für das Brautpaar:</strong> eine Hochzeit über zwei oder drei Tage, wie sie immer häufiger wird, ohne dass die Organisation des Vorabends und des Brunchs am nächsten Tag an ihm hängen bleibt.</p>
+<p><strong>Aufwand und Marge:</strong> oft dieselbe Location und dieselben Dienstleister. Ein Brunch lässt sich mit viel weniger Energie koordinieren als der Hochzeitstag, und deshalb ist er eine der Leistungen mit dem besten Verhältnis von Zeit zu Umsatz.</p>
+<p><strong>So verkaufen Sie es:</strong> Stellen Sie den Brunch als Abschluss der Hochzeit vor, nicht als zusätzliche Mahlzeit. Er ist auch der ideale Moment, um die Fotos der Gäste gemeinsam anzuschauen (siehe <a href="/journal/revelation-photos-lendemain-mariage">die Präsentation am nächsten Tag</a>).</p>
+
+<h3>11. Trauzeugen und Junggesellenabschied (JGA)</h3>
+<p><strong>Für das Brautpaar:</strong> Trauzeugen, die wissen, was von ihnen erwartet wird, und ein JGA, der nicht in die Hochzeitswoche hineinragt.</p>
+<p><strong>Aufwand und Marge:</strong> Ein Briefing der Trauzeugen dauert eine Stunde. Einen JGA komplett zu organisieren ist ein eigenes Projekt mit anderen Kunden (den Trauzeugen und Freunden). Entscheiden Sie, ob Sie diesen Markt wollen.</p>
+<p><strong>So verkaufen Sie es:</strong> Das Briefing der Trauzeugen passt in jedes Paket. Es spart Ihnen am Hochzeitstag Zeit, und die Trauzeugen werden zu Ihren Verbündeten (und oft zu künftigen Kunden).</p>
+
+<h3>12. Nach der Hochzeit</h3>
+<p><strong>Für das Brautpaar:</strong> nach der Rückkehr nichts mehr zu erledigen: Rückgabe der Mietsachen, Geschirr, Dankeskarten, Reinigung des Kleides, Fotos an einem Ort.</p>
+<p><strong>Aufwand und Marge:</strong> gering, und die Beziehung reicht über den Hochzeitstag hinaus. In diesen Wochen sind Paare auch am ehesten bereit, eine Bewertung zu schreiben und Sie weiterzuempfehlen.</p>
+<p><strong>So verkaufen Sie es:</strong> als Option bei Vertragsabschluss oder als Geschenk in der Komplettplanung. Warum dieser Moment für Ihren Ruf zählt, lesen Sie in <a href="/journal/trouver-clients-wedding-planner">wie Sie als Hochzeitsplaner Kunden gewinnen</a>.</p>
+
+<h2>Die Übersicht in einer Tabelle</h2>
+<table>
+<thead><tr><th>Leistung</th><th>Ihr Aufwand</th><th>Mögliche Marge</th><th>Wann anbieten</th></tr></thead>
+<tbody>
+<tr><td>Gestaltung und Deko-Konzept</td><td>Hoch</td><td>Hoch</td><td>Erster Termin</td></tr>
+<tr><td>Papeterie</td><td>Mittel</td><td>Gut</td><td>Nach Vertragsabschluss</td></tr>
+<tr><td>Gästemanagement</td><td>Mittel</td><td>Mittel</td><td>Sechs Monate vorher</td></tr>
+<tr><td>Unterkunft und Transport</td><td>Mittel</td><td>Gering bis mittel</td><td>Sobald die Location steht</td></tr>
+<tr><td>Begleitung Standesamt</td><td>Gering</td><td>Gering (Argument)</td><td>Bei Vertragsabschluss</td></tr>
+<tr><td>Freie Trauung</td><td>Hoch, wenn Sie selbst reden</td><td>Gut</td><td>Erster Termin</td></tr>
+<tr><td>Programm</td><td>Gering bis mittel</td><td>Mittel</td><td>Vier bis sechs Monate vorher</td></tr>
+<tr><td>Fotoaktion für die Gäste</td><td>Sehr gering</td><td>Nach Ihrer Wahl</td><td>Erster Termin (Vorführung)</td></tr>
+<tr><td>Programmheft und Sets</td><td>Gering</td><td>Mittel</td><td>Mit der Papeterie</td></tr>
+<tr><td>Wochenende und Brunch</td><td>Mittel</td><td>Gut</td><td>Bei Vertragsabschluss</td></tr>
+<tr><td>Trauzeugen und JGA</td><td>Gering bis hoch</td><td>Unterschiedlich</td><td>Drei bis sechs Monate vorher</td></tr>
+<tr><td>Nach der Hochzeit</td><td>Gering</td><td>Gering (Kundenbindung)</td><td>Bei Vertragsabschluss</td></tr>
+</tbody>
+</table>
+
+<h2>So präsentieren Sie Ihre Zusatzleistungen</h2>
+<p>Zwölf Optionen am Ende eines Angebots schrecken ab. Drei Ansätze funktionieren besser.</p>
+<p><strong>Pakete statt Speisekarte.</strong> Bündeln Sie die Leistungen nach Logik: ein Paket „Gäste“ (Gästemanagement, Unterkunft, Shuttles, Sets), ein Paket „Gestaltung“ (Deko-Konzept, Papeterie, Programmheft), ein Paket „Wochenende“ (Vorabend, Brunch, Nachbereitung). Das Paar wählt ein Paket, nicht zehn Zeilen.</p>
+<p><strong>Ein Markenzeichen in jedem Paket.</strong> Wählen Sie ein oder zwei Leistungen, die Sie wenig kosten und die Gäste deutlich sehen, und nehmen Sie sie in alle Pakete auf. Genau das bringt Gäste dazu zu fragen: „Wer hat das organisiert?“</p>
+<p><strong>Der richtige Zeitpunkt.</strong> Beim ersten Termin sprechen Sie über das, was zur Unterschrift führt (Gestaltung, Trauung, eine Vorführung). Logistische Optionen (Shuttles, Sets, Nachbereitung) bieten Sie später an, wenn das Paar merkt, wie viel noch zu tun ist.</p>
+
+<h2>So heben Sie sich als Hochzeitsplaner ab</h2>
+<p>Zusatzleistungen helfen wenig, wenn sie aussehen wie bei allen anderen. Vier Hebel machen den Unterschied.</p>
+<ul>
+<li><strong>Eine klare Spezialisierung.</strong> Hochzeiten auf dem Land, kleine Hochzeiten, interkulturelle Hochzeiten, nachhaltige Hochzeiten: Eine genaue Positionierung bleibt besser im Kopf als „Hochzeiten aller Art“.</li>
+<li><strong>Eine sichtbare Methode.</strong> Zeigen Sie Ihre Zeitplanung, Ihren Ablaufplan, Ihr Dienstleister-Infoblatt (eine Vorlage finden Sie in <a href="/journal/deroule-jour-j-mariage">dem Tagesablauf der Hochzeit Stunde für Stunde</a>). Paare kaufen Gelassenheit ein: Beweisen Sie sie.</li>
+<li><strong>Ein Erlebnis für die Gäste.</strong> Paare erinnern sich nicht an Ihre Tabelle, sondern an das, was ihre Gäste ihnen erzählt haben. Eine Aktion, bei der alle mitmachen, ein schönes Programmheft, ein pünktlicher Shuttle: Davon wird nach der Hochzeit erzählt.</li>
+<li><strong>Präsenz nach dem Hochzeitstag.</strong> Die meisten Dienstleister sind am nächsten Tag verschwunden. Eine Nachricht am Morgen, an dem die Gästefotos sichtbar werden, ein Rückblick auf den Abend, eine Bitte um Bewertung im richtigen Moment: Bessere Werbung gibt es nicht.</li>
+</ul>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Grenzen Sie Ihre drei Grundpakete schriftlich ab (enthaltene Dienstleister, Zahl der Termine).</li>
+<li>Wählen Sie die Zusatzleistungen, die zu Ihrer Spezialisierung passen, nicht alle.</li>
+<li>Bündeln Sie sie zu Paketen und nehmen Sie überall ein Markenzeichen auf, das die Gäste sehen.</li>
+<li>Bleiben Sie nach der Hochzeit in Kontakt: Dort entstehen Empfehlungen.</li>
+</ul>
+<p>Wenn Sie die Fotoaktion für Gäste als Leistung für Ihre Brautpaare interessiert, haben wir einen eigenen Bereich für Dienstleister eingerichtet: <a href="/pro">Time to Flash Ihren Brautpaaren anbieten</a>. Und um Ihr Geschäft aufzustellen, lesen Sie auch <a href="/journal/devenir-wedding-planner-outils">Hochzeitsplaner werden: Gründung, Ausbildung und Tools</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Welche Leistungen bietet ein Hochzeitsplaner?',
+        a: 'Meist drei Pakete: die Komplettplanung (vom Budget bis zum Hochzeitstag), die Teilplanung (ein Teil der Dienstleister plus Koordination) und die Tagesbegleitung, die in Wirklichkeit ein bis drei Monate vorher beginnt. Viele ergänzen das um Zusatzleistungen wie Gestaltung, Papeterie, Gästemanagement oder Unterkunft.',
+      },
+      {
+        q: 'Welche Zusatzleistungen kann ein Weddingplaner anbieten?',
+        a: 'Am häufigsten sind Gestaltung und Deko-Konzept, Papeterie, Gästemanagement, Unterkunft und Shuttles, die freie Trauung, Programm und Fotoaktion für die Gäste, der Brunch am nächsten Tag und die Nachbereitung. Wichtig ist, die Leistungen zu wählen, die zu Ihrer Spezialisierung passen, und sie zu Paketen zu bündeln.',
+      },
+      {
+        q: 'Was kostet eine Tagesbegleitung durch einen Hochzeitsplaner?',
+        a: 'Übliche Spannen in Deutschland liegen 2026 bei etwa 1.000 bis 2.500 €, im Premiumsegment auch darüber. Der Preis hängt von Region, Gästezahl und der enthaltenen Vorbereitungszeit ab.',
+      },
+      {
+        q: 'Wie kann sich ein Hochzeitsplaner von der Konkurrenz abheben?',
+        a: 'Mit einer klaren Spezialisierung, einer sichtbaren Methode (Zeitplan, Ablaufplan, Dienstleister-Infoblatt), einem Erlebnis, von dem die Gäste erzählen, und Präsenz nach der Hochzeit. Eine konkrete Vorführung beim Termin überzeugt mehr als eine Liste von Leistungen.',
+      },
+      {
+        q: 'Darf ein Hochzeitsplaner Unterkünfte für die Gäste verkaufen?',
+        a: 'Er kann Konditionen verhandeln und die Buchungen koordinieren. Verkauft er dagegen selbst Transport und Unterkunft als Paket zu einem Gesamtpreis, kann das als Pauschalreise gelten, mit den Pflichten eines Reiseveranstalters wie der Insolvenzabsicherung. Lassen Sie das prüfen, bevor Sie solche Leistungen berechnen.',
+      },
+    ],
+  },
+  // DE : « Hochzeitsplaner werden », « Weddingplaner werden », « Hochzeitsplaner
+  // Ausbildung », « Hochzeitsplaner Software ». Google.de (10/10/2026) :
+  // Gründungsratgeber (selbststaendigkeit.de, gruenderplattform.de, sevdesk)
+  // mit Gewerbeanmeldung, IHK-Pflichtmitgliedschaft, Fragebogen zur steuerlichen
+  // Erfassung (ELSTER), keine geschützte Ausbildung, IHK-Zertifikatslehrgänge
+  // (z. B. IHK Köln), Fernlehrgänge, Veranstaltungskaufleute, Eventmanagement.
+  // Angepasst : micro-entreprise → Einzelunternehmen + Kleinunternehmerregelung
+  // (25.000 / 100.000 € seit 2025), Atout France → Pauschalreiserecht,
+  // facturation électronique → E-Rechnung (Empfang seit 01/01/2025, nur B2B,
+  // Kleinunternehmer vom Ausstellen ausgenommen), RNCP/CPF → IHK-Zertifikat,
+  // ZFU-Zulassung, Bildungsgutschein. Tools : französische Tools ersetzt durch
+  // Lexware Office, sevDesk ; Anolla und folk gestrichen. Keine Preise.
+  'devenir-wedding-planner-outils': {
+    title: 'Hochzeitsplaner werden: Gründung, Ausbildung und Tools 2026',
+    excerpt: 'Gewerbe, Ausbildung, Netzwerk, erste Kunden und Preise: So werden Sie Hochzeitsplaner in Deutschland. Dazu der Werkzeugkasten 2026, nach Einsatz sortiert.',
+    caption: 'Ein Arbeitsplatz zu Hause am Abend: ein aufgeklappter Laptop mit einem Zeitplan, Stoffmuster und ein Terminkalender',
+    body: `
+<p>Hochzeitsplaner werden: Das reizt viele, aus guten Gründen. Ein greifbarer Beruf, viel Kontakt mit Menschen und die Genugtuung, wenn ein Tag so abläuft wie geplant. Es ist aber auch ein Beruf für Selbstständige, saisonal, in dem man von seinen Kontakten lebt und davon, Dutzende Details gleichzeitig im Blick zu behalten.</p>
+<p>Dieser Leitfaden zeigt die Schritte für den Start in Deutschland (Gründung, Ausbildung, Netzwerk, erste Kunden, Preise) und danach den Werkzeugkasten eines Weddingplaners 2026, sortiert nach Einsatzzweck. Alle genannten Tools gibt es wirklich, wir haben sie im Oktober 2026 geprüft; Preise nennen wir nicht, weil sie sich zu oft ändern.</p>
+
+<h2>Hochzeitsplaner werden: wie der Beruf wirklich aussieht</h2>
+<p>Ein Hochzeitsplaner verkauft drei Dinge: Zeit (die das Brautpaar nicht hat), ein Netzwerk (verlässliche Dienstleister zu ausgehandelten Konditionen) und Nervenstärke (am Hochzeitstag kümmert er sich um den Regen, den verspäteten Caterer und den Onkel, der zwanzig Minuten reden will).</p>
+<p>Ein paar Tatsachen, die Sie vor dem Start kennen sollten:</p>
+<ul>
+<li><strong>Die Saison ist kurz.</strong> Die meisten Hochzeiten finden zwischen Mai und September statt, vor allem samstags. Wie viele Hochzeiten Sie im Jahr betreuen können, begrenzt also der Kalender, nicht nur Ihre Energie.</li>
+<li><strong>Die Arbeit passiert vor allem vorher.</strong> Besichtigungen, Termine, Angebote, Nachfassen: Der Hochzeitstag ist nur der sichtbare Teil.</li>
+<li><strong>Kunden buchen lange im Voraus.</strong> Für eine Komplettplanung oft 12 bis 18 Monate vor dem Termin. Ihr erstes Jahr dient zu einem großen Teil dazu, das nächste zu füllen.</li>
+<li><strong>Jeder Kunde ist neu.</strong> Man heiratet selten zweimal mit demselben Planer: Ihr Geschäft lebt von Empfehlungen und Sichtbarkeit.</li>
+</ul>
+
+<h3>Die Fähigkeiten, auf die es ankommt</h3>
+<ul>
+<li><strong>Organisation</strong>, natürlich: mehrere Hochzeiten parallel führen, jede mit eigenen Fristen, ohne etwas zu vergessen.</li>
+<li><strong>Verhandlungsgeschick</strong>: einen besseren Preis, eine Stunde mehr, ein Entgegenkommen erreichen, ohne die Beziehung zum Dienstleister zu belasten.</li>
+<li><strong>Serviceorientierung</strong>: Brautpaare schreiben Ihnen am Sonntagabend. Setzen Sie einen Rahmen, ohne distanziert zu wirken.</li>
+<li><strong>Ruhe</strong>: Am Hochzeitstag gibt Ihr Gesicht den Ton an. Wenn Sie in Panik geraten, geraten alle in Panik.</li>
+<li><strong>Ein Mindestmaß an Geschmack und visueller Bildung</strong>, auch wenn Sie keine Gestaltung anbieten: Das Paar wird Sie zu allem nach Ihrer Meinung fragen.</li>
+<li><strong>Führerschein und körperliche Ausdauer</strong>: Hochzeitstage dauern oft mehr als fünfzehn Stunden, im Stehen.</li>
+</ul>
+
+<h2>Gründung: Gewerbe, Finanzamt und Kleinunternehmerregelung</h2>
+<p>Als Hochzeitsplaner betreiben Sie in aller Regel ein <strong>Gewerbe</strong>. Die üblichen Schritte:</p>
+<ol>
+<li><strong>Gewerbeanmeldung</strong> beim Gewerbeamt Ihrer Stadt oder Gemeinde, gegen eine Gebühr, die je nach Ort unterschiedlich ist. Viele Kommunen bieten das inzwischen online an.</li>
+<li><strong>Fragebogen zur steuerlichen Erfassung</strong> beim Finanzamt, online über ELSTER. Danach erhalten Sie Ihre Steuernummer für die Rechnungen.</li>
+<li><strong>IHK-Mitgliedschaft</strong>: Mit der Gewerbeanmeldung werden Sie automatisch Mitglied der Industrie- und Handelskammer. Die IHK ist auch eine gute erste Anlaufstelle für Gründungsberatung.</li>
+</ol>
+<p>Die meisten starten als <strong>Einzelunternehmen</strong>, oft mit der <strong>Kleinunternehmerregelung</strong>: Sie weisen keine Umsatzsteuer aus, was Ihre Preise für Privatkunden attraktiver macht und die Buchhaltung vereinfacht. Seit 2025 gelten dafür 25.000&nbsp;€ Umsatz im Vorjahr und 100.000&nbsp;€ im laufenden Jahr; prüfen Sie die aktuellen Grenzen bei Finanzamt oder IHK. Der Haken: Sie können sich die Vorsteuer nicht erstatten lassen, was ins Gewicht fällt, wenn Sie viel Deko kaufen oder mieten.</p>
+<p>Wächst das Geschäft, lohnt sich ein Gespräch mit einer Steuerberaterin oder einem Steuerberater über die Umsatzsteuerpflicht und später über eine GmbH oder UG (Haftungsbeschränkung, Mitarbeitende). Gewerbesteuer fällt bei Einzelunternehmen erst oberhalb eines Freibetrags an.</p>
+<p><strong>Fünf Punkte, die Sie nicht vergessen sollten:</strong></p>
+<ul>
+<li><strong>Eine Betriebshaftpflichtversicherung.</strong> Sie ist nicht vorgeschrieben, aber Locations und Kunden fragen danach, und ein Schaden am Hochzeitstag kann teuer werden.</li>
+<li><strong>Die Krankenversicherung.</strong> Als Selbstständige kümmern Sie sich selbst darum, ob gesetzlich oder privat. Planen Sie den Beitrag von Anfang an in Ihre Preise ein.</li>
+<li><strong>Solide Allgemeine Geschäftsbedingungen und Verträge</strong>: Anzahlung, Zahlungsplan, Stornierung, Verschiebung, genauer Umfang jedes Pakets.</li>
+<li><strong>Das Pauschalreiserecht.</strong> Wenn Sie selbst Transport und Unterkunft als Paket zu einem Gesamtpreis verkaufen (Hochzeit im Ausland, Wochenende für die Gäste), können Sie als Reiseveranstalter gelten, mit Pflichten wie der Insolvenzabsicherung. Informieren Sie sich, bevor Sie so etwas anbieten.</li>
+<li><strong>Die E-Rechnung.</strong> Seit dem 1. Januar 2025 müssen alle Unternehmen in Deutschland elektronische Rechnungen empfangen können. Die Pflicht zum Ausstellen wird bis Ende 2027 schrittweise eingeführt, gilt aber nur zwischen Unternehmen: Rechnungen an Brautpaare als Privatpersonen sind nicht betroffen, und Kleinunternehmer sind vom Ausstellen ausgenommen. Wählen Sie trotzdem ein Rechnungsprogramm, das E-Rechnungen beherrscht.</li>
+</ul>
+
+<h2>Hochzeitsplaner Ausbildung: nützlich, aber keine Pflicht</h2>
+<p>Hochzeitsplaner ist kein geschützter Beruf, eine bestimmte Ausbildung ist nicht vorgeschrieben. Eine Weiterbildung lohnt sich trotzdem aus drei Gründen: Sie lernen die Methode (Budget, Zeitplan, Verträge), Sie treffen Profis, und Sie geben den ersten Kunden Sicherheit.</p>
+<p>Die häufigsten Wege:</p>
+<ul>
+<li><strong>IHK-Zertifikatslehrgänge</strong>: Mehrere IHKs bieten berufsbegleitende Lehrgänge zur Hochzeitsplanerin oder zum Hochzeitsplaner an, mit Inhalten von der Gründung über Kalkulation bis zur Zusammenarbeit mit Dienstleistern.</li>
+<li><strong>Fernlehrgänge und private Akademien</strong> für Hochzeits- und Eventplanung. Achten Sie bei Fernlehrgängen auf die Zulassung durch die Staatliche Zentralstelle für Fernunterricht (ZFU). Wer arbeitssuchend ist, kann unter Umständen einen Bildungsgutschein der Agentur für Arbeit nutzen, wenn der Kurs dafür zertifiziert ist.</li>
+<li><strong>Allgemeine Wege ins Eventgeschäft</strong>: die Ausbildung zur Veranstaltungskauffrau oder zum Veranstaltungskaufmann, ein Studium im Eventmanagement, manchmal mit Schwerpunkt Hochzeiten.</li>
+<li><strong>Assistenz</strong>: eine oder zwei Saisons als Assistentin oder Assistent eines etablierten Planers. Oft die lehrreichste Ausbildung, und die beste fürs Netzwerk.</li>
+</ul>
+<p>Vorsicht bei Kurzkursen, die versprechen, Sie „in wenigen Wochen zum Weddingplaner“ zu machen, mit einem hauseigenen Zertifikat. Verlangen Sie den ausführlichen Lehrplan, fragen Sie nach dem Hintergrund der Dozenten und sprechen Sie mit ehemaligen Teilnehmenden.</p>
+
+<h2>Ein Netzwerk aus Dienstleistern aufbauen</h2>
+<p>Ihre Kontakte sind Ihr wichtigstes Kapital. Sie entstehen Dienstleister für Dienstleister:</p>
+<ul>
+<li><strong>Zuerst die Locations.</strong> Sie sehen die Brautpaare als Erste. Besichtigen Sie sie, stellen Sie sich vor, bitten Sie darum, auf ihre Empfehlungsliste zu kommen.</li>
+<li><strong>Ein oder zwei Dienstleister pro Kategorie</strong> (Catering, Fotografie, Floristik, DJ, Verleih), jeweils mit einer Alternative. Testen Sie sie, wenn es geht: ein Essen beim Caterer, ein Abend mit dem DJ.</li>
+<li><strong>Ein Infoblatt pro Dienstleister</strong>: Richtpreise, Konditionen, Vorlaufzeiten, was er gut kann und was nicht.</li>
+<li><strong>Austausch in beide Richtungen.</strong> Empfehlen Sie Ihre Partner, schicken Sie ihnen die Fotos gemeinsamer Hochzeiten, nennen Sie sie in Ihren Kanälen. Ein Netzwerk, das nur in eine Richtung funktioniert, erschöpft sich schnell.</li>
+</ul>
+
+<h2>Die ersten Kunden finden</h2>
+<p>Ohne Portfolio ist es schwer zu überzeugen. Die klassischen Wege, eines aufzubauen:</p>
+<ul>
+<li><strong>Ein Styled Shoot</strong> mit Partnern: eine Location, eine Deko, ein Fotograf, ein Model-Paar. Alle bekommen Bilder.</li>
+<li><strong>Hochzeiten im Freundeskreis</strong> zum reduzierten Preis, wenn Sie sie wie echte Aufträge behandeln (Vertrag, Ablaufplan, Fotos).</li>
+<li><strong>Assistenzeinsätze</strong> bei einem etablierten Planer, mit seinem Einverständnis, Ihre Arbeit zu zeigen.</li>
+</ul>
+<p>Danach kommen die Kanäle zur Kundengewinnung (Partner-Locations, Instagram, Google, Verzeichnisse, Messen). Wir beschreiben sie mit einem 90-Tage-Plan in <a href="/journal/trouver-clients-wedding-planner">wie Sie als Hochzeitsplaner Kunden gewinnen</a>.</p>
+
+<h2>Was Sie berechnen können</h2>
+<p>Die Preise schwanken stark nach Region, Erfahrung und Positionierung. Diese Spannen findet man 2026 am häufigsten auf den Websites von Hochzeitsplanern und in Ratgebern:</p>
+<table>
+<thead><tr><th>Paket</th><th>Einsteiger</th><th>Erfahren</th></tr></thead>
+<tbody>
+<tr><td>Tagesbegleitung</td><td>Etwa 1.000 bis 1.500&nbsp;€</td><td>Etwa 1.500 bis 2.500&nbsp;€</td></tr>
+<tr><td>Teilplanung</td><td>Etwa 1.500 bis 2.500&nbsp;€</td><td>Etwa 2.500 bis 4.000&nbsp;€ und mehr</td></tr>
+<tr><td>Komplettplanung</td><td>Etwa 3.000 bis 5.000&nbsp;€</td><td>Etwa 5.000 bis 8.000&nbsp;€, im Luxussegment deutlich mehr</td></tr>
+</tbody>
+</table>
+<p>Für Ihre eigenen Preise gehen Sie von Ihren Stunden aus. Notieren Sie bei Ihren ersten Hochzeiten die tatsächlich aufgewendete Zeit (Termine, Fahrten und E-Mails eingeschlossen), ziehen Sie Kosten, Steuern und Versicherungen ab und schauen Sie, was pro Stunde übrig bleibt. Bei einer ersten Komplettplanung liegt der echte Stundensatz oft weit unter dem, was man sich vorgestellt hat: Besser, Sie merken das früh.</p>
+<p>Pauschalen sind verbreiteter als ein Prozentsatz vom Budget. Sie sind für das Paar leichter zu verstehen und schützen Sie, wenn das Budget unterwegs schrumpft. Um Ihr Angebot über die drei Pakete hinaus zu erweitern, lesen Sie <a href="/journal/services-wedding-planner">die 12 Zusatzleistungen für Hochzeitsplaner</a>.</p>
+
+<h2>Hochzeitsplaner Tools: der Werkzeugkasten 2026 nach Einsatz</h2>
+<p>Für den Start brauchen Sie keine zehn Abos. Eine Tabelle, ein geteilter Kalender und ein Rechnungsprogramm reichen für die ersten Hochzeiten. Hier die Tools, die man bei Hochzeitsplanern am häufigsten sieht, sortiert nach Einsatz, damit Sie wählen können, wenn der Bedarf da ist.</p>
+
+<h3>Projektmanagement und Zeitplanung</h3>
+<p>Jede Hochzeit ist ein Projekt über mehrere Monate mit Dutzenden Aufgaben und Fristen. Allgemeine Tools erledigen das sehr gut:</p>
+<ul>
+<li><strong>Trello</strong>: Boards mit Karten, schnell gelernt. Eine Spalte pro Zeitraum (12 Monate vorher, 6 Monate vorher, 1 Monat vorher), eine Karte pro Aufgabe.</li>
+<li><strong>Notion</strong>: sehr flexibel, Sie können eine Datenbank pro Hochzeit anlegen (Zeitplan, Dienstleister, Budget, Gäste). Braucht etwas Einrichtungszeit.</li>
+<li><strong>Asana, ClickUp, monday.com</strong>: strukturierter, nützlich, wenn Sie im Team arbeiten.</li>
+<li><strong>Google Sheets oder Airtable</strong>: für alle, die in Tabellen denken. Airtable ergänzt eine Datenbank um Ansichten (Kalender, Galerie).</li>
+</ul>
+<p>Für das Gerüst selbst nehmen Sie unseren <a href="/journal/retroplanning-mariage">Zeitplan für die Hochzeitsplanung Monat für Monat</a> und machen daraus eine wiederverwendbare Vorlage.</p>
+
+<h3>Software speziell für Hochzeitsplaner</h3>
+<p>Es gibt Programme, die eigens für Hochzeitsplaner gebaut sind und Zeitplan, Budget, Gäste, Sitzplan und Kundenportal vereinen:</p>
+<ul>
+<li><strong>Aisle Planner</strong>: sehr umfassend bei den hochzeitsspezifischen Werkzeugen (Ablaufplan, Stilguides, Sitzpläne, Gäste).</li>
+<li><strong>Planning Pod</strong>: ausgerichtet auf Eventplaner und Locations mit vielen Terminen.</li>
+<li><strong>HoneyBook und Dubsado</strong>: vor allem Kundenverwaltung (Angebote, Verträge, Zahlungen, Automatisierungen). Zum Zeitpunkt, an dem wir das schreiben, richtet sich HoneyBook an Unternehmen in den USA, Kanada, Großbritannien und Australien.</li>
+</ul>
+<p>Diese Tools sind fast alle englischsprachig und für den nordamerikanischen Markt gedacht. Prüfen Sie vor einem Abo die Sprache der Oberfläche auf Seite des Paares, ob die Rechnungen den deutschen Vorgaben entsprechen und wo die Daten gespeichert werden (Stichwort DSGVO).</p>
+
+<h3>Angebote, Rechnungen und Buchhaltung</h3>
+<ul>
+<li><strong>Lexware Office</strong> (früher lexoffice) und <strong>sevDesk</strong>: verbreitete deutsche Cloud-Programme für Angebote, Rechnungen und Buchhaltung, gedacht für Selbstständige und kleine Unternehmen.</li>
+<li><strong>DATEV</strong>: das Programm, mit dem viele Steuerberater arbeiten. Fragen Sie Ihre Kanzlei, welche Schnittstelle sie bevorzugt.</li>
+<li><strong>Yousign oder DocuSign</strong>: elektronische Signatur, praktisch für Verträge und Angebote, die aus der Ferne unterschrieben werden.</li>
+</ul>
+<p>Achten Sie wegen der E-Rechnung darauf, dass Ihr Programm Formate wie XRechnung oder ZUGFeRD empfangen und erstellen kann.</p>
+
+<h3>CRM: Anfragen nachverfolgen</h3>
+<p>Ein CRM (eine intelligente Kundenkartei) sorgt dafür, dass keine Anfrage verloren geht: wer Sie kontaktiert hat, wann, für welches Datum, woher der Kontakt kommt, wie weit das Gespräch ist.</p>
+<ul>
+<li><strong>HubSpot</strong>: Die kostenlose Version reicht für den Start völlig.</li>
+<li><strong>Pipedrive</strong>: sehr übersichtlich, nach Verkaufsphasen organisiert.</li>
+</ul>
+<p>Am Anfang tut es eine Tabelle mit einer Zeile pro Anfrage und einer Spalte „Quelle“. Wichtig ist, bei jedem Kontakt zu notieren, woher er kommt: Daran sehen Sie, wo sich Ihre Zeit lohnt.</p>
+
+<h3>Sitzpläne</h3>
+<ul>
+<li><strong>PerfectTablePlan</strong>: ein eigenes Programm, das auch große Bankette schafft.</li>
+<li><strong>Canva</strong>: für die gedruckte Version des Sitzplans, mit Vorlagen.</li>
+<li>Die eingebauten Module der Branchensoftware (zum Beispiel Aisle Planner).</li>
+</ul>
+
+<h3>Moodboards und Gestaltung</h3>
+<ul>
+<li><strong>Pinterest</strong>: die Basis, um die Wünsche des Paares zu sammeln (bitten Sie um ein geteiltes Board).</li>
+<li><strong>Milanote</strong>: freie Boards, auf denen man Bilder, Notizen und Muster mischt, ideal, um ein Gestaltungskonzept vorzustellen.</li>
+<li><strong>Canva</strong>: um Moodboards, Vorschläge und Papeterie zu gestalten.</li>
+</ul>
+
+<h3>Kommunikation mit Brautpaar und Gästen</h3>
+<ul>
+<li><strong>WhatsApp Business</strong>: Berufliches von Privatem trennen, mit Schnellantworten und Abwesenheitszeiten.</li>
+<li><strong>Calendly</strong>: Das Paar bucht einen Termin, ohne zehn Nachrichten hin und her.</li>
+<li><strong>Google Drive</strong>: ein geteilter Ordner pro Hochzeit (Verträge, Angebote, Ablaufplan).</li>
+<li><strong>Joy (withjoy)</strong> oder die Hochzeitshomepage von <strong>Bridebook</strong>: für die Website des Paares und die Rückmeldungen der Gäste.</li>
+</ul>
+
+<h3>Fertige Gäste-Aktionen</h3>
+<p>Manche Programmpunkte lassen sich wie ein Tool handhaben: in wenigen Minuten vorbereitet, ohne Techniker, und sie erweitern Ihr Angebot. Ein Beispiel ist <strong>Time to Flash</strong>, die digitale Einwegkamera auf den Handys der Gäste: ein QR-Code zum Scannen, keine App zu installieren, eine begrenzte Zahl an Fotos pro Gast und ein Album, das am nächsten Tag für alle gleichzeitig sichtbar wird. Die Druckvorlagen (Plakat, Tischaufsteller, Kärtchen) kommen fertig aus dem Dashboard, und Sie können die Fotos vor der Präsentation durchsehen. Der Preis ist eine einmalige Zahlung pro Hochzeit, zum Beispiel 34,99&nbsp;€ bis 150 Gäste.</p>
+<p>Zum Vergleich mit einer gemieteten Fotobox lesen Sie <a href="/journal/prix-photobooth-mariage">was eine Fotobox für die Hochzeit kostet</a>.</p>
+
+<h3>Der Notfallkoffer für den Hochzeitstag</h3>
+<p>Das beste Werkzeug ist oft ein gut gepackter Koffer. Bei erfahrenen Planern enthält er fast immer: Schere, doppelseitiges Klebeband, Angelschnur, Stecknadeln, Nähset, Fleckenentferner, Taschentücher, Pflaster, Schmerztabletten, Ladegeräte und Powerbank, Verlängerungskabel, Feuerzeug, Klammern, Schnur, Ersatzstrumpfhose und eine Papierversion des Ablaufplans und der Kontakte (dem Handy geht irgendwann immer der Akku aus).</p>
+
+<h2>Die Übersicht</h2>
+<table>
+<thead><tr><th>Einsatz</th><th>Für den Start</th><th>Wenn das Geschäft wächst</th></tr></thead>
+<tbody>
+<tr><td>Zeitplan und Aufgaben</td><td>Trello, Google Sheets</td><td>Notion, Asana, ClickUp, Aisle Planner</td></tr>
+<tr><td>Angebote und Rechnungen</td><td>Lexware Office, sevDesk</td><td>Dazu eine Steuerkanzlei (oft mit DATEV)</td></tr>
+<tr><td>Verträge</td><td>Unterschriebenes PDF</td><td>Yousign, DocuSign</td></tr>
+<tr><td>Anfragen nachverfolgen</td><td>Tabelle</td><td>HubSpot, Pipedrive</td></tr>
+<tr><td>Sitzplan</td><td>Canva</td><td>PerfectTablePlan, Branchensoftware</td></tr>
+<tr><td>Moodboards</td><td>Pinterest</td><td>Milanote</td></tr>
+<tr><td>Austausch mit dem Paar</td><td>WhatsApp Business, Google Drive</td><td>Calendly, Kundenportal einer Branchensoftware</td></tr>
+<tr><td>Aktion für die Gäste</td><td>Time to Flash, gemietete Fotobox</td><td>Ein Markenzeichen in all Ihren Paketen</td></tr>
+</tbody>
+</table>
+
+<h2>Typische Fehler beim Start</h2>
+<ul>
+<li><strong>Tools vor Kunden sammeln.</strong> Eine Branchensoftware füllt keinen Kalender. Fangen Sie einfach an.</li>
+<li><strong>Die eigenen Stunden unterschätzen.</strong> Notieren Sie in der ersten Saison alles, dann passen Sie Ihre Preise an echte Zahlen an.</li>
+<li><strong>Ein unklarer Umfang.</strong> „Teilplanung“ bedeutet nichts, solange die Liste der enthaltenen Dienstleister nicht schriftlich steht.</li>
+<li><strong>Verträge vernachlässigen.</strong> Anzahlung, Stornierung, Verschiebung: Diese Klauseln braucht man selten, aber wenn, dann retten sie ein Jahr.</li>
+<li><strong>Warten, bis alles perfekt ist.</strong> Ein Instagram-Konto mit drei echten Hochzeiten ist mehr wert als eine perfekte Website ohne ein einziges Foto.</li>
+</ul>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Melden Sie ein Gewerbe an, prüfen Sie die Kleinunternehmerregelung, und sorgen Sie für Versicherung und solide Verträge.</li>
+<li>Eine Ausbildung ist keine Pflicht; Assistenz ist oft die beste Schule.</li>
+<li>Bauen Sie Ihr Netzwerk auf, angefangen bei den Locations.</li>
+<li>Legen Sie Ihre Preise anhand Ihrer echten Stunden fest, als Pauschale.</li>
+<li>Eine Tabelle, ein Rechnungsprogramm und ein Kalender reichen für den Anfang; weitere Tools kommen, wenn der Bedarf da ist.</li>
+</ul>
+<p>Wenn Sie einen einfachen Programmpunkt für Ihre Pakete suchen, schauen Sie in unseren Bereich für Dienstleister: <a href="/pro">Time to Flash Ihren Brautpaaren anbieten</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Braucht man eine Ausbildung, um Hochzeitsplaner zu werden?',
+        a: 'Nein, Hochzeitsplaner ist in Deutschland kein geschützter Beruf. Eine Weiterbildung (IHK-Zertifikatslehrgang, Fernlehrgang, Ausbildung im Eventbereich oder Assistenz bei einem etablierten Planer) hilft aber, die Methode zu lernen und ersten Kunden Sicherheit zu geben. Achten Sie bei Fernlehrgängen auf die ZFU-Zulassung.',
+      },
+      {
+        q: 'Muss ich als Weddingplaner ein Gewerbe anmelden?',
+        a: 'In aller Regel ja: Die Tätigkeit gilt als Gewerbe, Sie melden sie beim Gewerbeamt Ihrer Gemeinde an und werden damit Mitglied der IHK. Beim Finanzamt füllen Sie über ELSTER den Fragebogen zur steuerlichen Erfassung aus. Viele starten als Einzelunternehmen mit der Kleinunternehmerregelung.',
+      },
+      {
+        q: 'Was verdient ein Hochzeitsplaner?',
+        a: 'Das hängt von der Zahl der Hochzeiten pro Jahr und den verkauften Paketen ab. Als Richtwert liegt eine Tagesbegleitung bei etwa 1.000 bis 2.500 € und eine Komplettplanung bei etwa 3.000 bis 8.000 €, im Luxussegment mehr. Was am Ende bleibt, hängt von Kosten, Steuern, Versicherungen und der Zeit pro Auftrag ab.',
+      },
+      {
+        q: 'Welche Software nutzen Hochzeitsplaner?',
+        a: 'Für den Start reichen ein Projekttool (Trello, Notion), eine Tabelle und ein deutsches Rechnungsprogramm wie Lexware Office oder sevDesk. Branchenlösungen wie Aisle Planner oder Planning Pod vereinen alles, sind aber vor allem für den englischsprachigen Markt gedacht: Prüfen Sie Sprache, Rechnungsstellung und Datenspeicherung.',
+      },
+      {
+        q: 'Betrifft die E-Rechnung auch Hochzeitsplaner?',
+        a: 'Ja, beim Empfang: Seit dem 1. Januar 2025 müssen alle Unternehmen elektronische Rechnungen empfangen können, etwa von Dienstleistern. Die Pflicht zum Ausstellen gilt nur zwischen Unternehmen und wird bis Ende 2027 schrittweise eingeführt; Rechnungen an Brautpaare als Privatpersonen sind nicht betroffen, und Kleinunternehmer sind ausgenommen.',
+      },
+    ],
+  },
+  // DE : « Hochzeitsplaner Kunden gewinnen », « Weddingplaner Kunden
+  // finden », « Marketing Hochzeitsplaner », « Instagram Hochzeitsplaner ».
+  // Angepasst : Mariages.net/Zankyou → WeddyPlace und Bridebook (beide in
+  // Deutschland aktiv, geprüft) ; Salon du Mariage de Paris → TrauDich!
+  // (2026 u. a. in Berlin, Köln, München, Hannover, Mainz, geprüft) und
+  // regionale Messen, meist zwischen Oktober und Februar ; RGPD → DSGVO ;
+  // Google Business Profile → Google Unternehmensprofil.
+  'trouver-clients-wedding-planner': {
+    title: 'Hochzeitsplaner Kunden gewinnen: 8 Kanäle und ein 90-Tage-Plan',
+    excerpt: 'Partner-Locations, Instagram, Google, Bewertungen, Messen, Empfehlungen: So gewinnen Sie als Hochzeitsplaner Kunden, mit einem konkreten Plan für 90 Tage.',
+    caption: 'Eine Hochzeitsplanerin fotografiert mit dem Handy eine gedeckte Tafel in einer Scheune, bevor die Gäste kommen',
+    body: `
+<p>Als Hochzeitsplaner Kunden zu gewinnen funktioniert anders als in fast jedem anderen Dienstleistungsberuf. Eine Hochzeit ist ein seltener Kauf, voller Gefühle, oft mehr als ein Jahr im Voraus entschieden und mehrere tausend Euro schwer. Niemand bucht einen Planer, dessen Arbeit er nie gesehen und von dem er nie gehört hat.</p>
+<p>Dieser Leitfaden geht die acht Kanäle durch, über die tatsächlich Brautpaare kommen, mit konkreten Schritten für jeden, und dann einen Plan für 90 Tage. Zum Schluss geht es um das, was im Termin zur Unterschrift führt: ein Argument, das das Paar woanders noch nicht gehört hat.</p>
+
+<h2>Wie Brautpaare ihren Hochzeitsplaner finden</h2>
+<p>Bevor Sie Ihre Kanäle wählen, schauen Sie sich den Weg des Paares an. Er folgt fast immer derselben Reihenfolge:</p>
+<ol>
+<li><strong>Datum und Location stehen fest.</strong> Die Location wird oft als Erstes gebucht und empfiehlt deshalb als Erste weitere Dienstleister.</li>
+<li><strong>Das Paar sucht Inspiration</strong> auf Instagram und Pinterest und folgt den ersten Konten.</li>
+<li><strong>Es tippt „Hochzeitsplaner + Stadt“</strong> bei Google ein oder stöbert in einem Hochzeitsportal.</li>
+<li><strong>Es fragt herum</strong>: Freunde, die kürzlich geheiratet haben, Trauzeugen, Kollegen.</li>
+<li><strong>Es prüft</strong>: Google-Bewertungen, Instagram-Konto, Website. An dieser Stelle verlieren viele Planer den Kontakt, ohne es zu merken.</li>
+</ol>
+<p>Daraus folgt: Sie müssen präsent sein, wenn die Location empfiehlt, wenn das Paar sucht, und vor allem, wenn es prüft.</p>
+
+<h2>Kanal 1: Partner-Locations</h2>
+<p>Der stärkste Kanal, weil die Location das Paar vor allen anderen sieht. Ein Gut mit dreißig Hochzeiten im Jahr, das Sie empfiehlt, ist eine verlässliche Quelle für Anfragen.</p>
+<p><strong>So gehen Sie vor:</strong></p>
+<ul>
+<li>Listen Sie die Locations in Ihrer Region auf, die zu Ihrer Positionierung passen (nicht alle: die, in denen Sie arbeiten möchten).</li>
+<li>Bitten Sie um eine Besichtigung und bringen Sie eine kurze Mappe mit: wer Sie sind, zwei oder drei Hochzeiten in Bildern, wie Sie mit einer Location zusammenarbeiten (Zeiten, Regeln, Material respektieren).</li>
+<li>Bieten Sie der Location etwas Konkretes an: eine Hochzeit koordinieren, bei der das Paar keinen Planer hat, bei ihrem Tag der offenen Tür dabei sein, bei ihr einen Styled Shoot für ihre eigenen Kanäle organisieren.</li>
+<li>Schicken Sie nach jeder Hochzeit dem Betreiber die schönsten Fotos (mit Zustimmung des Fotografen). So bleiben Sie am besten auf seiner Liste.</li>
+</ul>
+<p>Was Paare eine Location fragen und was eine Location deshalb von einem Planer erwartet, lesen Sie in <a href="/journal/questions-lieu-reception-mariage">den Fragen an eine Hochzeitslocation</a>.</p>
+
+<h2>Kanal 2: das Netzwerk aus Dienstleistern</h2>
+<p>Fotografen, Caterer, Floristen, DJs, Trauredner: Alle treffen Paare, die noch keinen Planer haben. Und alle arbeiten lieber mit einem Planer, der ihnen den Tag erleichtert.</p>
+<ul>
+<li><strong>Empfehlen Sie, bevor Sie fragen.</strong> Ein Dienstleister, dem Sie zwei Kunden geschickt haben, revanchiert sich.</li>
+<li><strong>Organisieren Sie einen gemeinsamen Styled Shoot</strong>: Alle bekommen Bilder für ihre Kanäle, und Sie werden zu der Person, die zusammenbringt.</li>
+<li><strong>Seien Sie der Dienstleister, mit dem man gern arbeitet</strong>: ein klares Infoblatt vorab, ein eingeplantes Essen, eingehaltene Zeiten. Fotografen und DJs reden miteinander.</li>
+</ul>
+
+<h2>Kanal 3: Hochzeitsportale und Verzeichnisse</h2>
+<p>Portale wie WeddyPlace und Bridebook sowie regionale Verzeichnisse werden von vielen Paaren auf der Suche besucht. Ein Basiseintrag ist oft kostenlos, hervorgehobene Platzierungen kosten Geld.</p>
+<ul>
+<li><strong>Pflegen Sie den kostenlosen Eintrag</strong>, bevor Sie irgendetwas bezahlen: echte Fotos, eine genaue Beschreibung (Region, Spezialisierung, Pakete, „ab“-Preise), schnelle Antworten auf Anfragen.</li>
+<li><strong>Antworten Sie schnell.</strong> Paare schreiben oft mehrere Planer gleichzeitig an: Wer zuerst mit einem Terminvorschlag antwortet, hat einen klaren Vorteil.</li>
+<li><strong>Sammeln Sie Bewertungen auch auf dem Portal</strong>, nicht nur bei Google.</li>
+<li><strong>Testen Sie eine bezahlte Option eine Saison lang</strong> und notieren Sie die Quelle jeder Anfrage. Dann wissen Sie, ob sie sich rechnet.</li>
+</ul>
+
+<h2>Kanal 4: Hochzeitsmessen</h2>
+<p>Hochzeitsmessen finden meist zwischen Herbst und Frühjahr statt. Neben regionalen Messen tourt zum Beispiel die TrauDich! durch mehrere Großstädte, darunter Berlin, Köln, München und Hannover. Ein Stand kostet viel, an Geld und an Wochenenden: Er will vorbereitet sein.</p>
+<ul>
+<li><strong>Ein Stand, der zeigt statt stapelt.</strong> Eine Tafel, gedeckt wie auf einer echten Hochzeit, ein Bildschirm mit Ihren Arbeiten, eine Vorführung, die man erleben kann.</li>
+<li><strong>Ein Kontaktformular</strong> mit Datum und Ort der Hochzeit und der ausdrücklichen Einwilligung, kontaktiert zu werden (das verlangt die DSGVO, die europäische Datenschutz-Grundverordnung).</li>
+<li><strong>Nachfassen innerhalb von 48 Stunden</strong>, persönlich, mit Bezug auf das Gespräch am Stand.</li>
+<li><strong>Besuchen Sie, bevor Sie ausstellen</strong>: Ein Tag als Besucher zeigt Ihnen, ob die Messe Ihre Kundschaft anzieht.</li>
+</ul>
+
+<h2>Kanal 5: Instagram und Pinterest</h2>
+<h3>Instagram für Hochzeitsplaner</h3>
+<p>Instagram ist Ihr Portfolio: Die meisten Paare schauen dort vorbei, bevor sie Ihnen schreiben. Ein paar Regeln, die viel ändern:</p>
+<ul>
+<li><strong>Eine Bio, die in drei Sekunden antwortet</strong>: Beruf, Region, Spezialisierung, Kontaktlink. „Hochzeitsplanerin in Hamburg, Hochzeiten im Grünen, Tagesbegleitung und Komplettplanung“.</li>
+<li><strong>Story-Highlights, aufgebaut wie eine Website</strong>: Hochzeiten, Pakete, Bewertungen, hinter den Kulissen, „so arbeite ich“.</li>
+<li><strong>Einblicke hinter die Kulissen, nicht nur perfekte Bilder.</strong> Der Aufbau um 8&nbsp;Uhr, der Zeitplan, die Technikbesichtigung, der Notfallkoffer: Das zeigt Paaren, wie es ist, mit Ihnen zu arbeiten.</li>
+<li><strong>Kurze Videos (Reels)</strong>: ein Vorher-nachher vom Aufbau, ein Hochzeitstag in 30 Sekunden, ein Fehler, den man vermeiden sollte. Damit entdecken Sie Konten, die Ihnen noch nicht folgen.</li>
+<li><strong>Markieren Sie Location und Dienstleister</strong> in jedem Beitrag und schlagen Sie ihnen einen Collab-Beitrag vor: Ihr Inhalt erscheint dann auch bei ihnen.</li>
+<li><strong>Regelmäßigkeit zählt mehr als Häufigkeit.</strong> Zwei oder drei Beiträge pro Woche über ein Jahr sind mehr wert als ein Monat täglich und danach drei Monate Funkstille.</li>
+</ul>
+<h3>Pinterest</h3>
+<p>Pinterest funktioniert wie eine visuelle Suchmaschine: Ein Pin kann monate- oder sogar jahrelang Besucher bringen, während ein Instagram-Beitrag nach wenigen Tagen verpufft. Legen Sie Boards nach Themen an (Boho-Deko, Winterhochzeit, freie Trauung) und verlinken Sie jeden Pin auf die passende Seite Ihrer Website.</p>
+
+<h2>Kanal 6: Google Unternehmensprofil und Bewertungen</h2>
+<p>Wenn Paare „Hochzeitsplaner“ und eine Stadt eingeben, zeigt Google oft eine Karte mit drei Unternehmenseinträgen vor den Websites. In diesen drei Einträgen zu stehen ist einer der rentabelsten Hebel, und er ist kostenlos.</p>
+<ul>
+<li><strong>Legen Sie Ihr Google Unternehmensprofil an und bestätigen Sie es</strong>, mit der passendsten Kategorie, Ihrem Einsatzgebiet und Ihren Terminzeiten.</li>
+<li><strong>Laden Sie regelmäßig Fotos hoch</strong>, mit Beschreibungen, die Locations und Orte nennen.</li>
+<li><strong>Bitten Sie jedes Paar um eine Bewertung</strong>, mit einem direkten Link. Ratgeber nennen oft rund zehn ausführliche Bewertungen als Schwelle, ab der ein Profil wirklich Vertrauen weckt.</li>
+<li><strong>Antworten Sie auf alle Bewertungen</strong>, auch auf negative, ruhig und mit Fakten.</li>
+</ul>
+<p><strong>Der richtige Moment für die Bitte um eine Bewertung:</strong> wenn die Gefühle noch da sind, das Paar aber wieder durchgeatmet hat. Oft werden die zwei bis drei Wochen nach der Hochzeit genannt. Weiter unten kommen wir auf einen noch besseren Moment.</p>
+
+<h2>Kanal 7: Ihre Website und lokales SEO</h2>
+<p>Ihre Website hat zwei Aufgaben: Paare beruhigen, die prüfen, und bei Google gefunden werden.</p>
+<ul>
+<li><strong>Eine Seite pro Region oder Location</strong>, in der Sie oft arbeiten: „Hochzeitsplaner am Bodensee“, „Hochzeit auf Schloss X“. Mit echten Fotos und echtem Text, keine Kopie der Startseite.</li>
+<li><strong>Eine Seite mit Paketen und „ab“-Preisen.</strong> Paare, die keine Preisgrößenordnung sehen, gehen oft zu dem, der eine nennt.</li>
+<li><strong>Hilfreiche Artikel</strong>, die die Fragen von Paaren beantworten: Zeitplan, Budget, Tagesablauf, die schönsten Locations Ihrer Region. Solche Inhalte werden geteilt, bei Google gefunden und beweisen Ihre Erfahrung schon vor dem Termin.</li>
+<li><strong>Ein kurzes Formular</strong>: Datum, Location (oder Region), Gästezahl, gewünschtes Paket, wie man auf Sie aufmerksam wurde.</li>
+</ul>
+
+<h2>Kanal 8: Mundpropaganda und Empfehlungen</h2>
+<p>Trauzeugen und Gäste einer gelungenen Hochzeit sind Ihre künftigen Kunden oder kennen sie. Diesen Kanal kann man anstoßen:</p>
+<ul>
+<li><strong>Seien Sie am Hochzeitstag erkennbar</strong>: eine Visitenkarte an der Garderobe, Ihr Name im Programmheft, eine Erwähnung durch den DJ, wenn er die Dienstleister vorstellt.</li>
+<li><strong>Bleiben Sie mit dem Paar in Kontakt</strong>: eine Nachricht, wenn die Gästefotos sichtbar werden, eine Karte zum ersten Hochzeitstag.</li>
+<li><strong>Bedanken Sie sich für Empfehlungen</strong>: ein paar Zeilen, ein Geschenk, eine Geste für Paare, die Ihnen ein anderes Paar schicken.</li>
+</ul>
+
+<h2>Der erste Termin: ein Ablauf in fünf Schritten</h2>
+<p>Alle Kanäle oben führen an denselben Ort: einen Termin, per Video oder bei einem Kaffee. Dort entscheidet sich alles, und viele Planer gehen ohne Plan hinein.</p>
+<ol>
+<li><strong>Zuerst zuhören.</strong> Lassen Sie das Paar von seiner Traumhochzeit erzählen, von Sorgen und von dem, was schon gebucht ist. Machen Sie Notizen, fragen Sie so viel nach den Gästen wie nach der Deko.</li>
+<li><strong>Zusammenfassen.</strong> „Wenn ich es zusammenfasse: eine Hochzeit auf dem Land, 120 Gäste, viele Kinder, und Ihre größte Sorge ist die Logistik der Anfahrt.“ Das Paar fühlt sich verstanden, und Sie prüfen, ob Sie richtig zugehört haben.</li>
+<li><strong>Ihre Methode zeigen</strong>, mit echten Unterlagen: ein Zeitplan, ein Ablaufplan, ein Dienstleister-Infoblatt einer früheren Hochzeit (anonymisiert).</li>
+<li><strong>Etwas erleben lassen</strong>: ein Gegenstand, eine Vorführung, etwas, das das Paar bei anderen nicht gesehen hat (dazu gleich mehr).</li>
+<li><strong>Die nächsten Schritte festlegen</strong>: ein Datum für das Angebot, ein Termin für den Rückruf. Ein Gespräch, das mit „wir hören voneinander“ endet, wird selten zum Vertrag.</li>
+</ol>
+
+<h2>Das Argument, das im Termin überzeugt</h2>
+<p>Beim ersten Termin hat das Paar oft schon zwei oder drei Planer gesehen. Alle haben über Budget, Zeitplan und verlässliche Dienstleister gesprochen. Den Unterschied macht etwas, das es nirgendwo sonst gesehen hat und sofort ausprobieren kann.</p>
+<p>Ein paar Beispiele: ein gedrucktes Ablaufheft einer echten Hochzeit, ein Tischmodell, ein Erlebnis für die Gäste. Zum Beispiel die digitale Einwegkamera auf den Handys der Gäste: Sie reichen einen QR-Code, das Paar scannt ihn, und sein Handy wird zur Einwegkamera mit wenigen gezählten Aufnahmen, ohne etwas zu installieren. In dreißig Sekunden stellt es sich vor, wie seine Gäste das auf der Hochzeit machen. Genau das bietet <a href="/appareil-jetable-mariage">Time to Flash</a>, und das Argument ergänzt den Fotografen, statt ihm Konkurrenz zu machen.</p>
+<p>Diese Aktion hat für Sie noch einen weniger sichtbaren Vorteil: <strong>Das Album der Gäste wird am nächsten Tag präsentiert</strong> (oder zu dem Zeitpunkt, den Sie bestimmen). Ein idealer Anlass, sich beim Paar wieder zu melden:</p>
+<ul>
+<li>Am Morgen der Präsentation eine kurze Nachricht: „Die Fotos Ihrer Gäste sind jetzt sichtbar, schauen Sie rein!“</li>
+<li>Das Paar sieht seinen Abend durch die Augen der Gäste, oft sehr bewegt.</li>
+<li>Ein paar Tage später, wenn es alles angeschaut hat, schicken Sie den Link für eine Bewertung. Die Hochzeit ist noch frisch, und das Paar hat einen Grund, Ihnen zu danken.</li>
+</ul>
+<p>Das ist der Unterschied zwischen einem Dienstleister, der am Sonntagmorgen verschwunden ist, und einem Planer, der das Paar bis zum Schluss begleitet. Mehr zu diesem Moment lesen Sie in <a href="/journal/revelation-photos-lendemain-mariage">der Präsentation der Fotos am nächsten Tag</a>, und für weitere Leistungen, mit denen Sie sich abheben, in <a href="/journal/services-wedding-planner">den 12 Zusatzleistungen für Hochzeitsplaner</a>.</p>
+
+<h2>Der Plan für 90 Tage</h2>
+<p>Hier ein realistischer Plan für einen Planer, der startet oder sein Geschäft neu ankurbeln will, mit ein paar Stunden pro Woche.</p>
+<table>
+<thead><tr><th>Zeitraum</th><th>Maßnahmen</th><th>Erwartetes Ergebnis</th></tr></thead>
+<tbody>
+<tr><td><strong>Woche 1 und 2</strong></td><td>Spezialisierung und Region festlegen. Google Unternehmensprofil anlegen oder überarbeiten. Instagram-Bio und Story-Highlights neu schreiben. Eine einseitige Vorstellungsmappe vorbereiten.</td><td>Eine Grundlage, die beim Prüfen überzeugt</td></tr>
+<tr><td><strong>Woche 3 und 4</strong></td><td>15 Locations und 15 Dienstleister als Ziel auflisten. Alle bisherigen Paare um eine Bewertung bitten. Eine Seite mit Paketen und „ab“-Preisen veröffentlichen.</td><td>Erste Bewertungen, fertige Akquiseliste</td></tr>
+<tr><td><strong>Monat 2</strong></td><td>2 oder 3 Locations pro Woche besuchen. Einen Styled Shoot mit Partnern organisieren. 2 oder 3 Beiträge pro Woche auf Instagram, davon mindestens ein kurzes Video. Kostenlose Einträge in ein oder zwei Portalen anlegen.</td><td>Erste Partnerschaften, neue Inhalte</td></tr>
+<tr><td><strong>Monat 3</strong></td><td>Den Styled Shoot mit allen Partnern markiert veröffentlichen. Zwei hilfreiche Artikel auf Ihrer Website schreiben (Tagesablauf, Locations Ihrer Region). Bei den besuchten Locations mit Fotos nachfassen. Ihre Vorführung für den Termin vorbereiten.</td><td>Erste Anfragen über Partner und Google</td></tr>
+</tbody>
+</table>
+<p>Notieren Sie in diesen 90 Tagen bei jeder Anfrage die Quelle. Nach drei Monaten wissen Sie, welche Kanäle Ihre Zeit verdienen und welche Sie aufgeben.</p>
+
+<h2>Die Kennzahlen, die Sie verfolgen sollten</h2>
+<ul>
+<li><strong>Die Zahl der Anfragen pro Monat</strong> und ihre Quelle.</li>
+<li><strong>Die Terminquote</strong>: wie viele Anfragen zu einem Termin werden. Ist sie niedrig, arbeiten Sie an Antwortzeit und Antwortstil.</li>
+<li><strong>Die Abschlussquote</strong>: wie viele Termine zu einem Vertrag werden. Ist sie niedrig, arbeiten Sie an Ihrem Argument im Termin und an den angezeigten Preisen.</li>
+<li><strong>Die Zahl der Bewertungen</strong> und wie frisch sie sind: Eine aktuelle Bewertung beruhigt mehr als eine von vor drei Jahren.</li>
+</ul>
+
+<h2>Fehler, die Kunden kosten</h2>
+<ul>
+<li><strong>Nach drei Tagen antworten.</strong> Dann hat das Paar oft schon einen Termin woanders.</li>
+<li><strong>Überall ein bisschen sein.</strong> Lieber zwei gut gepflegte Kanäle als sechs verwaiste.</li>
+<li><strong>Fotos ohne Zusammenhang.</strong> Nennen Sie Location, Jahreszeit, Gästezahl und was Sie gemacht haben: So kann sich das Paar besser hineinversetzen.</li>
+<li><strong>Frühere Paare vergessen.</strong> Sie sind Ihre besten Verkäufer, wenn Sie ihnen einen Grund geben, über Sie zu sprechen.</li>
+</ul>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Partner-Locations und Dienstleister sind Ihr erster Kanal: besuchen, empfehlen, Fotos teilen.</li>
+<li>Instagram und Google zählen vor allem, wenn das Paar prüft: Pflegen Sie Bio, Profil und Bewertungen.</li>
+<li>Ein Plan über 90 Tage und die Quelle jeder Anfrage notiert, dann wissen Sie, wo sich Ihre Zeit lohnt.</li>
+<li>Zeigen Sie im Termin ein Erlebnis, das das Paar woanders nicht gesehen hat, und sorgen Sie für einen Anlass, sich nach der Hochzeit wieder zu melden.</li>
+</ul>
+<p>Wenn Sie die Vorführung der Einwegkamera als Argument im Termin anspricht, schauen Sie in unseren Bereich für Dienstleister: <a href="/pro">Time to Flash Ihren Brautpaaren anbieten</a>. Und um Ihr Geschäft aufzustellen, lesen Sie auch <a href="/journal/devenir-wedding-planner-outils">Hochzeitsplaner werden: Gründung, Ausbildung und Tools</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Wie finde ich als Hochzeitsplaner meine ersten Kunden?',
+        a: 'Bauen Sie zuerst ein Portfolio auf (Styled Shoot mit Partnern, Hochzeiten im Freundeskreis wie echte Aufträge behandelt) und sprechen Sie dann die Locations Ihrer Region an. Ein gepflegtes Google Unternehmensprofil und ein paar ausführliche Bewertungen beruhigen Paare, die Sie gerade entdecken.',
+      },
+      {
+        q: 'Ist Instagram für Hochzeitsplaner unverzichtbar?',
+        a: 'Es ist das Standard-Portfolio geworden: Die meisten Paare schauen sich das Instagram-Konto eines Planers an, bevor sie Kontakt aufnehmen. Eine klare Bio, geordnete Story-Highlights und regelmäßige Einblicke hinter die Kulissen zählen mehr als viele Follower.',
+      },
+      {
+        q: 'Lohnt sich ein Stand auf einer Hochzeitsmesse?',
+        a: 'Eine Messe kann viele Kontakte bringen, aber ein Stand kostet viel Geld und Zeit. Besuchen Sie die Messe zuerst als Gast, bereiten Sie einen Stand vor, der Ihre Arbeit zeigt, und fassen Sie bei jedem Kontakt innerhalb von 48 Stunden nach, mit seiner Einwilligung.',
+      },
+      {
+        q: 'Wann sollte ich das Brautpaar um eine Bewertung bitten?',
+        a: 'Wenn die Gefühle noch frisch sind, das Paar aber wieder durchgeatmet hat, oft in den zwei bis drei Wochen nach der Hochzeit. Die Präsentation der Gästefotos am nächsten Tag oder ein paar Tage später ist ebenfalls ein sehr guter Anlass, sich wieder zu melden.',
+      },
+      {
+        q: 'Wie lange dauert es, bis Anfragen kommen?',
+        a: 'Paare buchen oft 12 bis 18 Monate vor ihrem Termin, die Arbeit einer Saison füllt also vor allem die nächste. Mit einem konsequent verfolgten 90-Tage-Plan sehen Sie in der Regel die ersten Anfragen über Partner und Google und wissen, welche Kanäle Sie behalten.',
+      },
+    ],
+  },
+  // DE : « Tagesablauf Hochzeit », « Ablaufplan Hochzeit », « Hochzeit Ablauf »,
+  // « Zeitplan Hochzeitstag Vorlage ». Google.de (10/10/2026) : Bridebook
+  // (Hochzeitsprogramm, Sektempfang 30 bis 60 Min nach der Trauung), Vorlagen
+  // bei Jotform, ClickUp, Gumroad ; kaum vollständige Tabellen mit Uhrzeiten.
+  // Angepasst an deutsche Gewohnheiten : Trauung an der Location (freie Trauung
+  // oder Außentrauort des Standesamts), Gratulationen und Sektempfang, Kaffee
+  // und Kuchen mit Hochzeitstorte, Abendessen ab 19 Uhr, Eröffnungstanz nach
+  // dem Essen, Mitternachtssnack, Brautstraußwurf, Katerfrühstück. Varianten :
+  // Standesamt am Vormittag, Standesamt am Vortag, kirchliche Trauung (Kirchen
+  // setzen in der Regel die standesamtliche Trauung voraus), Winter. Anrede Sie.
+  'deroule-jour-j-mariage': {
+    title: 'Tagesablauf Hochzeit: der Ablaufplan Stunde für Stunde',
+    excerpt: 'Ein Tagesablauf für die Hochzeit von 9 Uhr bis in die Nacht, mit Varianten (Standesamt, Kirche, Winter), Puffern und dem Infoblatt für die Dienstleister.',
+    caption: 'Ein Ablaufplan für den Hochzeitstag, mit Klebeband an eine Küchentür geklebt, im Blitzlicht während einer Hochzeit',
+    body: `
+<p>Ein guter Tagesablauf für die Hochzeit sorgt dafür, dass Sie Ihren Tag erleben, statt ihn zu managen. Er ist eine Tabelle Stunde für Stunde, die alle Dienstleister kennen, und sagt, wer was wo und wann macht, vom Make-up am Morgen bis zum letzten Taxi.</p>
+<p>Hier finden Sie eine vollständige Vorlage von 9&nbsp;Uhr bis in die Nacht für eine typische Hochzeit in Deutschland: Trauung, Sektempfang, Kaffee und Kuchen, Abendessen, Eröffnungstanz und Party. Danach die Varianten (Standesamt am Vormittag, kirchliche Trauung, Winterhochzeit, Brunch am nächsten Tag), die Puffer, die Sie einplanen sollten, wer den Ablauf in der Hand hält, und das Infoblatt für die Dienstleister. Die Vorlage eignet sich auch für Hochzeitsplaner, die ein Gerüst zum Anpassen suchen.</p>
+
+<h2>Der Ablaufplan für die Hochzeit: Wo fangen Sie an?</h2>
+<p>Ein Ablaufplan entsteht rückwärts, von drei festen Punkten aus:</p>
+<ul>
+<li><strong>Die Uhrzeit der Trauung.</strong> Beim Standesamt legt meist das Amt die verfügbaren Termine fest, oft mit wenigen Samstagsterminen. Das ist der am wenigsten verhandelbare Punkt des Tages.</li>
+<li><strong>Der Sonnenuntergang</strong>, wenn Sie Paarfotos im schönsten Licht möchten. Im Juni geht die Sonne in Deutschland je nach Region zwischen etwa 21:15 Uhr im Süden und 22 Uhr im Norden unter, Anfang Oktober gegen 19 Uhr.</li>
+<li><strong>Das Ende, das die Location vorgibt</strong> (und der Vertrag mit dem DJ). Viele Locations erlauben Musik draußen nur bis 22 Uhr und haben eine feste Endzeit für drinnen.</li>
+</ul>
+<p>Zwischen diese Punkte setzen Sie die wichtigen Momente, dann ergänzen Sie Fahrten und Puffer. Diese Arbeit beginnt einige Wochen vor der Hochzeit und gehört zu den letzten Schritten <a href="/journal/retroplanning-mariage">Ihrer Hochzeitsplanung</a>.</p>
+
+<h2>Die Vorlage: Tagesablauf der Hochzeit Stunde für Stunde</h2>
+<p>Annahme: eine Hochzeit an einem Samstag im Juni, 100 Gäste, Trauung um 14&nbsp;Uhr direkt an der Location (eine freie Trauung oder die standesamtliche Trauung, wenn die Location ein Außentrauort des Standesamts ist), danach Sektempfang, Kaffee und Kuchen, Abendessen und Party am selben Ort.</p>
+<table>
+<thead><tr><th>Uhrzeit</th><th>Was passiert</th><th>Wer ist beteiligt</th></tr></thead>
+<tbody>
+<tr><td><strong>9:00</strong></td><td>Frühstück, Beginn von Frisur und Make-up (zuerst Trauzeugen und Familie, das Brautpaar zuletzt)</td><td>Brautpaar, Trauzeugen, Friseurin, Visagistin</td></tr>
+<tr><td><strong>9:30</strong></td><td>Hochzeitsplaner oder Koordinatorin trifft an der Location ein, empfängt Floristik und Deko</td><td>Koordination, Floristik, Location</td></tr>
+<tr><td><strong>10:30</strong></td><td>Brautstrauß und Anstecker werden an beide Getting-Ready-Orte geliefert</td><td>Floristik, Trauzeugen</td></tr>
+<tr><td><strong>11:00</strong></td><td>Fotograf kommt zum Getting Ready (Details, Kleid, Ringe, Stimmung)</td><td>Fotograf</td></tr>
+<tr><td><strong>12:00</strong></td><td>Leichtes Mittagessen für alle beim Getting Ready (niemand sollte mit leerem Magen zur Trauung)</td><td>Brautpaar, Familie</td></tr>
+<tr><td><strong>12:30</strong></td><td>Das Brautpaar zieht sich an</td><td>Brautpaar, Trauzeugen, Fotograf</td></tr>
+<tr><td><strong>13:00</strong></td><td>First Look und erste Paarfotos, wenn Sie möchten</td><td>Brautpaar, Fotograf</td></tr>
+<tr><td><strong>13:30</strong></td><td>Ankunft der Gäste, Wasser und Erfrischungen zur Begrüßung</td><td>Gäste, Trauzeugen, Service</td></tr>
+<tr><td><strong>13:50</strong></td><td>Gäste nehmen Platz, Programmhefte, Musik zum Ankommen</td><td>Gäste, Koordination, Musiker</td></tr>
+<tr><td><strong>14:00</strong></td><td>Trauung (standesamtlich oft 20 bis 30 Minuten, freie Trauung meist 30 bis 45 Minuten)</td><td>Brautpaar, Standesbeamtin oder Trauredner, Mitwirkende</td></tr>
+<tr><td><strong>14:45</strong></td><td>Auszug, Spalier, Konfetti oder Seifenblasen, ein Gruppenfoto mit allen Gästen</td><td>Alle, Fotograf</td></tr>
+<tr><td><strong>15:00</strong></td><td>Sektempfang und Gratulationen (bei 100 Gästen dauert allein das Gratulieren gut eine halbe Stunde)</td><td>Alle, Service</td></tr>
+<tr><td><strong>15:15</strong></td><td>Die QR-Code-Plakate der Fotoaktion stehen (Bar, Stehtische, Eingang), DJ oder Trauzeugen sagen sie an</td><td>Koordination, DJ oder Trauzeugen</td></tr>
+<tr><td><strong>15:45</strong></td><td>Gruppenfotos (Familie, Freunde, Kollegen), Liste vorher vorbereitet</td><td>Fotograf, ein Trauzeuge, der die Gruppen aufruft</td></tr>
+<tr><td><strong>16:15</strong></td><td>Kaffee und Kuchen, Anschneiden der Hochzeitstorte</td><td>Alle, Konditorei, Service</td></tr>
+<tr><td><strong>17:15</strong></td><td>Paarshooting (30 bis 45 Minuten)</td><td>Brautpaar, Fotograf</td></tr>
+<tr><td><strong>18:00</strong></td><td>Zeit für die Gäste: Rasenspiele, Getränke, Kinderprogramm</td><td>Alle</td></tr>
+<tr><td><strong>18:45</strong></td><td>Die Gäste gehen in den Saal und suchen ihren Platz</td><td>Gäste, Koordination, Service</td></tr>
+<tr><td><strong>19:00</strong></td><td>Einzug des Brautpaars, kurze Begrüßung</td><td>Brautpaar, DJ</td></tr>
+<tr><td><strong>19:15</strong></td><td>Vorspeise</td><td>Catering</td></tr>
+<tr><td><strong>19:45</strong></td><td>Erste Reden (Trauzeugen, Eltern), zwischen zwei Gängen</td><td>Trauzeugen, Eltern, DJ</td></tr>
+<tr><td><strong>20:15</strong></td><td>Hauptgang oder Eröffnung des Buffets</td><td>Catering</td></tr>
+<tr><td><strong>21:15</strong></td><td>Eine Viertelstunde Paarfotos draußen im Abendlicht</td><td>Brautpaar, Fotograf</td></tr>
+<tr><td><strong>21:30</strong></td><td>Dessert, danach ein oder zwei Programmpunkte der Trauzeugen (kurz halten)</td><td>Catering, Trauzeugen</td></tr>
+<tr><td><strong>22:15</strong></td><td>Eröffnungstanz</td><td>Brautpaar, DJ</td></tr>
+<tr><td><strong>22:30</strong></td><td>Party. Der Fotograf geht oft kurz nach dem Eröffnungstanz: Ab hier übernehmen die Fotos der Gäste</td><td>Alle</td></tr>
+<tr><td><strong>23:30</strong></td><td>Brautstraußwurf</td><td>Brautpaar, DJ</td></tr>
+<tr><td><strong>0:00</strong></td><td>Mitternachtssnack (Currywurst, Gulaschsuppe, Brezeln)</td><td>Catering</td></tr>
+<tr><td><strong>2:00</strong></td><td>Letzte Lieder, je nach vereinbarter Endzeit</td><td>DJ</td></tr>
+<tr><td><strong>2:30</strong></td><td>Taxis und Shuttles, die Location schließt</td><td>Gäste, Location, Fahrer</td></tr>
+<tr><td><strong>Am nächsten Tag</strong></td><td>Katerfrühstück oder Brunch (zum Beispiel von 11 bis 14 Uhr) und Präsentation des Fotoalbums der Gäste</td><td>Brautpaar, enge Gäste</td></tr>
+</tbody>
+</table>
+<p>Diese Tabelle ist eine Grundlage. Die genauen Zeiten hängen von Standesamt, Entfernungen und Catering ab: Fragen Sie Ihren Caterer nach der echten Servierzeit für sein Menü, sie ist oft der Grund, warum ein Abend aus dem Takt gerät. Die Torte wird übrigens nicht überall zum Kaffee angeschnitten; manche Paare heben sie für den Abend auf, direkt nach dem Dessert oder zu Mitternacht.</p>
+
+<h2>Drei Momente, die Sie nicht verpassen sollten</h2>
+<h3>Die Ansage der Fotoaktion beim Sektempfang</h3>
+<p>Der Sektempfang ist der beste Moment, um eine Fotoaktion zu starten: Die Gäste haben die Hände frei, sie warten auf das Brautpaar, und das Licht ist noch schön. Wenn Sie mit einem QR-Code arbeiten (geteilte Galerie oder digitale Einwegkamera wie <a href="/appareil-jetable-mariage">Time to Flash</a>), müssen die Plakate stehen, wenn die Gäste aus der Trauung kommen, und jemand muss die Aktion in der ersten Viertelstunde ansagen. Ohne Ansage wird ein Plakat allein selten gescannt. Wo Sie es am besten platzieren, lesen Sie in <a href="/journal/ou-poser-le-qr-code">wo der QR-Code hingehört</a>, und ein Plakat erstellen Sie kostenlos mit unserem <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator</a>.</p>
+
+<h3>Die Gruppenfotos</h3>
+<p>Dieser Programmpunkt läuft am häufigsten über. Bereiten Sie eine kurze Liste vor (höchstens zehn Gruppen) und geben Sie sie dem Fotografen und einem Trauzeugen, der beide Familien kennt und die Gruppen aufruft. Die Details stehen in <a href="/journal/photos-de-groupe-mariage">so gelingen die Gruppenfotos</a>.</p>
+
+<h3>Die Präsentation des Albums am nächsten Tag</h3>
+<p>Wenn die Fotos Ihrer Gäste bis zum nächsten Tag verborgen bleiben, wird ihre Präsentation zu einem zweiten Höhepunkt, am besten beim Brunch oder am späten Vormittag. Alle sehen den Abend gleichzeitig durch die Augen der anderen, und Sie bestimmen den Zeitpunkt. Mehr dazu in <a href="/journal/revelation-photos-lendemain-mariage">der Präsentation der Fotos am nächsten Tag</a>.</p>
+
+<h2>Die Varianten des Ablaufs</h2>
+<h3>Standesamt am Vormittag, Feier am selben Tag</h3>
+<p>Ein Klassiker in Deutschland: Trauung im Standesamt gegen 11 Uhr, Sektempfang direkt davor (oft mit Kollegen, Nachbarn und Freunden, die nur dazu kommen), dann Fahrt zur Location. Kaffee und Kuchen gegen 15 Uhr, Abendessen ab 18:30 Uhr, danach wie in der Vorlage. Planen Sie zwischen Standesamt und Location genug Zeit ein, damit das Brautpaar kurz durchatmen und Paarfotos machen kann.</p>
+
+<h3>Standesamt am Vortag</h3>
+<p>Immer mehr Paare heiraten freitags standesamtlich im kleinen Kreis und behalten den Samstag für die freie Trauung und das Fest. Der Samstag kann dann später beginnen: Getting Ready ab 11 Uhr, freie Trauung um 15 oder 16 Uhr, und der Rest entsprechend verschoben (Kaffee und Kuchen wird dann oft kürzer oder fällt zugunsten eines längeren Sektempfangs weg).</p>
+
+<h3>Kirchliche Trauung</h3>
+<p>Die großen Kirchen trauen in der Regel nur Paare, die bereits standesamtlich verheiratet sind. Den Termin legen Sie mit dem Pfarramt fest, oft viele Monate im Voraus. Ein evangelischer Traugottesdienst dauert meist 45 bis 60 Minuten, eine katholische Trauung mit Messe länger. Rechnen Sie die Fahrt von der Kirche zur Location ein, mit Autokorso und Parken.</p>
+
+<h3>Winterhochzeit</h3>
+<p>Im Dezember geht die Sonne gegen 16:30 Uhr unter. Ziehen Sie alles vor, was Licht braucht: Paarfotos vor der Trauung (mit einem First Look am Vormittag), Gruppenfotos direkt nach der Trauung, notfalls drinnen. Der Sektempfang findet im Warmen statt, oft kürzer, Kaffee und Kuchen wird gemütlich, und das Abendessen kann früher beginnen, gegen 18 Uhr. Denken Sie an eine Garderobe und Decken für die Wege.</p>
+
+<h3>Der Brunch am nächsten Tag</h3>
+<p>Ein großzügiges Zeitfenster (zum Beispiel 11 bis 14 Uhr) lässt alle in ihrem Tempo ankommen. Sorgen Sie für ein, zwei ruhige Tische für die Müdesten, Platz für die Kinder und einen Moment für die Präsentation der Gästefotos: Alle sind da, das Handy in der Hand, um sie gemeinsam anzuschauen.</p>
+
+<h2>Am Vorabend und am Morgen: Was fertig sein muss</h2>
+<p>Ein Ablauf, der am Hochzeitstag hält, wird am Vorabend vorbereitet. Prüfen Sie vor dem Schlafengehen diese Punkte:</p>
+<ul>
+<li><strong>Die Deko ist aufgebaut</strong> oder zumindest an der Location, mit einer Person, die sich am Morgen um den Aufbau kümmert.</li>
+<li><strong>Die Probe der freien Trauung</strong> ist mit allen Mitwirkenden gemacht: wer wann einzieht, wer was liest, wer wo steht.</li>
+<li><strong>Die Ringe</strong> sind einem Trauzeugen anvertraut, nicht in der Tasche des Brautpaars.</li>
+<li><strong>Die Umschläge für Dienstleister</strong>, die am Hochzeitstag bezahlt werden, sind vorbereitet und mit einer Liste der Koordination übergeben.</li>
+<li><strong>Plakate und Aufsteller</strong> (Sitzplan, QR-Code der Fotoaktion, Beschilderung) liegen in einer beschrifteten Kiste.</li>
+<li><strong>Ein Notfallset</strong>: Stecknadeln, Nähset, Taschentücher, Pflaster, Schmerztabletten, Ladegerät, Fleckenentferner.</li>
+<li><strong>Der Ablaufplan ist ausgedruckt</strong>, mehrfach: Koordination, Trauzeugen, Catering, DJ.</li>
+</ul>
+
+<h2>Kinder im Tagesablauf</h2>
+<p>Mit vielen Kindern braucht die Vorlage ein paar Anpassungen. Lassen Sie ihr Essen früher servieren (gegen 18:30 Uhr, während die Erwachsenen noch draußen sind), planen Sie ab 21 Uhr eine Kinderbetreuung oder eine ruhige Ecke mit Kissen und Film ein, und sagen Sie den Eltern, ab wann die Kleinsten schlafen gehen können, wenn die Location Zimmer hat. Kinder sind übrigens hervorragende Fotografen: Bei einer Fotoaktion per QR-Code machen sie mit dem Handy eines Elternteils mit wie die Großen.</p>
+
+<h2>Der Plan B bei Regen</h2>
+<p>Ein Plan B wird nicht am Morgen improvisiert. Schreiben Sie in den Ablauf: den Ausweichort für die freie Trauung und den Sektempfang, wer entscheidet, und bis wann (oft am Vorabend oder morgens gegen 10 Uhr, damit Location und Catering umplanen können). Denken Sie auch an Regenschirme für den Auszug und die Gruppenfotos: Ein durchsichtiger Schirm ergibt sehr schöne Regenfotos.</p>
+
+<h2>Die Puffer, die Sie einplanen sollten</h2>
+<p>Ein Ablauf ohne Puffer gerät spätestens nach der Trauung aus dem Takt. Diese Momente dauern fast immer länger als geplant:</p>
+<table>
+<thead><tr><th>Moment</th><th>Geplante Dauer</th><th>Empfohlener Puffer</th></tr></thead>
+<tbody>
+<tr><td>Frisur und Make-up</td><td>45 Min pro Person</td><td>+ 30 Min insgesamt</td></tr>
+<tr><td>Fahrten zwischen zwei Orten</td><td>Zeit laut Navi</td><td>+ 15 Min (Autokorso, Parken)</td></tr>
+<tr><td>Gratulationen nach der Trauung</td><td>30 Min bei 100 Gästen</td><td>+ 15 Min (alle wollen umarmen)</td></tr>
+<tr><td>Gruppenfotos</td><td>30 Min</td><td>+ 15 Min</td></tr>
+<tr><td>Wechsel vom Sektempfang in den Saal</td><td>15 Min</td><td>+ 15 Min</td></tr>
+<tr><td>Reden</td><td>3 bis 5 Min pro Rede</td><td>Lieber die Zahl begrenzen als die Länge</td></tr>
+<tr><td>Servieren eines Gangs</td><td>Je nach Catering</td><td>Nach der echten Zeit fragen</td></tr>
+</tbody>
+</table>
+<p>Ein Tipp: Legen Sie nicht alle Puffer ans Ende. Setzen Sie nach jedem riskanten Moment einen kleinen, damit sich eine Verspätung nicht über den ganzen Abend zieht.</p>
+
+<h2>Wer den Ablauf in der Hand hält</h2>
+<p><strong>Nicht Sie.</strong> Am Hochzeitstag sollten Sie nicht auf die Uhr schauen. Drei Möglichkeiten:</p>
+<ul>
+<li><strong>Ein Hochzeitsplaner oder eine Tagesbegleitung</strong>: Das ist ihr Beruf, sie kennen die Dienstleister und sehen Verspätungen kommen.</li>
+<li><strong>Ein Trauzeuge oder eine gut organisierte Person aus dem Umfeld</strong>, die einen Teil des Tages ein Auge auf die Uhr hat. Wählen Sie jemanden ohne andere große Aufgabe (Rede, Lesung, Programmpunkt).</li>
+<li><strong>DJ und Bankettleitung der Location</strong> für den Abend: Sie geben dem Essen und den Reden den Takt vor. Sie müssen denselben Ablaufplan haben wie alle anderen.</li>
+</ul>
+<p>In jedem Fall trifft eine einzige Person die Entscheidungen, wenn etwas schiefgeht (Regen, Verspätung, ein Gang, der auf sich warten lässt). Die Dienstleister müssen wissen, wer das ist.</p>
+
+<h2>Das Infoblatt für die Dienstleister</h2>
+<p>Der komplette Ablaufplan ist für die Person, die koordiniert. Jeder Dienstleister braucht ein einseitiges Infoblatt mit dem, was ihn betrifft. Schicken Sie es zwei Wochen vor der Hochzeit und bestätigen Sie es in der Hochzeitswoche per Nachricht.</p>
+<p><strong>Was auf das Infoblatt gehört:</strong></p>
+<ul>
+<li>Die genauen Adressen (Getting Ready, Standesamt oder Kirche, Location) und Zufahrten (Parkplatz, Lieferanteneingang, Torcode).</li>
+<li>Der Kontakt der koordinierenden Person und ein Notfallkontakt.</li>
+<li>Ankunft, Aufbau und Abbau dieses Dienstleisters.</li>
+<li>Die wichtigen Momente, die ihn betreffen (Einzug des Brautpaars, Reden, Eröffnungstanz, Torte).</li>
+<li>Der Plan B bei Regen.</li>
+<li>Das Essen für ihn und wann er es bekommt.</li>
+<li>Für den Fotografen: die Liste der Gruppenfotos und der wichtigen Personen, die nicht fehlen dürfen.</li>
+<li>Für den DJ: die Musik der wichtigen Momente, die Liste der Reden und die Ansagen (darunter die Fotoaktion beim Sektempfang).</li>
+</ul>
+<p>Für Ihre Gäste reicht eine noch kürzere Version: Uhrzeiten und Adressen, auf der Hochzeitshomepage oder in einer Nachricht. Den Text dafür haben wir in <a href="/journal/brief-invites">der Gäste-Info</a> vorbereitet.</p>
+
+<h2>Die klassischen Fehler</h2>
+<ul>
+<li><strong>Zu viele Reden und Spiele.</strong> Ab vier oder fünf Reden schaltet der Saal ab, und lange Hochzeitsspiele bremsen den Abend. Verteilen Sie die Reden zwischen den Gängen und halten Sie die Spiele kurz.</li>
+<li><strong>Das Essen vergessen.</strong> Das Brautpaar wird oft das ganze Abendessen über angesprochen. Bitten Sie das Catering, Sie zuerst zu bedienen, und schützen Sie diesen Moment.</li>
+<li><strong>Ein Sektempfang ohne Sie.</strong> Wenn Gruppen- und Paarfotos den ganzen Sektempfang füllen, sehen Sie Ihre Gäste nicht. Begrenzen Sie sie.</li>
+<li><strong>Kein Plan B bei Regen.</strong> Er gehört in den Ablaufplan, mit der Uhrzeit, bis zu der entschieden wird.</li>
+<li><strong>Ein Ablauf, den nur das Brautpaar kennt.</strong> Wenn er nicht mit jedem Dienstleister geteilt wird, nützt er nichts.</li>
+</ul>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Gehen Sie von den festen Punkten aus (Trauung, Sonnenuntergang, Endzeit) und planen Sie rückwärts.</li>
+<li>Setzen Sie nach jedem riskanten Moment einen Puffer.</li>
+<li>Geben Sie den Ablauf jemand anderem in die Hand und schicken Sie jedem Dienstleister zwei Wochen vorher ein einseitiges Infoblatt.</li>
+<li>Planen Sie die Ansage der Fotoaktion beim Sektempfang ein und die Präsentation des Albums am nächsten Tag.</li>
+</ul>
+<p>Für die Fotoaktion können Sie <a href="/create">Ihr Time to Flash Album erstellen</a> (kostenlos bis 5 Gäste, für einen Test mit Ihren Trauzeugen). Und wenn Sie Hochzeitsplaner sind und diese Aktion Ihren Brautpaaren anbieten möchten, finden Sie alles im <a href="/pro">Bereich für Dienstleister</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Wie erstelle ich den Tagesablauf für unsere Hochzeit?',
+        a: 'Gehen Sie von den festen Punkten aus: der Uhrzeit der Trauung, dem Sonnenuntergang, wenn Sie Paarfotos im schönsten Licht möchten, und der Endzeit der Location. Setzen Sie dann die wichtigen Momente (Sektempfang, Kaffee und Kuchen, Abendessen, Eröffnungstanz), ergänzen Sie die Fahrten und planen Sie nach jedem riskanten Moment einen Puffer ein.',
+      },
+      {
+        q: 'Wie lange dauert ein Sektempfang nach der Trauung?',
+        a: 'Meist zwischen 30 Minuten und einer Stunde, mit Gratulationen und Gruppenfotos auch länger. Bei 100 Gästen braucht allein das Gratulieren gut eine halbe Stunde. Folgt direkt Kaffee und Kuchen, darf der Sektempfang kürzer sein.',
+      },
+      {
+        q: 'Wann ist der Eröffnungstanz?',
+        a: 'In Deutschland meist nach dem Abendessen, oft zwischen 21:30 und 22:30 Uhr, und er eröffnet die Party. Manche Paare tanzen direkt nach ihrem Einzug in den Saal. Wichtig ist, dass DJ und Fotograf die Uhrzeit kennen.',
+      },
+      {
+        q: 'Wer sollte am Hochzeitstag den Ablauf in der Hand halten?',
+        a: 'Ein Hochzeitsplaner oder eine Tagesbegleitung, sonst ein gut organisierter Trauzeuge ohne andere große Aufgabe. Das Brautpaar sollte nicht auf die Uhr schauen müssen, und die Dienstleister sollten wissen, wer bei Unvorhergesehenem entscheidet.',
+      },
+      {
+        q: 'Wann schicke ich den Ablaufplan an die Dienstleister?',
+        a: 'Etwa zwei Wochen vor der Hochzeit, als einseitiges Infoblatt pro Dienstleister mit Adressen, Kontakten, seinen Zeiten und den Momenten, die ihn betreffen. In der Hochzeitswoche bestätigen Sie es noch einmal per Nachricht.',
+      },
+      {
+        q: 'Wann kündige ich die Fotoaktion für die Gäste an?',
+        a: 'Zu Beginn des Sektempfangs, in der ersten Viertelstunde: Die Gäste haben die Hände frei und warten auf das Brautpaar. Die QR-Code-Plakate sollten stehen, wenn die Gäste aus der Trauung kommen, und DJ oder Trauzeugen sagen die Aktion am Mikrofon an.',
+      },
+    ],
+  },
+}

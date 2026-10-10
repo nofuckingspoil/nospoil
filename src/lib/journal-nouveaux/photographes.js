@@ -1413,4 +1413,692 @@ export const POSTS_EN = {
   },
 }
 
-export const POSTS_DE = {}
+export const POSTS_DE = {
+  // DE : « Hochzeitsfotograf Gästefotos », « Hochzeitsfotograf Handy Gäste »,
+  // « Hochzeitsfotograf Paket Ideen ». Google.de (10/10/2026) : Ratgeber für
+  // Gäste (Canon, Macwelt), Artikel über Handys auf dem Mittelgang, Hinweise
+  // von Pfarrern. Nichts aus Sicht des Fotografen : Gästefotos als
+  // Verkaufsargument. Angepasst : Sektempfang, Hochzeitstanz, KUG/DSGVO.
+  'photographe-mariage-photos-invites': {
+    title: 'Hochzeitsfotograf und Gästefotos: Verbündete statt Konkurrenz',
+    excerpt: 'Die Handys der Gäste sind keine Konkurrenz für Hochzeitsfotografen. Wer was fotografiert, wie Sie Gästefotos ins Paket holen und was Sie davon haben.',
+    caption: 'Ein Gast fotografiert eine Hochzeitstafel mit Blitz, während der Fotograf im Hintergrund des Saals arbeitet',
+    body: `
+<p>Als Hochzeitsfotograf kennen Sie die Szene: Die Braut kommt herein, und zwischen Ihnen und dem Mittelgang steht plötzlich eine Wand aus ausgestreckten Armen und hochgehaltenen Handys. Da liegt der Schluss nahe, dass die Fotos der Gäste Ihre Konkurrenz geworden sind. Das Gegenteil stimmt. Mit klaren Regeln werden Gästefotos zum Verkaufsargument, zu einem Service für Ihre Brautpaare und zu einer Quelle für Blicke hinter die Kulissen, die Sie selbst für Ihr Marketing nutzen können. Dieser Artikel zeigt, warum das so ist, und vor allem, wie Sie Gästefotos in Ihr Angebot einbauen, ohne bei der Qualität Ihrer eigenen Arbeit Abstriche zu machen.</p>
+
+<h2>Hochzeitsfotograf und Gästefotos: warum das keine Konkurrenz ist</h2>
+<p>Fangen wir damit an, was Brautpaare eigentlich kaufen, wenn sie Sie buchen. Nicht „Fotos“: Davon haben sie ohnehin Hunderte. Sie kaufen einen Blick, den Umgang mit Licht, die Gewissheit, dass der Ringtausch scharf ist, Porträts, auf denen sie sich gefallen, Gruppenfotos, die nicht eine Stunde dauern, und eine stimmige Geschichte vom ersten bis zum letzten Moment des Tages. Das liefert kein Handy. Und auch kein Gast, selbst mit einer Kamera für 3.000&nbsp;€ um den Hals, denn er ist zum Feiern da und nicht zum Arbeiten.</p>
+<p>Was Gäste festhalten, ist etwas anderes: Nähe. Sie sitzen am hinteren Tisch, wenn der Trauzeuge seine Pointe verpatzt. Sie sind beim Getting Ready des Bräutigams dabei, das Sie vielleicht gar nicht begleiten. Sie stehen um zwei Uhr nachts auf der Tanzfläche, wenn Ihre Reportage längst zu Ende ist. Ihre Bilder sind oft unscharf, schief und falsch belichtet. Trotzdem haben sie etwas, das Ihre nicht haben: Sie wurden <em>von jemandem gemacht, den das Paar liebt</em>, mitten aus der Feier heraus.</p>
+<p>Die beiden Reportagen kommen sich nicht in die Quere. Sie ergänzen sich. Und Brautpaare wissen das: Niemand verlangt von ihnen, sich zwischen Fotograf und den Bildern ihrer Liebsten zu entscheiden. Sie wollen beides.</p>
+
+<h2>Wer was fotografiert: die Aufgabenteilung</h2>
+<p>Um mit Ihren Kunden klar darüber zu sprechen, legen Sie die Aufteilung am besten schwarz auf weiß fest.</p>
+<table>
+<thead><tr><th>Moment</th><th>Der Fotograf</th><th>Die Gäste</th></tr></thead>
+<tbody>
+<tr><td>Getting Ready</td><td>Details, Kleid, Licht, die Rührung der Eltern</td><td>Die andere Seite (das Zimmer des Bräutigams, die Fahrt im Auto)</td></tr>
+<tr><td>Trauung</td><td>Alles: Einzug, Ringtausch, Auszug</td><td>Idealerweise nichts (Unplugged-Trauung)</td></tr>
+<tr><td>Gruppenfotos</td><td>Organisation, Aufstellung, Schärfe</td><td>Nichts: Hier stören sie am meisten</td></tr>
+<tr><td>Paarshooting</td><td>Nur Sie, zur goldenen Stunde</td><td>Was währenddessen beim Sektempfang passiert</td></tr>
+<tr><td>Abendessen</td><td>Reden, Einzug, Reaktionen</td><td>Die Tische, die Lachanfälle, die Großeltern</td></tr>
+<tr><td>Hochzeitstanz</td><td>Das Foto, das bleibt</td><td>Die Gesichter der Gäste, die zuschauen</td></tr>
+<tr><td>Später Abend</td><td>Oft nicht mehr im Paket</td><td>Die Tanzfläche, die improvisierte Fotoecke, die Afterparty</td></tr>
+</tbody>
+</table>
+<p>Diese Tabelle können Sie im Vorgespräch genau so zeigen. Sie sagt etwas Einfaches: <strong>Sie fotografieren die Momente, auf die es ankommt; die Gäste fotografieren die Momente, die sonst niemand abdecken kann</strong>. Echte Überschneidungen gibt es nur an zwei Stellen, bei der Trauung und bei den Gruppenfotos, und genau dort gehören die Handys in die Tasche.</p>
+
+<h2>Das eigentliche Problem: das Chaos, nicht die Fotos</h2>
+<p>Wenn Fotografen sich über Gäste ärgern, dann fast nie, weil sie fotografieren. Sondern weil sie es überall und irgendwie tun:</p>
+<ul>
+<li>die Tante, die sich beim Einzug der Braut mitten in den Gang stellt;</li>
+<li>der Onkel, der sich bei den Gruppenfotos direkt hinter Sie stellt, sodass die halbe Familie in sein Objektiv schaut statt in Ihres;</li>
+<li>das Tablet, das beim Ringtausch über alle Köpfe gehalten wird;</li>
+<li>der Handyblitz, der genau in dem Moment auslöst, in dem Sie abdrücken, und Ihr Bild überstrahlt.</li>
+</ul>
+<p>Das sind Fragen der Regeln, nicht des Prinzips. Und sie lassen sich mit zwei Hebeln lösen: einer Unplugged-Trauung (die Handys bleiben während des Jaworts in der Tasche) und klaren Regeln für den Rest des Tages. Alle Techniken mit Formulierungen zum Kopieren finden Sie in <a href="/journal/invites-telephone-photographe-mariage">unserem Leitfaden zu Gästen mit Handy</a>.</p>
+<p>Der zweite Hebel lohnt einen genaueren Blick, denn hier werden Gästefotos vom Störfaktor zum Verbündeten. Ein Gast, dem man „verboten“ sagt, hält sich zwanzig Minuten daran und holt dann sein Handy wieder heraus. Ein Gast, dem man ein Spiel mit Regeln gibt, spielt den ganzen Abend mit.</p>
+
+<h3>Das Prinzip der Einwegkamera</h3>
+<p>Erinnern Sie sich an die Einwegkameras, die in den 1990er- und 2000er-Jahren auf den Hochzeitstischen lagen? 27 Aufnahmen, kein Display, die Fotos sah man erst nach dem Entwickeln. Niemand knipste drauflos, niemand kontrollierte seinen Bildausschnitt, niemand verbrachte den Abend mit dem Blick aufs Display. Die Idee kehrt heute als digitale Einwegkamera auf dem Handy zurück, mit Apps, die dieselben Regeln übernehmen:</p>
+<ul>
+<li><strong>eine begrenzte Zahl an Aufnahmen pro Gast</strong>: Man hebt das Handy nicht bei jeder Gelegenheit, man wählt seine Momente;</li>
+<li><strong>Fotos, die bis zur Präsentation verborgen bleiben</strong>: kein Reflex „kurz nachschauen, nochmal machen, in die Story stellen“;</li>
+<li><strong>eine gemeinsame Präsentation</strong>, oft am nächsten Tag, bei der alle das Album gleichzeitig sehen.</li>
+</ul>
+<p>Für Sie hat das handfeste Folgen: weniger Handys, die ständig in der Luft sind, weniger Gäste, die sich in den Weg stellen, um „dasselbe Foto wie der Fotograf“ zu bekommen, weniger fremde Blitze. Begrenzte Aufnahmen sind das Gegenmittel zur Handywand.</p>
+<p>Genau das macht <a href="/appareil-jetable-mariage">Time to Flash</a>, der Dienst, den wir entwickeln: Jeder Gast scannt einen QR-Code (ohne App-Installation), hat je nach Einstellung des Brautpaars 3 bis 15 Aufnahmen, und das Album wird auf einen Schlag für alle sichtbar. Wichtiger als das Werkzeug ist aber das Prinzip: Was auch immer Sie empfehlen, achten Sie auf die begrenzten Aufnahmen und die verzögerte Präsentation. Eine reine Galerie, in die jeder seine Fotos hochlädt, ändert nichts daran, wie sich die Gäste während der Feier verhalten.</p>
+
+<h2>Warum Ihre Brautpaare beides wollen</h2>
+<p>Wenn man Paaren nach ihrer Hochzeit zuhört, kommen immer wieder vier Gründe.</p>
+<h3>1. Sie wollen ihre Hochzeit mit den Augen der Gäste sehen</h3>
+<p>Am Hochzeitstag erlebt das Paar nur einen kleinen Ausschnitt seiner eigenen Feier. Glückwünsche, Fotos und Zeitplan nehmen es voll in Beschlag. Es sieht nicht, wie Tisch 8 vor Lachen nicht mehr kann, und nicht, wie die Oma zum Tanzen aufsteht. Ihre Reportage zeigt den Tag so, wie er am schönsten aussah; die Fotos der Gäste zeigen ihn so, wie er rundherum erlebt wurde. Das ist nicht dasselbe, und beides ist wertvoll. Aus Sicht des Paares erklären wir das in <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>.</p>
+<h3>2. Die Party geht weiter, wenn Sie gehen</h3>
+<p>Die meisten Pakete enden nach dem Hochzeitstanz oder nach den ersten Stunden des Abends. Die Tanzfläche lebt aber bis zum Schluss. Niemand erwartet, dass Sie bis fünf Uhr morgens bleiben; die Gäste sind ohnehin da.</p>
+<h3>3. Die Rührung eines Fotos hängt auch daran, wer es gemacht hat</h3>
+<p>Ein etwas unscharfes Foto vom besten Freund hat eine ganz eigene emotionale Kraft. „Das hat Jonas gemacht“ gehört zur Erinnerung dazu. Die Gästefotos geben dem Paar ein vielstimmiges Album, das Ihres ergänzt.</p>
+<h3>4. Sie wollen nicht warten</h3>
+<p>Ihre Galerie kommt in der Regel einige Wochen nach der Hochzeit, und das ist normal: Auswahl und Bearbeitung brauchen Zeit. In der Zwischenzeit möchte das Paar seine Feier noch einmal erleben. Das Gästealbum, das schon am nächsten Tag für alle sichtbar wird, füllt diese Lücke. Was das für Sie bedeutet, sehen wir weiter unten; ausführlich geht es darum in <a href="/journal/delai-livraison-photos-mariage">Lieferzeit für Hochzeitsfotos</a>.</p>
+
+<h2>So bauen Sie Gästefotos in Ihr Angebot ein</h2>
+<p>Es gibt drei Wege, vom einfachsten bis zum verbindlichsten. Bei keinem müssen Sie Ihre Arbeitsweise am Hochzeitstag ändern.</p>
+
+<h3>Stufe 1: der Tipp, kostenlos</h3>
+<p>Sie empfehlen eine Fotoaktion für die Gäste in Ihrem Vorbereitungsfragebogen oder im Gespräch, und das Paar organisiert sie selbst. Kosten für Sie: keine. Nutzen: Sie positionieren sich als Berater, der an den ganzen Tag denkt und nicht nur an seine eigenen Stunden. Gleichzeitig können Sie Ihre Bedingungen nennen: „Gästefotos gern, aber ab dem Abendessen; während der Trauung bitten wir alle, die Handys wegzustecken.“</p>
+
+<h3>Stufe 2: im Premium-Paket enthalten</h3>
+<p>Sie nehmen die Aktion in Ihr größtes Paket auf, neben dem zweiten Fotografen, dem Verlobungsshooting oder dem gedruckten Album. Die Kosten einer Aktion per QR-Code sind im Verhältnis zu einem Hochzeitspaket gering: Bei Time to Flash zum Beispiel ist es eine einmalige Zahlung von 29,99&nbsp;€ bis 100 Gäste und 34,99&nbsp;€ bis 150 (Preise Stand Oktober 2026). Was Sie verkaufen, ist keine technische Position, sondern ein Versprechen: <strong>„Ihre Hochzeit aus zwei Blickwinkeln erzählt: aus meinem und aus dem Ihrer Gäste.“</strong></p>
+<p>Diese Zeile hat einen seltenen Vorteil: Sie hebt Sie ab, ohne dass Sie Ihre Preise senken müssen. Wenn zwei Fotografen auf vergleichbarem Niveau im Rennen sind, gibt so ein Detail oft den Ausschlag, weil es zeigt, dass Sie an etwas gedacht haben, das der andere nicht erwähnt hat.</p>
+
+<h3>Stufe 3: als Zusatzoption</h3>
+<p>Sie bieten die Aktion gegen Aufpreis an, so wie eine zusätzliche Stunde Begleitung. Das ist am einfachsten zu erklären, hebt Sie aber am wenigsten ab: Eine Option wird verglichen, ein Versprechen im Paket kaum.</p>
+
+<h3>Wer legt das Album an, und wer verwaltet es?</h3>
+<p>Zwei Modelle funktionieren. Entweder Sie legen das Event selbst an und laden das Paar als Mitorganisatoren ein: Dann sieht das Paar die Fotos vor der Präsentation, kann störende Bilder ausblenden und bestimmt den Zeitpunkt, zu dem das Album für alle sichtbar wird. Oder das Paar legt es an und fügt Sie als Mitorganisator hinzu, wenn Sie das Album begleiten möchten. In beiden Fällen gilt eine Regel: <strong>Das Gästealbum gehört dem Brautpaar</strong>. Sie bearbeiten es nicht, Sie liefern es nicht, es ist nicht Teil Ihrer fotografischen Leistung. Schreiben Sie das in Ihren Vertrag, damit keine Missverständnisse über die erwartete Qualität entstehen.</p>
+
+<h3>Ein Satz für Ihre Preisliste</h3>
+<p>Wenn Sie eine Formulierung für Ihre Website oder Ihre Preisbroschüre suchen, hier ein Vorschlag zum Anpassen:</p>
+<p><em>„Im Paket Signature enthalten: die digitale Einwegkamera für Ihre Gäste. Jeder Gast scannt einen QR-Code und bekommt ein paar Aufnahmen für den Abend. Die Fotos bleiben bis zum nächsten Tag verborgen und werden dann auf einen Schlag für alle sichtbar. Meine Reportage erzählt Ihre Hochzeit; die Ihrer Gäste erzählt die Feier von innen.“</em></p>
+
+<h2>Was Sie wirklich davon haben</h2>
+<p>Über das Verkaufsargument hinaus erleichtern Ihnen die Gästefotos die Arbeit ganz konkret.</p>
+
+<h3>Weniger unmögliche Wünsche</h3>
+<p>Sie kennen sie: „Haben Sie kein Foto von Onkel Gerd an Tisch 8?“, „Meine Kollegen sieht man in der Galerie gar nicht“, „Meine Cousine sagt, beim Dessert gab es einen tollen Moment, haben Sie den?“. Sie können nicht überall sein, und solche Fragen hinterlassen beim Paar wie bei Ihnen einen schalen Nachgeschmack. Gibt es ein Gästealbum, ist die Antwort einfach: Die Tische und Momente, die Sie nicht begleitet haben, sind im Album der Gäste. Sie liefern Ihre Arbeit und müssen nicht rechtfertigen, was Sie nicht sehen konnten.</p>
+
+<h3>Blicke hinter die Kulissen für Ihr Marketing</h3>
+<p>Auf den Gästefotos sind oft … Sie zu sehen. Hockend im Gang, auf einem Stuhl für das Gruppenfoto, beim Versuch, die Kinder zum Lachen zu bringen. Solche Bilder sind Gold wert für Ihr Instagram oder Ihre „Über mich“-Seite: Sie zeigen, wie Sie arbeiten, was kein Portfolio erzählt. Aber Vorsicht: Am Foto hat der Gast als Fotograf das Urheberrecht, und darauf sind erkennbare Personen zu sehen. Für die Veröffentlichung gelten in Deutschland das Kunsturhebergesetz (KUG) und die DSGVO. Holen Sie vor jeder Veröffentlichung das Einverständnis des Paares ein, das des Gastes, der das Foto gemacht hat, und im Zweifel das der abgebildeten Personen. Mehr dazu in <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild bei Hochzeitsfotos</a>; bei konkreten Fragen hilft eine Rechtsberatung.</p>
+
+<h3>Früher glückliche Paare, also herzlichere Bewertungen</h3>
+<p>Der Moment, in dem ein Paar eine Bewertung schreibt, zählt. Drei Wochen nach der Hochzeit ist die Euphorie verflogen, der Alltag ist zurück. Am Tag danach dagegen schwebt das Paar noch auf der Feier. Wird das Gästealbum an diesem Tag präsentiert, erlebt das Paar als Erstes seine Hochzeit mit den Augen seiner Liebsten, und es verbindet diesen Moment mit dem Gesamterlebnis, das Sie ihm empfohlen haben. Sie können auch einen einfachen Satz in Ihre Dankesnachricht schreiben: „Viel Freude mit dem Album Ihrer Gäste, meine Galerie kommt wie besprochen in sechs Wochen.“</p>
+
+<h3>Ein Sicherheitsnetz für alles außerhalb Ihres Bildausschnitts</h3>
+<p>Während Sie das Paar zum Shooting in die Abendsonne entführen, geht der Sektempfang ohne Sie weiter. Während Sie den Akku wechseln, hält jemand eine spontane Rede. Diese Momente gehen nicht verloren. Und Sie müssen sich nicht dafür entschuldigen: Es war nicht Ihre Aufgabe, sie festzuhalten.</p>
+
+<h2>Die Einwände, und was man darauf antworten kann</h2>
+<h3>„Das wertet meine Arbeit ab“</h3>
+<p>Der Kontrast spielt für Sie. Gästefotos, mit dem Handy gemacht, mit wenigen Aufnahmen und oft mit bewusst analogem Look (Korn, Blitz, warme Farben), haben nichts von einer professionellen Reportage. Niemand verwechselt einen Blitzschnappschuss von der Tanzfläche mit Ihrem Porträt im Abendlicht. Neben dem Gästealbum wirkt Ihre Galerie noch souveräner.</p>
+<h3>„Das Paar wird mich vergleichen“</h3>
+<p>Das tut es schon, bei jeder Instagram-Story, die noch am selben Abend online geht. Der Unterschied: Mit klaren Regeln (Fotos bis zum nächsten Tag verborgen) gibt es weniger Live-Storys, also weniger spontane Vergleiche während der Feier, und mehr Bilder in Ruhe an einem Ort.</p>
+<h3>„Die Qualität der Gästefotos ist schlecht“</h3>
+<p>Ja, und darum geht es nicht. Niemand verlangt von den Gästen, Ihren Job zu machen. Ihre Fotos sind Erinnerungen, keine Lieferleistung. Dienste dieser Art speichern die Bilder übrigens oft in einer Größe für Bildschirm und kleine Abzüge (bei Time to Flash 1600 Pixel): ein Erinnerungsalbum, keine Bilddatenbank.</p>
+<h3>„Die Gäste holen dann erst recht ihr Handy raus“</h3>
+<p>Das ist die häufigste Sorge, und wenn die Regel gut erklärt ist, passiert das Gegenteil. Ein Gast, der weiß, dass er zehn Aufnahmen für den ganzen Abend hat, hebt sein Handy nicht bei den Gruppenfotos: Er spart sie für die Tanzfläche. Ein Gast, der seine Fotos nicht sehen kann, verbringt keine zehn Minuten damit, sie für seine Story zu bearbeiten. Das Spiel lenkt, was ohnehin passiert, nur eben ungeordnet.</p>
+
+<h2>Am Hochzeitstag: wie Sie und die Aktion zusammenspielen</h2>
+<p>Damit alles gut läuft, empfehlen wir diese Reihenfolge, abgestimmt mit dem Paar und, falls vorhanden, mit der Hochzeitsplanerin:</p>
+<ol>
+<li><strong>Unplugged-Trauung.</strong> Der Trauredner oder die Person, die die Trauung leitet, bittet darum, die Handys während des Jaworts wegzustecken (Text zum Kopieren in <a href="/journal/invites-telephone-photographe-mariage">unserem Leitfaden</a>).</li>
+<li><strong>Kein QR-Code am Mittelgang.</strong> Der Code steht auf den Tischen beim Essen, an der Bar, an der Tanzfläche, nicht am Eingang zur Trauung.</li>
+<li><strong>Ansage zu Beginn des Essens.</strong> Der DJ oder ein Trauzeuge stellt das Spiel vor: „Jeder von euch hat ein paar Aufnahmen, die Fotos sind morgen für alle sichtbar.“</li>
+<li><strong>Geschützte Gruppenfotos.</strong> Sie sagen an, dass das Gästealbum für die spontanen Momente da ist und niemand Ihre Gruppenfotos doppeln muss.</li>
+<li><strong>Sie arbeiten ganz normal.</strong> Die Aktion läuft von allein, ohne Fotobox, die man beaufsichtigen muss, und ohne Technik zum Aufbauen.</li>
+<li><strong>Präsentation am nächsten Tag.</strong> Das Paar und seine Gäste sehen das Album; Ihr Sneak Peek kann gleich danach kommen, Ihre komplette Galerie im vereinbarten Zeitrahmen.</li>
+</ol>
+<p>Wenn das Paar bei der Organisation unsicher ist, gibt ihm unser <a href="/journal/brief-invites">Gäste-Briefing zum Kopieren</a> die Nachrichten, die es vor der Hochzeit verschicken kann.</p>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Die Gäste machen nicht Ihren Job: Sie halten fest, was Sie nicht sehen können.</li>
+<li>Der einzige echte Konflikt entsteht bei der Trauung und den Gruppenfotos: Dort gehören die Handys weg.</li>
+<li>Für den Rest des Tages sind Regeln (begrenzte Aufnahmen, verborgene Fotos) besser als ein Verbot.</li>
+<li>Im Premium-Paket wird die Aktion zu einem Argument, das Sie abhebt, ohne Ihre Preise anzutasten.</li>
+<li>Sie erspart Ihnen unmögliche Wünsche, liefert Ihnen Bilder hinter den Kulissen und überbrückt die Wartezeit bis zu Ihrer Galerie.</li>
+</ul>
+<p>Sie möchten Time to Flash Ihren Brautpaaren anbieten? Wir bereiten ein Programm für Fotografen, Hochzeitsplaner und Locations vor: <a href="/pro">So bieten Sie Time to Flash Ihren Brautpaaren an</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Sind Gästefotos eine Konkurrenz für den Hochzeitsfotografen?',
+        a: 'Nein. Der Fotograf hält die wichtigen Momente mit professionellem Blick fest (Trauung, Porträts, Gruppen), die Gäste fotografieren, was er nicht sehen kann: die Tische, die Tanzfläche spät in der Nacht, die Momente hinter den Kulissen. Brautpaare wollen beides, und die beiden Reportagen ergänzen sich.',
+      },
+      {
+        q: 'Wie verhindert man, dass die Handys der Gäste den Fotografen stören?',
+        a: 'Bitten Sie um eine Unplugged-Trauung, angesagt vom Trauredner oder Pfarrer, und schützen Sie die Gruppenfotos. Für den Rest des Tages helfen Regeln mehr als ein Verbot: Eine Aktion mit begrenzten Aufnahmen und Fotos, die bis zum nächsten Tag verborgen bleiben, reduziert die ständig hochgehaltenen Handys deutlich.',
+      },
+      {
+        q: 'Kann ein Fotograf eine Fotoaktion für Gäste in sein Paket aufnehmen?',
+        a: 'Ja. Sie können sie kostenlos empfehlen, in Ihr Premium-Paket aufnehmen oder als Option anbieten. Eine Aktion per QR-Code kostet für eine Hochzeit höchstens einige Dutzend Euro und ist damit ein günstiges Argument, mit dem Sie sich abheben.',
+      },
+      {
+        q: 'Darf der Hochzeitsfotograf Fotos verwenden, die Gäste gemacht haben?',
+        a: 'Nur mit Einverständnis. Das Urheberrecht liegt beim Gast, der das Foto gemacht hat, und für die Veröffentlichung erkennbarer Personen gelten in Deutschland das KUG und die DSGVO. Holen Sie vor jeder Veröffentlichung auf Website oder Social Media die Zustimmung des Paares, des Gastes und im Zweifel der abgebildeten Personen ein.',
+      },
+      {
+        q: 'Welche besondere Idee kann ein Hochzeitsfotograf anbieten?',
+        a: 'Die Hochzeit aus zwei Blickwinkeln erzählen: aus Ihrem und aus dem der Gäste, dank einer digitalen Einwegkamera, deren Fotos am nächsten Tag für alle sichtbar werden. Dieses Versprechen hebt Sie von gleichwertigen Mitbewerbern ab, ohne dass Sie Ihre Preise senken, und überbrückt die Wartezeit bis zu Ihrer Galerie.',
+      },
+    ],
+  },
+  // DE : « Software für Hochzeitsfotografen », « Hochzeitsfotograf Software »,
+  // « Kundengalerie Fotograf », « CRM Fotograf ». Google.de (10/10/2026) :
+  // deutsche Seiten von Imagen und Pixpa (nur Bearbeitung oder nur CRM),
+  // Vergleiche lexoffice/sevDesk ohne Bezug zur Fotografie. Angepasst :
+  // Hochzeitsportale (Weddyplace, Bridebook), Pflichtangaben § 14 UStG,
+  // Lexware Office und sevDesk, E-Rechnung in Deutschland (Empfang seit
+  // 01.01.2025, Ausstellung B2B bis 2028, Kleinunternehmer ausgenommen,
+  // Rechnungen an Privatpersonen nicht betroffen). HoneyBook : nur USA,
+  // Kanada, UK, Australien (honeybook.com, Juli 2026).
+  'logiciel-photographe-mariage': {
+    title: 'Software für Hochzeitsfotografen: Ihr Werkzeugkasten 2026',
+    excerpt: 'CRM, Verträge, Auswahl, Bearbeitung, Galerien, Backup, Buchhaltung: die Software für Hochzeitsfotografen Schritt für Schritt, mit Übersichtstabelle.',
+    caption: 'Ein aufgeklappter Laptop auf einem vollen Schreibtisch mit Speicherkarten und Festplatten, beleuchtet von einer Schreibtischlampe',
+    body: `
+<p>Wer nach „Software für Hochzeitsfotografen“ sucht, landet schnell bei Ratgebern, in denen es nur um Bildbearbeitung geht. Dabei ist die Bearbeitung nur einer von acht Schritten. Zwischen der ersten Nachricht eines Paares und der bezahlten Schlussrechnung jongliert ein Hochzeitsfotograf mit CRM, Angeboten, Vertrag, Terminplanung, Tausenden Dateien zum Aussortieren, einer Galerie zum Ausliefern, Backups und einer Buchhaltung, für die gerade neue Regeln zur E-Rechnung gelten. Hier ist der komplette Werkzeugkasten, in der Reihenfolge, in der Sie ihn brauchen, mit den Programmen, die in der Branche tatsächlich genutzt werden, und dem, was Sie vor der Wahl wissen sollten.</p>
+<p>Ein Wort zur Methode: Wir nennen nur Programme, die es gibt, geprüft im Oktober 2026. Preise ändern sich oft und werden von amerikanischen Anbietern meist in Dollar angegeben; wir nennen sie nur, wenn wir sie prüfen konnten, mit Datum.</p>
+
+<h2>Software für Hochzeitsfotografen: die 8 Schritte</h2>
+<ol>
+<li>Akquise und Website</li>
+<li>CRM, Angebote und Verträge</li>
+<li>Terminplanung und Vorbereitung des Hochzeitstags</li>
+<li>Bildauswahl (Culling)</li>
+<li>Bildbearbeitung</li>
+<li>Galerien zur Auslieferung</li>
+<li>Datensicherung</li>
+<li>Buchhaltung und Rechnungen</li>
+</ol>
+<p>Dazu kommt ein neunter, freiwilliger Schritt, den Brautpaare immer öfter nachfragen: ein Zusatzangebot wie eine Fotoaktion für die Gäste. Dazu am Ende mehr.</p>
+<p>Vorab eine goldene Regel: <strong>weniger Programme, besser verbunden</strong>. Wer zwölf Abos stapelt, verbringt seine Abende damit, Daten von einem Programm ins andere zu kopieren. Fangen Sie bei Ihrem größten Schmerzpunkt an (oft die Auswahl oder der Papierkram), statten Sie diesen Schritt aus und erweitern Sie dann.</p>
+
+<h2>1. Akquise und Website</h2>
+<p>Paare finden Sie vor allem über drei Wege: die Google-Suche, Instagram und Pinterest sowie Hochzeitsportale. Die Werkzeuge folgen daraus.</p>
+<h3>Die Website</h3>
+<ul>
+<li><strong>Pixieset Website</strong>: der Website-Baukasten von Pixieset, praktisch, wenn Sie schon deren Galerien nutzen (alles an einem Ort).</li>
+<li><strong>Squarespace</strong> und <strong>Showit</strong>: bei Fotografen wegen ihrer gestalteten Vorlagen weit verbreitet; Showit ist vor allem bei Hochzeitsfotografen beliebt.</li>
+<li><strong>WordPress</strong>: mehr Arbeit, aber mehr Kontrolle über die Suchmaschinenoptimierung, wenn Sie bloggen wollen.</li>
+</ul>
+<p>Denken Sie bei jeder Lösung an Impressum und Datenschutzerklärung, die für eine geschäftliche Website in Deutschland Pflicht sind. Und unabhängig vom Werkzeug konvertiert immer dieselbe Seite am besten: eine klare Seite mit Paketen und Preisspanne statt eines „Kontaktieren Sie mich“, das einen Teil der Paare abschreckt.</p>
+<h3>Gefunden werden</h3>
+<ul>
+<li><strong>Ihr Google-Unternehmensprofil</strong> (Google Business Profile): kostenlos, es bringt Sie auf Google Maps und in lokale Suchen wie „Hochzeitsfotograf Leipzig“. Dort sammeln sich Bewertungen, und die haben großes Gewicht.</li>
+<li><strong>Hochzeitsportale</strong>: In Deutschland gehören Weddyplace und Bridebook zu den bekannten Plattformen, dazu kommen regionale Portale. Ein hervorgehobener Eintrag kostet Geld und bringt Anfragen, aber auch viele Paare, die vor allem Preise vergleichen.</li>
+<li><strong>Instagram und Pinterest</strong>: Pinterest wird unterschätzt; ein Paar, das Ihr Trauungsfoto merkt, bekommt es noch monatelang wieder angezeigt.</li>
+</ul>
+
+<h2>2. CRM, Angebote und Verträge</h2>
+<p>Ein CRM (Software für das Kundenmanagement) bündelt Ihre Anfragen, Angebote, unterschriebenen Verträge, Anzahlungen und die Kommunikation mit jedem Paar. Für einen Fotografen mit mehr als etwa fünfzehn Hochzeiten im Jahr ist es oft das Programm, das am meisten Zeit spart.</p>
+<h3>CRMs speziell für Fotografen</h3>
+<ul>
+<li><strong>Pixieset Studio Manager</strong>: CRM, Online-Buchung, Verträge mit elektronischer Unterschrift, Rechnungen mit Ratenplan, Fragebögen. Sein Vorteil: Er sitzt direkt neben den Pixieset-Galerien.</li>
+<li><strong>Studio Ninja</strong>: von Fotografen für Fotografen entwickelt; Projektverwaltung, automatische E-Mails, Verträge und Rechnungen.</li>
+<li><strong>Dubsado</strong>: sehr anpassbar (Formulare, automatische Abläufe), beliebt bei allen, die gern alles einstellen, um den Preis einer längeren Einarbeitung.</li>
+</ul>
+<p>Zwei Hinweise für Fotografen in Deutschland. Erstens sind diese Programme auf Englisch und für den nordamerikanischen Markt gebaut: Prüfen Sie, ob Ihre Angebote und Rechnungen dort die Pflichtangaben nach § 14 UStG erfüllen (fortlaufende Rechnungsnummer, Steuernummer oder USt-IdNr., Leistungszeitpunkt, Steuersatz oder Hinweis auf die Kleinunternehmerregelung) und ob die Daten DSGVO-konform verarbeitet werden. Zweitens steht das sehr bekannte <strong>HoneyBook</strong> zum Zeitpunkt dieses Artikels nur Unternehmen in den USA, Kanada, Großbritannien und Australien offen: Sparen Sie sich den Testabend.</p>
+<h3>Allgemeine Alternativen</h3>
+<ul>
+<li><strong>folk</strong> oder <strong>Pipedrive</strong>: allgemeine CRMs, praktisch, um Interessenten und Partner (Hochzeitsplaner, Locations) im Blick zu behalten.</li>
+<li><strong>Notion</strong> oder eine einfache Tabelle: Für den Anfang ist eine gut gepflegte Liste (Datum, Paar, Location, Status, Anzahlung erhalten) besser als ein CRM, das keiner pflegt.</li>
+</ul>
+<h3>Elektronische Unterschrift</h3>
+<p>Wenn Ihr CRM sie nicht bietet, lässt sich ein Vertrag mit Diensten wie <strong>Yousign</strong> oder <strong>DocuSign</strong> in wenigen Minuten online unterschreiben. Ein unterschriebener Vertrag vor der Anzahlung ist das Minimum.</p>
+<h3>Was in Ihren Vertrag gehört</h3>
+<p>Egal mit welchem Programm: Ihre Vertragsvorlage sollte mindestens festhalten, welche Stunden Sie begleiten, wie viele Fotos Sie ungefähr liefern, die <strong>Lieferzeit</strong> (bei Verträgen mit Privatpersonen verlangt das Verbraucherrecht in der Regel eine Angabe, bis wann die Leistung erbracht wird), die Stornobedingungen, wie Sie die Bilder selbst nutzen dürfen (Portfolio, Social Media, mit Einwilligung des Paares) und was passiert, wenn Sie verhindert sind. Der Lieferzeit haben wir einen eigenen Artikel gewidmet: <a href="/journal/delai-livraison-photos-mariage">Lieferzeit für Hochzeitsfotos</a>. Für die Vertragsvorlage selbst lohnt sich ein Blick von einem Anwalt oder einem Berufsverband.</p>
+
+<h2>3. Terminplanung und Vorbereitung des Hochzeitstags</h2>
+<p>Hier brauchen Sie keine Spezialsoftware: Die meisten Fotografen kommen mit drei einfachen Werkzeugen aus.</p>
+<ul>
+<li><strong>Ein gemeinsamer Kalender</strong> (Google Kalender oder der Ihres CRM), verbunden mit Ihrem Buchungstool, damit Sie nie denselben Samstag zweimal verkaufen.</li>
+<li><strong>Ein Terminbuchungstool</strong> wie <strong>Calendly</strong> für Kennenlerngespräche und Vorbereitungstermine, falls Ihr CRM keines hat.</li>
+<li><strong>Ein Vorbereitungsfragebogen</strong> (Google Forms, Typeform oder das Modul Ihres CRM), den Sie ein bis zwei Monate vorher verschicken: Tagesablauf, Namen der Trauzeugen, Liste der Gruppenfotos, Besonderheiten der Location, anwesende Dienstleister.</li>
+</ul>
+<p>Der Fragebogen ist der ideale Moment für zwei Themen, die viele Fotografen vergessen: die Handys der Gäste während der Trauung und die geplanten Gruppenfotos. Unsere Artikel <a href="/journal/shot-list-mariage">Shotlist für die Hochzeit</a> und <a href="/journal/photos-de-groupe-mariage">Gruppenfotos bei der Hochzeit</a> können Sie Ihren Paaren als Grundlage schicken.</p>
+
+<h2>4. Bildauswahl (Culling)</h2>
+<p>Eine Hochzeit ergibt schnell mehrere Tausend Auslösungen, und die Auswahl ist oft der undankbarste Schritt. Gleichzeitig haben sich die Werkzeuge hier in den letzten Jahren dank künstlicher Intelligenz am stärksten verbessert.</p>
+<ul>
+<li><strong>Photo Mechanic</strong> (Camera Bits): der Klassiker. Er zeigt die in den RAW-Dateien eingebetteten Vorschauen an, statt sie zu berechnen, und das Durchblättern geht dadurch fast ohne Verzögerung. Keine KI: Sie entscheiden, nur sehr schnell.</li>
+<li><strong>Narrative Select</strong>: KI-gestützte Auswahl für Mac und Windows. Das Programm markiert geschlossene Augen, Unschärfe und Fehlfokus und zeigt Gesichter in Großansicht, die letzte Entscheidung bleibt bei Ihnen.</li>
+<li><strong>Aftershoot</strong>: automatische KI-Auswahl, die lokal auf Ihrem Rechner läuft (praktisch unterwegs oder mit langsamer Verbindung), mit zusätzlichen Bearbeitungsfunktionen.</li>
+<li><strong>Imagen</strong>: vor allem für die KI-Bearbeitung bekannt, bietet auch eine automatische Auswahl, die in der Cloud läuft.</li>
+</ul>
+<p>Unser Rat: Testen Sie mit einer bereits gelieferten Hochzeit, deren endgültige Auswahl Sie kennen. Sie sehen sofort, ob das Programm dieselben Bilder behält wie Sie und wie viel Zeit es Ihnen tatsächlich spart.</p>
+
+<h2>5. Bildbearbeitung</h2>
+<p>Keine Überraschung, aber ein paar Feinheiten.</p>
+<ul>
+<li><strong>Adobe Lightroom Classic</strong>: der Branchenstandard für Serienbearbeitung und Verwaltung. Die meisten Auswahl- und KI-Bearbeitungsprogramme docken dort an.</li>
+<li><strong>Capture One</strong>: die ernsthafteste Alternative, bekannt für Farbwiedergabe und Hauttöne; manche Fotografen schwören darauf.</li>
+<li><strong>Adobe Photoshop</strong>: für gezielte Retuschen (ein Notausgangsschild entfernen, einen störenden Gast im Hintergrund).</li>
+<li><strong>KI-Bearbeitung</strong>: <strong>Imagen</strong>, <strong>Aftershoot</strong> oder das deutsche <strong>Neurapix</strong> lernen Ihren Stil anhand früherer Bearbeitungen und wenden ihn auf eine neue Hochzeit an. Sie gehen danach noch einmal drüber, aber der Großteil ist erledigt.</li>
+</ul>
+<p>Ein oft vernachlässigter Punkt: Ein <strong>kalibrierter Monitor</strong> (mit Messgerät) bringt mehr für einheitliche Lieferungen als jedes neue Preset.</p>
+
+<h2>6. Galerien zur Auslieferung</h2>
+<p>Die Galerie ist der erste Kontakt des Paares mit seinen Fotos: Sie gehört zum Erlebnis, nicht nur zur Logistik. Spezialisierte Plattformen bieten eine schöne Präsentation, Download für das Paar, Teilen mit den Gästen und manchmal den Verkauf von Abzügen.</p>
+<ul>
+<li><strong>Pixieset</strong>: am weitesten verbreitet. Ein kostenloser Tarif mit 3 GB Speicher (und 15 % Provision auf verkaufte Abzüge), dann Bezahltarife von 10 bis 50 $ pro Monat je nach Speicher (Preise laut Anbieterseite im Oktober 2026, bei jährlicher Zahlung günstiger).</li>
+<li><strong>Pic-Time</strong>: bekannt für elegante Galerien und Werkzeuge zum Verkauf von Abzügen und Alben, bei Hochzeiten sehr beliebt.</li>
+<li><strong>ShootProof</strong> und <strong>Zenfolio</strong>: Galerien, Shop und Verwaltung, zwei langjährige Anbieter.</li>
+<li><strong>Picdrop</strong> (aus Berlin) und <strong>Picflow</strong>: stärker auf Auswahl und Abstimmung mit dem Kunden ausgerichtet, interessant für Verlobungsshootings oder Business-Aufträge.</li>
+</ul>
+<p>Für den einmaligen Versand großer Dateien tun es <strong>WeTransfer</strong> oder <strong>Smash</strong>, aber sie ersetzen keine Galerie: Der Link läuft ab, die Präsentation ist schmucklos, und sechs Monate später weiß das Paar nicht mehr, wo seine Fotos sind.</p>
+<h3>Gedruckte Alben</h3>
+<p>Wenn Sie Alben verkaufen, spart ein Layoutprogramm Stunden: <strong>Pixellu SmartAlbums</strong> und <strong>Fundy Designer</strong> sind bei Hochzeitsfotografen die beiden meistgenutzten. Beide erstellen automatische Layouts, die Sie anpassen, und bieten einen Online-Bereich, in dem das Paar die Seiten kommentiert.</p>
+
+<h2>7. Datensicherung: der einzige Schritt, bei dem ein Fehler unverzeihlich ist</h2>
+<p>Eine Hochzeit lässt sich nicht wiederholen. Verlorene Dateien sind der Albtraum des Berufs und ein echtes rechtliches Risiko. Die Regel ist bekannt: <strong>3-2-1</strong>.</p>
+<ul>
+<li><strong>3 Kopien</strong> jeder Datei;</li>
+<li>auf <strong>2 verschiedenen Speichermedien</strong> (zum Beispiel eine Arbeitsfestplatte und ein NAS);</li>
+<li>davon <strong>1 außer Haus</strong> (in der Cloud oder auf einer Festplatte an einem anderen Ort).</li>
+</ul>
+<p>Konkret:</p>
+<ul>
+<li><strong>Am Hochzeitstag</strong>: eine Kamera mit zwei Kartenfächern, eingestellt auf gleichzeitiges Schreiben auf beide Karten. Fällt eine Karte aus, hat die andere alles.</li>
+<li><strong>Nach der Rückkehr</strong>: Formatieren Sie nie eine Karte, bevor Sie zwei geprüfte Kopien haben.</li>
+<li><strong>Im Büro</strong>: ein NAS (Synology ist bei Fotografen die häufigste Marke) oder doppelte externe Festplatten.</li>
+<li><strong>Außer Haus</strong>: ein Cloud-Backup wie <strong>Backblaze</strong>, das Ihre Festplatten im Hintergrund hochlädt. Achten Sie darauf, wo die Daten liegen und ob der Anbieter einen Auftragsverarbeitungsvertrag nach DSGVO anbietet: Auf den Fotos sind schließlich Personen zu sehen.</li>
+</ul>
+<p>Denken Sie auch an die Aufbewahrungsdauer: Wie lange behalten Sie RAW-Dateien und gelieferte Bilder? Schreiben Sie es in Ihren Vertrag und erinnern Sie das Paar daran, seine Galerie herunterzuladen, bevor sie abläuft.</p>
+
+<h2>8. Buchhaltung und Rechnungen: die E-Rechnung im Blick</h2>
+<p>Die meisten Hochzeitsfotografen arbeiten als Einzelunternehmer, manche mit der Kleinunternehmerregelung nach § 19 UStG. Für Rechnungen, Belege und Steuer nutzen viele Selbstständige in Deutschland Cloud-Buchhaltungsprogramme:</p>
+<ul>
+<li><strong>Lexware Office</strong> (früher lexoffice): Angebote, Rechnungen, Belegerfassung, Einnahmenüberschussrechnung und Umsatzsteuer-Voranmeldung.</li>
+<li><strong>sevDesk</strong>: ähnlicher Umfang, mit einem kostenlosen Einstieg für wenige Rechnungen im Monat.</li>
+</ul>
+<p>Beide bieten einen DATEV-Export, praktisch, wenn Sie mit einem Steuerberater arbeiten. Prüfen Sie vor der Wahl, in welchem Tarif die E-Rechnungsformate enthalten sind: Das unterscheidet sich je nach Anbieter.</p>
+<h3>Die E-Rechnung: was für Hochzeitsfotografen gilt</h3>
+<p>Dieses Thema fehlt in fast jedem Software-Ratgeber. Seit dem <strong>1. Januar 2025</strong> müssen alle Unternehmen in Deutschland <strong>E-Rechnungen empfangen</strong> können (Formate wie XRechnung oder ZUGFeRD), auch Kleinunternehmer. Für das <strong>Ausstellen</strong> gibt es Übergangsfristen: Bis Ende 2026 sind bei Rechnungen an andere Unternehmen noch Papier- oder PDF-Rechnungen möglich (PDF nur mit Zustimmung des Empfängers), bei einem Vorjahresumsatz bis 800.000&nbsp;€ sogar bis Ende 2027. Ab dem <strong>1. Januar 2028</strong> gilt die Pflicht für alle Rechnungen zwischen Unternehmen im Inland. Kleinunternehmer sind vom Ausstellen ausgenommen.</p>
+<p>Für Ihre Brautpaare ändert sich nichts: Rechnungen an Privatpersonen fallen nicht unter die Pflicht. Betroffen sind Sie aber, sobald Sie Firmenkunden haben (Business-Porträts, Firmenevents, Aufträge über eine Agentur), und bei Ihren eigenen Eingangsrechnungen für Technik, Labor oder Software. Wenn Sie heute mit einer Word-Vorlage oder aus einem amerikanischen CRM heraus abrechnen, ist jetzt der Moment, Ihren Weg zu prüfen. Klären Sie Ihre konkrete Situation mit Ihrem Steuerberater.</p>
+
+<h2>9. Das Zusatzangebot: eine Fotoaktion für die Gäste</h2>
+<p>Der letzte Baustein ist keine Verwaltungssoftware, sondern ein Service, den Sie Ihrem Angebot hinzufügen können: eine Aktion, die das Handy der Gäste in eine digitale Einwegkamera verwandelt. Warum das hier? Weil Paare immer öfter danach fragen, und weil ein Fotograf, der sie selbst anbietet, mitbestimmt, wie die Handys am Hochzeitstag genutzt werden.</p>
+<p>Das Prinzip: Jeder Gast scannt einen QR-Code, bekommt eine begrenzte Zahl an Aufnahmen, und die Fotos bleiben verborgen, bis sie bei einer gemeinsamen Präsentation für alle sichtbar werden, oft am nächsten Tag. Für Sie heißt das: weniger Handys, die ständig in der Luft sind (jeder spart seine Aufnahmen für die besten Momente), und ein Album der Tische und der Tanzfläche, das Ihre Reportage ergänzt, statt mit ihr zu konkurrieren. Wie Sie das in ein Paket einbauen, beschreiben wir in <a href="/journal/photographe-mariage-photos-invites">Hochzeitsfotograf und Gästefotos</a>.</p>
+<p>Das macht <a href="/appareil-jetable-mariage">Time to Flash</a>, das wir entwickeln: keine App-Installation für die Gäste, 3 bis 15 Aufnahmen pro Person, fünf Filmlooks, ein Album, das auf einen Schlag für alle sichtbar wird und sich auf einmal herunterladen lässt. Einmalige Zahlung pro Hochzeit, ohne Abo: 29,99&nbsp;€ bis 100 Gäste, 34,99&nbsp;€ bis 150, 59,99&nbsp;€ bis 300 (Stand Oktober 2026).</p>
+
+<h2>Die Übersichtstabelle</h2>
+<table>
+<thead><tr><th>Schritt</th><th>Genannte Programme</th><th>Merksatz</th></tr></thead>
+<tbody>
+<tr><td>Website</td><td>Pixieset Website, Squarespace, Showit, WordPress</td><td>Eine klare Preisseite konvertiert besser als ein Formular</td></tr>
+<tr><td>Gefunden werden</td><td>Google-Unternehmensprofil, Weddyplace, Bridebook, Instagram, Pinterest</td><td>Das Google-Profil ist kostenlos und lokal entscheidend</td></tr>
+<tr><td>CRM und Verträge</td><td>Pixieset Studio Manager, Studio Ninja, Dubsado, folk, Pipedrive, Yousign, DocuSign</td><td>Pflichtangaben nach § 14 UStG und DSGVO prüfen</td></tr>
+<tr><td>Planung</td><td>Google Kalender, Calendly, Google Forms, Typeform</td><td>Der Vorbereitungsfragebogen verhindert Lücken</td></tr>
+<tr><td>Auswahl</td><td>Photo Mechanic, Narrative Select, Aftershoot, Imagen</td><td>Mit einer bereits gelieferten Hochzeit testen</td></tr>
+<tr><td>Bearbeitung</td><td>Lightroom Classic, Capture One, Photoshop, Imagen, Neurapix</td><td>Erst ein kalibrierter Monitor, dann ein neues Preset</td></tr>
+<tr><td>Auslieferung</td><td>Pixieset, Pic-Time, ShootProof, Zenfolio, Picdrop, Picflow</td><td>Die Galerie gehört zum Kundenerlebnis</td></tr>
+<tr><td>Alben</td><td>Pixellu SmartAlbums, Fundy Designer</td><td>Das Paar gibt die Seiten online frei</td></tr>
+<tr><td>Datensicherung</td><td>Zwei Karten, Synology-NAS, Backblaze</td><td>3-2-1-Regel, nie formatieren vor zwei Kopien</td></tr>
+<tr><td>Buchhaltung</td><td>Lexware Office, sevDesk</td><td>E-Rechnung: Empfang seit 2025, Ausstellen im B2B bis spätestens 2028</td></tr>
+<tr><td>Zusatzangebot</td><td>Time to Flash</td><td>Ein Gästealbum, das Ihre Reportage ergänzt</td></tr>
+</tbody>
+</table>
+
+<h2>Womit Sie je nach Situation anfangen</h2>
+<h3>Sie fangen an (weniger als 10 Hochzeiten im Jahr)</h3>
+<p>Lightroom Classic, eine Galerie im kostenlosen oder günstigsten Tarif, eine Tabelle für Ihre Anfragen, ein Buchhaltungsprogramm im Einstiegstarif und vom ersten Auftrag an eine 3-2-1-Sicherung. Zahlen Sie für kein CRM, bevor Sie den Bedarf spüren.</p>
+<h3>Sie sind etabliert (15 bis 30 Hochzeiten im Jahr)</h3>
+<p>Jetzt lohnt ein CRM, das Nachfassen, Anzahlungstermine und den Fragebogen automatisiert, und ein KI-Programm für die Auswahl. Diese beiden Posten bringen Ihnen die meisten freien Abende.</p>
+<h3>Sie sind sehr gefragt (mehr als 30 Hochzeiten im Jahr)</h3>
+<p>KI-Bearbeitung oder ausgelagerte Bearbeitung, eine hochwertige Galerie mit Verkauf von Abzügen, ein Albumprogramm. Und denken Sie an das, was Sie über die Technik hinaus abhebt: das Gesamterlebnis, das Sie Ihren Paaren bieten, von der Vorbereitung bis zu dem Moment, in dem sie ihre Fotos zum ersten Mal sehen.</p>
+
+<h2>Kurz zusammengefasst</h2>
+<p>Die eine beste Software für Hochzeitsfotografen gibt es nicht: Es gibt eine Kette von Werkzeugen, und die richtige Kombination hängt von Ihrem Volumen und Ihren Schmerzpunkten ab. Statten Sie zuerst die Datensicherung aus (nicht verhandelbar), dann den Schritt, der Sie am meisten Zeit kostet, und behalten Sie die Fristen der E-Rechnung im Blick. Der Rest wächst Hochzeit für Hochzeit.</p>
+<p>Und wenn Sie Ihr Angebot um einen Service erweitern möchten, der Ihren Paaren auffällt: Wir bereiten ein Programm für Fotografen vor. <a href="/pro">So bieten Sie Time to Flash Ihren Brautpaaren an</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Welche Software nutzen professionelle Hochzeitsfotografen?',
+        a: 'Die meisten nutzen Adobe Lightroom Classic für die Bearbeitung, ein Auswahlprogramm wie Photo Mechanic, Narrative Select oder Aftershoot und eine Galerieplattform wie Pixieset oder Pic-Time für die Auslieferung. Dazu kommen ein CRM für Verträge und Anzahlungen und ein Buchhaltungsprogramm wie Lexware Office oder sevDesk.',
+      },
+      {
+        q: 'Welche Online-Galerie eignet sich für die Auslieferung von Hochzeitsfotos?',
+        a: 'Pixieset ist am weitesten verbreitet und hat einen kostenlosen Einstiegstarif mit 3 GB. Pic-Time wird für elegante Galerien und den Verkauf von Abzügen geschätzt; ShootProof, Zenfolio und das Berliner Picdrop sind weitere solide Optionen. Meiden Sie reine Transferlinks: Sie laufen ab und präsentieren Ihre Arbeit nicht.',
+      },
+      {
+        q: 'Welches CRM passt für Hochzeitsfotografen in Deutschland?',
+        a: 'Pixieset Studio Manager, Studio Ninja und Dubsado sind für Fotografen gebaut, aber auf Englisch: Prüfen Sie, ob Ihre Rechnungen dort die Pflichtangaben nach § 14 UStG erfüllen und die Daten DSGVO-konform verarbeitet werden. HoneyBook ist derzeit nur in den USA, Kanada, Großbritannien und Australien verfügbar.',
+      },
+      {
+        q: 'Betrifft die E-Rechnungspflicht auch Hochzeitsfotografen?',
+        a: 'Teilweise. Seit dem 1. Januar 2025 muss jedes Unternehmen in Deutschland E-Rechnungen empfangen können, auch Kleinunternehmer. Rechnungen an Brautpaare als Privatpersonen sind von der Ausstellungspflicht nicht betroffen; für Rechnungen an Firmenkunden gelten Übergangsfristen bis spätestens 2028, und Kleinunternehmer sind vom Ausstellen ausgenommen.',
+      },
+      {
+        q: 'Wie sichert man die Fotos einer Hochzeit?',
+        a: 'Mit der 3-2-1-Regel: drei Kopien auf zwei verschiedenen Speichermedien, davon eine außer Haus. Am Hochzeitstag auf zwei Karten gleichzeitig speichern und keine Karte formatieren, bevor zwei geprüfte Kopien auf Festplatte liegen.',
+      },
+    ],
+  },
+  // DE : « Lieferzeit Hochzeitsfotos », « wie lange dauert es bis man
+  // Hochzeitsfotos bekommt », « Sneak Peek Hochzeit ». Google.de (10/10/2026) :
+  // Profile deutscher Fotografen (trustlocal : Sneak Peek am nächsten Tag,
+  // Galerie oft nach 1 bis 4 Wochen, in der Saison länger), deutsche Seiten von
+  // Imagen (20 bis 40 Stunden Nachbearbeitung). Fast alles für Paare
+  // geschrieben, nichts zum Umgang mit der Wartezeit. Angepasst : Spannen an
+  // deutsche Angaben angeglichen (eher kürzer als in Frankreich), Rechtslage
+  // über BGB/EGBGB (Art. 246 und 246a : Termin der Leistung angeben) statt
+  // Code de la consommation, vorsichtig formuliert.
+  'delai-livraison-photos-mariage': {
+    title: 'Lieferzeit für Hochzeitsfotos: die Wartezeit gut überbrücken',
+    excerpt: 'Wie lange es dauert, bis das Paar seine Hochzeitsfotos bekommt, was so lange dauert und wie Sie das Warten angenehm machen, ohne Ihre Bearbeitung zu hetzen.',
+    caption: 'Ein frisch verheiratetes Paar schaut sich am Morgen nach der Hochzeit Fotos auf einem Handy an, am Frühstückstisch',
+    body: `
+<p>„Wann bekommen wir die Fotos?“ Jeder Hochzeitsfotograf hört diese Frage, oft schon am Tag danach. Die Lieferzeit für Hochzeitsfotos liegt bei der kompletten Galerie meist zwischen zwei und acht Wochen, in der Hochsaison auch länger, und viele Fotografen schicken in den ersten Tagen eine kleine Vorschau, den Sneak Peek. Die Lieferzeit selbst zählt aber weniger als die Art, wie das Paar das Warten erlebt. Hier finden Sie die üblichen Spannen, was wirklich Zeit kostet, was rechtlich gilt und wie Sie Ihr Paar bei Laune halten, ohne die Qualität Ihrer Bearbeitung zu opfern.</p>
+
+<h2>Lieferzeit für Hochzeitsfotos: die üblichen Spannen</h2>
+<p>Eine einheitliche Lieferzeit gibt es in der Branche nicht. Die Angaben, die Hochzeitsfotografen in Deutschland machen, bewegen sich ungefähr in diesem Rahmen:</p>
+<table>
+<thead><tr><th>Leistung</th><th>Übliche Dauer</th><th>Hinweis</th></tr></thead>
+<tbody>
+<tr><td>Sneak Peek (Vorschau)</td><td>Vom nächsten Tag bis zu einer Woche</td><td>Einige bearbeitete Bilder, meist zwischen 5 und 20</td></tr>
+<tr><td>Komplette Galerie, Nebensaison</td><td>Etwa 2 bis 6 Wochen</td><td>November bis März, wenn der Kalender Luft lässt</td></tr>
+<tr><td>Komplette Galerie, Hochsaison</td><td>Etwa 4 bis 12 Wochen</td><td>Mai bis September, mehrere Hochzeiten pro Woche</td></tr>
+<tr><td>Gedrucktes Album</td><td>Mehrere Wochen nach der Freigabe</td><td>Layout, Abstimmung, Herstellung</td></tr>
+</tbody>
+</table>
+<p>Nach drei Monaten ohne Nachricht werden die meisten Paare unruhig, und genau dann entstehen oft schlechte Bewertungen. Nicht die Lieferzeit ärgert, sondern das Schweigen.</p>
+
+<h2>Wie lange dauert es, bis das Paar die Hochzeitsfotos bekommt, und warum?</h2>
+<p>Ihre Paare sehen nur den Hochzeitstag. Was danach passiert, wissen sie nicht. Wer es erklärt, nimmt der Ungeduld schon die Hälfte ihrer Kraft.</p>
+<h3>Die Auswahl</h3>
+<p>Eine Hochzeit ergibt mehrere Tausend Auslösungen. Doppelte Bilder, geschlossene Augen und Unschärfen müssen raus, aus jeder Serie wird das beste Bild gewählt, und am Ende steht eine Auswahl, die den Tag der Reihe nach erzählt. Selbst mit einem Auswahlprogramm ist das Arbeit für mehrere Stunden.</p>
+<h3>Die Bearbeitung</h3>
+<p>Jedes ausgewählte Bild wird entwickelt (Belichtung, Weißabgleich, Farben), manche bekommen zusätzlich gezielte Retuschen. Es geht um Einheitlichkeit: Ein Trauungsfoto in praller Sonne und ein Foto von der Tanzfläche mit Blitz müssen zur selben Reportage gehören. Übliche Schätzungen gehen von 20 bis 40 Stunden Nachbearbeitung pro Hochzeit aus, je nach Umfang und Stil.</p>
+<h3>Die Saison</h3>
+<p>Der am meisten unterschätzte Faktor. Hochzeiten ballen sich auf wenige Monate, oft auf Samstage, manchmal zwei an einem Wochenende. Ein Fotograf, der zwischen Juni und September fünfzehn Hochzeiten hat, baut eine Warteschlange auf: Die Hochzeit von Ende August kommt nach denen vom Juli dran. Derselbe Fotograf liefert im November in drei Wochen und im September in zehn.</p>
+<h3>Alles andere</h3>
+<p>Export, Upload der Galerie, Datensicherung, Gespräche mit den Paaren des nächsten Jahres, Hochzeitsmessen, Buchhaltung. Die Bearbeitungszeit ist nicht die einzige Arbeitszeit eines Fotografen.</p>
+
+<h2>Was rechtlich zur Lieferzeit gilt</h2>
+<p>Wenn Ihre Kunden Privatpersonen sind, gelten die Informationspflichten des Verbraucherrechts. Nach § 312a und § 312d BGB in Verbindung mit Art. 246 und Art. 246a EGBGB müssen Sie vor Vertragsschluss in der Regel angeben, bis zu welchem Termin Sie die Leistung erbringen; das betrifft gerade auch Verträge, die per E-Mail oder online geschlossen werden. Ein „so schnell wie möglich“ ist dafür keine gute Grundlage. Konkret:</p>
+<ul>
+<li>nennen Sie für jede Leistung (Sneak Peek, Galerie, Album) eine eigene Frist statt einer Gesamtfrist;</li>
+<li>legen Sie fest, ab wann die Frist läuft (ab dem Hochzeitstag, beim Album ab der Freigabe der Auswahl);</li>
+<li>regeln Sie, was passiert, wenn Sie verhindert sind (Krankheit, Technikausfall).</li>
+</ul>
+<p>Eine überschrittene Frist ohne Erklärung führt schnell zu Beschwerden und kann im schlimmsten Fall zu Forderungen des Paares führen. Eine ehrlich genannte und eingehaltene Frist schützt Sie viel besser als ein ehrgeiziges Versprechen. Im Zweifel lassen Sie Ihre Vertragsvorlage von einem Anwalt prüfen.</p>
+
+<h2>So gestalten Sie die Wartezeit für Ihre Paare</h2>
+<p>Die gute Nachricht: Sechs Wochen Warten können angenehm sein. Hier die Hebel, vom Vertrag bis zum Tag der Lieferung.</p>
+
+<h3>1. Nennen Sie ein Datum, keine Dauer</h3>
+<p>„Acht Wochen“ ist abstrakt. „Ihre Galerie ist spätestens am 15. November online“ ist greifbar. Das Paar trägt das Datum in den Kalender ein und hört auf, Tage zu zählen. Nennen Sie ein etwas vorsichtiges Datum und liefern Sie ein wenig früher: Eine Lieferung vor dem Termin freut immer, eine verspätete bleibt immer hängen.</p>
+<p>Eine Formulierung für Ihren Vertrag oder Ihre Bestätigungsmail:</p>
+<p><em>„Innerhalb von 48 Stunden erhalten Sie eine erste Auswahl an Fotos als Vorschau. Die komplette Galerie mit 400 bis 600 bearbeiteten Bildern liefere ich spätestens acht Wochen nach der Hochzeit, also bis zum [Datum]. Zur Halbzeit melde ich mich und sage Ihnen, wie weit ich bin.“</em></p>
+
+<h3>2. Der Sneak Peek innerhalb von 48 Stunden</h3>
+<p>Das ist die Geste, die alles verändert. In den zwei Tagen nach der Hochzeit schwebt das Paar noch, die Familie schreibt, die Gäste teilen ihre Erinnerungen. Ein paar Bilder von Ihnen in diesem Moment wirken stärker als die ganze Galerie einen Monat später.</p>
+<p>Was hineingehört:</p>
+<ul>
+<li><strong>ein starkes Porträt des Paares</strong>, das als Hintergrundbild endet;</li>
+<li><strong>ein Moment der Trauung</strong> (der Ringtausch, der Auszug);</li>
+<li><strong>ein Stimmungsbild</strong> (die Location, die Tafel, die Tanzfläche);</li>
+<li>eventuell <strong>ein oder zwei Bilder im Hochformat</strong>, die sich gut als Story teilen lassen.</li>
+</ul>
+<p>5 bis 20 Fotos reichen. Heben Sie Ihre schönsten Abendbilder für die Galerie auf: Die komplette Lieferung soll eine Entdeckung bleiben.</p>
+
+<h3>3. Melden Sie sich während der Wartezeit</h3>
+<p>Ein Fotograf, der schweigt, ist ein Fotograf, den man sich im Verzug vorstellt. Drei kurze Nachrichten genügen:</p>
+<ul>
+<li><strong>Am Tag danach</strong>: ein Dankeschön und die Erinnerung an das Lieferdatum.</li>
+<li><strong>Zur Halbzeit</strong>: „Die Auswahl ist fertig, ich bin an der Bearbeitung, alles liegt im Zeitplan.“ Wenn Sie noch ein Foto mitschicken können, umso besser.</li>
+<li><strong>Am Tag vor der Lieferung</strong>: „Morgen kommt Ihre Galerie. Nehmen Sie sich einen ruhigen Moment, um sie anzuschauen.“</li>
+</ul>
+<p>Ihr CRM kann diese Nachrichten im Voraus planen (wir vergleichen die Programme in <a href="/journal/logiciel-photographe-mariage">Software für Hochzeitsfotografen</a>).</p>
+
+<h3>4. Machen Sie die Lieferung zu einem Moment</h3>
+<p>Eine Galerie, die an einem Dienstag um 14 Uhr zwischen zwei Meetings ankommt, verpufft. Lassen Sie das Paar den Zeitpunkt wählen, oder liefern Sie an einem Freitagabend. Manche Fotografen schicken mit dem Link eine kurze Slideshow mit Musik: Aus einer Datei zum Herunterladen wird eine Erinnerung zum Teilen.</p>
+
+<h3>5. Was Sie besser vermeiden</h3>
+<ul>
+<li><strong>Eine zu kurze Lieferzeit versprechen, um den Auftrag zu bekommen.</strong> Das rächt sich im September.</li>
+<li><strong>In mehreren Etappen liefern, ohne es angekündigt zu haben.</strong> Das Paar weiß nicht mehr, was endgültig ist.</li>
+<li><strong>Fotos der Hochzeit auf Instagram zeigen, bevor das Paar sie hat.</strong> Dann sieht es seine eigene Hochzeit zuerst in seinem Feed, und nicht von Ihnen.</li>
+</ul>
+
+<h2>Die Idee, die das Warten verändert: das Gästealbum am nächsten Tag</h2>
+<p>Ein Problem lösen weder Sneak Peek noch gute Kommunikation ganz: Das Paar möchte seine Feier <em>sofort</em> noch einmal erleben, in voller Breite. Nicht nur über zehn sorgfältig bearbeitete Fotos, sondern mit den Tischen, den Cousins, der Tanzfläche, den Lachanfällen. Und das kann kein Fotograf am Tag danach liefern, ohne seine Arbeit zu verpfuschen.</p>
+<p>Genau das kann ein Gästealbum leisten, das am Tag nach der Hochzeit für alle sichtbar wird. Das Prinzip: Während der Feier nutzt jeder Gast sein Handy als digitale Einwegkamera, mit ein paar Aufnahmen und verborgenen Fotos. Am nächsten Morgen wird das Album auf einen Schlag präsentiert, für alle gleichzeitig. Das Paar wacht mit Dutzenden, manchmal Hunderten Fotos seiner Hochzeit auf, gesehen von seinen Liebsten.</p>
+<p>Für Sie hat das ganz konkrete Folgen:</p>
+<ul>
+<li><strong>Die Wochen des Wartens sind gefüllt.</strong> Das Paar hat etwas, um die Feier noch einmal zu erleben, zu teilen, zu kommentieren. Die Frage „Wann bekommen wir die Fotos?“ ist viel weniger dringend.</li>
+<li><strong>Sie behalten Ihr Bearbeitungstempo.</strong> Niemand drängt Sie, weil das Bedürfnis nach sofortigen Bildern anderswo gestillt ist.</li>
+<li><strong>Ihre Galerie bleibt ein Ereignis.</strong> Das Gästealbum ist spontan, unperfekt, mit dem Handy gemacht. Wenn Ihre Reportage kommt, spielt der Kontrast voll für Sie.</li>
+<li><strong>Sie haben ein Verkaufsargument.</strong> Wenige Fotografen können sagen: „Am Tag nach Ihrer Hochzeit erleben Sie die Feier mit den Fotos Ihrer Gäste noch einmal. Einige Wochen später bekommen Sie meine Reportage.“</li>
+</ul>
+<p>So sieht der Zeitplan dann für das Paar aus:</p>
+<table>
+<thead><tr><th>Wann</th><th>Was das Paar bekommt</th></tr></thead>
+<tbody>
+<tr><td>Am Tag nach der Hochzeit</td><td>Das Gästealbum wird für das Paar und alle Gäste sichtbar</td></tr>
+<tr><td>Innerhalb von 48 Stunden</td><td>Ihr Sneak Peek: einige starke, bearbeitete Bilder</td></tr>
+<tr><td>Zur Halbzeit</td><td>Eine Nachricht von Ihnen: Alles liegt im Zeitplan</td></tr>
+<tr><td>Am genannten Datum</td><td>Ihre komplette Galerie</td></tr>
+<tr><td>Danach</td><td>Das gedruckte Album, falls vereinbart</td></tr>
+</tbody>
+</table>
+<p>Zwischen Hochzeit und Ihrer Lieferung gibt es kein „Loch“ mehr, sondern eine Folge von Momenten, jeder an seinem Platz. Aus Sicht des Paares beschreiben wir das Prinzip in <a href="/journal/revelation-photos-lendemain-mariage">die große Präsentation am nächsten Tag</a>, und wie Sie es in Ihr Angebot einbauen, in <a href="/journal/photographe-mariage-photos-invites">Hochzeitsfotograf und Gästefotos</a>.</p>
+<p>So funktioniert <a href="/appareil-jetable-mariage">Time to Flash</a>, die Aktion, die wir entwickeln: ein QR-Code zum Scannen, ohne App, 3 bis 15 Aufnahmen pro Gast und ein Album, das standardmäßig am nächsten Tag für alle sichtbar wird (das Paar bestimmt den Zeitpunkt und kann einen anderen wählen). Das Gästealbum ersetzt Ihre Arbeit nicht: Es sind unbearbeitete Handyfotos, gespeichert für Bildschirm und kleine Abzüge. Genau deshalb ergänzt es Ihre Reportage, statt mit ihr zu konkurrieren.</p>
+
+<h2>Kann man schneller liefern?</h2>
+<p>Ja, solange es nicht auf Kosten der Qualität geht. Drei Ansätze:</p>
+<ul>
+<li><strong>Eine kostenpflichtige Express-Lieferung</strong> für Paare, die ins Ausland gehen oder schnell drucken wollen. Sie sollte etwas kosten, weil sie Ihre Warteschlange durcheinanderbringt.</li>
+<li><strong>Die KI-gestützte Auswahl</strong>, die den ersten Schritt deutlich verkürzt.</li>
+<li><strong>Ausgelagerte oder KI-gestützte Bearbeitung</strong>, für Fotografen mit vielen Hochzeiten in der Saison.</li>
+</ul>
+<p>Für die meisten Paare ist aber eine klar genannte Lieferzeit, ergänzt durch einen Sneak Peek und ein Gästealbum am nächsten Tag, viel befriedigender als eine hastige Lieferung nach zehn Tagen.</p>
+
+<h2>Die Fragen, die Ihre Paare stellen werden</h2>
+<h3>„Warum bekommen wir nicht sofort alle Rohdaten?“</h3>
+<p>Weil Rohdaten keine fertigen Fotos sind: Sie sind flau, nicht ausgewählt und zeigen Ihre Arbeit nicht. Die meisten Fotografen geben sie nicht heraus, und es ist gute Praxis, das im Vertrag festzuhalten.</p>
+<h3>„Unsere Freunde hatten ihre Fotos nach zwei Wochen“</h3>
+<p>Das ist möglich, je nach Saison, Umfang und Bearbeitungsstil. Verweisen Sie einfach auf die vereinbarte Frist und darauf, was sie ermöglicht: Zeit für jedes einzelne Bild.</p>
+<h3>„Wie viele Fotos bekommen wir?“</h3>
+<p>Nennen Sie im Vertrag eine Spanne statt einer genauen Zahl, denn die hängt von der Dauer der Begleitung und vom Ablauf des Tages ab. Und stellen Sie klar, dass das Gästealbum, falls es eines gibt, zu Ihrer Galerie hinzukommt, aber nicht Teil davon ist.</p>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Die komplette Galerie kommt meist nach zwei bis acht Wochen, in der Hochsaison auch später.</li>
+<li>Nennen Sie im Vertrag eine eigene Frist für jede Leistung: Gegenüber Privatkunden ist eine Angabe zum Leistungstermin in der Regel Pflicht.</li>
+<li>Nennen Sie ein Datum, liefern Sie etwas früher, melden Sie sich zur Halbzeit.</li>
+<li>Schicken Sie einen Sneak Peek innerhalb von 48 Stunden: Dann wirken Ihre Bilder am stärksten.</li>
+<li>Ein Gästealbum, das am nächsten Tag für alle sichtbar wird, füllt die Wartezeit und lässt Sie in Ihrem Tempo bearbeiten.</li>
+</ul>
+<p>Sie möchten dieses Album für den Tag danach Ihren Paaren anbieten? Wir bereiten ein Programm für Fotografen vor: <a href="/pro">So bieten Sie Time to Flash Ihren Brautpaaren an</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Wie lange dauert es, bis man die Hochzeitsfotos bekommt?',
+        a: 'Die komplette Galerie kommt meist nach zwei bis acht Wochen, in der Hochsaison von Mai bis September auch später. Viele Fotografen schicken in den ersten Tagen eine Vorschau mit einigen bearbeiteten Fotos. Die genaue Frist sollte im Vertrag stehen.',
+      },
+      {
+        q: 'Was ist ein Sneak Peek bei der Hochzeit?',
+        a: 'Eine kleine Auswahl bearbeiteter Fotos (meist zwischen 5 und 20), die der Fotograf kurz nach der Hochzeit schickt, manchmal schon am nächsten Tag. So kann das Paar einige starke Bilder teilen, während die komplette Galerie entsteht.',
+      },
+      {
+        q: 'Muss der Hochzeitsfotograf eine Lieferzeit angeben?',
+        a: 'Gegenüber Privatpersonen in der Regel ja: Das Verbraucherrecht (§ 312a und § 312d BGB mit Art. 246 und 246a EGBGB) verlangt vor Vertragsschluss eine Angabe, bis wann die Leistung erbracht wird. Unabhängig davon empfiehlt sich eine eigene Frist für jede Leistung: Vorschau, Galerie, Album.',
+      },
+      {
+        q: 'Warum dauert es so lange, bis die Hochzeitsfotos da sind?',
+        a: 'Die Auswahl aus mehreren Tausend Bildern und die Bearbeitung jedes ausgewählten Fotos bedeuten mehrere Dutzend Stunden Arbeit. In der Hochsaison folgen die Hochzeiten dicht aufeinander und es entsteht eine Warteschlange.',
+      },
+      {
+        q: 'Wie kann man schon am Tag nach der Hochzeit Fotos sehen?',
+        a: 'Mit einem Gästealbum, das am nächsten Tag für alle sichtbar wird: Während der Feier macht jeder Gast ein paar Fotos mit dem Handy, die bis dahin verborgen bleiben. Das Paar erlebt die Feier schon am Morgen noch einmal, während der Fotograf seine Galerie in Ruhe fertigstellt.',
+      },
+    ],
+  },
+  // DE : « unplugged Hochzeit », « Hochzeit ohne Handy », « Hochzeitsfotograf
+  // Gäste Handy », « unplugged Hochzeit Schild Text ». Google.de (10/10/2026) :
+  // Shops für Schilder, Ratgeber für Gäste (Canon), Blog evangelisch.de
+  // (Pfarrer weisen zu Beginn auf den Fotografen hin), Meldungen über Bräute,
+  // die sich über Handys im Gang ärgern. Kaum Texte zum Kopieren, nichts für
+  // Fotografen. Angepasst : Standesamt, Kirche, freie Trauung mit Trauredner,
+  // Einladungskarte, Ansage mit Sie oder ihr je nach Ton der Feier.
+  'invites-telephone-photographe-mariage': {
+    title: 'Unplugged Hochzeit: 17 Tipps für Fotografen gegen Gäste-Handys',
+    excerpt: 'Schild, Ansage des Trauredners, Standort, taktvolle Sätze: 17 konkrete Tipps, damit die Handys der Gäste Ihre Hochzeitsfotos nicht mehr ruinieren.',
+    caption: 'Ein Mittelgang bei einer Hochzeit, in dem einige Gäste beim Einzug der Braut ihr Handy hochhalten',
+    body: `
+<p>Gäste mit Handy sind das Ärgernis Nummer eins für Hochzeitsfotografen: ein ausgestreckter Arm im Mittelgang beim Einzug, ein Tablet über allen Köpfen beim Ringtausch, ein Onkel, der Ihnen bei den Gruppenfotos über die Schulter fotografiert. Gibt es wirklich Mittel dagegen? Ja, und sie wirken umso besser, je mehr man sie kombiniert. Die bekannteste ist die Unplugged-Hochzeit, also eine Trauung ohne Handys. Hier sind 17 Tipps, geordnet nach dem Moment, in dem Sie sie brauchen: vor der Hochzeit, während der Trauung, am Abend und gegenüber dem aufdringlichen Gast. Jeweils mit Sätzen zum Kopieren.</p>
+<p>Hinter allen Tipps steht ein Grundsatz: <strong>Gegen Handys gewinnt man nicht, man gibt ihnen einen Platz</strong>. Ein komplettes Verbot hält zwanzig Minuten. Klare Regeln (weggesteckt während der Trauung, danach erlaubt und gelenkt) halten den ganzen Tag, und niemand fühlt sich bestraft.</p>
+
+<h2>Vor der Hochzeit: Bei der Unplugged-Hochzeit entscheidet die Vorbereitung</h2>
+<p>Die Hälfte der Arbeit passiert vor dem großen Tag. Ein Gast, der dreimal Bescheid bekommen hat, muss vor Ort nicht mehr ermahnt werden.</p>
+
+<h3>1. Mit dem Paar schon beim Vertrag darüber sprechen</h3>
+<p>Das Paar entscheidet, nicht Sie. Ihre Rolle ist es, ihm die Sache mit Bildern zu erklären: Zeigen Sie zwei Fotos vom Einzug zur Trauung, eines mit einer Wand aus Handys, eines mit gerührten Gesichtern. Die meisten Paare entscheiden sich in drei Sekunden.</p>
+<p>Ergänzen Sie dann eine Zeile in Ihrem Vertrag oder Vorbereitungsfragebogen, zum Beispiel:</p>
+<p><em>„Das Brautpaar informiert seine Gäste über den Wunsch nach einer Trauung ohne Handys. Der Fotograf haftet nicht für Handys oder Gäste im Bild während der wichtigen Momente.“</em></p>
+<p>Diese Klausel ist nicht aggressiv: Sie schützt alle, und sie eröffnet das Gespräch.</p>
+
+<h3>2. Der Hinweis auf der Einladung oder der Hochzeitswebsite</h3>
+<p>Die Einladungskarte ist der erste Ort, an dem die Gäste die Regeln erfahren. Ein paar Formulierungen, von schlicht bis locker:</p>
+<ul>
+<li><em>„Wir wünschen uns eine Trauung ohne Handys. Um die Fotos kümmert sich unser Fotograf; wir möchten eure Gesichter sehen.“</em></li>
+<li><em>„Lasst eure Handys während der Trauung bitte in der Tasche: Die Fotos bekommt ihr hinterher.“</em></li>
+<li><em>„Unplugged-Trauung: Handys weg, Taschentücher raus.“</em></li>
+</ul>
+<p>Sind die Einladungen schon gedruckt, tun es die Hochzeitswebsite oder die Nachricht mit den letzten Infos genauso gut.</p>
+
+<h3>3. Die Erinnerung am Vortag</h3>
+<p>Eine Nachricht in der WhatsApp-Gruppe der Gäste oder eine Mail am Vortag erinnert an das Praktische (Uhrzeiten, Parken, Dresscode) und erwähnt die Regel nebenbei. Oft ist es genau diese Erinnerung, die hängen bleibt. Fertige Nachrichten findet das Paar in unserem <a href="/journal/brief-invites">Gäste-Briefing zum Kopieren</a>.</p>
+
+<h3>4. Das Schild am Eingang zur Trauung</h3>
+<p>Ein Schild auf einer Staffelei, dort, wo die Gäste Platz nehmen, ist der sichtbarste Tipp. Es muss von Weitem lesbar sein, kurz und freundlich. Texte für das Unplugged-Schild zum Kopieren:</p>
+<ul>
+<li><em>„Willkommen zu unserer Unplugged-Trauung. Bitte steckt eure Handys weg: Unser Fotograf kümmert sich um alles.“</em></li>
+<li><em>„Wir haben euch eingeladen, dabei zu sein, nicht zu filmen. Bitte schaltet eure Handys aus.“</em></li>
+<li><em>„Genießt diesen Moment mit euren Augen. Die Fotos kommen später, versprochen.“</em></li>
+<li><em>„Das Einzige, was wir im Gang sehen wollen, seid ihr.“</em></li>
+</ul>
+<p>Schlagen Sie dem Paar vor, das Schild erhöht aufzustellen, am Anfang des Gangs und nicht ganz hinten, und es mit einem kleinen Kärtchen auf den Stühlen der ersten Reihe zu ergänzen.</p>
+
+<h3>5. Eine freundliche Vertrauensperson bestimmen</h3>
+<p>Sie können nicht gleichzeitig aufpassen und fotografieren. Bitten Sie das Paar, eine Person zu bestimmen, die freundlich an die Regel erinnert: die Hochzeitsplanerin, falls es eine gibt, sonst eine Trauzeugin oder einen Trauzeugen, die mit allen gut können. Weisen Sie sie vor der Trauung in zwei Minuten ein: wo Sie stehen werden, welche Momente heikel sind und was sie sagen soll.</p>
+
+<h3>6. Im Ablauf festlegen, wann Handys erlaubt sind</h3>
+<p>Ein Verbot ohne Ausgleich frustriert. Legen Sie mit dem Paar fest, wann jeder sein Foto machen darf: beim Auszug des Paares, beim Blütenregen oder direkt nach der Trauung. Ein Gast, der weiß, dass sein Moment kommt, wartet viel bereitwilliger.</p>
+
+<h2>Während der Trauung: wie man die Gäste bittet, das Handy wegzustecken</h2>
+
+<h3>7. Die Ansage vor der Trauung</h3>
+<p>Mit Abstand der wirksamste Tipp. Ein Satz ins Mikrofon, kurz vor dem Einzug des Paares, von der Person, der alle zuhören. Texte zum Kopieren, je nach Ton der Feier mit „Sie“ oder „ihr“:</p>
+<p><em>„Bevor es losgeht, haben die beiden eine Bitte: Sie möchten, dass Sie diesen Moment mit ihnen erleben und nicht durch ein Display. Bitte stecken Sie Ihre Handys und Kameras weg. Ihr Fotograf hält alles fest. Beim Auszug haben Sie Zeit für Ihre eigenen Fotos.“</em></p>
+<p>Lockere Version:</p>
+<p><em>„Kurze Erinnerung vor dem Einzug der Braut: Das schönste Geschenk, das ihr den beiden heute machen könnt, ist euer Blick. Handys in die Tasche, Taschentücher griffbereit.“</em></p>
+<p>Wer die Ansage macht, hängt von der Trauung ab. Bei der freien Trauung übernimmt das meist gern der Trauredner, wenn er den Text vorher bekommt. In der Kirche hat der Pfarrer oft ohnehin eigene Regeln zum Fotografieren, und mancher weist zu Beginn selbst darauf hin, dass ein Fotograf da ist: Sprechen Sie das im Vorgespräch an. Im Standesamt gelten ebenfalls oft eigene Regeln, und nicht jede Standesbeamtin macht eine solche Ansage. Dann übernimmt ein Trauzeuge sie im Saal, kurz bevor es losgeht.</p>
+
+<h3>8. Ihr Standort</h3>
+<p>Ein guter Standort löst einen Teil des Problems, bevor es entsteht:</p>
+<ul>
+<li><strong>Schauen Sie sich den Ort vorher an</strong> oder lassen Sie sich einen Plan geben: Wo kommt die Braut herein, wo steht das Paar, woher kommt das Licht?</li>
+<li><strong>Bitten Sie darum, den Gang freizuhalten</strong>, und darum, dass die Plätze am Gang nicht mit den begeistertsten Gästen besetzt werden.</li>
+<li><strong>Beziehen Sie vor dem Einzug Position</strong>, am Ende des Gangs, und wechseln Sie nur zwischen zwei wichtigen Momenten.</li>
+<li><strong>Planen Sie einen Ausweichwinkel</strong>, erhöht oder seitlich: Taucht ein Arm auf, wechseln Sie den Winkel, ohne zu rennen.</li>
+<li><strong>Arbeiten Sie bei großen Trauungen mit einem zweiten Fotografen</strong>: einer von vorn, einer von der Seite, und die Handys können nicht beide gleichzeitig verdecken.</li>
+</ul>
+
+<h3>9. Der erlaubte Fotomoment</h3>
+<p>Das ist Tipp 6, in Szene gesetzt. Nach dem Kuss oder am Ende der Trauung sagt der Trauredner: <em>„Und jetzt dürfen die Handys raus: Die beiden schenken Ihnen dreißig Sekunden für das Erinnerungsfoto.“</em> Das Paar dreht sich zu den Gästen, alle fotografieren, es wird gelacht, und die Regel ist ohne Frust eingehalten. Machen Sie bei der Gelegenheit selbst ein Bild vom ganzen Saal mit erhobenen Handys: Es erzählt etwas.</p>
+
+<h3>10. Absprache mit DJ und Musikern</h3>
+<p>Der DJ hat den ganzen Tag das Mikrofon. Sprechen Sie mit ihm die Momente ab, in denen eine Ansage hilft: der Einzug in den Saal, der Hochzeitstanz, das Anschneiden der Torte. Ein Satz genügt: <em>„Für den Hochzeitstanz lasst bitte den Kreis um die beiden frei und steckt die Handys für ein paar Minuten weg: Der Fotograf kümmert sich darum.“</em> Ein vorbereiteter DJ macht das besser als jeder andere, im Ton der Feier.</p>
+
+<h3>11. Die Gruppenfotos: eins für die Handys</h3>
+<p>Bei den Gruppenfotos ist nicht das Handy im Gang das Problem, sondern der Gast, der sich hinter Sie stellt: Die halbe Gruppe schaut in sein Objektiv, und Ihr Foto ist verdorben. Was funktioniert: Sagen Sie nach jedem Gruppenfoto selbst <em>„Und jetzt eins für die Handys!“</em> und lassen Sie den Gästen zehn Sekunden. Niemand muss Sie mehr doppeln, weil jeder weiß, dass er drankommt. Vorab ein Satz, der die Regeln klärt: <em>„Damit alle in die richtige Richtung schauen, lasse ich Sie direkt nach jedem meiner Fotos Ihre eigenen machen.“</em> Unsere Tipps für die Organisation der Gruppen stehen in <a href="/journal/photos-de-groupe-mariage">Gruppenfotos bei der Hochzeit</a>.</p>
+
+<h2>Am Abend: lenken statt verbieten</h2>
+<p>Nach der Trauung ergibt ein Handyverbot keinen Sinn mehr. Die Gäste werden fotografieren, und das ist gut so: Sie halten die Tische, die Tanzfläche und die Momente hinter den Kulissen fest, alles, was Sie nicht sehen können. Es geht nur noch darum, dass sie es tun, ohne Sie zu stören und ohne den Abend mit der Nase am Display zu verbringen.</p>
+
+<h3>12. Der QR-Code für die digitale Einwegkamera</h3>
+<p>Das ist der wirksamste Tipp für den Abend, weil er das Verhalten der Gäste verändert, statt es zu bekämpfen. Das Prinzip übernimmt das der Einwegkameras, die früher auf den Tischen lagen: Jeder Gast scannt einen QR-Code, und sein Handy wird zu einer digitalen Einwegkamera mit einer <strong>begrenzten Zahl an Aufnahmen</strong> und <strong>Fotos, die verborgen bleiben</strong>, bis sie bei einer gemeinsamen Präsentation für alle sichtbar werden, oft am nächsten Tag.</p>
+<p>Was das für Sie ändert:</p>
+<ul>
+<li><strong>Weniger Handys, die ständig in der Luft sind.</strong> Mit zehn Aufnahmen für den ganzen Abend knipst niemand drauflos; jeder spart seine Aufnahmen für die Momente, die zählen.</li>
+<li><strong>Weniger Reflex „nachschauen, nochmal machen“.</strong> Weil die Fotos verborgen sind, schaut niemand nach jedem Auslösen drei Minuten aufs Display.</li>
+<li><strong>Weniger Live-Storys.</strong> Die Fotos werden später gemeinsam angeschaut, statt einzeln während der Feier gepostet.</li>
+<li><strong>Weniger Gäste in Ihrem Bild.</strong> Wer Ihnen sonst folgte, um „dasselbe Foto“ zu bekommen, hat jetzt sein eigenes Spiel.</li>
+</ul>
+<p>Das macht <a href="/appareil-jetable-mariage">Time to Flash</a>, der Dienst, den wir entwickeln: ein QR-Code ohne App-Installation, 3 bis 15 Aufnahmen pro Gast nach Wahl des Paares und ein Album, das auf einen Schlag für alle sichtbar wird. Egal welches Werkzeug Sie empfehlen, prüfen Sie die zwei entscheidenden Punkte: begrenzte Aufnahmen und verborgene Fotos. Eine reine Galerie, in die jeder seine Fotos hochlädt, ändert nichts am Verhalten während der Feier. Mehr zu diesem Ansatz in <a href="/journal/photographe-mariage-photos-invites">Hochzeitsfotograf und Gästefotos</a>.</p>
+
+<h3>13. Den QR-Code dort platzieren, wo Sie nicht arbeiten</h3>
+<p>Der Code gehört nicht an den Mittelgang der Trauung und nicht an den Ort der Gruppenfotos. Stellen Sie ihn auf die Tische beim Essen, an die Bar, an die Garderobe, neben die Tanzfläche: dorthin, wo die Gäste Zeit haben und wo sich Ihre wichtigen Momente nicht abspielen. Erprobte Plätze finden Sie in <a href="/journal/ou-poser-le-qr-code">Wohin mit dem QR-Code</a>, und das Paar kann sein Plakat mit dem <a href="/generateur-qr-code-mariage">kostenlosen QR-Code-Plakat-Generator</a> gestalten.</p>
+
+<h3>14. Die zwei, drei wichtigen Momente des Abends schützen</h3>
+<p>Hochzeitstanz, Anschneiden der Torte, Reden: Diese Momente verdienen eine kurze Ansage, wie bei der Trauung. Bitten Sie den DJ oder den Trauzeugen, der durch den Abend führt, zu sagen: <em>„Beim Hochzeitstanz bitte die erste Reihe ohne Handys. Danach gehört die Tanzfläche euch.“</em> Den Rest der Zeit lassen Sie laufen: Es ist der Abend der Gäste.</p>
+
+<h3>15. Der Handyblitz</h3>
+<p>Ein Handyblitz, der während Ihrer Auslösung zündet, kann ein Bild überstrahlen. Wenn Sie beim Hochzeitstanz mit entfesseltem Blitz arbeiten, sagen Sie dem DJ Bescheid: Ein Satz mit der Bitte, für dieses Lied den Blitz auszuschalten, reicht, und die meisten Gäste halten sich daran. Für den Rest des Abends ist es ein aussichtsloser Kampf; den nehmen Sie besser gelassen hin.</p>
+
+<h2>Der aufdringliche Gast: was Sie im Moment taktvoll sagen</h2>
+<p>Trotz allem gibt es immer jemanden. Den fotobegeisterten Cousin, der Ihnen mit seiner Spiegelreflex folgt, die Tante, die sich in den Gang stellt, den Freund, der die Rede live streamt. Das Ziel: das Problem lösen, ohne dass es peinlich wird, weder für ihn noch für das Paar.</p>
+
+<h3>16. Die Sätze, die funktionieren</h3>
+<p>Immer leise, mit einem Lächeln und mit einer Alternative statt eines Vorwurfs:</p>
+<ul>
+<li><strong>Der Gast im Gang:</strong> <em>„Darf ich Sie bitten, einen Schritt zur Seite zu gehen? Das Paar hat mich gebeten, den Gang für den Einzug freizuhalten. Von hier haben Sie einen wunderbaren Blick.“</em></li>
+<li><strong>Der Gast hinter Ihnen bei den Gruppenfotos:</strong> <em>„Nach diesem Foto gehört der Platz Ihnen, sonst schauen alle in Ihr Handy und nicht in meine Kamera.“</em></li>
+<li><strong>Der Hobbyfotograf, der Ihnen folgt:</strong> <em>„Tolle Kamera! Während der Trauung brauche ich den ganzen Platz, aber danach zeige ich Ihnen gern die besten Winkel der Location.“</em> Ihn zum Verbündeten zu machen, funktioniert fast immer.</li>
+<li><strong>Das Tablet über den Köpfen:</strong> <em>„Es verdeckt der ganzen Reihe hinter Ihnen die Sicht. Ich schicke Ihnen ein Foto von diesem Moment, versprochen.“</em> Wenn Sie es versprechen, halten Sie Wort.</li>
+<li><strong>Der Livestream in den sozialen Netzwerken:</strong> Das müssen nicht Sie regeln. Sagen Sie unauffällig der Vertrauensperson Bescheid (Tipp 5), die weiß, ob das Paar Wert darauf legt.</li>
+</ul>
+
+<h3>17. Abgeben, und nie ein Drama daraus machen</h3>
+<p>Wenn der Gast nicht nachgibt, lassen Sie sich nicht auf einen Streit ein: Gehen Sie über die Vertrauensperson oder die Hochzeitsplanerin. Sie sind Dienstleister, er gehört zu den Liebsten des Paares; eine Szene kostet Sie viel mehr als ein misslungenes Foto. Und beschweren Sie sich nicht während der Feier beim Paar. Wurde ein wichtiger Moment verdorben, sprechen Sie nach der Hochzeit in Ruhe darüber, mit einer Lösung (ein Zuschnitt, ein anderes Bild aus derselben Serie).</p>
+
+<h2>Übersicht: die 17 Tipps auf einen Blick</h2>
+<table>
+<thead><tr><th>Wann</th><th>Tipp</th></tr></thead>
+<tbody>
+<tr><td>Vorher</td><td>1. Gespräch und Klausel mit dem Paar</td></tr>
+<tr><td>Vorher</td><td>2. Hinweis auf der Einladung oder der Website</td></tr>
+<tr><td>Vorher</td><td>3. Erinnerung am Vortag</td></tr>
+<tr><td>Vorher</td><td>4. Schild am Eingang zur Trauung</td></tr>
+<tr><td>Vorher</td><td>5. Eine freundliche Vertrauensperson</td></tr>
+<tr><td>Vorher</td><td>6. Ein erlaubter Moment im Ablauf</td></tr>
+<tr><td>Trauung</td><td>7. Ansage durch Trauredner, Pfarrer oder Trauzeugen</td></tr>
+<tr><td>Trauung</td><td>8. Standort des Fotografen</td></tr>
+<tr><td>Trauung</td><td>9. Der erlaubte Fotomoment</td></tr>
+<tr><td>Trauung</td><td>10. Absprache mit dem DJ</td></tr>
+<tr><td>Trauung</td><td>11. „Eins für die Handys“ nach jedem Gruppenfoto</td></tr>
+<tr><td>Abend</td><td>12. QR-Code für die digitale Einwegkamera (begrenzte Aufnahmen, verborgene Fotos)</td></tr>
+<tr><td>Abend</td><td>13. QR-Code fern von Ihren Arbeitsbereichen</td></tr>
+<tr><td>Abend</td><td>14. Wichtige Momente per Ansage schützen</td></tr>
+<tr><td>Abend</td><td>15. Blitz aus beim Hochzeitstanz</td></tr>
+<tr><td>Im Moment</td><td>16. Die taktvollen Sätze</td></tr>
+<tr><td>Im Moment</td><td>17. Abgeben, ohne Drama</td></tr>
+</tbody>
+</table>
+
+<h2>Sollte die ganze Hochzeit ohne Handy stattfinden?</h2>
+<p>Manche Paare wollen Handys den ganzen Tag verbannen. Das ist ihr gutes Recht, aber Sie können sie daran erinnern, was ihnen dabei entgeht: die Fotos der Tische, der Tanzfläche um zwei Uhr nachts, der Momente hinter den Kulissen, die Sie nicht machen können. Der Mittelweg (Trauung unplugged, Abend gelenkt) bringt fast immer das bessere Ergebnis, für das Paar wie für Sie. Die Debatte aus Sicht des Paares lesen Sie in <a href="/journal/mariage-sans-telephone-unplugged">Hochzeit ohne Handy: gute oder schlechte Idee?</a></p>
+
+<h2>Kurz zusammengefasst</h2>
+<ul>
+<li>Der Großteil der Arbeit passiert vorher: Vertrag, Einladung, Erinnerung, Schild.</li>
+<li>Während der Trauung ist die Ansage der wirksamste Tipp; ein erlaubter Fotomoment verhindert Frust.</li>
+<li>Bei den Gruppenfotos löst „eins für die Handys“ nach jedem Foto das Problem des Gastes hinter Ihnen.</li>
+<li>Am Abend lenken statt verbieten: Eine digitale Einwegkamera mit begrenzten Aufnahmen und verborgenen Fotos bremst den Reflex, nachzuschauen und zu posten.</li>
+<li>Beim aufdringlichen Gast: leise, mit einem Lächeln, mit einer Alternative, und mit einer Vertrauensperson, wenn das nicht reicht.</li>
+</ul>
+<p>Sie möchten Ihren Paaren diese digitale Einwegkamera anbieten und so mitbestimmen, welchen Platz die Handys am Hochzeitstag haben? Wir bereiten ein Programm für Fotografen vor: <a href="/pro">So bieten Sie Time to Flash Ihren Brautpaaren an</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Wie bittet man die Gäste, das Handy während der Trauung wegzustecken?',
+        a: 'Mit mehreren Erinnerungen: ein Hinweis auf der Einladung, eine Nachricht am Vortag, ein Schild am Eingang und vor allem eine Ansage durch Trauredner, Pfarrer oder einen Trauzeugen kurz vor dem Einzug. Wenn ein Moment eingeplant ist, in dem Handys erlaubt sind, etwa beim Auszug, wird die Bitte viel besser angenommen.',
+      },
+      {
+        q: 'Was ist eine Unplugged-Hochzeit?',
+        a: 'Eine Hochzeit oder Trauung, bei der das Paar die Gäste bittet, weder Handy noch Kamera zu benutzen. Der Fotograf hat freie Sicht, und das Paar sieht Gesichter statt Displays. Die meisten Paare beschränken die Regel auf die Trauung und erlauben Handys danach wieder.',
+      },
+      {
+        q: 'Was tun, wenn ein Gast den Hochzeitsfotografen stört?',
+        a: 'Der Fotograf spricht ihn leise und mit einem Lächeln an und bietet eine Alternative: einen Schritt zur Seite, auf das nächste Foto warten oder direkt danach selbst fotografieren. Gibt der Gast nicht nach, geht er über die Hochzeitsplanerin oder eine bestimmte Vertrauensperson und lässt sich nie auf einen Streit mit den Liebsten des Paares ein.',
+      },
+      {
+        q: 'Sollte man Handys auf der ganzen Hochzeit verbieten?',
+        a: 'Meist nicht. Am Abend halten die Gäste die Tische, die Tanzfläche und die Momente hinter den Kulissen fest, die der Fotograf nicht abdecken kann. Besser ist es, zu lenken: zum Beispiel mit einer digitalen Einwegkamera mit begrenzten Aufnahmen und Fotos, die bis zum nächsten Tag verborgen bleiben.',
+      },
+      {
+        q: 'Was schreibt man auf ein Schild für eine Unplugged-Trauung?',
+        a: 'Einen kurzen, freundlichen Satz, der von Weitem lesbar ist, zum Beispiel: „Willkommen zu unserer Unplugged-Trauung. Bitte steckt eure Handys weg: Unser Fotograf kümmert sich um alles.“ oder „Genießt diesen Moment mit euren Augen, die Fotos kommen später.“',
+      },
+    ],
+  },
+}

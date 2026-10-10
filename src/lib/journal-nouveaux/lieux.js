@@ -1086,4 +1086,528 @@ export const POSTS_EN = {
   },
 }
 
-export const POSTS_DE = {}
+// ------------------------------------------------------------
+//  POSTS_DE : adaptations pour les gérants de Hochzeitslocations en
+//  Allemagne (vouvoiement « Sie »), d’après le glossaire du 10/10/2026.
+//  Requêtes visées : « Hochzeitslocation Marketing », « Hochzeitslocation
+//  mehr Anfragen », « Zusatzleistungen Hochzeitslocation », « Rahmenprogramm
+//  Hochzeit », « WLAN Hochzeitslocation », « Event WLAN mieten ».
+//  Adapté : plateformes allemandes (Bridebook, Weddyplace, Zankyou),
+//  Google Unternehmensprofil, UWG pour les faux avis, KUG/DSGVO pour les
+//  photos, Außenstelle des Standesamts, Nachtruhe 22 Uhr, feu d’artifice
+//  (1. SprengV : F2 interdit hors 31/12-01/01 sauf Ausnahmegenehmigung,
+//  Großfeuerwerk annoncé 2 semaines avant), Himmelslaternen interdites,
+//  opérateurs Telekom/Vodafone/O2, fin de la Störerhaftung (2017).
+// ------------------------------------------------------------
+export const POSTS_DE = {
+  'attirer-maries-lieu-reception': {
+    title: 'Hochzeitslocation Marketing: 12 Wege zu mehr Anfragen',
+    excerpt: 'Google-Profil, Fotos echter Hochzeiten, Portale, freie Termine, Besichtigungen, die überzeugen: der konkrete Plan, um Ihre Hochzeitslocation zu füllen.',
+    caption: 'Ein Paar besichtigt mit der Betreiberin den Festsaal eines Landguts, am späten Nachmittag',
+    body: `
+<p>Eine schöne Location allein füllt keinen Kalender mehr. Paare vergleichen Dutzende Hochzeitslocations online, bevor sie drei besichtigen, und sortieren in Sekunden aus, wer ein leeres Profil, veraltete Fotos oder eine langsame Antwort hat. Gutes <strong>Hochzeitslocation Marketing</strong> muss deshalb zwei Dinge leisten: gefunden werden, und dann ausgewählt werden.</p>
+<p>Hier sind die zwölf Hebel, die wirklich zählen, in der Reihenfolge, in der ein Paar ihnen begegnet: von der ersten Google-Suche bis zur Vertragsunterschrift.</p>
+
+<h2>Zuerst: Für wen füllen Sie Ihre Hochzeitslocation?</h2>
+<p>Marketing für eine Hochzeitslocation beginnt mit einer einfachen Frage: Welche Hochzeit funktioniert bei Ihnen am besten? Ein Schloss mit 250 Plätzen, eine Scheune für 90 Gäste und ein Saal in der Stadt ziehen nicht dieselben Paare an und sollten sie auch nicht gleich ansprechen.</p>
+<p>Schreiben Sie in drei Zeilen das Porträt Ihrer idealen Hochzeit auf: Gästezahl, Budget, Stil (rustikal, elegant, ausgelassen, im kleinen Kreis) und das, was dem Paar am wichtigsten ist (vor Ort übernachten, lange feiern, ein Garten für die freie Trauung). Alles Weitere (Fotos, Texte, Angebote) leitet sich aus diesem Porträt ab. Eine Location, die allen gefallen will, hebt sich am Ende von niemandem ab.</p>
+
+<h2>1. Google-Unternehmensprofil und Bewertungen: Ihr erstes Schaufenster</h2>
+<p>Viele Paare suchen nach „Hochzeitslocation“ plus Region oder Stadt, oder sie geben direkt Ihren Namen ein, nachdem sie ihn irgendwo gesehen haben. In beiden Fällen sehen sie zuerst Ihr Google-Unternehmensprofil, mit Karte, Fotos und Sternebewertung.</p>
+<h3>Was ein gutes Profil enthält</h3>
+<ul>
+<li><strong>Die richtige Hauptkategorie</strong> (Hochzeitslocation, Veranstaltungsort, Festsaal, je nachdem, was Google anbietet und am besten passt), dazu Nebenkategorien für die anderen Feiern, die Sie ausrichten.</li>
+<li><strong>Mindestens rund dreißig Fotos</strong>, jede Saison aufgefrischt: Außenbereiche, eingedeckter Saal, leerer Saal, Zimmer, und vor allem Fotos echter Hochzeiten.</li>
+<li><strong>Eine Beschreibung, die Fragen beantwortet</strong>: Plätze bestuhlt und stehend, Übernachtungsmöglichkeiten, Ende der Feier, freie Caterer-Wahl oder Hauscatering, Anfahrt, Parkplätze.</li>
+<li><strong>Den Link zu Ihrer Website</strong> und einen Kontaktweg, der wirklich funktioniert (eine Nummer, unter der jemand abnimmt, ein Postfach, das täglich gelesen wird).</li>
+</ul>
+<h3>Bewertungen: der am meisten unterschätzte Hebel</h3>
+<p>Ein Paar, das zwischen zwei gleichwertigen Locations schwankt, liest die Bewertungen. Es schaut auf die Sterne, aber auch darauf, wie aktuell die letzten Bewertungen sind und wie Sie darauf antworten.</p>
+<ul>
+<li><strong>Bitten Sie jedes Paar um eine Bewertung</strong>, ein bis zwei Wochen nach der Hochzeit: Die beiden haben sich erholt und sind noch ganz erfüllt vom Tag. Schicken Sie den direkten Link, nicht nur „Bewerten Sie uns gern auf Google“.</li>
+<li><strong>Antworten Sie auf jede Bewertung</strong>, auch auf die begeisterten, und greifen Sie ein Detail ihres Tages auf. Auf eine negative Bewertung antworten Sie sachlich, ohne sich Zeile für Zeile zu rechtfertigen: Mitlesen tut Ihr nächstes Paar, nicht der Verfasser.</li>
+<li><strong>Kaufen Sie niemals Bewertungen</strong> und schreiben Sie keine selbst: Das ist nach dem Gesetz gegen den unlauteren Wettbewerb (UWG) unzulässig, kann abgemahnt werden, und die Plattformen erkennen es immer besser.</li>
+</ul>
+
+<h2>2. Fotos der Location, und Fotos echter Hochzeiten</h2>
+<p>Paare buchen einen Tag, den sie noch nicht erlebt haben. Ihre Aufgabe ist es, ihnen zu helfen, sich diesen Tag vorzustellen, und nichts gelingt dabei besser als Bilder.</p>
+<h3>Zwei Fotoserien, nicht eine</h3>
+<p><strong>Fotos der Location</strong>, von einem Profi aufgenommen, bei klarem Wetter und zur richtigen Tageszeit: Fassade, Garten oder Park, der Saal aus mehreren Blickwinkeln, die Zimmer. Sie zeigen Raum, Licht und Zustand. Denken Sie auch an den leeren Saal: Viele Paare wollen die leere Leinwand sehen, bevor sie sich ihre Dekoration vorstellen.</p>
+<p><strong>Fotos echter Hochzeiten</strong>, die Lust auf mehr machen. Ein eingedeckter Saal mit lachenden Gästen, die Tanzfläche um Mitternacht, die freie Trauung im Garten, der Sektempfang im Abendlicht. Diese Bilder beweisen, dass bei Ihnen gefeiert wird, nicht nur, dass die Kulisse schön ist.</p>
+<h3>So bekommen Sie sie rechtssicher</h3>
+<p>Hochzeitsfotos gehören urheberrechtlich dem Fotografen, und sie zeigen erkennbare Menschen (Recht am eigenen Bild, dazu die DSGVO). Um sie zu veröffentlichen, brauchen Sie die Zustimmung des Fotografen und die des Paares für alle Bilder, auf denen es zu sehen ist. Am einfachsten:</p>
+<ul>
+<li>eine freiwillige Klausel in Ihren Vertrag aufnehmen, die das Paar ablehnen kann und die Ihnen erlaubt, nach der Hochzeit um einige Fotos zu bitten;</li>
+<li>den Fotografen ansprechen und anbieten, eine Auswahl mit Namensnennung und Markierung zu verwenden: Die meisten sehen darin gute Sichtbarkeit;</li>
+<li>Bilder bevorzugen, auf denen die Location im Mittelpunkt steht (ein Tisch, der beleuchtete Saal, der Park), statt Nahaufnahmen von Gästen.</li>
+</ul>
+<p>Die Regeln im Detail erklären wir in unserem Artikel zum <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild auf der Hochzeit</a>.</p>
+<h3>Denken Sie an Video und an alle vier Jahreszeiten</h3>
+<p>Ein 30-Sekunden-Video, gedreht während einer Feier im Herbst oder Winter (Kamin an, Lichterketten, der Saal bei Nacht), beantwortet Fragen, die kein Sommerfoto klärt: wie man sich bewegt, wie die Location nach Einbruch der Dunkelheit aussieht. Genau das hilft, Termine außerhalb der Hochsaison zu verkaufen.</p>
+
+<h2>3. Hochzeitsportale und Location-Verzeichnisse</h2>
+<p>Spezialisierte Portale bleiben für viele Paare Pflicht, vor allem zu Beginn der Suche. In Deutschland gehören Bridebook, Weddyplace und Zankyou dazu, ergänzt durch Location-Verzeichnisse, regionale Hochzeitsportale und Hochzeitsblogs.</p>
+<p>Ein paar Regeln, damit sich das lohnt:</p>
+<ul>
+<li><strong>Messen Sie, bevor Sie mehr bezahlen.</strong> Zählen Sie pro Portal über eine Saison die Anfragen, die Besichtigungen und die unterschriebenen Verträge. Ein Portal, das viele Anfragen, aber wenige Besichtigungen bringt, erreicht vielleicht nicht Ihre Zielgruppe.</li>
+<li><strong>Pflegen Sie das Profil wie Ihre Website.</strong> Dieselben starken Fotos, dieselben klaren Antworten, dieselben Richtpreise. Ein halb ausgefülltes Profil schadet mehr als gar keins.</li>
+<li><strong>Sammeln Sie auch dort Bewertungen</strong>, denn Paare lesen sie direkt auf dem Portal.</li>
+<li><strong>Machen Sie sich nicht von einer einzigen Quelle abhängig.</strong> Ihre Website und Ihr Google-Profil gehören Ihnen; ein Portal kann seine Regeln oder Preise von heute auf morgen ändern.</li>
+</ul>
+
+<h2>4. Instagram und Pinterest: das Leben in Ihrer Location zeigen</h2>
+<p>Auf Instagram und Pinterest träumen Paare von ihrer Hochzeit. Sie suchen dort keinen Prospekt, sondern Inspiration.</p>
+<h3>Instagram</h3>
+<ul>
+<li><strong>Zeigen Sie echte Hochzeiten</strong> (mit Einverständnis) und markieren Sie Fotografin, Caterer und Floristin. Jede Markierung bringt Sie vor die Community dieser Dienstleister.</li>
+<li><strong>Zeigen Sie, was hinter den Kulissen passiert</strong>: das Eindecken des Saals, die Küche des Caterers, den Park am frühen Morgen. Solche Inhalte, oft mit dem Handy gedreht, kommen genauso gut an wie die schönen Bilder.</li>
+<li><strong>Antworten Sie schnell auf Nachrichten</strong>: Viele Paare stellen ihre erste Anfrage per Direktnachricht.</li>
+<li><strong>Halten Sie einen machbaren Rhythmus</strong>: Zwei sorgfältige Beiträge pro Woche sind besser als eine intensive Woche und danach ein Monat Funkstille.</li>
+</ul>
+<h3>Pinterest</h3>
+<p>Pinterest funktioniert wie eine visuelle Suchmaschine: Ein gut betitelter Pin („Scheunenhochzeit im Allgäu“, „freie Trauung im Schlossgarten“) kann Ihnen über Jahre Besucher bringen. Legen Sie Pinnwände nach Stil und Jahreszeit an und verlinken Sie jeden Pin auf die passende Seite Ihrer Website.</p>
+
+<h2>5. Partnerschaften mit Hochzeitsplanern und Dienstleistern</h2>
+<p>Ein großer Teil der Location-Empfehlungen läuft über andere Dienstleister. Eine Hochzeitsplanerin, die Ihr Haus kennt, ein Fotograf, der Ihr Licht mag, ein Caterer, der gern in Ihrer Küche arbeitet: Jeder von ihnen kann Ihnen Paare schicken.</p>
+<ul>
+<li><strong>Laden Sie die Hochzeitsplaner Ihrer Region ein</strong>, die Location außerhalb von Hochzeiten zu besichtigen, mit Zeit für ein echtes Gespräch: ihre Anforderungen, das, was ihre Kunden suchen.</li>
+<li><strong>Führen Sie eine aktuelle Liste empfohlener Dienstleister</strong>, die Sie den Paaren mitgeben. Das ist ein Service für die Paare und ein Grund für die Dienstleister, umgekehrt von Ihnen zu erzählen.</li>
+<li><strong>Teilen Sie Fotos und nennen Sie die Urheber</strong>: Ein Fotograf, den Sie hervorheben, zeigt auch gern Ihre Location.</li>
+<li><strong>Bleiben Sie bei Pflicht-Dienstleistern flexibel.</strong> Eine feste Liste gibt manchen Locations Sicherheit, schreckt aber viele Paare ab, die ihren Caterer oder DJ schon haben. Wenn Sie Dienstleister vorschreiben, erklären Sie warum.</li>
+</ul>
+<p>Wie Hochzeitsplaner selbst ihre Kunden (und damit ihre Partner-Locations) finden, lesen Sie in <a href="/journal/trouver-clients-wedding-planner">Kunden finden als Hochzeitsplaner</a>.</p>
+
+<h2>6. Tag der offenen Tür und Hochzeitsmessen</h2>
+<h3>Der Tag der offenen Tür</h3>
+<p>Ein gut gemachter Tag der offenen Tür ist Dutzende Einzelbesichtigungen wert. Das Geheimnis: Zeigen Sie die Location <strong>wie an einem Hochzeitstag</strong>, nicht als leeren Raum. Decken Sie eine komplette Tafel ein, laden Sie drei oder vier Partner ein (Floristin, Caterer mit Häppchen, DJ, Fotograf), planen Sie einen ausgeschilderten Rundgang und ein einfaches Formular, auf dem Sie Datum, Gästezahl und Budget jedes Paares notieren.</p>
+<p>Zwei Zeitpunkte funktionieren gut: der Jahresbeginn, wenn die Paare, die sich an Weihnachten oder Silvester verlobt haben, mit der Suche anfangen, und der Herbst, für die Hochzeiten des folgenden Jahres.</p>
+<h3>Hochzeitsmessen</h3>
+<p>Messen sind teuer (Stand, ein ganzer Arbeitstag, Material) und passen nicht zu jeder Location. Sie lohnen sich vor allem, wenn die Messe in Ihrer Nähe stattfindet und Sie mit einem klaren Angebot kommen: noch freie Termine, Preis für Freitag oder Sonntag, Besichtigung direkt vor Ort buchbar. Melden Sie sich noch am selben Abend bei jedem Kontakt.</p>
+
+<h2>7. Freie Termine: Winter, Freitag, Sonntag, kurzfristig</h2>
+<p>Die Samstage im Mai, Juni und September füllen sich von allein. Der echte Zusatzumsatz liegt woanders: freitags, sonntags, in den Wintermonaten und bei Terminen, die kurzfristig frei werden.</p>
+<ul>
+<li><strong>Schnüren Sie ein eigenes Angebot, statt Ihren Grundpreis zu senken.</strong> Eine „Freitagspauschale“ oder eine „Winterhochzeit“ mit einer Leistung inklusive (Brunch am nächsten Morgen, zusätzliche Übernachtung, Glühwein zum Sektempfang) schützt Ihren Preis und gibt einen konkreten Grund, diese Termine zu wählen.</li>
+<li><strong>Verkaufen Sie den Winter als das, was er ist.</strong> Kaminfeuer, Kerzen, warmes Licht, ein gemütlicher Saal: Zeigen Sie es in Fotos und Videos, statt sich für die Kälte zu entschuldigen.</li>
+<li><strong>Kündigen Sie kurzfristig freie Termine an</strong>, auf Instagram, bei Hochzeitsplanern und auf Ihrer Website, mit einer klaren Frist. Manche Paare suchen gezielt eine Location in sechs Monaten.</li>
+<li><strong>Öffnen Sie sich für andere Feiern</strong>: Geburtstage, Taufen, Firmenfeiern, Weihnachtsfeiern. Sie füllen die Woche und den Winter, und jeder dieser Gäste kann ein künftiges Brautpaar sein.</li>
+</ul>
+
+<h2>8. Schnell antworten, und gut antworten</h2>
+<p>Paare schicken ihre Anfrage oft am selben Abend an mehrere Locations. Wer zuerst klar antwortet, hat einen Vorsprung, weil er die erste Besichtigung bekommt.</p>
+<p>Eine gute Antwort braucht nicht viel:</p>
+<ol>
+<li><strong>Die Verfügbarkeit des Termins</strong>, gleich in der ersten Zeile (und Alternativtermine, falls er vergeben ist).</li>
+<li><strong>Eine realistische Preisspanne</strong> für ihre Gästezahl, oder Ihre Preisliste. Preise zu verstecken kostet alle Beteiligten Zeit.</li>
+<li><strong>Zwei oder drei Fotos</strong>, die zu ihrem Vorhaben passen.</li>
+<li><strong>Einen Besichtigungsvorschlag</strong> mit zwei konkreten Terminen statt „wann es Ihnen passt“.</li>
+</ol>
+<p>Legen Sie sich Textvorlagen an, um Zeit zu sparen, aber formulieren Sie den ersten Satz immer persönlich. Und wenn Sie nicht am selben Tag antworten können, verhindert eine kurze Nachricht („Vielen Dank, ich melde mich morgen mit allen Details“), dass das Paar zur nächsten Location weiterzieht.</p>
+<p>Vereinfachen Sie auch Ihr Kontaktformular: Name, E-Mail, Wunschtermin, Gästezahl. Alles andere fragen Sie danach.</p>
+
+<h2>9. Die Besichtigung, die überzeugt</h2>
+<p>Bei der Besichtigung entscheidet sich alles. Ein Paar, das kommt, ist bereits interessiert; Ihre Aufgabe ist es, seine Zweifel auszuräumen.</p>
+<h3>Vorher</h3>
+<p>Erinnern Sie am Vortag an den Termin, mit Adresse und Parkmöglichkeit. Lesen Sie die Anfrage noch einmal: Gästezahl, Stil, Besonderheiten. Wenn möglich, legen Sie die Besichtigung auf einen Aufbautag oder direkt nach einer Hochzeit, wenn der Saal noch eingedeckt ist.</p>
+<h3>Währenddessen</h3>
+<ul>
+<li><strong>Erzählen Sie den Tag der Reihe nach</strong>: Ankunft der Gäste, Trauung, Sektempfang, Essen, Party, Nacht, Brunch. So stellt sich das Paar jede Stunde vor.</li>
+<li><strong>Zeigen Sie die Schlechtwetteralternative.</strong> Regen ist die Sorge Nummer eins, und eine Antwort, bevor die Frage kommt, beruhigt enorm.</li>
+<li><strong>Sprechen Sie die heiklen Punkte von sich aus an</strong>: Ende der Feier, Lautstärke nach 22 Uhr, Nachbarn, Kaution, Pflicht-Dienstleister. Unsere Liste der <a href="/journal/questions-lieu-reception-mariage">Fragen, die Brautpaare der Location stellen</a>, hilft Ihnen, jede Antwort vorzubereiten.</li>
+<li><strong>Lassen Sie die beiden fünf Minuten allein</strong> im Saal. Sie müssen sich untereinander austauschen.</li>
+</ul>
+<h3>Danach</h3>
+<p>Schicken Sie das Angebot innerhalb von 48 Stunden, mit einer Zusammenfassung des Gesprächs und einer Terminreservierung, die eine klare Frist hat (zum Beispiel zehn Tage). Ohne Rückmeldung genügt eine freundliche Nachfrage eine Woche später. Ein Paar, das zögert, ist dankbar für den Hinweis, dass der Termin vergeben werden könnte.</p>
+
+<h2>10. Inklusivleistungen, die den Unterschied machen</h2>
+<p>Bei vergleichbarem Preis gibt oft den Ausschlag, was das Paar nicht selbst organisieren muss. Jede Inklusivleistung ist ein Dienstleister weniger, den es suchen, und ein Angebot weniger, das es vergleichen muss.</p>
+<table>
+<thead><tr><th>Leistung</th><th>Was das Paar davon hat</th><th>Aufwand für Sie</th></tr></thead>
+<tbody>
+<tr><td>Mobiliar (Tische, Stühle, Stehtische)</td><td>Nichts zu mieten</td><td>Anschaffung, Lagerung</td></tr>
+<tr><td>Übernachtung vor Ort</td><td>Kein Shuttle, längere Feier</td><td>Reinigung, Wäsche, Empfang</td></tr>
+<tr><td>Standesamtliche Trauung vor Ort (wenn Ihre Location als Trauort anerkannt ist)</td><td>Kein Ortswechsel am Hochzeitstag</td><td>Absprache mit dem Standesamt</td></tr>
+<tr><td>Ansprechpartner am Hochzeitstag</td><td>Eine einzige Kontaktperson</td><td>Eine anwesende Person</td></tr>
+<tr><td>WLAN, das den Saal abdeckt</td><td>Musik, Kartenzahlung, Fotos der Gäste</td><td>Einmalige Installation</td></tr>
+<tr><td>Schlechtwetteralternative (Saal, Zelt)</td><td>Ruhe und Sicherheit</td><td>Unterschiedlich</td></tr>
+<tr><td>Brunch am nächsten Morgen</td><td>Die Feier verlängern, ohne Organisation</td><td>Partner-Caterer</td></tr>
+<tr><td>Rahmenprogramm aus einer Hand</td><td>Weniger Dienstleister zu buchen</td><td>Gering bis mittel</td></tr>
+</tbody>
+</table>
+<p>Das WLAN verdient einen eigenen Hinweis: Immer mehr Paare fragen danach, für ihre Dienstleister wie für ihre Gäste. Die Lösungen beschreiben wir in <a href="/journal/wifi-lieu-reception-mariage">WLAN in der Hochzeitslocation</a>.</p>
+<h3>Rahmenprogramm aus einer Hand</h3>
+<p>Ein Rahmenprogramm ist ein starkes Argument, weil man es auf den Fotos sieht und nach der Hochzeit davon erzählt. Gartenspiele, Kinderecke, Feuerschale, Weinprobe zum Sektempfang: Wir gehen sie mit Kosten und Rentabilität durch in <a href="/journal/animations-lieu-reception-mariage">Zusatzleistungen der Hochzeitslocation</a>.</p>
+<p>Zu den einfachsten Ideen gehört eine digitale Einwegkamera für die Gäste. Keine Fotobox, die geliefert werden muss, keine Kameras, die man laden oder einsammeln muss, nur ein QR-Code auf einem Plakat: Jeder Gast scannt ihn und macht mit seinem Handy eine begrenzte Zahl an Fotos, die danach alle auf einmal in einem gemeinsamen Album sichtbar werden. Für eine Location ist das eine Zeile mehr in der Pauschale, ohne Technik und ohne Personal. Genau das macht zum Beispiel <a href="/appareil-jetable-mariage">Time to Flash</a>.</p>
+
+<h2>11. Ihre Website: die Seite, die alles beantworten muss</h2>
+<p>Alle bisherigen Kanäle führen auf Ihre Website. Sie muss auf dem Handy schnell laden (die meisten Paare schauen sie dort an) und Fragen beantworten, ohne dass man Ihnen schreiben muss:</p>
+<ul>
+<li>Kapazitäten (bestuhlt, Stehempfang, Betten);</li>
+<li>Richtpreise oder „ab“-Preise, nach Saison und Wochentag;</li>
+<li>was inklusive ist und was gegen Aufpreis;</li>
+<li>Uhrzeiten, Regeln zur Lautstärke, freie oder vorgeschriebene Dienstleister;</li>
+<li>Anfahrt, nächste Bahnhöfe und Flughäfen, Hotels in der Umgebung;</li>
+<li>eine Galerie echter Hochzeiten und ein sichtbarer Kontaktknopf auf jeder Seite.</li>
+</ul>
+<p>Eigene Seiten nach Stil oder Saison (Winterhochzeit, Hochzeit im kleinen Kreis, freie Trauung im Garten) helfen Ihnen außerdem, bei gezielten Suchen weiter oben zu erscheinen.</p>
+
+<h2>12. Die Paare des Jahres zu Botschaftern machen</h2>
+<p>Mundpropaganda bleibt die verlässlichste Quelle für neue Paare: Jede Hochzeit bringt Dutzende Gäste zusammen, von denen einige in den nächsten zwei Jahren selbst heiraten. Alles, was den Tag unvergesslich macht und damit weitererzählt wird, arbeitet für Sie.</p>
+<ul>
+<li><strong>Achten Sie auf die Details, die Gäste bemerken</strong>: den Empfang, die Ausschilderung, saubere Toiletten um Mitternacht, das Frühstück.</li>
+<li><strong>Bleiben Sie in Kontakt</strong>: ein Gruß zum ersten Hochzeitstag, eine Einladung zum Tag der offenen Tür.</li>
+<li><strong>Bitten Sie um Weiterempfehlung</strong>, ganz einfach, wenn Sie um die Bewertung bitten.</li>
+<li><strong>Sammeln Sie Erinnerungen aus Sicht der Gäste</strong>: Mit Einverständnis des Paares zeigen ein paar Gästefotos Ihre Location so, wie man sie erlebt, und nicht so, wie man sie inszeniert.</li>
+</ul>
+
+<h2>Der Plan für eine Saison</h2>
+<p><strong>Diesen Monat:</strong> Google-Profil vervollständigen, auf alle Bewertungen antworten, Textvorlagen für Anfragen anlegen.<br>
+<strong>In den nächsten drei Monaten:</strong> professionelles Fotoshooting, Auswahl an Fotos echter Hochzeiten (mit Einverständnis), klare Preisseite.<br>
+<strong>In den nächsten sechs Monaten:</strong> Tag der offenen Tür mit Partnern, Angebot für Freitag, Sonntag und Winter, Übersicht der Anfragen nach Quelle.<br>
+<strong>Laufend:</strong> zwei Instagram-Beiträge pro Woche, eine Bewertungsanfrage nach jeder Hochzeit, jede Saison eine Inklusivleistung mehr.</p>
+
+<h2>Time to Flash Ihren Brautpaaren anbieten</h2>
+<p>Wenn Sie die Idee anspricht, eine digitale Einwegkamera in Ihre Pauschalen aufzunehmen: Wir haben ein Programm für Hochzeitslocations und Hochzeitsdienstleister gestartet. Sie schenken oder empfehlen Ihren Paaren die Aktion, die Gäste fotografieren die Feier mit ihrem Handy, und das Paar sieht das Album am nächsten Tag oder zu dem Zeitpunkt, den es selbst bestimmt. Alles Weitere erfahren Sie auf der Seite <a href="/pro">Time to Flash Ihren Brautpaaren anbieten</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Wie bekommt eine Hochzeitslocation mehr Anfragen?',
+        a: 'Fangen Sie mit dem an, was kostenlos und sichtbar ist: ein vollständiges Google-Unternehmensprofil, Fotos echter Hochzeiten und Antworten auf alle Bewertungen. Beantworten Sie dann jede Anfrage noch am selben Tag mit Verfügbarkeit, Preisspanne und zwei Besichtigungsterminen. Bauen Sie außerdem Partnerschaften mit Hochzeitsplanern und Dienstleistern Ihrer Region auf, die viele Locations empfehlen.',
+      },
+      {
+        q: 'Wie füllt man eine Hochzeitslocation im Winter oder unter der Woche?',
+        a: 'Schnüren Sie eigene Angebote (Freitagspauschale, Winterhochzeit) mit einer Inklusivleistung, statt Ihren Grundpreis zu senken. Zeigen Sie die Location im Winter, in Fotos und Videos: Kaminfeuer, Lichter, ein gemütlicher Saal. Öffnen Sie den Kalender außerdem für Geburtstage, Taufen und Firmenfeiern.',
+      },
+      {
+        q: 'Lohnen sich Hochzeitsportale wie Bridebook oder Weddyplace?',
+        a: 'Für viele Locations ja, zumindest auf ein oder zwei Portalen, weil zahlreiche Paare dort mit der Suche beginnen. Messen Sie über eine Saison Anfragen, Besichtigungen und Verträge pro Portal, bevor Sie Ihr Budget erhöhen. Ihre Website und Ihr Google-Profil bleiben die wichtigsten Quellen, denn sie gehören Ihnen.',
+      },
+      {
+        q: 'Darf eine Location Hochzeitsfotos auf ihrer Website zeigen?',
+        a: 'Nur mit Zustimmung des Fotografen, der die Urheberrechte hat, und der erkennbaren Personen, allen voran des Brautpaares. Am einfachsten ist eine freiwillige Klausel im Vertrag und die Nennung des Fotografen. Bevorzugen Sie Bilder, auf denen die Location im Mittelpunkt steht, statt Nahaufnahmen von Gästen.',
+      },
+      {
+        q: 'Welche Inklusivleistungen sprechen für eine Hochzeitslocation?',
+        a: 'Alles, was dem Paar die Suche nach weiteren Dienstleistern erspart: Mobiliar, Übernachtung vor Ort, ein Ansprechpartner am Hochzeitstag, eine Schlechtwetteralternative, Brunch am nächsten Morgen, WLAN im Saal und ein Rahmenprogramm aus einer Hand. Jede Inklusivleistung vereinfacht den Vergleich und rechtfertigt Ihren Preis.',
+      },
+    ],
+  },
+
+  'animations-lieu-reception-mariage': {
+    title: 'Zusatzleistungen der Hochzeitslocation: was sich wirklich lohnt',
+    excerpt: 'Gartenspiele, Kinderecke, Fotobox, Brunch, Feuerwerk: Kosten, Aufwand und Nutzen jeder Zusatzleistung, und wie Sie sie in Ihre Hochzeitspauschale einbauen.',
+    caption: 'Gäste spielen Kubb auf dem Rasen eines Landguts während des Sektempfangs',
+    body: `
+<p>Paare suchen immer öfter eine Location, die ihnen das Leben leichter macht. Jede Leistung, die Sie anbieten, ist ein Dienstleister weniger, den das Paar finden muss, ein Angebot weniger zum Vergleichen und ein Grund mehr, bei Ihnen zu unterschreiben. Es kommt aber auf die Auswahl an: Manche <strong>Zusatzleistungen einer Hochzeitslocation</strong> bringen viel bei minimalem Aufwand, andere binden Personal und Material für wenig Ertrag.</p>
+<p>Dieser Leitfaden geht die Programmpunkte und Services durch, die eine Hochzeitslocation anbieten kann, jeweils mit Kosten, Aufwand und der rentabelsten Art, sie in Ihr Angebot aufzunehmen.</p>
+
+<h2>Warum eine Location ein Rahmenprogramm anbieten sollte</h2>
+<p>Drei Gründe, die über den direkten Umsatz hinausgehen:</p>
+<ul>
+<li><strong>Sie heben sich beim Vergleich ab.</strong> Zwischen zwei gleichwertigen Locations zum gleichen Preis wählt das Paar oft die, bei der „schon alles da ist“.</li>
+<li><strong>Sie behalten den Tag in der Hand.</strong> Programmpunkte, die Sie kennen und die an den richtigen Stellen aufgebaut sind, ersparen Ihnen Dienstleister, die die Location erst am Hochzeitstag kennenlernen, und böse Überraschungen (eine Hüpfburg auf einem empfindlichen Rasen, eine Fotobox ohne Steckdose).</li>
+<li><strong>Sie schaffen Erinnerungen, die mit Ihrer Location verbunden sind.</strong> Die Gäste erinnern sich an die Boule-Partie im Abendlicht oder den Brunch am Pool, und sie erzählen davon.</li>
+</ul>
+
+<h2>Inklusive, gegen Aufpreis oder über Partner: drei Modelle</h2>
+<p>Bevor Sie entscheiden, was Sie anbieten, entscheiden Sie, wie. Die drei Modelle lassen sich in einem Angebot gut kombinieren.</p>
+<table>
+<thead><tr><th>Modell</th><th>Prinzip</th><th>Vorteil</th><th>Grenze</th></tr></thead>
+<tbody>
+<tr><td><strong>In der Pauschale enthalten</strong></td><td>Die Leistung gehört zum Grundpreis</td><td>Starkes Verkaufsargument, einfach</td><td>Die Kosten fallen bei jeder Hochzeit an, auch wenn das Paar sie nicht braucht</td></tr>
+<tr><td><strong>Gegen Aufpreis</strong></td><td>Das Paar bucht sie bei Bedarf dazu</td><td>Zusatzumsatz, übersichtlicher Grundpreis</td><td>Zu viele Optionen machen das Angebot unübersichtlich</td></tr>
+<tr><td><strong>Empfohlener Partner</strong></td><td>Sie verweisen auf einen Dienstleister Ihres Vertrauens</td><td>Keine Investition, kein Risiko</td><td>Kein direkter Umsatz, weniger Kontrolle</td></tr>
+</tbody>
+</table>
+<p>Eine Regel, die gut funktioniert: <strong>Nehmen Sie auf, was wenig kostet und fast alle nutzen</strong>, bieten Sie gegen Aufpreis an, was teuer ist oder nur manchen gefällt, und empfehlen Sie Partner für alles, was Know-how verlangt, das Sie nicht haben.</p>
+
+<h2>Das Raster für die Entscheidung</h2>
+<p>Stellen Sie sich bei jeder Leistung vier Fragen:</p>
+<ol>
+<li><strong>Was kostet sie pro Hochzeit</strong>, wenn die Anschaffung abgeschrieben ist? Ein Spieleset für 1.000 €, das bei 30 Hochzeiten zum Einsatz kommt, kostet etwa 33 € pro Hochzeit, ohne Pflege.</li>
+<li><strong>Wie viel Personalzeit</strong> braucht sie: Aufbau, Aufsicht, Abbau, Reinigung?</li>
+<li><strong>Welches Risiko</strong> bringt sie mit sich: Bruch, Verletzung, Brand, Lärm für die Nachbarn? Deckt Ihre Versicherung das ab?</li>
+<li><strong>Welchen Wert hat sie aus Sicht des Paares?</strong> Eine Leistung, die Sie wenig kostet, für die das Paar woanders aber mehrere hundert Euro bezahlt hätte, ist ein hervorragender Kandidat für die Pauschale.</li>
+</ol>
+
+<h2>Die Zusatzleistungen im Einzelnen</h2>
+
+<h3>Gartenspiele</h3>
+<p>Kubb (Wikingerschach), Boule, Mölkky, Cornhole, Krocket, Riesen-Jenga: das Programm für den Sektempfang schlechthin. Die Spiele beschäftigen die Gäste, während das Paar beim Fotoshooting ist, bringen die Generationen zusammen und brauchen fast keine Aufsicht.</p>
+<p><strong>Kosten:</strong> ein Set aus acht bis zehn Spielen kostet je nach Qualität einige hundert bis etwa 1.500 €; zur Miete verlangen Anbieter von Holzspielen oft zwischen 70 und 300 € pro Wochenende.<br>
+<strong>Aufwand:</strong> gering (rausstellen, wegräumen, prüfen, ob alles da ist).<br>
+<strong>Unser Rat:</strong> in die Pauschale. Das ist das Musterbeispiel für eine günstige Leistung, die bei jeder Hochzeit genutzt wird und die Paare schon bei der Besichtigung bemerken.</p>
+
+<h3>Die Kinderecke</h3>
+<p>Eltern genießen den Abend viel mehr, wenn die Kinder einen eigenen Bereich haben. Eine Kinderecke reicht vom einfach eingerichteten Raum (Teppich, Kissen, Tipi, Gesellschaftsspiele, Malsachen, ein Bildschirm für einen Film am späten Abend) bis zur echten Kinderbetreuung mit Betreuerinnen.</p>
+<p><strong>Kosten:</strong> einige hundert Euro für die Einrichtung. Die Betreuung (Babysitter oder Kinderbetreuung für Hochzeiten) wird pro Stunde abgerechnet; die Preise schwanken stark je nach Region, Zahl der Kinder und ob eine Agentur dahintersteht.<br>
+<strong>Aufwand:</strong> mittel, und sobald Kinder im Spiel sind, tragen Sie echte Verantwortung.<br>
+<strong>Unser Rat:</strong> Nehmen Sie den eingerichteten Raum in die Pauschale auf und empfehlen Sie für die Betreuung einen Partner, den das Paar bezahlt. So behalten Sie das Argument, ohne die Aufsichtspflicht zu übernehmen. Klären Sie mit Ihrer Versicherung, was Ihr Vertrag abdeckt.</p>
+
+<h3>Die Fotobox</h3>
+<p>Die Fotobox ist weiterhin sehr gefragt, vor allem wegen der sofort gedruckten Abzüge. Aber sie ist teuer, empfindlich und braucht Aufbau und Wartung.</p>
+<p><strong>Kosten:</strong> zur Miete meist 350 bis 900 € pro Abend, je nach Ausstattung (Details in <a href="/journal/prix-photobooth-mariage">Was kostet eine Fotobox für die Hochzeit?</a>). Eine professionelle Fotobox zu kaufen kostet mehrere tausend Euro, Verbrauchsmaterial nicht eingerechnet.<br>
+<strong>Aufwand:</strong> mittel bis hoch, wenn Sie sie selbst betreiben (Aufbau, Papier, Pannen).<br>
+<strong>Unser Rat:</strong> empfohlener Partner, oder gegen Aufpreis, wenn ein Anbieter Ihnen einen Sonderpreis macht. Sehen Sie einen geschützten Platz mit Steckdose vor, der schon feststeht.</p>
+
+<h3>Die digitale Einwegkamera für die Gäste</h3>
+<p>Das Prinzip: Jeder Gast scannt mit seinem Handy einen QR-Code und bekommt eine kleine Einwegkamera mit einer begrenzten Zahl an Aufnahmen. Die Fotos bleiben während der Feier verborgen und werden danach für alle gleichzeitig in einem gemeinsamen Album sichtbar. Das ist keine einfache Galerie, in die man Fotos hochlädt (den Unterschied erklären wir in <a href="/journal/application-photo-mariage">unserem Vergleich der Hochzeits-Foto-Apps</a>), sondern ein Spiel, das den ganzen Abend dauert.</p>
+<p><strong>Kosten:</strong> bei <a href="/appareil-jetable-mariage">Time to Flash</a> eine Einmalzahlung pro Hochzeit je nach Gästezahl, ohne Abo: 29,99 € bis 100 Gäste, 34,99 € bis 150, 39,99 € bis 200. Zum Vergleich: Analoge Einwegkameras auf den Tischen kosten rund 10 bis 15 € pro Stück, plus Entwicklung.<br>
+<strong>Aufwand:</strong> praktisch keiner (ein Plakat aufstellen).<br>
+<strong>Unser Rat:</strong> in die Pauschale, oder als Geschenk für Paare, die bei Ihnen unterschreiben. Weiter unten erklären wir, warum sie für eine Location die am einfachsten einzubauende Leistung ist.</p>
+
+<h3>Das Feuerwerk</h3>
+<p>Spektakulär, aber streng geregelt. In Deutschland darf Feuerwerk der Kategorie F2 (das übliche Silvesterfeuerwerk) außerhalb des 31. Dezember und 1. Januar nur mit einer Ausnahmegenehmigung der örtlichen Behörde abgebrannt werden, auch auf Privatgrund. Einen Anspruch darauf gibt es nicht, und der Antrag gehört frühzeitig gestellt, meist mindestens zwei Wochen vorher. Ein Profi-Feuerwerk (Kategorien F3 und F4) darf nur ein Pyrotechniker mit Erlaubnis oder Befähigungsschein zünden, der es in der Regel zwei Wochen vorher bei der zuständigen Behörde anzeigt. In der Nähe besonders brandempfindlicher Gebäude, etwa Reet- und Fachwerkhäuser, ist das Abbrennen ohnehin verboten, und im Sommer kommen bei Trockenheit Einschränkungen wegen Waldbrandgefahr hinzu. Die Details regeln die Länder und Kommunen: Fragen Sie bei Ihrem Ordnungsamt nach.</p>
+<p><strong>Kosten:</strong> Hochzeitsfeuerwerke vom Profi beginnen je nach Anbieter bei einigen hundert Euro für eine kurze Show und liegen schnell deutlich über 1.000 €.<br>
+<strong>Aufwand:</strong> hoch (Abbrennplatz, Sicherheit, Nachbarn, Tiere, Aufräumen).<br>
+<strong>Unser Rat:</strong> nur über einen empfohlenen Partner, mit schriftlichen Regeln im Vertrag: versicherter Profi-Pyrotechniker, von Ihnen festgelegter Abbrennplatz, Zusage nur vorbehaltlich der behördlichen Genehmigung. Funkenfontänen mit sogenannten Kaltfunken, drinnen zum Eröffnungstanz oder zur Hochzeitstorte eingesetzt, sind eine einfachere Alternative; klären Sie sie mit dem Anbieter, Ihrer Versicherung und im Hinblick auf Ihre Rauchmelder. Himmelslaternen sind in fast allen Bundesländern verboten, und seit 2024 ist auch ihr Verkauf in Deutschland untersagt: Schließen Sie sie aus.</p>
+
+<h3>Der Brunch am nächsten Morgen</h3>
+<p>Der Brunch (oder das klassische Katerfrühstück) verlängert die Feier, lässt Gäste mit langer Anreise ein ganzes Wochenende genießen und macht einen Tag rentabel, an dem Ihre Location wegen des Aufräumens ohnehin belegt wäre.</p>
+<p><strong>Kosten:</strong> den Preis legt der Caterer fest; Locations, die einen Brunch anbieten, nennen oft einen Preis pro Person in der Größenordnung von 20 bis 45 €, je nach Umfang.<br>
+<strong>Aufwand:</strong> mittel, wenn ein Partner-Caterer übernimmt, hoch, wenn Sie es selbst machen.<br>
+<strong>Unser Rat:</strong> gegen Aufpreis, mit einem Partner-Caterer. Er gehört zu den beliebtesten Leistungen und ist das ideale Argument, um das ganze Wochenende zu vermieten.</p>
+
+<h3>Der Sektempfang mit Programm</h3>
+<p>Wenn Ihre Location eine starke Identität hat, machen Sie daraus einen Programmpunkt: Weinprobe mit den Weinen des Guts, Kellerführung, regionale Spezialitäten, Cocktailbar, Foodtruck. Davon erzählen die Gäste oft am meisten.</p>
+<p><strong>Kosten und Aufwand:</strong> sehr unterschiedlich. Eine Probe Ihrer eigenen Weine kostet vor allem Zeit; eine Cocktailbar oder ein Foodtruck läuft über einen Partner.<br>
+<strong>Unser Rat:</strong> gegen Aufpreis oder über einen Partner. Wenn Sie selbst Wein machen, ist eine kurze Weinprobe in der Pauschale ein Argument, das niemand kopieren kann.</p>
+
+<h3>Abendstimmung</h3>
+<p>Feuerschalen und Lagerfeuer mit Stockbrot oder Marshmallows, eine Lounge mit Liegestühlen und Decken, Lichterketten in den Bäumen, Open-Air-Kino am nächsten Tag: Diese kleinen Akzente kosten nach der Anschaffung wenig und verändern die Atmosphäre der Location.</p>
+<p><strong>Kosten:</strong> einige Dutzend bis einige hundert Euro für die Ausstattung.<br>
+<strong>Aufwand:</strong> gering, aber achten Sie bei allem, was mit Feuer zu tun hat, auf die Sicherheitsregeln.<br>
+<strong>Unser Rat:</strong> in die Pauschale; daraus entstehen die Fotos, an die man sich erinnert.</p>
+
+<h3>Praktische Services</h3>
+<p>Das ist kein Programm im engeren Sinn, wiegt bei der Entscheidung aber genauso schwer: Shuttle zum Bahnhof oder zu den Hotels, Aufbau für die freie Trauung (Stühle, Traubogen), Garderobe, ein Raum für die Dienstleister, WLAN, das den Saal abdeckt. Zum letzten Punkt lesen Sie <a href="/journal/wifi-lieu-reception-mariage">wie Sie Ihre Hochzeitslocation mit WLAN ausstatten</a>.</p>
+
+<h2>Das Programm an die Jahreszeit anpassen</h2>
+<p>Eine einzige Pauschale für das ganze Jahr ist einfacher zu verwalten, aber das Programm hängt vom Wetter ab. Planen Sie zwei Varianten:</p>
+<ul>
+<li><strong>Im Sommer</strong> spielt sich alles draußen ab: Spiele auf dem Rasen, freie Trauung im Garten, Feuerschalen am späten Abend, Brunch am Pool. Denken Sie an Schatten (Sonnenschirme, Sonnensegel), kühles Wasser für alle und Feuerverbote bei Trockenheit.</li>
+<li><strong>Im Winter</strong> zieht alles nach drinnen: Riesen-Gesellschaftsspiele im Salon, Glühwein oder heiße Schokolade zum Sektempfang, Kaminfeuer, eine Leseecke für die Kinder. Das ist auch der richtige Moment, eine wetterunabhängige Aktion hervorzuheben, etwa die digitale Einwegkamera, die am Tisch genauso gut funktioniert wie am Kamin.</li>
+</ul>
+<p>Diese Varianten sind ein hervorragendes Argument für Wintertermine: Statt „dieselbe Hochzeit, nur schlechter und billiger“ bieten Sie eine andere Hochzeit an, mit ihren eigenen Momenten. Mehr dazu in <a href="/journal/attirer-maries-lieu-reception">Hochzeitslocation Marketing: 12 Wege zu mehr Anfragen</a>.</p>
+
+<h2>Die Übersicht</h2>
+<table>
+<thead><tr><th>Leistung</th><th>Kosten für die Location</th><th>Aufwand</th><th>Empfohlenes Modell</th></tr></thead>
+<tbody>
+<tr><td>Gartenspiele</td><td>Gering (Anschaffung abgeschrieben)</td><td>Gering</td><td>Inklusive</td></tr>
+<tr><td>Kinderecke (Raum)</td><td>Gering</td><td>Gering</td><td>Inklusive</td></tr>
+<tr><td>Kinderbetreuung</td><td>Mittel</td><td>Mittel</td><td>Partner</td></tr>
+<tr><td>Fotobox</td><td>Hoch beim Kauf</td><td>Mittel bis hoch</td><td>Partner oder Aufpreis</td></tr>
+<tr><td>Digitale Einwegkamera</td><td>Gering, pro Hochzeit</td><td>Praktisch keiner</td><td>Inklusive</td></tr>
+<tr><td>Feuerwerk</td><td>Hoch</td><td>Hoch</td><td>Partner</td></tr>
+<tr><td>Brunch am nächsten Morgen</td><td>Unterschiedlich</td><td>Mittel</td><td>Aufpreis</td></tr>
+<tr><td>Sektempfang mit Programm</td><td>Unterschiedlich</td><td>Unterschiedlich</td><td>Aufpreis oder Partner</td></tr>
+<tr><td>Abendstimmung</td><td>Gering</td><td>Gering</td><td>Inklusive</td></tr>
+</tbody>
+</table>
+
+<h2>Warum eine Fotoaktion ohne Technik am einfachsten einzubauen ist</h2>
+<p>Die meisten Programmpunkte haben für eine Location versteckte Kosten: Material, das gelagert, gepflegt, auf- und abgebaut werden muss, Personal für den Aufbau, Bruchgefahr. Eine Fotoaktion, die in einen QR-Code passt, hat keinen dieser Nachteile.</p>
+<ul>
+<li><strong>Keine Technik.</strong> Keine Fotobox, die geliefert wird, keine Kameras, die man laden, verteilen und am Ende des Abends einsammeln muss. Die Gäste nutzen ihr eigenes Handy.</li>
+<li><strong>Kein Personal.</strong> Ein Plakat am Eingang, ein paar Aufsteller auf den Tischen, fertig. Mit dem <a href="/generateur-qr-code-mariage">QR-Plakat-Generator</a> lassen sich diese Vorlagen kostenlos in den Farben der Hochzeit gestalten.</li>
+<li><strong>Kein fester Platz.</strong> Keine Steckdose, keine reservierte Ecke: Die Aktion läuft überall, von der Trauung bis zur Bar, und die Fotos zeigen den ganzen Tag statt nur einer Ecke des Saals.</li>
+<li><strong>Planbare Kosten.</strong> Ein fester Preis pro Hochzeit je nach Gästezahl, den Sie eins zu eins in die Pauschale übernehmen können.</li>
+</ul>
+<p>Einzige technische Voraussetzung: Die Gäste brauchen Internet, um die Seite zu öffnen und ihre Fotos zu senden. Wenn der Empfang in Ihrem Saal schlecht ist, hängen Sie den QR-Code dort auf, wo das Netz gut ist (Eingang, Bar, Terrasse), und den WLAN-Zugang direkt daneben. Unsere Tipps im Detail stehen in <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>.</p>
+
+<h3>Die Fotos der Gäste setzen Ihre Location in Szene</h3>
+<p>Ein Profi-Fotograf hat das Brautpaar im Blick. Die Gäste fotografieren alles andere: den Saal, der sich füllt, die Tafel beim Dessert, die Tanzfläche um ein Uhr nachts, den Park am frühen Morgen. Diese Bilder zeigen Ihre Location so, wie man sie erlebt, aus allen Blickwinkeln und zu jeder Stunde, und genau sie helfen einem künftigen Paar, sich den eigenen Tag vorzustellen.</p>
+<p>Das Album gehört dem Brautpaar: Es ist privat, und Sie haben keinen Zugriff darauf. Nichts spricht aber dagegen, das Paar nach der Hochzeit zu fragen, ob es Ihnen einige Fotos für Website oder Social Media überlässt. Ein paar Vorsichtsmaßnahmen:</p>
+<ul>
+<li><strong>Holen Sie die Zustimmung des Paares schriftlich ein</strong> und nennen Sie den Zweck (Website, Instagram, Prospekt).</li>
+<li><strong>Wählen Sie Bilder, auf denen die Location im Mittelpunkt steht</strong>: eine eingedeckte Tafel, der beleuchtete Saal, Gäste von hinten auf der Tanzfläche. Ist jemand erkennbar im Vordergrund, brauchen Sie auch dessen Zustimmung.</li>
+<li><strong>Verzichten Sie auf Kinderfotos</strong>: Für eine öffentliche Verwendung ist die Zustimmung der Eltern nötig.</li>
+<li><strong>Entfernen Sie ein Foto ohne Diskussion</strong>, wenn jemand darum bittet.</li>
+</ul>
+<p>Die Regeln im Detail stehen in unserem Artikel zum <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild auf der Hochzeit</a>.</p>
+
+<h2>Eine Leistung in die Pauschale aufnehmen: die Methode</h2>
+<ol>
+<li><strong>Schreiben Sie sie schwarz auf weiß</strong> in Ihren Prospekt und auf Ihre Website, mit einem konkreten Satz: „Gartenspiele und digitale Einwegkamera für Ihre Gäste inklusive“ statt „zahlreiche Programmpunkte“.</li>
+<li><strong>Zeigen Sie sie bei der Besichtigung.</strong> Die Spiele auf dem Rasen, das QR-Plakat am Eingang, die eingerichtete Kinderecke: Was man sieht, verkauft sich.</li>
+<li><strong>Regeln Sie die Logistik ein für alle Mal</strong>: wo gelagert wird, wer auf- und abbaut, welcher Platz am Hochzeitstag. Ein Blatt pro Leistung genügt.</li>
+<li><strong>Geben Sie dem Paar einige Wochen vorher eine Anleitung</strong>, damit es seine Gäste vorbereiten kann.</li>
+<li><strong>Fragen Sie nach der Hochzeit nach.</strong> Was nicht genutzt wird, fliegt aus der Pauschale.</li>
+</ol>
+
+<h2>Fehler, die Sie vermeiden sollten</h2>
+<ul>
+<li><strong>Zu viele Optionen.</strong> Ein Angebot mit zwanzig Positionen lähmt die Entscheidung. Drei klare Pakete sind besser.</li>
+<li><strong>Pflicht-Dienstleister ohne Begründung.</strong> Viele Paare haben ihren DJ oder Fotografen schon; eine unbegründete Exklusivität schreckt sie ab.</li>
+<li><strong>Laute oder riskante Programmpunkte ohne schriftliche Regeln.</strong> Feuer, Musik, Hüpfburgen: Alles gehört in den Vertrag, Versicherung inklusive.</li>
+<li><strong>Etwas ankündigen, das Sie nicht beherrschen.</strong> Eine Fotobox, die am Hochzeitstag streikt, schadet Ihrem Ruf mehr als gar keine Fotobox.</li>
+</ul>
+<p>Damit Ihre Paare den Rest ihres Programms zusammenstellen können, schicken Sie ihnen gern unsere Liste mit <a href="/journal/idees-animation-mariage">Ideen für die Hochzeitsunterhaltung</a>.</p>
+
+<h2>Time to Flash Ihren Brautpaaren anbieten</h2>
+<p>Sie möchten die digitale Einwegkamera in Ihre Pauschalen aufnehmen oder Ihren Paaren einfach empfehlen? Wir haben ein Programm für Hochzeitslocations und Hochzeitsdienstleister gestartet. Die Einzelheiten stehen auf der Seite <a href="/pro">Time to Flash Ihren Brautpaaren anbieten</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Welche Zusatzleistungen kann eine Hochzeitslocation anbieten?',
+        a: 'Am häufigsten sind Gartenspiele, eine Kinderecke, eine Fotobox, eine digitale Einwegkamera für die Gäste, ein Sektempfang mit Programm (Weinprobe, Cocktailbar), ein Brunch am nächsten Morgen und Abendstimmung mit Feuerschalen und Lichterketten. Ein Feuerwerk ist möglich, aber streng geregelt.',
+      },
+      {
+        q: 'Sollte das Rahmenprogramm in der Hochzeitspauschale enthalten sein?',
+        a: 'Nehmen Sie auf, was wenig kostet und bei fast jeder Hochzeit genutzt wird, etwa Gartenspiele oder eine Fotoaktion ohne Technik. Bieten Sie gegen Aufpreis an, was teuer ist oder nur manchen Paaren gefällt, etwa den Brunch. Empfehlen Sie Partner für alles, was besonderes Know-how verlangt, etwa das Feuerwerk.',
+      },
+      {
+        q: 'Darf auf einer Hochzeit ein Feuerwerk gezündet werden?',
+        a: 'Ja, aber Silvesterfeuerwerk der Kategorie F2 braucht außerhalb des 31. Dezember und 1. Januar eine Ausnahmegenehmigung der örtlichen Behörde, auf die kein Anspruch besteht. Ein Profi-Feuerwerk zündet ein Pyrotechniker mit Erlaubnis, der es meist zwei Wochen vorher anzeigt. Halten Sie Ihre Bedingungen schriftlich im Vertrag fest.',
+      },
+      {
+        q: 'Was gehört in eine Hochzeitspauschale einer Location?',
+        a: 'Das ist unterschiedlich, oft aber die Miete der Location, das Mobiliar, Übernachtungen, ein Ansprechpartner am Hochzeitstag und manchmal das Catering. Die attraktivsten Pauschalen ergänzen ein Rahmenprogramm aus einer Hand und einen Brunch am nächsten Morgen. Entscheidend ist, klar zu schreiben, was enthalten ist und was nicht.',
+      },
+      {
+        q: 'Darf eine Location die Fotos der Gäste verwenden?',
+        a: 'Nur mit Zustimmung des Brautpaares und der Personen, die im Vordergrund erkennbar sind. Bevorzugen Sie Bilder, auf denen die Location im Mittelpunkt steht, und verzichten Sie auf Kinderfotos. Das Album bleibt das des Paares: Es entscheidet, welche Fotos es Ihnen überlässt.',
+      },
+    ],
+  },
+
+  'wifi-lieu-reception-mariage': {
+    title: 'WLAN in der Hochzeitslocation: der Leitfaden für Betreiber',
+    excerpt: 'Router, LTE mit Außenantenne, Repeater, Event-WLAN mieten, Starlink: welche Lösung für Ihre Hochzeitslocation, was sie kostet und wie Sie sie Paaren erklären.',
+    caption: 'Ein WLAN-Access-Point unter den Balken einer zur Hochzeit geschmückten Scheune, Lichterketten an',
+    body: `
+<p>„Gibt es im Saal WLAN?“ Die Frage kommt inzwischen bei fast jeder Besichtigung. Die schönsten Hochzeitslocations (Schlösser mit dicken Mauern, abgelegene Scheunen, Gewölbekeller, Gutshöfe am Ende eines Feldwegs) haben oft den schlechtesten Empfang, und die Paare wissen das. Ein <strong>WLAN in der Hochzeitslocation</strong>, das wirklich funktioniert, oder zumindest eine klare Aussage dazu, ist zu einem eigenen Verkaufsargument geworden.</p>
+<p>Dieser Leitfaden richtet sich an Eigentümer und Betreiber: warum Paare danach fragen, welche Lösungen es gibt, was sie kosten, wie man sie einrichtet und wie man ehrlich darüber spricht.</p>
+
+<h2>Warum Brautpaare nach WLAN fragen</h2>
+<p>Das ist keine Laune. Am Hochzeitstag hängt vieles am Internet:</p>
+<ul>
+<li><strong>Die Dienstleister.</strong> Der DJ, der auf seine Online-Playlists zugreift, die Fotografin, die am Abend schon ein paar Vorschaubilder schickt, der Videograf, der Daten sichert, der Caterer oder die Cocktailbar, die mit einem vernetzten Terminal Kartenzahlungen annimmt.</li>
+<li><strong>Der Livestream.</strong> Manche Paare übertragen die Trauung live für Großeltern oder Angehörige im Ausland. Das ist die anspruchsvollste Nutzung: Sie braucht einen stabilen Upload über die gesamte Dauer.</li>
+<li><strong>Die Gäste.</strong> Ein Foto verschicken, die Hoteladresse nachschauen, am Ende des Abends ein Taxi rufen. Gäste aus der Schweiz, Großbritannien oder Übersee haben nicht immer einen Tarif, mit dem mobiles Internet in Deutschland günstig ist.</li>
+<li><strong>Die Fotoaktionen.</strong> Geteiltes Album, digitale Einwegkamera per QR-Code, Online-Gästebuch: Diese Aktionen brauchen eine Verbindung in dem Moment, in dem der Gast sein Foto oder seine Nachricht sendet.</li>
+<li><strong>Die Abstimmung.</strong> Hochzeitsplanerin, Trauzeugen und Ihr Team schreiben sich den ganzen Tag Nachrichten.</li>
+</ul>
+
+<h2>Zuerst: den tatsächlichen Empfang messen</h2>
+<p>Bevor Sie investieren, machen Sie eine genaue Bestandsaufnahme, Raum für Raum:</p>
+<ol>
+<li><strong>Testen Sie den Mobilfunkempfang jedes Netzes</strong> (Telekom, Vodafone, O2 und, wo vorhanden, 1&amp;1) in jedem Bereich: Saal, Terrasse, Garten, Zimmer, Keller. Bitten Sie Bekannte oder Ihre üblichen Dienstleister mit anderen Netzen um Hilfe: Der Empfang unterscheidet sich von Netz zu Netz enorm. Die Netzkarten der Anbieter und die Mobilfunk-Karte der Bundesnetzagentur geben einen ersten Eindruck, aber nichts ersetzt einen Test vor Ort, innerhalb der Mauern.</li>
+<li><strong>Messen Sie die Geschwindigkeit</strong> mit einer Speedtest-App und notieren Sie den Download (was ankommt) und vor allem den Upload (was hinausgeht): Er zählt, wenn Fotos geteilt oder eine Trauung übertragen werden soll.</li>
+<li><strong>Testen Sie unter echten Bedingungen</strong>, während einer Feier: Ein Netz, das mit fünf Handys funktioniert, kann mit hundertfünfzig Menschen an derselben Funkzelle zusammenbrechen.</li>
+</ol>
+<p>Halten Sie alles in einer Tabelle fest: Mit diesem Dokument wählen Sie später die Lösung aus und informieren die Paare.</p>
+
+<h2>Die Lösungen, von der einfachsten bis zur robustesten</h2>
+
+<h3>1. Festnetzanschluss (Glasfaser, Kabel, VDSL oder DSL) und gut platzierte Access Points</h3>
+<p>Wenn ein Festnetzanschluss bis zur Location reicht, ist er die stabilste Grundlage. Mit Glasfaser ist die Bandbreite für eine Hochzeit mehr als ausreichend; mit einem alten DSL-Anschluss reicht sie vielleicht für die Dienstleister, aber nicht für hundertfünfzig Gäste.</p>
+<p>Der Schwachpunkt ist selten der Anschluss, sondern die Verteilung: Ein Router im Büro deckt keinen Festsaal ab, der 50 Meter entfernt hinter Steinmauern liegt. Die Lösung: professionelle WLAN-Access-Points, per Kabel mit dem Router verbunden und in jedem Bereich montiert (Saal, Terrasse, Zimmer).</p>
+<p><strong>Kosten zur Orientierung:</strong> ein Anschluss für einige Dutzend Euro im Monat; professionelle Access Points für etwa 100 bis 300 € pro Stück, dazu Verkabelung und Installation, wenn Sie einen Fachbetrieb beauftragen.</p>
+
+<h3>2. LTE- oder 5G-Router mit Außenantenne</h3>
+<p>Ohne brauchbaren Festnetzanschluss tut es ein LTE- oder 5G-Router, sofern Sie das Netz wählen, das bei Ihnen am besten empfangen wird. Ist das Signal drinnen schwach, bringt eine Außenantenne auf dem Dach oder an einem Mast, ausgerichtet auf den nächsten Sendemast, oft den entscheidenden Unterschied.</p>
+<p><strong>Kosten zur Orientierung:</strong> ein Tarif für einige Dutzend Euro im Monat; eine Außenantenne für einige Dutzend bis einige hundert Euro, ohne Montage. Prüfen Sie die Tarifbedingungen: Manche Tarife sind an die angemeldete Adresse gebunden, haben Nutzungsgrenzen oder werden bei Netzauslastung nachrangig behandelt.</p>
+
+<h3>3. Repeater und Mesh-WLAN</h3>
+<p>Ist Ihre Verbindung gut, reicht das WLAN aber nicht bis in den Saal, erweitern Repeater oder ein Mesh-System (mehrere Geräte, die sich gegenseitig das Signal weiterreichen) die Abdeckung, ohne dass Sie Kabel ziehen müssen. Das ist die am schnellsten installierte Lösung.</p>
+<p><strong>Kosten zur Orientierung:</strong> von einigen Dutzend Euro für einen Repeater bis zu einigen hundert für ein Mesh-Set.<br>
+<strong>Grenze:</strong> Jeder Funksprung kostet Bandbreite, und Geräte für den Heimgebrauch kommen mit vielen gleichzeitig verbundenen Handys schlecht zurecht. Für einen Saal, in dem regelmäßig mehr als hundert Menschen feiern, sind verkabelte Access Points die bessere Wahl.</p>
+
+<h3>4. Event-WLAN mieten</h3>
+<p>Spezialisierte Anbieter vermieten Komplettlösungen für eine Veranstaltung: eine oder mehrere gebündelte LTE- oder 5G-Verbindungen (mehrere Tarife werden zusammengeschaltet, um Bandbreite und Ausfallsicherheit zu erhöhen), manchmal eine Satellitenverbindung, und WLAN-Access-Points, die für den Tag aufgebaut werden.</p>
+<p><strong>Kosten zur Orientierung:</strong> mehrere hundert Euro pro Veranstaltung, mehr mit Techniker vor Ort.<br>
+<strong>Für wen:</strong> Locations mit wenigen Veranstaltungen im Jahr, oder Hochzeiten mit Livestream. Sie können diese Option auch den Paaren empfehlen, statt sie selbst zu übernehmen.</p>
+
+<h3>5. Internet per Satellit (Starlink und andere)</h3>
+<p>Für wirklich abgelegene Locations ist Internet über Satelliten im niedrigen Orbit zu einer ernsthaften Option geworden. Die Antenne braucht freie Sicht auf einen großen Teil des Himmels, ohne Bäume oder Gebäude in unmittelbarer Nähe.</p>
+<p><strong>Kosten zur Orientierung:</strong> In Deutschland lagen die Starlink-Tarife für Privathaushalte 2026 grob zwischen 30 und 60 € im Monat, die Hardware gab es zeitweise ohne Aufpreis. Für gewerbliche Nutzung gibt es eigene, meist teurere Tarife. Preise und Konditionen ändern sich häufig: Prüfen Sie sie vor dem Kauf.<br>
+<strong>Grenze:</strong> Eine einzelne Antenne ist nicht für Hunderte gleichzeitig verbundene Geräte gedacht. Dahinter braucht es ein gutes WLAN-Netz, und ideal ist die Kombination mit einer LTE- oder Festnetzverbindung.</p>
+
+<h3>Der Vergleich</h3>
+<table>
+<thead><tr><th>Lösung</th><th>Für welche Location</th><th>Kosten zur Orientierung</th><th>Worauf achten</th></tr></thead>
+<tbody>
+<tr><td>Festnetz und verkabelte Access Points</td><td>Festnetzanschluss vorhanden</td><td>Monatlicher Tarif + 100 bis 300 € pro Access Point</td><td>Verkabelung einplanen</td></tr>
+<tr><td>LTE/5G-Router mit Antenne</td><td>Guter Empfang in mindestens einem Netz</td><td>Monatlicher Tarif + Antenne</td><td>Tarifbedingungen</td></tr>
+<tr><td>Repeater, Mesh-WLAN</td><td>Gute Verbindung, schwache Abdeckung</td><td>Einige Dutzend bis einige hundert Euro</td><td>Bandbreitenverlust, begrenzte Kapazität</td></tr>
+<tr><td>Event-WLAN mieten</td><td>Wenige Veranstaltungen, Livestream</td><td>Mehrere hundert Euro pro Veranstaltung</td><td>Frühzeitig reservieren</td></tr>
+<tr><td>Satellit</td><td>Abgelegene Location, freier Himmel</td><td>Hardware + monatlicher Tarif</td><td>Gerätedichte, gewerblicher Tarif</td></tr>
+</tbody>
+</table>
+<p>Diese Beträge sind Größenordnungen: Holen Sie immer ein Angebot bei einem Fachbetrieb aus der Region ein, der vor Ort misst.</p>
+
+<h2>Wie viele Gäste muss Ihr WLAN verkraften?</h2>
+<p>Nicht alle Gäste gehen gleichzeitig online, aber die Spitzen sind heftig: bei der Ankunft, während der Reden, beim Anschneiden der Torte. Eine Faustregel, die Anbieter von Event-WLAN oft nennen: ein Access Point für 30 bis 50 verbundene Personen in einem vollen Raum. Für einen Saal mit 150 Gästen planen Sie also mehrere Access Points ein, nicht einen einzigen Router.</p>
+<p>Halten Sie außerdem eine Verbindung für die Dienstleister (und gegebenenfalls den Livestream) bereit, getrennt vom Gästenetz: Wenn das Gästenetz an seine Grenzen kommt, laufen Musik und Kartenzahlung trotzdem weiter.</p>
+
+<h2>Die richtigen Einstellungen</h2>
+<ul>
+<li><strong>Ein eigenes Gästenetz</strong>, getrennt von Ihrem Betriebsnetz (Kasse, Computer, Kameras). Das ist eine Frage der Sicherheit ebenso wie des Komforts.</li>
+<li><strong>Ein eigenes Netz für die Dienstleister</strong>, mit anderem Passwort.</li>
+<li><strong>Ein eindeutiger Netzwerkname</strong> (der Name der Location plus „Gäste“) und ein Passwort, das sich auf dem Handy leicht tippen lässt: keine Verwechslungsgefahr zwischen „0“ und „O“.</li>
+<li><strong>Ein WLAN-QR-Code.</strong> Aktuelle Handys verbinden sich, wenn man einen QR-Code mit Netzwerkname und Passwort scannt: Niemand muss mehr etwas eintippen. Viele kostenlose Generatoren erstellen ihn.</li>
+<li><strong>Eine Bandbreitenbegrenzung pro Gerät</strong>, wenn Ihre Geräte das können, damit ein Gast, der ein Update lädt, die anderen nicht ausbremst.</li>
+<li><strong>Ein regelmäßig geändertes Passwort</strong>, zum Beispiel jede Saison.</li>
+</ul>
+<p>Ein rechtlicher Punkt: In Deutschland wurde die sogenannte Störerhaftung für WLAN-Betreiber 2017 weitgehend abgeschafft. Wer seinen Gästen einen Internetzugang anbietet, haftet grundsätzlich nicht für Rechtsverletzungen der Nutzer, etwa illegales Filesharing, und muss auch keine Abmahnkosten dafür tragen (geregelt früher im Telemediengesetz, heute im Digitale-Dienste-Gesetz). Ein Rechteinhaber kann aber verlangen, dass bestimmte Inhalte gesperrt werden. Viele Betriebe schalten zusätzlich eine Startseite mit Nutzungsbedingungen vor, wie sie etwa der DEHOGA empfiehlt; professionelle Hotspot-Lösungen bringen das mit. Im Zweifel lassen Sie sich von Ihrem Installateur oder einer Anwältin beraten.</p>
+
+<h2>Das WLAN am Hochzeitstag gut sichtbar machen</h2>
+<p>Ein WLAN, das niemand findet, nützt nichts. Hängen Sie Netzwerkname, Passwort und WLAN-QR-Code am Eingang, an der Bar und auf einigen Tischen aus. Wenn das Paar eine Fotoaktion mit QR-Code plant, schlagen Sie vor, den WLAN-Zugang <strong>auf dasselbe Schild</strong> zu drucken: Der Gast verbindet sich und macht gleich mit.</p>
+
+<h2>Fotoaktionen der Gäste</h2>
+<p>Immer mehr Paare planen eine Aktion, bei der die Gäste die Feier mit ihrem Handy fotografieren. Bei <a href="/appareil-jetable-mariage">Time to Flash</a> zum Beispiel scannt jeder Gast einen QR-Code und bekommt eine digitale Einwegkamera, ohne App-Installation.</p>
+<p>Solche Aktionen brauchen beim Senden Internet. Konkret bei Time to Flash: Es ist eine schlanke Webseite, die sich auch bei schwachem Netz in wenigen Sekunden öffnet; das Foto wird sofort aufgenommen und danach gesendet. Hängt das Senden, genügt es, ein paar Sekunden auf der Seite zu bleiben oder es etwas weiter erneut zu versuchen, am Fenster oder draußen.</p>
+<p>Ihre Rolle als Location ist einfach: Sagen Sie dem Paar, wo der Empfang am besten ist, damit es dort sein Plakat aufhängt, und geben Sie ihm den WLAN-Zugang zum Ausdrucken daneben. Für Brautpaare haben wir dazu einen Ratgeber geschrieben, den Sie weitergeben können: <a href="/journal/pas-de-reseau-salle-mariage">Kein Netz im Saal: was tun?</a>, ergänzt durch <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>.</p>
+
+<h2>Den Paaren klar sagen, wie es aussieht</h2>
+<p>Das Schlimmste ist nicht eine Location ohne Netz, sondern eine, die den Eindruck erweckt, das WLAN funktioniere überall. Verfassen Sie ein kurzes Infoblatt „Netz und WLAN“ für Ihren Prospekt und die Besichtigung:</p>
+<ul>
+<li><strong>Der Mobilfunkempfang, Netz für Netz</strong> und Raum für Raum („Telekom und Vodafone: gut im Saal und im Garten; O2: schwach im Gewölbekeller“).</li>
+<li><strong>Das WLAN</strong>: welche Bereiche es abdeckt, wie viele Geräte es gut verkraftet, ob es ein eigenes Netz für die Dienstleister gibt.</li>
+<li><strong>Was möglich ist und was nicht</strong>: Braucht ein Livestream eine gemietete Lösung?</li>
+<li><strong>Die Stellen mit dem besten Empfang</strong>, für die QR-Plakate der Fotoaktionen.</li>
+<li><strong>Einen Ansprechpartner</strong> für Dienstleister mit technischen Anforderungen.</li>
+</ul>
+<p>Diese Offenheit vermeidet Enttäuschungen am Hochzeitstag und die schlechten Bewertungen, die darauf folgen. Sie beantwortet außerdem im Voraus eine der Fragen aus unserer Liste der <a href="/journal/questions-lieu-reception-mariage">Fragen an die Hochzeitslocation</a>, die viele Paare vor ihren Besichtigungen lesen.</p>
+
+<h2>Die Checkliste für Betreiber</h2>
+<p><strong>1.</strong> Jedes Netz in jedem Bereich testen, während einer Feier.<br>
+<strong>2.</strong> Die passende Lösung wählen und ein Angebot bei einem Fachbetrieb aus der Region einholen.<br>
+<strong>3.</strong> Drei Netze einrichten: Betrieb, Dienstleister, Gäste.<br>
+<strong>4.</strong> Einen WLAN-QR-Code erstellen und am Eingang, an der Bar und auf den Tischen aushängen.<br>
+<strong>5.</strong> Das Infoblatt „Netz und WLAN“ für den Prospekt schreiben.<br>
+<strong>6.</strong> Den Paaren die besten Plätze für ihre QR-Plakate nennen.</p>
+
+<h2>Time to Flash Ihren Brautpaaren anbieten</h2>
+<p>Ein zuverlässiges WLAN bedeutet auch, dass Sie Ihren Paaren Fotoaktionen ganz ohne Technik anbieten können. Wenn Sie die digitale Einwegkamera von Time to Flash in Ihre Pauschalen aufnehmen oder Ihren Brautpaaren empfehlen möchten, finden Sie alles auf der Seite <a href="/pro">Time to Flash Ihren Brautpaaren anbieten</a>.</p>
+`,
+    faq: [
+      {
+        q: 'Muss eine Hochzeitslocation WLAN anbieten?',
+        a: 'Pflicht ist es nicht, aber es wird inzwischen häufig gefragt: Dienstleister, Kartenzahlung, Livestream und Fotoaktionen der Gäste brauchen es. Wenn Sie kein WLAN anbieten, sagen Sie das den Paaren klar und nennen Sie den Mobilfunkempfang jedes Netzes.',
+      },
+      {
+        q: 'Was tun, wenn es in der Location keinen Empfang gibt?',
+        a: 'Messen Sie zuerst den Empfang jedes Netzes in jedem Bereich. Je nach Ergebnis lösen ein LTE- oder 5G-Router mit Außenantenne, verkabelte Access Points an einem Festnetzanschluss oder eine Satellitenverbindung das Problem. Für eine einzelne Veranstaltung ist gemietetes Event-WLAN eine Komplettlösung.',
+      },
+      {
+        q: 'Was kostet WLAN für eine Hochzeitslocation?',
+        a: 'Das reicht von einigen Dutzend Euro im Monat für einen Router und einen Repeater bis zu mehreren tausend Euro für eine professionelle, verkabelte Installation in mehreren Gebäuden. Event-WLAN zu mieten kostet in der Regel mehrere hundert Euro pro Veranstaltung. Holen Sie ein Angebot bei einem Fachbetrieb ein, der vor Ort misst.',
+      },
+      {
+        q: 'Haftet die Location, wenn Gäste über das WLAN Rechtsverstöße begehen?',
+        a: 'Seit der Abschaffung der Störerhaftung 2017 haften WLAN-Betreiber in Deutschland grundsätzlich nicht für Rechtsverletzungen ihrer Nutzer und müssen dafür auch keine Abmahnkosten tragen. Möglich bleibt die Aufforderung, bestimmte Inhalte zu sperren. Ein getrenntes Gästenetz und eine Startseite mit Nutzungsbedingungen sind trotzdem empfehlenswert; im Zweifel fragen Sie einen Fachmann.',
+      },
+      {
+        q: 'Wie viele Gäste verkraftet ein WLAN?',
+        a: 'Ein einzelner Router für den Heimgebrauch stößt bei vielen Geräten schnell an seine Grenzen. Anbieter von Event-WLAN rechnen oft mit einem Access Point für 30 bis 50 verbundene Personen in einem vollen Raum. Planen Sie außerdem ein eigenes Netz für die Dienstleister ein.',
+      },
+      {
+        q: 'Eignet sich Starlink für eine Hochzeitslocation?',
+        a: 'Für eine abgelegene Location mit freiem Himmel ist es eine ernsthafte Option. Eine einzelne Antenne ist aber nicht für Hunderte gleichzeitige Geräte gedacht: Dahinter braucht es ein gutes WLAN-Netz, ideal in Kombination mit LTE oder Festnetz. Prüfen Sie den Tarif für gewerbliche Nutzung.',
+      },
+    ],
+  },
+}

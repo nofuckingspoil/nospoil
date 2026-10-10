@@ -1065,59 +1065,131 @@ export const POSTS_OCCASIONS_DE = {
     ],
   },
   'idees-pot-de-depart-retraite': {
-    title: 'Abschiedsfeier zum Ruhestand: Ideen und Planung',
-    excerpt: 'Ideen für die Abschiedsfeier zum Ruhestand: Planung, Rede, Programm, Gruppengeschenk und Fehler, die Sie vermeiden sollten.',
+    // Vise « Abschiedsfeier Ruhestand Ideen », « Buffet Abschied Ruhestand »,
+    // « Ausstand Ruhestand ». Google.de : guides Ausstand (karrierebibel,
+    // kuechenfibel) ; Kaffee und Kuchen l'après-midi, Umtrunk après le travail.
+    title: 'Abschiedsfeier Ruhestand: Ideen, Buffet und Planung',
+    excerpt: 'Abschiedsfeier zum Ruhestand: das Buffet (Mengen pro Person, Budget), originelle Ideen fürs Programm, die Reden, das Gruppengeschenk und ein bewährter Ablauf.',
     caption: 'Kollegen stoßen auf eine Kollegin an, die in den Ruhestand geht',
     body: `
-<p>Ein Abschied in den Ruhestand ist kein Ausstand wie jeder andere. Er markiert das Ende von Jahrzehnten Arbeit, manchmal im selben Unternehmen, und die Person, die geht, wird sich lange daran erinnern. Die gute Nachricht: Eine gelungene Abschiedsfeier braucht kein großes Budget, nur etwas Organisation. Hier die Anleitung, mit Ideen für Programm und Gruppengeschenk und den Fehlern, die Sie vermeiden sollten.</p>
+<p>Der Abschied in den Ruhestand ist kein Ausstand wie jeder andere. Er markiert das Ende von Jahrzehnten im Beruf, manchmal im selben Unternehmen, und die Person, die geht, wird sich lange an diesen Tag erinnern. Die gute Nachricht: Eine gelungene Abschiedsfeier braucht kein großes Budget, nur etwas Organisation. Hier ist die Anleitung: die Planung, das Buffet (mit Mengen pro Person), originelle Ideen fürs Programm, das Gruppengeschenk und die Fehler, die Sie vermeiden sollten.</p>
 
-<h2>Die Abschiedsfeier planen: die Grundlagen</h2>
+<h2>Die Abschiedsfeier zum Ruhestand planen: die Grundlagen</h2>
+
+<h3>Wer lädt ein?</h3>
+<p>In vielen Betrieben ist es üblich, dass die Person, die geht, zum Ausstand einlädt und Essen und Getränke ausgibt. Beim Abschied in den Ruhestand übernehmen oft auch das Team oder das Unternehmen die Organisation, als Dankeschön für die vielen Jahre. Beides ist in Ordnung, Hauptsache, es ist vorher geklärt: Sprechen Sie offen mit der Person, statt sie mit einer Feier zu überraschen, die sie am Ende selbst bezahlen soll.</p>
 
 <h3>Das Datum</h3>
-<p>Am einfachsten: die letzte Arbeitswoche, an einem Donnerstag oder Freitag am späten Nachmittag. Sprechen Sie es zuerst mit der Person ab, die geht, dann prüfen Sie den Urlaub der engsten Kollegen. Bei einem Abschied im Juli, August oder Dezember planen Sie eine Woche früher: Die Teams sind dann oft nicht vollständig.</p>
+<p>Am einfachsten: die letzte Arbeitswoche, an einem Donnerstag oder Freitag, nach Feierabend ab etwa 16 oder 17 Uhr. So geht keine Arbeitszeit verloren, und auch die Führungsebene ist meist einverstanden. Sprechen Sie das Datum zuerst mit der Person ab, die geht, und prüfen Sie dann den Urlaub der engsten Kollegen. Fällt der Abschied in die Sommerferien oder zwischen die Jahre, planen Sie lieber eine Woche früher: Die Teams sind dann selten vollständig.</p>
 
 <h3>Der Ort</h3>
 <p>Drei klassische Möglichkeiten:</p>
 <ul>
-<li><strong>Im Büro</strong>: Besprechungsraum, Kantine, Terrasse. Kostenlos und praktisch, jeder kann vorbeischauen.</li>
-<li><strong>Im Restaurant oder in einer Bar</strong>: festlicher, aber Sie müssen reservieren und klären, wie die Rechnung geteilt wird.</li>
+<li><strong>Im Betrieb</strong>: Besprechungsraum, Kantine, Pausenraum, Terrasse. Kostenlos und praktisch, jeder kann kurz vorbeischauen.</li>
+<li><strong>Im Restaurant oder in einer Bar</strong>: festlicher, aber Sie müssen reservieren und klären, wie die Rechnung aufgeteilt wird.</li>
 <li><strong>Zu Hause oder in einem gemieteten Raum</strong>: für eine Feier mit Kollegen, Familie und Freunden, oft an einem Samstag.</li>
 </ul>
 
 <h3>Das Budget</h3>
-<p>Es kommt meist aus drei Quellen: einem Budget des Unternehmens oder Betriebsrats, einer Sammlung unter Kollegen und manchmal von der Person selbst, die „einen ausgibt“. Klären Sie von Anfang an, wer was zahlt: Das ist die häufigste Quelle für Missverständnisse.</p>
+<p>Es kommt meist aus drei Quellen: einem Budget des Unternehmens oder der Abteilung, einer Sammlung unter Kollegen und manchmal einem Beitrag der Person selbst, die „einen ausgibt“. Klären Sie von Anfang an, wer was zahlt: Das ist die häufigste Quelle für Missverständnisse.</p>
 
 <h3>Die Gäste</h3>
-<p>Denken Sie großzügig: das aktuelle Team, aber auch frühere Kollegen, die woanders arbeiten, langjährige Kunden oder Partner und warum nicht den Partner oder die Partnerin. Bitten Sie die Person, die geht, um eine Liste der „Menschen, die zählen“. Verschicken Sie die Einladung mindestens drei Wochen vorher.</p>
+<p>Denken Sie großzügig: das aktuelle Team, aber auch frühere Kollegen, die inzwischen woanders arbeiten, langjährige Kunden oder Partner und warum nicht den Ehepartner oder die Ehepartnerin. Bitten Sie die Person, die geht, um eine Liste der Menschen, die ihr wichtig sind. Verschicken Sie die Einladung mindestens drei Wochen vorher.</p>
 
-<h3>Die Rede</h3>
-<p>Planen Sie zwei oder drei Reden, nicht mehr, und höchstens fünf Minuten pro Rede. Die Führungskraft für den Werdegang, ein enger Kollege für die Anekdoten und die Person, die geht, für das Schlusswort. Die besten Geschichten sammeln Sie vorher unauffällig bei den Kollegen. Verzichten Sie auf die Liste aller Positionen: Erzählen Sie lieber zwei oder drei Geschichten, die alles zusammenfassen.</p>
+<h3>Die Reden</h3>
+<p>Planen Sie zwei oder drei Reden, nicht mehr, und höchstens fünf Minuten pro Rede. Die Führungskraft für den beruflichen Weg, ein enger Kollege für die Anekdoten und die Person, die geht, für das Schlusswort. Die besten Geschichten sammeln Sie vorher unauffällig bei den Kollegen. Verzichten Sie auf die Aufzählung aller Positionen: Erzählen Sie lieber zwei oder drei Geschichten, die alles auf den Punkt bringen.</p>
 
-<h2>Programmideen für die Abschiedsfeier</h2>
+<h2>Das Buffet für die Abschiedsfeier zum Ruhestand</h2>
+<p>Das Buffet macht den meisten Organisatoren Sorgen: Reicht es? Bleibt zu viel übrig? Die Mengen lassen sich recht einfach berechnen, wenn Sie zwei Fragen beantworten: Wie lange dauert die Feier, und ersetzt sie eine Mahlzeit?</p>
+
+<h3>Das passende Format</h3>
+<ul>
+<li><strong>Kaffee und Kuchen</strong> (am Nachmittag, eine Stunde): der Klassiker für einen Abschied im Büro. Kuchen vom Bäcker oder selbst gebacken, Kaffee, Tee, Saft, ein paar herzhafte Kleinigkeiten.</li>
+<li><strong>Der Umtrunk mit Fingerfood</strong> (eine bis anderthalb Stunden, nach Feierabend): ein paar herzhafte Häppchen, etwas Süßes, Getränke und ein Glas Sekt zum Anstoßen.</li>
+<li><strong>Das Fingerfood-Buffet am Abend</strong> (zwei Stunden und mehr, ab etwa 18 Uhr): Es ersetzt das Abendessen, die Häppchen müssen also sättigender und zahlreicher sein.</li>
+<li><strong>Das Buffet als Mahlzeit</strong> (mittags oder an einem Samstag mit der Familie): Salate, kalte oder warme Gerichte, Käse, Dessert, wie ein richtiges Essen.</li>
+</ul>
+
+<h3>Die Mengen pro Person</h3>
+<p>Die folgenden Werte sind gängige Richtwerte von Caterern. Rechnen Sie 10 % Reserve dazu, wenn Sie nicht genau wissen, wie viele Gäste kommen.</p>
+<table>
+<thead><tr><th>Format</th><th>Herzhaft</th><th>Süß</th><th>Getränke</th></tr></thead>
+<tbody>
+<tr><td>Kaffee und Kuchen (1 Std.)</td><td>2 bis 3 kleine Häppchen</td><td>1 bis 2 Stück Kuchen</td><td>2 bis 3 Tassen oder Gläser</td></tr>
+<tr><td>Umtrunk (1 bis 1,5 Std.)</td><td>6 bis 8 Häppchen</td><td>2 bis 3 Stück, oder ein Stück Kuchen</td><td>2 bis 3 Gläser</td></tr>
+<tr><td>Fingerfood-Buffet am Abend (ab 2 Std.)</td><td>12 bis 16 Häppchen</td><td>3 bis 5 Stück</td><td>4 bis 5 Gläser</td></tr>
+<tr><td>Buffet als Mahlzeit</td><td>Salat oder Vorspeise, Hauptgericht, Käse</td><td>Ein Dessert</td><td>4 bis 5 Gläser</td></tr>
+</tbody>
+</table>
+<p>Wenn Sie selbst einkaufen, ein paar Anhaltspunkte für ein Fingerfood-Buffet am Abend: 50 bis 80 g Aufschnitt und ebenso viel Käse pro Person, ein bis zwei Brötchen oder Brezeln pro Person, eine gute Handvoll Gemüsesticks zum Dippen und einen halben Liter Wasser pro Person. Eine Flasche Wein oder Sekt reicht für etwa sechs Gläser: Rechnen Sie über den Abend mit einer Flasche für zwei bis drei Personen, und mit ebenso vielen alkoholfreien wie alkoholischen Getränken.</p>
+
+<h3>Die Getränke</h3>
+<ul>
+<li><strong>Das Glas zur Rede</strong>: ein Sekt oder Crémant zum Anstoßen während der Reden. Diese Geste macht den Moment feierlich.</li>
+<li><strong>Alkoholfreie Getränke</strong>: Säfte, Schorlen, Mineralwasser, eine selbst gemachte Limonade. Viele Gäste fahren noch Auto oder trinken keinen Alkohol: Planen Sie großzügig.</li>
+<li><strong>Alkohol im Betrieb</strong>: Ob und welcher Alkohol im Unternehmen erlaubt ist, kann die Hausordnung oder eine betriebliche Regelung festlegen, und manche Betriebe verbieten ihn ganz. Fragen Sie vorher bei der Personalabteilung nach, bevor Sie Sekt oder Bier einplanen.</li>
+<li><strong>Der Kaffee</strong> zum Schluss, vor allem, wenn die Feier mittags stattfindet.</li>
+</ul>
+
+<h3>Das Budget fürs Buffet</h3>
+<p>Als grobe Orientierung, je nach Region:</p>
+<ul>
+<li><strong>Selbst gemachtes</strong> oder gemeinsames Buffet: etwa 5 bis 10&nbsp;€ pro Person, Getränke inklusive.</li>
+<li><strong>Gemischtes Buffet</strong> (ein paar Platten vom Caterer, der Rest gekauft oder selbst gemacht): etwa 10 bis 15&nbsp;€ pro Person.</li>
+<li><strong>Kompletter Caterer</strong> mit Service: oft 20 bis 35&nbsp;€ pro Person und mehr für ein Fingerfood-Buffet am Abend.</li>
+</ul>
+<p>Holen Sie immer zwei oder drei Angebote ein, und stellen Sie die unangenehmen Fragen: Sind Service, Geschirr, Lieferung und Abholung inbegriffen?</p>
+
+<h3>Selbst gemacht, Caterer oder Mitbring-Buffet?</h3>
+<ul>
+<li><strong>Das Mitbring-Buffet</strong>: Jeder Kollege bringt etwas mit. Gesellig und fast kostenlos, unter einer Bedingung: eine gemeinsame Liste, in die jeder einträgt, was er mitbringt (herzhaft, süß, Getränke). Sonst haben Sie am Ende zwölf Nudelsalate und keinen Nachtisch.</li>
+<li><strong>Der Caterer</strong>: kein Stress, schön angerichtet, aber teurer. Ideal ab fünfzig Personen.</li>
+<li><strong>Die Mischung</strong>: die herzhaften Platten vom Caterer oder der Metzgerei, der Kuchen oder die Torte vom Bäcker oder Konditor, die Getränke aus dem Supermarkt. Oft der beste Kompromiss.</li>
+</ul>
+
+<h3>Ideen fürs Buffet</h3>
+<p><strong>Herzhaft:</strong> Mini-Quiches, herzhafte Muffins, kleine Gläser mit Dips (Hummus, Guacamole, Tzatziki), Wraps in Scheiben, Tomate-Mozzarella-Spieße, Laugengebäck, Mini-Frikadellen, belegte Brötchenhälften, eine Platte mit Aufschnitt und Käse, Gemüsesticks mit zwei oder drei Dips, ein Kartoffel- oder Nudelsalat.</p>
+<p><strong>Süß:</strong> Blechkuchen, Muffins, Obstspieße, Cookies, kleine Törtchen, und vor allem <strong>die Torte</strong>, mit einer Botschaft oder einem Foto der Person, die geht.</p>
+<p><strong>Die persönliche Note:</strong> die Lieblingsgerichte der gefeierten Person, eine Spezialität aus ihrer Heimatregion, oder ein Buffet, das ihren Ruhestand ankündigt: eine Weltreise in Häppchen, wenn sie vom Reisen träumt, ein Buffet aus dem Gemüsegarten, wenn sie endlich Zeit für den Garten hat.</p>
+<p>Ein letzter Tipp: Denken Sie an besondere Ernährungsweisen (vegetarisch, glutenfrei, ohne Schweinefleisch) und beschriften Sie die Platten. Niemand rät gern, was in einem Glas steckt.</p>
+
+<h2>Ideen fürs Programm der Abschiedsfeier</h2>
+<h3>Klassiker, die immer funktionieren</h3>
 <ul>
 <li><strong>Die Diashow der Jahre</strong>: Teamfotos, Betriebsausflüge, Weihnachtsfeiern. Bitten Sie die Kollegen einen Monat vorher um Fotos. Alte Fotos sorgen immer für Lacher.</li>
 <li><strong>Das Karriere-Quiz</strong>: In welchem Jahr hat sie angefangen? Wo stand ihr erster Schreibtisch? Welche Software hat sie am meisten verflucht? In Teams, mit einem symbolischen Preis.</li>
-<li><strong>Das Gästebuch</strong>: ein schönes Heft, das während der Feier herumgeht, damit jeder ein paar Worte schreibt. Für abwesende Kollegen oder solche im Homeoffice sammeln Sie die Nachrichten vorher und kleben sie ein.</li>
+<li><strong>Das Gästebuch</strong>: ein schönes Heft, das während der Feier herumgeht, damit jeder ein paar Worte schreibt. Für Kollegen, die nicht da sind oder im Homeoffice arbeiten, sammeln Sie die Nachrichten vorher und kleben sie ein.</li>
 <li><strong>Das Überraschungsvideo</strong>: ein paar Videobotschaften von ehemaligen Kollegen, der Familie oder sogar einem treuen Kunden.</li>
-<li><strong>Die gemeinsame Einwegkamera</strong>: ein QR-Code auf den Tischen, jeder Gast scannt ihn mit dem Handy und macht ein paar Aufnahmen, ohne sie zu sehen. Am nächsten Tag erscheinen alle Fotos auf einmal in einem privaten Album, das die gefeierte Person behalten kann. Das bietet <a href="/depart-retraite">Time to Flash für den Abschied in den Ruhestand</a>, ohne App-Installation, für 14,99 € bei 50 Gästen.</li>
-<li><strong>Das Lieblingssprüche-Bingo</strong>: ein Raster mit den Lieblingssätzen der Person, die geht. Während der Reden wird angekreuzt.</li>
 </ul>
 
-<h2>Das Gruppengeschenk zum Ruhestand</h2>
-<p>Die Sammlung ist die Regel. Starten Sie sie einen Monat vorher, mit einer klaren Nachricht und ohne festen Betrag: Jeder gibt, was er möchte, und niemand soll sich verpflichtet fühlen. Ein paar Ideen, je nach Person:</p>
+<h3>Originelle Ideen für den Abschied in den Ruhestand</h3>
 <ul>
-<li><strong>Das Ruhestandsprojekt</strong>: Träumt die Person vom Reisen, Gärtnern, Malen, Radfahren? Finanzieren Sie den ersten Schritt: einen Reisegutschein, Ausrüstung, einen Kurs.</li>
+<li><strong>Die gemeinsame digitale Einwegkamera</strong>: ein QR-Code auf den Tischen, jeder Gast scannt ihn mit dem Handy und macht ein paar Aufnahmen, ohne sie zu sehen. Am nächsten Tag erscheinen alle Fotos auf einmal in einem privaten Album, das die gefeierte Person behalten kann. Das bietet <a href="/depart-retraite">Time to Flash für den Abschied in den Ruhestand</a>, ohne App-Installation, für 14,99&nbsp;€ bei 50 Gästen.</li>
+<li><strong>Das Audio-Gästebuch</strong>: Jeder Gast nimmt mit seinem Handy eine kurze Sprachnachricht auf, mit einem Selfie dazu. Die Organisatoren hören sie sich an und können sie der Person vorspielen, die geht. Bei Time to Flash ist das eine Option für 9,99&nbsp;€, die Sie zu jedem kostenpflichtigen Paket dazubuchen können.</li>
+<li><strong>Die Ruhestandsurkunde</strong>: eine feierliche Urkunde für den „frischgebackenen Ruheständler“, überreicht mit einem Überlebenspaket (ein kaputter Wecker, ein leerer Terminkalender, ein Gärtnerhut, ein Angelschein). Bei den Reden ein garantierter Lacher.</li>
+<li><strong>Die Abschiedszeitung</strong>: eine selbst gemachte Zeitung, die die berufliche Laufbahn erzählt, mit großer Schlagzeile, Archivfotos und „Stimmen“ aus dem Kollegenkreis. Sie wird während der Feier gelesen und danach eingerahmt.</li>
+<li><strong>Die Wunschkarte</strong>: eine große Welt- oder Deutschlandkarte, auf der jeder einen Ort markiert, den die Person besuchen sollte, mit ein paar Worten dazu. So geht sie mit ihrem Reiseprogramm für den Ruhestand nach Hause.</li>
+<li><strong>Die Ratschlag-Box</strong>: Jeder Gast schreibt auf eine Karte einen Tipp für einen gelungenen Ruhestand, ernst gemeint oder nicht. Ein paar werden laut vorgelesen, und die Box nimmt die gefeierte Person mit.</li>
+<li><strong>Das Musikquiz ihrer Laufbahn</strong>: die Hits aus dem Jahr ihres Einstiegs, dann aus jedem Jahrzehnt im Unternehmen. In Teams, mit Buzzer.</li>
+<li><strong>Das Lieblingssprüche-Bingo</strong>: ein Raster mit den typischen Sätzen der Person, die geht. Während der Reden wird angekreuzt.</li>
+</ul>
+<p>Ein oder zwei Programmpunkte genügen: Im Mittelpunkt stehen die Reden und die Momente, in denen jeder der Person persönlich ein paar Worte sagt.</p>
+
+<h2>Das Gruppengeschenk zum Ruhestand</h2>
+<p>Die Sammlung ist die Regel, oft mit einer Abschiedskarte, die herumgeht. Starten Sie sie einen Monat vorher, mit einer klaren Nachricht und ohne festen Betrag: Jeder gibt, was er möchte, und niemand soll sich verpflichtet fühlen. Ein paar Ideen, je nach Person:</p>
+<ul>
+<li><strong>Das Ruhestandsprojekt</strong>: Träumt die Person vom Reisen, Gärtnern, Malen oder Radfahren? Finanzieren Sie den ersten Schritt: einen Reisegutschein, Ausrüstung, einen Kurs.</li>
 <li><strong>Ein Erlebnis</strong>: ein Wochenende, eine Ballonfahrt, ein Essen in einem besonderen Restaurant, Konzertkarten.</li>
 <li><strong>Die Erinnerung ans Team</strong>: ein Buch mit einer Nachricht und einem Foto von jedem Kollegen. Oft das Geschenk, das am längsten aufbewahrt wird.</li>
 <li><strong>Das Fotoalbum der Feier</strong>: die Fotos, die alle während der Feier gemacht haben, in einem Album gesammelt. Mit Time to Flash können Sie Abzüge direkt aus dem Album bestellen und sie ein paar Tage später als Erinnerung überreichen.</li>
 </ul>
 <p>Eine gute Kombination: ein Geschenk, das nach vorne blickt (das Ruhestandsprojekt), und eine Erinnerung, die zurückblickt (das Buch oder das Album).</p>
 
-<h2>Der typische Ablauf</h2>
+<h2>Der typische Ablauf einer Abschiedsfeier</h2>
 <p>Für eine Feier nach Feierabend von etwa zwei Stunden hat sich dieser Ablauf bewährt:</p>
 <ol>
-<li><strong>Ankommen (30 Minuten)</strong>: Getränke, Buffet, das Gästebuch geht herum. Die Gäste kommen nach und nach, lassen Sie ihnen Zeit.</li>
-<li><strong>Reden (15 Minuten)</strong>: wenn die meisten da sind, und nicht zu spät, damit noch niemand gegangen ist. Die Führungskraft, ein enger Kollege, dann die gefeierte Person.</li>
+<li><strong>Ankommen (30 Minuten)</strong>: Getränke, Buffet, das Gästebuch geht herum, der QR-Code der Kamera liegt auf den Tischen. Die Gäste kommen nach und nach, lassen Sie ihnen Zeit.</li>
+<li><strong>Die Reden (15 Minuten)</strong>: wenn die meisten da sind, und nicht zu spät, damit noch niemand gegangen ist. Die Führungskraft, ein enger Kollege, dann die gefeierte Person.</li>
 <li><strong>Das Geschenk (5 Minuten)</strong>: direkt nach den Reden, vor allen überreicht. Bitten Sie jemanden, das Foto zu machen.</li>
 <li><strong>Der Programmpunkt (20 bis 30 Minuten)</strong>: Diashow, Quiz oder Überraschungsvideo. Einer reicht.</li>
 <li><strong>Offenes Ende</strong>: Jeder kommt vorbei und sagt der Person ein paar Worte. Oft ihr liebster Moment.</li>
@@ -1129,29 +1201,37 @@ export const POSTS_OCCASIONS_DE = {
 <li><strong>Planen, ohne zu fragen</strong>: Manche Menschen stehen ungern im Mittelpunkt. Fragen Sie, was sich die Person wünscht, auch wenn Sie einen Teil als Überraschung behalten.</li>
 <li><strong>Zu lange Reden</strong>: Nach fünf Minuten sinkt die Aufmerksamkeit. Drei kurze Reden sind besser als eine lange.</li>
 <li><strong>Witze, die verletzen</strong>: eine lustige Anekdote, ja. Eine Anspielung auf einen Konflikt oder die Gesundheit, nein. Im Zweifel lieber weglassen.</li>
-<li><strong>Die Abwesenden vergessen</strong>: Kollegen im Homeoffice, an einem anderen Standort oder bereits ausgeschieden möchten oft mitmachen. Schicken Sie ihnen den Link zur Sammlung und laden Sie sie ein, eine Nachricht zu schicken.</li>
+<li><strong>Die Abwesenden vergessen</strong>: Kollegen im Homeoffice, an einem anderen Standort oder bereits ausgeschieden möchten oft dabei sein. Schicken Sie ihnen den Link zur Sammlung und laden Sie sie ein, eine Nachricht zu schicken.</li>
 <li><strong>Die Fotos vergessen</strong>: die häufigste Falle. Alle genießen den Moment, niemand fotografiert, und am nächsten Tag bleibt nichts. Bestimmen Sie jemanden, oder geben Sie allen eine Kamera.</li>
 </ul>
 
-<h2>Der richtige Geist</h2>
+<h2>Worauf es ankommt</h2>
 <p>Eine gelungene Abschiedsfeier braucht wenig: das richtige Datum, die richtigen Menschen, zwei oder drei ehrliche Reden und eine Erinnerung zum Mitnehmen. Mehr Ideen nach Anlass finden Sie unter <a href="/occasions">alle Anlässe</a>.</p>
 `,
     faq: [
       {
         q: 'Wie organisiert man eine Abschiedsfeier zum Ruhestand?',
-        a: 'Legen Sie das Datum mit der Person fest, die geht (oft die letzte Arbeitswoche), wählen Sie den Ort (Büro, Restaurant oder Raum), klären Sie das Budget (Unternehmen, Sammlung, Beitrag der Person), laden Sie großzügig drei Wochen vorher ein und planen Sie zwei oder drei kurze Reden.',
+        a: 'Legen Sie das Datum mit der Person fest, die geht (oft die letzte Arbeitswoche, nach Feierabend), wählen Sie den Ort (Betrieb, Restaurant oder gemieteter Raum), klären Sie, wer zahlt (Unternehmen, Sammlung, Beitrag der Person), laden Sie drei Wochen vorher großzügig ein und planen Sie zwei oder drei kurze Reden.',
       },
       {
         q: 'Welches Gruppengeschenk zum Ruhestand?',
         a: 'Ein Geschenk passend zu den Plänen für den Ruhestand (Reisen, Garten, Ausrüstung für ein Hobby), ein Erlebnis oder eine Erinnerung ans Team wie ein Buch mit Nachrichten oder ein Album mit den Fotos der Feier und Abzügen.',
       },
       {
-        q: 'Wie viel gibt man für ein Abschiedsgeschenk zum Ruhestand?',
-        a: 'Es gibt keine Regel: Jeder gibt nach seinen Möglichkeiten und je nachdem, wie nah er der Person steht. Starten Sie die Sammlung ohne festen Betrag, damit sich niemand verpflichtet fühlt.',
+        q: 'Wie viel gibt man in die Sammlung zum Ruhestand?',
+        a: 'Es gibt keine feste Regel: Jeder gibt nach seinen Möglichkeiten und je nachdem, wie nah er der Person steht. Starten Sie die Sammlung ohne festen Betrag, damit sich niemand verpflichtet fühlt.',
       },
       {
-        q: 'Welches Programm für eine Abschiedsfeier zum Ruhestand?',
-        a: 'Eine Diashow der Jahre, ein Karriere-Quiz, ein Gästebuch, ein Überraschungsvideo mit Botschaften und eine gemeinsame Einwegkamera, damit alle Gäste fotografieren und die gefeierte Person ein Album der Feier behält.',
+        q: 'Was gehört auf ein Buffet zum Abschied in den Ruhestand?',
+        a: 'Herzhafte Häppchen, die sich im Stehen essen lassen (Mini-Quiches, Wraps, Spieße, Laugengebäck, belegte Brötchen, Aufschnitt und Käse), etwas Süßes und eine persönliche Torte, reichlich alkoholfreie Getränke und ein Sekt zum Anstoßen. Dazu eine persönliche Note: die Lieblingsgerichte der Person oder eine Spezialität aus ihrer Heimat.',
+      },
+      {
+        q: 'Wie viele Häppchen pro Person für eine Abschiedsfeier?',
+        a: 'Für einen Umtrunk von einer bis anderthalb Stunden rechnen Sie mit 6 bis 8 herzhaften und 2 bis 3 süßen Häppchen pro Person. Ersetzt das Buffet das Abendessen, sind es 12 bis 16 herzhafte und 3 bis 5 süße. Planen Sie 10 % Reserve ein.',
+      },
+      {
+        q: 'Welche originelle Idee für die Abschiedsfeier zum Ruhestand?',
+        a: 'Eine gemeinsame digitale Einwegkamera, die alle Gäste mit ihrem Handy nutzen, ein Audio-Gästebuch mit Sprachnachrichten, eine Ruhestandsurkunde mit Überlebenspaket, eine Abschiedszeitung über die Laufbahn, eine Weltkarte, auf der jeder ein Reiseziel markiert, oder ein Musikquiz mit den Hits aus ihren Jahren im Unternehmen.',
       },
     ],
   },

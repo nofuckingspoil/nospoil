@@ -276,109 +276,215 @@ export const POSTS_DE = {
   },
 
   'partager-photos-mariage-invites': {
-    title: 'Hochzeitsfotos mit den Gästen teilen: 5 Möglichkeiten',
-    excerpt: 'WhatsApp, Google Fotos, Transferlink, App oder gemeinsame Einwegkamera: 5 Wege, die Hochzeitsfotos der Gäste zu sammeln und mit allen zu teilen.',
-    caption: 'Ein geteiltes Hochzeitsalbum auf einem Handy',
+    // Guide « album partagé » (fusion du 10/10/2026). Vise « Hochzeitsfotos
+    // teilen », « Fotoalbum Hochzeit Gäste », « Hochzeit Fotos sammeln Gäste ».
+    // Google.de : surtout des applis galeries (Wedbox, weddies…) et des guides
+    // QR code ; la différence galerie / animation y est absente.
+    title: 'Hochzeitsfotos teilen: das gemeinsame Fotoalbum mit Ihren Gästen',
+    excerpt: 'WhatsApp, Google Fotos, App oder digitale Einwegkamera: So legen Sie das gemeinsame Hochzeitsalbum an, sammeln die Fotos aller Gäste und teilen sie mit allen.',
+    caption: 'Ein gemeinsames Hochzeitsalbum auf einem Handy',
     body: `
-<p>Am Tag nach der Hochzeit gibt es die Fotos. Hunderte sogar. Das Problem: Sie liegen auf achtzig verschiedenen Handys, und niemand denkt daran, sie Ihnen zu schicken. Hochzeitsfotos mit den Gästen teilen bedeutet eigentlich zweierlei: die Fotos aller <strong>einsammeln</strong> und dann alles an alle <strong>zurückgeben</strong>. Hier sind die fünf Möglichkeiten, was sie wirklich taugen, und wie Sie vor, während und nach dem großen Tag vorgehen.</p>
+<p>Am Tag nach der Hochzeit fällt in jedem Gespräch derselbe Satz: „Schickst du mir deine Fotos?“ Die Fotos gibt es, Hunderte sogar. Nur liegen sie auf achtzig verschiedenen Handys, und kaum jemand denkt daran, sie Ihnen zu schicken.</p>
+<p>Ein gemeinsames Fotoalbum für die Hochzeit löst genau dieses Problem: ein einziger, privater Ort, an dem die Fotos aller Gäste zusammenkommen und den sich jeder ansehen und herunterladen kann. Hochzeitsfotos teilen heißt eigentlich zweierlei: die Fotos aller <strong>einsammeln</strong> und dann alles an alle <strong>zurückgeben</strong>. Dieser Ratgeber deckt beides ab: die Möglichkeiten und was sie wirklich taugen, woran Sie eine gute App zum Teilen erkennen, die Einrichtung Schritt für Schritt, wie Sie Ihre Gäste zum Mitmachen bringen und wie Sie das Album für immer behalten.</p>
 
-<h2>Warum es schwieriger ist, als es aussieht</h2>
+<h2>Was ist ein gemeinsames Hochzeitsalbum genau?</h2>
+<p>Ein privates Online-Album, in das jeder Gast seine Fotos <strong>hochladen</strong> und das jeder <strong>ansehen</strong> kann. Es ersetzt nicht den Fotografen: Der liefert eine sorgfältige Auswahl, das gemeinsame Album sammelt die Blickwinkel aller. Die Oma auf der Tanzfläche, das Selfie der Trauzeugen um zwei Uhr nachts, die Torte vom Kindertisch aus gesehen, der Lachanfall in der letzten Reihe während der Reden.</p>
+<p>Ein gutes gemeinsames Album erfüllt fünf Punkte:</p>
+<ul>
+<li><strong>Alle kommen hinein</strong>, egal mit welchem Handy (iPhone oder Android) und egal in welchem Alter.</li>
+<li><strong>Ein Foto hinzuzufügen dauert Sekunden</strong>, ohne Konto und ohne Passwort.</li>
+<li><strong>Das Album ist privat</strong>: Nur wer den Link hat, sieht es, und es taucht nicht bei Google auf.</li>
+<li><strong>Sie können alles auf einmal herunterladen</strong>, um es zu Hause zu sichern.</li>
+<li><strong>Sie wissen, wie lange es online bleibt</strong>, damit Sie nicht zu spät merken, dass es verschwunden ist.</li>
+</ul>
+
+<h2>Warum die Fotos der Gäste verloren gehen</h2>
 <p>Auf dem Papier ist es ganz einfach: Jeder schickt seine Fotos, Sie sammeln sie. In der Praxis tauchen bei jeder Hochzeit dieselben drei Hindernisse auf.</p>
 <ul>
-<li><strong>Das Vergessen.</strong> Am Abend versprechen alle, ihre Fotos zu schicken. Eine Woche später ist die Feier weit weg, und nur ein paar enge Freunde haben es getan.</li>
-<li><strong>Die Zerstreuung.</strong> Die Fotos kommen per WhatsApp, SMS, E-Mail und AirDrop. Sie verbringen Abende damit, alles in einen Ordner zu holen, und es fehlt immer etwas.</li>
-<li><strong>Die Qualität.</strong> Messenger komprimieren Bilder beim Senden. Ein Foto, das auf dem Handydisplay perfekt aussah, wird im Druck unscharf.</li>
+<li><strong>Vergessen.</strong> Am Abend versprechen alle, ihre Fotos zu schicken. Eine Woche später ist die Feier weit weg, und nur ein paar enge Freunde haben es getan.</li>
+<li><strong>Durcheinander.</strong> Die Fotos kommen per WhatsApp, SMS, E-Mail und AirDrop. Sie verbringen Abende damit, alles in einen Ordner zu holen, und es fehlt immer etwas.</li>
+<li><strong>Qualitätsverlust.</strong> Messenger komprimieren Bilder beim Senden. Ein Foto, das auf dem Handy perfekt aussah, wirkt im Abzug unscharf.</li>
 </ul>
 <p>Daraus folgt eine einfache Regel: Je mehr Aufwand Sie Ihren Gästen <em>nach</em> der Feier abverlangen, desto weniger Fotos bekommen Sie. Die richtige Methode sammelt die Fotos <em>während</em> der Feier, ohne etwas Kompliziertes zu verlangen.</p>
 
-<h2>5 Wege, die Fotos der Gäste zu sammeln und zu teilen</h2>
+<h2>7 Wege, Hochzeitsfotos zu teilen</h2>
 
 <h3>1. Die WhatsApp-Gruppe</h3>
-<p>Der erste Reflex aller: eine Gruppe mit den Gästen, in die jeder seine Fotos stellt. Ihr großer Vorteil: Jeder hat WhatsApp schon, niemand muss etwas lernen. Aber die Fotos werden komprimiert, gehen zwischen Nachrichten und Sprachnachrichten unter, und man braucht die Nummer jedes Gastes. Praktisch, um am Abend drei Fotos auszutauschen, aber kaum geeignet, um das Hochzeitsalbum zusammenzustellen.</p>
+<p>Der erste Reflex aller: eine Gruppe mit den Gästen, in die jeder seine Fotos stellt. Der große Vorteil: Fast jeder hat WhatsApp schon, niemand muss etwas lernen. Aber die Fotos werden komprimiert, gehen zwischen Nachrichten und Sprachnachrichten unter, Sie brauchen die Nummer jedes Gastes, und ein Bild drei Wochen später wiederzufinden ist ein Kunststück. Praktisch, um am Abend drei Fotos auszutauschen, aber kaum geeignet für das Hochzeitsalbum.</p>
 
-<h3>2. Das geteilte Album in Google Fotos oder iCloud</h3>
-<p>Sie legen ein geteiltes Album an, verschicken den Link, und jeder fügt seine Fotos hinzu. Die Qualität ist viel besser als im Messenger, und alles liegt an einem Ort. Der Haken: Um Fotos hinzuzufügen, braucht man meist ein Google-Konto oder ein Apple-Gerät, sodass je nach Lösung ein Teil Ihrer Gäste außen vor bleibt. Vor allem ist das Album passiv: Jeder muss nach der Feier selbst daran denken. Diese ersten beiden Möglichkeiten vergleichen wir ausführlich in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Fotos oder eigene App?</a></p>
+<h3>2. Das geteilte Album in Google Fotos</h3>
+<p>Sie legen ein geteiltes Album an, verschicken den Link, und jeder fügt seine Fotos hinzu. Kostenlos, die Qualität ist deutlich besser als im Messenger, und alles liegt an einem Ort. Der Haken: Zum Hochladen braucht man ein Google-Konto, das viele iPhone-Nutzer nicht haben oder dessen Passwort sie vergessen haben. Und das Album ist passiv: Jeder muss nach der Feier selbst daran denken.</p>
 
-<h3>3. Der Transferlink oder geteilte Ordner</h3>
-<p>Ein Online-Ordner oder ein Dienst zum Versenden großer Dateien: Jeder Gast schickt Ihnen seinen Stapel Fotos. Diese Methode schont die Dateien am meisten und passt gut zu den wenigen engagierten Verwandten oder zum Cousin mit der Spiegelreflexkamera. Sie verlangt aber auch den meisten Aufwand: Fotos auswählen, verschicken, manchmal ein Konto anlegen. In der Praxis machen es nur wenige Gäste.</p>
+<h3>3. Das geteilte Album in iCloud</h3>
+<p>Zwischen iPhone-Nutzern sehr bequem: Es steckt in der Fotos-App, ein Foto ist mit zwei Fingertipps hinzugefügt. Ein Gast mit Android-Handy kann dort aber keine Fotos ablegen (bestenfalls kann er sich das Album ansehen, wenn Sie die öffentliche Website aktivieren). Bei hundert Gästen bleiben so viele außen vor. Diese ersten Möglichkeiten vergleichen wir ausführlich in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Fotos oder eigene App?</a></p>
 
-<h3>4. Hochzeits-Galerie-Apps</h3>
-<p>Das sind Online-Alben für Hochzeiten: ein QR-Code, eine Seite, auf der man seine Fotos hochlädt, manchmal eine Diashow. Einfacher als ein geteilter Ordner, und alles landet an einem Ort. Das Prinzip bleibt aber dasselbe: Die Gäste fotografieren mit ihrer normalen Kamera und müssen dann daran denken, die Fotos <em>hochzuladen</em>. Manche verlangen eine App-Installation, andere begrenzen den Download in der kostenlosen Version. Wir haben sie in <a href="/journal/application-photo-mariage">unserem Vergleich der Hochzeitsfoto-Apps</a> unter die Lupe genommen.</p>
+<h3>4. Der Transferlink oder geteilte Ordner</h3>
+<p>Ein Online-Ordner oder ein Dienst zum Versenden großer Dateien: Jeder Gast schickt Ihnen seinen Stapel Fotos. Diese Methode schont die Dateien am meisten und passt gut zu den wenigen engagierten Verwandten oder zum Cousin mit der Spiegelreflexkamera. Sie verlangt aber auch den meisten Aufwand: Fotos auswählen, verschicken, manchmal ein Konto anlegen. In der Praxis machen es nur wenige.</p>
 
-<h3>5. Die gemeinsame Einwegkamera</h3>
-<p>Hier wird die Logik umgedreht: Statt die Gäste zu bitten, ihre Fotos hinterher hochzuladen, geben Sie ihnen eine Kamera, deren Aufnahmen direkt im gemeinsamen Album landen. Sie scannen einen QR-Code, die Kamera öffnet sich im Browser, ohne App und ohne Konto, und jedes Foto geht ins Album. Wie bei einer echten Einwegkamera hat jeder eine begrenzte Zahl an Aufnahmen und sieht seine Fotos nicht sofort: Sie werden alle gemeinsam enthüllt, zu dem Zeitpunkt, den Sie gewählt haben, zum Beispiel am nächsten Morgen. Das ist eine Aktion während der Feier, und das Sammeln erledigt sich von selbst. Genau das macht <a href="/photos-mariage-invites">Time to Flash mit den Fotos Ihrer Gäste</a>.</p>
+<h3>5. Der Instagram-Hashtag oder die Facebook-Gruppe</h3>
+<p>Ein Hashtag wie #LeaUndMarius2026 auf der Einladung, und jeder postet seine Fotos auf Instagram. Das macht Spaß, aber nicht alle Gäste sind auf Instagram, unter dem Hashtag erscheinen nur Fotos aus öffentlichen Profilen, und diese Fotos kann dann jeder sehen. Eine private Facebook-Gruppe löst das Problem der Privatsphäre, nicht aber das der Gäste ohne Konto. Nur sinnvoll, wenn wirklich alle im selben Netzwerk sind.</p>
+
+<h3>6. Hochzeits-Galerie-Apps</h3>
+<p>Online-Alben speziell für Hochzeiten: ein QR-Code, eine Seite, auf der man die Fotos aus seiner Galerie hochlädt, manchmal eine Diashow. Einfacher als ein Album bei Google oder iCloud, und alles landet an einem Ort. Ihre Grenze ist die aller geteilten Alben: <strong>Sie sind passiv</strong>. Die Gäste fotografieren mit ihrer gewohnten Kamera und müssen dann daran denken, die Fotos <em>hochzuladen</em>. Manche verlangen eine App-Installation, andere begrenzen den Download in der kostenlosen Version. Wir haben sie in <a href="/journal/application-photo-mariage">unserem Vergleich der Hochzeitsfoto-Apps</a> unter die Lupe genommen.</p>
+
+<h3>7. Die gemeinsame digitale Einwegkamera</h3>
+<p>Hier wird die Logik umgedreht: Statt die Gäste zu bitten, ihre Fotos hinterher hochzuladen, geben Sie ihnen während der Feier eine Kamera, und jede Aufnahme landet direkt im gemeinsamen Album. Bei <a href="/photos-mariage-invites">Time to Flash</a> scannt der Gast einen QR-Code, gibt seinen Vornamen ein, und die Kamera öffnet sich im Browser: keine App, kein Konto. Wie bei einer echten Einwegkamera hat jeder eine begrenzte Zahl an Aufnahmen (Sie wählen zwischen 3 und 15 pro Gast) und sieht die Fotos der anderen nicht. Alle Bilder werden auf einen Schlag für alle sichtbar, zu dem Zeitpunkt, den Sie bestimmen: standardmäßig am nächsten Tag.</p>
+<p>Der Unterschied zur Galerie: Das Album ist hier kein Ordner, den man füllen muss, sondern das Ergebnis eines Spiels. Die Gäste machen mit, weil es am Abend Spaß macht, nicht weil man sie am nächsten Tag um einen Gefallen bittet. Das Sammeln erledigt sich von selbst.</p>
 
 <h2>Der Vergleich auf einen Blick</h2>
 <table>
-<thead><tr><th>Methode</th><th>Aufwand für Gäste</th><th>Qualität</th><th>Gesammelte Fotos</th><th>Preis</th></tr></thead>
+<thead><tr><th>Methode</th><th>Aufwand für Gäste</th><th>Alle Handys</th><th>Gesammelte Fotos</th><th>Preis</th></tr></thead>
 <tbody>
-<tr><td>WhatsApp-Gruppe</td><td>Gering</td><td>Komprimiert</td><td>Einige</td><td>Kostenlos</td></tr>
-<tr><td>Google Fotos / iCloud</td><td>Mittel (Konto)</td><td>Gut</td><td>Die der Engagiertesten</td><td>Kostenlos</td></tr>
-<tr><td>Transferlink</td><td>Hoch</td><td>Sehr gut</td><td>Wenige</td><td>Kostenlos oder fast</td></tr>
-<tr><td>Galerie-App</td><td>Mittel</td><td>Gut</td><td>Unterschiedlich</td><td>Kostenlos bis kostenpflichtig</td></tr>
-<tr><td>Gemeinsame Einwegkamera</td><td>Sehr gering</td><td>Gut</td><td>Jedes aufgenommene</td><td>Kostenlos bis 5, dann Einmalzahlung</td></tr>
+<tr><td>WhatsApp-Gruppe</td><td>Gering</td><td>Ja</td><td>Einige, komprimiert</td><td>Kostenlos</td></tr>
+<tr><td>Google Fotos</td><td>Mittel (Google-Konto)</td><td>Ja, mit Konto</td><td>Die der Engagiertesten</td><td>Kostenlos</td></tr>
+<tr><td>iCloud</td><td>Gering auf dem iPhone</td><td>Nein (kein Hochladen von Android)</td><td>Die der iPhone-Nutzer</td><td>Kostenlos</td></tr>
+<tr><td>Transferlink</td><td>Hoch</td><td>Ja</td><td>Wenige</td><td>Kostenlos oder fast</td></tr>
+<tr><td>Instagram oder Facebook</td><td>Mittel</td><td>Mit Konto</td><td>Die geposteten</td><td>Kostenlos</td></tr>
+<tr><td>Galerie-App</td><td>Mittel</td><td>Je nach App</td><td>Unterschiedlich</td><td>Kostenlos bis kostenpflichtig</td></tr>
+<tr><td>Digitale Einwegkamera</td><td>Sehr gering</td><td>Ja, im Browser</td><td>Alle aufgenommenen</td><td>Kostenlos bis 5 Gäste, dann Einmalzahlung</td></tr>
 </tbody>
 </table>
 <p>Keine Methode ist überall perfekt. Aber nur eine hängt nicht vom guten Willen der Gäste ab, wenn sie wieder zu Hause sind: die, bei der das Foto in dem Moment im Album landet, in dem es aufgenommen wird.</p>
 
-<h2>Schritt für Schritt: vor, während und nach der Hochzeit</h2>
+<h2>Galerie oder Einwegkamera: die Entscheidung</h2>
+<p>Stellen Sie sich eine einzige Frage: <strong>Wollen Sie die Fotos einsammeln, die Ihre Gäste ohnehin machen, oder ihnen Lust machen, welche zu machen?</strong></p>
+<ul>
+<li><strong>Wenn Sie vor allem vorhandene Fotos bündeln wollen</strong>, ohne Programmpunkt, reicht eine Galerie. Planen Sie nur ein, Ihre Gäste nach der Feier mehrmals zu erinnern.</li>
+<li><strong>Wenn Sie eine Foto-Aktion während der Feier möchten</strong>, mit der Überraschung am nächsten Tag, erledigt die Einwegkamera beides: das Spiel am Abend und das gemeinsame Album danach.</li>
+</ul>
+<p>Sie können auch kombinieren: die Einwegkamera am Abend, danach ein Ordner in Ihrer eigenen Cloud, um alles mit den Bildern des Fotografen zu archivieren. Beide Arten von Lösungen vergleichen wir in <a href="/journal/comparatif-animations-photo-mariage">Fotobox, Selfie-Box, Spiegel oder Einwegkamera</a>.</p>
 
-<h3>Vor der Hochzeit</h3>
+<h2>App oder Website zum Teilen von Hochzeitsfotos: 8 Fragen vor der Wahl</h2>
+<p>Ob Galerie oder Einwegkamera: Stellen Sie jeder App und jeder Website diese Fragen. Die Antworten stehen meist auf der Preisseite oder in den FAQ.</p>
+<ol>
+<li><strong>Muss man eine App installieren?</strong> Jeder Download kostet Teilnehmer, vor allem bei älteren Gästen. Eine Lösung, die sich nach dem Scan eines QR-Codes im Browser öffnet, erreicht alle.</li>
+<li><strong>Muss man ein Konto anlegen?</strong> Gleiche Logik: Ein Vorname genügt, ein Passwort schreckt ab.</li>
+<li><strong>Funktioniert es auf iPhone und Android?</strong> Testen Sie beides vor dem großen Tag.</li>
+<li><strong>Wer sieht das Album, und wann?</strong> Privat per Link oder öffentlich? Fotos sofort sichtbar oder erst später?</li>
+<li><strong>Können Sie ein Foto entfernen?</strong> Das peinliche Foto um drei Uhr morgens gibt es auf jeder Hochzeit. Prüfen Sie, ob Sie es entfernen können, bevor alle es sehen.</li>
+<li><strong>Können Sie alles herunterladen, und in welcher Größe?</strong> Gehen Sie bei einem Test den Download bis zum Ende durch, bevor Sie etwas bezahlen.</li>
+<li><strong>Wie lange bleibt das Album online?</strong> Und werden Sie vor dem Löschen benachrichtigt?</li>
+<li><strong>Was kostet es wirklich?</strong> Einmalzahlung oder Abo, wie viele Gäste inklusive, welche Optionen kosten extra.</li>
+</ol>
+<p>Unsere eigenen Antworten: keine App nötig (eine iPhone-App gibt es für alle, die sie lieber nutzen), kein Konto, iPhone wie Android, ein privates Album, das zu dem Zeitpunkt sichtbar wird, den Sie bestimmen, Fotos, die Sie vor der Präsentation entfernen können, das ganze Album zum Herunterladen, Speicherung in Europa für sechs Monate (mit einer E-Mail vor dem Löschen). Und eine Einmalzahlung ohne Abo: kostenlos bis 5 Gäste, 14,99&nbsp;€ bis 50, 29,99&nbsp;€ bis 100, 34,99&nbsp;€ bis 150. Bei knappem Budget hilft unser Überblick über <a href="/journal/application-photo-mariage-gratuite">kostenlose Hochzeitsfoto-Apps</a>.</p>
+
+<h2>Das gemeinsame Album anlegen, Schritt für Schritt</h2>
+
+<h3>Einen Monat vorher</h3>
 <ol>
 <li><strong>Entscheiden Sie sich für eine einzige Methode.</strong> Zwei Lösungen parallel sind die Garantie, dass sich die Fotos wieder verstreuen.</li>
-<li><strong>Bereiten Sie den QR-Code vor.</strong> Drucken Sie ihn auf Menükarten, Platzkarten und ein Schild am Eingang. Der <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator für Hochzeiten</a> erstellt Ihnen ein druckfertiges Plakat, und wir erklären, <a href="/journal/ou-poser-le-qr-code">wo der QR-Code hingehört</a>, damit er wirklich gescannt wird.</li>
-<li><strong>Sagen Sie es Ihren Gästen.</strong> Ein Satz auf der Einladung oder der Hochzeitswebsite reicht: „Scannt am großen Tag den QR-Code auf eurem Tisch.“</li>
-<li><strong>Testen Sie es selbst.</strong> Scannen Sie Ihren eigenen QR-Code, machen Sie ein Foto und prüfen Sie, ob es ankommt. Wenn der Saal schlechten Empfang hat, finden Sie heraus, wo das Netz funktioniert.</li>
+<li><strong>Legen Sie das Album an</strong> und geben Sie ihm einen klaren Namen (Ihre Vornamen und das Datum). Mit Time to Flash dauert das zwei Minuten: Zahl der Gäste, Aufnahmen pro Person, Präsentationstermin und einer von fünf analogen Film-Looks.</li>
+<li><strong>Fügen Sie einen Mitorganisator hinzu</strong>, wenn Ihre Lösung das erlaubt: eine Trauzeugin oder ein Freund, der sich am großen Tag an Ihrer Stelle um das Album kümmert.</li>
+<li><strong>Testen Sie es selbst</strong> auf einem iPhone und einem Android-Handy: scannen, ein Foto machen, prüfen, ob es ankommt.</li>
 </ol>
 
-<h3>Während der Hochzeit</h3>
+<h3>Zwei Wochen vorher</h3>
 <ol>
-<li><strong>Lassen Sie es ankündigen.</strong> Zwei Sätze des Trauzeugen am Mikrofon, zu Beginn des Essens, bewirken mehr als zehn Schilder.</li>
-<li><strong>Geben Sie die Aufgabe ab.</strong> Eine Trauzeugin oder ein Freund kann den Tischen, die noch nicht mitmachen, den QR-Code zeigen, vor allem den älteren Gästen.</li>
+<li><strong>Bereiten Sie den QR-Code vor</strong>: Er ist die Eingangstür zum Album. Unser <a href="/generateur-qr-code-mariage">QR-Code-Plakatgenerator für Hochzeiten</a> erstellt Ihnen kostenlos ein persönliches, druckfertiges Plakat.</li>
+<li><strong>Drucken Sie mehrere Varianten</strong>: ein Plakat am Eingang und an der Bar, eine kleine Karte auf jedem Tisch, eine Zeile auf der Menükarte. Die besten Plätze stehen in <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>.</li>
+<li><strong>Sagen Sie es Ihren Gästen</strong>: Ein Satz auf der Hochzeitswebsite oder in der letzten Nachricht reicht (zwei fertige Texte finden Sie weiter unten).</li>
+<li><strong>Erkundigen Sie sich nach dem Empfang in der Location.</strong> Ist das Netz schwach, fragen Sie nach dem WLAN-Passwort und schreiben Sie es neben den QR-Code. Was sonst hilft, steht in <a href="/journal/pas-de-reseau-salle-mariage">Kein Netz im Saal: Was tun?</a></li>
+</ol>
+
+<h3>Am großen Tag</h3>
+<ol>
+<li><strong>Lassen Sie es ankündigen.</strong> Fünfzehn Sekunden des Trauzeugen am Mikrofon, beim Sektempfang oder zu Beginn des Essens, bewirken mehr als zehn Schilder.</li>
+<li><strong>Bestimmen Sie eine Ansprechperson.</strong> Eine Trauzeugin oder ein Freund, der das Album kennt, zeigt den QR-Code an den Tischen, die noch nicht mitmachen, vor allem den älteren Gästen.</li>
 <li><strong>Kümmern Sie sich nicht selbst darum.</strong> Es ist Ihr Tag. Wenn das Sammeln während der Feier von Ihnen abhängt, ist die Methode die falsche.</li>
 </ol>
 
 <h3>Nach der Hochzeit</h3>
 <ol>
-<li><strong>Holen Sie den Rest schnell ein.</strong> Den Fotografen, den Cousin mit der großen Kamera: Bitten Sie innerhalb einer Woche um die Dateien, solange alle noch motiviert sind.</li>
-<li><strong>Laden Sie alles herunter und sichern Sie es.</strong> Bewahren Sie das komplette Album an zwei Orten auf (Computer und Cloud oder eine Festplatte).</li>
+<li><strong>Sehen Sie das Album durch, bevor Sie es teilen</strong>, und entfernen Sie, was nicht hineingehört.</li>
+<li><strong>Holen Sie den Rest schnell ein.</strong> Den Fotografen, den Cousin mit der Spiegelreflex: Bitten Sie innerhalb einer Woche um die Dateien, solange alle noch motiviert sind.</li>
+<li><strong>Laden Sie alles herunter und sichern Sie es</strong> an zwei Orten (Computer und Cloud oder eine externe Festplatte).</li>
 <li><strong>Sortieren Sie in Ihrem Tempo.</strong> Eine Stunde reicht für das Wesentliche: Die Methode steht in <a href="/journal/300-photos-lendemain">Was tun mit 300 Fotos am Tag danach</a>.</li>
 </ol>
 
-<h2>So teilen Sie die Fotos danach mit allen Gästen</h2>
+<h2>So machen Ihre Gäste mit</h2>
+<p>Hier entscheidet sich alles. Ein gemeinsames Album, das niemand kennt, bleibt leer, egal mit welchem Werkzeug.</p>
+<ul>
+<li><strong>Kündigen Sie es vorher an</strong>: ein Satz auf der Hochzeitswebsite oder in der letzten Nachricht an die Gäste. Dann wissen sie schon Bescheid, wenn sie ankommen.</li>
+<li><strong>Verteilen Sie viele QR-Codes</strong>: Einen einzigen am Eingang sieht niemand. Einer auf jedem Tisch wird gescannt, während alle auf die Vorspeise warten.</li>
+<li><strong>Schreiben Sie dazu, was passiert</strong>: Ein QR-Code ohne Satz sagt nicht, wozu er dient. „Scannen, fotografieren, morgen früh sehen wir alles“ genügt.</li>
+<li><strong>Geben Sie eine einfache Regel vor</strong>: eine Zahl an Fotos, eine Uhrzeit für die Präsentation. Klare Regeln machen Lust mitzuspielen (warum, erklären wir in <a href="/journal/dix-cliches">Warum 10 Aufnahmen besser sind als 300</a>).</li>
+<li><strong>Denken Sie an die Älteren</strong>: Ein Enkel, der seiner Oma die Handgriffe zeigt, wirkt besser als jedes Plakat.</li>
+</ul>
+<p>Zwei fertige Texte zum Anpassen:</p>
+<p><strong>Auf der Hochzeitswebsite:</strong> <em>„Am Hochzeitstag finden Sie auf Ihrem Tisch einen QR-Code. Scannen Sie ihn mit Ihrem Handy: keine App, nur Ihr Vorname. Jeder hat ein paar Fotos, um den Tag aus seiner Sicht festzuhalten, und am nächsten Tag schauen wir uns alles gemeinsam an.“</em></p>
+<p><strong>Am Mikrofon:</strong> <em>„Heute Abend seid ihr die Fotografen. Scannt den QR-Code auf eurem Tisch: Jeder hat zehn Fotos, kein einziges mehr, also zielt gut. Morgen um 11 Uhr sehen wir alles.“</em></p>
+<p>Weitere Formulierungen finden Sie in <a href="/journal/brief-invites">Der Text für Ihre Gäste zum Kopieren</a>.</p>
+
+<h2>Die Fehler, die ein gemeinsames Album leer lassen</h2>
+<p>Wer schon einmal ein geteiltes Album für eine Feier angelegt hat, kennt das: ein verschickter Link, drei Leute laden etwas hoch, dann Funkstille. Diese Fehler stecken fast immer dahinter:</p>
+<ul>
+<li><strong>Den Link erst nach der Feier schicken</strong>: Am nächsten Tag sind alle müde, fahren nach Hause, müssen wieder arbeiten. Die Nachricht geht unter. Das Album muss <em>während</em> des Abends existieren und bekannt sein.</li>
+<li><strong>Ein Konto verlangen</strong>: Jeder zusätzliche Schritt kostet Teilnehmer. An einem Hochzeitsabend legt niemand ein Konto an oder sucht sein Passwort.</li>
+<li><strong>Einen Teil der Handys vergessen</strong>: Ein Werkzeug, das nur auf dem iPhone oder nur auf Android funktioniert, schließt einen Teil der Familie aus.</li>
+<li><strong>Mehrere Lösungen gleichzeitig</strong>: eine WhatsApp-Gruppe, dazu ein Google-Album, dazu ein Hashtag. Die Fotos verteilen sich auf alle drei, und keines ist vollständig.</li>
+<li><strong>Auf guten Willen setzen</strong>: Fotos in ein Album hochzuladen ist ein Gefallen. Mit einer Einwegkamera zu fotografieren ist ein Spiel. Das Spiel motiviert viel mehr als der Gefallen.</li>
+</ul>
+
+<h2>Fotos sofort sichtbar oder erst später?</h2>
+<p>Es gibt zwei Schulen. In einer klassischen Galerie sind die Fotos sichtbar, sobald sie hochgeladen sind: Man kann sie schon am Abend anschauen, aber die Überraschung ist weg, und manche Gäste scrollen mehr, als sie feiern.</p>
+<p>Bei einer späteren Präsentation ist vor dem gewählten Zeitpunkt nichts zu sehen. Am nächsten Morgen, beim Brunch oder am Abend nach der Rückkehr erscheint alles auf einmal. Das ist der Moment, in dem sich alle die Fotos weiterschicken und entdecken, was am anderen Ende des Saals los war. Ein Tipp: Wählen Sie eine Uhrzeit, zu der die Gäste wach sind und Zeit haben, etwa 10 oder 11 Uhr am nächsten Tag. Sie bestimmen den Zeitpunkt. Mehr über diesen Moment lesen Sie in <a href="/journal/revelation-photos-lendemain-mariage">der Präsentation am Tag nach der Hochzeit</a>.</p>
+<p>Die spätere Präsentation hat noch einen Vorteil: Zwischen dem Ende der Feier und dem Präsentationstermin sehen nur Sie und Ihre Mitorganisatoren alle Fotos. Das ist Ihr Zeitfenster, um das peinliche Foto zu entfernen, bevor es alle sehen.</p>
+
+<h2>Die Fotos nach der Hochzeit mit allen Gästen teilen</h2>
 <p>Sind die Fotos beisammen, müssen sie noch zu denen zurück, die sie gemacht haben. Die goldene Regel: <strong>ein einziger Link für alle</strong>. Keine Nachricht pro Person, keine eigene Auswahl für jeden Tisch.</p>
 <ul>
 <li><strong>Schicken Sie den Link dorthin, wo ihn alle sehen</strong>: in die WhatsApp-Gruppe der Gäste, per Sammel-E-Mail oder auf die Hochzeitswebsite.</li>
-<li><strong>Wählen Sie ein privates Album.</strong> Per Link zugänglich, nicht öffentlich im Internet und nicht bei Google indexiert. Die Fotos Ihrer Gäste gehen nur sie etwas an (die Regeln erklären wir in <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild bei Hochzeitsfotos</a>).</li>
+<li><strong>Wählen Sie ein privates Album.</strong> Per Link zugänglich, nicht öffentlich im Internet und nicht bei Google zu finden. Die Fotos Ihrer Gäste gehen nur sie etwas an (die Regeln erklären wir in <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild bei Hochzeitsfotos</a>).</li>
 <li><strong>Lassen Sie jeden herunterladen, was er möchte.</strong> Die Gäste wollen nicht alles: Sie suchen die Fotos, auf denen sie zu sehen sind, und die von ihrem Tisch.</li>
 <li><strong>Denken Sie an die, die nicht da waren.</strong> Die Großtante, die nicht kommen konnte, freut sich über den Link, oder noch mehr über ein paar Abzüge.</li>
-<li><strong>Sagen Sie, wie lange es verfügbar ist.</strong> Ein Online-Album ist nicht für die Ewigkeit: Bitten Sie alle, ihre Lieblingsfotos bald herunterzuladen.</li>
+<li><strong>Sagen Sie, wie lange das Album verfügbar ist.</strong> Ein Online-Album ist nicht für die Ewigkeit: Bitten Sie alle, ihre Lieblingsfotos bald herunterzuladen.</li>
 </ul>
-<p>Mit einer gemeinsamen Einwegkamera ist dieser Schritt schon erledigt: Zur Enthüllung entdecken alle Teilnehmer das Album gleichzeitig auf ihrem Handy und können die Fotos herunterladen oder Abzüge bestellen. Bei Time to Flash bleibt das Album privat, wird in Europa gespeichert und sechs Monate lang aufbewahrt (Sie werden vor dem Löschen benachrichtigt, damit Sie alles herunterladen können). Mehr dazu in <a href="/journal/album-photo-partage-mariage">unserem Ratgeber zum gemeinsamen Hochzeitsalbum</a>.</p>
+<p>Mit einer gemeinsamen Einwegkamera ist dieser Schritt schon erledigt: Zum Präsentationstermin sehen alle Teilnehmer das Album gleichzeitig auf ihrem Handy und können die Fotos herunterladen oder Abzüge bestellen. Bei Time to Flash bleibt das Album privat, wird in Europa gespeichert und sechs Monate lang aufbewahrt: Sie werden vor dem Löschen benachrichtigt und haben Zeit, alles herunterzuladen.</p>
+
+<h2>Das Album für immer behalten</h2>
+<p>Ein gemeinsames Album ist kein Archiv. Dienste ändern sich, Links laufen ab, Alben werden gelöscht. So behalten Sie die Fotos Ihrer Hochzeit ein Leben lang:</p>
+<ul>
+<li><strong>Laden Sie alle Fotos herunter</strong>, auf einmal, in den Tagen nach der Präsentation.</li>
+<li><strong>Speichern Sie sie an zwei Orten</strong>: auf Ihrem Computer und in Ihrer eigenen Cloud, oder auf einer Festplatte, die bei Ihren Eltern liegt.</li>
+<li><strong>Benennen Sie den Ordner eindeutig</strong> (Datum und Ihre Vornamen), damit Sie ihn in zehn Jahren wiederfinden.</li>
+<li><strong>Lassen Sie die besten drucken</strong>: ein paar Abzüge, direkt aus dem Album bestellt, oder ein Fotobuch, das Bilder des Fotografen und der Gäste mischt. Wie Sie es zusammenstellen, steht in <a href="/journal/livre-photo-mariage-invites">Ein Fotobuch mit den Fotos der Gäste</a>.</li>
+</ul>
+
+<h2>Und die Fotos des Fotografen?</h2>
+<p>Der Fotograf liefert seine Bilder meist einige Wochen nach der Hochzeit, in seiner eigenen Online-Galerie. Das ist kein gemeinsames Album im Sinne dieses Ratgebers: Nur der Fotograf lädt dort Bilder hoch. Beides ergänzt sich sehr gut. Der Fotograf deckt die offiziellen Momente und die sorgfältigen Porträts ab; die Gäste halten fest, was er nicht sieht, weil er nicht überall sein kann (lesen Sie <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>). Für das Fotobuch oder die Abzüge mischen Sie beides: Oft erzählen die Fotos der Gäste die Stimmung am besten.</p>
 
 <h2>Unsere Empfehlung</h2>
-<p>Wenn Sie sich nur eines merken: <strong>Sammeln Sie während der Feier, nicht danach</strong>. Eine WhatsApp-Gruppe und ein Google-Fotos-Album sind ideal, um ein paar Fotos auszutauschen oder zu archivieren, aber sie setzen auf den guten Willen aller, wenn die Feier vorbei ist. Eine gemeinsame Einwegkamera macht das Fotografieren zum Spiel des Abends: Die Gäste machen mit, weil es Spaß macht, und Sie bekommen alles, ohne nachzuhaken. Sie können <a href="/create">Ihr Event</a> in zwei Minuten erstellen, zum Ausprobieren kostenlos bis 5 Teilnehmer.</p>
+<p>Wenn Sie sich nur eines merken: <strong>Sammeln Sie während der Feier, nicht danach</strong>. Eine WhatsApp-Gruppe und ein Google-Fotos-Album eignen sich bestens, um ein paar Fotos auszutauschen oder zu archivieren, aber sie setzen auf den guten Willen aller, wenn die Feier vorbei ist. Eine gemeinsame digitale Einwegkamera macht das Fotografieren zum Spiel des Abends: Die Gäste machen mit, weil es Spaß macht, und Sie bekommen alles, ohne nachzuhaken, in einem gemeinsamen Album, das alle zusammen entdecken.</p>
+<p>Sie können in zwei Minuten <a href="/create">Ihr Event anlegen</a>, kostenlos bis 5 Teilnehmer, zum Beispiel für einen Test mit Ihren Trauzeugen. Wie das Ganze für die Gäste aussieht, zeigt unsere Seite <a href="/photos-mariage-invites">Hochzeitsfotos der Gäste</a>.</p>
 `,
     faq: [
       {
-        q: 'Wie bekomme ich die Hochzeitsfotos, die meine Gäste gemacht haben?',
-        a: 'Am zuverlässigsten ist es, die Fotos während der Feier zu sammeln statt danach. Mit einem QR-Code auf den Tischen öffnet jeder Gast eine gemeinsame Kamera im Browser, und jede Aufnahme landet direkt im gemeinsamen Album. Methoden, bei denen die Gäste ihre Fotos hinterher schicken sollen (WhatsApp, geteiltes Album, Transferlink), bringen meist nur die Fotos der engagiertesten Gäste.',
+        q: 'Wie erstelle ich ein gemeinsames Fotoalbum für die Hochzeit?',
+        a: 'Wählen Sie ein einziges Werkzeug (Google Fotos, iCloud, Galerie-App oder gemeinsame digitale Einwegkamera), legen Sie das Album an, testen Sie es auf einem iPhone und einem Android-Handy und drucken Sie einen QR-Code, den Ihre Gäste am großen Tag scannen. Mit Time to Flash dauert das Anlegen zwei Minuten, und kein Gast braucht ein Konto.',
+      },
+      {
+        q: 'Wie sammle ich die Hochzeitsfotos meiner Gäste?',
+        a: 'Am zuverlässigsten sammeln Sie die Fotos während der Feier statt danach. Mit einem QR-Code auf den Tischen öffnet jeder Gast eine gemeinsame Kamera im Browser, und jede Aufnahme landet direkt im gemeinsamen Album. Methoden, bei denen die Gäste ihre Fotos hinterher schicken sollen (WhatsApp, geteiltes Album, Transferlink), bringen meist nur die Fotos der engagiertesten Gäste.',
       },
       {
         q: 'Welche App eignet sich am besten, um Hochzeitsfotos zu teilen?',
-        a: 'Das hängt davon ab, was Sie suchen. Eine Galerie-App sammelt die Fotos, an deren Hochladen die Gäste denken. Eine Einwegkamera-Aktion wie Time to Flash sorgt dafür, dass während der Feier fotografiert wird, mit ein paar Aufnahmen pro Gast, und enthüllt alle Fotos am nächsten Tag in einem privaten Album. Den vollständigen Vergleich finden Sie in unserem Artikel über Hochzeitsfoto-Apps.',
+        a: 'Das hängt davon ab, was Sie suchen. Eine Galerie-App sammelt die Fotos, an deren Hochladen die Gäste denken. Eine Foto-Aktion mit digitaler Einwegkamera wie Time to Flash sorgt dafür, dass während der Feier fotografiert wird, ohne App-Installation und mit ein paar Aufnahmen pro Gast; alle Fotos werden am nächsten Tag gemeinsam in einem privaten Album sichtbar.',
       },
       {
-        q: 'Wie teile ich Hochzeitsfotos, ohne dass die Gäste eine App installieren müssen?',
-        a: 'Wählen Sie eine Lösung, die sich im Browser öffnet. Bei Time to Flash scannen die Gäste einen QR-Code, und die Kamera öffnet sich sofort, ohne App und ohne Konto. Um die Fotos zurückzugeben, genügt ein einziger Link zum Album: Jeder sieht es sich an und lädt die Fotos herunter, die er möchte.',
+        q: 'Funktioniert ein geteiltes iCloud-Album mit Android?',
+        a: 'Ein Gast mit Android-Handy kann sich ein öffentlich geteiltes iCloud-Album über einen Link ansehen, aber keine eigenen Fotos hinzufügen. Für eine Hochzeit mit Handys aller Marken ist ein Werkzeug besser, das in jedem Browser funktioniert.',
       },
       {
         q: 'Wie teile ich Hochzeitsfotos ohne Qualitätsverlust?',
         a: 'Verschicken Sie die Fotos nicht über Messenger: WhatsApp und SMS komprimieren Bilder beim Senden. Nutzen Sie ein geteiltes Album, einen Transferlink oder eine gemeinsame Kamera, die die Fotos direkt im Album speichert, und laden Sie danach alles herunter, um es an zwei Orten aufzubewahren.',
       },
       {
-        q: 'Wie lange können die Gäste auf das Hochzeitsalbum zugreifen?',
-        a: 'Das hängt vom Dienst ab. Bei Time to Flash wird das private Album sechs Monate nach dem Event aufbewahrt, und der Organisator wird vor dem Löschen benachrichtigt. Am einfachsten ist es, alle zu bitten, ihre Lieblingsfotos in den Wochen nach der Hochzeit herunterzuladen.',
+        q: 'Kann ich ein Foto aus dem gemeinsamen Album entfernen?',
+        a: 'Ja, wenn das Werkzeug es erlaubt. Bei Time to Flash sehen der Organisator und seine Mitorganisatoren alle Fotos vor der Präsentation und können ein peinliches Foto entfernen, bevor die Gäste es entdecken. Bittet ein Gast darum, ein Foto von sich zu löschen, entfernen Sie es ohne Diskussion.',
+      },
+      {
+        q: 'Wie lange bleibt das gemeinsame Album online?',
+        a: 'Das hängt vom Dienst ab. Bei Time to Flash wird das private Album sechs Monate nach dem Event aufbewahrt, und der Organisator wird vor dem Löschen benachrichtigt. Laden Sie in jedem Fall alle Fotos in den Tagen danach herunter und speichern Sie sie an zwei Orten.',
       },
     ],
   },
@@ -816,7 +922,7 @@ export const POSTS_DE = {
 <h2>Das geteilte Album (Google Fotos, iCloud, Drive)</h2>
 <p><strong>Was funktioniert:</strong> kostenlos, die Qualität bleibt erhalten, alles liegt an einem Ort und bleibt jahrelang zugänglich.</p>
 <p><strong>Was hakt:</strong> Man braucht ein Konto. Ein iCloud-Album schließt Ihre Android-Gäste aus, ein Google-Album einen Teil der iPhone-Nutzer. Sie müssen jedem einen Link per E-Mail oder SMS schicken, und vor allem: <strong>Man muss daran denken</strong>. Ein geteiltes Album ist passiv: Niemand lädt an einem Festabend von sich aus seine Fotos hoch. In der Praxis bekommen Sie die Fotos von sechs von achtzig Gästen.</p>
-<p><strong>Fazit:</strong> hervorragend zum <em>Archivieren</em>, sobald Sie die Fotos haben. Schlecht zum <em>Sammeln</em>. Die anderen Wege zu einem gemeinsamen Album stehen in <a href="/journal/album-photo-partage-mariage">Das gemeinsame Hochzeitsalbum</a>.</p>
+<p><strong>Fazit:</strong> hervorragend zum <em>Archivieren</em>, sobald Sie die Fotos haben. Schlecht zum <em>Sammeln</em>. Die anderen Wege zu einem gemeinsamen Album stehen in <a href="/journal/partager-photos-mariage-invites">Das gemeinsame Hochzeitsalbum</a>.</p>
 
 <h2>Die digitale Einwegkamera</h2>
 <p><strong>Was funktioniert:</strong> ein QR-Code auf den Tischen, eine Seite, die sich im Browser öffnet, ein Vorname zum Eintippen. Nichts zu installieren, kein Konto. Alle machen mit, auch die Großeltern. Alle Fotos landen in einem einzigen Album, und das Spiel (begrenzte Aufnahmen, Enthüllung am nächsten Tag) sorgt dafür, dass man während der Feier daran denkt.</p>
@@ -922,16 +1028,19 @@ export const POSTS_DE = {
   },
 
   'shot-list-mariage': {
-    title: 'Shot-Liste Hochzeit: 50 Fotos, die nicht fehlen dürfen',
-    excerpt: 'Die vollständige Liste, Moment für Moment: die Fotos, um die sich Ihr Fotograf kümmert, und die, die nur Ihre Gäste machen können.',
+    // Vise « Shotlist Hochzeit », « Hochzeitsfotos Checkliste », « Fotoliste
+    // Hochzeit ». Google.de : checklists de photographes (Format, Jotform),
+    // rarement dans l'ordre de la journée et jamais côté invités.
+    title: 'Shotlist Hochzeit: 50 Fotos, die auf keinen Fall fehlen dürfen',
+    excerpt: 'Die Shotlist für Ihre Hochzeit als Checkliste, im Ablauf des Tages: die Fotos, um die sich Ihr Fotograf kümmert, und die, die nur Ihre Gäste machen werden.',
     caption: 'Fotograf und Gäste während einer Trauung',
     body: `
-<p>Eine Shot-Liste ist die Liste der Fotos, bei denen Sie in sechs Monaten nicht feststellen möchten, dass sie fehlen. Sie hat zwei Zwecke: Sie geben sie Ihrem Fotografen, und Sie erkennen die Bilder, die er allein nicht machen kann.</p>
+<p>Eine Shotlist ist die Liste der Fotos, bei denen Sie in sechs Monaten nicht feststellen möchten, dass sie fehlen. Sie erfüllt zwei Zwecke: Sie geben sie Ihrem Fotografen, und Sie erkennen die Bilder, die er allein nicht machen kann. Hier ist die Checkliste für Ihre Hochzeitsfotos, in der Reihenfolge des Tages.</p>
 
 <h2>Die Vorbereitungen (10)</h2>
 <p>1. Das Kleid auf dem Bügel, bevor es angezogen wird.<br>
 2. Schuhe, Schmuck und Ringe zusammen arrangiert.<br>
-3. Die Einladung und der Sitzplan, flach ausgelegt.<br>
+3. Die Einladungskarte und der Sitzplan, flach ausgelegt.<br>
 4. Frisur und Make-up, mittendrin.<br>
 5. Der Moment, in dem das Kleid geschlossen wird: die Hände der Mutter oder der Trauzeugin.<br>
 6. Das Binden der Krawatte.<br>
@@ -942,12 +1051,12 @@ export const POSTS_DE = {
 
 <h2>Die Trauung (10)</h2>
 <p>11. Der Einzug, von hinten, im Mittelgang.<br>
-12. Das Gesicht dessen, der wartet.<br>
+12. Das Gesicht dessen, der vorn wartet.<br>
 13. Ihr erster Blick zueinander.<br>
 14. Die Hände während des Eheversprechens.<br>
 15. Der Ringtausch, in Nahaufnahme.<br>
 16. Der Kuss, und die Sekunde danach.<br>
-17. Der Saal, von hinter dem Altar aus gesehen.<br>
+17. Der Raum, von hinter dem Altar oder dem Trautisch aus gesehen.<br>
 18. Die gerührten Gesichter in der ersten Reihe.<br>
 19. Der Auszug, unter Blütenblättern oder Seifenblasen.<br>
 20. Eine weite Aufnahme der leeren Location, bevor alle eintreffen.</p>
@@ -961,12 +1070,12 @@ export const POSTS_DE = {
 26. Die Freunde aus Kindertagen.<br>
 27. Das Paarshooting, im schönsten Licht des Tages.<br>
 28. Ein Foto von Ihnen beiden, aus der Ferne, in der Landschaft.</p>
-<p>Diese acht verdienen eine eigene Organisation: Die Methode steht hier, <a href="/journal/photos-de-groupe-mariage">Gruppenfotos in 20 Minuten</a>.</p>
+<p>Diese acht verdienen eine eigene Organisation: Die Methode steht in <a href="/journal/photos-de-groupe-mariage">Gruppenfotos bei der Hochzeit in 25 Minuten</a>.</p>
 
 <h2>Der Sektempfang (8)</h2>
 <p>29. Die gedeckten Tische, bevor jemand sie berührt.<br>
 30. Die Deko-Details, die Sie sechs Monate lang ausgesucht haben.<br>
-31. Das Buffet und die Cocktails.<br>
+31. Das Fingerfood und die Drinks.<br>
 32. Wiedersehen: zwei Gäste, die sich seit zehn Jahren nicht gesehen hatten.<br>
 33. Lachen in kleinen Gruppen.<br>
 34. Kinder, die herumrennen.<br>
@@ -979,7 +1088,7 @@ export const POSTS_DE = {
 39. Der Trauzeuge während seiner Rede.<br>
 40. Ihre Reaktionen während dieser Rede: oft das beste Foto des Abends.<br>
 41. Der Tisch, der am lautesten lacht.<br>
-42. Die Hochzeitstorte, vorher.<br>
+42. Die Hochzeitstorte, unberührt.<br>
 43. Der Anschnitt, und der erste Bissen.</p>
 
 <h2>Die Party (7)</h2>
@@ -994,10 +1103,10 @@ export const POSTS_DE = {
 <h2>In welcher Reihenfolge macht man die Hochzeitsfotos?</h2>
 <p>Die Liste oben folgt bereits dem Ablauf des Tages. Hier ist ein typischer Ablauf, den Sie mit Ihrem Fotografen an Ihr eigenes Programm anpassen (ausgehend von einer Trauung am frühen Nachmittag):</p>
 <ol>
-<li><strong>Die Vorbereitungen</strong>, am späten Vormittag: zuerst die Details (Kleid, Ringe, Einladung), dann das Ankleiden, dann die ersten Blicke der Liebsten.</li>
-<li><strong>Das First Look</strong>, wenn Sie eines planen: Sie sehen sich vor der Trauung zum ersten Mal, im kleinen Kreis. So lässt sich ein Teil des Paarshootings vorziehen.</li>
+<li><strong>Die Vorbereitungen</strong>, am späten Vormittag: zuerst die Details (Kleid, Ringe, Einladungskarte), dann das Ankleiden, dann die ersten Blicke der Liebsten.</li>
+<li><strong>Der First Look</strong>, wenn Sie einen planen: Sie sehen sich vor der Trauung zum ersten Mal, im kleinen Kreis. So lässt sich ein Teil des Paarshootings vorziehen.</li>
 <li><strong>Die Trauung</strong>: der Einzug, das Eheversprechen, die Ringe, der Kuss, der Auszug.</li>
-<li><strong>Die Gruppenfotos</strong>, direkt nach dem Auszug, solange alle da sind: etwa zwanzig Minuten (die Methode steht in <a href="/journal/photos-de-groupe-mariage">Gruppenfotos in 20 Minuten</a>).</li>
+<li><strong>Die Gruppenfotos</strong>, direkt nach dem Auszug, solange alle da sind: etwa zwanzig Minuten (die Methode steht in <a href="/journal/photos-de-groupe-mariage">Gruppenfotos bei der Hochzeit</a>).</li>
 <li><strong>Der Sektempfang</strong>: Wiedersehen, Lachen, die Deko, bevor sich alle setzen.</li>
 <li><strong>Das Paarshooting</strong>, zwanzig bis dreißig Minuten während des Sektempfangs, oder später im goldenen Licht am Ende des Tages.</li>
 <li><strong>Das Essen</strong>: Ihr Einzug, die Reden und Ihre Reaktionen, der Tisch, der am lautesten lacht.</li>
@@ -1005,6 +1114,9 @@ export const POSTS_DE = {
 <li><strong>Die Party</strong>: Eltern und Großeltern auf der Tanzfläche, der Brautstraußwurf und das Ende der Nacht.</li>
 </ol>
 <p>Zwei Tipps, damit dieser Ablauf hält. Erstens: Geben Sie ihn Ihrem Fotografen mit den echten Uhrzeiten Ihres Tages, dann weiß er, wo er wann sein muss. Zweitens: Planen Sie direkt nach der Trauung Puffer ein. Genau dort gerät der Zeitplan immer ins Rutschen, zwischen Glückwünschen und Umarmungen.</p>
+
+<h3>Und die Reihenfolge der Gruppenfotos?</h3>
+<p>Die Gruppenfotos haben ihre eigene Reihenfolge, vom engsten zum weitesten Kreis: die Großeltern, die Eltern, die engste Familie jeder Seite, beide Familien zusammen, die erweiterte Familie, die Trauzeugen, die Freunde, die Kollegen und zum Schluss alle Gäste. Bei 90 Sekunden pro Gruppe dauert die Serie 20 bis 25 Minuten. Die ausführliche Liste, mit der Zeit für jede Gruppe und der richtigen Aufstellung, finden Sie in <a href="/journal/photos-de-groupe-mariage">Gruppenfotos Hochzeit: Liste, Reihenfolge und Posen</a>.</p>
 
 <h2>Die Fotos, die Ihr Fotograf nicht machen wird</h2>
 <p>Schauen Sie sich die Liste an: Die Nummern 32, 33, 34, 41, 48 und 50 fehlen fast immer. Nicht aus Nachlässigkeit: Der Fotograf ist einfach woanders oder schon gegangen. Genau diese Fotos machen Ihre Gäste ganz von selbst.</p>
@@ -1014,8 +1126,8 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>So nutzen Sie die Liste</h2>
-<p>Schicken Sie die vollständige Liste zwei Wochen vorher an Ihren Fotografen und markieren Sie Ihre fünf absoluten Prioritäten. Für den Rest verlassen Sie sich nicht auf eine allgemeine Anweisung wie „Macht Fotos!“: Geben Sie Ihren Gästen eine klare Beschränkung (ein paar Aufnahmen pro Person), und sie erledigen die Arbeit mit Sorgfalt (siehe <a href="/journal/dix-cliches">Warum 10 Aufnahmen besser sind als 300</a>).</p>
-<p>Das ist das Prinzip von <a href="/">Time to Flash</a>: Jeder Gast bekommt eine kleine Zahl an Fotos, und das komplette Album wird am nächsten Tag enthüllt.</p>
+<p>Übertragen Sie die Liste in ein Dokument, eine Zeile pro Foto, und ergänzen Sie Namen, wo nötig („die Freunde aus Kindertagen: Lukas, Hannah, Jonas“). Schicken Sie sie Ihrem Fotografen zwei Wochen vorher und markieren Sie Ihre fünf absoluten Prioritäten. Für den Rest verlassen Sie sich nicht auf eine allgemeine Ansage wie „Macht Fotos!“: Geben Sie Ihren Gästen eine klare Beschränkung (ein paar Aufnahmen pro Person), und sie fotografieren mit viel mehr Sorgfalt (siehe <a href="/journal/dix-cliches">Warum 10 Aufnahmen besser sind als 300</a>).</p>
+<p>Das ist das Prinzip von <a href="/">Time to Flash</a>: Jeder Gast hat eine kleine Zahl an Fotos, und das komplette Album wird am nächsten Tag für alle sichtbar.</p>
 `,
   },
 
@@ -1058,40 +1170,88 @@ export const POSTS_DE = {
   },
 
   'photos-de-groupe-mariage': {
-    title: 'Gruppenfotos bei der Hochzeit: Liste, Reihenfolge, Posen',
-    excerpt: 'Welche Gruppenfotos bei der Hochzeit, in welcher Reihenfolge, und wie Sie sie in 20 Minuten schaffen: die Liste, die Organisation und Ideen für Posen.',
+    // Vise « Gruppenfotos Hochzeit », « Gruppenfotos Hochzeit Liste »,
+    // « Gruppenfotos Hochzeit Reihenfolge ». Google.de : checklists de
+    // photographes (Format, Canva) ; peu de durées par groupe, rien sur la
+    // pluie ni les familles recomposées.
+    title: 'Gruppenfotos Hochzeit: Liste, Reihenfolge und Posen',
+    excerpt: 'Gruppenfotos bei der Hochzeit: welche Gruppen, in welcher Reihenfolge, wie viel Zeit pro Gruppe und wie Sie alle aufstellen. Mit Liste, Zeitplan und Posen.',
     caption: 'Gruppenfoto auf einer Hochzeit',
     body: `
-<p>Gruppenfotos haben einen schlechten Ruf, und zu Recht: Sie ziehen sich hin, man sucht die Leute überall, der Sektempfang leert sich, und beim zwanzigsten lächelt niemand mehr wirklich. Dabei sind es die Fotos, die Ihre Familie am längsten anschauen wird. Hier ist die Liste der Gruppenfotos für Ihre Hochzeit, in der richtigen Reihenfolge, dazu Ideen für Posen und die Methode, alles in zwanzig Minuten zu erledigen.</p>
+<p>Gruppenfotos haben einen schlechten Ruf, und zu Recht: Sie ziehen sich hin, man sucht die Leute überall, der Sektempfang leert sich, und beim zwanzigsten Bild lächelt niemand mehr wirklich. Dabei sind es die Fotos, die Ihre Familie am längsten anschauen wird. Hier ist die Liste der Gruppenfotos für Ihre Hochzeit, in der richtigen Reihenfolge und mit der Zeit, die Sie pro Gruppe einplanen sollten, dazu die Aufstellung, der beste Zeitpunkt am Tag und die Pläne B (Regen, Patchworkfamilien), damit alles in weniger als einer halben Stunde erledigt ist.</p>
 
-<h2>Die Liste der Gruppenfotos, in der richtigen Reihenfolge</h2>
-<p>Das sind die klassischen Gruppenfotos einer Hochzeit, in der Reihenfolge, die wir empfehlen. Sie beginnen im engsten Kreis und werden Schritt für Schritt größer: Jede neue Gruppe ergänzt die vorherige, und niemand wartet umsonst.</p>
-<ol>
-<li><strong>Das Brautpaar mit den Eltern</strong>, erst die eine Seite, dann die andere.</li>
-<li><strong>Die engste Familie</strong>: Eltern, Geschwister mit Partnern und Kindern, Großeltern. Erst eine Seite, dann die andere, dann beide Familien zusammen.</li>
-<li><strong>Die erweiterte Familie</strong>: Onkel, Tanten, Cousins und Cousinen. Oft die größte Familiengruppe, planen Sie also Platz ein.</li>
-<li><strong>Die Trauzeugen</strong>, und das Gefolge, falls es eines gibt (Brautjungfern, Blumenkinder).</li>
-<li><strong>Die Freunde</strong>, Clique für Clique: Kindheitsfreunde, Studienfreunde, der Sportverein, die alte WG. Jede Clique hat ihre Geschichte und verdient ihr eigenes Foto.</li>
-<li><strong>Die Kollegen</strong>, erst von der einen, dann von der anderen Seite.</li>
-<li><strong>Alle Gäste</strong>: das große Foto, das die Serie abschließt (mehr dazu weiter unten).</li>
-</ol>
-<p>Warum die Familie zuerst? Weil sich die Großeltern und älteren Gäste danach setzen können und die Kinder noch nicht müde sind. Ihre Freunde warten problemlos mit einem Glas in der Hand. Diese Liste vertieft den Abschnitt „Gruppen“ in <a href="/journal/shot-list-mariage">der Shot-Liste mit 50 Hochzeitsfotos</a>.</p>
+<h2>Gruppenfotos Hochzeit: die Liste in der empfohlenen Reihenfolge</h2>
+<p>Das sind die klassischen Gruppenfotos einer Hochzeit, in der Reihenfolge, die wir empfehlen, mit der Zeit, die Sie einplanen sollten. Die Logik: Sie beginnen mit den Menschen, die sich am dringendsten setzen möchten, und erweitern dann vom engsten Kreis aus Schritt für Schritt. Jede neue Gruppe ergänzt die vorherige, und niemand wartet umsonst.</p>
+<table>
+<thead><tr><th>Reihenfolge</th><th>Gruppe</th><th>Zeit einplanen</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>Das Brautpaar mit den Großeltern</td><td>1,5 bis 3 Min.</td></tr>
+<tr><td>2</td><td>Das Brautpaar mit den Eltern, erst die eine Seite, dann die andere</td><td>3 Min.</td></tr>
+<tr><td>3</td><td>Die engste Familie (Eltern, Geschwister, Partner, Kinder), erst die eine Seite, dann die andere</td><td>3 Min.</td></tr>
+<tr><td>4</td><td>Beide engsten Familien zusammen</td><td>1,5 Min.</td></tr>
+<tr><td>5</td><td>Die erweiterte Familie (Onkel, Tanten, Cousins und Cousinen), erst die eine Seite, dann die andere</td><td>3 Min.</td></tr>
+<tr><td>6</td><td>Die Trauzeugen und das Gefolge (Brautjungfern, Blumenkinder, Ringträger)</td><td>1,5 Min.</td></tr>
+<tr><td>7</td><td>Die Freunde, Clique für Clique (Schule, Studium, Sportverein, alte WG)</td><td>1,5 Min. pro Clique</td></tr>
+<tr><td>8</td><td>Die Kollegen, erst von der einen, dann von der anderen Seite</td><td>3 Min.</td></tr>
+<tr><td>9</td><td>Alle Gäste</td><td>5 Min.</td></tr>
+</tbody>
+</table>
+<p>Mit drei Freundescliquen dauert die komplette Serie etwa 25 Minuten, das große Foto inklusive. Ist Ihr Zeitplan eng, machen Sie die Gruppen 1 bis 6 und das große Foto direkt nach der Trauung, und die Freunde und Kollegen später, an ihrem Tisch oder auf der Tanzfläche: Mit einem Glas in der Hand posieren sie sowieso lieber.</p>
+<p>Warum die Familie zuerst? Weil sich die Großeltern und älteren Gäste danach setzen können und die Kinder noch nicht müde sind. Ihre Freunde warten problemlos beim Sektempfang. Diese Liste vertieft den Abschnitt „Gruppen“ in <a href="/journal/shot-list-mariage">der Shotlist mit 50 Hochzeitsfotos</a>.</p>
 
 <h2>1. Schreiben Sie die Liste, mit Namen</h2>
-<p>Das sind 90 % der Arbeit. Eine schriftliche Liste mit Namen: nicht „die Familie“, sondern „Papa, Mama, meine Schwester, ihr Mann, die beiden Kinder“. Planen Sie höchstens 8 bis 12 Gruppen. Mehr, und Sie brauchen eine Stunde. Drucken Sie sie zweimal aus: einmal für den Fotografen, einmal für die Person, die die Leute zusammenholt.</p>
+<p>Das sind 90 % der Arbeit. Eine schriftliche Liste mit Namen: nicht „die Familie“, sondern „Papa, Mama, meine Schwester, ihr Mann, die beiden Kinder“. Planen Sie höchstens 8 bis 12 Gruppen. Mehr, und Sie brauchen eine Stunde. Eine Zeile pro Gruppe genügt, zum Beispiel:</p>
+<ul>
+<li><strong>Gruppe 2:</strong> wir beide mit Papa und Mama (Seite Léa), dann mit Anne und Philipp (Seite Marius).</li>
+<li><strong>Gruppe 3:</strong> dazu Julian (Léas Bruder), Sarah, Ida und Noah.</li>
+<li><strong>Gruppe 7:</strong> die Clique aus der Schulzeit: Lukas, Hannah, Jonas, Lena, Felix.</li>
+</ul>
+<p>Drucken Sie die Liste zweimal aus: einmal für den Fotografen, einmal für die Person, die die Leute zusammenholt. Und schicken Sie sie dem Fotografen ein bis zwei Wochen vorher, damit er den Ort und den nötigen Platz einplanen kann.</p>
 
-<h2>2. Bestimmen Sie einen Regisseur</h2>
-<p>Der klassische Fehler ist, den Fotografen die Leute rufen zu lassen: Er kennt niemanden. Geben Sie diese Regisseur-Rolle einem Trauzeugen oder einem Bruder mit kräftiger Stimme, der alle kennt. Mit der Liste in der Hand ruft er die nächste Gruppe, <em>während</em> die aktuelle Gruppe posiert. Sie verlieren keine Sekunde und müssen nur noch lächeln.</p>
+<h2>2. Geben Sie die Liste einem Trauzeugen, der die Leute ruft</h2>
+<p>Der klassische Fehler ist, den Fotografen die Leute rufen zu lassen: Er kennt niemanden. Geben Sie diese Aufgabe einem Trauzeugen, einem Bruder oder einer Cousine mit kräftiger Stimme, der oder die alle kennt. Mit der Liste in der Hand ruft er die nächste Gruppe, <em>während</em> die aktuelle Gruppe posiert. Sie verlieren keine Sekunde und müssen nur noch lächeln.</p>
+<p>Ein paar Kniffe, die viel ausmachen:</p>
+<ul>
+<li><strong>Ein Rufer pro Familie</strong>, wenn sich die beiden Familien kaum kennen: Jeder weiß, wie „Onkel Herbert“ aussieht.</li>
+<li><strong>Die ganze Liste beim Auszug ankündigen</strong>: „Gleich Familienfotos, dann Trauzeugen, dann Freunde.“ Wer gebraucht wird, bleibt in der Nähe.</li>
+<li><strong>Abhaken, was erledigt ist</strong>: Am Ende sieht man mit einem Blick, ob eine Gruppe fehlt.</li>
+<li><strong>Fehlende Personen früh bemerken</strong>: Ist die Großtante gerade auf der Toilette, kommt die nächste Gruppe dran, und man holt sie danach nach.</li>
+</ul>
 
-<h2>3. Suchen Sie den Ort vorher aus</h2>
-<p>Ein schattiger Platz mit schlichtem Hintergrund (eine Mauer, eine Hecke, eine Fassade), weniger als zwei Minuten Fußweg vom Sektempfang entfernt. Pralle Sonne wirft Schatten unter die Augen und lässt alle blinzeln. Ein weißer Himmel im Hintergrund überstrahlt das Foto. Suchen Sie diesen Ort bei der Besichtigung der Location aus, nicht am großen Tag.</p>
+<h2>3. So stellen Sie die Leute auf</h2>
+<p>Der Fotograf übernimmt das zum Teil, aber wer die Grundregeln kennt, spart Zeit, vor allem wenn der Rufer die nächste Gruppe schon am Rand vorbereiten kann.</p>
+<table>
+<thead><tr><th>Größe der Gruppe</th><th>Aufstellung</th></tr></thead>
+<tbody>
+<tr><td>Bis 8 Personen</td><td>Eine einzige Reihe, leicht im Bogen, das Brautpaar in der Mitte.</td></tr>
+<tr><td>8 bis 20 Personen</td><td>Zwei Reihen: die Kleineren vorn, die Größeren hinten, versetzt (jedes Gesicht in der Lücke zwischen zwei Köpfen).</td></tr>
+<tr><td>Mehr als 20 Personen</td><td>Drei Reihen: Kinder vorn sitzend oder hockend, Erwachsene stehend in der Mitte, die Größten hinten auf einer Stufe oder Bank.</td></tr>
+</tbody>
+</table>
+<p>Bei einer Familiengruppe mit fünfzehn Personen sieht das zum Beispiel so aus, von hinten nach vorn:</p>
+<ul>
+<li><strong>Hintere Reihe:</strong> die Größten (Brüder, Onkel, Cousins), stehend, wenn möglich auf einer Stufe.</li>
+<li><strong>Mittlere Reihe:</strong> das Brautpaar in der Mitte, die Eltern auf beiden Seiten, dann Geschwister und Partner.</li>
+<li><strong>Vordere Reihe:</strong> die Großeltern auf zwei Stühlen direkt vor dem Brautpaar, die Kinder auf dem Boden sitzend oder davor stehend.</li>
+</ul>
+<p>Und die Anweisungen, die Sie bei jeder Gruppe wiederholen: viel enger zusammenrücken als gedacht, Paare nebeneinander, Schultern leicht zum Brautpaar gedreht, nichts in den Händen (kein Glas, keine Tasche, kein Handy), und alle schauen in die Kamera. Stellen Sie zwei Stühle bereit: Die Großeltern werden es Ihnen danken.</p>
 
-<h2>4. Das richtige Zeitfenster: der Beginn des Sektempfangs</h2>
-<p>Direkt nach der Trauung, wenn alle noch an einem Ort versammelt sind und niemand angefangen hat, herumzulaufen. Lassen Sie es beim Auszug ankündigen: „Zwanzig Minuten Gruppenfotos, dann sind wir bei euch.“ In dieser Zeit beginnt für alle anderen der Sektempfang: Sie haben ein Glas und etwas zu knabbern, niemand langweilt sich. Wenn Sie bis zur Mitte des Sektempfangs warten, suchen Sie zwanzig Minuten lang drei Personen.</p>
-<p>Eine Aufteilung, die funktioniert: etwa zehn Minuten für die Familien, fünf für Trauzeugen, Freunde und Kollegen und ein paar Minuten für das große Foto mit allen Gästen.</p>
+<h2>4. Suchen Sie den Ort vorher aus</h2>
+<p>Ein schattiger Platz mit schlichtem Hintergrund (eine Mauer, eine Hecke, eine Fassade), weniger als zwei Minuten Fußweg vom Sektempfang entfernt. Pralle Sonne wirft Schatten unter die Augen und lässt alle blinzeln. Ein weißer Himmel im Hintergrund überstrahlt das Foto. Suchen Sie diesen Ort bei der Besichtigung der Location aus, nicht am großen Tag, und prüfen Sie, ob er breit genug für die größte Gruppe auf Ihrer Liste ist.</p>
 
-<h2>5. Die 90-Sekunden-Regel</h2>
-<p>Eine Gruppe = 90 Sekunden. Der Fotograf macht drei oder vier Bilder, und weiter geht’s zur nächsten. Das reicht völlig: Danach erstarrt das Lächeln, und die Gruppe löst sich auf. Zwölf Gruppen à 90 Sekunden ergeben achtzehn Minuten.</p>
+<h2>5. Der beste Zeitpunkt am Tag</h2>
+<p>Am besten <strong>direkt nach der Trauung</strong>, zu Beginn des Sektempfangs, wenn alle noch an einem Ort sind und niemand angefangen hat, herumzulaufen. Lassen Sie es beim Auszug ankündigen: „Fünfundzwanzig Minuten Gruppenfotos, dann sind wir bei euch.“ In dieser Zeit beginnt für alle anderen der Sektempfang: Sie haben ein Glas und etwas zu knabbern, niemand langweilt sich. Wenn Sie bis zur Mitte des Sektempfangs warten, suchen Sie zwanzig Minuten lang drei Personen.</p>
+<p>Ein Beispielablauf für eine freie oder kirchliche Trauung um 15 Uhr:</p>
+<ul>
+<li><strong>15:45 Uhr:</strong> Auszug, Glückwünsche, Blütenblätter oder Seifenblasen.</li>
+<li><strong>16:00 Uhr:</strong> Familienfotos, dann die Trauzeugen (etwa 15 Minuten).</li>
+<li><strong>16:15 Uhr:</strong> Freunde und Kollegen, dann das große Foto mit allen Gästen.</li>
+<li><strong>16:30 Uhr:</strong> Das Brautpaar geht zum Sektempfang oder zum Paarshooting.</li>
+</ul>
+<p>Es gibt zwei Varianten. <strong>Am Standesamt</strong> ist das große Foto auf den Stufen ein Klassiker, aber die Zeit ist knapp: Oft wartet schon das nächste Paar. Machen Sie dort nur das Foto mit allen Gästen, und heben Sie die Gruppen für die Location auf. <strong>Mit einem First Look vor der Trauung</strong> (Sie sehen sich vorher im kleinen Kreis) können Sie die Fotos der engsten Familie vorziehen und danach nur noch die großen Gruppen machen.</p>
+
+<h2>6. Die 90-Sekunden-Regel</h2>
+<p>Eine Gruppe = 90 Sekunden. Der Fotograf macht drei oder vier Bilder, und weiter geht’s. Das reicht völlig: Danach erstarrt das Lächeln, und die Gruppe löst sich auf. Die Zeit geht fast nie beim Foto selbst verloren, sondern zwischen zwei Gruppen, wenn jemand gesucht wird. Deshalb ist der Rufer so wichtig.</p>
 
 <blockquote class="dj-quote">„Wir haben am Mikrofon angekündigt: Gruppenfotos, zwanzig Minuten, wir beginnen mit den Großeltern. Niemand hat sich beschwert.“
   <cite>Léa &amp; Marius · 2026</cite>
@@ -1101,10 +1261,32 @@ export const POSTS_DE = {
 <p>Es ist das spektakulärste Foto und das schwierigste: Hundert Menschen passen nicht in einen Bildausschnitt auf Augenhöhe. Das Geheimnis ist die <strong>Höhe</strong>.</p>
 <ul>
 <li><strong>Ein Balkon oder ein Fenster im Obergeschoss</strong>: Der Fotograf steht oben, die Gäste rücken unten zusammen und schauen hoch. Alle sind zu sehen, auch in der letzten Reihe.</li>
-<li><strong>Eine Treppe</strong>: Die Gäste stellen sich auf die Stufen, und jede Reihe steht ganz von selbst höher als die vordere.</li>
+<li><strong>Eine Treppe</strong>: Die Gäste stellen sich auf die Stufen, und jede Reihe steht ganz von selbst höher als die vordere. Die Stufen vor dem Standesamt oder der Kirche eignen sich bestens.</li>
 <li><strong>Eine stabile Trittleiter</strong>, wenn die Location weder Balkon noch Treppe hat. Zwei oder drei Stufen verändern das Foto schon deutlich.</li>
 </ul>
-<p>Drei Anweisungen, die der Regisseur weitergibt: viel enger zusammenrücken als gedacht, die Kleinsten und die Kinder nach vorn, und alle schauen in die Kamera, nicht zum Brautpaar. Machen Sie eine brave Version und dann eine, bei der alle die Arme hochreißen und jubeln: Oft ist es diese, die man einrahmt. Und suchen Sie Balkon oder Treppe bei der Besichtigung aus, wie alles andere auch.</p>
+<p>Drei Anweisungen, die der Rufer weitergibt: viel enger zusammenrücken als gedacht, die Kleinsten und die Kinder nach vorn, und alle schauen in die Kamera, nicht zum Brautpaar. Machen Sie eine brave Version und dann eine, bei der alle die Arme hochreißen und jubeln: Oft ist es diese, die man einrahmt. Und suchen Sie Balkon oder Treppe bei der Besichtigung aus, wie alles andere auch.</p>
+
+<h2>Patchworkfamilien</h2>
+<p>Das Thema spricht man ungern an, und gerade deshalb sorgt es am großen Tag für die meisten unangenehmen Momente, wenn es nicht vorbereitet ist. Ein paar einfache Regeln:</p>
+<ul>
+<li><strong>Entscheiden Sie vorher</strong>, gemeinsam mit Ihrem Partner oder Ihrer Partnerin, wer mit wem aufs Foto kommt. Nichts ist schlimmer, als vor allen zu improvisieren.</li>
+<li><strong>Planen Sie ein Foto pro Elternteil</strong>: das Brautpaar mit Papa und seiner Partnerin, dann mit Mama und ihrem Partner. Jeder hat sein Foto, niemand wird ausgeschlossen.</li>
+<li><strong>Verstehen sich getrennte Eltern gut</strong>, ist auch ein Foto mit beiden leiblichen Eltern möglich: Fragen Sie sie vorher, nicht vor Ort.</li>
+<li><strong>Stellen Sie das Brautpaar in die Mitte</strong>: Wenn beide Familien zusammen posieren, verbindet das Brautpaar ganz natürlich die beiden Seiten.</li>
+<li><strong>Schreiben Sie es auf die Liste</strong> („Papa und Claudia“, „Mama und Bernd“) und weihen Sie den Rufer diskret ein. So vermeidet er Fettnäpfchen.</li>
+<li><strong>Denken Sie an Halbgeschwister</strong>: Sie gehören zur engsten Familie und haben ihren Platz in Gruppe 3.</li>
+</ul>
+<p>Und wenn ein verstorbener Angehöriger fehlt, lassen manche Paare ein gerahmtes Foto von ihm von einem Elternteil auf dem Familienfoto halten. Das ist eine persönliche Entscheidung: Sprechen Sie vorher mit Ihrer Familie darüber.</p>
+
+<h2>Und wenn es regnet?</h2>
+<p>Regen sollte die Gruppenfotos nicht streichen, nur verlegen. Planen Sie den Plan B schon bei der Besichtigung:</p>
+<ul>
+<li><strong>Suchen Sie einen Unterstand</strong>: ein Vordach, eine Scheune, eine Eingangshalle, ein Kirchenportal oder den Festsaal, bevor eingedeckt wird. Prüfen Sie, ob es dort hell genug ist.</li>
+<li><strong>Kürzen Sie die Liste</strong>: Familien und Trauzeugen unter dem Unterstand, Freunde und Kollegen später drinnen, beim Essen oder auf der Party.</li>
+<li><strong>Machen Sie das große Foto von oben</strong>: Von einer Innentreppe oder einer Galerie über dem Saal passen alle ins Bild.</li>
+<li><strong>Warten Sie auf die Regenpause</strong>: Ein Schauer dauert selten lange. Fotograf und Rufer holen alle in fünf Minuten zusammen, sobald er aufhört, wenn die Liste bereitliegt.</li>
+<li><strong>Machen Sie das Beste daraus</strong>: Ein paar durchsichtige Regenschirme (sie verdunkeln die Gesichter nicht) ergeben bei Nieselregen sehr schöne Gruppenfotos.</li>
+</ul>
 
 <h2>Originelle Ideen für Gruppenposen</h2>
 <p>Bitten Sie direkt nach dem „offiziellen“ Foto jeder Gruppe um eine zweite, freiere Aufnahme. Fast immer ist es diese, die man behält. Ein paar Ideen, die funktionieren:</p>
@@ -1116,28 +1298,32 @@ export const POSTS_DE = {
 <li><strong>Sonnenbrillen auf</strong>: Alle setzen sie im selben Moment auf, und schon sieht es aus wie ein Plattencover.</li>
 <li><strong>Das Klassenfoto</strong>: eine Reihe sitzend, eine stehend, Arme verschränkt, todernste Miene. In zwanzig Jahren lachen alle darüber.</li>
 </ul>
-<p>Eine Idee pro Gruppe, nicht mehr: Das Ziel bleibt, die zwanzig Minuten einzuhalten.</p>
+<p>Eine Idee pro Gruppe, nicht mehr: Das Ziel bleibt, die geplante Zeit einzuhalten.</p>
 
 <h2>Und in der Zwischenzeit</h2>
-<p>Ihre Gäste, die auf ihren Einsatz warten, fotografieren derweil alles andere: die Lachanfälle hinter den Kulissen, die Kinder, die ausbüxen, die Organisation selbst. Das sind oft die lebendigsten Bilder des Tages (siehe <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>). Und später am Abend entstehen die schönsten Gruppenfotos oft ganz von selbst, unter Freunden auf der Tanzfläche: Unsere Tipps, damit sie nicht alle dunkel werden, stehen in <a href="/journal/photos-soiree-dansante-telephone">Gute Partyfotos mit dem Handy</a>.</p>
-<p>Mit <a href="/">Time to Flash</a> landet alles, was Ihre Gäste in diesen zwanzig Minuten und am Rest des Tages festhalten, im selben Album, das am nächsten Tag enthüllt wird.</p>
+<p>Ihre Gäste, die auf ihren Einsatz warten, fotografieren derweil alles andere: die Lachanfälle hinter den Kulissen, die Kinder, die ausbüxen, das Organisieren selbst. Das sind oft die lebendigsten Bilder des Tages (siehe <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>). Und später am Abend entstehen die schönsten Gruppenfotos oft ganz von selbst, unter Freunden auf der Tanzfläche: Unsere Tipps, damit sie nicht alle dunkel werden, stehen in <a href="/journal/photos-soiree-dansante-telephone">Gute Partyfotos mit dem Handy</a>.</p>
+<p>Mit <a href="/">Time to Flash</a> landet alles, was Ihre Gäste in diesen fünfundzwanzig Minuten und am Rest des Tages festhalten, im selben Album, das am nächsten Tag für alle sichtbar wird.</p>
 `,
     faq: [
       {
-        q: 'Wie viele Gruppenfotos sollte man bei einer Hochzeit einplanen?',
-        a: 'Planen Sie 8 bis 12 Gruppen, nicht mehr. Bei 90 Sekunden pro Gruppe sind das etwa zwanzig Minuten. Danach verstreuen sich die Gäste, und das Lächeln erstarrt.',
+        q: 'In welcher Reihenfolge macht man die Gruppenfotos bei der Hochzeit?',
+        a: 'Beginnen Sie mit dem Brautpaar und den Großeltern, dann den Eltern, der engsten Familie jeder Seite, beiden Familien zusammen, der erweiterten Familie, den Trauzeugen und dem Gefolge, den Freunden Clique für Clique, den Kollegen, und schließen Sie mit dem Foto aller Gäste. So können sich die älteren Gäste schnell wieder setzen.',
+      },
+      {
+        q: 'Wie viel Zeit sollte man für die Gruppenfotos einplanen?',
+        a: 'Rechnen Sie mit etwa 90 Sekunden pro Gruppe und 5 Minuten für das Foto mit allen Gästen. Bei 8 bis 12 Gruppen dauert die Serie 20 bis 25 Minuten. Danach verstreuen sich die Gäste, und das Lächeln erstarrt.',
       },
       {
         q: 'Wann macht man die Gruppenfotos bei der Hochzeit?',
-        a: 'Direkt nach der Trauung, zu Beginn des Sektempfangs, wenn alle noch an einem Ort versammelt sind. Die übrigen Gäste genießen in der Zeit den Empfang, und niemand langweilt sich.',
+        a: 'Direkt nach der Trauung, zu Beginn des Sektempfangs, wenn alle noch an einem Ort versammelt sind. Die übrigen Gäste genießen in der Zeit den Empfang. Am Standesamt beschränken Sie sich auf das große Foto auf den Stufen: Oft wartet schon das nächste Paar.',
       },
       {
-        q: 'In welcher Reihenfolge macht man die Gruppenfotos?',
-        a: 'Vom engsten zum weitesten Kreis: das Brautpaar mit den Eltern, die engste Familie, die erweiterte Familie, die Trauzeugen, die Freunde, die Kollegen und zum Schluss alle Gäste. So können sich die älteren Gäste schnell wieder setzen.',
+        q: 'Wie stellt man die Gäste für ein Hochzeitsgruppenfoto auf?',
+        a: 'Das Brautpaar in die Mitte, die Eltern daneben, die Größeren hinten und die Kleineren vorn, versetzt. Ab 20 Personen bilden Sie drei Reihen: Kinder vorn sitzend, Erwachsene stehend in der Mitte, die Größten hinten auf einer Stufe. Die Großeltern können vorn auf Stühlen sitzen.',
       },
       {
-        q: 'Wie macht man ein Gruppenfoto mit allen Hochzeitsgästen?',
-        a: 'Gehen Sie in die Höhe: ein Balkon, ein Fenster im Obergeschoss, eine Treppe oder eine stabile Trittleiter. Die Gäste rücken eng zusammen, die Kleinsten vorn, und alle schauen in die Kamera. Machen Sie eine brave und dann eine ausgelassene Version.',
+        q: 'Was tun, wenn es während der Gruppenfotos regnet?',
+        a: 'Suchen Sie schon bei der Besichtigung einen hellen Unterstand (Vordach, Eingangshalle, Kirchenportal, Saal vor dem Eindecken), machen Sie dort die Familien- und Trauzeugenfotos, verlegen Sie die Freunde auf später drinnen und machen Sie das große Foto von einer Innentreppe aus. Mit durchsichtigen Regenschirmen klappt es auch bei Nieselregen.',
       },
     ],
   },

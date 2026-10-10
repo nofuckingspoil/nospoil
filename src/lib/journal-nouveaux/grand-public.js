@@ -1258,4 +1258,624 @@ export const POSTS_EN = {
   },
 }
 
-export const POSTS_DE = {}
+export const POSTS_DE = {
+  // DE : « Hochzeitsspiele », « Unterhaltung Hochzeit », « Unterhaltung zur
+  // Hochzeit Ideen », « Sektempfang Hochzeit Ideen ». Vu dans Google.de
+  // (10/10/2026) : Bridebook DE (Unterhaltung zur Hochzeit, Hochzeitsprogramm,
+  // Sektempfang), ERGO (Hochzeitsspiele), für Sie (Aufgaben für Gäste) :
+  // listes d’idées (Schuhspiel, Hochzeitsbingo, Zauberer, Fotobox, Karaoke)
+  // sans prix ni effort, rarement par moment de la journée. Usages adaptés à
+  // l’Allemagne : Sektempfang, Kaffee und Kuchen, Baumstammsägen, Kubb,
+  // Hochzeitszeitung, Mitternachtssnack, Himmelslaternen interdites dans
+  // presque tous les Länder, feu d’artifice soumis à l’Ordnungsamt.
+  'idees-animation-mariage': {
+    title: 'Hochzeitsspiele und Unterhaltung: 36 Ideen für den ganzen Tag',
+    excerpt: '36 Ideen für Hochzeitsspiele und Unterhaltung, von der Trauung bis zum Brunch: mit Preisen, Aufwand und Tipps, damit sich Ihre Gäste nie langweilen.',
+    caption: 'Hochzeitsgäste spielen beim Sektempfang Kubb auf dem Rasen',
+    body: `
+<p>Sie suchen <strong>Hochzeitsspiele und Unterhaltung</strong> für Ihre Feier, aber die Listen, die Sie finden, wiederholen alle dieselben Ideen, ohne zu sagen, was sie kosten, wie viel Vorbereitung sie brauchen und zu welchem Zeitpunkt des Tages sie wirklich funktionieren. Hier sind 36 Ideen, sortiert nach Tagesabschnitt (Trauung, Sektempfang, Hochzeitsessen, Party, Tag danach), jede mit Prinzip, ungefährem Preis, Aufwand und der Art von Hochzeit, zu der sie passt.</p>
+<p>Bevor Sie auswählen, ein Rat, der mehr wert ist als alle Ideen zusammen: <strong>Gute Unterhaltung ist vor allem Unterhaltung im richtigen Moment</strong>. Darauf kommen wir nach der Liste ausführlich zurück.</p>
+
+<h2>Unterhaltung bei der Hochzeit: drei Regeln vorab</h2>
+<ul>
+<li><strong>Füllen Sie nicht jede Minute.</strong> Ihre Gäste kommen auch, um zu reden, zu essen und zu tanzen. Alle zwanzig Minuten ein Programmpunkt ermüdet alle, Sie eingeschlossen.</li>
+<li><strong>Zielen Sie auf die Leerlaufzeiten.</strong> Davon gibt es an jedem Hochzeitstag mindestens vier (Details weiter unten). Genau dort verändert Unterhaltung die Stimmung wirklich.</li>
+<li><strong>Bestimmen Sie Verantwortliche.</strong> Jeder Programmpunkt, der Koordination braucht, bekommt eine verantwortliche Person, die nicht Sie sind: eine Trauzeugin, ein organisierter Cousin, der Hochzeitsplaner. Am Hochzeitstag steuern Sie nichts.</li>
+</ul>
+<p>Bei jeder Idee steht der <strong>Aufwand</strong>: <em>gering</em> (höchstens eine Stunde Vorbereitung), <em>mittel</em> (ein paar Abende oder mehrere Personen zu koordinieren), <em>hoch</em> (ein echtes Projekt, oder ein Dienstleister, den man finden und briefen muss).</p>
+
+<h2>Während der Trauung: 5 Ideen</h2>
+<p>Die Trauung ist nicht der Moment für Spiele, aber ein paar Elemente machen sie persönlicher und lebendiger, vor allem bei einer freien Trauung.</p>
+
+<h3>1. Worte der Liebsten</h3>
+<p><strong>Das Prinzip:</strong> Zwei oder drei nahestehende Menschen lesen einen Text, erzählen eine Anekdote oder berichten von Ihrer Geschichte. Oft der bewegendste Moment des Tages.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> mittel. Sie müssen die Rednerinnen und Redner früh auswählen, ihnen eine Dauer vorgeben (drei Minuten pro Person, nicht mehr) und die Reihenfolge festlegen.<br>
+<strong>Für welche Hochzeit:</strong> alle, vor allem freie Trauungen, bei denen nichts vorgegeben ist.</p>
+
+<h3>2. Ein symbolisches Ritual</h3>
+<p><strong>Das Prinzip:</strong> eine Geste, die die Verbindung sichtbar macht. Farbiger Sand, der in ein gemeinsames Gefäß fließt, ein Baum, den Sie zusammen pflanzen, Hände, die mit einem Band verbunden werden (Handfasting), oder eine Weinkiste, in die Sie Briefe und eine Flasche legen, die Sie in zehn Jahren öffnen.<br>
+<strong>Kosten:</strong> 20 bis 80 € je nach Ritual.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> freie Trauungen oder Trauungen im Freien. Die Weinkiste funktioniert auch im kleinen Kreis sehr gut.</p>
+
+<h3>3. Live-Musik</h3>
+<p><strong>Das Prinzip:</strong> Ein Musiker spielt zum Einzug, zum Auszug und zwischen den Beiträgen. Eine Geige, eine Gitarre oder eine Stimme verändern die Atmosphäre völlig im Vergleich zu einem Lautsprecher.<br>
+<strong>Kosten:</strong> nichts, wenn jemand aus Ihrem Umfeld spielt, sonst in der Regel 300 bis 1.000 € für einen professionellen Musiker, mehr für ein Quartett.<br>
+<strong>Aufwand:</strong> mittel (Auswahl der Stücke, Probe, eventuell Steckdose).<br>
+<strong>Für welche Hochzeit:</strong> alle. Wenn ein Freund oder eine Verwandte spielt, ist das ein Geschenk: Bedanken Sie sich mit einer Erwähnung im Programmheft.</p>
+
+<h3>4. Ein Programmheft, das beschäftigt</h3>
+<p><strong>Das Prinzip:</strong> Neben dem Ablauf enthält das Programmheft den Text eines Liedes, das alle mitsingen, ein kleines Rätsel für die Kinder (Suchsel, Ausmalbild) oder eine Frage des Tages, die alle mit zum Sektempfang nehmen.<br>
+<strong>Kosten:</strong> unter 100 € Druckkosten für rund hundert Exemplare, oft viel weniger, wenn Sie selbst drucken.<br>
+<strong>Aufwand:</strong> mittel (Layout).<br>
+<strong>Für welche Hochzeit:</strong> wenn die Gäste vor Beginn lange warten, oder wenn viele Kinder dabei sind.</p>
+
+<h3>5. Der Auszug unter Blütenblättern</h3>
+<p><strong>Das Prinzip:</strong> Beim Auszug bilden die Gäste ein Spalier und werfen getrocknete Blütenblätter, Lavendel oder biologisch abbaubares Konfetti, oder sie pusten Seifenblasen. Das ist auch eines der schönsten Fotos des Tages. In vielen Regionen folgt danach das Baumstammsägen: Sie sägen gemeinsam einen Stamm durch, die Gäste feuern an.<br>
+<strong>Kosten:</strong> 20 bis 60 €.<br>
+<strong>Aufwand:</strong> gering, wenn zwei Personen die Tütchen verteilen.<br>
+<strong>Für welche Hochzeit:</strong> alle. Prüfen Sie nur, was erlaubt ist: Manche Standesämter, Kirchen und Locations verbieten Reis oder Konfetti.</p>
+
+<h2>Unterhaltung beim Sektempfang: 10 Ideen für den längsten Moment</h2>
+<p>Der Sektempfang dauert oft anderthalb bis zwei Stunden, und bei vielen Hochzeiten geht er in Kaffee und Kuchen über. Es ist der Moment, in dem Gäste, die sich nicht kennen, aufeinandertreffen, während Sie Ihr Paarshooting machen. Hier ist Unterhaltung am nützlichsten: Sie gibt einen Vorwand, miteinander ins Gespräch zu kommen.</p>
+
+<h3>6. Die digitale Einwegkamera auf dem Handy der Gäste</h3>
+<p><strong>Das Prinzip:</strong> ein QR-Code am Eingang, an der Bar und auf den Tischen. Jeder Gast scannt ihn, und sein Handy wird zur Einwegkamera: eine begrenzte Zahl an Fotos (Sie wählen zwischen 3 und 15 pro Person), vor der Präsentation ist nichts zu sehen, und das Album wird für alle gleichzeitig sichtbar, standardmäßig am Tag nach der Feier; Sie bestimmen den Zeitpunkt. Weil die Aufnahmen gezählt sind, überlegt jeder vor dem Auslösen: So entstehen Fotos vom ganzen Tag, aus Dutzenden Blickwinkeln, auch von Momenten, in denen Sie gerade woanders waren.<br>
+<strong>Kosten:</strong> mit <a href="/appareil-jetable-mariage">Time to Flash</a> kostenlos bis 5 Gäste, danach eine einmalige Zahlung je nach Gästezahl (14,99 € für 50, 29,99 € für 100, 59,99 € für 300), ohne Abo.<br>
+<strong>Aufwand:</strong> gering. Sie legen das Event in wenigen Minuten an und drucken den QR-Code (der <a href="/generateur-qr-code-mariage">Plakatgenerator</a> ist kostenlos).<br>
+<strong>Für welche Hochzeit:</strong> alle, vor allem wenn Sie eine Unterhaltung möchten, die vom Sektempfang bis zum Ende der Party läuft, ohne Warteschlange und ohne Platzbedarf. Keine App zu installieren: Es öffnet sich eine Webseite, also machen auch die Großeltern mit. Wenn Sie zwischen Fotobox, Spiegel-Fotobox und Einwegkameras aus Pappe schwanken, haben wir sie in <a href="/journal/comparatif-animations-photo-mariage">diesem Vergleich der Fotoaktionen</a> gegenübergestellt.</p>
+
+<h3>7. Rasenspiele</h3>
+<p><strong>Das Prinzip:</strong> Kubb (Wikingerschach), Mölkky, Boule, Cornhole, Riesen-Jenga oder Riesen-Vier-gewinnt. Die Gäste spielen in spontanen Teams und lernen sich kennen, ohne es zu merken.<br>
+<strong>Kosten:</strong> nichts, wenn Sie sich die Spiele leihen, sonst oft 50 bis 150 € Miete für ein komplettes Set.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> ländliche Hochzeiten, im Freien, mit Kindern. Planen Sie einen überdachten Ausweichplatz ein, falls das Wetter umschlägt.</p>
+
+<h3>8. Der Musiker als Walking Act</h3>
+<p><strong>Das Prinzip:</strong> ein Saxofonist, ein Gitarrist oder ein Jazztrio, das zwischen den Gruppen umhergeht. Lebendiger als eine Playlist, weniger raumgreifend als ein Konzert.<br>
+<strong>Kosten:</strong> in der Regel 300 bis 1.000 € je nach Dauer und Besetzung.<br>
+<strong>Aufwand:</strong> mittel (den richtigen Musiker finden, das Repertoire abstimmen).<br>
+<strong>Für welche Hochzeit:</strong> elegante Hochzeiten, auf einem Gut oder im Schloss.</p>
+
+<h3>9. Der Close-up-Zauberer</h3>
+<p><strong>Das Prinzip:</strong> Ein Zauberer geht von Gruppe zu Gruppe und zeigt Tricks wenige Zentimeter vor den Augen (Karten, Münzen, Gegenstände der Gäste). Er bringt Menschen ins Gespräch, die bisher kein Wort gewechselt haben.<br>
+<strong>Kosten:</strong> ab etwa 400 €, oft mehr je nach Bekanntheit und Dauer.<br>
+<strong>Aufwand:</strong> gering, sobald er gebucht ist.<br>
+<strong>Für welche Hochzeit:</strong> wenn sich die beiden Familien kaum kennen. Kinder lieben es.</p>
+
+<h3>10. Karikaturist oder Schnellzeichner</h3>
+<p><strong>Das Prinzip:</strong> Ein Zeichner porträtiert die Gäste in wenigen Minuten. Jeder nimmt sein Bild mit nach Hause: Unterhaltung und kleines Gastgeschenk in einem.<br>
+<strong>Kosten:</strong> rechnen Sie mit einigen Hundert Euro für ein paar Stunden.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> mittlere und große Hochzeiten. Fragen Sie, wie viele Porträts er pro Stunde schafft, damit keine Schlange entsteht.</p>
+
+<h3>11. Die Genussstation</h3>
+<p><strong>Das Prinzip:</strong> eine Käsestation mit Erklärungen, eine Bar mit Bier aus der Region oder mit Spritz, eine Weinprobe des Weinguts, eine Austernbar für Feinschmecker. Das Buffet wird zum Treffpunkt.<br>
+<strong>Kosten:</strong> sehr unterschiedlich, oft Teil des Angebots des Caterers.<br>
+<strong>Aufwand:</strong> gering, wenn der Caterer sich kümmert.<br>
+<strong>Für welche Hochzeit:</strong> für Genießer, oder wenn der Sektempfang lang ist.</p>
+
+<h3>12. Das große Gruppenfoto</h3>
+<p><strong>Das Prinzip:</strong> alle Gäste auf einem einzigen Foto, von oben aufgenommen (aus einem Fenster, von einem Balkon, von einer Leiter). Zehn Minuten, ein Foto, das oft gerahmt wird.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> gering, wenn ein Trauzeuge mit Mikrofon alle zusammenruft. So klappt es: <a href="/journal/photos-de-groupe-mariage">Gruppenfotos bei der Hochzeit</a>.<br>
+<strong>Für welche Hochzeit:</strong> alle.</p>
+
+<h3>13. Das Audio-Gästebuch</h3>
+<p><strong>Das Prinzip:</strong> Statt zu schreiben, hinterlassen die Gäste eine Sprachnachricht. Die klassische Version ist ein altes Telefon auf einem Tisch: Hörer abnehmen, sprechen. Nach der Hochzeit hören Sie alles noch einmal, mit Stimmen und Lachen.<br>
+<strong>Kosten:</strong> Die Miete eines solchen Telefons liegt oft zwischen 150 und 300 €. Wenn Sie Time to Flash ohnehin nutzen, ist das Audio-Gästebuch eine Option für 9,99 €: Jeder Gast nimmt seine Nachricht und ein Selfie mit dem eigenen Handy auf, ohne Gerät, das Sie aufstellen müssen.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> alle. Eine der Erinnerungen, die sich Brautpaare am häufigsten wieder anhören.</p>
+
+<h3>14. Die Kinderecke</h3>
+<p><strong>Das Prinzip:</strong> ein Bereich mit Malsachen, Spielen, einer Decke, und idealerweise ein oder zwei Betreuerinnen oder Babysitter. Die Eltern genießen den Tag, die Kinder auch.<br>
+<strong>Kosten:</strong> nichts, wenn Jugendliche aus der Familie das übernehmen (mit einem echten Dankeschön), sonst das Honorar einer Kinderbetreuung für den Abend, oft einige Hundert Euro.<br>
+<strong>Aufwand:</strong> mittel.<br>
+<strong>Für welche Hochzeit:</strong> sobald mehr als fünf oder sechs Kinder dabei sind.</p>
+
+<h3>15. Die Cocktailbar mit Barkeeper</h3>
+<p><strong>Das Prinzip:</strong> Ein Barkeeper mixt vor den Gästen einen oder zwei Signature-Cocktails, benannt nach Ihnen oder inspiriert von Ihrer Geschichte.<br>
+<strong>Kosten:</strong> von einigen Hundert Euro bis über 1.000 €, je nach Gästezahl und Getränken.<br>
+<strong>Aufwand:</strong> mittel (Rezepte auswählen, mit dem Caterer abstimmen).<br>
+<strong>Für welche Hochzeit:</strong> ausgelassene Feiern, Sektempfang im Freien.</p>
+
+<h2>Beim Hochzeitsessen: 8 Ideen zur Unterhaltung der Gäste</h2>
+<p>Das Essen ist lang, oft drei Stunden. Die Falle: zwischen jedem Gang ein Programmpunkt am Mikrofon, kalte Teller und ein erschöpfter Caterer. Gönnen Sie sich zwei oder drei Höhepunkte, nicht mehr, und sagen Sie dem Service genau, wann sie im Ablauf stattfinden.</p>
+
+<h3>16. Die Sitzordnung, die eine Geschichte erzählt</h3>
+<p><strong>Das Prinzip:</strong> Jeder Tisch trägt den Namen eines Ortes oder einer Erinnerung, die Ihnen wichtig ist (Ihre erste Reise, die Stadt, in der Sie sich kennengelernt haben), mit einem Foto und drei Zeilen Erklärung. Die Gäste haben ein Gesprächsthema, sobald sie sitzen.<br>
+<strong>Kosten:</strong> keine, abgesehen vom Druck.<br>
+<strong>Aufwand:</strong> mittel.<br>
+<strong>Für welche Hochzeit:</strong> alle.</p>
+
+<h3>17. Das Brautpaar-Quiz und das Schuhspiel</h3>
+<p><strong>Das Prinzip:</strong> ein Blatt mit zehn Fragen über Sie pro Tisch, im Team zwischen zwei Gängen auszufüllen, oder das Schuhspiel: Sie sitzen Rücken an Rücken und heben Ihren Schuh oder den des anderen, um Fragen wie „Wer von euch beiden…“ zu beantworten.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> alle, solange es kurz (zehn Minuten) und liebevoll bleibt.</p>
+
+<h3>18. Vorbereitete Reden mit Zeitlimit</h3>
+<p><strong>Das Prinzip:</strong> an sich kein Programmpunkt, aber das, was ein Essen gelingen oder kippen lässt. Reden von drei bis fünf Minuten, verteilt zwischen den Gängen, mit einer Reihenfolge, die ein Zeremonienmeister ansagt. Ein umgedichtetes Lied, ein kleiner Sketch der Trauzeugen oder eine Hochzeitszeitung zum Verteilen gehören in dieselbe Kategorie.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> mittel für die, die sprechen, gering für Sie.<br>
+<strong>Für welche Hochzeit:</strong> alle. Ab fünf Beiträgen verlieren Sie den Saal.</p>
+
+<h3>19. Diashow oder Video</h3>
+<p><strong>Das Prinzip:</strong> Ihre Kinderfotos, Ihre ersten Urlaube, oder ein Video mit Grüßen von denen, die nicht kommen konnten.<br>
+<strong>Kosten:</strong> keine, wenn die Location einen Beamer hat (sonst Miete einplanen).<br>
+<strong>Aufwand:</strong> mittel bis hoch, es ist ein echter Schnitt.<br>
+<strong>Für welche Hochzeit:</strong> alle. Bleiben Sie unter fünf Minuten.</p>
+
+<h3>20. Umschläge auf den Tischen</h3>
+<p><strong>Das Prinzip:</strong> Ein Umschlag pro Tisch enthält Aufgaben (ein Foto des Tisches mit der Braut machen, jemanden finden, der im selben Monat Geburtstag hat) oder Fragen zum Kennenlernen; eine Variante ist das Hochzeitsbingo. Das funktioniert sehr gut zusammen mit der Einwegkamera aus Idee 6: Die Aufgaben liefern die Motive.<br>
+<strong>Kosten:</strong> unter 30 €.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> wenn an den Tischen Gäste sitzen, die sich nicht kennen.</p>
+
+<h3>21. Platzwechsel zum Dessert</h3>
+<p><strong>Das Prinzip:</strong> Zum Dessert wechselt die Hälfte jedes Tisches den Platz, nach einem Zeichen, das am Anfang verteilt wurde (eine Farbe, eine Karte). Oder Sie als Brautpaar gehen von Tisch zu Tisch und setzen sich jeweils kurz dazu.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> große Hochzeiten, bei denen Sie mit manchen Gästen kaum gesprochen haben.</p>
+
+<h3>22. Das Dessert als Show</h3>
+<p><strong>Das Prinzip:</strong> Sektsäbeln, das Anschneiden der Hochzeitstorte mit Musik, ein Dessertbuffet, ein Eiswagen oder ein Crêpes-Stand, der frisch zubereitet.<br>
+<strong>Kosten:</strong> unterschiedlich, oft eine Option des Caterers.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> alle. Der ideale Übergang zum Hochzeitstanz.</p>
+
+<h3>23. Briefe für später</h3>
+<p><strong>Das Prinzip:</strong> Jeder Gast schreibt auf eine Karte einen Rat, einen Wunsch oder eine Vorhersage für Ihren zehnten Hochzeitstag. Sie öffnen die Karten an diesem Tag.<br>
+<strong>Kosten:</strong> unter 30 €.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> alle, sehr schön im kleinen Kreis.</p>
+
+<h2>Am Abend: 9 Ideen, um die Tanzfläche zu füllen</h2>
+<p>Am Abend erledigt der DJ das Wesentliche. Die Programmpunkte dienen vor allem zwei Dingen: die auf die Tanzfläche zu holen, die sich nicht trauen, und denen eine Alternative zu bieten, die nicht tanzen.</p>
+
+<h3>24. Ein Hochzeitstanz, der alle mitnimmt</h3>
+<p><strong>Das Prinzip:</strong> Sie beginnen allein, auf ein vereinbartes Zeichen kommen die Trauzeugen dazu, dann die Familien, dann der ganze Saal. Ehrgeizigere Version: eine Choreografie, die eine Gruppe von Freunden einstudiert hat.<br>
+<strong>Kosten:</strong> keine, oder ein paar Tanzstunden, wenn Sie eine echte Choreografie möchten.<br>
+<strong>Aufwand:</strong> gering bis hoch, je nach Ehrgeiz.<br>
+<strong>Für welche Hochzeit:</strong> alle.</p>
+
+<h3>25. Das Musikquiz</h3>
+<p><strong>Das Prinzip:</strong> Der DJ spielt kurze Ausschnitte an, Tische oder Familien treten gegeneinander an. Die Lieder aus Ihrer Jugend kommen immer gut an.<br>
+<strong>Kosten:</strong> keine, wenn der DJ es einbaut.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> wenn die Tanzfläche nur langsam in Schwung kommt.</p>
+
+<h3>26. Karaoke</h3>
+<p><strong>Das Prinzip:</strong> eine halbe Stunde Karaoke mitten am Abend, oder spät in der Nacht für die Letzten.<br>
+<strong>Kosten:</strong> oft unter 100 € Miete für die Technik, oder beim DJ im Angebot.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> unter Freunden, lockere Stimmung.</p>
+
+<h3>27. Die Fotobox</h3>
+<p><strong>Das Prinzip:</strong> eine Fotobox mit Requisiten und Sofortdruck. Die Gäste nehmen ihren Abzug mit nach Hause.<br>
+<strong>Kosten:</strong> in der Regel 350 bis 900 € für den Abend. Die Preise im Detail: <a href="/journal/prix-photobooth-mariage">was eine Fotobox kostet</a>.<br>
+<strong>Aufwand:</strong> gering, nötig sind vor allem eine Steckdose und etwa 4 m².<br>
+<strong>Für welche Hochzeit:</strong> wenn Ihnen der Papierabzug wichtig ist, den man noch am selben Abend mitnimmt.</p>
+
+<h3>28. Der Mitternachtssnack</h3>
+<p><strong>Das Prinzip:</strong> gegen Mitternacht oder ein Uhr ein Foodtruck oder ein Stand mit Currywurst, Pommes, Flammkuchen oder Gulaschsuppe. Das gibt dem Abend neuen Schwung und schickt niemanden hungrig auf die Heimfahrt.<br>
+<strong>Kosten:</strong> unterschiedlich, oft pro Person berechnet. Eine Version vom Caterer (Suppe, belegte Brötchen) ist viel günstiger.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> wenn spät gefeiert wird.</p>
+
+<h3>29. Party-Accessoires</h3>
+<p><strong>Das Prinzip:</strong> Knicklichter, Brillen, Hüte oder Fächer, die zu einem bestimmten Moment verteilt werden (oft, wenn der DJ zu den großen Hits wechselt). Sofortige Wirkung auf die Stimmung und auf die Fotos.<br>
+<strong>Kosten:</strong> unter 50 € für rund hundert Gäste.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> ausgelassene Feiern.</p>
+
+<h3>30. Kaltfunken und Feuerwerk</h3>
+<p><strong>Das Prinzip:</strong> Kaltfunkenfontänen rund um die Tanzfläche für den Hochzeitstanz, oder ein echtes Feuerwerk von einem Pyrotechniker.<br>
+<strong>Kosten:</strong> einige Hundert Euro für die Fontänen, oft 1.000 € und mehr für ein Feuerwerk vom Profi.<br>
+<strong>Aufwand:</strong> hoch beim Feuerwerk: Zustimmung der Location, Genehmigung oder Anzeige beim Ordnungsamt (außerhalb von Silvester ist privates Feuerwerk genehmigungspflichtig), und im Sommer kann Waldbrandgefahr alles kurzfristig verhindern.<br>
+<strong>Für welche Hochzeit:</strong> große Hochzeiten auf einem Gut, mit Platz und weit entfernten Nachbarn.</p>
+
+<h3>31. Die ruhige Ecke</h3>
+<p><strong>Das Prinzip:</strong> eine Lounge abseits der Tanzfläche mit Sofas, Gesellschaftsspielen, Tee und gedämpftem Licht. Großeltern, Nicht-Tänzer und alle, die einfach reden wollen, finden dort ihren Platz.<br>
+<strong>Kosten:</strong> 0 bis 100 €.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> alle, vor allem mit mehreren Generationen.</p>
+
+<h3>32. Der Tanz Ihrer Wurzeln</h3>
+<p><strong>Das Prinzip:</strong> ein traditioneller Tanz aus einer der beiden Familien (Halay, Sirtaki, Hora, Polonaise, schottischer Ceilidh), angeführt von denen, die ihn kennen. Die anderen lernen ihn direkt mit.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> Hochzeiten, die zwei Kulturen zusammenbringen. Oft der Moment, von dem am nächsten Tag alle reden.</p>
+
+<h2>Am Tag danach: 4 Ideen zum Verlängern</h2>
+<p>Ein Katerfrühstück, Brunch oder Grillen am Tag nach der Hochzeit wird immer beliebter. Die Stimmung ist entspannt, die Gäste sind müde: Große Show braucht es nicht.</p>
+
+<h3>33. Brunch mit Präsentation der Fotos</h3>
+<p><strong>Das Prinzip:</strong> Wenn Ihre Gäste mit einer Einwegkamera fotografiert haben (aus Pappe oder auf dem Handy), ist der Brunch der perfekte Moment, die Bilder gemeinsam anzuschauen, an eine Wand projiziert oder auf den Handys. Der ganze Abend zieht vorbei, aus der Sicht jedes Einzelnen.<br>
+<strong>Kosten:</strong> keine, wenn das Album schon geplant ist.<br>
+<strong>Aufwand:</strong> gering. Wie Sie diesen Moment gestalten, erklären wir in <a href="/journal/revelation-photos-lendemain-mariage">der Fotopräsentation am Tag nach der Hochzeit</a>.<br>
+<strong>Für welche Hochzeit:</strong> alle mit einem Treffen am Tag danach.</p>
+
+<h3>34. Das Turnier am Tag danach</h3>
+<p><strong>Das Prinzip:</strong> Boule, Kubb, Fußball oder Volleyball, in ausgelosten Teams. Die Rasenspiele vom Sektempfang kommen wieder zum Einsatz.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> ländliche Hochzeiten mit großer Wiese.</p>
+
+<h3>35. Baden oder Spazieren</h3>
+<p><strong>Das Prinzip:</strong> der Pool des Guts, ein See in der Nähe, ein Spaziergang zu einem Aussichtspunkt. Nichts zu organisieren, außer den Gästen zu sagen, dass sie Badesachen einpacken sollen.<br>
+<strong>Kosten:</strong> keine.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> im Sommer, mit Übernachtung vor Ort.</p>
+
+<h3>36. Der Dank im kleinen Kreis</h3>
+<p><strong>Das Prinzip:</strong> In Ruhe überreichen Sie den Trauzeugen, den Eltern und allen, die geholfen haben, ein Geschenk. Ohne Mikrofon und vollen Saal ist das oft herzlicher als beim Essen.<br>
+<strong>Kosten:</strong> die der Geschenke.<br>
+<strong>Aufwand:</strong> gering.<br>
+<strong>Für welche Hochzeit:</strong> alle.</p>
+
+<h2>Alle 36 Ideen in einer Tabelle</h2>
+<table>
+<thead><tr><th>Idee</th><th>Moment</th><th>Budget</th><th>Aufwand</th></tr></thead>
+<tbody>
+<tr><td>Worte der Liebsten</td><td>Trauung</td><td>Kostenlos</td><td>Mittel</td></tr>
+<tr><td>Symbolisches Ritual</td><td>Trauung</td><td>Unter 100 €</td><td>Gering</td></tr>
+<tr><td>Live-Musik</td><td>Trauung</td><td>Kostenlos bis über 300 €</td><td>Mittel</td></tr>
+<tr><td>Programmheft, das beschäftigt</td><td>Trauung</td><td>Unter 100 €</td><td>Mittel</td></tr>
+<tr><td>Auszug unter Blütenblättern</td><td>Trauung</td><td>Unter 100 €</td><td>Gering</td></tr>
+<tr><td>Digitale Einwegkamera auf den Handys</td><td>Sektempfang und Party</td><td>Kostenlos bis unter 100 €</td><td>Gering</td></tr>
+<tr><td>Rasenspiele</td><td>Sektempfang</td><td>Kostenlos bis unter 150 €</td><td>Gering</td></tr>
+<tr><td>Musiker als Walking Act</td><td>Sektempfang</td><td>Über 300 €</td><td>Mittel</td></tr>
+<tr><td>Close-up-Zauberer</td><td>Sektempfang</td><td>Über 400 €</td><td>Gering</td></tr>
+<tr><td>Karikaturist</td><td>Sektempfang</td><td>Einige Hundert Euro</td><td>Gering</td></tr>
+<tr><td>Genussstation</td><td>Sektempfang</td><td>Unterschiedlich</td><td>Gering</td></tr>
+<tr><td>Großes Gruppenfoto</td><td>Sektempfang</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Audio-Gästebuch</td><td>Sektempfang</td><td>Unter 100 € bis 300 €</td><td>Gering</td></tr>
+<tr><td>Kinderecke</td><td>Sektempfang und Party</td><td>Kostenlos bis einige Hundert Euro</td><td>Mittel</td></tr>
+<tr><td>Cocktailbar mit Barkeeper</td><td>Sektempfang</td><td>Über 300 €</td><td>Mittel</td></tr>
+<tr><td>Sitzordnung mit Geschichte</td><td>Essen</td><td>Kostenlos</td><td>Mittel</td></tr>
+<tr><td>Brautpaar-Quiz</td><td>Essen</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Reden mit Zeitlimit</td><td>Essen</td><td>Kostenlos</td><td>Mittel</td></tr>
+<tr><td>Diashow oder Video</td><td>Essen</td><td>Kostenlos</td><td>Mittel bis hoch</td></tr>
+<tr><td>Umschläge auf den Tischen</td><td>Essen</td><td>Unter 100 €</td><td>Gering</td></tr>
+<tr><td>Platzwechsel zum Dessert</td><td>Essen</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Dessert als Show</td><td>Essen</td><td>Unterschiedlich</td><td>Gering</td></tr>
+<tr><td>Briefe für später</td><td>Essen</td><td>Unter 100 €</td><td>Gering</td></tr>
+<tr><td>Hochzeitstanz mit allen</td><td>Party</td><td>Kostenlos</td><td>Gering bis hoch</td></tr>
+<tr><td>Musikquiz</td><td>Party</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Karaoke</td><td>Party</td><td>Unter 100 €</td><td>Gering</td></tr>
+<tr><td>Fotobox</td><td>Party</td><td>Über 300 €</td><td>Gering</td></tr>
+<tr><td>Mitternachtssnack</td><td>Party</td><td>Unterschiedlich</td><td>Gering</td></tr>
+<tr><td>Party-Accessoires</td><td>Party</td><td>Unter 100 €</td><td>Gering</td></tr>
+<tr><td>Kaltfunken und Feuerwerk</td><td>Party</td><td>Über 300 €</td><td>Hoch</td></tr>
+<tr><td>Ruhige Ecke</td><td>Party</td><td>Kostenlos bis unter 100 €</td><td>Gering</td></tr>
+<tr><td>Tanz Ihrer Wurzeln</td><td>Party</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Brunch und Präsentation der Fotos</td><td>Tag danach</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Turnier am Tag danach</td><td>Tag danach</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Baden oder Spazieren</td><td>Tag danach</td><td>Kostenlos</td><td>Gering</td></tr>
+<tr><td>Dank im kleinen Kreis</td><td>Tag danach</td><td>Preis der Geschenke</td><td>Gering</td></tr>
+</tbody>
+</table>
+<p>Die Preise sind Größenordnungen, die wir 2026 bei Dienstleistern erhoben haben. Sie schwanken stark je nach Region, Saison und Dauer: Fragen Sie immer nach einem Angebot.</p>
+
+<h2>Der Rhythmus: Wo Sie die Programmpunkte im Tagesablauf platzieren</h2>
+<p>Ein Hochzeitstag hat seine Durchhänger, immer an denselben Stellen. Markieren Sie sie in Ihrem Ablauf und setzen Sie in jede Lücke einen Programmpunkt, statt alles auf den Abend zu konzentrieren.</p>
+<h3>Die vier Leerlaufzeiten, die Sie füllen sollten</h3>
+<ul>
+<li><strong>Zwischen Trauung und Sektempfang.</strong> Der Weg, das Warten, während das Brautpaar unterschreibt oder Fotos macht. Ein Begrüßungsgetränk und Musik reichen oft.</li>
+<li><strong>Während Ihres Paarshootings.</strong> Sie sind mitten im Sektempfang 30 bis 45 Minuten weg. Der Moment für Rasenspiele, den Zauberer, den QR-Code der Einwegkamera: Die Gäste fotografieren sich gegenseitig, während Sie fort sind.</li>
+<li><strong>Zwischen dem Platznehmen und der Vorspeise.</strong> Oft eine Viertelstunde, die in der Luft hängt: Die Sitzordnung mit Geschichte und die Umschläge füllen diese Zeit ganz von selbst.</li>
+<li><strong>Zwischen Dessert und Hochzeitstanz.</strong> Der Caterer räumt ab, der DJ baut auf, der Saal leert sich Richtung Raucherecke. Das Dessert als Show oder ein Musikquiz zum Aufwärmen schlagen die Brücke.</li>
+</ul>
+<h3>Nicht alles stapeln</h3>
+<p>Die Versuchung ist groß, „noch eine Idee“ hinzuzufügen. Stellen Sie sich bei jedem Programmpunkt eine einzige Frage: <strong>Füllt er eine Leerlaufzeit, oder unterbricht er einen schönen Moment?</strong> Ein Quiz mitten in einer lachenden Tischrunde, ein Sketch, während die Tanzfläche voll ist, eine Rede genau dann, wenn der Hauptgang kommt: Das sind die Programmpunkte, die die Stimmung kippen lassen.</p>
+<p>In der Praxis sieht ein gutes Gleichgewicht so aus: ein oder zwei Elemente bei der Trauung, zwei Programmpunkte, die beim Sektempfang von allein laufen, zwei oder drei Höhepunkte beim Essen, und am Abend eine einzige Überraschung. Der Rest ist Musik und Gespräch.</p>
+<h3>Sagen Sie es den Dienstleistern</h3>
+<p>Jeder Programmpunkt, der das Essen betrifft, muss dem Caterer bekannt sein, jeder am Abend dem DJ. Tragen Sie sie in Ihren <a href="/journal/deroule-jour-j-mariage">Ablauf des Hochzeitstages</a> ein, mit Uhrzeit, Dauer und verantwortlicher Person. Und prüfen Sie vor der Unterschrift, ob Ihre Location sie erlaubt (Feuer, Kerzen, Musik im Freien): Das gehört zu den <a href="/journal/questions-lieu-reception-mariage">Fragen an die Hochzeitslocation</a>.</p>
+
+<h2>Drei Pläne nach Budget</h2>
+<h3>Für 0 Euro</h3>
+<p>Worte der Liebsten bei der Trauung, geliehene Rasenspiele und das große Gruppenfoto beim Sektempfang, die Sitzordnung mit Geschichte und das Quiz beim Essen, der Hochzeitstanz mit allen und der Tanz Ihrer Wurzeln am Abend, das Turnier am Tag danach. Nichts davon kostet einen Cent, und es ist schon ein sehr lebendiger Tag.</p>
+<h3>Unter 100 €</h3>
+<p>Der vorige Plan, dazu Blütenblätter für den Auszug, Umschläge mit Aufgaben auf den Tischen, Knicklichter für die Tanzfläche und eine digitale Einwegkamera für rund fünfzig Gäste (14,99 € mit Time to Flash). Obendrein bekommen Sie Hunderte Fotos vom Tag, aufgenommen von Ihren Gästen.</p>
+<h3>Über 100 €</h3>
+<p>Wählen Sie <strong>einen einzigen</strong> Programmpunkt mit Dienstleister und setzen Sie ihn in die größte Lücke: einen Zauberer oder Musiker während Ihres Paarshootings beim Sektempfang, oder einen Mitternachtssnack, der den Abend neu belebt. Ein gut platzierter Programmpunkt ist besser als drei, die sich gegenseitig auf die Füße treten.</p>
+
+<h2>Was Sie lieber lassen</h2>
+<ul>
+<li><strong>Himmelslaternen.</strong> Ihr Start ist in Deutschland in praktisch allen Bundesländern verboten, wegen der Brandgefahr. Auch Luftballon-Starts sind vielerorts untersagt oder genehmigungspflichtig.</li>
+<li><strong>Spiele, bei denen sich jemand unwohl fühlt.</strong> Strumpfbandversteigerung, peinliche Pfänder, Quizfragen über Ex-Partner, eine Brautentführung, die das Paar nicht möchte: Wenn Sie zögern, ist die Antwort nein. Sagen Sie es den Trauzeugen rechtzeitig.</li>
+<li><strong>Zu lange Programmpunkte.</strong> Nach fünfzehn Minuten ermüdet selbst die beste Idee.</li>
+<li><strong>Alles, was vom Handynetz abhängt, ohne dass Sie es getestet haben.</strong> Wenn Ihr Programmpunkt über die Handys läuft, prüfen Sie den Empfang vor Ort. Die Lösungen, wenn es kein Netz gibt: <a href="/journal/pas-de-reseau-salle-mariage">kein Netz im Saal</a>.</li>
+</ul>
+<p>Für die Einwegkamera aus Idee 6 ist alles in wenigen Minuten vorbereitet: <a href="/create">Album anlegen</a>, QR-Code drucken, und Ihre Gäste erzählen Ihren Tag.</p>
+`,
+    faq: [
+      {
+        q: 'Welche originelle Unterhaltung passt zu einer Hochzeit?',
+        a: 'Wählen Sie nach Tagesabschnitt: ein symbolisches Ritual bei der Trauung, Rasenspiele oder eine digitale Einwegkamera beim Sektempfang, ein Brautpaar-Quiz beim Essen, ein traditioneller Tanz oder ein Musikquiz am Abend. Originell wird es vor allem durch den Bezug zu Ihrer Geschichte, weniger durch den Preis.',
+      },
+      {
+        q: 'Wie unterhält man die Gäste beim Sektempfang?',
+        a: 'Der Sektempfang ist lang, und Sie sind für das Paarshooting weg: Planen Sie Programmpunkte, die ohne Sie laufen. Rasenspiele, ein Musiker als Walking Act, ein Close-up-Zauberer oder der QR-Code einer Einwegkamera auf den Tischen geben den Gästen einen Vorwand, ins Gespräch zu kommen.',
+      },
+      {
+        q: 'Welche Hochzeitsspiele und Programmpunkte kosten nichts?',
+        a: 'Worte der Liebsten bei der Trauung, das große Gruppenfoto, das Brautpaar-Quiz und das Schuhspiel, die Sitzordnung mit Geschichte, der Platzwechsel zum Dessert, der Hochzeitstanz mit allen, das Musikquiz mit dem DJ und das Turnier am Tag danach kosten nichts. Es braucht nur jeweils eine verantwortliche Person.',
+      },
+      {
+        q: 'Wie viele Programmpunkte sollte man bei einer Hochzeit planen?',
+        a: 'Ein oder zwei Elemente bei der Trauung, zwei Programmpunkte beim Sektempfang, die von allein laufen, zwei oder drei Höhepunkte beim Essen und eine Überraschung am Abend reichen. Mehr davon tritt sich gegenseitig auf die Füße und unterbricht die Gespräche, die das Herz des Tages bleiben.',
+      },
+      {
+        q: 'Wie beschäftigt man die Gäste während des Paarshootings?',
+        a: 'Das ist die größte Leerlaufzeit des Tages, oft 30 bis 45 Minuten. Starten Sie genau dann Rasenspiele, Musiker oder Zauberer, und laden Sie die Gäste ein, den QR-Code der Einwegkamera zu scannen: Sie fotografieren sich gegenseitig, während Sie weg sind.',
+      },
+      {
+        q: 'Sind Himmelslaternen bei einer Hochzeit erlaubt?',
+        a: 'In Deutschland ist der Start von Himmelslaternen in praktisch allen Bundesländern verboten, wegen der Brandgefahr. Auch Luftballon-Starts sind vielerorts untersagt oder genehmigungspflichtig. Fragen Sie im Zweifel beim Ordnungsamt und bei der Location nach, oder wählen Sie eine Alternative wie Kaltfunkenfontänen.',
+      },
+    ],
+  },
+
+  // DE : « Hochzeitslocation Checkliste », « Fragen an die Hochzeitslocation »,
+  // « Hochzeitslocation besichtigen ». Vu dans Google.de (10/10/2026) :
+  // Bridebook DE (10 Fragen, 21 Fragen, Guide Besichtigung), eventlocations.com,
+  // podcasts : listes brutes. Adapté à l’Allemagne : GEMA au lieu de la Sacem,
+  // Korkgeld et Tortengeld, Nachtruhe à 22 h dehors, Anzahlung et
+  // Stornostaffel au lieu de arrhes/acompte (prudence : § 309 Nr. 5 BGB sur
+  // les forfaits en CGV, renvoi à la Verbraucherzentrale), Haftpflicht et
+  // Mietsachschäden, Übernachtungssteuer au lieu de la taxe de séjour.
+  'questions-lieu-reception-mariage': {
+    title: 'Hochzeitslocation Checkliste: die Fragen für Ihre Besichtigung',
+    excerpt: 'Die wichtigsten Fragen an die Hochzeitslocation, Thema für Thema: was hinter jeder Antwort steckt, die typischen Fallen und eine Checkliste zum Ausdrucken.',
+    caption: 'Ein Paar besichtigt mit einem Notizbuch in der Hand einen leeren Festsaal',
+    body: `
+<p>Die Location ist oft die größte Ausgabe der Hochzeit und die erste Unterschrift. Ist die Anzahlung einmal geleistet, wird ein Rückzieher teuer. Hier sind <strong>die Fragen an die Hochzeitslocation</strong>, nach Themen sortiert, jeweils mit dem Grund, warum sie zählt, und der Falle, die sie verhindert. Am Ende finden Sie eine Hochzeitslocation Checkliste zum Ausdrucken und Mitnehmen zur Besichtigung.</p>
+<p>Ein Rat vorab: Besichtigen Sie die Location, wenn möglich, <strong>zur selben Jahreszeit und zur selben Uhrzeit</strong> wie Ihre Hochzeit. Ein Saal, der im Juni um 15 Uhr in der Sonne liegt, wirkt im Oktober um 23 Uhr ganz anders.</p>
+
+<h2>Die richtige Hochzeitslocation finden: die Methode</h2>
+<ul>
+<li><strong>Bereiten Sie Ihre Zahlen vor der Besichtigung vor</strong>: Gästezahl (Erwachsene und Kinder), Höchstbudget, zwei oder drei mögliche Termine.</li>
+<li><strong>Kommen Sie zu zweit oder mit einer Vertrauensperson.</strong> Einer stellt die Fragen, der andere notiert und fotografiert.</li>
+<li><strong>Lassen Sie sich wichtige Antworten schriftlich geben.</strong> Was nicht im Vertrag steht, gibt es nicht.</li>
+<li><strong>Fragen Sie nach einem Mustervertrag</strong> und lesen Sie ihn in Ruhe zu Hause, nicht vor Ort.</li>
+</ul>
+
+<h2>1. Kapazität und Räume</h2>
+<ul>
+<li><strong>Wie viele Personen beim gesetzten Essen, und wie viele bei einem Stehempfang?</strong> Die beiden Zahlen sind sehr unterschiedlich. Ein Saal „für 200 Personen“ ist das oft nur stehend.</li>
+<li><strong>Wie viele mit Tanzfläche und DJ-Pult?</strong> Tanzfläche und Technik nehmen schnell den Platz mehrerer Tische ein.</li>
+<li><strong>Welche Höchstzahl ist zugelassen?</strong> Ein Veranstaltungsort hat eine aus Sicherheitsgründen festgelegte Obergrenze. Wer sie überschreitet, hat im Schadensfall ein Versicherungsproblem.</li>
+<li><strong>Gibt es getrennte Bereiche</strong> für eine freie Trauung, den Sektempfang, das Essen, eine Kinderecke, eine ruhige Lounge?</li>
+<li><strong>Wird die Location exklusiv vermietet?</strong> Manche Güter richten zwei Feiern am selben Tag aus oder lassen ein Restaurant für andere Gäste geöffnet.</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Ein zu voller Saal ist unbequem, ein zu großer wirkt leer. Verlangen Sie einen Plan mit der Tischanordnung, die Sie sich vorstellen (rund oder lange Tafeln), keine theoretische Kapazität.</p>
+
+<h2>2. Der Schlechtwetterplan</h2>
+<ul>
+<li><strong>Wo finden Sektempfang und Trauung bei Regen statt?</strong> Besichtigen Sie diesen Raum genauso aufmerksam wie den Rest.</li>
+<li><strong>Ist der Plan B inklusive, oder muss ein Zelt gemietet werden?</strong> Und zu welchem Preis?</li>
+<li><strong>Bis wann muss man sich entscheiden?</strong> Am Vortag, am Morgen, zwei Stunden vorher?</li>
+<li><strong>Lassen sich die Räume heizen oder kühlen</strong>, wenn das Wetter extrem ist?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Viele Locations werden über ihren Garten verkauft. Ist der Plan B eine Scheune ohne Charme oder ein zu kleiner Saal, dann müssen Sie ihn beurteilen, denn vielleicht verbringen Sie dort den ganzen Tag.</p>
+
+<h2>3. Uhrzeiten und Ende der Feier</h2>
+<ul>
+<li><strong>Ab wann haben Sie Zugang</strong>, um die Deko aufzubauen? Ist der Vortag möglich, und zu welchem Preis?</li>
+<li><strong>Wann muss die Musik aufhören</strong>, und wann müssen alle den Saal verlassen haben?</li>
+<li><strong>Wird noch in der Nacht aufgeräumt</strong> oder am nächsten Morgen?</li>
+<li><strong>Ist die Location am Tag danach verfügbar</strong> für einen Brunch oder ein Katerfrühstück?</li>
+<li><strong>Kostet es extra, wenn es später wird?</strong> Manche berechnen jede zusätzliche Stunde.</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Musikende um 1 Uhr nachts verändert den ganzen Abend. Wenn Sie von einer Party bis zum Morgengrauen träumen, ist das die erste Frage, noch vor der Besichtigung.</p>
+
+<h2>4. Lautstärke und Nachbarn</h2>
+<ul>
+<li><strong>Hat der Saal einen Schallpegelbegrenzer?</strong> Das ist ein Gerät, das die Anlage abschaltet, wenn die Lautstärke einen Grenzwert überschreitet. Auf welchen Wert ist er eingestellt?</li>
+<li><strong>Ist Musik im Freien erlaubt</strong>, und bis wann? In Deutschland gilt draußen vielerorts ab 22 Uhr Nachtruhe.</li>
+<li><strong>Gibt es Nachbarn in der Nähe</strong>, und gab es schon Beschwerden?</li>
+<li><strong>Müssen Türen und Fenster</strong> ab einer bestimmten Uhrzeit geschlossen bleiben?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Ein zu niedrig eingestellter Begrenzer schaltet bei jedem Refrain ab, den alle mitsingen. Lassen Sie Ihren DJ mit der Location sprechen, bevor Sie ihn buchen: Er kann einschätzen, ob das machbar ist.</p>
+
+<h2>5. Vorgegebener oder freier Caterer</h2>
+<ul>
+<li><strong>Ist der Caterer vorgegeben</strong>, aus einer Liste zu wählen, oder völlig frei?</li>
+<li><strong>Wenn der Caterer frei ist: Kostet ein externer Caterer extra?</strong></li>
+<li><strong>Wie ist die Küche ausgestattet?</strong> Kühlraum, Öfen, Herd, Spülküche, genug Strom?</li>
+<li><strong>Ist ein Probeessen vor der Unterschrift möglich</strong>, wenn der Caterer vorgegeben ist?</li>
+<li><strong>Darf die Hochzeitstorte von einer anderen Konditorei kommen?</strong> Manche Caterer berechnen dafür ein „Tortengeld“ (auch Kuchengeld) pro Stück oder pauschal.</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Der Caterer kostet oft so viel wie die Miete. Eine günstige Location mit einem teuren vorgegebenen Caterer ist keine günstige Location. Vergleichen Sie immer die Gesamtkosten pro Gast.</p>
+
+<h2>6. Getränke und Korkgeld</h2>
+<ul>
+<li><strong>Dürfen Sie eigene Getränke mitbringen?</strong></li>
+<li><strong>Gibt es ein Korkgeld</strong>, also einen Betrag für jede mitgebrachte und geöffnete Flasche? Pro Flasche oder pauschal?</li>
+<li><strong>Gilt dasselbe für Wein, Sekt und Spirituosen?</strong> Gibt es eine Staffelung?</li>
+<li><strong>Wer übernimmt den Service</strong> an der Bar, und bis wann?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Nicht jede Location verlangt Korkgeld, und die Beträge schwanken stark. Multipliziert mit der Zahl der Flaschen einer Hochzeit kann es die Ersparnis durch eigenen Wein zunichtemachen. Rechnen Sie nach, bevor Sie sich entscheiden.</p>
+
+<h2>7. Inklusive Ausstattung</h2>
+<ul>
+<li><strong>Tische und Stühle</strong>: wie viele, welche Form, welche Größe? Sind die Stühle vorzeigbar oder braucht es Hussen?</li>
+<li><strong>Tischwäsche, Geschirr, Gläser</strong>: inklusive oder zu mieten?</li>
+<li><strong>Musikanlage, Mikrofon, Beamer, Leinwand</strong>: vorhanden und funktionsfähig?</li>
+<li><strong>Licht</strong>: Lässt sich der Saal dimmen? Sind die Außenbereiche nachts beleuchtet?</li>
+<li><strong>Heizung und Klimaanlage</strong>: inklusive oder extra berechnet?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Tische, Stühle, Tischwäsche und Geschirr für hundert Personen zu mieten, ist ein ernsthafter Budgetposten. Eine etwas teurere, aber voll ausgestattete Location ist am Ende manchmal günstiger.</p>
+
+<h2>8. Übernachtung</h2>
+<ul>
+<li><strong>Wie viele Betten gibt es vor Ort</strong>, und zu welchem Preis?</li>
+<li><strong>Müssen alle Zimmer</strong> der Location verpflichtend gemietet werden?</li>
+<li><strong>Bis wann müssen die Zimmer</strong> am nächsten Tag geräumt sein?</li>
+<li><strong>Welche Hotels oder Pensionen in der Nähe</strong> empfiehlt die Location?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Wer vor Ort übernachtet, setzt sich nach der Feier nicht ans Steuer. Das ist eine echte Sicherheitsfrage und ein enormer Komfort für Gäste, die von weit her kommen.</p>
+
+<h2>9. Anfahrt und Parken</h2>
+<ul>
+<li><strong>Wie viele Parkplätze gibt es</strong>, und dürfen die Autos über Nacht stehen bleiben?</li>
+<li><strong>Ist die Location mit dem Navi leicht zu finden?</strong> Ist der Weg nachts beleuchtet?</li>
+<li><strong>Gibt es einen Bahnhof in der Nähe</strong>, und fahren spät am Abend noch Taxis?</li>
+<li><strong>Ist ein Shuttle möglich</strong> oder von der Location schon organisiert?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Auf dem Land um 2 Uhr nachts ein Taxi zu finden, grenzt manchmal an ein Wunder. Ist die Heimfahrt kompliziert, planen Sie einen Shuttle oder Übernachtungen ein.</p>
+
+<h2>10. Barrierefreiheit</h2>
+<ul>
+<li><strong>Ist die Location rollstuhlgerecht?</strong> Treppen, Rampen, Aufzug?</li>
+<li><strong>Gibt es barrierefreie Toiletten?</strong></li>
+<li><strong>Liegen die Bereiche nah beieinander</strong>, oder muss man weit über Kies oder Wiese laufen?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Ein Großelternteil, das nicht in den Speisesaal kommt: Das ist ein verdorbener Tag für ihn und für Sie. Denken Sie auch an Absätze auf Kopfsteinpflaster und an Kinderwagen.</p>
+
+<h2>11. Handynetz und WLAN</h2>
+<ul>
+<li><strong>Gibt es im Saal Empfang?</strong> Verlassen Sie sich nicht auf die Antwort: Schalten Sie das WLAN Ihres Handys aus und testen Sie selbst, im Saal, nicht auf dem Parkplatz. Wenn möglich mit zwei verschiedenen Netzbetreibern.</li>
+<li><strong>Gibt es ein WLAN für Gäste</strong>, das den ganzen Saal abdeckt und nicht nur den Empfang?</li>
+<li><strong>Wie viele Geräte verkraftet es gleichzeitig</strong>, und wie lautet das Passwort?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Die schönsten Locations (Gewölbekeller, Scheunen aus Naturstein, Täler) haben oft den schlechtesten Empfang. Ohne Netz keine geteilten Fotos, kein Anruf für einen verirrten Gast, keine Kartenzahlung an der Bar. Es gibt Lösungen: Wir erklären sie in <a href="/journal/pas-de-reseau-salle-mariage">kein Netz im Saal, was tun</a> und in <a href="/journal/wifi-lieu-reception-mariage">das WLAN der Hochzeitslocation</a>.</p>
+
+<h2>12. Erlaubte Programmpunkte und Deko</h2>
+<ul>
+<li><strong>Welche Programmpunkte sind erlaubt?</strong> Feuerwerk, Kaltfunken, Kerzen, Nebelmaschine, Konfetti, Reiswerfen?</li>
+<li><strong>Darf Deko an Wänden, Balken oder Decke befestigt werden?</strong></li>
+<li><strong>Gibt es Strom und Platz</strong> für eine Fotobox oder einen DJ?</li>
+<li><strong>Dürfen Spiele im Freien</strong> aufgebaut werden, eine freie Trauung im Garten stattfinden?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Sie möchten nicht einen Monat vor der Hochzeit erfahren, dass Kerzen verboten sind oder das Feuerwerk nicht möglich ist. Wenn Sie noch überlegen, was Sie planen: Wir haben <a href="/journal/idees-animation-mariage">36 Ideen für Hochzeitsspiele und Unterhaltung</a> mit ihren Einschränkungen gesammelt.</p>
+
+<h2>13. Vorgegebene Dienstleister und Ansprechpartner</h2>
+<ul>
+<li><strong>Gibt es vorgegebene Dienstleister</strong> oder eine verbindliche Partnerliste (DJ, Floristik, Fotograf, Möbelverleih)?</li>
+<li><strong>Fallen Gebühren an</strong>, wenn Sie einen externen Dienstleister wählen?</li>
+<li><strong>Wer ist am Hochzeitstag</strong> von der Location vor Ort, und bis wann? Wen rufen Sie bei Problemen an?</li>
+<li><strong>Wer kümmert sich um die GEMA?</strong> Bei einer geschlossenen privaten Feier, bei der Sie die Gäste persönlich kennen, fallen in der Regel keine Gebühren an. Bei sehr großen oder halböffentlichen Feiern kann das anders sein: Klären Sie es mit DJ und Location.</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Ein vorgegebener Dienstleister kann hervorragend sein, aber er muss vor der Unterschrift genannt werden, nicht danach auftauchen. Und am Hochzeitstag löst ein erreichbarer Verantwortlicher der Location in fünf Minuten, was Ihnen sonst eine Stunde verderben würde.</p>
+
+<h2>14. Preis, Anzahlung und Zahlung</h2>
+<ul>
+<li><strong>Was ist im Preis genau enthalten?</strong> Reinigung, Strom, Heizung, Sicherheitsdienst, Übernachtungssteuer oder Kurtaxe?</li>
+<li><strong>Ist der Preis bis zur Hochzeit garantiert</strong>, oder kann er angepasst werden, wenn Sie zwei Jahre im Voraus unterschreiben?</li>
+<li><strong>Wie hoch ist die Anzahlung</strong> bei der Buchung, und wann sind die weiteren Zahlungen fällig?</li>
+<li><strong>Was passiert mit der Anzahlung, wenn Sie stornieren?</strong></li>
+</ul>
+<p><strong>Warum das zählt:</strong> In Deutschland regelt vor allem der Vertrag, was bei einer Absage mit Ihrem Geld passiert. Üblich ist eine Stornostaffel: Je näher die Hochzeit, desto höher der Anteil, den Sie zahlen. Lesen Sie diese Klausel genau. Pauschale Stornogebühren in den AGB dürfen nicht unangemessen hoch sein, und Ihnen muss der Nachweis offenstehen, dass der tatsächliche Schaden der Location geringer ist. Im Zweifel hilft eine Beratung, zum Beispiel bei der Verbraucherzentrale.</p>
+
+<h2>15. Stornierung und Verschiebung</h2>
+<ul>
+<li><strong>Was passiert, wenn Sie absagen</strong>, je nach Zeitpunkt der Absage?</li>
+<li><strong>Ist eine Verschiebung möglich</strong>, und zu welchen Bedingungen?</li>
+<li><strong>Was passiert, wenn die Location absagt</strong> (Verkauf, Umbau, Schaden)?</li>
+<li><strong>Welche Fälle gelten im Vertrag als höhere Gewalt?</strong></li>
+</ul>
+<p><strong>Warum das zählt:</strong> Man unterschreibt oft mehr als ein Jahr im Voraus. In einem Jahr kann viel passieren. Ein Vertrag, der nur die Absage des Kunden regelt und nie die der Location, ist unausgewogen.</p>
+
+<h2>16. Versicherung</h2>
+<ul>
+<li><strong>Verlangt die Location einen Nachweis über eine Haftpflichtversicherung?</strong> Prüfen Sie, ob Ihre private Haftpflicht eine Feier dieser Art abdeckt und ob Schäden an gemieteten Räumen (Mietsachschäden) eingeschlossen sind; sonst gibt es eine Veranstalterhaftpflicht für den Tag.</li>
+<li><strong>Ist die Location selbst versichert</strong> für Unfälle auf ihrem Gelände?</li>
+<li><strong>Brauchen Sie eine Hochzeitsversicherung?</strong> Es gibt spezielle Policen gegen Ausfall; vergleichen Sie, was sie wirklich abdecken (Krankheit, Unwetter, Ausfall eines Dienstleisters).</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Ein Glas Rotwein auf einem antiken Sofa oder eine zerbrochene Scheibe können teuer werden. Besser, Sie wissen vorher, wer zahlt.</p>
+
+<h2>17. Übergabe und Kaution</h2>
+<ul>
+<li><strong>Gibt es eine Abnahme bei Übergabe und Rückgabe</strong>, mit Protokoll? In Ihrer Anwesenheit?</li>
+<li><strong>Wie hoch ist die Kaution</strong>, und wann wird sie zurückgezahlt?</li>
+<li><strong>Ist die Endreinigung inklusive</strong>, oder müssen Sie den Saal sauber übergeben?</li>
+<li><strong>Wer kümmert sich um den Müll</strong>, die Mülltrennung, das Leergut?</li>
+<li><strong>Wird zerbrochenes Material</strong> pro Stück berechnet?</li>
+</ul>
+<p><strong>Warum das zählt:</strong> Die Kaution beträgt oft mehrere Hundert Euro, manchmal mehr. Machen Sie bei Ihrer Ankunft datierte Fotos vom Saal: Das ist Ihr bester Schutz bei Meinungsverschiedenheiten.</p>
+
+<h2>Die typischen Fallen bei der Besichtigung einer Hochzeitslocation</h2>
+<ul>
+<li><strong>Der Preis „ab“.</strong> Er gilt oft für einen Wochentag außerhalb der Saison, ohne Reinigung und Heizung. Verlangen Sie ein Angebot für Ihr Datum und Ihre Gästezahl, alles inklusive.</li>
+<li><strong>Die Stehkapazität als Sitzkapazität verkauft.</strong> Lassen Sie sich einen echten Tischplan zeigen.</li>
+<li><strong>Der nie besichtigte Plan B.</strong> Der Garten ist herrlich, der Ausweichsaal viel weniger.</li>
+<li><strong>Das Ende der Feier, zu spät entdeckt.</strong> Oder die Musik, die um 1 Uhr von einem Begrenzer abgeschaltet wird, von dem Ihnen niemand erzählt hat.</li>
+<li><strong>Versteckte Kosten.</strong> Strom nach Verbrauch, verpflichtender Sicherheitsdienst, Korkgeld, Tortengeld, Gebühren für externe Caterer.</li>
+<li><strong>Auschecken um 10 Uhr am nächsten Morgen.</strong> Mit Gästen, die um 5 Uhr ins Bett gegangen sind, wird das ein Wettlauf.</li>
+<li><strong>Zu wenige Toiletten</strong> für die Zahl der Gäste, oder eine Sicherung, die rausfliegt, wenn Caterer und DJ alles gleichzeitig einstecken.</li>
+<li><strong>Mündliche Zusagen.</strong> „Der Vortag ist kein Problem“, „Sie dürfen bestimmt länger feiern“: Was nicht schriftlich steht, verpflichtet niemanden.</li>
+</ul>
+<p>Fragen Sie auch nach Kontakten zu Paaren, die dort geheiratet haben, oder lesen Sie aktuelle Bewertungen. Und sobald die Location unterschrieben ist, wartet der Rest des Kalenders: Die <a href="/journal/retroplanning-mariage">Hochzeit Checkliste mit Zeitplan</a> hilft Ihnen, nichts zu vergessen.</p>
+
+<h2>Die Checkliste zum Ausdrucken für Ihre Besichtigung</h2>
+<p>Drucken Sie diese Liste aus, haken Sie während der Besichtigung ab und notieren Sie die Antworten am Rand.</p>
+<ul>
+<li>☐ Kapazität beim gesetzten Essen, mit Tanzfläche und DJ</li>
+<li>☐ Kapazität beim Stehempfang und zugelassene Höchstzahl</li>
+<li>☐ Getrennte Bereiche: Trauung, Sektempfang, Essen, Kinder</li>
+<li>☐ Exklusive Vermietung</li>
+<li>☐ Schlechtwetterplan besichtigt, inklusive oder kostenpflichtig, Entscheidungszeitpunkt</li>
+<li>☐ Heizung und Klimaanlage</li>
+<li>☐ Zugang zum Aufbauen, Vortag möglich</li>
+<li>☐ Musikende und Uhrzeit, zu der der Saal verlassen werden muss</li>
+<li>☐ Aufräumen nachts oder am nächsten Tag, Location für den Brunch verfügbar</li>
+<li>☐ Schallpegelbegrenzer und eingestellter Wert, Musik im Freien bis wann</li>
+<li>☐ Nachbarn in der Nähe, Vorgaben zu Türen und Fenstern</li>
+<li>☐ Caterer vorgegeben, aus Liste oder frei, Gebühr für externen Caterer</li>
+<li>☐ Ausstattung der Küche und Stromleistung</li>
+<li>☐ Torte von einer anderen Konditorei, Tortengeld</li>
+<li>☐ Eigene Getränke, Korkgeld und seine Höhe</li>
+<li>☐ Tische, Stühle, Tischwäsche, Geschirr inklusive</li>
+<li>☐ Musikanlage, Mikrofon, Beamer, Licht innen und außen</li>
+<li>☐ Zahl der Betten, Preis, Auschecken am nächsten Tag</li>
+<li>☐ Parkplätze, beleuchteter Weg, Taxis und Shuttles</li>
+<li>☐ Rollstuhlgerechter Zugang und barrierefreie Toiletten</li>
+<li>☐ Empfang im Saal mit zwei Netzbetreibern getestet</li>
+<li>☐ Gäste-WLAN: Abdeckung, Zahl der Geräte, Passwort</li>
+<li>☐ Erlaubte Programmpunkte: Feuerwerk, Kerzen, Konfetti, Nebel</li>
+<li>☐ Deko an Wänden und Decke</li>
+<li>☐ Vorgegebene Dienstleister und Gebühren für externe</li>
+<li>☐ Ansprechpartner am Hochzeitstag und seine Nummer</li>
+<li>☐ GEMA: wer kümmert sich</li>
+<li>☐ Was im Preis enthalten ist, Preisgarantie bis zum Datum</li>
+<li>☐ Anzahlung, Höhe und Zahlungsplan</li>
+<li>☐ Storno- und Verschiebungsbedingungen, auf beiden Seiten</li>
+<li>☐ Haftpflichtnachweis verlangt, Mietsachschäden abgedeckt</li>
+<li>☐ Übergabeprotokoll bei Ankunft und Abreise, Höhe der Kaution</li>
+<li>☐ Reinigung, Müll, Bruch berechnet</li>
+<li>☐ Mustervertrag mitgenommen</li>
+</ul>
+<p>Eine letzte Idee für den Hochzeitstag: Wenn der Empfang im Saal gut ist, verwandelt eine <a href="/appareil-jetable-mariage">digitale Einwegkamera für alle</a> das Handy jedes Gastes in eine Kamera, mit einem QR-Code auf den Tischen und einem Album, das am nächsten Tag für alle sichtbar wird.</p>
+`,
+    faq: [
+      {
+        q: 'Welche Fragen sollte man bei der Besichtigung einer Hochzeitslocation stellen?',
+        a: 'Die wichtigsten: Kapazität beim gesetzten Essen mit Tanzfläche, Schlechtwetterplan, Musikende, vorgegebener oder freier Caterer, Korkgeld, was im Preis enthalten ist sowie Anzahlung und Stornobedingungen. Ergänzen Sie Handyempfang, Übernachtung und Parkplätze, die oft vergessen werden.',
+      },
+      {
+        q: 'Bekommt man die Anzahlung für die Hochzeitslocation bei einer Absage zurück?',
+        a: 'Das hängt vor allem vom Vertrag ab. Üblich ist eine Stornostaffel, bei der der zu zahlende Anteil steigt, je näher die Hochzeit rückt. Pauschale Stornogebühren in AGB dürfen nicht unangemessen hoch sein, und Sie dürfen nachweisen, dass der tatsächliche Schaden geringer ist; im Zweifel hilft die Verbraucherzentrale.',
+      },
+      {
+        q: 'Was ist Korkgeld bei einer Hochzeit?',
+        a: 'Korkgeld ist ein Betrag, den Location oder Caterer für jede mitgebrachte und geöffnete Flasche berechnen, weil sie die Getränke dann nicht selbst verkaufen. Es kann pro Flasche oder pauschal berechnet werden, und nicht jede Location verlangt es. Rechnen Sie mit der geplanten Flaschenzahl nach, bevor Sie eigenen Wein mitbringen.',
+      },
+      {
+        q: 'Wie früh sollte man die Hochzeitslocation buchen?',
+        a: 'Für einen Samstag zwischen Mai und September sind die gefragtesten Locations oft mehr als ein Jahr im Voraus gebucht. Außerhalb der Saison oder unter der Woche reichen manchmal einige Monate. Die Location legt das Hochzeitsdatum fest: Sie ist die erste Buchung.',
+      },
+      {
+        q: 'Was sollte man beim Handyempfang einer Hochzeitslocation prüfen?',
+        a: 'Testen Sie den Empfang selbst im Saal, mit ausgeschaltetem WLAN, idealerweise mit zwei Netzbetreibern. Fragen Sie, ob ein Gäste-WLAN den ganzen Saal abdeckt und wie viele Geräte es verkraftet. Ohne Netz können die Gäste weder Fotos teilen noch ein Taxi rufen.',
+      },
+      {
+        q: 'Braucht man eine Versicherung, um eine Hochzeitslocation zu mieten?',
+        a: 'Viele Locations verlangen einen Nachweis über eine Haftpflichtversicherung. Prüfen Sie bei Ihrer Versicherung, ob die private Haftpflicht die Feier und Schäden an gemieteten Räumen abdeckt, sonst gibt es eine Veranstalterhaftpflicht für den Tag. Eine Hochzeitsversicherung gegen Ausfall ist freiwillig; vergleichen Sie genau, was sie abdeckt.',
+      },
+    ],
+  },
+}
