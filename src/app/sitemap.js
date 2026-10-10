@@ -43,6 +43,8 @@ export default function sitemap() {
     ['/cadeau-mariage-temoins', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],
     ['/appareil-jetable-mariage', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],
     ['/photobooth-mariage', { lastModified: now, changeFrequency: 'monthly', priority: 0.9 }],
+    // La page partenaires des prestataires de mariage (10/10/2026).
+    ['/pro', { lastModified: now, changeFrequency: 'monthly', priority: 0.7 }],
     // /revivez-votre-mariage reste en « noindex » : pure page de pub, personne
     // ne tape cette phrase dans un moteur de recherche.
   ].flatMap(([chemin, reste]) => enTroisLangues(chemin, reste))

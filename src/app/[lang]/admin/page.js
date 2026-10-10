@@ -156,6 +156,9 @@ export default function Admin() {
   // à ouvrir la fiche de l'événement pour agir.
   const [aSuspendre, setASuspendre] = useState(null)
   const [aSupprimer, setASupprimer] = useState(null)
+  // Demandes des prestataires (page /pro) pas encore traitées : null tant
+  // qu'on ne sait pas (table absente, erreur), le lien s'affiche alors sans chiffre.
+  const [prosNouvelles, setProsNouvelles] = useState(null)
   const [actionErr, setActionErr] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -172,6 +175,10 @@ export default function Admin() {
       if (!res.ok) throw new Error(d.error || 'Erreur.')
       setEvents(d.events); setAuthed(true); setKey(key)
       sessionStorage.setItem(KEY_STORE, key)
+      fetch('/api/admin/pros', { headers: { 'x-admin-key': key } })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((r) => { if (r?.demandes) setProsNouvelles(r.demandes.filter((x) => (x.statut || 'nouvelle') === 'nouvelle').length) })
+        .catch(() => {})
     } catch (err) { setError(err.message) } finally { setLoading(false) }
   }
 
@@ -332,6 +339,9 @@ export default function Admin() {
           <Link href="/admin/avis" className="linklike" style={{ fontSize: 14 }}>Avis →</Link>
           <Link href="/admin/parcours" className="linklike" style={{ fontSize: 14 }}>Parcours →</Link>
           <Link href="/admin/essais" className="linklike" style={{ fontSize: 14 }}>Essais →</Link>
+          <Link href="/admin/pros" className="linklike" style={{ fontSize: 14 }}>
+            Partenaires{prosNouvelles ? ` (${prosNouvelles} nouvelle${prosNouvelles > 1 ? 's' : ''})` : ''} →
+          </Link>
         </div>
 
         {/* Chiffres clés */}
