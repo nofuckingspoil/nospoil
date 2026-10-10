@@ -63,8 +63,10 @@ export function proxy(request) {
     return reponse
   }
 
+  // Les pages en français seulement s'affichent en français, quelle que soit
+  // la langue du visiteur (sinon la page le renvoie vers elle-même, en boucle).
   const cible = url.clone()
-  cible.pathname = `/${langue}${pathname}`
+  cible.pathname = `/${PAGES_FR_SEULEMENT.test(pathname) ? LANGUE_PAR_DEFAUT : langue}${pathname}`
   return NextResponse.rewrite(cible)
 }
 
