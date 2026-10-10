@@ -96,6 +96,23 @@ const PAGE_LIEE_DEFAUT = {
   href: '/photos-mariage-invites',
   titre: { fr: 'Les photos de ton mariage, vues par tes invités', en: 'Your wedding, seen through your guests’ eyes', de: 'Ihre Hochzeit, mit den Augen Ihrer Gäste' },
 }
+// Bandeau des articles pour prestataires : le lecteur est un pro, pas un marié.
+function BandeauPro({ lang }) {
+  return (
+    <div className="dj-guide dj-pro">
+      <div>
+        <h3>{t({ fr: 'Vous êtes prestataire de mariage ?', en: 'Are you a wedding professional?', de: 'Sie sind Hochzeitsdienstleister?' }, lang)}</h3>
+        <span>{t({
+          fr: 'Référencez-vous et obtenez un code gratuit pour faire découvrir Time to Flash à vos mariés.',
+          en: 'Get listed and receive a free code to introduce Time to Flash to your couples.',
+          de: 'Lassen Sie sich eintragen und erhalten Sie einen kostenlosen Code, um Time to Flash Ihren Brautpaaren vorzustellen.',
+        }, lang)}</span>
+      </div>
+      <Link className="dj-btn" href={lien('/pro', lang)}>{t({ fr: 'Me référencer', en: 'Get listed', de: 'Eintragen lassen' }, lang)}</Link>
+    </div>
+  )
+}
+
 function pageLiee(slug) {
   return PAGES_LIEES.find((x) => x.slugs.includes(slug)) || PAGE_LIEE_DEFAUT
 }
@@ -136,6 +153,9 @@ export default async function Article({ params }) {
 
   const related = relatedPosts(p, lang)
   const liee = pageLiee(p.slug)
+  // Articles pour wedding planners, photographes et lieux (10/10/2026) :
+  // bandeau partenaires en tête, et l'appel final mène à /pro.
+  const pro = p.cible === 'pro'
 
   return (
     <main className="dj" id="journal" aria-label={p.title}>
@@ -172,6 +192,7 @@ export default async function Article({ params }) {
 
         <div className="dj-prose">
           <p className="dj-lede">{p.excerpt}</p>
+          {pro && <BandeauPro lang={lang} />}
           <div dangerouslySetInnerHTML={{ __html: p.body }} />
 
           {faqLd && (
@@ -186,6 +207,19 @@ export default async function Article({ params }) {
             </section>
           )}
 
+          {pro ? (
+            <div className="dj-cta">
+              <div>
+                <h3>{t({ fr: 'Proposez Time to Flash à vos mariés', en: 'Offer Time to Flash to your couples', de: 'Bieten Sie Time to Flash Ihren Brautpaaren an' }, lang)}</h3>
+                <span>{t({
+                  fr: 'Référencez-vous comme partenaire et recevez un code gratuit pour l’essayer sur un vrai mariage.',
+                  en: 'Join as a partner and get a free code to try it at a real wedding.',
+                  de: 'Werden Sie Partner und erhalten Sie einen kostenlosen Code, um es bei einer echten Hochzeit zu testen.',
+                }, lang)}</span>
+              </div>
+              <Link className="dj-btn dj-btn--dark" href={lien('/pro', lang)}>{t({ fr: 'Devenir partenaire', en: 'Become a partner', de: 'Partner werden' }, lang)}</Link>
+            </div>
+          ) : (<>
           <div className="dj-cta">
             <div>
               <h3>{t(liee.titre, lang)}</h3>
@@ -211,6 +245,7 @@ export default async function Article({ params }) {
             </div>
             <Link className="dj-btn" href={lien('/guide', lang)}>{t({ fr: 'Lire le guide', en: 'Read the guide', de: 'Leitfaden lesen' }, lang)}</Link>
           </div>
+          </>)}
         </div>
       </div>
 

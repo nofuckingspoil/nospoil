@@ -43,8 +43,22 @@ const nextConfig = {
       permanent: false,
     }))
 
+    // Articles du journal fusionnés dans un autre : redirection permanente
+    // (301) pour que Google transfère l'ancienne adresse vers la nouvelle,
+    // dans les trois langues (le français à la racine, /en et /de devant).
+    // 10/10/2026 : « album photo partagé mariage » fondu dans le guide
+    // partager-photos-mariage-invites (les deux se concurrençaient).
+    const articlesFusionnes = [
+      ['album-photo-partage-mariage', 'partager-photos-mariage-invites'],
+    ].flatMap(([ancien, nouveau]) => ['', '/en', '/de'].map((prefixe) => ({
+      source: `${prefixe}/journal/${ancien}`,
+      destination: `${prefixe}/journal/${nouveau}`,
+      statusCode: 301,
+    })))
+
     return [
       ...reseaux,
+      ...articlesFusionnes,
       {
         source: '/:path*',
         has: [{ type: 'host', value: 'no-spoil.fr' }],

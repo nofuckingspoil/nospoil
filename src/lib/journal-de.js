@@ -787,13 +787,13 @@ export const POSTS_DE = {
 
 <h2>Die 5 Fragen vor dem Start</h2>
 <p><strong>1. Ist der Download des kompletten Albums inbegriffen?</strong> Das ist die Falle Nummer eins. Ist die Antwort nicht eindeutig, suchen Sie weiter.<br>
-<strong>2. Sind die Fotos in Originalqualität?</strong> Viele kostenlose Dienste komprimieren. Auf dem Bildschirm ist Ihnen das egal, beim Drucken werden Sie es bereuen.<br>
+<strong>2. Sind die Fotos scharf genug für den Druck?</strong> Manche kostenlose Dienste verkleinern sie stark. Auf dem Bildschirm ist Ihnen das egal, bei Abzügen oder einem Fotobuch werden Sie es bereuen.<br>
 <strong>3. Wie lange werden die Fotos aufbewahrt?</strong> Manche Alben laufen nach 30 Tagen ab.<br>
 <strong>4. Gibt es ein Limit bei der Zahl der Gäste oder Fotos?</strong> Und was passiert, wenn es mitten in der Feier erreicht ist?<br>
 <strong>5. Wo werden die Fotos gespeichert?</strong> Bei einer Hochzeit, mit Kindern und Angehörigen auf den Bildern, ist das kein Detail (siehe <a href="/journal/droit-image-photos-mariage">Recht am eigenen Bild: was das Gesetz sagt</a>).</p>
 
 <h2>Der Test, eine Woche vorher</h2>
-<p>Legen Sie Ihr Event an, scannen Sie den QR-Code mit Ihrem eigenen Handy, machen Sie drei Fotos und <strong>gehen Sie den Download bis zum Ende durch</strong>. Wenn Sie Ihre drei Fotos in voller Qualität bekommen, ohne nach Ihrer Karte gefragt zu werden, ist das Angebot ehrlich. Wenn nicht, haben Sie sich gerade eine sehr böse Überraschung erspart.</p>
+<p>Legen Sie Ihr Event an, scannen Sie den QR-Code mit Ihrem eigenen Handy, machen Sie drei Fotos und <strong>gehen Sie den Download bis zum Ende durch</strong>. Wenn Sie Ihre drei Fotos bekommen, ohne nach Ihrer Karte gefragt zu werden, ist das Angebot ehrlich. Wenn nicht, haben Sie sich gerade eine sehr böse Überraschung erspart.</p>
 
 <h2>Wie wir es handhaben</h2>
 <p>Mit <a href="/">unserer Hochzeitsfoto-App</a> ist es bis 5 Gäste kostenlos, ohne Kreditkarte: genug, um den ganzen Ablauf zu testen, vom QR-Code bis zum Download. Darüber hinaus ist es eine einmalige Zahlung je nach Zahl der Gäste: kein Abo, keine Gebühren, wenn Sie Ihre Fotos abholen. Die Server stehen in Europa.</p>
@@ -1253,7 +1253,7 @@ export const POSTS_DE = {
 <h2>Die drei Fehler, die Sie vermeiden sollten</h2>
 <p><strong>Warten, bis man Zeit hat.</strong> Legen Sie sich einen Termin fest, einen Monat nach der Hochzeit. Nach sechs Monaten wird es nie mehr passieren.<br>
 <strong>Alles hineinpacken wollen.</strong> Ein Buch ist eine Auswahl, kein Archiv. Der Rest lebt sehr gut digital weiter.<br>
-<strong>Mit komprimierten Dateien arbeiten.</strong> Laden Sie immer das Originalalbum herunter, in voller Qualität.</p>
+<strong>Mit komprimierten Dateien arbeiten.</strong> Laden Sie immer das komplette Album direkt beim Anbieter herunter, statt Fotos aus WhatsApp oder einem Messenger zu verwenden.</p>
 
 <h2>Das lohnendste Geschenk der Hochzeit</h2>
 <p>Lassen Sie zwei oder drei Exemplare drucken: eines für Sie beide, eines pro Familie. Ein Buch für 80 €, das die Feier durch die Augen der Gäste erzählt, macht viel mehr Eindruck als ein klassisches Geschenk, und man schaut es auch in zwanzig Jahren noch an.</p>

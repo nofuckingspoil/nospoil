@@ -276,13 +276,25 @@ export const POSTS_EN = {
   },
 
   'partager-photos-mariage-invites': {
-    title: 'How to share wedding photos with your guests: 5 ways',
-    excerpt: 'WhatsApp, Google Photos, transfer links, apps or a shared disposable camera: 5 ways to collect your guests’ wedding photos and share them with everyone.',
+    title: 'Shared wedding photo album: how to share your guests’ photos',
+    excerpt: 'WhatsApp, Google Photos, an app or a shared disposable camera: how to set up a shared wedding album, collect every guest’s photos and share them with all.',
     caption: 'A shared wedding album on a phone',
     body: `
-<p>The day after the wedding, the photos exist. Hundreds of them. The trouble is that they are sitting on eighty different phones, and nobody thinks to send them to you. Sharing wedding photos with your guests actually means two things: <strong>collecting</strong> everyone’s photos, then <strong>sharing</strong> the whole lot back with everyone. Here are the five ways to do it, what each one is really worth, and what to do before, during and after the big day.</p>
+<p>The day after the wedding, the same sentence comes up in every conversation: “Can you send me your photos?”. The photos exist. There are hundreds of them. The trouble is that they are sitting on eighty different phones, and nobody thinks to send them to you.</p>
+<p>A shared wedding photo album solves that: one private place where all your guests’ photos end up, and where everyone can look at them and download them. Sharing wedding photos actually means two things: <strong>collecting</strong> everyone’s photos, then <strong>sharing</strong> the whole lot back with everyone. This guide covers both: the options and what each one is really worth, how to choose a photo sharing app, setting it up step by step, getting your guests to join in, and keeping the album for good.</p>
 
-<h2>Why it is harder than it looks</h2>
+<h2>What exactly is a shared wedding album?</h2>
+<p>It is a private online album that every guest can <strong>add</strong> photos to and everyone can <strong>browse</strong>. It doesn’t replace your photographer: the photographer delivers a polished selection, while the shared album gathers everyone’s point of view. Grandma on the dance floor, the bridesmaids’ selfie at 2am, the cake seen from the kids’ table, the fit of giggles at the back during the speeches.</p>
+<p>A good shared album ticks five boxes:</p>
+<ul>
+<li><strong>Everyone can get in</strong>, whatever their phone (iPhone or Android) and whatever their age.</li>
+<li><strong>Adding a photo takes seconds</strong>, with no account to create and no password to remember.</li>
+<li><strong>The album is private</strong>: only people with the link can see it, and it doesn’t show up on Google.</li>
+<li><strong>You can download everything</strong> in one go, to keep it at home.</li>
+<li><strong>You know how long it stays online</strong>, so you don’t find out too late that it has gone.</li>
+</ul>
+
+<h2>Why guests’ photos get lost</h2>
 <p>On paper, nothing could be simpler: everyone sends their photos, you gather them up. In practice, the same three obstacles come up at every wedding.</p>
 <ul>
 <li><strong>Forgetting.</strong> On the night, everyone promises to send their photos. A week later, the party feels far away, and only a few close friends have done it.</li>
@@ -291,61 +303,130 @@ export const POSTS_EN = {
 </ul>
 <p>The rule that follows is simple: the more effort you ask of your guests <em>after</em> the party, the fewer photos you get back. The right method is the one that collects photos <em>during</em> the party, without asking anything complicated.</p>
 
-<h2>5 ways to collect and share your guests’ photos</h2>
+<h2>7 ways to share wedding photos</h2>
 
 <h3>1. The WhatsApp group</h3>
-<p>Everyone’s first instinct: a group with the guests, and everyone posts their photos there. Its big advantage: everyone already has it, nobody has anything to learn. But the photos are compressed, buried between messages and voice notes, and you need every guest’s number. Handy for swapping three photos on the night, much less so for building the wedding album.</p>
+<p>Everyone’s first instinct: a group with the guests, and everyone posts their photos there. Its big advantage: everyone already has it, nobody has anything to learn. But the photos are compressed, buried between messages and voice notes, you need every guest’s number, and finding a picture three weeks later is a real challenge. Handy for swapping three photos on the night, much less so for building the wedding album.</p>
 
-<h3>2. A shared Google Photos or iCloud album</h3>
-<p>You create a shared album, send the link, and everyone adds their photos. The quality is far better than on a messaging app, and everything is kept in one place. The catch: to add photos, you usually need a Google account or an Apple device, which leaves out some of your guests depending on the option you pick. Above all, the album is passive: everyone has to remember to use it once the party is over. We compare these first two options in detail in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos or a dedicated app?</a></p>
+<h3>2. A shared Google Photos album</h3>
+<p>You create a shared album, send the link, and everyone adds their photos. It is free, the quality is far better than on a messaging app, and everything is kept in one place. The catch: to add photos, you need a Google account, which many iPhone users don’t have, or can’t remember the password for. And the album is passive: everyone has to remember to use it once the party is over.</p>
 
-<h3>3. A transfer link or shared folder</h3>
+<h3>3. A shared iCloud album</h3>
+<p>Very handy between iPhone users: it is built into the Photos app, and adding a picture takes two taps. But a guest on Android can’t add their photos (at best, they can view the album if you switch on the public link). At a wedding of a hundred people, that leaves a lot of guests out. We compare these first options in detail in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos or a dedicated app?</a></p>
+
+<h3>4. A transfer link or shared folder</h3>
 <p>An online folder or a large-file transfer service: each guest sends you their batch of photos. It is the method that damages the files the least, and it suits the few keen relatives, or the cousin who brought a proper camera. But it also asks the most effort: choosing your photos, sending them, sometimes creating an account. In practice, few guests do it.</p>
 
-<h3>4. Wedding gallery apps</h3>
-<p>These are online albums designed for weddings: a QR code, a page where people upload their photos, sometimes a slideshow. Simpler than a shared folder, and everything ends up in one place. But the principle is the same: guests take photos with their usual camera, then have to remember to <em>upload</em> them. Some require an app to be installed, others limit downloads in their free version. We reviewed them in <a href="/journal/application-photo-mariage">our comparison of wedding photo apps</a>.</p>
+<h3>5. An Instagram hashtag or a Facebook group</h3>
+<p>A hashtag like #LeaAndMarius2026 on the table cards, and everyone posts their photos on Instagram. It is fun, but not all your guests are on Instagram, only posts from public accounts show up under the hashtag, and those photos become visible to anyone. A private Facebook group solves the privacy question, but not the problem of guests without an account. Best kept for weddings where everyone is already on the same network.</p>
 
-<h3>5. The shared disposable camera</h3>
-<p>Here, the logic is reversed: instead of asking guests to upload their photos afterwards, you give them a camera that sends every shot straight to the shared album. They scan a QR code, the camera opens in the browser, with no app and no account, and every photo goes into the album. Just like a real disposable, everyone has a set number of shots and can’t see their photos straight away: they are all revealed together, at the time you chose, the next morning for example. It is an activity during the party, and the collecting takes care of itself. That is what <a href="/photos-mariage-invites">Time to Flash does for your guests’ photos</a>.</p>
+<h3>6. Wedding gallery apps</h3>
+<p>These are online albums designed for weddings: a QR code, a page where people upload photos from their camera roll, sometimes a slideshow. Simpler than a Google or iCloud album, and everything ends up in one place. Their limit is the same as every shared album: <strong>they are passive</strong>. Guests take photos with their usual camera, then have to remember to <em>upload</em> them. Some require an app to be installed, others limit downloads in their free version. We reviewed them in <a href="/journal/application-photo-mariage">our comparison of wedding photo apps</a>.</p>
+
+<h3>7. The shared disposable camera</h3>
+<p>Here, the logic is reversed: instead of asking guests to upload their photos afterwards, you give them a camera during the party, and every shot goes straight into the shared album. With <a href="/photos-mariage-invites">Time to Flash</a>, a guest scans a QR code, types their first name, and the camera opens in their browser: no app to install, no account. Just like a real disposable, they have a set number of shots (you choose between 3 and 15 per guest) and can’t see anyone else’s photos. Everything is revealed at once, for everyone, at the time you chose: the next day by default.</p>
+<p>The difference from a gallery: here, the album isn’t a folder to fill, it is the result of a game. Guests join in because it is fun during the evening, not because they were asked a favour the next day. The collecting takes care of itself.</p>
 
 <h2>The comparison at a glance</h2>
 <table>
-<thead><tr><th>Method</th><th>Effort for guests</th><th>Quality</th><th>Photos collected</th><th>Price</th></tr></thead>
+<thead><tr><th>Method</th><th>Effort for guests</th><th>All phones</th><th>Photos collected</th><th>Price</th></tr></thead>
 <tbody>
-<tr><td>WhatsApp group</td><td>Low</td><td>Compressed</td><td>A few</td><td>Free</td></tr>
-<tr><td>Google Photos / iCloud</td><td>Medium (account)</td><td>Good</td><td>The keenest guests’</td><td>Free</td></tr>
-<tr><td>Transfer link</td><td>High</td><td>Very good</td><td>Few</td><td>Free or nearly</td></tr>
-<tr><td>Gallery app</td><td>Medium</td><td>Good</td><td>Varies</td><td>Free to paid</td></tr>
-<tr><td>Shared disposable</td><td>Very low</td><td>Good</td><td>Every one taken</td><td>Free up to 5, then a one-off payment</td></tr>
+<tr><td>WhatsApp group</td><td>Low</td><td>Yes</td><td>A few, compressed</td><td>Free</td></tr>
+<tr><td>Google Photos</td><td>Medium (Google account)</td><td>Yes, with an account</td><td>The keenest guests’</td><td>Free</td></tr>
+<tr><td>iCloud</td><td>Low on iPhone</td><td>No (no uploads from Android)</td><td>iPhone users’ photos</td><td>Free</td></tr>
+<tr><td>Transfer link</td><td>High</td><td>Yes</td><td>Few</td><td>Free or nearly</td></tr>
+<tr><td>Instagram or Facebook</td><td>Medium</td><td>With an account</td><td>The ones that get posted</td><td>Free</td></tr>
+<tr><td>Gallery app</td><td>Medium</td><td>Depends on the app</td><td>Varies</td><td>Free to paid</td></tr>
+<tr><td>Shared disposable</td><td>Very low</td><td>Yes, in the browser</td><td>Every one taken</td><td>Free up to 5 guests, then a one-off payment</td></tr>
 </tbody>
 </table>
 <p>No method is perfect everywhere. But only one doesn’t rely on your guests’ goodwill once they are back home: the one where the photo lands in the album the moment it is taken.</p>
 
-<h2>Step by step: before, during and after the wedding</h2>
+<h2>Gallery or disposable: how to choose</h2>
+<p>Ask yourself a single question: <strong>do you want to collect the photos your guests already take, or make them want to take some?</strong></p>
+<ul>
+<li><strong>If you mainly want to gather existing photos</strong>, with no activity, a gallery is enough. Just plan to remind your guests after the party, more than once.</li>
+<li><strong>If you want a photo activity during the party</strong>, with a surprise the next day, the shared disposable does both: the game during the evening, and the shared album afterwards.</li>
+</ul>
+<p>Nothing stops you combining them: the disposable during the evening, then a folder in your personal cloud to archive everything alongside the photographer’s pictures. Both kinds of solution are compared in <a href="/journal/comparatif-animations-photo-mariage">our comparison of wedding photo activities</a>.</p>
 
-<h3>Before the wedding</h3>
+<h2>Wedding photo sharing app or website: 8 questions to ask</h2>
+<p>Whether you go for a gallery or a disposable, ask these questions of any wedding photo sharing app or website. The answers are usually on the pricing page or in the FAQ.</p>
+<ol>
+<li><strong>Do guests have to install an app?</strong> Every download loses guests, especially older ones. A solution that opens in the browser after scanning a QR code reaches everyone.</li>
+<li><strong>Do they have to create an account?</strong> Same logic: a first name is fine, a password scares people off.</li>
+<li><strong>Does it work on iPhone and Android?</strong> Test both before the big day.</li>
+<li><strong>Who sees the album, and when?</strong> Private by link or visible to all? Photos live or revealed later?</li>
+<li><strong>Can you remove a photo?</strong> Every wedding has its awkward 3am shot. Check that you can take it down before everyone sees it.</li>
+<li><strong>Can you download everything, and at what size?</strong> During a trial, go all the way through the download before paying for anything.</li>
+<li><strong>How long does the album stay online?</strong> And will you be warned before it is deleted?</li>
+<li><strong>What does it really cost?</strong> One-off payment or subscription, number of guests included, paid extras.</li>
+</ol>
+<p>For our part, here are our answers: no app to install (an iPhone app exists for those who prefer it), no account, iPhone and Android alike, a private album revealed at the time you choose, photos you can remove before the reveal, the whole album to download, photos hosted in Europe and kept for six months (with an email before deletion). And a one-off payment, with no subscription: free up to 5 guests, €14.99 up to 50, €29.99 up to 100, €34.99 up to 150. On a tight budget? We sorted through <a href="/journal/application-photo-mariage-gratuite">the free wedding photo apps</a>.</p>
+
+<h2>Setting up the shared album, step by step</h2>
+
+<h3>A month before</h3>
 <ol>
 <li><strong>Pick a single method.</strong> Two solutions side by side is a guarantee that the photos get scattered again.</li>
-<li><strong>Prepare the QR code.</strong> Print it on the menus, the place cards, a sign at the entrance. The <a href="/generateur-qr-code-mariage">wedding QR code poster generator</a> makes you a poster ready to print, and we explain <a href="/journal/ou-poser-le-qr-code">where to put the QR code</a> so it actually gets scanned.</li>
-<li><strong>Tell your guests.</strong> One line on the invitation or the wedding website is enough: “on the day, scan the QR code on your table”.</li>
-<li><strong>Test it yourself.</strong> Scan your own QR code, take a photo, check it arrives. If the venue has poor reception, find out where the signal works.</li>
+<li><strong>Create the album</strong> and give it a clear name (your first names and the date). With Time to Flash, it takes two minutes: number of guests, shots per person, reveal time, and the film from five analogue looks.</li>
+<li><strong>Add a co-host</strong> if your tool allows it: a best man, maid of honour or relative who can look after the album on the day instead of you.</li>
+<li><strong>Test it yourself</strong> on an iPhone and on an Android: scan, take a photo, check it arrives.</li>
 </ol>
 
-<h3>During the wedding</h3>
+<h3>Two weeks before</h3>
 <ol>
-<li><strong>Have it announced.</strong> Two sentences from the best man on the microphone, at the start of dinner, do more than ten signs.</li>
-<li><strong>Hand over to someone.</strong> A bridesmaid or a friend can show the QR code to the tables that haven’t joined in yet, especially the older guests.</li>
+<li><strong>Prepare the QR code</strong>: it is the way into the album. Our <a href="/generateur-qr-code-mariage">wedding QR code poster generator</a> makes you a personalised poster, free and ready to print.</li>
+<li><strong>Print several versions</strong>: a poster at the entrance and at the bar, a small card on every table, a line on the menu. The best spots are covered in <a href="/journal/ou-poser-le-qr-code">where to put the QR code</a>.</li>
+<li><strong>Tell your guests</strong>: one sentence on the wedding website or in your last message is enough (two ready-to-use texts below).</li>
+<li><strong>Check the venue’s reception.</strong> If the signal is poor, ask for the wifi password and write it next to the QR code. We explain what to do in <a href="/journal/pas-de-reseau-salle-mariage">no signal at the wedding venue</a>.</li>
+</ol>
+
+<h3>On the day</h3>
+<ol>
+<li><strong>Have it announced.</strong> Fifteen seconds from the best man on the microphone, during the drinks reception or at the start of dinner, do more than ten signs.</li>
+<li><strong>Appoint a helper.</strong> A bridesmaid or friend who knows the album can show the QR code to the tables that haven’t joined in yet, especially the older guests.</li>
 <li><strong>Don’t deal with it yourself.</strong> It is your day. If collecting the photos depends on you during the party, the method is wrong.</li>
 </ol>
 
 <h3>After the wedding</h3>
 <ol>
+<li><strong>Look through the album before sharing it</strong>, and remove anything that needs to go.</li>
 <li><strong>Gather the rest quickly.</strong> The photographer, the cousin with the big camera: ask for their files within the week, while everyone is still keen.</li>
-<li><strong>Download and back up everything.</strong> Keep the whole album in two places (your computer and a cloud, or a hard drive).</li>
+<li><strong>Download and back up everything</strong> in two places (your computer and a cloud, or a hard drive).</li>
 <li><strong>Sort it at your own pace.</strong> One hour is enough to keep the essentials: the method is in <a href="/journal/300-photos-lendemain">what to do with 300 photos the next day</a>.</li>
 </ol>
 
-<h2>How to share the photos with all your guests afterwards</h2>
+<h2>Getting your guests to join in</h2>
+<p>This is where it all happens. A shared album nobody knows about stays empty, whatever the tool.</p>
+<ul>
+<li><strong>Announce it beforehand</strong>: a line on the wedding website or in your last message to guests. They will arrive prepared.</li>
+<li><strong>Put up lots of QR codes</strong>: one QR code at the entrance and nobody sees it. One on every table and everyone scans it while waiting for dinner.</li>
+<li><strong>Say what happens</strong>: a QR code with no sentence next to it doesn’t explain what it is for. “Scan, take your photos, we’ll see them all tomorrow morning” is enough.</li>
+<li><strong>Give one simple rule</strong>: a number of photos, a reveal time. Clear rules make people want to play (we explain why in <a href="/journal/dix-cliches">why 10 shots beat 300</a>).</li>
+<li><strong>Think of the older guests</strong>: a grandchild showing their grandmother how to do it is worth every poster in the world.</li>
+</ul>
+<p>Two ready-to-use texts, to adapt:</p>
+<p><strong>On the wedding website:</strong> <em>“On the day, you’ll find a QR code on your table. Scan it with your phone: no app, just your first name. You’ll each have a few photos to tell the story of the day from your point of view, and we’ll discover them all together the next day.”</em></p>
+<p><strong>On the microphone:</strong> <em>“Tonight, you are the photographers. Scan the QR code on your table: you each have ten photos, not one more, so aim well. We’ll see them all tomorrow morning at 11.”</em></p>
+<p>More wording ideas are in <a href="/journal/brief-invites">the short brief to give your guests</a>.</p>
+
+<h2>The mistakes that leave a shared album empty</h2>
+<p>If you have ever set up a shared album for a party, you know how it goes: a link sent out, three people add their photos, then silence. These mistakes come up almost every time:</p>
+<ul>
+<li><strong>Sending the link after the party</strong>: the next day, everyone is tired, heading home, back at work. The message gets lost. The album needs to exist and be known <em>during</em> the evening.</li>
+<li><strong>Asking for an account</strong>: every extra step loses participants. Nobody creates an account or digs out a password on a wedding night.</li>
+<li><strong>Leaving some phones out</strong>: a tool that only works on iPhone, or only on Android, shuts out part of the family.</li>
+<li><strong>Using several solutions at once</strong>: a WhatsApp group, plus a Google album, plus a hashtag. The photos get split between the three, and none of them is complete.</li>
+<li><strong>Relying on goodwill</strong>: uploading your photos to an album is doing someone a favour. Taking photos with a disposable camera is playing a game. Games motivate far more than favours.</li>
+</ul>
+
+<h2>Photos visible straight away, or revealed later?</h2>
+<p>Two schools of thought. With a classic gallery, photos are visible as soon as they are uploaded: you can look at them during the evening, but the surprise disappears, and some guests spend their time scrolling instead of enjoying the party.</p>
+<p>With a delayed reveal, nothing is visible before the chosen time. The next morning, at brunch, or the evening you get home, everything appears at once. That is when everyone starts sending photos to each other, and finds out what happened at the other end of the room. A tip: choose a time when guests are awake and free, say 10 or 11am the next day. We describe that moment in <a href="/journal/revelation-photos-lendemain-mariage">revealing the photos the day after the wedding</a>.</p>
+<p>A delayed reveal has another advantage: between the end of the party and the reveal, you and your co-hosts are the only ones who can see all the photos. That is your window to remove the awkward one before everyone discovers it.</p>
+
+<h2>Sharing the photos with all your guests after the wedding</h2>
 <p>Once the photos are together, you still need to give them back to the people who took them. The golden rule: <strong>one link, for everyone</strong>. Not one message per person, not a different selection for each table.</p>
 <ul>
 <li><strong>Send the link where everyone will see it</strong>: the guests’ WhatsApp group, a group email, or the wedding website.</li>
@@ -354,31 +435,52 @@ export const POSTS_EN = {
 <li><strong>Think of those who couldn’t come.</strong> The great-aunt who couldn’t make it will be delighted to get the link, or better still, a few prints.</li>
 <li><strong>Say how long it lasts.</strong> An online album isn’t forever: invite everyone to download their favourites without waiting.</li>
 </ul>
-<p>With a shared disposable camera, this step is already done: at reveal time, all the participants discover the album at the same moment, on their phone, and can download the photos or order prints. At Time to Flash, the album stays private, is hosted in Europe, and is kept for six months (you are warned before it is deleted, so you have time to download everything). To go further, read <a href="/journal/album-photo-partage-mariage">our guide to the shared wedding photo album</a>.</p>
+<p>With a shared disposable camera, this step is already done: at reveal time, all the participants discover the album at the same moment, on their phone, and can download the photos or order prints. At Time to Flash, the album stays private, is hosted in Europe, and is kept for six months: you are warned before it is deleted, so you have time to download everything.</p>
+
+<h2>Keeping the album for good</h2>
+<p>A shared album is not an archive. Services change, links expire, albums get deleted. To keep your wedding photos for life:</p>
+<ul>
+<li><strong>Download all the photos</strong> in one go, in the days after the reveal.</li>
+<li><strong>Keep them in two places</strong>: your computer and your personal cloud, for example, or a hard drive kept at your parents’.</li>
+<li><strong>Name the folder clearly</strong> (the date and your first names), so you can find it in ten years.</li>
+<li><strong>Print the best ones</strong>: a few prints ordered from the album, or a book mixing the photographer’s pictures and your guests’. We explain how to put it together in <a href="/journal/livre-photo-mariage-invites">a wedding photo book made with your guests’ photos</a>.</li>
+</ul>
+
+<h2>What about the photographer’s photos?</h2>
+<p>Photographers usually deliver their photos a few weeks after the wedding, in their own online gallery. That isn’t a shared album in the sense we mean here: only the photographer adds photos to it. The two complement each other very well. The photographer covers the official moments and the polished portraits; your guests capture everything the photographer doesn’t see, because nobody can be everywhere (read <a href="/journal/invites-photographe">your guests see what the photographer doesn’t</a>). For the book or the prints, mix the two: it is often the guests’ photos that best capture the atmosphere.</p>
 
 <h2>What we recommend</h2>
-<p>If you remember just one thing: <strong>collect during the party, not afterwards</strong>. A WhatsApp group and a Google Photos album are great for swapping a few photos or for archiving, but they rely on everyone’s goodwill once the party is over. A shared disposable camera turns photography into a game for the evening: guests join in because it is fun, and you get everything without chasing anyone. You can <a href="/create">create your event</a> in two minutes, free for up to 5 participants if you want to try it out.</p>
+<p>If you remember just one thing: <strong>collect during the party, not afterwards</strong>. A WhatsApp group and a Google Photos album are great for swapping a few photos or for archiving, but they rely on everyone’s goodwill once the party is over. A shared disposable camera turns photography into a game for the evening: guests join in because it is fun, and you get everything without chasing anyone, in a shared album everyone discovers together.</p>
+<p>You can <a href="/create">create your event</a> in two minutes, free for up to 5 participants so you can try it out with your best man or maid of honour. And to see what it looks like on the guests’ side, everything is on our <a href="/photos-mariage-invites">wedding guest photos</a> page.</p>
 `,
     faq: [
+      {
+        q: 'How do I create a shared photo album for a wedding?',
+        a: 'Choose a single tool (a Google Photos or iCloud album, a gallery app or a shared disposable camera), create the album, test it on an iPhone and an Android, then print a QR code for your guests to scan on the day. With Time to Flash, setting it up takes two minutes and no guest needs an account.',
+      },
       {
         q: 'How do I collect the wedding photos my guests took?',
         a: 'The most reliable way is to collect photos during the party rather than afterwards. With a QR code on the tables, each guest opens a shared camera in their browser, and every shot goes straight into the shared album. Methods that ask guests to send photos afterwards (WhatsApp, a shared album, a transfer link) usually only get the photos of the keenest guests.',
       },
       {
         q: 'What is the best app for sharing wedding photos?',
-        a: 'It depends on what you want. A gallery app gathers the photos guests remember to upload. A disposable camera activity like Time to Flash gets photos taken during the party, with a few shots per guest, and reveals them all together the next day in a private album. The full comparison is in our article on wedding photo apps.',
+        a: 'It depends on what you want. A gallery app gathers the photos guests remember to upload. A disposable camera activity like Time to Flash gets photos taken during the party, with no app to install and a few shots per guest, and reveals them all together the next day in a private album.',
       },
       {
-        q: 'How can I share wedding photos without guests installing an app?',
-        a: 'Choose a solution that opens in the browser. With Time to Flash, guests scan a QR code and the camera opens straight away, with no app and no account. To share the photos back, a single link to the album is enough: everyone views it and downloads the photos they want.',
+        q: 'Does a shared iCloud album work with Android?',
+        a: 'A guest on Android can view a publicly shared iCloud album through a link, but cannot add their own photos. For a wedding with phones of every brand, a tool that works in any browser is a better choice.',
       },
       {
         q: 'How do I share wedding photos without losing quality?',
         a: 'Avoid passing photos around on messaging apps: WhatsApp and text messages compress images when they are sent. Use a shared album, a transfer link or a shared camera that saves photos straight to the album, then download the whole album and keep it in two places.',
       },
       {
-        q: 'How long can guests access the wedding album?',
-        a: 'It depends on the service. At Time to Flash, the private album is kept for six months after the event, and the organiser is warned before it is deleted. The simplest thing is to invite everyone to download their favourite photos in the weeks after the wedding.',
+        q: 'Can you remove a photo from the shared album?',
+        a: 'Yes, if the tool allows it. On Time to Flash, the host and co-hosts can see every photo before the reveal and remove an awkward one before guests discover it. If a guest asks for a photo of them to be taken down, just remove it.',
+      },
+      {
+        q: 'How long does the shared album stay online?',
+        a: 'It depends on the service. At Time to Flash, the private album is kept for six months after the event, and the host is warned before it is deleted. Either way, download all the photos in the days that follow and keep them in two places.',
       },
     ],
   },
@@ -787,13 +889,13 @@ export const POSTS_EN = {
 
 <h2>The 5 questions to ask before you start</h2>
 <p><strong>1. Is downloading the whole album included?</strong> This is trap number one. If the answer isn’t clear, move on.<br>
-<strong>2. Are the photos in their original quality?</strong> Many free services compress. You won’t care on a screen, but you’ll regret it when you print.<br>
+<strong>2. Are the photos sharp enough to print?</strong> Some free services shrink them a lot. You won’t care on a screen, but you’ll regret it when you order prints or a book.<br>
 <strong>3. How long are the photos kept?</strong> Some albums expire after 30 days.<br>
 <strong>4. Is there a limit on the number of guests or photos?</strong> And what happens when it is reached, in the middle of the party?<br>
 <strong>5. Where are the photos hosted?</strong> For a wedding, with children and loved ones in the pictures, it is not a detail (see <a href="/journal/droit-image-photos-mariage">image rights: what the law says</a>).</p>
 
 <h2>The test to do, one week before</h2>
-<p>Create your event, scan the QR code with your own phone, take three photos, and <strong>go all the way through the download</strong>. If you can get your three photos back in full quality without being asked for your card, the offer is honest. If not, you have just avoided a very nasty surprise.</p>
+<p>Create your event, scan the QR code with your own phone, take three photos, and <strong>go all the way through the download</strong>. If you can get your three photos back without being asked for your card, the offer is honest. If not, you have just avoided a very nasty surprise.</p>
 
 <h2>What we do on our side</h2>
 <p>With <a href="/">our wedding photo app</a>, it is free for up to 5 guests, with no card needed: enough to test the whole process, from the QR code to the download. Beyond that, it is a one-off payment depending on the number of guests: no subscription, no fees when you collect your photos. The servers are in Europe.</p>
@@ -816,7 +918,7 @@ export const POSTS_EN = {
 <h2>The shared album (Google Photos, iCloud, Drive)</h2>
 <p><strong>What works:</strong> free, quality is preserved, everything is kept in one place and stays accessible for years.</p>
 <p><strong>What goes wrong:</strong> you need an account. An iCloud album shuts out your Android guests, a Google album shuts out some iPhone users. You have to send a link to each person by email or text, and above all: <strong>people have to remember</strong>. A shared album is passive: nobody spontaneously uploads their photos on a party night. In practice, you get the photos of six guests out of eighty.</p>
-<p><strong>Verdict:</strong> excellent for <em>archiving</em> once you have the photos. Poor for <em>collecting</em> them. The other ways to build a shared album are in <a href="/journal/album-photo-partage-mariage">the shared wedding photo album</a>.</p>
+<p><strong>Verdict:</strong> excellent for <em>archiving</em> once you have the photos. Poor for <em>collecting</em> them. The other ways to build a shared album are in <a href="/journal/partager-photos-mariage-invites">the shared wedding photo album</a>.</p>
 
 <h2>The digital disposable camera</h2>
 <p><strong>What works:</strong> a QR code on the tables, a page that opens in the browser, a first name to type. Nothing to install, no account. Everyone takes part, grandparents included. All the photos arrive in a single album, and the game (a limited number of shots, a reveal the next day) means people think about it during the party.</p>
@@ -923,7 +1025,7 @@ export const POSTS_EN = {
 
   'shot-list-mariage': {
     title: 'Wedding shot list: the 50 photos not to miss',
-    excerpt: 'The complete list, moment by moment: the ones your photographer handles, and the ones only your guests can take.',
+    excerpt: 'The wedding photo list not to miss, in the order of the day: the shots your photographer handles, and the ones only your guests will take.',
     caption: 'A photographer and guests during a wedding ceremony',
     body: `
 <p>A shot list is the list of photos you don’t want to find missing in six months’ time. It has two uses: giving it to your photographer, and spotting the pictures they won’t be able to take on their own.</p>
@@ -1006,15 +1108,14 @@ export const POSTS_EN = {
 </ol>
 <p>Two tips to keep this order on track. First, give this running order to your photographer with the real times of your day: they will know where to be, and when. Second, leave some slack right after the ceremony: that is always where the schedule slips, between the congratulations and the hugs.</p>
 
+<h3>And the order of the group photos?</h3>
+<p>Group photos have their own order, from the closest circle to the widest: grandparents, parents, close family on each side, both families together, extended family, the wedding party, friends, colleagues, and finally all the guests. At 90 seconds per group, the series takes 20 to 25 minutes. The detailed list, with the time to allow for each group and how to arrange people, is in <a href="/journal/photos-de-groupe-mariage">wedding group photos: the list, the order, the poses</a>.</p>
+
 <h2>The ones your photographer won’t take</h2>
 <p>Look at the list: numbers 32, 33, 34, 41, 48 and 50 are almost always missing. Not through carelessness: the photographer is simply somewhere else, or has already left. These are exactly the photos your guests take naturally.</p>
 
-<blockquote class="dj-quote">“Our guests took 312 photos. We framed four; none of them came from the photographer.”
-  <cite>Camille &amp; Tom · June 2026</cite>
-</blockquote>
-
 <h2>How to use it</h2>
-<p>Send the complete list to your photographer two weeks before, highlighting your five absolute priorities. For the rest, don’t rely on a general instruction like “take photos!”: give your guests a clear constraint (a few shots each) and they will do the job with care (see <a href="/journal/dix-cliches">why 10 shots beat 300</a>).</p>
+<p>Copy the list into a document, one line per photo, and add names where needed (“childhood friends: Hugo, Chloe, Yanis”). Send it to your photographer two weeks before, highlighting your five absolute priorities. For the rest, don’t rely on a general instruction like “take photos!”: give your guests a clear constraint (a few shots each) and they will do the job with care (see <a href="/journal/dix-cliches">why 10 shots beat 300</a>).</p>
 <p>That is the principle of <a href="/">Time to Flash</a>: each guest gets a small number of photos to take, and the whole album is revealed the next day.</p>
 `,
   },
@@ -1059,52 +1160,114 @@ export const POSTS_EN = {
 
   'photos-de-groupe-mariage': {
     title: 'Wedding group photos: the list, the order, the poses',
-    excerpt: 'Which group photos to take at your wedding, in what order, and how to get them done in 20 minutes: the list, the organising and some pose ideas.',
+    excerpt: 'Which group photos to take at your wedding, in what order, how long each group takes and where everyone stands: the list, the timing and some pose ideas.',
     caption: 'A group photo at a wedding',
     body: `
-<p>Group photos have a bad reputation, and it is deserved: they drag on, people have to be found all over the place, the drinks reception empties, and nobody is really smiling by the twentieth one. And yet, they are the photos your family will look at the longest. Here is the list of group photos to take at your wedding, in the right order, some pose ideas, and the method to get it all done in twenty minutes.</p>
+<p>Group photos have a bad reputation, and it is deserved: they drag on, people have to be found all over the place, the drinks reception empties, and nobody is really smiling by the twentieth one. And yet, they are the photos your family will look at the longest. Here is the list of group photos to take at your wedding, in the right order and with the time each one needs, how to arrange people, the best moment in the day, and the backup plans (rain, blended families) to get it all done in under half an hour.</p>
 
-<h2>The list of group photos, in order</h2>
-<p>These are the classic wedding group photos, in the order we suggest you take them. They start with the closest circle and widen step by step: each new group adds people to the previous one, and nobody waits around for nothing.</p>
-<ol>
-<li><strong>The couple with their parents</strong>, one side then the other.</li>
-<li><strong>Close family</strong>: parents, brothers and sisters, their partners and children, grandparents. One side, then the other, then both families together.</li>
-<li><strong>Extended family</strong>: aunts, uncles, cousins. Often the biggest family group, so allow some space.</li>
-<li><strong>The best man and maid of honour</strong>, and the wedding party if there is one (bridesmaids, groomsmen, flower girls and page boys).</li>
-<li><strong>Friends</strong>, group by group: childhood friends, university friends, the sports club, the old flatmates. Each group has its own story, and deserves its own photo.</li>
-<li><strong>Colleagues</strong>, from one side then the other.</li>
-<li><strong>All the guests</strong>: the big photo that closes the series (more on that below).</li>
-</ol>
-<p>Why family first? Because grandparents and older guests can then go and sit down, and the children aren’t tired yet. Your friends will happily wait with a drink in hand. This list expands the “groups” section of <a href="/journal/shot-list-mariage">the 50-photo wedding shot list</a>.</p>
+<h2>The list of group photos, in the recommended order</h2>
+<p>These are the classic wedding group photos, in the order we suggest you take them, with the time to allow. The logic: start with the people who most need to sit down, then begin with the closest circle and widen it step by step. Each new group adds people to the previous one, and nobody waits around for nothing.</p>
+<table>
+<thead><tr><th>Order</th><th>Group</th><th>Time to allow</th></tr></thead>
+<tbody>
+<tr><td>1</td><td>The couple with their grandparents</td><td>1.5 to 3 min</td></tr>
+<tr><td>2</td><td>The couple with their parents, one side then the other</td><td>3 min</td></tr>
+<tr><td>3</td><td>Close family (parents, brothers and sisters, partners, children), one side then the other</td><td>3 min</td></tr>
+<tr><td>4</td><td>Both close families together</td><td>1.5 min</td></tr>
+<tr><td>5</td><td>Extended family (aunts, uncles, cousins), one side then the other</td><td>3 min</td></tr>
+<tr><td>6</td><td>The wedding party (best man, maid of honour, bridesmaids, groomsmen, flower girls and page boys)</td><td>1.5 min</td></tr>
+<tr><td>7</td><td>Friends, group by group (childhood, university, sports club, old flatmates)</td><td>1.5 min per group</td></tr>
+<tr><td>8</td><td>Colleagues, from one side then the other</td><td>3 min</td></tr>
+<tr><td>9</td><td>All the guests</td><td>5 min</td></tr>
+</tbody>
+</table>
+<p>With three groups of friends, the full series takes about 25 minutes, big photo included. If your schedule is tight, keep groups 1 to 6 and the big photo right after the ceremony, and do friends and colleagues later, at their table or on the dance floor: they will be happy to pose with a drink in hand.</p>
+<p>Why family first? Because grandparents and older guests can then go and sit down, and the children aren’t tired yet. Your friends will happily wait at the drinks reception. This list expands the “groups” section of <a href="/journal/shot-list-mariage">the 50-photo wedding shot list</a>.</p>
 
 <h2>1. Write the list, with names</h2>
-<p>This is 90% of the work. A written list, with names: not “the family”, but “Dad, Mum, my sister, her husband, the two children”. Aim for 8 to 12 groups at most. Beyond that, you will spend an hour on it. Print two copies: one for the photographer, one for the person rounding people up.</p>
+<p>This is 90% of the work. A written list, with names: not “the family”, but “Dad, Mum, my sister, her husband, the two children”. Aim for 8 to 12 groups at most. Beyond that, you will spend an hour on it. One line per group is enough, for example:</p>
+<ul>
+<li><strong>Group 2:</strong> the two of us with Mum and Dad (Lea’s side), then with Anne and Philip (Marius’s side).</li>
+<li><strong>Group 3:</strong> + Julian (Lea’s brother), Sarah, Ines and Noah.</li>
+<li><strong>Group 7:</strong> the school gang: Hugo, Chloe, Yanis, Megan, Theo.</li>
+</ul>
+<p>Print two copies: one for the photographer, one for the person rounding people up. And send it to the photographer a week or two before, so they can plan the spot and the space needed.</p>
 
-<h2>2. Appoint a stage manager</h2>
-<p>The classic mistake is letting the photographer call people: they don’t know anyone. Give this stage manager role to a best man or a brother who has a loud voice and knows everyone. List in hand, they call the next group <em>while</em> the current group is posing. You never lose a second, and all you have to do is smile.</p>
+<h2>2. Give the list to a best man or bridesmaid who “calls” people</h2>
+<p>The classic mistake is letting the photographer call people: they don’t know anyone. Give this role to a best man, a brother or a cousin who has a loud voice and knows everyone. List in hand, they call the next group <em>while</em> the current group is posing. You never lose a second, and all you have to do is smile.</p>
+<p>A few habits that make all the difference:</p>
+<ul>
+<li><strong>One caller per family</strong> if the two families don’t know each other well: each one knows what “Uncle Bernard” looks like.</li>
+<li><strong>Announce the whole list</strong> as you leave the ceremony: “family photos straight away, then the wedding party, then friends”. The people concerned stay close by.</li>
+<li><strong>Tick groups off as you go</strong>: at the end, one glance tells you if a group is missing.</li>
+<li><strong>Plan for missing people</strong>: if the great-aunt has gone to the loo, do the next group and come back to her.</li>
+</ul>
 
-<h2>3. Find the spot beforehand</h2>
-<p>A shaded place, with a simple background (a wall, a hedge, a façade), less than two minutes’ walk from the drinks reception. Bright sunlight casts shadows under the eyes and makes everyone squint. A white sky in the background burns out the photo. Scout this spot when you visit the venue, not on the day.</p>
+<h2>3. How to arrange people</h2>
+<p>The photographer handles some of this, but knowing the basic rules saves time, especially if the caller can get the next group ready to one side.</p>
+<table>
+<thead><tr><th>Group size</th><th>Arrangement</th></tr></thead>
+<tbody>
+<tr><td>Up to 8 people</td><td>A single row, in a slight curve, with the couple in the middle.</td></tr>
+<tr><td>8 to 20 people</td><td>Two rows: shortest at the front, tallest at the back, staggered (each face in the gap between two heads).</td></tr>
+<tr><td>More than 20 people</td><td>Three rows: children sitting or crouching at the front, adults standing in the middle, the tallest at the back, on a step or a bench.</td></tr>
+</tbody>
+</table>
+<p>For a family group of fifteen, that gives you, from back to front:</p>
+<ul>
+<li><strong>Back row:</strong> the tallest (brothers, uncles, cousins), standing, on a step if possible.</li>
+<li><strong>Middle row:</strong> the couple in the centre, parents on either side, then brothers, sisters and partners.</li>
+<li><strong>Front row:</strong> the grandparents on two chairs just in front of the couple, children sitting on the ground or standing in front.</li>
+</ul>
+<p>And the instructions to repeat for every group: squeeze in much more than you think, couples side by side, shoulders turned slightly towards the couple, nothing in your hands (no glass, no bag, no phone), and everyone looks at the camera. Have two chairs on hand: the grandparents will thank you.</p>
 
-<h2>4. The right time: the start of the drinks reception</h2>
-<p>Right after the ceremony, when everyone is still gathered in the same place and nobody has started to wander. Have it announced on the way out: “group photos for twenty minutes, we’ll join you straight after”. Meanwhile, the drinks reception gets going for everyone else: they have a glass and something to nibble, nobody is bored. If you wait until the middle of the drinks reception, you will spend twenty minutes looking for three people.</p>
-<p>A split that works: about ten minutes for the families, five for the best man and maid of honour, friends and colleagues, and a few minutes for the big photo of all the guests.</p>
+<h2>4. Find the spot beforehand</h2>
+<p>A shaded place, with a simple background (a wall, a hedge, a façade), less than two minutes’ walk from the drinks reception. Bright sunlight casts shadows under the eyes and makes everyone squint. A white sky in the background burns out the photo. Scout this spot when you visit the venue, not on the day, and check it is wide enough for the biggest group on your list.</p>
 
-<h2>5. The 90-second rule</h2>
-<p>One group = 90 seconds. The photographer takes three or four pictures, and you move on to the next. That is plenty: beyond that, smiles freeze and the group drifts apart. Twelve groups at 90 seconds each makes eighteen minutes.</p>
+<h2>5. The right moment in the day</h2>
+<p>The best slot is <strong>right after the ceremony</strong>, at the start of the drinks reception, when everyone is still gathered in the same place and nobody has started to wander. Have it announced on the way out: “group photos for twenty-five minutes, we’ll join you straight after”. Meanwhile, the drinks reception gets going for everyone else: they have a glass and something to nibble, nobody is bored. If you wait until the middle of the drinks reception, you will spend twenty minutes looking for three people.</p>
+<p>A sample timeline, for a ceremony starting at 3pm:</p>
+<ul>
+<li><strong>3.45pm:</strong> leaving the ceremony, congratulations, confetti.</li>
+<li><strong>4.00pm:</strong> family photos, then the wedding party (about 15 minutes).</li>
+<li><strong>4.15pm:</strong> friends and colleagues, then the big photo of all the guests.</li>
+<li><strong>4.30pm:</strong> the couple join the drinks reception, or head off for their couple shoot.</li>
+</ul>
+<p>There are two variations. <strong>At a register office or town hall</strong>, the big photo on the steps is a classic, but time is short: another wedding is often waiting behind you. Only take the photo of all the guests there, and keep the groups for the reception venue. <strong>With a first look before the ceremony</strong> (you see each other privately beforehand), you can bring the close family photos forward to before the ceremony, and keep only the big groups for afterwards.</p>
 
-<blockquote class="dj-quote">“We announced it on the microphone: group photos, twenty minutes, starting with the grandparents. Nobody complained.”
-  <cite>Léa &amp; Marius · 2026</cite>
-</blockquote>
+<h2>6. The 90-second rule</h2>
+<p>One group = 90 seconds. The photographer takes three or four pictures, and you move on to the next. That is plenty: beyond that, smiles freeze and the group drifts apart. Time is almost never lost during the photo itself, but between two groups, while someone is being looked for. Hence the importance of the caller.</p>
 
 <h2>The big photo of all the guests</h2>
 <p>It is the most spectacular photo, and the hardest: a hundred people don’t fit into a frame taken at eye level. The secret is <strong>height</strong>.</p>
 <ul>
 <li><strong>A balcony or an upstairs window</strong>: the photographer stands above, the guests squeeze together below and look up. Everyone is visible, even in the back row.</li>
-<li><strong>A staircase</strong>: guests stand on the steps, and each row naturally ends up higher than the one in front.</li>
+<li><strong>A staircase</strong>: guests stand on the steps, and each row naturally ends up higher than the one in front. The steps of a town hall or a church work very well.</li>
 <li><strong>A sturdy stepladder</strong>, if the venue has neither balcony nor stairs. Two or three steps are already enough to change the photo.</li>
 </ul>
-<p>Three instructions for the stage manager to pass on: squeeze in much more than you think, shortest people and children at the front, and everyone looks at the camera, not at the couple. Take a sensible version, then one where everyone raises their arms and cheers: that is often the one you frame. And scout the balcony or staircase during your venue visit, like everything else.</p>
+<p>Three instructions for the caller to pass on: squeeze in much more than you think, shortest people and children at the front, and everyone looks at the camera, not at the couple. Take a sensible version, then one where everyone raises their arms and cheers: that is often the one you frame. And scout the balcony or staircase during your venue visit, like everything else.</p>
+
+<h2>Blended families</h2>
+<p>It is the subject nobody dares raise, and the one that causes the most awkwardness on the day when it hasn’t been prepared. A few simple rules:</p>
+<ul>
+<li><strong>Decide beforehand</strong>, with your partner, who poses with whom. Nothing is worse than improvising in front of everyone.</li>
+<li><strong>Plan one photo per parent</strong>: the couple with Dad and his partner, then with Mum and her husband. Everyone gets their photo, nobody is left out.</li>
+<li><strong>If divorced parents get on well</strong>, a photo with both birth parents is possible: ask them beforehand, not on the spot.</li>
+<li><strong>Put the couple in the middle</strong>: when both families pose together, the couple naturally act as the link between the two sides.</li>
+<li><strong>Write it down on the list</strong> (“Dad and Claire”, “Mum and Bruno”) and quietly brief the caller. It will avoid any blunders.</li>
+<li><strong>Remember half-brothers and half-sisters</strong>: they are close family, and belong in group 3.</li>
+</ul>
+<p>And if a loved one who has passed away is missing, some couples have a parent hold a framed photo of them in the family picture. It is a personal choice: talk it over with your family beforehand.</p>
+
+<h2>What if it rains?</h2>
+<p>Rain shouldn’t make you skip the group photos, only move them. Plan your backup during the venue visit:</p>
+<ul>
+<li><strong>Find a shelter</strong>: a covered walkway, a barn, an entrance hall, a church porch, or the reception room before the tables are laid. Check that it is bright enough.</li>
+<li><strong>Shorten the list</strong>: keep families and the wedding party under cover, and move friends and colleagues indoors, during dinner or the party.</li>
+<li><strong>Take the big photo from above</strong>: from an indoor staircase or a mezzanine overlooking the room, everyone fits in the frame.</li>
+<li><strong>Watch for a dry spell</strong>: a shower rarely lasts long. The photographer and the caller can gather everyone in five minutes as soon as it stops, if the list is ready.</li>
+<li><strong>Have fun with it</strong>: a few clear umbrellas (they don’t darken faces) make for great group photos in light rain.</li>
+</ul>
 
 <h2>Fun group pose ideas</h2>
 <p>Right after each group’s “official” photo, ask for a second, freer take. It is almost always the one you keep. A few ideas that work:</p>
@@ -1116,28 +1279,32 @@ export const POSTS_EN = {
 <li><strong>Sunglasses on</strong>: everyone puts them on at the same moment, for an instant album-cover look.</li>
 <li><strong>The class photo</strong>: one row sitting, one row standing, arms crossed, looking very serious. It will make everyone laugh in twenty years.</li>
 </ul>
-<p>One idea per group, no more: the goal is still to stick to twenty minutes.</p>
+<p>One idea per group, no more: the goal is still to stick to the time you planned.</p>
 
 <h2>And meanwhile</h2>
 <p>Your guests waiting their turn are busy photographing everything else: the giggles behind the scenes, the children escaping, the organising itself. These are often the liveliest pictures of the day (see <a href="/journal/invites-photographe">your guests see what the photographer doesn’t</a>). And later in the evening, the best group photos often happen on their own, among friends on the dance floor: our tips to stop them all coming out dark are in <a href="/journal/photos-soiree-dansante-telephone">getting good dance-floor photos with your phone</a>.</p>
-<p>With <a href="/">Time to Flash</a>, everything your guests capture during those twenty minutes, and the rest of the day, lands in the same album, revealed the next day.</p>
+<p>With <a href="/">Time to Flash</a>, everything your guests capture during those twenty-five minutes, and the rest of the day, lands in the same album, revealed the next day.</p>
 `,
     faq: [
       {
-        q: 'How many group photos should we plan at a wedding?',
-        a: 'Aim for 8 to 12 groups, no more. At 90 seconds per group, that comes to about twenty minutes. Beyond that, guests drift away and smiles freeze.',
+        q: 'In what order should wedding group photos be taken?',
+        a: 'Start with the couple and their grandparents, then their parents, then close family on each side, both families together, extended family, the wedding party, friends group by group, colleagues, and finish with the photo of all the guests. That way older guests can sit down quickly.',
+      },
+      {
+        q: 'How long should we allow for group photos?',
+        a: 'Allow about 90 seconds per group, and 5 minutes for the photo of all the guests. For 8 to 12 groups, the series takes 20 to 25 minutes. Beyond that, guests drift away and smiles freeze.',
       },
       {
         q: 'When should wedding group photos be taken?',
-        a: 'Right after the ceremony, at the start of the drinks reception, when everyone is still gathered in the same place. The other guests enjoy the drinks in the meantime, so nobody gets bored.',
+        a: 'Right after the ceremony, at the start of the drinks reception, when everyone is still gathered in the same place. The other guests enjoy the drinks in the meantime. At a register office, just take the big photo on the steps: another wedding is often waiting.',
       },
       {
-        q: 'In what order should group photos be taken?',
-        a: 'From the closest circle to the widest: the couple with their parents, close family, extended family, the best man and maid of honour, friends, colleagues, then all the guests. That way older guests can sit down quickly.',
+        q: 'How do you arrange people in a wedding group photo?',
+        a: 'The couple in the middle, parents beside them, the tallest at the back and the shortest at the front, staggered. For more than 20 people, use three rows: children sitting at the front, adults standing in the middle, the tallest on a step at the back. Grandparents can sit on chairs in the front row.',
       },
       {
-        q: 'How do you take a group photo with all the wedding guests?',
-        a: 'Get some height: a balcony, an upstairs window, a staircase or a sturdy stepladder. Guests squeeze together, shortest at the front, and everyone looks at the camera. Take a sensible version, then a wilder one.',
+        q: 'What if it rains during the group photos?',
+        a: 'Find a bright shelter during your venue visit (covered walkway, hall, porch, the reception room before it is laid), keep families and the wedding party under cover, move friends indoors during the party, and take the big photo from an indoor staircase. Clear umbrellas also let you pose in light rain.',
       },
     ],
   },
@@ -1253,7 +1420,7 @@ export const POSTS_EN = {
 <h2>The three mistakes to avoid</h2>
 <p><strong>Waiting until you have the time.</strong> Set yourself a date, one month after the wedding. After six months, it will never happen.<br>
 <strong>Wanting to include everything.</strong> A book is a selection, not an archive. The rest lives very happily in digital form.<br>
-<strong>Working from compressed files.</strong> Always download the original album, in full quality.</p>
+<strong>Working from compressed files.</strong> Always download the complete album from the service, rather than photos saved from WhatsApp or a messaging app.</p>
 
 <h2>The best-value gift of the wedding</h2>
 <p>Make two or three copies: one for the two of you, one for each family. An €80 book that tells the story of the party through the guests’ eyes makes far more of an impression than a classic gift, and people still look at it twenty years later.</p>

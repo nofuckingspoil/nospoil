@@ -1,0 +1,5 @@
+# Illustrations : série « retroplanning » (10/10/2026)
+
+## retroplanning-mariage
+
+Photo argentique, grain visible, couleurs un peu passées comme une pellicule 35 mm des années 90. Le soir, dans une cuisine d'appartement, un jeune couple d'une trentaine d'années est penché côte à côte sur une table en bois couverte de préparatifs de mariage : un grand carnet ouvert avec des listes cochées à la main (écriture illisible, aucun mot lisible), des échantillons de faire-part vierges, un nuancier de tissus, deux tasses de thé, un téléphone posé face contre la table, un stylo. Cadrage légèrement de travers, pris d'un peu au-dessus comme par un ami debout. Éclairage amateur : la seule lumière vient d'une suspension au-dessus de la table, chaude et un peu jaune, avec des coins de la pièce dans la pénombre ; ou flash direct d'appareil compact, ombres dures derrière les objets. Ambiance complice et concentrée, l'un des deux sourit en pointant une ligne du carnet. Jamais de lumière de studio, aucun texte lisible, aucun logo, aucune marque visible.

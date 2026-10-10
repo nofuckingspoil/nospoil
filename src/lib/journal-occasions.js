@@ -1,127 +1,11 @@
 // ============================================================
-//  Journal : articles par occasion (anniversaire, entre amis, retraite)
-//  et article « album photo partagé mariage ». Fusionnés dans journal.js.
+//  Journal : articles par occasion (anniversaire, entre amis, retraite).
+//  Fusionnés dans journal.js. L'ancien article « album photo partagé
+//  mariage » a été fondu dans partager-photos-mariage-invites (journal.js)
+//  le 10/10/2026 et redirige vers lui (voir next.config.js).
 // ============================================================
 
 export const POSTS_OCCASIONS = [
-  {
-    // Vise « album photo partagé mariage » et « album partagé mariage ».
-    slug: 'album-photo-partage-mariage',
-    cat: 'Souvenirs',
-    title: 'Album photo partagé de mariage : le mode d’emploi',
-    excerpt: 'Album photo partagé de mariage : Google Photos, iCloud, WhatsApp ou appli ? Les options, la mise en place et comment faire participer les invités.',
-    author: 'Léa Ferrand',
-    date: '2026-10-03',
-    read: '8 min',
-    caption: 'Le lendemain du mariage, des invités découvrent les photos ensemble au brunch',
-    image: '/journal/album-photo-partage-mariage.webp',
-    body: `
-<p>Le lendemain d’un mariage, la même question revient toujours : « Tu peux m’envoyer tes photos ? ». Chaque invité a pris une poignée d’images, et elles dorment dans quatre-vingts téléphones différents. Un album photo partagé de mariage règle ce problème : un seul endroit où toutes les photos des invités se retrouvent, que tout le monde peut regarder et télécharger.</p>
-<p>Sur le papier, c’est simple. Dans les faits, la plupart des albums partagés restent à moitié vides. Voici comment choisir le bon outil, le mettre en place, et surtout faire en sorte que tes invités y participent vraiment.</p>
-
-<h2>Un album partagé de mariage, c’est quoi exactement ?</h2>
-<p>C’est un album en ligne, privé, auquel chaque invité peut <strong>ajouter</strong> ses photos et que chacun peut <strong>consulter</strong>. La différence avec l’album du photographe est importante : le photographe livre une sélection soignée, l’album partagé rassemble les points de vue de tout le monde. La photo de la grand-mère qui danse, le selfie des témoins à 2 h du matin, le gâteau vu depuis la table des enfants.</p>
-<p>Un bon album partagé coche quatre cases :</p>
-<ul>
-<li><strong>Tout le monde peut y accéder</strong>, quel que soit son téléphone (iPhone ou Android).</li>
-<li><strong>Ajouter une photo prend quelques secondes</strong>, sans compte à créer.</li>
-<li><strong>L’album est privé</strong> : seuls ceux qui ont le lien le voient.</li>
-<li><strong>Tu peux tout télécharger</strong> d’un coup pour le garder.</li>
-</ul>
-
-<h2>Les options possibles, et ce qu’elles valent</h2>
-
-<h3>L’album partagé Google Photos</h3>
-<p>Gratuit, et la qualité des photos est bien préservée. Le hic : pour ajouter des photos, il faut un compte Google. Une partie de tes invités sur iPhone n’en a pas, ou ne s’en souvient plus. Il faut aussi leur envoyer le lien un par un.</p>
-
-<h3>L’album partagé iCloud</h3>
-<p>Très pratique entre utilisateurs d’iPhone, c’est intégré à l’appli Photos. Mais tes invités sous Android ne peuvent pas y déposer leurs photos. Sur un mariage de cent personnes, ça laisse beaucoup de monde dehors.</p>
-
-<h3>Le groupe WhatsApp</h3>
-<p>Tout le monde l’a déjà. Mais les photos sont compressées à l’envoi, le fil mélange photos, messages et vocaux, et retrouver une image trois semaines plus tard tient de l’exploit. On a détaillé tout ça dans <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos ou appli dédiée</a>.</p>
-
-<h3>Les applis « galerie » de mariage</h3>
-<p>Ce sont des albums en ligne pensés pour les mariages : un QR code, une page, les invités déposent les photos de leur pellicule. C’est plus simple qu’un album Google ou iCloud, et c’est souvent gratuit ou peu cher. Leur limite est la même que celle de tous les albums partagés : <strong>ils sont passifs</strong>. Ils attendent que les invités pensent à y déposer leurs photos, et beaucoup n’y pensent jamais. Le tour d’horizon est dans <a href="/journal/application-photo-mariage">notre comparatif des applications photo de mariage</a>.</p>
-
-<h3>L’appareil photo jetable partagé</h3>
-<p>C’est une autre approche : au lieu de demander aux invités de déposer des photos après coup, on leur donne un appareil photo pendant la fête. Avec <a href="/">Time to Flash</a>, chaque invité scanne un QR code, l’appareil s’ouvre dans son navigateur (rien à installer, aucun compte), et il dispose d’un nombre de clichés compté, comme sur un jetable. Il ne voit pas ses photos tout de suite. Le lendemain, à l’heure que tu as choisie, tout se révèle d’un coup dans un album partagé privé.</p>
-<p>La différence avec une galerie : ici, l’album n’est pas un dossier à remplir, c’est le résultat d’un jeu. Les invités participent parce que c’est amusant pendant la soirée, pas parce qu’on leur a demandé un service le lendemain.</p>
-
-<h2>Galerie ou jetable : comment choisir</h2>
-<p>Pose-toi une seule question : <strong>veux-tu récupérer les photos que tes invités prennent déjà, ou leur donner envie d’en prendre ?</strong></p>
-<ul>
-<li>Si tu veux surtout rassembler les photos existantes, sans animation, une galerie suffit. Prévois juste de relancer tes invités.</li>
-<li>Si tu veux une animation photo pendant la fête, avec la surprise du lendemain, le jetable partagé fait les deux : le jeu pendant la soirée, et l’album partagé ensuite.</li>
-</ul>
-<p>Rien n’empêche de combiner : le jetable pendant la soirée, et un dossier dans ton cloud personnel pour archiver le tout, avec les photos du photographe.</p>
-
-<h2>Mettre en place l’album partagé, étape par étape</h2>
-<ol>
-<li><strong>Choisis ton outil un mois avant</strong>, pas la veille. Tu auras le temps de tester avec deux ou trois proches.</li>
-<li><strong>Crée l’album</strong> et donne-lui un nom clair (vos prénoms et la date). Avec Time to Flash, ça prend deux minutes : nombre d’invités, nombre de clichés par personne, heure de la révélation.</li>
-<li><strong>Teste-le toi-même</strong> sur un iPhone et sur un Android. Prends une photo, vérifie qu’elle arrive bien.</li>
-<li><strong>Prépare le QR code</strong> : c’est la porte d’entrée de l’album. Tu peux créer une affiche personnalisée avec notre <a href="/generateur-qr-code-mariage">générateur de QR code pour mariage</a>.</li>
-<li><strong>Imprime et place les affiches</strong> là où les invités attendent : bar, tables, toilettes, vestiaire. Les meilleurs emplacements sont détaillés dans <a href="/journal/ou-poser-le-qr-code">où poser le QR code</a>.</li>
-<li><strong>Désigne un relais</strong> : un témoin qui connaît l’album et peut aider un invité perdu.</li>
-</ol>
-
-<h2>Faire participer les invités</h2>
-<p>C’est là que tout se joue. Un album partagé que personne ne connaît reste vide, quel que soit l’outil.</p>
-<ul>
-<li><strong>Annonce-le avant</strong> : un mot sur le site du mariage ou dans le dernier message aux invités. Ils arriveront prévenus.</li>
-<li><strong>Multiplie les QR codes</strong> : un seul QR code à l’entrée, personne ne le voit. Un sur chaque table, tout le monde le scanne en attendant l’entrée.</li>
-<li><strong>Fais une annonce au micro</strong> : quinze secondes pendant le vin d’honneur ou au début du dîner suffisent. « Scannez le QR code sur votre table, vous avez dix photos, on découvre tout demain matin. »</li>
-<li><strong>Donne une règle simple</strong> : un nombre de photos, une heure de découverte. Les règles claires donnent envie de jouer.</li>
-</ul>
-<p>Plus de conseils pour impliquer chaque invité dans <a href="/journal/partager-photos-mariage-invites">comment partager les photos de mariage avec tous les invités</a>.</p>
-
-<h2>Les erreurs qui laissent un album partagé vide</h2>
-<p>Si tu as déjà créé un album partagé pour une fête, tu connais le scénario : un lien envoyé, trois personnes qui y déposent leurs photos, et un silence radio. Ces erreurs reviennent presque toujours :</p>
-<ul>
-<li><strong>Envoyer le lien après la fête</strong> : le lendemain, tout le monde est fatigué, rentre chez soi, reprend le travail. Le message se perd. L’album doit exister et être connu <em>pendant</em> la soirée.</li>
-<li><strong>Demander un compte</strong> : chaque étape en plus fait perdre des participants. Créer un compte ou retrouver un mot de passe un soir de mariage, personne ne le fait.</li>
-<li><strong>Oublier une partie des téléphones</strong> : un outil qui ne fonctionne que sur iPhone, ou que sur Android, laisse une partie de la famille dehors.</li>
-<li><strong>Ne rien expliquer</strong> : un QR code sans phrase autour ne dit pas à quoi il sert. Écris clairement sur l’affiche ce qui se passe quand on le scanne.</li>
-<li><strong>Compter sur la bonne volonté</strong> : déposer ses photos dans un album, c’est rendre service. Prendre des photos avec un appareil jetable, c’est jouer. Le jeu motive bien plus que le service.</li>
-</ul>
-
-<h2>Quand rendre l’album visible ?</h2>
-<p>Deux écoles. Avec une galerie classique, les photos sont visibles dès qu’elles sont déposées : on peut les regarder pendant la soirée, mais la surprise s’envole et certains invités passent leur temps à scroller.</p>
-<p>Avec une révélation différée, rien n’est visible avant l’heure choisie. Le lendemain matin, au brunch, ou le soir du retour, tout apparaît d’un coup. C’est le moment où tout le monde se renvoie les photos, et où l’on découvre ce qui s’est passé à l’autre bout de la salle. Un conseil : choisis une heure où les invités sont réveillés et disponibles, par exemple 10 h ou 11 h le lendemain.</p>
-<p>Avant la révélation, en tant qu’organisateur, tu peux masquer une photo gênante. Pratique quand un cousin a photographié le mauvais moment.</p>
-
-<h2>Comment garder l’album partagé</h2>
-<p>Un album partagé n’est pas une archive. Les services changent, les liens expirent, les albums sont supprimés. Sur Time to Flash, l’album est conservé six mois, et on te prévient avant la suppression. Pour le garder pour toujours :</p>
-<ul>
-<li><strong>Télécharge toutes les photos</strong> en une fois, dans les jours qui suivent.</li>
-<li><strong>Range-les à deux endroits</strong> : ton ordinateur et ton cloud personnel, par exemple.</li>
-<li><strong>Fais imprimer les meilleures</strong> : un livre photo ou quelques tirages papier, commandés directement depuis l’album.</li>
-</ul>
-<p>Tu veux voir à quoi ressemble l’expérience côté invités ? Tout est expliqué sur notre page <a href="/photos-mariage-invites">photos de mariage des invités</a>.</p>
-`,
-    faq: [
-      {
-        q: 'Comment créer un album photo partagé pour un mariage ?',
-        a: 'Choisis un outil (album Google Photos, iCloud, appli galerie ou appareil jetable partagé), crée l’album, teste-le sur un iPhone et un Android, puis imprime un QR code que tes invités scanneront le jour J. Avec Time to Flash, la création prend deux minutes et aucun invité n’a besoin de compte.',
-      },
-      {
-        q: 'Les invités doivent-ils installer une application ?',
-        a: 'Pas forcément. Un album Google ou iCloud demande un compte pour ajouter des photos. Time to Flash fonctionne dans le navigateur : les invités scannent le QR code, tapent leur prénom et prennent leurs photos, sans rien installer.',
-      },
-      {
-        q: 'Un album partagé iCloud fonctionne-t-il avec Android ?',
-        a: 'Un invité sous Android peut regarder un album iCloud partagé publiquement via un lien, mais il ne peut pas y ajouter ses photos. Pour un mariage avec des téléphones de toutes marques, mieux vaut un outil qui marche dans n’importe quel navigateur.',
-      },
-      {
-        q: 'Combien de temps l’album partagé reste-t-il en ligne ?',
-        a: 'Cela dépend du service. Sur Time to Flash, l’album est conservé six mois et tu es prévenu avant sa suppression. Dans tous les cas, télécharge toutes les photos dans les jours qui suivent et range-les à deux endroits.',
-      },
-      {
-        q: 'Peut-on retirer une photo de l’album partagé ?',
-        a: 'Oui. Sur Time to Flash, l’organisateur peut masquer une photo gênante avant la révélation, pour que personne ne la voie. Si un invité demande le retrait d’une photo de lui, retire-la sans discuter.',
-      },
-    ],
-  },
   {
     // Vise « idée anniversaire 30 ans », « que faire pour ses 30 ans ».
     slug: 'idees-anniversaire-30-ans',
@@ -242,14 +126,15 @@ export const POSTS_OCCASIONS = [
     slug: 'idees-pot-de-depart-retraite',
     cat: 'Retraite',
     title: 'Pot de départ à la retraite : idées, buffet et organisation',
-    excerpt: 'Idées de pot de départ à la retraite : organisation, discours, animations, cadeau collectif et pièges à éviter pour une fête réussie.',
+    excerpt: 'Pot de départ à la retraite : le buffet (quantités par personne, budget), des animations originales, les discours, le cadeau collectif et le déroulé type.',
     author: 'Tom Bréval',
     date: '2026-10-01',
-    read: '7 min',
+    updated: '2026-10-10',
+    read: '10 min',
     caption: 'Des collègues lèvent leur verre pour une collègue qui part en retraite',
     image: '/journal/idees-pot-de-depart-retraite.webp',
     body: `
-<p>Un départ à la retraite, ce n’est pas un pot comme les autres. C’est la fin de dizaines d’années de travail, parfois dans la même entreprise, et la personne qui part s’en souviendra longtemps. Bonne nouvelle : un pot réussi ne demande pas un gros budget, juste un peu d’organisation. Voici le mode d’emploi, des idées d’animation et de cadeau collectif, et les pièges à éviter.</p>
+<p>Un départ à la retraite, ce n’est pas un pot comme les autres. C’est la fin de dizaines d’années de travail, parfois dans la même entreprise, et la personne qui part s’en souviendra longtemps. Bonne nouvelle : un pot réussi ne demande pas un gros budget, juste un peu d’organisation. Voici le mode d’emploi : l’organisation, le buffet (avec les quantités par personne), des animations originales, le cadeau collectif et les pièges à éviter.</p>
 
 <h2>Organiser le pot de départ : les bases</h2>
 
@@ -273,15 +158,79 @@ export const POSTS_OCCASIONS = [
 <h3>Le discours</h3>
 <p>Prévois deux ou trois prises de parole, pas plus, et cinq minutes chacune au maximum. Le manager pour le parcours, un collègue proche pour les anecdotes, et la personne qui part pour le mot de la fin. Les meilleures anecdotes se collectent discrètement à l’avance auprès des collègues. Évite la liste des postes occupés : raconte plutôt deux ou trois histoires qui la résument.</p>
 
+<h2>Le buffet du pot de départ à la retraite</h2>
+<p>C’est souvent le poste qui inquiète le plus : peur de manquer, peur de trop jeter. Bonne nouvelle, les quantités se calculent assez simplement, à partir de deux questions : combien de temps dure le pot, et remplace-t-il un repas ?</p>
+
+<h3>Quel format choisir</h3>
+<ul>
+<li><strong>Le pot apéritif</strong> (1 h à 1 h 30, en fin de journée) : quelques bouchées salées, un gâteau, des boissons. C’est le format le plus courant dans les locaux de l’entreprise.</li>
+<li><strong>L’apéritif dînatoire</strong> (2 h et plus, à partir de 18 h 30) : il remplace le dîner, il faut donc des bouchées plus consistantes et en plus grand nombre.</li>
+<li><strong>Le buffet repas</strong> (le midi, ou un samedi avec la famille) : entrées, plats froids ou chauds, fromage, dessert, comme un vrai repas.</li>
+</ul>
+
+<h3>Les quantités par personne</h3>
+<p>Les repères ci-dessous sont ceux qu’utilisent couramment les traiteurs. Ajoute 10 % de marge si tu ne sais pas exactement combien de personnes passeront.</p>
+<table>
+<thead><tr><th>Format</th><th>Salé</th><th>Sucré</th><th>Boissons</th></tr></thead>
+<tbody>
+<tr><td>Pot apéritif (1 h à 1 h 30)</td><td>6 à 8 pièces</td><td>2 à 3 pièces, ou une part de gâteau</td><td>2 à 3 verres</td></tr>
+<tr><td>Apéritif dînatoire (2 h et plus)</td><td>12 à 16 pièces</td><td>3 à 5 pièces</td><td>4 à 5 verres</td></tr>
+<tr><td>Buffet repas</td><td>Une entrée, un plat, du fromage</td><td>Un dessert</td><td>4 à 5 verres</td></tr>
+</tbody>
+</table>
+<p>Si tu fais toi-même les courses, quelques repères utiles pour un apéritif dînatoire : 50 à 80 g de charcuterie et autant de fromage par personne, une baguette pour quatre ou cinq personnes, une bonne poignée de crudités à tremper, et un demi-litre d’eau par personne. Pour les boissons, une bouteille de vin ou de crémant sert environ six verres : compte une bouteille pour deux à trois personnes sur la soirée, et autant de boissons sans alcool que de boissons alcoolisées.</p>
+
+<h3>Les boissons</h3>
+<ul>
+<li><strong>Le verre du discours</strong> : un crémant ou un champagne pour trinquer au moment des discours, c’est le geste qui marque le coup.</li>
+<li><strong>Les boissons sans alcool</strong> : jus, eaux pétillantes, une citronnade maison. Une bonne partie des invités conduit, ou ne boit pas : prévois-en largement.</li>
+<li><strong>Dans les locaux de l’entreprise</strong>, le Code du travail n’autorise que le vin, la bière, le cidre et le poiré, et ton règlement intérieur peut être plus strict. Vérifie avec les ressources humaines avant de prévoir un cocktail.</li>
+<li><strong>Le café</strong> en fin de pot, surtout s’il a lieu le midi.</li>
+</ul>
+
+<h3>Le budget du buffet</h3>
+<p>À titre indicatif, et selon ta région :</p>
+<ul>
+<li><strong>Buffet fait maison</strong> ou participatif : environ 5 à 10&nbsp;€ par personne, boissons comprises.</li>
+<li><strong>Buffet mixte</strong> (quelques pièces de traiteur, le reste acheté ou préparé) : environ 10 à 15&nbsp;€ par personne.</li>
+<li><strong>Traiteur complet</strong>, avec service : souvent 20 à 35&nbsp;€ par personne et plus pour un apéritif dînatoire.</li>
+</ul>
+<p>Demande toujours deux ou trois devis, et pose les questions qui fâchent : le service est-il compris, la vaisselle, la livraison, le ramassage ?</p>
+
+<h3>Fait maison, traiteur ou participatif ?</h3>
+<ul>
+<li><strong>Le buffet participatif</strong> : chaque collègue apporte quelque chose. C’est convivial et presque gratuit, à une condition : un tableau partagé où chacun inscrit ce qu’il apporte (salé, sucré, boissons), sinon tu te retrouves avec douze quiches et aucun dessert.</li>
+<li><strong>Le traiteur</strong> : zéro stress, une présentation soignée, mais un budget plus élevé. Idéal au-delà de cinquante personnes.</li>
+<li><strong>Le mixte</strong> : les pièces salées chez le traiteur, le gâteau chez le boulanger ou le pâtissier, les boissons au supermarché. C’est souvent le meilleur compromis.</li>
+</ul>
+
+<h3>Des idées de buffet</h3>
+<p><strong>Côté salé :</strong> mini-quiches, cakes salés coupés en dés, verrines (houmous, guacamole, tzatziki), wraps roulés et tranchés, brochettes tomate cerise et mozzarella, gougères, mini-burgers, un plateau de charcuterie et de fromages, des crudités avec deux ou trois sauces.</p>
+<p><strong>Côté sucré :</strong> mignardises, brochettes de fruits, cookies, mini-tartelettes, et surtout <strong>le gâteau</strong>, avec un message ou une photo de la personne qui part.</p>
+<p><strong>La touche personnelle :</strong> les plats préférés de la personne fêtée, une spécialité de sa région d’origine, ou un buffet qui annonce sa retraite : un tour du monde en bouchées si elle rêve de voyager, un buffet du potager si elle va enfin cultiver son jardin.</p>
+<p>Dernier conseil : pense aux régimes particuliers (végétarien, sans gluten, sans porc) et étiquette les plats. Personne n’aime deviner ce qu’il y a dans une verrine.</p>
+
 <h2>Idées d’animation pour un pot de départ</h2>
+<h3>Les classiques qui marchent toujours</h3>
 <ul>
 <li><strong>Le diaporama des années</strong> : photos d’équipe, séminaires, fêtes de fin d’année. Demande des photos aux collègues un mois avant. Les vieilles photos font toujours rire.</li>
 <li><strong>Le quiz sur la carrière</strong> : en quelle année est-elle arrivée ? Quel était son premier bureau ? Quel logiciel a-t-elle maudit le plus ? Par équipes, avec un lot symbolique.</li>
 <li><strong>Le livre d’or</strong> : un beau carnet qui circule pendant le pot, pour que chacun écrive un mot. Pour les collègues absents ou en télétravail, collecte les messages à l’avance et colle-les dedans.</li>
 <li><strong>La vidéo surprise</strong> : quelques messages filmés par des anciens collègues, la famille, ou même un client fidèle.</li>
-<li><strong>L’appareil photo jetable partagé</strong> : un QR code sur les tables, chaque invité le scanne avec son téléphone et prend quelques clichés, sans les voir. Le lendemain, toutes les photos apparaissent d’un coup dans un album privé que la personne fêtée peut garder. C’est ce que propose <a href="/depart-retraite">Time to Flash pour un départ en retraite</a>, sans application à installer, et c’est 14,99 € pour 50 invités.</li>
+</ul>
+
+<h3>Des animations originales pour un départ en retraite</h3>
+<ul>
+<li><strong>L’appareil photo jetable partagé</strong> : un QR code sur les tables, chaque invité le scanne avec son téléphone et prend quelques clichés, sans les voir. Le lendemain, toutes les photos apparaissent d’un coup dans un album privé que la personne fêtée peut garder. C’est ce que propose <a href="/depart-retraite">Time to Flash pour un départ en retraite</a>, sans application à installer, et c’est 14,99&nbsp;€ pour 50 invités.</li>
+<li><strong>Le livre d’or audio</strong> : chaque invité enregistre un petit message vocal, signé d’un selfie, depuis son téléphone. Les organisateurs les écoutent et peuvent les faire découvrir à la personne qui part. Chez Time to Flash, c’est une option à 9,99&nbsp;€, qui s’ajoute à n’importe quelle formule payante.</li>
+<li><strong>Le diplôme du jeune retraité</strong> : un faux diplôme solennel, remis avec un « kit de survie » (un réveil cassé, un agenda vide, un chapeau de jardinier, une carte de pêche). Effet garanti au moment des discours.</li>
+<li><strong>La une de journal</strong> : une fausse page de quotidien qui raconte sa carrière, avec gros titre, photos d’archives et « témoignages » de collègues. Elle se lit pendant le pot et s’encadre ensuite.</li>
+<li><strong>La carte des envies</strong> : une grande carte du monde (ou de France) où chacun épingle un endroit à visiter, avec un mot. La personne repart avec son programme de retraite.</li>
+<li><strong>La boîte à conseils</strong> : chaque invité écrit sur une carte un conseil pour bien vivre sa retraite, sérieux ou non. On en lit quelques-uns à voix haute, et la boîte part avec la personne fêtée.</li>
+<li><strong>Le blind test de sa carrière</strong> : les tubes de l’année de son arrivée, puis ceux de chaque décennie passée dans l’entreprise. Par équipes, avec un buzzer.</li>
 <li><strong>Le « bingo des expressions »</strong> : une grille avec les phrases fétiches de la personne qui part. On coche pendant les discours.</li>
 </ul>
+<p>Une ou deux animations suffisent : le cœur du pot reste les discours et les moments où chacun vient dire un mot à la personne qui part.</p>
 
 <h2>Le cadeau collectif de départ en retraite</h2>
 <p>La cagnotte est la règle. Lance-la un mois avant, avec un message clair et sans montant imposé : chacun donne ce qu’il veut, et personne ne doit se sentir obligé. Quelques idées selon la personne :</p>
@@ -296,7 +245,7 @@ export const POSTS_OCCASIONS = [
 <h2>Le déroulé type d’un pot de départ</h2>
 <p>Pour un pot en fin de journée, d’environ deux heures, voici un déroulé qui fonctionne :</p>
 <ol>
-<li><strong>L’accueil (30 minutes)</strong> : boissons, buffet, livre d’or qui circule. Les invités arrivent au fil de l’eau, laisse-leur le temps.</li>
+<li><strong>L’accueil (30 minutes)</strong> : boissons, buffet, livre d’or qui circule, QR code de l’appareil photo sur les tables. Les invités arrivent au fil de l’eau, laisse-leur le temps.</li>
 <li><strong>Les discours (15 minutes)</strong> : quand la majorité est là, pas trop tard pour que personne ne soit déjà parti. Le manager, un collègue proche, puis la personne fêtée.</li>
 <li><strong>Le cadeau (5 minutes)</strong> : remis juste après les discours, devant tout le monde. Prévois quelqu’un pour prendre la photo.</li>
 <li><strong>L’animation (20 à 30 minutes)</strong> : diaporama, quiz ou vidéo surprise. Une seule suffit.</li>
@@ -330,8 +279,16 @@ export const POSTS_OCCASIONS = [
         a: 'Il n’y a pas de règle : chacun donne selon ses moyens et sa proximité avec la personne. Lance la cagnotte sans montant imposé, pour que personne ne se sente obligé.',
       },
       {
-        q: 'Quelle animation pour un pot de départ en retraite ?',
-        a: 'Le diaporama des années, le quiz sur la carrière, le livre d’or, la vidéo surprise de messages, et l’appareil photo jetable partagé pour que tous les invités prennent des photos et que la personne fêtée garde un album de la fête.',
+        q: 'Que mettre dans un buffet de départ à la retraite ?',
+        a: 'Des bouchées salées faciles à manger debout (mini-quiches, cakes salés, verrines, wraps, brochettes, charcuterie et fromages), quelques douceurs et un gâteau personnalisé, des boissons sans alcool en quantité et un crémant pour trinquer. Ajoute une touche personnelle : les plats préférés de la personne ou une spécialité de sa région.',
+      },
+      {
+        q: 'Combien de pièces par personne pour un pot de départ ?',
+        a: 'Pour un pot d’une heure à une heure et demie, compte 6 à 8 pièces salées et 2 à 3 pièces sucrées par personne. Pour un apéritif dînatoire qui remplace le repas, compte 12 à 16 pièces salées et 3 à 5 sucrées. Ajoute 10 % de marge.',
+      },
+      {
+        q: 'Quelle animation originale pour un départ en retraite ?',
+        a: 'Un appareil photo jetable partagé que tous les invités utilisent avec leur téléphone, un livre d’or audio de messages vocaux, un faux diplôme de jeune retraité avec son kit de survie, une fausse une de journal sur sa carrière, une carte du monde où chacun épingle un voyage à faire, ou un blind test des tubes de ses années dans l’entreprise.',
       },
     ],
   },
@@ -539,117 +496,6 @@ export const POSTS_OCCASIONS = [
 
 // Traductions : une entrée par slug, mêmes champs que journal-en.js.
 export const POSTS_OCCASIONS_EN = {
-  'album-photo-partage-mariage': {
-    title: 'Shared wedding photo album: how to set one up',
-    excerpt: 'Shared wedding photo album: Google Photos, iCloud, WhatsApp or an app? The options, a step-by-step setup and how to get every guest to join in.',
-    caption: 'The day after the wedding, guests discover the photos together over brunch',
-    body: `
-<p>The day after a wedding, the same question always comes up: “Can you send me your photos?” Every guest took a handful of pictures, and they are now sleeping on eighty different phones. A shared wedding photo album solves this: one place where all the guests’ photos end up, which everyone can browse and download.</p>
-<p>On paper, it is simple. In practice, most shared albums stay half empty. Here is how to choose the right tool, set it up, and above all make sure your guests actually take part.</p>
-
-<h2>What exactly is a shared wedding album?</h2>
-<p>It is a private online album that every guest can <strong>add</strong> photos to and everyone can <strong>view</strong>. The difference from the photographer’s album matters: the photographer delivers a polished selection, while the shared album gathers everyone’s point of view. Grandma on the dance floor, the best man’s selfie at 2am, the cake seen from the children’s table.</p>
-<p>A good shared album ticks four boxes:</p>
-<ul>
-<li><strong>Everyone can access it</strong>, whatever their phone (iPhone or Android).</li>
-<li><strong>Adding a photo takes seconds</strong>, with no account to create.</li>
-<li><strong>The album is private</strong>: only people with the link can see it.</li>
-<li><strong>You can download everything</strong> in one go to keep it.</li>
-</ul>
-
-<h2>The options, and what they are worth</h2>
-
-<h3>A shared Google Photos album</h3>
-<p>Free, and photo quality is well preserved. The catch: adding photos requires a Google account. Some of your iPhone guests don’t have one, or can’t remember it. You also have to send the link to people one by one.</p>
-
-<h3>A shared iCloud album</h3>
-<p>Very handy between iPhone users, as it is built into the Photos app. But guests on Android can’t add their photos to it. At a wedding of a hundred people, that leaves a lot of people out.</p>
-
-<h3>The WhatsApp group</h3>
-<p>Everyone already has it. But photos are compressed when sent, the thread mixes photos, messages and voice notes, and finding a picture three weeks later is quite a feat. We cover all this in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Photos or a dedicated app</a>.</p>
-
-<h3>Wedding “gallery” apps</h3>
-<p>These are online albums designed for weddings: a QR code, a page, and guests upload photos from their camera roll. It is simpler than a Google or iCloud album, and often free or cheap. Their limit is the same as every shared album: <strong>they are passive</strong>. They wait for guests to remember to upload, and many never do. The overview is in <a href="/journal/application-photo-mariage">our comparison of wedding photo apps</a>.</p>
-
-<h3>The shared disposable camera</h3>
-<p>This is a different approach: instead of asking guests to upload photos afterwards, you hand them a camera during the party. With <a href="/">Time to Flash</a>, each guest scans a QR code, the camera opens in their browser (nothing to install, no account), and they get a limited number of shots, just like a disposable. They can’t see their photos straight away. The next day, at the time you choose, everything is revealed at once in a private shared album.</p>
-<p>The difference from a gallery: here the album is not a folder to fill, it is the result of a game. Guests join in because it is fun during the evening, not because they were asked a favour the next day.</p>
-
-<h2>Gallery or disposable: how to choose</h2>
-<p>Ask yourself one question: <strong>do you want to collect the photos your guests already take, or make them want to take some?</strong></p>
-<ul>
-<li>If you mainly want to gather existing photos, with no activity, a gallery is enough. Just plan to remind your guests.</li>
-<li>If you want a photo activity during the party, with a surprise the next day, the shared disposable does both: the game during the evening and the shared album afterwards.</li>
-</ul>
-<p>Nothing stops you combining them: the disposable during the party, and a folder in your personal cloud to archive everything, alongside the photographer’s pictures.</p>
-
-<h2>Setting up the shared album, step by step</h2>
-<ol>
-<li><strong>Pick your tool a month before</strong>, not the night before. You will have time to test it with two or three close friends.</li>
-<li><strong>Create the album</strong> and give it a clear name (your first names and the date). With Time to Flash, it takes two minutes: number of guests, shots per person, reveal time.</li>
-<li><strong>Test it yourself</strong> on an iPhone and on an Android. Take a photo and check that it arrives.</li>
-<li><strong>Prepare the QR code</strong>: it is the way into the album. You can create a personalised sign with our <a href="/generateur-qr-code-mariage">wedding QR code generator</a>.</li>
-<li><strong>Print and place the signs</strong> where guests wait: the bar, the tables, the toilets, the cloakroom. The best spots are covered in <a href="/journal/ou-poser-le-qr-code">where to put the QR code</a>.</li>
-<li><strong>Appoint a helper</strong>: a bridesmaid or groomsman who knows the album and can help a lost guest.</li>
-</ol>
-
-<h2>Getting guests to take part</h2>
-<p>This is where it all happens. A shared album nobody knows about stays empty, whatever the tool.</p>
-<ul>
-<li><strong>Announce it beforehand</strong>: a line on the wedding website or in your last message to guests. They will arrive prepared.</li>
-<li><strong>Put up plenty of QR codes</strong>: a single QR code at the entrance goes unnoticed. One on every table, and everyone scans it while waiting for the starters.</li>
-<li><strong>Make an announcement on the mic</strong>: fifteen seconds during the drinks reception or at the start of dinner is enough. “Scan the QR code on your table, you have ten shots, and we’ll see everything tomorrow morning.”</li>
-<li><strong>Give a simple rule</strong>: a number of photos, a reveal time. Clear rules make people want to play.</li>
-</ul>
-<p>More tips for involving every guest in <a href="/journal/partager-photos-mariage-invites">how to share wedding photos with all your guests</a>.</p>
-
-<h2>The mistakes that leave a shared album empty</h2>
-<p>If you have ever created a shared album for a party, you know the story: a link sent out, three people uploading, then silence. These mistakes come up almost every time:</p>
-<ul>
-<li><strong>Sending the link after the party</strong>: the next day, everyone is tired, heading home, back at work. The message gets lost. The album has to exist and be known <em>during</em> the evening.</li>
-<li><strong>Requiring an account</strong>: every extra step loses participants. Nobody creates an account or digs out a password on a wedding night.</li>
-<li><strong>Forgetting some of the phones</strong>: a tool that only works on iPhone, or only on Android, leaves part of the family out.</li>
-<li><strong>Not explaining anything</strong>: a QR code with no sentence around it doesn’t say what it is for. Write clearly on the sign what happens when you scan it.</li>
-<li><strong>Relying on goodwill</strong>: uploading photos to an album is doing someone a favour. Taking photos with a disposable camera is playing. Playing motivates people far more than favours.</li>
-</ul>
-
-<h2>When should the album become visible?</h2>
-<p>Two schools of thought. With a classic gallery, photos are visible as soon as they are uploaded: you can look at them during the party, but the surprise is gone and some guests spend their evening scrolling.</p>
-<p>With a delayed reveal, nothing is visible before the chosen time. The next morning, at brunch, or on the evening you get back, everything appears at once. That is when everyone sends photos back and forth, and discovers what happened at the other end of the room. A tip: pick a time when guests are awake and free, for example 10 or 11am the next day.</p>
-<p>Before the reveal, as the organiser, you can hide an awkward photo. Handy when a cousin caught the wrong moment.</p>
-
-<h2>How to keep the shared album</h2>
-<p>A shared album is not an archive. Services change, links expire, albums get deleted. On Time to Flash, the album is kept for six months, and you are warned before it is deleted. To keep it forever:</p>
-<ul>
-<li><strong>Download all the photos</strong> in one go, in the days that follow.</li>
-<li><strong>Store them in two places</strong>: your computer and your personal cloud, for example.</li>
-<li><strong>Print the best ones</strong>: a photo book or a few prints, ordered straight from the album.</li>
-</ul>
-<p>Want to see what it looks like on the guests’ side? It is all explained on our <a href="/photos-mariage-invites">wedding guest photos</a> page.</p>
-`,
-    faq: [
-      {
-        q: 'How do I create a shared photo album for a wedding?',
-        a: 'Choose a tool (Google Photos or iCloud album, gallery app or shared disposable camera), create the album, test it on an iPhone and an Android, then print a QR code for your guests to scan on the day. With Time to Flash, setup takes two minutes and no guest needs an account.',
-      },
-      {
-        q: 'Do guests need to install an app?',
-        a: 'Not necessarily. A Google or iCloud album requires an account to add photos. Time to Flash works in the browser: guests scan the QR code, type their first name and take their photos, without installing anything.',
-      },
-      {
-        q: 'Does a shared iCloud album work with Android?',
-        a: 'An Android guest can view a publicly shared iCloud album through a link, but cannot add photos to it. For a wedding with phones of every brand, a tool that works in any browser is a better choice.',
-      },
-      {
-        q: 'How long does the shared album stay online?',
-        a: 'It depends on the service. On Time to Flash, the album is kept for six months and you are warned before it is deleted. Either way, download all the photos in the days that follow and store them in two places.',
-      },
-      {
-        q: 'Can a photo be removed from the shared album?',
-        a: 'Yes. On Time to Flash, the organiser can hide an awkward photo before the reveal so nobody sees it. If a guest asks for a photo of them to be removed, simply remove it.',
-      },
-    ],
-  },
   'idees-anniversaire-30-ans': {
     title: '30th birthday ideas: 15 ways to celebrate turning 30',
     excerpt: '30th birthday ideas: 15 practical ideas for venues, themes, party activities and group gifts to celebrate turning 30 without breaking the bank.',
@@ -759,11 +605,11 @@ export const POSTS_OCCASIONS_EN = {
     ],
   },
   'idees-pot-de-depart-retraite': {
-    title: 'Retirement party ideas: planning, speeches and gifts',
-    excerpt: 'Retirement party ideas: how to plan it, speeches, activities, group gifts and the mistakes to avoid for a send-off your colleague will remember.',
+    title: 'Retirement party ideas: buffet, activities and planning',
+    excerpt: 'Retirement party ideas: the buffet (quantities per person, budget), original activities, speeches, the group gift and a running order that works.',
     caption: 'Colleagues raise their glasses to a colleague who is retiring',
     body: `
-<p>A retirement send-off is not like any other leaving do. It marks the end of decades of work, sometimes at the same company, and the person leaving will remember it for a long time. The good news: a great retirement party doesn’t need a big budget, just a bit of organisation. Here is how to plan it, with ideas for activities and group gifts, and the mistakes to avoid.</p>
+<p>A retirement send-off is not like any other leaving do. It marks the end of decades of work, sometimes at the same company, and the person leaving will remember it for a long time. The good news: a great retirement party doesn’t need a big budget, just a bit of organisation. Here is how to plan it: the organising, the buffet (with quantities per person), original activities, the group gift and the mistakes to avoid.</p>
 
 <h2>Planning the retirement party: the basics</h2>
 
@@ -787,15 +633,79 @@ export const POSTS_OCCASIONS_EN = {
 <h3>The speeches</h3>
 <p>Plan two or three speeches, no more, and five minutes each at most. The manager for the career, a close colleague for the anecdotes, and the person leaving for the final word. The best stories are gathered quietly from colleagues beforehand. Skip the list of job titles: tell two or three stories that sum them up.</p>
 
+<h2>The retirement party buffet</h2>
+<p>This is often the part that worries organisers most: fear of running out, fear of throwing loads away. The good news is that quantities are fairly easy to work out, from two questions: how long does the party last, and does it replace a meal?</p>
+
+<h3>Which format to choose</h3>
+<ul>
+<li><strong>Drinks and nibbles</strong> (1 to 1.5 hours, late afternoon): a few savoury bites, a cake, drinks. The most common format when the party is held at the office.</li>
+<li><strong>A finger food dinner</strong> (2 hours or more, from 6.30pm): it replaces dinner, so you need more substantial bites, and more of them.</li>
+<li><strong>A buffet meal</strong> (at lunchtime, or on a Saturday with family): starters, cold or hot dishes, cheese, dessert, like a proper meal.</li>
+</ul>
+
+<h3>Quantities per person</h3>
+<p>The guidelines below are the ones caterers commonly use. Add a 10% margin if you don’t know exactly how many people will drop by.</p>
+<table>
+<thead><tr><th>Format</th><th>Savoury</th><th>Sweet</th><th>Drinks</th></tr></thead>
+<tbody>
+<tr><td>Drinks and nibbles (1 to 1.5 h)</td><td>6 to 8 pieces</td><td>2 to 3 pieces, or a slice of cake</td><td>2 to 3 glasses</td></tr>
+<tr><td>Finger food dinner (2 h or more)</td><td>12 to 16 pieces</td><td>3 to 5 pieces</td><td>4 to 5 glasses</td></tr>
+<tr><td>Buffet meal</td><td>A starter, a main, some cheese</td><td>A dessert</td><td>4 to 5 glasses</td></tr>
+</tbody>
+</table>
+<p>If you are doing the shopping yourself, a few useful benchmarks for a finger food dinner: 50 to 80 g of cold meats and the same of cheese per person, one baguette for every four or five people, a good handful of crudités for dipping, and half a litre of water per person. For drinks, a bottle of wine or sparkling wine pours about six glasses: allow one bottle for every two or three people over the evening, and as many soft drinks as alcoholic ones.</p>
+
+<h3>Drinks</h3>
+<ul>
+<li><strong>The toast</strong>: a glass of sparkling wine or champagne when the speeches start is the gesture that marks the occasion.</li>
+<li><strong>Soft drinks</strong>: juices, sparkling water, homemade lemonade. Plenty of guests will be driving or don’t drink: be generous.</li>
+<li><strong>At the office</strong>, check your company’s rules on alcohol before planning cocktails. In France, for example, the labour code only allows wine, beer, cider and perry at work, and internal rules can be stricter.</li>
+<li><strong>Coffee</strong> at the end, especially for a lunchtime party.</li>
+</ul>
+
+<h3>The buffet budget</h3>
+<p>As a rough guide, and depending on where you live:</p>
+<ul>
+<li><strong>Homemade or bring-a-dish buffet</strong>: around €5 to €10 per person, drinks included.</li>
+<li><strong>Mixed buffet</strong> (a few catered items, the rest bought or homemade): around €10 to €15 per person.</li>
+<li><strong>Full catering</strong>, with service: often €20 to €35 per person or more for a finger food dinner.</li>
+</ul>
+<p>Always ask for two or three quotes, and ask the awkward questions: is service included, the crockery, delivery, clearing up?</p>
+
+<h3>Homemade, caterer or bring-a-dish?</h3>
+<ul>
+<li><strong>Bring-a-dish</strong>: each colleague brings something. Friendly and almost free, on one condition: a shared sheet where everyone writes down what they are bringing (savoury, sweet, drinks), or you end up with twelve quiches and no dessert.</li>
+<li><strong>A caterer</strong>: zero stress, a polished presentation, but a bigger budget. Ideal for more than fifty people.</li>
+<li><strong>A mix</strong>: savoury bites from the caterer, the cake from the bakery, drinks from the supermarket. Often the best compromise.</li>
+</ul>
+
+<h3>Buffet ideas</h3>
+<p><strong>Savoury:</strong> mini quiches, savoury loaf cut into cubes, small pots of dips (hummus, guacamole, tzatziki), sliced wraps, cherry tomato and mozzarella skewers, cheese puffs, mini burgers, a board of cold meats and cheeses, crudités with two or three dips.</p>
+<p><strong>Sweet:</strong> petits fours, fruit skewers, cookies, mini tarts, and above all <strong>the cake</strong>, with a message or a photo of the retiree.</p>
+<p><strong>The personal touch:</strong> the retiree’s favourite dishes, a speciality from where they grew up, or a buffet that hints at their retirement: a world tour in bites if they dream of travelling, a vegetable garden buffet if they are finally going to grow their own.</p>
+<p>One last tip: think about special diets (vegetarian, gluten-free, no pork) and label the dishes. Nobody likes guessing what is in a little pot.</p>
+
 <h2>Retirement party activity ideas</h2>
+<h3>The classics that always work</h3>
 <ul>
 <li><strong>The slideshow through the years</strong>: team photos, away days, Christmas parties. Ask colleagues for photos a month ahead. Old photos always get a laugh.</li>
 <li><strong>The career quiz</strong>: what year did they join? Where was their first desk? Which software did they curse the most? In teams, with a token prize.</li>
 <li><strong>The guest book</strong>: a nice notebook passed around during the party so everyone can write a message. For absent or remote colleagues, collect messages beforehand and stick them in.</li>
 <li><strong>The surprise video</strong>: a few messages filmed by former colleagues, family, or even a loyal client.</li>
+</ul>
+
+<h3>Original ideas for a retirement send-off</h3>
+<ul>
 <li><strong>The shared disposable camera</strong>: a QR code on the tables, each guest scans it with their phone and takes a few shots without seeing them. The next day, all the photos appear at once in a private album the retiree can keep. That is what <a href="/depart-retraite">Time to Flash offers for a retirement party</a>, with no app to install, and it costs €14.99 for 50 guests.</li>
+<li><strong>The audio guest book</strong>: each guest records a short voice message, signed with a selfie, from their phone. The hosts listen to them and can share them with the retiree. At Time to Flash, it is a €9.99 option that can be added to any paid plan.</li>
+<li><strong>The new retiree’s diploma</strong>: a mock-solemn certificate, handed over with a “survival kit” (a broken alarm clock, an empty diary, a gardening hat, a fishing licence). Guaranteed laughs during the speeches.</li>
+<li><strong>The front page</strong>: a fake newspaper front page telling the story of their career, with a big headline, archive photos and “quotes” from colleagues. It gets read during the party and framed afterwards.</li>
+<li><strong>The wish map</strong>: a big map of the world where everyone pins a place to visit, with a note. The retiree leaves with their retirement plan.</li>
+<li><strong>The advice box</strong>: each guest writes a tip for enjoying retirement on a card, serious or not. A few are read out loud, and the box goes home with the retiree.</li>
+<li><strong>The career music quiz</strong>: the hits from the year they joined, then from each decade they spent at the company. In teams, with a buzzer.</li>
 <li><strong>Catchphrase bingo</strong>: a grid with the retiree’s favourite expressions. Tick them off during the speeches.</li>
 </ul>
+<p>One or two activities are enough: the heart of the party is still the speeches, and the moments when everyone comes to have a word with the retiree.</p>
 
 <h2>The group retirement gift</h2>
 <p>A collection is the norm. Start it a month ahead, with a clear message and no set amount: everyone gives what they want, and nobody should feel obliged. A few ideas depending on the person:</p>
@@ -810,7 +720,7 @@ export const POSTS_OCCASIONS_EN = {
 <h2>A typical running order</h2>
 <p>For an after-work party of about two hours, here is a running order that works:</p>
 <ol>
-<li><strong>Arrivals (30 minutes)</strong>: drinks, buffet, guest book going round. People arrive gradually, give them time.</li>
+<li><strong>Arrivals (30 minutes)</strong>: drinks, buffet, guest book going round, the camera QR code on the tables. People arrive gradually, give them time.</li>
 <li><strong>Speeches (15 minutes)</strong>: once most people are there, and not too late so nobody has already left. The manager, a close colleague, then the retiree.</li>
 <li><strong>The gift (5 minutes)</strong>: handed over right after the speeches, in front of everyone. Ask someone to take the photo.</li>
 <li><strong>The activity (20 to 30 minutes)</strong>: slideshow, quiz or surprise video. One is enough.</li>
@@ -844,8 +754,16 @@ export const POSTS_OCCASIONS_EN = {
         a: 'There is no rule: everyone gives according to their means and how close they are to the person. Start the collection with no set amount so nobody feels obliged.',
       },
       {
-        q: 'What activities work for a retirement party?',
-        a: 'A slideshow through the years, a career quiz, a guest book, a surprise video of messages, and a shared disposable camera so every guest takes photos and the retiree keeps an album of the party.',
+        q: 'What food should you serve at a retirement party buffet?',
+        a: 'Savoury bites that are easy to eat standing up (mini quiches, savoury loaf, dips, wraps, skewers, cold meats and cheese), a few sweet treats and a personalised cake, plenty of soft drinks and some sparkling wine for the toast. Add a personal touch: the retiree’s favourite dishes or a speciality from where they grew up.',
+      },
+      {
+        q: 'How many pieces per person for a retirement party?',
+        a: 'For a party of one to one and a half hours, allow 6 to 8 savoury pieces and 2 to 3 sweet pieces per person. For a finger food dinner that replaces a meal, allow 12 to 16 savoury and 3 to 5 sweet pieces. Add a 10% margin.',
+      },
+      {
+        q: 'What are some original activities for a retirement party?',
+        a: 'A shared disposable camera every guest uses with their phone, an audio guest book of voice messages, a mock diploma for the new retiree with a survival kit, a fake newspaper front page about their career, a world map where everyone pins a trip to take, or a music quiz of the hits from their years at the company.',
       },
     ],
   },
@@ -1038,117 +956,6 @@ export const POSTS_OCCASIONS_EN = {
 }
 
 export const POSTS_OCCASIONS_DE = {
-  'album-photo-partage-mariage': {
-    title: 'Gemeinsames Hochzeitsfotoalbum: so klappt es',
-    excerpt: 'Gemeinsames Hochzeitsfotoalbum: Google Fotos, iCloud, WhatsApp oder App? Die Optionen, die Einrichtung Schritt für Schritt und wie alle Gäste mitmachen.',
-    caption: 'Am Tag nach der Hochzeit entdecken Gäste die Fotos gemeinsam beim Brunch',
-    body: `
-<p>Am Tag nach einer Hochzeit kommt immer dieselbe Frage: „Kannst du mir deine Fotos schicken?“ Jeder Gast hat eine Handvoll Bilder gemacht, und die schlummern jetzt auf achtzig verschiedenen Handys. Ein gemeinsames Hochzeitsfotoalbum löst dieses Problem: ein einziger Ort, an dem alle Fotos der Gäste landen und den alle ansehen und herunterladen können.</p>
-<p>Auf dem Papier ist das einfach. In der Praxis bleiben die meisten geteilten Alben halb leer. So wählen Sie das richtige Werkzeug, richten es ein und sorgen vor allem dafür, dass Ihre Gäste wirklich mitmachen.</p>
-
-<h2>Was genau ist ein gemeinsames Hochzeitsalbum?</h2>
-<p>Ein privates Online-Album, in das jeder Gast Fotos <strong>hochladen</strong> und das jeder <strong>ansehen</strong> kann. Der Unterschied zum Album des Fotografen ist wichtig: Der Fotograf liefert eine sorgfältige Auswahl, das gemeinsame Album sammelt die Blickwinkel aller. Die Oma auf der Tanzfläche, das Selfie der Trauzeugen um 2 Uhr nachts, die Torte vom Kindertisch aus gesehen.</p>
-<p>Ein gutes gemeinsames Album erfüllt vier Punkte:</p>
-<ul>
-<li><strong>Alle haben Zugang</strong>, egal mit welchem Handy (iPhone oder Android).</li>
-<li><strong>Ein Foto hinzuzufügen dauert Sekunden</strong>, ohne ein Konto anzulegen.</li>
-<li><strong>Das Album ist privat</strong>: Nur wer den Link hat, sieht es.</li>
-<li><strong>Sie können alles</strong> auf einmal herunterladen und aufbewahren.</li>
-</ul>
-
-<h2>Die Möglichkeiten und was sie taugen</h2>
-
-<h3>Das geteilte Google-Fotos-Album</h3>
-<p>Kostenlos, und die Bildqualität bleibt gut erhalten. Der Haken: Zum Hinzufügen von Fotos braucht man ein Google-Konto. Ein Teil Ihrer iPhone-Gäste hat keins oder erinnert sich nicht mehr daran. Außerdem müssen Sie den Link jedem einzeln schicken.</p>
-
-<h3>Das geteilte iCloud-Album</h3>
-<p>Sehr praktisch unter iPhone-Nutzern, denn es ist in die Fotos-App eingebaut. Gäste mit Android können dort aber keine Fotos hinzufügen. Bei einer Hochzeit mit hundert Gästen bleiben so viele außen vor.</p>
-
-<h3>Die WhatsApp-Gruppe</h3>
-<p>Jeder hat sie schon. Aber die Fotos werden beim Senden komprimiert, der Verlauf mischt Fotos, Nachrichten und Sprachnachrichten, und ein Bild drei Wochen später wiederzufinden, ist eine Kunst. Mehr dazu in <a href="/journal/whatsapp-google-photos-mariage">WhatsApp, Google Fotos oder eigene App</a>.</p>
-
-<h3>Hochzeits-„Galerie“-Apps</h3>
-<p>Das sind Online-Alben speziell für Hochzeiten: ein QR-Code, eine Seite, und die Gäste laden Fotos aus ihrer Galerie hoch. Das ist einfacher als ein Google- oder iCloud-Album und oft kostenlos oder günstig. Ihre Grenze ist dieselbe wie bei allen geteilten Alben: <strong>Sie sind passiv</strong>. Sie warten darauf, dass die Gäste ans Hochladen denken, und viele denken nie daran. Den Überblick finden Sie in <a href="/journal/application-photo-mariage">unserem Vergleich der Hochzeitsfoto-Apps</a>.</p>
-
-<h3>Die gemeinsame Einwegkamera</h3>
-<p>Das ist ein anderer Ansatz: Statt die Gäste zu bitten, hinterher Fotos hochzuladen, geben Sie ihnen während der Feier eine Kamera. Mit <a href="/">Time to Flash</a> scannt jeder Gast einen QR-Code, die Kamera öffnet sich im Browser (nichts zu installieren, kein Konto), und er hat eine begrenzte Zahl an Aufnahmen, wie bei einer Einwegkamera. Die eigenen Fotos sieht man nicht sofort. Am nächsten Tag, zur von Ihnen gewählten Uhrzeit, erscheint alles auf einmal in einem privaten gemeinsamen Album.</p>
-<p>Der Unterschied zur Galerie: Hier ist das Album kein Ordner, den man füllen muss, sondern das Ergebnis eines Spiels. Die Gäste machen mit, weil es am Abend Spaß macht, nicht weil man sie am nächsten Tag um einen Gefallen bittet.</p>
-
-<h2>Galerie oder Einwegkamera: so entscheiden Sie</h2>
-<p>Stellen Sie sich eine einzige Frage: <strong>Wollen Sie die Fotos einsammeln, die Ihre Gäste ohnehin machen, oder ihnen Lust machen, welche zu machen?</strong></p>
-<ul>
-<li>Wenn Sie vor allem vorhandene Fotos sammeln wollen, ohne Programmpunkt, reicht eine Galerie. Planen Sie nur ein, Ihre Gäste zu erinnern.</li>
-<li>Wenn Sie eine Fotoaktion während der Feier möchten, mit Überraschung am nächsten Tag, erledigt die gemeinsame Einwegkamera beides: das Spiel am Abend und das gemeinsame Album danach.</li>
-</ul>
-<p>Sie können beides auch kombinieren: die Einwegkamera während der Feier und einen Ordner in Ihrer privaten Cloud, um alles zu archivieren, zusammen mit den Bildern des Fotografen.</p>
-
-<h2>Das gemeinsame Album einrichten, Schritt für Schritt</h2>
-<ol>
-<li><strong>Wählen Sie das Werkzeug einen Monat vorher</strong>, nicht am Vorabend. So bleibt Zeit, es mit zwei, drei Vertrauten zu testen.</li>
-<li><strong>Legen Sie das Album an</strong> und geben Sie ihm einen klaren Namen (Ihre Vornamen und das Datum). Mit Time to Flash dauert das zwei Minuten: Zahl der Gäste, Aufnahmen pro Person, Uhrzeit der Enthüllung.</li>
-<li><strong>Testen Sie es selbst</strong> auf einem iPhone und einem Android-Handy. Machen Sie ein Foto und prüfen Sie, ob es ankommt.</li>
-<li><strong>Bereiten Sie den QR-Code vor</strong>: Er ist der Eingang zum Album. Mit unserem <a href="/generateur-qr-code-mariage">QR-Code-Generator für Hochzeiten</a> können Sie ein persönliches Plakat erstellen.</li>
-<li><strong>Drucken und verteilen Sie die Plakate</strong> dort, wo Gäste warten: Bar, Tische, Toiletten, Garderobe. Die besten Plätze finden Sie in <a href="/journal/ou-poser-le-qr-code">wo der QR-Code hingehört</a>.</li>
-<li><strong>Bestimmen Sie eine Ansprechperson</strong>: eine Trauzeugin oder einen Trauzeugen, der das Album kennt und einem ratlosen Gast helfen kann.</li>
-</ol>
-
-<h2>Die Gäste zum Mitmachen bringen</h2>
-<p>Hier entscheidet sich alles. Ein gemeinsames Album, von dem niemand weiß, bleibt leer, egal mit welchem Werkzeug.</p>
-<ul>
-<li><strong>Kündigen Sie es vorher an</strong>: ein Satz auf der Hochzeitswebsite oder in der letzten Nachricht an die Gäste. Dann kommen sie vorbereitet.</li>
-<li><strong>Verteilen Sie viele QR-Codes</strong>: Ein einziger QR-Code am Eingang wird übersehen. Einer auf jedem Tisch, und alle scannen ihn, während sie auf die Vorspeise warten.</li>
-<li><strong>Machen Sie eine Ansage am Mikrofon</strong>: Fünfzehn Sekunden beim Sektempfang oder zu Beginn des Essens genügen. „Scannt den QR-Code auf eurem Tisch, ihr habt zehn Fotos, und morgen früh sehen wir alles.“</li>
-<li><strong>Geben Sie eine einfache Regel vor</strong>: eine Zahl an Fotos, eine Uhrzeit für die Enthüllung. Klare Regeln machen Lust aufs Mitspielen.</li>
-</ul>
-<p>Mehr Tipps, wie Sie jeden Gast einbinden, in <a href="/journal/partager-photos-mariage-invites">wie Sie die Hochzeitsfotos mit allen Gästen teilen</a>.</p>
-
-<h2>Die Fehler, die ein gemeinsames Album leer lassen</h2>
-<p>Wer schon einmal ein geteiltes Album für eine Feier angelegt hat, kennt das: ein verschickter Link, drei Leute laden etwas hoch, dann Funkstille. Diese Fehler kommen fast immer vor:</p>
-<ul>
-<li><strong>Den Link nach der Feier schicken</strong>: Am nächsten Tag sind alle müde, fahren nach Hause, arbeiten wieder. Die Nachricht geht unter. Das Album muss <em>während</em> des Abends existieren und bekannt sein.</li>
-<li><strong>Ein Konto verlangen</strong>: Jeder zusätzliche Schritt kostet Teilnehmer. Auf einer Hochzeit legt niemand ein Konto an oder sucht ein Passwort.</li>
-<li><strong>Einen Teil der Handys vergessen</strong>: Ein Werkzeug, das nur auf dem iPhone oder nur auf Android läuft, schließt einen Teil der Familie aus.</li>
-<li><strong>Nichts erklären</strong>: Ein QR-Code ohne einen Satz dazu sagt nicht, wofür er da ist. Schreiben Sie klar auf das Plakat, was beim Scannen passiert.</li>
-<li><strong>Auf guten Willen setzen</strong>: Fotos in ein Album hochzuladen ist ein Gefallen. Mit einer Einwegkamera zu fotografieren ist ein Spiel. Spielen motiviert viel mehr als Gefallen.</li>
-</ul>
-
-<h2>Wann soll das Album sichtbar werden?</h2>
-<p>Zwei Schulen. Bei einer klassischen Galerie sind die Fotos sichtbar, sobald sie hochgeladen sind: Man kann sie schon während der Feier ansehen, aber die Überraschung ist weg, und manche Gäste scrollen den ganzen Abend.</p>
-<p>Bei einer verzögerten Enthüllung ist vor der gewählten Uhrzeit nichts zu sehen. Am nächsten Morgen, beim Brunch oder am Abend nach der Heimkehr erscheint alles auf einmal. Das ist der Moment, in dem sich alle die Fotos hin und her schicken und entdecken, was am anderen Ende des Saals los war. Ein Tipp: Wählen Sie eine Uhrzeit, zu der die Gäste wach sind und Zeit haben, zum Beispiel 10 oder 11 Uhr am nächsten Tag.</p>
-<p>Vor der Enthüllung können Sie als Organisator ein unvorteilhaftes Foto ausblenden. Praktisch, wenn ein Cousin den falschen Moment erwischt hat.</p>
-
-<h2>So bewahren Sie das gemeinsame Album auf</h2>
-<p>Ein geteiltes Album ist kein Archiv. Dienste ändern sich, Links laufen ab, Alben werden gelöscht. Bei Time to Flash wird das Album sechs Monate aufbewahrt, und Sie werden vor der Löschung benachrichtigt. Damit es für immer bleibt:</p>
-<ul>
-<li><strong>Laden Sie alle Fotos</strong> in den Tagen danach auf einmal herunter.</li>
-<li><strong>Speichern Sie sie an zwei Orten</strong>: zum Beispiel auf Ihrem Computer und in Ihrer privaten Cloud.</li>
-<li><strong>Lassen Sie die schönsten drucken</strong>: ein Fotobuch oder ein paar Abzüge, direkt aus dem Album bestellt.</li>
-</ul>
-<p>Sie möchten sehen, wie das für die Gäste aussieht? Alles steht auf unserer Seite <a href="/photos-mariage-invites">Hochzeitsfotos der Gäste</a>.</p>
-`,
-    faq: [
-      {
-        q: 'Wie erstelle ich ein gemeinsames Fotoalbum für die Hochzeit?',
-        a: 'Wählen Sie ein Werkzeug (Google-Fotos- oder iCloud-Album, Galerie-App oder gemeinsame Einwegkamera), legen Sie das Album an, testen Sie es auf einem iPhone und einem Android-Handy und drucken Sie einen QR-Code, den Ihre Gäste am großen Tag scannen. Mit Time to Flash dauert die Einrichtung zwei Minuten, und kein Gast braucht ein Konto.',
-      },
-      {
-        q: 'Müssen die Gäste eine App installieren?',
-        a: 'Nicht unbedingt. Ein Google- oder iCloud-Album verlangt ein Konto, um Fotos hinzuzufügen. Time to Flash funktioniert im Browser: Die Gäste scannen den QR-Code, tippen ihren Vornamen ein und fotografieren, ohne etwas zu installieren.',
-      },
-      {
-        q: 'Funktioniert ein geteiltes iCloud-Album mit Android?',
-        a: 'Ein Gast mit Android kann ein öffentlich geteiltes iCloud-Album über einen Link ansehen, aber keine Fotos hinzufügen. Für eine Hochzeit mit Handys aller Marken ist ein Werkzeug besser, das in jedem Browser läuft.',
-      },
-      {
-        q: 'Wie lange bleibt das gemeinsame Album online?',
-        a: 'Das hängt vom Dienst ab. Bei Time to Flash wird das Album sechs Monate aufbewahrt, und Sie werden vor der Löschung benachrichtigt. Laden Sie in jedem Fall alle Fotos in den Tagen danach herunter und speichern Sie sie an zwei Orten.',
-      },
-      {
-        q: 'Kann man ein Foto aus dem gemeinsamen Album entfernen?',
-        a: 'Ja. Bei Time to Flash kann der Organisator ein unvorteilhaftes Foto vor der Enthüllung ausblenden, damit niemand es sieht. Wenn ein Gast darum bittet, ein Foto von sich zu entfernen, entfernen Sie es einfach.',
-      },
-    ],
-  },
   'idees-anniversaire-30-ans': {
     title: 'Ideen zum 30. Geburtstag: 15 Ideen zum Feiern',
     excerpt: 'Ideen zum 30. Geburtstag: 15 konkrete Ideen für Location, Motto, Programm und Gruppengeschenk, um den 30. zu feiern, ohne pleite zu gehen.',
