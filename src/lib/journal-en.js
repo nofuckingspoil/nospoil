@@ -7,7 +7,7 @@
 
 export const POSTS_EN = {
   'application-appareil-photo-jetable-mariage': {
-    title: 'Disposable camera apps: the 5 best for a wedding',
+    title: 'Disposable camera apps for weddings: the 5 best compared',
     excerpt: 'Scene, POV, Reveal, Fotify, Time to Flash: which apps really work like a disposable camera, which ones need installing, and what they cost.',
     caption: 'A guest scans the QR code placed on a wedding table',
     body: `
@@ -1114,6 +1114,10 @@ export const POSTS_EN = {
 <h2>The ones your photographer won’t take</h2>
 <p>Look at the list: numbers 32, 33, 34, 41, 48 and 50 are almost always missing. Not through carelessness: the photographer is simply somewhere else, or has already left. These are exactly the photos your guests take naturally.</p>
 
+<blockquote class="dj-quote">“Our guests took 312 photos. We framed four; none of them came from the photographer.”
+  <cite>Camille &amp; Tom · June 2026</cite>
+</blockquote>
+
 <h2>How to use it</h2>
 <p>Copy the list into a document, one line per photo, and add names where needed (“childhood friends: Hugo, Chloe, Yanis”). Send it to your photographer two weeks before, highlighting your five absolute priorities. For the rest, don’t rely on a general instruction like “take photos!”: give your guests a clear constraint (a few shots each) and they will do the job with care (see <a href="/journal/dix-cliches">why 10 shots beat 300</a>).</p>
 <p>That is the principle of <a href="/">Time to Flash</a>: each guest gets a small number of photos to take, and the whole album is revealed the next day.</p>
@@ -1237,6 +1241,10 @@ export const POSTS_EN = {
 
 <h2>6. The 90-second rule</h2>
 <p>One group = 90 seconds. The photographer takes three or four pictures, and you move on to the next. That is plenty: beyond that, smiles freeze and the group drifts apart. Time is almost never lost during the photo itself, but between two groups, while someone is being looked for. Hence the importance of the caller.</p>
+
+<blockquote class="dj-quote">“We announced it on the microphone: group photos, twenty minutes, starting with the grandparents. Nobody complained.”
+  <cite>Léa &amp; Marius · 2026</cite>
+</blockquote>
 
 <h2>The big photo of all the guests</h2>
 <p>It is the most spectacular photo, and the hardest: a hundred people don’t fit into a frame taken at eye level. The secret is <strong>height</strong>.</p>

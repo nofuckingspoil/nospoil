@@ -92,7 +92,7 @@ const ALL_POSTS = [
     // sortent. Faits concurrents relevés sur leurs sites le 17/09/2026.
     slug: 'application-appareil-photo-jetable-mariage',
     cat: 'Photo',
-    title: 'Appli appareil photo jetable : les 5 meilleures pour un mariage',
+    title: 'Appli appareil photo jetable mariage : les 5 meilleures comparées',
     excerpt: 'Notre avis sur Reveal, Scene, POV, Fotify et Time to Flash : prix, nombre de poses, avec ou sans téléchargement. Le tableau pour choisir en 2 minutes.',
     author: 'Camille Rouzaud',
     date: '2026-09-17',
@@ -1322,6 +1322,10 @@ const ALL_POSTS = [
 <h2>Celles que ton photographe ne prendra pas</h2>
 <p>Regarde la liste : les numéros 32, 33, 34, 41, 48 et 50 sont presque toujours manquantes. Pas par négligence : le photographe est simplement ailleurs, ou déjà parti. Ce sont exactement les photos que tes invités, eux, prennent naturellement.</p>
 
+<blockquote class="dj-quote">« Nos invités ont pris 312 photos. On en a encadré quatre ; aucune ne venait du photographe. »
+  <cite>Camille &amp; Tom · juin 2026</cite>
+</blockquote>
+
 <h2>Comment t’en servir</h2>
 <p>Recopie la liste dans un document, une ligne par photo, et ajoute les prénoms là où il en faut (« les amis d’enfance : Hugo, Chloé, Yanis »). Envoie-la à ton photographe deux semaines avant, en surlignant tes cinq priorités absolues. Pour le reste, ne compte pas sur une consigne générale du type « prenez des photos ! » : donne à tes invités une contrainte claire (quelques clichés chacun) et ils feront le travail avec attention (voir <a href="/journal/dix-cliches">pourquoi 10 clichés valent mieux que 300</a>).</p>
 <p>C’est le principe de <a href="/">Time to Flash</a> : chaque invité reçoit un petit nombre de photos à prendre, et l’album complet se dévoile le lendemain.</p>
@@ -1460,6 +1464,10 @@ const ALL_POSTS = [
 
 <h2>6. La règle des 90 secondes</h2>
 <p>Un groupe = 90 secondes. Le photographe prend trois ou quatre images, et on passe au suivant. C’est largement suffisant : au-delà, les sourires se figent et le groupe se disperse. Le temps ne se perd presque jamais pendant la photo elle-même, mais entre deux groupes, quand on cherche quelqu’un. D’où l’importance de l’appeleur.</p>
+
+<blockquote class="dj-quote">« On a annoncé au micro : photos de groupe, vingt minutes, on commence par les grands-parents. Personne ne s’est plaint. »
+  <cite>Léa &amp; Marius · 2026</cite>
+</blockquote>
 
 <h2>La grande photo de tous les invités</h2>
 <p>C’est la photo la plus spectaculaire, et la plus difficile : cent personnes ne tiennent pas dans un cadre pris à hauteur d’homme. Le secret, c’est la <strong>hauteur</strong>.</p>
