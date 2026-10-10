@@ -17,7 +17,7 @@ const TEXTES_MARQUE = {
   },
   de: {
     tagline: 'Die digitale Einwegkamera für Ihre Events.',
-    pitch: 'Ein QR-Code, eine begrenzte Anzahl an Fotos pro Gast, alle Bilder werden erst nach Ihrer Feier präsentiert. Keine App nötig.',
+    pitch: 'Ein QR-Code, eine begrenzte Anzahl an Fotos pro Gast, alle Bilder werden erst nach der Feier präsentiert. Keine App nötig.',
   },
 }
 
