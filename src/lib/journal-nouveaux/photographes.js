@@ -20,6 +20,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'photographe-mariage-photos-invites',
+    image: '/journal/photographe-mariage-photos-invites.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Photographe mariage : les photos des invités sont vos alliées',
@@ -190,6 +191,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'logiciel-photographe-mariage',
+    image: '/journal/logiciel-photographe-mariage.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Logiciel photographe mariage : la boîte à outils pro 2026',
@@ -394,6 +396,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'delai-livraison-photos-mariage',
+    image: '/journal/delai-livraison-photos-mariage.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Délai de livraison des photos de mariage : gérer l’attente',
@@ -566,6 +569,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'invites-telephone-photographe-mariage',
+    image: '/journal/invites-telephone-photographe-mariage.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Invités au téléphone : 17 techniques pour photographe de mariage',

@@ -25,6 +25,7 @@ export const POSTS = [
     // jour le 16/09/2026) ; témoins : article 75 du Code civil (2 à 4) ;
     // impôts : impots.gouv.fr (signalement sous 60 jours).
     slug: 'retroplanning-mariage',
+    image: '/journal/retroplanning-mariage.webp',
     cat: 'Organisation',
     title: 'Rétroplanning mariage : la checklist complète de J-18 mois à J+1',
     excerpt: 'Toutes les tâches à cocher de 18 mois avant au lendemain, les délais par prestataire, la mairie, le budget, et un planning express en 6 ou 3 mois.',

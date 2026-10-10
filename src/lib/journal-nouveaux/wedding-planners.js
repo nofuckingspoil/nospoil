@@ -24,6 +24,7 @@ export const POSTS = [
     // Angle : chaque service avec intérêt mariés / effort et marge / comment le
     // vendre, tableau récapitulatif, et méthode de présentation (packs).
     slug: 'services-wedding-planner',
+    image: '/journal/services-wedding-planner.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Prestations wedding planner : 12 services pour vous démarquer',
@@ -227,6 +228,7 @@ export const POSTS = [
     // obligatoire depuis le 01/09/2026, émission au 01/09/2027 pour les
     // micro-entreprises). Outils cités : tous vérifiés par recherche, sans prix.
     slug: 'devenir-wedding-planner-outils',
+    image: '/journal/devenir-wedding-planner-outils.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Devenir wedding planner : statut, formation et outils en 2026',
@@ -455,6 +457,7 @@ export const POSTS = [
     // demander un avis). Salon du Mariage de Paris : deux éditions en 2026
     // (janvier et septembre, Porte de Versailles), vérifié.
     slug: 'trouver-clients-wedding-planner',
+    image: '/journal/trouver-clients-wedding-planner.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Trouver des clients wedding planner : 8 canaux, un plan 90 jours',
@@ -653,6 +656,7 @@ export const POSTS = [
     // prestataires, créneau QR au vin d'honneur et révélation le lendemain.
     // Rappel vérifié : le mariage civil doit précéder la cérémonie religieuse.
     slug: 'deroule-jour-j-mariage',
+    image: '/journal/deroule-jour-j-mariage.webp',
     cat: 'Organisation',
     title: 'Déroulé mariage : le planning du jour J heure par heure',
     excerpt: 'Un modèle de déroulé de mariage de 9 h à 4 h du matin, ses variantes (hiver, matin, brunch), les marges à prévoir et la fiche à donner aux prestataires.',

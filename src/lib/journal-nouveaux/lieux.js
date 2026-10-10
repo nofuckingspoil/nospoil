@@ -26,6 +26,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'attirer-maries-lieu-reception',
+    image: '/journal/attirer-maries-lieu-reception.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Attirer des mariés dans votre lieu de réception : 12 leviers',
@@ -237,6 +238,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'animations-lieu-reception-mariage',
+    image: '/journal/animations-lieu-reception-mariage.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Animations pour domaine de mariage : que proposer, à quel prix',
@@ -438,6 +440,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'wifi-lieu-reception-mariage',
+    image: '/journal/wifi-lieu-reception-mariage.webp',
     cat: 'Prestataires',
     cible: 'pro',
     title: 'Wifi dans une salle de mariage : le guide du lieu de réception',

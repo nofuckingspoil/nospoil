@@ -21,6 +21,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'idees-animation-mariage',
+    image: '/journal/idees-animation-mariage.webp',
     cat: 'Organisation',
     title: 'Animation mariage originale : 36 idées par moment et budget',
     excerpt: 'Animation mariage originale : 36 idées classées de la cérémonie au brunch, avec prix, effort et conseils de rythme pour ne jamais laisser tes invités s’ennuyer.',
@@ -391,6 +392,7 @@ export const POSTS = [
   // ----------------------------------------------------------
   {
     slug: 'questions-lieu-reception-mariage',
+    image: '/journal/questions-lieu-reception-mariage.webp',
     cat: 'Organisation',
     title: 'Questions à poser au lieu de réception de mariage (checklist)',
     excerpt: 'Les questions à poser au lieu de réception de ton mariage, thème par thème, avec ce qui se cache derrière chaque réponse et une checklist à imprimer.',
