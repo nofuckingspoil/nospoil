@@ -8,14 +8,14 @@
 //  l'envoi : Vercel refuse les requêtes de plus de 4,5 Mo et une photo de
 //  téléphone dépasse souvent ce poids.
 // ============================================================
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   FORMULAIRES, METIERS_FICHE, OFFRE, LIMITES_FICHE, validerFiche, deptDuCodePostal,
-  codePostalDansAdresse, versPseudo, siteAffiche,
+  codePostalDansAdresse, versLienReseau, siteAffiche,
 } from '../../lib/partenaires'
 
 const VIDE = { entreprise: '', metier: '', codePostal: '', adresse: '', description: '', site: '', instagram: '', tiktok: '', facebook: '', prenom: '', nom: '', email: '', telephone: '', accord: false, site_web_2: '' }
-const RESEAUX = [['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook']]
+const RESEAUX = [['instagram', 'Instagram', 'https://instagram.com/votrecompte'], ['tiktok', 'TikTok', 'https://tiktok.com/@votrecompte'], ['facebook', 'Facebook', 'https://facebook.com/votrepage']]
 
 async function reduirePhoto(fichier) {
   try {
@@ -30,6 +30,65 @@ async function reduirePhoto(fichier) {
   } catch {
     return fichier // le serveur réessaiera avec sharp
   }
+}
+
+// Adresse du lieu, avec suggestions du service public d'adresses (Base
+// Adresse Nationale, via la Géoplateforme de l'IGN). Rien n'est imposé : on
+// peut toujours taper l'adresse à la main, le code postal suffit.
+function ChampAdresse({ value, onChange, erreur }) {
+  const [suggestions, setSuggestions] = useState([])
+  const [ouvert, setOuvert] = useState(false)
+  const [actif, setActif] = useState(-1)
+  const choisie = useRef('')
+
+  useEffect(() => {
+    const q = value.trim()
+    if (q.length < 4 || q === choisie.current) { setSuggestions([]); return }
+    const ctrl = new AbortController()
+    const minuteur = setTimeout(async () => {
+      try {
+        const r = await fetch(`https://data.geopf.fr/geocodage/search?q=${encodeURIComponent(q)}&limit=5&autocomplete=1`, { signal: ctrl.signal })
+        const d = r.ok ? await r.json() : null
+        const liste = (d?.features || []).map((x) => x.properties?.label).filter(Boolean)
+        setSuggestions(liste); setActif(-1); setOuvert(liste.length > 0)
+      } catch { /* hors ligne ou service lent : on tape à la main */ }
+    }, 250)
+    return () => { clearTimeout(minuteur); ctrl.abort() }
+  }, [value])
+
+  function choisir(label) {
+    choisie.current = label
+    onChange(label)
+    setOuvert(false); setSuggestions([])
+  }
+  function clavier(e) {
+    if (!ouvert || !suggestions.length) return
+    if (e.key === 'ArrowDown') { e.preventDefault(); setActif((i) => (i + 1) % suggestions.length) }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); setActif((i) => (i <= 0 ? suggestions.length - 1 : i - 1)) }
+    else if (e.key === 'Enter' && actif >= 0) { e.preventDefault(); choisir(suggestions[actif]) }
+    else if (e.key === 'Escape') setOuvert(false)
+  }
+
+  return (
+    <div className="pp-champ pp-adresse">
+      <label htmlFor="pp-adresse">Adresse du lieu</label>
+      <input id="pp-adresse" type="text" value={value} placeholder="Numéro, rue, code postal, commune" autoComplete="off"
+        role="combobox" aria-expanded={ouvert} aria-controls="pp-adresse-liste" aria-autocomplete="list"
+        aria-activedescendant={actif >= 0 ? `pp-adresse-${actif}` : undefined}
+        onChange={(e) => onChange(e.target.value)} onKeyDown={clavier}
+        onFocus={() => suggestions.length && setOuvert(true)} onBlur={() => setTimeout(() => setOuvert(false), 150)}
+        maxLength={LIMITES_FICHE.adresse} className={erreur ? 'pp-invalide' : ''} aria-invalid={!!erreur} />
+      {ouvert && (
+        <ul id="pp-adresse-liste" role="listbox" className="pp-suggestions">
+          {suggestions.map((l, i) => (
+            <li key={l} id={`pp-adresse-${i}`} role="option" aria-selected={i === actif} className={i === actif ? 'actif' : ''}
+              onMouseDown={(e) => { e.preventDefault(); choisir(l) }}>{l}</li>
+          ))}
+        </ul>
+      )}
+      {erreur && <span className="pp-err">{erreur}</span>}
+    </div>
+  )
 }
 
 export default function FormulaireFiche({ cle, provenance }) {
@@ -55,7 +114,6 @@ export default function FormulaireFiche({ cle, provenance }) {
     setErreursServeur((x) => ({ ...x, [k]: undefined }))
     setF((s) => ({ ...s, [k]: v }))
   }
-  const setReseau = (k) => (e) => setF((s) => ({ ...s, [k]: versPseudo(k, e.target.value) }))
 
   async function choisirPhoto(e) {
     const fichier = e.target.files && e.target.files[0]
@@ -90,7 +148,7 @@ export default function FormulaireFiche({ cle, provenance }) {
   const d = deptDuCodePostal(cp)
   const metierLabel = metier ? METIERS_FICHE[metier]?.label : 'Votre métier'
   const web = siteAffiche(f.site)
-  const reseaux = RESEAUX.filter(([k]) => f[k] && f[k] !== '@').map(([k, l]) => `${l} ${f[k]}`)
+  const reseaux = RESEAUX.filter(([k]) => f[k] && versLienReseau(k, f[k])).map(([, l]) => `${l} ↗`)
 
   const champ = (k, label, props = {}) => (
     <div className="pp-champ">
@@ -121,7 +179,10 @@ export default function FormulaireFiche({ cle, provenance }) {
               )}
               {!estLieu && champ('codePostal', 'Code postal', { inputMode: 'numeric', maxLength: 5, placeholder: '44000', autoComplete: 'postal-code' })}
             </div>
-            {estLieu && champ('adresse', 'Adresse du lieu', { placeholder: 'Numéro, rue, code postal, commune', autoComplete: 'street-address' })}
+            {estLieu && (
+              <ChampAdresse value={f.adresse} erreur={err.adresse}
+                onChange={(v) => { setErreursServeur((x) => ({ ...x, adresse: undefined })); setF((s) => ({ ...s, adresse: v })) }} />
+            )}
             <div className="pp-champ">
               <label htmlFor="pp-description">{m.descLabel}</label>
               <textarea id="pp-description" rows={3} maxLength={LIMITES_FICHE.description} value={f.description} onChange={set('description')}
@@ -135,14 +196,16 @@ export default function FormulaireFiche({ cle, provenance }) {
             <div className="pp-champ">
               <label>Réseaux sociaux <span className="pp-facultatif">· facultatif</span></label>
               <div className="pp-reseaux">
-                {RESEAUX.map(([k, l]) => (
+                {RESEAUX.map(([k, l, ph]) => (
                   <div key={k} className="pp-reseau">
                     <span>{l}</span>
-                    <input type="text" value={f[k]} onChange={setReseau(k)} placeholder="@votrecompte" maxLength={LIMITES_FICHE[k]} aria-label={l} />
+                    <input type="url" inputMode="url" value={f[k]} onChange={set(k)} placeholder={ph} maxLength={LIMITES_FICHE[k]} aria-label={`Lien ${l}`}
+                      className={err[k] ? 'pp-invalide' : ''} />
+                    {err[k] && <span className="pp-err">{err[k]}</span>}
                   </div>
                 ))}
               </div>
-              <span className="pp-aide">Collez le lien de votre profil : le @ est récupéré automatiquement.</span>
+              <span className="pp-aide">Collez le lien de votre profil, tel qu’il apparaît dans votre navigateur.</span>
             </div>
             <div className="pp-champ">
               <label>{m.photoLabel} <span className="pp-facultatif">· facultatif</span></label>
@@ -206,7 +269,7 @@ export default function FormulaireFiche({ cle, provenance }) {
             <p className={f.description.trim() ? '' : 'pp-vide'}>{f.description.trim() || 'Votre présentation en deux phrases apparaît ici.'}</p>
             <div className="pp-liens-mono">
               <span className={web ? '' : 'pp-vide'}>{web || m.sitePh}</span>
-              {(reseaux.length ? reseaux : ['@votrecompte']).map((r) => <span key={r} className={reseaux.length ? '' : 'pp-vide'}>{r}</span>)}
+              {(reseaux.length ? reseaux : ['Vos réseaux']).map((r) => <span key={r} className={reseaux.length ? '' : 'pp-vide'}>{r}</span>)}
             </div>
             <span className="pp-badge"><span className="pp-etoile">✱</span> Partenaire Time to Flash {OFFRE.annee}</span>
           </div>

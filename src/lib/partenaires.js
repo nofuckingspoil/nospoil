@@ -50,21 +50,31 @@ export function deptDuCodePostal(cp) {
 }
 export const codePostalDansAdresse = (adresse) => ((adresse || '').match(/\b\d{5}\b/) || [])[0] || ''
 
-// ---------- Réseaux sociaux : un lien collé devient un @pseudo ----------
-const RESEAUX = { instagram: /instagram\.com/i, tiktok: /tiktok\.com/i, facebook: /(facebook|fb)\.com/i }
-const SEGMENTS_IGNORES = ['pages', 'pg', 'people', 'p', 'reel', 'reels', 'stories', 'share', 'profile.php']
-export function versPseudo(reseau, brut) {
+// ---------- Réseaux sociaux ----------
+// Le lien d'un profil, tel que le pro l'a collé (ou reconstruit depuis un
+// @pseudo tapé à la main). Renvoie '' si rien, null si ce n'est pas un lien
+// du bon réseau (une adresse Facebook dans la case Instagram, par exemple).
+const HOTES_RESEAUX = { instagram: /(^|\.)instagram\.com$/i, tiktok: /(^|\.)tiktok\.com$/i, facebook: /(^|\.)(facebook\.com|fb\.com)$/i }
+export function versLienReseau(reseau, brut) {
   const v = String(brut || '').trim()
   if (!v) return ''
-  if (/^(https?:\/\/)?([a-z0-9-]+\.)*[a-z0-9-]+\.[a-z]{2,}\//i.test(v) || RESEAUX[reseau]?.test(v)) {
-    const chemin = v.replace(/^(https?:\/\/)?[^/]+\/?/i, '').split(/[?#]/)[0]
-    const segs = chemin.split('/').filter(Boolean).map((s) => s.replace(/^@/, ''))
-    const seg = segs.find((s) => !SEGMENTS_IGNORES.includes(s.toLowerCase()) && !/^\d+$/.test(s)) || ''
-    try { return seg ? '@' + decodeURIComponent(seg) : '' } catch { return seg ? '@' + seg : '' }
+  if (/[./]/.test(v) && !/^@/.test(v)) {
+    let u
+    try { u = new URL(/^https?:\/\//i.test(v) ? v : `https://${v}`) } catch { return null }
+    if (!HOTES_RESEAUX[reseau]?.test(u.hostname)) return null
+    const chemin = u.pathname.replace(/\/+$/, '')
+    if (!chemin) return null
+    // Facebook range parfois le profil dans ?id= : on le garde, le reste s'en va.
+    const id = reseau === 'facebook' && u.searchParams.get('id') ? `?id=${u.searchParams.get('id')}` : ''
+    const hote = /^vm\./i.test(u.hostname) ? u.hostname : /(^|\.)fb\.com$/i.test(u.hostname) ? 'www.facebook.com' : u.hostname.replace(/^(m|web|fr-fr|fr)\./i, 'www.').replace(/^(?!www\.)/, 'www.')
+    return `https://${hote}${chemin}${id}`
   }
-  return '@' + v.replace(/^@+/, '').replace(/\s+/g, '')
+  const pseudo = v.replace(/^@+/, '')
+  return /^[\w.\-]{1,60}$/.test(pseudo) ? lienReseau(reseau, pseudo) : null
 }
+
 export function lienReseau(reseau, pseudo) {
+  if (/^https?:\/\//i.test(String(pseudo || ''))) return pseudo
   const p = String(pseudo || '').replace(/^@/, '')
   if (!p) return null
   if (reseau === 'instagram') return `https://www.instagram.com/${encodeURIComponent(p)}/`
@@ -87,7 +97,7 @@ export function slugifier(s) {
 
 // ---------- Limites et validation (formulaire et serveur, mêmes règles) ----------
 export const LIMITES_FICHE = {
-  entreprise: 120, description: 220, site: 200, instagram: 80, tiktok: 80, facebook: 120,
+  entreprise: 120, description: 220, site: 200, instagram: 200, tiktok: 200, facebook: 200,
   prenom: 60, nom: 80, email: 160, telephone: 30, adresse: 200,
 }
 
@@ -105,6 +115,9 @@ export function validerFiche(f, cle) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(f.email || '').trim())) e.email = 'Email invalide.'
   if (String(f.telephone || '').replace(/\D/g, '').length < 10) e.telephone = 'Numéro à 10 chiffres.'
   if (!f.accord) e.accord = 'Cochez la case pour que votre fiche puisse être publiée.'
+  for (const [k, nom] of [['instagram', 'Instagram'], ['tiktok', 'TikTok'], ['facebook', 'Facebook']]) {
+    if (f[k] && versLienReseau(k, f[k]) === null) e[k] = `Ce lien ne ressemble pas à un profil ${nom}.`
+  }
   for (const [k, max] of Object.entries(LIMITES_FICHE)) {
     if (f[k] && String(f[k]).length > max && !e[k]) e[k] = 'Texte trop long.'
   }

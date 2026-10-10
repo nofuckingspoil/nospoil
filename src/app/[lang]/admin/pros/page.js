@@ -87,7 +87,10 @@ function Fiche({ d, adminKey, onSaved }) {
               <textarea rows={3} maxLength={220} value={description} onChange={(e) => setDescription(e.target.value)} />
             </label>
             <span className="small">
-              {[d.instagram && `Instagram ${d.instagram}`, d.tiktok && `TikTok ${d.tiktok}`, d.facebook && `Facebook ${d.facebook}`].filter(Boolean).join(' · ') || 'Aucun réseau'}
+              {[['Instagram', d.instagram], ['TikTok', d.tiktok], ['Facebook', d.facebook]].filter(([, u]) => u).map(([l, u], i) => (
+                <span key={l}>{i > 0 && ' · '}<a href={/^https?:/.test(u) ? u : '#'} target="_blank" rel="noopener noreferrer">{l} ↗</a></span>
+              ))}
+              {!d.instagram && !d.tiktok && !d.facebook && 'Aucun réseau'}
               {!d.accord_publication && ' · ⚠️ publication non acceptée'}
             </span>
             <div className="apro-publication">

@@ -21,7 +21,7 @@ import { ipDe, tropDeDemandes, messageTrop } from '../../../../lib/rate-limit'
 import { CONTACT_EMAIL } from '../../../../lib/pricing'
 import {
   METIERS_FICHE, estCleMetier, validerFiche, deptDuCodePostal, codePostalDansAdresse,
-  versPseudo, slugifier, LIMITES_FICHE,
+  versLienReseau, slugifier, LIMITES_FICHE,
 } from '../../../../lib/partenaires'
 
 export const runtime = 'nodejs'
@@ -71,9 +71,9 @@ export async function POST(request) {
     adresse: texte(brut.adresse),
     description: texte(brut.description),
     site: texte(brut.site),
-    instagram: versPseudo('instagram', texte(brut.instagram)),
-    tiktok: versPseudo('tiktok', texte(brut.tiktok)),
-    facebook: versPseudo('facebook', texte(brut.facebook)),
+    instagram: texte(brut.instagram),
+    tiktok: texte(brut.tiktok),
+    facebook: texte(brut.facebook),
     prenom: texte(brut.prenom),
     nom: texte(brut.nom),
     email: normalizeGuestEmail(brut.email),
@@ -82,6 +82,9 @@ export async function POST(request) {
   }
   const erreurs = validerFiche(f, cle === 'general' ? 'general' : cle)
   if (Object.keys(erreurs).length) return erreur('Quelques champs sont à compléter.', 400, erreurs)
+  // Les réseaux sont rangés en liens complets (https://www.instagram.com/…).
+  for (const k of ['instagram', 'tiktok', 'facebook']) f[k] = versLienReseau(k, f[k]) || ''
+
   const forme = checkEmailShape(f.email, 'fr')
   if (!forme.ok) return erreur(forme.reason, 400, { email: forme.reason })
 
@@ -142,7 +145,7 @@ export async function POST(request) {
         ['Structure', f.entreprise], ['Métier', METIERS_FICHE[metierCle].label],
         ['Département', `${dept.nom} (${dept.num})`], ['Commune', ville || '-'], ['Adresse', f.adresse || '-'],
         ['Présentation', f.description], ['Site', f.site || '-'],
-        ['Réseaux', [f.instagram && `Instagram ${f.instagram}`, f.tiktok && `TikTok ${f.tiktok}`, f.facebook && `Facebook ${f.facebook}`].filter(Boolean).join(' · ') || '-'],
+        ['Réseaux', [f.instagram, f.tiktok, f.facebook].filter(Boolean).join(' · ') || '-'],
         ['Photo', photoCle ? 'oui' : 'non'], ['Contact', `${f.prenom} ${f.nom}`], ['E-mail', f.email], ['Téléphone', f.telephone],
         ['Provenance', ligne.provenance],
       ]
