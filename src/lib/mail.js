@@ -506,7 +506,7 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt, lang
           <strong style="color:#221A12;">${tx({ fr: 'Le lien à donner à vos participants :', en: 'The link to give your guests:', de: 'Der Link für Ihre Gäste:' }, langue)}</strong><br>
           <a href="${joinUrl}" style="color:#C9431F;word-break:break-all;">${joinUrl}</a>
         </div>
-        ${date ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">${tx({ fr: 'Révélation des photos :', en: 'Photo reveal:', de: 'Enthüllung der Fotos:' }, langue)}</strong><br>${date}</div>` : ''}
+        ${date ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">${tx({ fr: 'Révélation des photos :', en: 'Photo reveal:', de: 'Präsentation der Fotos:' }, langue)}</strong><br>${date}</div>` : ''}
         <!-- « Et maintenant ? » est la question qui suit immédiatement la
              création. On y répond ici plutôt que d'alourdir le tableau de bord. -->
         <div style="margin-top:26px;padding:18px 20px;background:#FCF8F0;border:1px solid rgba(34,26,18,.12);border-radius:14px;">
@@ -518,7 +518,7 @@ export function eventCreatedEmail({ eventName, ownerUrl, joinUrl, revealAt, lang
               en: `Where to put the QR code, what to announce on the mic, what your guests see
             during the party, and how to review the album before the reveal.`,
               de: `Wo Sie den QR-Code aufstellen, was am Mikrofon angesagt werden sollte, was Ihre Gäste
-            während der Feier sehen und wie Sie das Album vor der Enthüllung durchsehen.`,
+            während der Feier sehen und wie Sie das Album vor der Präsentation durchsehen.`,
             }, langue)}
           </div>
           <div style="padding-top:12px;">
@@ -574,7 +574,7 @@ export function eventDayEmail({ eventName, ownerUrl, shotsPerGuest, langue }) {
       intro: tx({
         fr: `Vos participants vont pouvoir scanner. Chacun aura <strong>${shotsPerGuest} photos</strong>, pas une de plus, et personne ne verra rien avant la révélation.`,
         en: `Your guests will be able to scan. Each one gets <strong>${shotsPerGuest} photos</strong>, not one more, and nobody will see anything before the reveal.`,
-        de: `Ihre Gäste können gleich scannen. Jeder hat <strong>${shotsPerGuest} Fotos</strong>, kein einziges mehr, und niemand sieht etwas vor der Enthüllung.`,
+        de: `Ihre Gäste können gleich scannen. Jeder hat <strong>${shotsPerGuest} Fotos</strong>, kein einziges mehr, und niemand sieht etwas vor der Präsentation.`,
       }, langue),
       body: `${bigButton(ownerUrl, tx({ fr: 'Ouvrir mon tableau de bord →', en: 'Open my dashboard →', de: 'Mein Dashboard öffnen →' }, langue))}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:22px;">
@@ -649,7 +649,7 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
       ? tx({
           fr: `Action requise avant la révélation : « ${eventName} »`,
           en: `Action needed before the reveal: “${eventName}”`,
-          de: `Handlungsbedarf vor der Enthüllung: „${eventName}“`,
+          de: `Handlungsbedarf vor der Präsentation: „${eventName}“`,
         }, langue)
       : tx({
           fr: `${photoCount} photos vous attendent : « ${eventName} »`,
@@ -666,7 +666,7 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
       intro: tx({
         fr: `${invites} <strong>Vous seul pouvez déjà les voir</strong> : vos participants devront patienter jusqu'à la révélation.`,
         en: `${invites} <strong>Only you can see them for now</strong>: your guests will have to wait until the reveal.`,
-        de: `${invites} <strong>Nur Sie können sie schon sehen</strong>: Ihre Gäste müssen sich bis zur Enthüllung gedulden.`,
+        de: `${invites} <strong>Nur Sie können sie schon sehen</strong>: Ihre Gäste müssen sich bis zur Präsentation gedulden.`,
       }, langue),
       body: `${bigButton(ownerUrl, tx({ fr: 'Voir les photos →', en: 'See the photos →', de: 'Fotos ansehen →' }, langue))}
         ${alerte}
@@ -680,11 +680,11 @@ export function afterPartyEmail({ eventName, ownerUrl, photoCount, guestCount, r
           Im Album genügt ein Klick auf jedem Foto.`,
           }, langue)}
         </div>
-        ${revealDate ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">${tx({ fr: 'Révélation prévue :', en: 'Reveal scheduled for:', de: 'Geplante Enthüllung:' }, langue)}</strong><br>${revealDate}</div>` : ''}`,
+        ${revealDate ? `<div style="font-size:14px;line-height:1.7;color:#5f5341;padding-top:14px;"><strong style="color:#221A12;">${tx({ fr: 'Révélation prévue :', en: 'Reveal scheduled for:', de: 'Geplante Präsentation:' }, langue)}</strong><br>${revealDate}</div>` : ''}`,
       footer: tx({
         fr: `Le jour de la révélation, votre tableau de bord vous proposera un message tout prêt à envoyer à vos participants.`,
         en: `On reveal day, your dashboard will offer you a ready-made message to send to your guests.`,
-        de: `Am Tag der Enthüllung schlägt Ihnen Ihr Dashboard eine fertige Nachricht für Ihre Gäste vor.`,
+        de: `Am Tag der Präsentation schlägt Ihnen Ihr Dashboard eine fertige Nachricht für Ihre Gäste vor.`,
       }, langue),
     }),
   }
@@ -828,7 +828,7 @@ export function guestAccessEmail({ eventName, link, shotsPerGuest, langue }) {
           ${tx({
             fr: `Vous recevrez l'album complet dès sa révélation, sans rien avoir à faire.`,
             en: `You will receive the full album as soon as it is revealed, without having to do anything.`,
-            de: `Sie erhalten das komplette Album, sobald es enthüllt wird, ohne etwas tun zu müssen.`,
+            de: `Sie erhalten das komplette Album, sobald es präsentiert wird, ohne etwas tun zu müssen.`,
           }, langue)}
         </div>`,
       footer: tx({

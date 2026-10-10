@@ -181,7 +181,7 @@ export function Revelation({ cible = 'maries', lang = 'fr' }) {
             alt={t({
               fr: "L'album partagé pendant la soirée : le compte à rebours avant la révélation et le nombre d'invités.",
               en: 'The shared album during the party: the countdown to the reveal and the number of guests.',
-              de: 'Das gemeinsame Album während der Feier: der Countdown bis zur Enthüllung und die Anzahl der Gäste.',
+              de: 'Das gemeinsame Album während der Feier: der Countdown bis zur Präsentation und die Anzahl der Gäste.',
             }, lang)} />
         </div>
       </div>
@@ -221,12 +221,12 @@ export function Controle({ cible = 'maries', lang = 'fr' }) {
               ? t({
                   fr: "Avant la révélation, vous êtes seul à voir ce qui a été pris. Une photo ratée, un cliché qui les gênerait le jour de leur mariage ? Vous le retirez, et personne n'en saura jamais rien.",
                   en: "Before the reveal, you're the only one who sees what has been taken. A blurry photo, a shot that would embarrass them on their wedding day? You remove it, and nobody will ever know.",
-                  de: 'Vor der Enthüllung sehen nur Sie, was aufgenommen wurde. Ein missglücktes Foto, eine Aufnahme, die ihnen an ihrem Hochzeitstag peinlich wäre? Sie entfernen sie, und niemand erfährt je davon.',
+                  de: 'Vor der Präsentation sehen nur Sie, was aufgenommen wurde. Ein missglücktes Foto, eine Aufnahme, die ihnen an ihrem Hochzeitstag peinlich wäre? Sie entfernen sie, bevor jemand anderes sie sieht.',
                 }, lang)
               : t({
                   fr: "C'est votre mariage : vous découvrez les photos en avant-première et vous décidez de ce qui apparaît. Une photo ratée, un moment gênant ? Vous le retirez avant que qui que ce soit ne le voie.",
                   en: "It's your wedding: you get a sneak peek at the photos and decide what appears. A blurry photo, an awkward moment? You remove it before anyone sees it.",
-                  de: 'Es ist Ihre Hochzeit: Sie sehen die Fotos als Erste und entscheiden, was erscheint. Ein missglücktes Foto, ein peinlicher Moment? Sie entfernen es, bevor irgendjemand es sieht.',
+                  de: 'Es ist Ihre Hochzeit: Sie sehen die Fotos als Erste und entscheiden, was erscheint. Ein missglücktes Foto, ein peinlicher Moment? Sie entfernen es, bevor jemand anderes es sieht.',
                 }, lang)}
           </p>
           <ul className="split-list">
@@ -234,7 +234,7 @@ export function Controle({ cible = 'maries', lang = 'fr' }) {
               {t({
                 fr: <><b>Vous validez en premier</b>, et personne ne saura ce que vous avez masqué.</>,
                 en: <><b>You approve first</b>, and nobody will know what you hid.</>,
-                de: <><b>Sie geben zuerst frei</b>, und niemand erfährt, was Sie ausgeblendet haben.</>,
+                de: <><b>Sie geben zuerst frei</b>: Was Sie ausblenden, sieht sonst niemand.</>,
               }, lang)}
             </div></li>
             <li><span className="ic">🤝</span><div>

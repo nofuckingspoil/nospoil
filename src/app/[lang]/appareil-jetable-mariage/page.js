@@ -210,7 +210,7 @@ function textes(lang) {
           a: 'Rechnen Sie mit 12 bis 15 € pro Kamera, plus Entwicklung. Bei fünfzig Gästen sind schnell über 800 € erreicht, und man muss sie verteilen, wieder einsammeln und hoffen, dass keine in einer Jackentasche verschwindet. Hier ist die Kamera schon in ihrer Hand.',
         },
       ],
-      eyebrow: 'Einwegkamera · Hochzeit',
+      eyebrow: 'Digitale Einwegkamera · Hochzeit',
       h1: <>Machen Sie die<br />Handys Ihrer Gäste<br />zu Einwegkameras.</>,
       p1: 'Eine begrenzte Anzahl an Fotos. Keine Vorschau, kein Aussortieren. Und alles wird am nächsten Tag entwickelt, in einem einzigen Album.',
       p2: 'Hundert Kameras stecken schon in den Taschen Ihrer Gäste. Es fehlte ihnen nur noch ein Film.',

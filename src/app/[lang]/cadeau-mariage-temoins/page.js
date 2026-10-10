@@ -153,7 +153,7 @@ function textes(lang) {
     de: {
       titre: 'Das Hochzeitsgeschenk der Trauzeugen, bei dem alle Gäste mitmachen',
       description:
-        `Schenken Sie dem Brautpaar seinen Tag, gesehen von denen, die ihn mit ihm erlebt haben. Ein QR-Code am großen Tag, ein Überraschungsalbum, das nach der Feier enthüllt wird. Ab ${aPartirDe}, gern auch gemeinsam.`,
+        `Schenken Sie dem Brautpaar seinen Tag, gesehen von denen, die ihn mit ihm erlebt haben. Ein QR-Code am großen Tag, ein Überraschungsalbum, das nach der Feier präsentiert wird. Ab ${aPartirDe}, gern auch gemeinsam.`,
       cadeau: [
         {
           ic: '🎁',
@@ -179,7 +179,7 @@ function textes(lang) {
       faq: [
         {
           q: 'Muss das Brautpaar etwas tun?',
-          a: 'Überhaupt nichts, und genau darum geht es. Sie erstellen das Album, teilen den QR-Code am großen Tag und schenken ihnen den Link, sobald alles enthüllt ist. Sie müssen nur noch schauen.',
+          a: 'Überhaupt nichts, und genau darum geht es. Sie erstellen das Album, teilen den QR-Code am großen Tag und schenken ihnen den Link, sobald alles für alle sichtbar ist. Sie müssen nur noch schauen.',
         },
         {
           q: 'Wie legen wir zusammen?',
@@ -191,12 +191,12 @@ function textes(lang) {
         },
         {
           q: 'Wer behält am Ende die Fotos?',
-          a: 'Das Brautpaar, wie alle anderen auch: Sobald das Album enthüllt ist, kann jeder es ansehen und alles in voller Auflösung herunterladen. Sie können ihnen auch den Gastgeber-Zugang übergeben, damit es wirklich ihres wird.',
+          a: 'Das Brautpaar, wie alle anderen auch: Sobald das Album präsentiert ist, kann jeder es ansehen und alles in voller Auflösung herunterladen. Sie können ihnen auch den Gastgeber-Zugang übergeben, damit es wirklich ihres wird.',
         },
       ],
       eyebrow: 'Geschenkidee · für Trauzeugen & Freunde',
       h1: <>Schenken Sie ihnen<br />ihre Hochzeit, gesehen<br />von allen Gästen.</>,
-      p1: 'Ein QR-Code am großen Tag, ein paar Fotos pro Gast, und ein Überraschungsalbum, das nach der Feier enthüllt wird.',
+      p1: 'Ein QR-Code am großen Tag, ein paar Fotos pro Gast, und ein Überraschungsalbum, das nach der Feier präsentiert wird.',
       p2: 'Sie waren den ganzen Tag auf den Beinen. Schenken Sie ihnen, was sie nicht sehen konnten.',
       bouton: 'Überraschung vorbereiten (kostenlos)',
       ticks: ['In zwei Minuten startklar', 'Keine App, auch nicht für Oma', `Ab ${aPartirDe}, gern auch gemeinsam`],

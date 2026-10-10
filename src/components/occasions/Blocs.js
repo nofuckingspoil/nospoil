@@ -80,7 +80,7 @@ export function Album({ slug, lang }) {
         {t({
           fr: "Des photos prises par vos invités, sur le vif, que personne n'avait vues avant la révélation.",
           en: "Photos taken by your guests, in the moment, that nobody had seen before the reveal.",
-          de: 'Fotos Ihrer Gäste, mitten aus dem Moment, die vor der Enthüllung niemand gesehen hat.',
+          de: 'Fotos Ihrer Gäste, mitten aus dem Moment, die vor der Präsentation niemand gesehen hat.',
         }, lang)}
       </div>
       <div className="occ-album">

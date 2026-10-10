@@ -49,7 +49,7 @@ export default function ApresCreation({ eventId, court, onPersonnaliser }) {
           <p>{t({
             fr: "On a choisi pour vous : 5 photos par personne et une couverture par défaut. Tout se change ici jusqu'au jour J : nombre de photos, fin de la soirée, couverture, photos visibles ou non avant la révélation.",
             en: 'We have chosen for you: 5 photos per person and a default cover. You can change everything here until the big day: number of photos, end of the event, cover, whether photos can be seen before the reveal.',
-            de: 'Wir haben für Sie gewählt: 5 Fotos pro Person und ein Standard-Titelbild. Bis zum großen Tag können Sie hier alles ändern: Anzahl der Fotos, Ende des Events, Titelbild, ob Fotos vor der Enthüllung sichtbar sind.',
+            de: 'Wir haben für Sie gewählt: 5 Fotos pro Person und ein Standard-Titelbild. Bis zum großen Tag können Sie hier alles ändern: Anzahl der Fotos, Ende des Events, Titelbild, ob Fotos vor der Präsentation sichtbar sind.',
           })}</p>
           <button type="button" className="btn btn-dark apres-crea-btn" onClick={onPersonnaliser}>
             {t({ fr: 'Personnaliser ma soirée →', en: 'Customise my event →', de: 'Mein Event anpassen →' })}

@@ -71,8 +71,8 @@ function messageRevelation(nomEvenement, eventId, langue) {
   const nom = (nomEvenement || '').trim()
   return {
     titre: nom
-      ? t({ fr: `${nom} : c'est la révélation`, en: `${nom}: it's reveal time`, de: `${nom}: Zeit für die Enthüllung` }, langue)
-      : t({ fr: "C'est la révélation", en: "It's reveal time", de: 'Zeit für die Enthüllung' }, langue),
+      ? t({ fr: `${nom} : c'est la révélation`, en: `${nom}: it's reveal time`, de: `${nom}: Zeit für die Präsentation` }, langue)
+      : t({ fr: "C'est la révélation", en: "It's reveal time", de: 'Zeit für die Präsentation' }, langue),
     corps: t({
       fr: "L'album vient de s'ouvrir. Découvrez la soirée par les yeux des autres.",
       en: 'The album has just opened. See the party through everyone else’s eyes.',

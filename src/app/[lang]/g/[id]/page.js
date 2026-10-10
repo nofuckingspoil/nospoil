@@ -1437,7 +1437,7 @@ export default function Gallery({ params }) {
           👁️ {t({
             fr: <><strong>Aperçu organisateur</strong> : vous voyez les photos en avant-première. Vos participants ne pourront les découvrir qu'à la révélation, le {formatReveal(data.revealAt, locale)}.</>,
             en: <><strong>Host preview</strong>: you are seeing the photos early. Your guests will only discover them at the reveal, on {formatReveal(data.revealAt, locale)}.</>,
-            de: <><strong>Gastgeber-Vorschau</strong>: Sie sehen die Fotos vorab. Ihre Gäste entdecken sie erst bei der Enthüllung am {formatReveal(data.revealAt, locale)}.</>,
+            de: <><strong>Gastgeber-Vorschau</strong>: Sie sehen die Fotos vorab. Ihre Gäste entdecken sie erst bei der Präsentation am {formatReveal(data.revealAt, locale)}.</>,
           })}
         </div>
       )}
@@ -1504,7 +1504,7 @@ export default function Gallery({ params }) {
             </div>
           )}
           <div className="gal-etat">
-            🎉 {t({ fr: 'Album révélé', en: 'Album revealed', de: 'Album enthüllt' })}
+            🎉 {t({ fr: 'Album révélé', en: 'Album revealed', de: 'Album präsentiert' })}
             {data.expiresAt && <> · {t({
               fr: `en ligne jusqu'au ${formatJour(data.expiresAt, locale)}`,
               en: `online until ${formatJour(data.expiresAt, locale)}`,
@@ -1539,7 +1539,7 @@ export default function Gallery({ params }) {
             )}
             {data.photos.length > 1 && (
               <button className="gal-hero-revoir" onClick={() => { oublierWrap(id); setMontrerWrap(true) }}>
-                ↺ {t({ fr: 'Revoir la révélation', en: 'Watch the reveal again', de: 'Enthüllung noch einmal ansehen' })}
+                ↺ {t({ fr: 'Revoir la révélation', en: 'Watch the reveal again', de: 'Präsentation noch einmal ansehen' })}
               </button>
             )}
           </div>

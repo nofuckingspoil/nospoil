@@ -150,9 +150,9 @@ function CreateForm() {
     }
     if (step === 2) {
       if (!startsAt || isNaN(new Date(startsAt))) { setError(t({ fr: 'Indiquez la date de votre événement.', en: 'Enter the date of your event.', de: 'Geben Sie das Datum Ihres Events an.' })); return }
-      if (!revealAt || isNaN(new Date(revealAt))) { setError(t({ fr: 'Choisissez une date de révélation.', en: 'Choose a reveal date.', de: 'Wählen Sie ein Datum für die Enthüllung.' })); return }
+      if (!revealAt || isNaN(new Date(revealAt))) { setError(t({ fr: 'Choisissez une date de révélation.', en: 'Choose a reveal date.', de: 'Wählen Sie einen Präsentationstermin.' })); return }
       if (new Date(revealAt) <= new Date(startsAt)) {
-        setError(t({ fr: 'La révélation doit venir après le début de votre événement.', en: 'The reveal must come after your event starts.', de: 'Die Enthüllung muss nach dem Beginn Ihres Events liegen.' })); return
+        setError(t({ fr: 'La révélation doit venir après le début de votre événement.', en: 'The reveal must come after your event starts.', de: 'Die Präsentation muss nach dem Beginn Ihres Events liegen.' })); return
       }
       return goTo(3)
     }
@@ -361,7 +361,7 @@ function CreateForm() {
           <SelecteurDate value={startsAt} onChange={pickStart} min={toInputValue(new Date())} />
           <div style={{ height: 20 }} />
 
-          <h2 className="wiz-q" style={{ marginTop: 0 }}>{t({ fr: 'Et quand révéler les photos ?', en: 'And when should the photos be revealed?', de: 'Und wann sollen die Fotos enthüllt werden?' })}</h2>
+          <h2 className="wiz-q" style={{ marginTop: 0 }}>{t({ fr: 'Et quand révéler les photos ?', en: 'And when should the photos be revealed?', de: 'Und wann sollen die Fotos präsentiert werden?' })}</h2>
           <p className="wiz-sub">
             {t({
               fr: <>Jusqu'à cette date, tout reste caché, comme une pellicule qu'on développe. Ensuite, les photos deviennent visibles par <strong>tous les participants</strong>.</>,
@@ -386,14 +386,14 @@ function CreateForm() {
               il mérite mieux qu'une ligne grise. Affiché aussi en date libre,
               où il traduit la saisie brute en quelque chose de lisible. */}
           <div className="wiz-reveal-echo">
-            <span className="lbl">{t({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' })}</span>
+            <span className="lbl">{t({ fr: 'Révélation', en: 'Reveal', de: 'Präsentation' })}</span>
             <strong className="val">{frDate(revealAt, locale)}</strong>
           </div>
           <div className="notice" style={{ marginTop: 16 }}>
             {t({
               fr: "💡 Laissez-leur le temps. Avant la révélation, chacun peut revoir ses clichés et supprimer ceux qu'il ne veut pas montrer ; après, c'est visible par tout le monde.",
               en: "💡 Give them time. Before the reveal, everyone can look back at their shots and delete any they don't want to show; afterwards, everyone can see them.",
-              de: '💡 Lassen Sie ihnen Zeit. Vor der Enthüllung kann jeder seine Aufnahmen ansehen und löschen, was er nicht zeigen möchte; danach ist alles für alle sichtbar.',
+              de: '💡 Lassen Sie ihnen Zeit. Vor der Präsentation kann jeder seine Aufnahmen ansehen und löschen, was er nicht zeigen möchte; danach ist alles für alle sichtbar.',
             })}
           </div>
           {error && <div className="err" style={{ marginTop: 14 }}>{error}</div>}
@@ -433,7 +433,7 @@ function CreateForm() {
               <span>{frDate(startsAt, locale)} <button type="button" className="linklike" onClick={() => goTo(2)}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button></span>
             </div>
             <div className="wiz-recap-row">
-              <span>{t({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' })}</span>
+              <span>{t({ fr: 'Révélation', en: 'Reveal', de: 'Präsentation' })}</span>
               <span>{frDate(revealAt, locale)} <button type="button" className="linklike" onClick={() => goTo(2)}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button></span>
             </div>
             <div className="wiz-recap-row">
@@ -463,7 +463,7 @@ function CreateForm() {
             {t({
               fr: <>✎ <strong>Rien n'est figé.</strong> Nom, dates, moment de la révélation, photo de couverture : tout se modifie ensuite depuis votre tableau de bord. Le nombre de clichés se règle jusqu'au jour de l'événement.</>,
               en: <>✎ <strong>Nothing is set in stone.</strong> Name, dates, time of the reveal, cover photo: you can change it all later from your dashboard. The number of shots can be adjusted until the day of the event.</>,
-              de: <>✎ <strong>Nichts ist endgültig.</strong> Name, Termine, Zeitpunkt der Enthüllung, Titelbild: Alles lässt sich danach in Ihrem Dashboard ändern. Die Anzahl der Aufnahmen können Sie bis zum Tag des Events anpassen.</>,
+              de: <>✎ <strong>Nichts ist endgültig.</strong> Name, Termine, Präsentationstermin, Titelbild: Alles lässt sich danach in Ihrem Dashboard ändern. Die Anzahl der Aufnahmen können Sie bis zum Tag des Events anpassen.</>,
             })}
           </div>
 

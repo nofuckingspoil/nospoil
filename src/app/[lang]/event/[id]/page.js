@@ -99,7 +99,7 @@ const SHOT_PRESETS = [
 const MOMENTS = [
   { key: AVANT, title: { fr: 'Avant', en: 'Before', de: 'Vorher' }, sub: (ev, lang) => choisir({ fr: 'Préparatifs', en: 'Getting ready', de: 'Vorbereitung' }, lang) },
   { key: JOUR_J, title: { fr: 'Le jour J', en: 'The big day', de: 'Der große Tag' }, sub: (ev, lang) => (ev.startsAt ? formatShort(ev.startsAt, LOCALES[lang]) : choisir({ fr: 'La fête', en: 'The party', de: 'Die Feier' }, lang)) },
-  { key: APRES, title: { fr: 'Après', en: 'After', de: 'Danach' }, sub: (ev, lang) => choisir({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' }, lang) + ` ${formatShort(ev.revealAt, LOCALES[lang])}` },
+  { key: APRES, title: { fr: 'Après', en: 'After', de: 'Danach' }, sub: (ev, lang) => choisir({ fr: 'Révélation', en: 'Reveal', de: 'Präsentation' }, lang) + ` ${formatShort(ev.revealAt, LOCALES[lang])}` },
 ]
 
 export default function EventManage({ params }) {
@@ -665,7 +665,7 @@ export default function EventManage({ params }) {
     : t({
       fr: `Les photos de ${nomEv} sortent le ${formatDate(ev.revealAt, locale)}. Gardez ce lien, elles s'ouvriront toutes seules : ${galleryUrl}`,
       en: `The photos from ${nomEv} will be revealed on ${formatDate(ev.revealAt, locale)}. Keep this link, they'll open on their own: ${galleryUrl}`,
-      de: `Die Fotos von ${nomEv} werden am ${formatDate(ev.revealAt, locale)} enthüllt. Bewahren Sie diesen Link auf, sie öffnen sich von selbst: ${galleryUrl}`,
+      de: `Die Fotos von ${nomEv} werden am ${formatDate(ev.revealAt, locale)} präsentiert. Bewahren Sie diesen Link auf, sie öffnen sich von selbst: ${galleryUrl}`,
     })
   const defaultMessage = ev.galleryCode ? avecLigneCode(messageDeBase, ev.galleryCode) : messageDeBase
   const shareText = message || defaultMessage
@@ -807,18 +807,18 @@ export default function EventManage({ params }) {
     if (paused) {
       return (
         <div className="db-hero db-hero-paused">
-          <div className="db-hero-top"><span className="db-eyebrow">{t({ fr: 'révélation suspendue', en: 'reveal on hold', de: 'Enthüllung pausiert' })}</span></div>
+          <div className="db-hero-top"><span className="db-eyebrow">{t({ fr: 'révélation suspendue', en: 'reveal on hold', de: 'Präsentation pausiert' })}</span></div>
           <h2 className="db-hero-title">{t({ fr: "L'album est en pause", en: 'The album is on hold', de: 'Das Album ist pausiert' })}</h2>
           <p className="db-hero-sub">
             {t({
               fr: "Vos participants ne voient rien, même si l'heure de révélation est passée. Prenez le temps de vérifier les photos, puis reprenez quand vous voulez.",
               en: "Your guests can't see anything, even though the reveal time has passed. Take your time checking the photos, then resume whenever you like.",
-              de: 'Ihre Gäste sehen nichts, auch wenn der Zeitpunkt der Enthüllung vorbei ist. Nehmen Sie sich Zeit, die Fotos zu prüfen, und setzen Sie dann fort, wann Sie möchten.',
+              de: 'Ihre Gäste sehen nichts, auch wenn der Präsentationstermin vorbei ist. Nehmen Sie sich Zeit, die Fotos zu prüfen, und setzen Sie dann fort, wann Sie möchten.',
             })}
           </p>
           <Link href={`/g/${id}`} className="btn btn-dark db-hero-cta">{t({ fr: 'Vérifier les photos →', en: 'Check the photos →', de: 'Fotos prüfen →' })}</Link>
           <button className="btn db-hero-2nd" onClick={() => patchEvent({ revealPaused: false })}>
-            {t({ fr: 'Reprendre la révélation', en: 'Resume the reveal', de: 'Enthüllung fortsetzen' })}
+            {t({ fr: 'Reprendre la révélation', en: 'Resume the reveal', de: 'Präsentation fortsetzen' })}
           </button>
         </div>
       )
@@ -829,7 +829,7 @@ export default function EventManage({ params }) {
         <>
           <div className="db-hero db-hero-ink">
             <div className="db-hero-top"><span className="db-eyebrow">{t({ fr: "c'est ouvert", en: "it's open", de: 'es ist offen' })}</span></div>
-            <h2 className="db-hero-title">{t({ fr: 'Album révélé', en: 'Album revealed', de: 'Album enthüllt' })}</h2>
+            <h2 className="db-hero-title">{t({ fr: 'Album révélé', en: 'Album revealed', de: 'Album präsentiert' })}</h2>
             {/* Le nombre annoncé est celui que les participants voient : les photos
                 masquées ne sont visibles de personne. */}
             <p className="db-hero-sub">
@@ -856,7 +856,7 @@ export default function EventManage({ params }) {
             <span className="db-eyebrow">{t({ fr: 'album validé', en: 'album approved', de: 'Album freigegeben' })}</span>
             <span className="db-pill">{daysUntil(ev.revealAt, lang)}</span>
           </div>
-          <h2 className="db-hero-title">{t({ fr: 'Révélation programmée', en: 'Reveal scheduled', de: 'Enthüllung geplant' })}</h2>
+          <h2 className="db-hero-title">{t({ fr: 'Révélation programmée', en: 'Reveal scheduled', de: 'Präsentation geplant' })}</h2>
           <p className="db-hero-sub">
             {t({
               fr: `Vos ${ev.photoCount} photos s'ouvriront à tous le ${formatShort(ev.revealAt, locale)}. Vous n'avez plus rien à faire.`,
@@ -891,14 +891,14 @@ export default function EventManage({ params }) {
                 <button className="btn btn-accent" onClick={async () => {
                   if (await patchEvent({ revealAt: new Date().toISOString() })) setConfirmReveal(false)
                 }}>
-                  {t({ fr: 'Oui, révéler', en: 'Yes, reveal', de: 'Ja, enthüllen' })}
+                  {t({ fr: 'Oui, révéler', en: 'Yes, reveal', de: 'Ja, präsentieren' })}
                 </button>
               </div>
             </div>
           ) : (
             <>
               <button className="btn btn-accent db-hero-cta" onClick={() => setConfirmReveal(true)}>
-                {t({ fr: 'Révéler maintenant', en: 'Reveal now', de: 'Jetzt enthüllen' })}
+                {t({ fr: 'Révéler maintenant', en: 'Reveal now', de: 'Jetzt präsentieren' })}
               </button>
               <button className="btn db-hero-2nd" onClick={() => {
                 setEditing('reveal'); setDraftDate(toLocalInput(ev.revealAt))
@@ -980,7 +980,7 @@ export default function EventManage({ params }) {
               {t({
                 fr: `Valider ne révèle rien tout de suite : l'ouverture reste prévue le ${formatShort(ev.revealAt, locale)}. Et si vous ne faites rien, elle se fera quand même.`,
                 en: `Approving doesn't reveal anything straight away: the album still opens on ${formatShort(ev.revealAt, locale)}. And if you do nothing, it will open anyway.`,
-                de: `Die Freigabe enthüllt nicht sofort etwas: Das Album öffnet sich weiterhin am ${formatShort(ev.revealAt, locale)}. Und wenn Sie nichts tun, passiert es trotzdem.`,
+                de: `Die Freigabe macht nicht sofort etwas sichtbar: Das Album öffnet sich weiterhin am ${formatShort(ev.revealAt, locale)}. Und wenn Sie nichts tun, passiert es trotzdem.`,
               })}
             </p>
           </>
@@ -1118,7 +1118,7 @@ export default function EventManage({ params }) {
             {ev.quotaExceeded
               ? (revealedTime
                 ? t({ fr: "L'album attend votre formule", en: 'The album is waiting for your plan upgrade', de: 'Das Album wartet auf Ihr Paket-Upgrade' })
-                : t({ fr: 'Agrandissez votre formule avant la révélation', en: 'Upgrade your plan before the reveal', de: 'Erweitern Sie Ihr Paket vor der Enthüllung' }))
+                : t({ fr: 'Agrandissez votre formule avant la révélation', en: 'Upgrade your plan before the reveal', de: 'Erweitern Sie Ihr Paket vor der Präsentation' }))
               : t({ fr: 'Le prochain participant devra attendre', en: 'The next guest will have to wait', de: 'Der nächste Gast muss warten' })}
           </h2>
           <p className="db-quota-sub">
@@ -1311,7 +1311,7 @@ export default function EventManage({ params }) {
               {t({
                 fr: `Prenez ${ev.shotsPerGuest} photos pendant la soirée. Elles resteront cachées jusqu'à la révélation, le ${formatDate(ev.revealAt, locale)}.`,
                 en: `Take ${ev.shotsPerGuest} photos during the party. They’ll stay hidden until the reveal on ${formatDate(ev.revealAt, locale)}.`,
-                de: `Machen Sie während der Feier ${ev.shotsPerGuest} Fotos. Sie bleiben bis zur Enthüllung am ${formatDate(ev.revealAt, locale)} verborgen.`,
+                de: `Machen Sie während der Feier ${ev.shotsPerGuest} Fotos. Sie bleiben bis zur Präsentation am ${formatDate(ev.revealAt, locale)} verborgen.`,
               })}
             </p>
           </div>
@@ -1383,7 +1383,7 @@ export default function EventManage({ params }) {
               {t({
                 fr: "La révélation se décalera d'autant, pour rester au même moment après la fête.",
                 en: 'The reveal will move by the same amount, so it stays at the same point after the party.',
-                de: 'Die Enthüllung verschiebt sich entsprechend, damit sie im gleichen Abstand zur Feier bleibt.',
+                de: 'Die Präsentation verschiebt sich entsprechend, damit sie im gleichen Abstand zur Feier bleibt.',
               })}
             </p>
           </>
@@ -1670,7 +1670,7 @@ export default function EventManage({ params }) {
                     {t({
                       fr: "Le mur du groupe, où l'on devine les photos des autres en flou, reste affiché dans les trois cas. Modifiable jusqu'à la révélation : le changement s'applique aussitôt sur les téléphones.",
                       en: 'The group wall, where you glimpse everyone else’s photos blurred, stays visible in all three cases. Can be changed until the reveal: the change applies to phones straight away.',
-                      de: 'Die Fotowand der Gruppe, auf der man die Fotos der anderen verschwommen erahnt, bleibt in allen drei Fällen sichtbar. Bis zur Enthüllung änderbar: Die Änderung gilt sofort auf allen Handys.',
+                      de: 'Die Fotowand der Gruppe, auf der man die Fotos der anderen verschwommen erahnt, bleibt in allen drei Fällen sichtbar. Bis zur Präsentation änderbar: Die Änderung gilt sofort auf allen Handys.',
                     })}
                   </p>
                   <button className="btn btn-accent" style={{ marginTop: 16 }} onClick={async () => {
@@ -1686,7 +1686,7 @@ export default function EventManage({ params }) {
         <div className="db-set">
           <div className="db-set-l">
             <span className="db-set-lbl">
-              {t({ fr: 'Révélation des photos', en: 'Photo reveal', de: 'Enthüllung der Fotos' })} {revealedTime && <span className="db-frozen">{t({ fr: 'figée', en: 'locked', de: 'fixiert' })}</span>}
+              {t({ fr: 'Révélation des photos', en: 'Photo reveal', de: 'Präsentation der Fotos' })} {revealedTime && <span className="db-frozen">{t({ fr: 'figée', en: 'locked', de: 'fixiert' })}</span>}
             </span>
             <span className="db-set-val">{formatDate(ev.revealAt, locale)}</span>
           </div>
@@ -1699,7 +1699,7 @@ export default function EventManage({ params }) {
         {/* Dire pourquoi, plutôt que de laisser deviner devant un bouton absent. */}
         {revealedTime && (
           <p className="hint" style={{ marginTop: 2 }}>
-            {t({ fr: 'La révélation a eu lieu : les dates ne se modifient plus.', en: 'The reveal has happened: the dates can no longer be changed.', de: 'Die Enthüllung hat stattgefunden: Die Daten lassen sich nicht mehr ändern.' })}
+            {t({ fr: 'La révélation a eu lieu : les dates ne se modifient plus.', en: 'The reveal has happened: the dates can no longer be changed.', de: 'Die Präsentation hat stattgefunden: Die Daten lassen sich nicht mehr ändern.' })}
           </p>
         )}
         {editing === 'reveal' && (
@@ -1721,7 +1721,7 @@ export default function EventManage({ params }) {
         hint={[
           revealed
             ? t({ fr: 'Ouvert à vos participants', en: 'Open to your guests', de: 'Für Ihre Gäste geöffnet' })
-            : t({ fr: 'Caché jusqu’à la révélation', en: 'Hidden until the reveal', de: 'Bis zur Enthüllung verborgen' }),
+            : t({ fr: 'Caché jusqu’à la révélation', en: 'Hidden until the reveal', de: 'Bis zur Präsentation verborgen' }),
           finAlbum ? t({ fr: `disponible jusqu'au ${formatJour(finAlbum, locale)}`, en: `available until ${formatJour(finAlbum, locale)}`, de: `verfügbar bis zum ${formatJour(finAlbum, locale)}` }) : null,
         ].filter(Boolean).join(' · ')}
         badge={t({
@@ -1775,7 +1775,7 @@ export default function EventManage({ params }) {
                 🔒 {t({
                   fr: <>L'album est <strong>fermé</strong> : vos participants ne voient rien, même si l'heure de révélation est passée.</>,
                   en: <>The album is <strong>closed</strong>: your guests can’t see anything, even though the reveal time has passed.</>,
-                  de: <>Das Album ist <strong>geschlossen</strong>: Ihre Gäste sehen nichts, auch wenn der Zeitpunkt der Enthüllung vorbei ist.</>,
+                  de: <>Das Album ist <strong>geschlossen</strong>: Ihre Gäste sehen nichts, auch wenn der Präsentationstermin vorbei ist.</>,
                 })}
               </p>
               <button className="btn btn-ghost" onClick={() => patchEvent({ revealPaused: false })}>
@@ -1871,7 +1871,7 @@ export default function EventManage({ params }) {
           {t({
             fr: 'Chaque invité trouve un bouton micro sur son appareil photo. Il vous laisse un message d’une minute au plus, signé d’un selfie. Vous seuls l’écoutez, dès qu’il arrive : pas besoin d’attendre la révélation.',
             en: 'Each guest finds a microphone button on their camera. They leave you a message of up to one minute, signed with a selfie. Only you hear it, as soon as it arrives: no need to wait for the reveal.',
-            de: 'Jeder Gast findet einen Mikrofon-Knopf an seiner Kamera. Er hinterlässt Ihnen eine Nachricht von höchstens einer Minute, mit einem Selfie unterschrieben. Nur Sie hören sie, sobald sie ankommt: Sie müssen nicht auf die Enthüllung warten.',
+            de: 'Jeder Gast findet einen Mikrofon-Knopf an seiner Kamera. Er hinterlässt Ihnen eine Nachricht von höchstens einer Minute, mit einem Selfie unterschrieben. Nur Sie hören sie, sobald sie ankommt: Sie müssen nicht auf die Präsentation warten.',
           })}
         </p>
 
@@ -1940,7 +1940,7 @@ export default function EventManage({ params }) {
             ),
             de: (
               <>
-                Ein Mitveranstalter sieht die <strong>Fotos vor der Enthüllung</strong> und kann sie
+                Ein Mitveranstalter sieht die <strong>Fotos vor der Präsentation</strong> und kann sie
                 sortieren: unpassende ausblenden oder löschen. Er legt auch die Daten fest und lädt
                 die Gäste ein. Er kann <strong>das Event nicht löschen</strong>.
               </>
@@ -2030,7 +2030,7 @@ export default function EventManage({ params }) {
             ✉️ {t({
               fr: <>Ceux qui ont laissé leur adresse reçoivent le lien de l'album <strong>tout seuls</strong>, dès la révélation. Pour les autres, partagez le lien depuis{' '}</>,
               en: <>Those who left their email address receive the album link <strong>automatically</strong>, as soon as it’s revealed. For everyone else, share the link from{' '}</>,
-              de: <>Wer seine Adresse hinterlassen hat, erhält den Album-Link <strong>automatisch</strong>, sobald es enthüllt ist. Für alle anderen teilen Sie den Link über{' '}</>,
+              de: <>Wer seine Adresse hinterlassen hat, erhält den Album-Link <strong>automatisch</strong>, sobald es präsentiert ist. Für alle anderen teilen Sie den Link über{' '}</>,
             })}
             <button type="button" className="linklike" onClick={() => allerA('album', 'sec-album')}>
               {t({ fr: "la section L'album", en: 'the Album section', de: 'den Bereich „Album“' })}
@@ -2086,7 +2086,7 @@ export default function EventManage({ params }) {
             <em>{t({
               fr: 'Combien de clichés donner, quand révéler, comment faire scanner tout le monde.',
               en: 'How many shots to give, when to reveal, how to get everyone scanning.',
-              de: 'Wie viele Aufnahmen, wann enthüllen, wie alle zum Scannen bringen.',
+              de: 'Wie viele Aufnahmen, wann präsentieren, wie alle zum Scannen bringen.',
             })}</em>
           </span>
         </Link>

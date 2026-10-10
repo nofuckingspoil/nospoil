@@ -40,7 +40,7 @@ export async function POST(request) {
   // avant de lire le fichier, pour ne pas transférer des octets qu'on jettera.
   if (await envoiFerme(eventId)) {
     return Response.json(
-      { error: t({ fr: 'Cette soirée est terminée : son album est déjà révélé.', en: 'This party is over: its album has already been revealed.', de: 'Diese Feier ist vorbei: Ihr Album wurde bereits enthüllt.' }, langue) },
+      { error: t({ fr: 'Cette soirée est terminée : son album est déjà révélé.', en: 'This party is over: its album has already been revealed.', de: 'Diese Feier ist vorbei: Ihr Album wurde bereits präsentiert.' }, langue) },
       { status: 403 }
     )
   }

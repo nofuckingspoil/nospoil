@@ -34,7 +34,7 @@ export async function POST(request) {
     const ouvert = ev ? isRevealed({ revealAt: ev.reveal_at, revealPaused: ev.reveal_paused }) : true
     if (ev && !ouvert && !peutSupprimer(ev.photo_mode)) {
       return Response.json(
-        { error: t({ fr: 'Sur cet événement, une photo prise ne se reprend pas : elle se découvrira à la révélation.', en: 'At this event, a photo cannot be taken back once taken: it will be discovered at the reveal.', de: 'Bei diesem Event kann ein aufgenommenes Foto nicht zurückgenommen werden: Es wird bei der Enthüllung sichtbar.' }, langue) },
+        { error: t({ fr: 'Sur cet événement, une photo prise ne se reprend pas : elle se découvrira à la révélation.', en: 'At this event, a photo cannot be taken back once taken: it will be discovered at the reveal.', de: 'Bei diesem Event kann ein aufgenommenes Foto nicht zurückgenommen werden: Es wird bei der Präsentation sichtbar.' }, langue) },
         { status: 409 }
       )
     }

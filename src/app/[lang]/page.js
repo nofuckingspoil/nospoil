@@ -28,7 +28,7 @@ export async function generateMetadata({ params }) {
     description: t({
       fr: "L'application photo de mariage qui récupère les clichés de tous vos participants : un QR code, aucune appli à installer, un nombre de photos limité par personne, et un album qui se révèle le lendemain.",
       en: 'The wedding photo app that collects every guest\'s shots: one QR code, no app to install, a limited number of photos per person, and an album revealed the next day.',
-      de: 'Die Hochzeit Foto App, die die Aufnahmen all Ihrer Gäste sammelt: ein QR-Code, keine App zu installieren, eine begrenzte Anzahl an Fotos pro Person und ein Album, das am nächsten Tag enthüllt wird.',
+      de: 'Die Hochzeit Foto App, die die Aufnahmen all Ihrer Gäste sammelt: ein QR-Code, keine App zu installieren, eine begrenzte Anzahl an Fotos pro Person und ein Album, das am nächsten Tag für alle sichtbar wird.',
     }, lang),
     alternates: alternates('/', lang),
   }
@@ -48,9 +48,9 @@ const STEPS = {
     { img: '/accueil/revelation.webp', pos: 'center center', alt: 'The event gallery once the photos are revealed', title: 'The reveal', sub: 'Everything develops and is revealed after the party, for everyone at once.' },
   ],
   de: [
-    { img: '/accueil/affiche.webp', pos: 'center 38%', alt: 'Aufsteller zum Ausdrucken mit dem QR-Code des Events', title: 'QR-Code scannen', sub: 'Ihre Gäste öffnen die Kamera in ihrem Browser. Keine App nötig.' },
-    { img: '/accueil/declencheur.webp', pos: 'center center', alt: 'Die Kamera im Browser: Sucher, Bildzähler und Auslöser', title: 'Fotos machen', sub: 'Eine begrenzte Anzahl an Fotos pro Gast. Jede Aufnahme zählt wirklich.' },
-    { img: '/accueil/revelation.webp', pos: 'center center', alt: 'Die Galerie des Events, nachdem die Fotos enthüllt wurden', title: 'Die Enthüllung', sub: 'Alles wird nach der Feier entwickelt und für alle gleichzeitig enthüllt.' },
+    { img: '/accueil/affiche.webp', pos: 'center 38%', alt: 'Aufsteller zum Ausdrucken mit dem QR-Code des Events', title: 'QR-Code scannen', sub: 'Ihre Gäste öffnen die Kamera in ihrem Browser. Es ist dafür keine App nötig.' },
+    { img: '/accueil/declencheur.webp', pos: 'center center', alt: 'Die Kamera im Browser: Sucher, Bildzähler und Auslöser', title: 'Fotos machen', sub: 'Pro Gast gibt es eine begrenzte Anzahl an möglichen Fotos, jedes Foto zählt: ein Klick, ein Foto.' },
+    { img: '/accueil/revelation.webp', pos: 'center center', alt: 'Die Galerie des Events nach der Präsentation der Fotos', title: 'Die Präsentation', sub: 'Alle Bilder werden erst nach der Feier für alle sichtbar! Sie bestimmen den Zeitpunkt.' },
   ],
 }
 
@@ -68,9 +68,9 @@ const CONTROL = {
     { ic: '🎞️', title: 'Everyone controls their own shots', sub: 'A guest can delete a bad photo and take another. Without ever going over the limit you set.' },
   ],
   de: [
-    { ic: '👀', title: 'Sie geben vor der Enthüllung frei', sub: 'Sie sehen die Fotos als Erste und blenden aus, was nicht erscheinen soll. Niemand wird es erfahren.' },
-    { ic: '🤝', title: 'Gern auch zu mehreren', sub: 'Laden Sie Co-Gastgeber ein (das Brautpaar, einen Trauzeugen), um die Galerie gemeinsam zu verwalten und auszuwählen.' },
-    { ic: '🎞️', title: 'Jeder hat seine Fotos im Griff', sub: 'Ein Gast kann ein missglücktes Foto löschen und ein neues machen. Ohne jemals das von Ihnen festgelegte Limit zu überschreiten.' },
+    { ic: '👀', title: 'Sie geben vor der Präsentation frei', sub: 'Sie sehen die Fotos als Erste und blenden aus, was nicht erscheinen soll.' },
+    { ic: '🤝', title: 'Gern auch zu mehreren', sub: 'Laden Sie Co-Gastgeber ein (das Brautpaar, einen Trauzeugen), um die Galerie gemeinsam zu verwalten und die Bilder auszuwählen.' },
+    { ic: '🎞️', title: 'Jeder hat seine Fotos im Griff', sub: 'Ein Gast kann ein missglücktes Foto löschen und ein neues machen. Ohne damit das von Ihnen festgelegte Limit zu überschreiten.' },
   ],
 }
 
@@ -91,7 +91,7 @@ const REASSURE = {
     { ic: '🇪🇺', title: 'In Europa gehostet', sub: 'Ihre Fotos bleiben auf europäischen Servern.' },
     { ic: '🔒', title: 'Nur für Ihre Gäste', sub: 'Ihre Galerie ist nur über Ihren privaten Link erreichbar. Sie ist niemals öffentlich.' },
     { ic: '📱', title: 'Keine App', sub: 'Alles läuft im Browser, auch für Ihre Gäste.' },
-    { ic: '🗓️', title: 'Automatische Löschung', sub: 'Die Fotos werden 6 Monate nach der Enthüllung gelöscht. Wir sagen Ihnen vorher Bescheid.' },
+    { ic: '🗓️', title: 'Automatische Löschung', sub: 'Die Fotos werden 6 Monate nach der Präsentation gelöscht. Wir sagen Ihnen vorher Bescheid.' },
   ],
 }
 
@@ -118,12 +118,12 @@ const FAQ = {
   ],
   de: [
     { q: 'Müssen meine Gäste eine App installieren?', a: 'Nein. Sie scannen den QR-Code, und die Kamera öffnet sich direkt in ihrem Browser. Kein Konto, keine Installation.' },
-    { q: 'Wie lange dauert ein Event?', a: 'So lange Sie möchten. Sie wählen das Startdatum und das Datum der Enthüllung: ein Abend, ein Wochenende oder eine ganze Urlaubswoche.' },
+    { q: 'Wie lange dauert ein Event?', a: 'So lange Sie möchten. Sie wählen das Startdatum und den Präsentationstermin: ein Abend, ein Wochenende oder eine ganze Urlaubswoche.' },
     { q: 'Ist das nur für Hochzeiten?', a: 'Nein. Geburtstage, Taufen, Junggesellinnenabschiede, Urlaub mit Freunden, Firmenevents: jede Feier, bei der die Leute ihr Handy zücken, um Fotos zu machen.' },
     { q: 'Wie viele Fotos darf jeder machen?', a: 'Sie legen das Limit zwischen 3 und 15 Aufnahmen pro Gast fest. Sie können auch 1 bis 5 Extrafotos für alle vorsehen, die ihr Kontingent aufgebraucht haben, also höchstens 20 Fotos. Genau diese „analoge“ Begrenzung macht jede Aufnahme wertvoll.' },
     { q: 'Kann ein Gast ein missglücktes Foto löschen?', a: 'Ja. Das gelöschte Foto gibt einen Platz frei, er kann ein neues machen. Das von Ihnen festgelegte Limit überschreitet er aber nie.' },
-    { q: 'Kann ich ein Foto entfernen, bevor alle es sehen?', a: 'Ja. Vor der Enthüllung sehen nur Sie die Fotos und können so viele ausblenden, wie Sie möchten. Sie können auch Co-Gastgeber einladen, um gemeinsam auszuwählen.' },
-    { q: 'Wann sind die Fotos sichtbar?', a: 'Sie bleiben bis zum Datum der Enthüllung verborgen, das Sie wählen, wie ein Film, der entwickelt wird. Danach öffnet sich die Galerie für alle.' },
+    { q: 'Kann ich ein Foto entfernen, bevor alle es sehen?', a: 'Ja. Vor der Präsentation sehen nur Sie die Fotos und können so viele ausblenden, wie Sie möchten. Sie können auch Co-Gastgeber einladen, um gemeinsam auszuwählen.' },
+    { q: 'Wann sind die Fotos sichtbar?', a: 'Sie bleiben bis zum Präsentationstermin verborgen, den Sie wählen, wie ein Film, der entwickelt wird. Danach öffnet sich die Galerie für alle.' },
     { q: 'Ist das ein Abo?', a: 'Nein. Sie zahlen einmal für Ihr Event, je nach Anzahl der Gäste. Nichts verlängert sich.' },
   ],
 }
@@ -211,7 +211,7 @@ export default async function Home({ params }) {
               {t({
                 fr: <>L'appareil photo<br />jetable de votre<br />mariage.</>,
                 en: <>The disposable<br />camera for your<br />wedding.</>,
-                de: <>Die Einwegkamera<br />für Ihre<br />Hochzeit.</>,
+                de: <>Die digitale Einwegkamera<br />für Ihre<br />Hochzeit.</>,
               }, lang)}
             </h1>
             <p>{M.pitch}</p>
@@ -241,7 +241,7 @@ export default async function Home({ params }) {
                 ['/appareil-jetable-mariage', { fr: 'Mariages', en: 'Weddings', de: 'Hochzeiten' }],
                 ['/anniversaire', { fr: 'Anniversaires', en: 'Birthdays', de: 'Geburtstage' }],
                 ['/bapteme', { fr: 'Baptêmes', en: 'Christenings', de: 'Taufen' }],
-                ['/evjf-evg', { fr: 'EVJF', en: 'Hen & stag dos', de: 'JGA' }],
+                ['/evjf-evg', { fr: 'EVJF', en: 'Hen & stag dos', de: 'Junggesellenabschiede (JGA)' }],
                 ['/vacances-entre-amis', { fr: 'Vacances', en: 'Holidays', de: 'Urlaub' }],
                 ['/depart-retraite', { fr: 'Retraites', en: 'Retirements', de: 'Ruhestand' }],
                 ['/occasions', { fr: 'Et plus', en: 'And more', de: 'Und mehr' }],
@@ -276,7 +276,7 @@ export default async function Home({ params }) {
                 alt={t({
                   fr: "L'album révélé après la fête : les photos de tous les participants réunies dans une galerie.",
                   en: "The album revealed after the party: every guest's photos together in one gallery.",
-                  de: 'Das nach der Feier enthüllte Album: die Fotos aller Gäste in einer Galerie.',
+                  de: 'Das Album nach der Präsentation: die Fotos aller Gäste in einer Galerie.',
                 }, lang)} />
             </div>
           </div>
@@ -285,12 +285,12 @@ export default async function Home({ params }) {
         {/* COMMENT ÇA MARCHE */}
         <section className="section">
           <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>{t({ fr: 'Comment ça marche', en: 'How it works', de: "So funktioniert's" }, lang)}</div>
-          <h2 className="section-title">{t({ fr: 'Trois étapes, zéro friction', en: 'Three steps, zero hassle', de: 'Drei Schritte, null Aufwand' }, lang)}</h2>
+          <h2 className="section-title">{t({ fr: 'Trois étapes, zéro friction', en: 'Three steps, zero hassle', de: 'Drei Schritte, kein Aufwand' }, lang)}</h2>
           <div className="section-sub">
             {t({
               fr: "Vous créez l'événement, vos participants scannent, et la magie opère après la fête.",
               en: 'You create the event, your guests scan, and the magic happens after the party.',
-              de: 'Sie erstellen das Event, Ihre Gäste scannen, und der Zauber passiert nach der Feier.',
+              de: 'Sie erstellen das Event, Ihre Gäste scannen den Code und fotografieren, und nach der Feier sehen alle das Ergebnis.',
             }, lang)}
           </div>
           <div className="steps-grid">
@@ -342,12 +342,12 @@ export default async function Home({ params }) {
           <div className="split split-inverse">
             <div className="split-text">
               <div className="eyebrow-mute" style={{ marginBottom: 10 }}>{t({ fr: 'Pendant la fête', en: 'During the party', de: 'Während der Feier' }, lang)}</div>
-              <h2>{t({ fr: 'Un seul album, rempli par tout le monde', en: 'One album, filled by everyone', de: 'Ein Album, gefüllt von allen' }, lang)}</h2>
+              <h2>{t({ fr: 'Un seul album, rempli par tout le monde', en: 'One album, filled by everyone', de: 'Ein einzigartiges Album, erstellt von all Ihren Gästen' }, lang)}</h2>
               <p>
                 {t({
                   fr: 'Chacun scanne, prend ses clichés et voit le compteur grimper. Mais personne ne découvre les photos des autres : le compte à rebours retient tout le monde jusqu\'à la révélation.',
                   en: "Everyone scans, takes their shots and watches the counter go up. But nobody sees anyone else's photos: the countdown keeps everyone waiting until the reveal.",
-                  de: 'Jeder scannt, macht seine Fotos und sieht den Zähler steigen. Aber niemand sieht die Fotos der anderen: Der Countdown lässt alle bis zur Enthüllung warten.',
+                  de: 'Jeder Gast scannt den QR-Code und macht seine Fotos. Die Gäste sehen den Fotozähler steigen, aber niemand kann die Fotos der anderen sehen: Der Countdown läuft bis zur Präsentation, und Sie bestimmen den Zeitpunkt.',
                 }, lang)}
               </p>
               <ul className="split-list">
@@ -369,7 +369,7 @@ export default async function Home({ params }) {
                   {t({
                     fr: <><b>Chacun sa pellicule</b> : ses propres photos, visibles de lui seul avant l'heure.</>,
                     en: <><b>A roll of film each</b>: your own photos, visible only to you until the reveal.</>,
-                    de: <><b>Jedem sein Film</b>: die eigenen Fotos, vor der Zeit nur für einen selbst sichtbar.</>,
+                    de: <><b>Jedem sein Film</b>: die eigenen Fotos, vor Ablauf des Countdowns nur für einen selbst sichtbar.</>,
                   }, lang)}
                 </div></li>
               </ul>
@@ -379,7 +379,7 @@ export default async function Home({ params }) {
                 alt={t({
                   fr: "L'album partagé pendant la soirée : compte à rebours avant la révélation, nombre de photos du groupe et de participants.",
                   en: 'The shared album during the party: countdown to the reveal, number of group photos and guests.',
-                  de: 'Das gemeinsame Album während der Feier: Countdown bis zur Enthüllung, Anzahl der Fotos und der Gäste.',
+                  de: 'Das gemeinsame Album während der Feier: Countdown bis zur Präsentation, Anzahl der Fotos und der Gäste.',
                 }, lang)} />
             </div>
           </div>
@@ -392,12 +392,12 @@ export default async function Home({ params }) {
         {/* VOUS GARDEZ LA MAIN */}
         <section className="section">
           <div className="eyebrow-mute" style={{ textAlign: 'center', marginBottom: 10 }}>{t({ fr: 'Vous gardez la main', en: "You're in control", de: 'Sie behalten die Kontrolle' }, lang)}</div>
-          <h2 className="section-title">{t({ fr: 'Rien ne se révèle sans votre accord', en: 'Nothing is revealed without your approval', de: 'Nichts wird ohne Ihre Zustimmung enthüllt' }, lang)}</h2>
+          <h2 className="section-title">{t({ fr: 'Rien ne se révèle sans votre accord', en: 'Nothing is revealed without your approval', de: 'Nichts wird ohne Ihre Zustimmung sichtbar' }, lang)}</h2>
           <div className="section-sub">
             {t({
               fr: 'Une photo gênante ? Vous la retirez avant que qui que ce soit ne la voie.',
               en: 'An embarrassing photo? You remove it before anyone sees it.',
-              de: 'Ein peinliches Foto? Sie entfernen es, bevor irgendjemand es sieht.',
+              de: 'Ein peinliches Foto? Sie entfernen es, bevor jemand anderes es sieht.',
             }, lang)}
           </div>
           <div className="steps-grid">
@@ -494,7 +494,7 @@ export default async function Home({ params }) {
                 {t({
                   fr: "Une fois l'album révélé, chaque participant peut commander lui-même ses photos préférées (frais supplémentaires à prévoir), directement depuis l'album, sans passer par vous. Il les reçoit chez lui, imprimées comme au temps des pellicules.",
                   en: 'Once the album is revealed, every guest can order their own favourite photos (at an extra cost) straight from the album, without going through you. They get them delivered at home, printed just like in the days of film.',
-                  de: 'Sobald das Album enthüllt ist, kann jeder Gast seine Lieblingsfotos selbst bestellen (gegen Aufpreis), direkt im Album, ohne über Sie zu gehen. Er bekommt sie nach Hause geschickt, gedruckt wie zu Zeiten des Films.',
+                  de: 'Sobald das Album für alle sichtbar ist, kann jeder Gast seine Lieblingsfotos selbst bestellen (gegen Aufpreis), direkt im Album, ohne über Sie zu gehen. Er bekommt sie nach Hause geschickt, gedruckt wie zu Zeiten des Films.',
                 }, lang)}
               </p>
               <ul className="split-list">

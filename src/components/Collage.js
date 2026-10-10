@@ -92,7 +92,7 @@ export default function Collage({
       fond,
       titre: nom || '',
       surtitre: t({ fr: 'Les souvenirs de', en: 'Memories of', de: 'Erinnerungen an' }),
-      pied: t({ fr: 'L’appareil photo jetable de vos événements', en: 'The disposable camera for your events', de: 'Die Einwegkamera für Ihre Events' }),
+      pied: t({ fr: 'L’appareil photo jetable de vos événements', en: 'The disposable camera for your events', de: 'Die digitale Einwegkamera für Ihre Events' }),
       pellicule,
       avecDate,
       graine,

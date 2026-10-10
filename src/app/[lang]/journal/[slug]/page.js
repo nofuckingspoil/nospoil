@@ -58,7 +58,7 @@ const PAGES_LIEES = [
   {
     href: '/appareil-jetable-mariage',
     slugs: ['appareil-photo-jetable-mariage', 'application-appareil-photo-jetable-mariage', 'photos-mariage-effet-argentique', 'dix-cliches', 'revelation-photos-lendemain-mariage'],
-    titre: { fr: "L'appareil photo jetable de ton mariage", en: 'The disposable camera for your wedding', de: 'Die Einwegkamera für Ihre Hochzeit' },
+    titre: { fr: "L'appareil photo jetable de ton mariage", en: 'The disposable camera for your wedding', de: 'Die digitale Einwegkamera für Ihre Hochzeit' },
   },
   {
     href: '/photobooth-mariage',
@@ -73,7 +73,7 @@ const PAGES_LIEES = [
   {
     href: '/anniversaire-30-ans',
     slugs: ['idees-anniversaire-30-ans'],
-    titre: { fr: 'Un appareil jetable partagé pour tes 30 ans', en: 'A shared disposable camera for your 30th', de: 'Eine geteilte Einwegkamera für Ihren 30.' },
+    titre: { fr: 'Un appareil jetable partagé pour tes 30 ans', en: 'A shared disposable camera for your 30th', de: 'Eine geteilte digitale Einwegkamera für Ihren 30.' },
   },
   {
     href: '/depart-retraite',
@@ -88,7 +88,7 @@ const PAGES_LIEES = [
   {
     href: '/week-end-entre-amis',
     slugs: ['photos-week-end-entre-amis'],
-    titre: { fr: 'Les photos du week-end, révélées le lundi', en: 'The weekend photos, revealed on Monday', de: 'Die Wochenendfotos, enthüllt am Montag' },
+    titre: { fr: 'Les photos du week-end, révélées le lundi', en: 'The weekend photos, revealed on Monday', de: 'Die Wochenendfotos, präsentiert am Montag' },
   },
 ]
 // Par défaut (les autres articles de mariage) : les photos des invités.
@@ -240,7 +240,7 @@ export default async function Article({ params }) {
               <span>{t({
                 fr: "Combien de clichés donner, quand révéler l'album, comment faire scanner tout le monde. Sept chapitres, gratuits.",
                 en: 'How many shots to give, when to reveal the album, how to get everyone scanning. Seven chapters, free.',
-                de: 'Wie viele Aufnahmen pro Gast, wann das Album enthüllt wird, wie alle zum Scannen kommen. Sieben Kapitel, kostenlos.',
+                de: 'Wie viele Aufnahmen pro Gast, wann das Album präsentiert wird, wie alle zum Scannen kommen. Sieben Kapitel, kostenlos.',
               }, lang)}</span>
             </div>
             <Link className="dj-btn" href={lien('/guide', lang)}>{t({ fr: 'Lire le guide', en: 'Read the guide', de: 'Leitfaden lesen' }, lang)}</Link>

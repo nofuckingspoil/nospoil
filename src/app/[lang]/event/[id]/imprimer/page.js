@@ -228,8 +228,8 @@ export default function PrintKit({ params }) {
             l'essentiel, la date et l'heure. */}
         <div className="pk-reveal">
           {size === 'sm'
-            ? t({ fr: 'Révélation le', en: 'Revealed on', de: 'Enthüllung am' })
-            : t({ fr: 'Révélation commune des clichés le', en: 'All the shots revealed together on', de: 'Gemeinsame Enthüllung aller Aufnahmen am' })}
+            ? t({ fr: 'Révélation le', en: 'Revealed on', de: 'Präsentation am' })
+            : t({ fr: 'Révélation commune des clichés le', en: 'All the shots revealed together on', de: 'Gemeinsame Präsentation aller Aufnahmen am' })}
           <br />
           <strong>{reveal}</strong>
         </div>

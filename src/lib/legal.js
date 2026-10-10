@@ -985,12 +985,12 @@ const cgvDe = {
 
 <h2>Artikel 3: Begriffsbestimmungen</h2>
 <ul>
-  <li><strong>Dienst</strong>: die Lösung Time to Flash, mit der die von den Gästen eines Events aufgenommenen Fotos gesammelt und nach dem Event enthüllt werden.</li>
+  <li><strong>Dienst</strong>: die Lösung Time to Flash, mit der die von den Gästen eines Events aufgenommenen Fotos gesammelt und nach dem Event präsentiert werden.</li>
   <li><strong>Gastgeber</strong>: die natürliche oder juristische Person, die ein Event erstellt und gegebenenfalls den entsprechenden Preis bezahlt.</li>
   <li><strong>Gast</strong>: jede Person, die über den vom Gastgeber mitgeteilten Link oder QR-Code auf ein Event zugreift und Inhalte hochlädt.</li>
   <li><strong>Event</strong>: der vom Gastgeber erstellte Bereich, der einem Paket und einer Höchstzahl von Gästen zugeordnet ist.</li>
   <li><strong>Inhalte</strong>: die von den Gästen hochgeladenen Fotos.</li>
-  <li><strong>Enthüllung</strong>: der vom Gastgeber bei der Erstellung des Events festgelegte Zeitpunkt, ab dem die Inhalte für den Gastgeber und die Gäste zugänglich werden.</li>
+  <li><strong>Präsentation</strong>: der vom Gastgeber bei der Erstellung des Events festgelegte Zeitpunkt, ab dem die Inhalte für den Gastgeber und die Gäste zugänglich werden.</li>
 </ul>
 
 <h2>Artikel 4: Beschreibung des Dienstes</h2>
@@ -1002,7 +1002,7 @@ const cgvDe = {
   <li><strong>Höchstzahl der Gäste</strong>: richtet sich nach dem gewählten Paket gemäß der Tabelle in Artikel 5.</li>
   <li><strong>Zugang</strong>: über einen Webbrowser, ohne Installation einer App, sowohl für den Gastgeber als auch für die Gäste.</li>
 </ul>
-<p>Die Inhalte sind während des Events nicht einsehbar: Sie werden zum vom Gastgeber gewählten Zeitpunkt der Enthüllung freigegeben.</p>
+<p>Die Inhalte sind während des Events nicht einsehbar: Sie werden zum vom Gastgeber gewählten Präsentationstermin zugänglich.</p>
 <p>Die Nutzung des Dienstes setzt ein kompatibles Gerät mit Kamera und Internetverbindung voraus, für das der Gastgeber und die Gäste selbst zu sorgen haben.</p>
 
 <h2>Artikel 5: Pakete und Preise</h2>
@@ -1023,7 +1023,7 @@ const cgvDe = {
 </table>
 <p>Die Preise verstehen sich <strong>in Euro einschließlich aller Steuern</strong>. Es wird kein Abonnement abgeschlossen: Jedes Paket wird durch eine <strong>einmalige Zahlung</strong> beglichen, die bei der Erstellung des Events fällig wird.</p>
 <p>BLACK BY C behält sich das Recht vor, die Preise jederzeit zu ändern. Maßgeblich ist der am Tag der Erstellung des Events angezeigte Preis.</p>
-<p><strong>Überschreitung der Gästezahl.</strong> Die Höchstzahl der Gäste des Pakets hindert niemals einen Gast daran, dem Event beizutreten oder Fotos aufzunehmen: Während des Events wird nichts gesperrt, und alle Fotos bleiben erhalten. Übersteigt die Zahl der tatsächlich angemeldeten Gäste jedoch die des gebuchten Pakets, <strong>wird die Freigabe des Albums für die Gäste (die „Enthüllung“) ausgesetzt</strong>, bis der Gastgeber das Paket bucht, das der tatsächlichen Gästezahl entspricht. Für dieses Upgrade ist nur die <strong>Preisdifferenz</strong> zwischen dem gebuchten und dem erforderlichen Paket zu zahlen; der bereits gezahlte Betrag bleibt angerechnet. Der Gastgeber wird darüber in seinem Dashboard und per E-Mail informiert. Keine Aussetzung erfolgt, wenn der Gastgeber das höchste Paket gebucht hat, das keine Begrenzung der Gästezahl vorsieht.</p>
+<p><strong>Überschreitung der Gästezahl.</strong> Die Höchstzahl der Gäste des Pakets hindert niemals einen Gast daran, dem Event beizutreten oder Fotos aufzunehmen: Während des Events wird nichts gesperrt, und alle Fotos bleiben erhalten. Übersteigt die Zahl der tatsächlich angemeldeten Gäste jedoch die des gebuchten Pakets, <strong>wird die Freigabe des Albums für die Gäste (die „Präsentation“) ausgesetzt</strong>, bis der Gastgeber das Paket bucht, das der tatsächlichen Gästezahl entspricht. Für dieses Upgrade ist nur die <strong>Preisdifferenz</strong> zwischen dem gebuchten und dem erforderlichen Paket zu zahlen; der bereits gezahlte Betrag bleibt angerechnet. Der Gastgeber wird darüber in seinem Dashboard und per E-Mail informiert. Keine Aussetzung erfolgt, wenn der Gastgeber das höchste Paket gebucht hat, das keine Begrenzung der Gästezahl vorsieht.</p>
 
 <h2>Artikel 6: Bestellung und Vertragsschluss</h2>
 <p>Die Erstellung eines Events setzt die Eingabe der abgefragten Informationen, die Bestätigung des gewählten Pakets und bei kostenpflichtigen Paketen die Zahlung des Preises voraus.</p>
@@ -1037,7 +1037,7 @@ const cgvDe = {
 
 <h2>Artikel 8: Dauer und Verfügbarkeit des Events</h2>
 <p>Der Gastgeber hat ab der Zahlung <strong>zwölf (12) Monate</strong> Zeit, sein Event zu veranstalten und zu nutzen. Nach Ablauf dieser Frist gilt das Paket als verbraucht; eine Erstattung oder Verschiebung ist ausgeschlossen.</p>
-<p>Die Inhalte werden gespeichert und <strong>sechs (6) Monate nach dem Datum des Events automatisch gelöscht</strong>. Im Sinne dieser AGB gilt als Datum des Events das <strong>Datum der Enthüllung</strong>, das der Gastgeber bei der Erstellung des Events gewählt hat: Mit diesem Datum beginnt die Frist von sechs Monaten.</p>
+<p>Die Inhalte werden gespeichert und <strong>sechs (6) Monate nach dem Datum des Events automatisch gelöscht</strong>. Im Sinne dieser AGB gilt als Datum des Events der <strong>Präsentationstermin</strong>, den der Gastgeber bei der Erstellung des Events gewählt hat: Mit diesem Termin beginnt die Frist von sechs Monaten.</p>
 <p>Es obliegt dem Gastgeber, die Inhalte, die er behalten möchte, vor Ablauf dieser Frist herunterzuladen. Die Löschung ist endgültig und unwiderruflich.</p>
 
 <h2>Artikel 9: Widerrufsrecht</h2>
@@ -1070,7 +1070,7 @@ const cgvDe = {
 <h2>Artikel 12: Inhalte und Moderation</h2>
 <p>Streng verboten sind rechtswidrige Inhalte, insbesondere kinderpornografische, gewaltverherrlichende, hasserfüllte oder verleumderische Inhalte, Inhalte, die die Privatsphäre oder das Recht am eigenen Bild Dritter verletzen, sowie rechtsverletzende Inhalte.</p>
 <p>BLACK BY C handelt als Hosting-Anbieter im Sinne von Artikel 6 des französischen Gesetzes Nr. 2004-575 vom 21. Juni 2004. Sie nimmt keine allgemeine Überwachung der Inhalte vor, verpflichtet sich jedoch, offensichtlich rechtswidrige Inhalte, die ihr unter support@timetoflash.fr zur Kenntnis gebracht werden, unverzüglich zu entfernen.</p>
-<p>Jeder Gast kann seine eigenen Inhalte vor der Enthüllung löschen. Auch der Gastgeber kann in sein Event hochgeladene Inhalte entfernen.</p>
+<p>Jeder Gast kann seine eigenen Inhalte vor der Präsentation löschen. Auch der Gastgeber kann in sein Event hochgeladene Inhalte entfernen.</p>
 <p>BLACK BY C behält sich das Recht vor, ein Event, das offensichtlich gegen diese AGB oder gegen das Gesetz verstößt, ohne Vorankündigung und ohne Erstattung zu sperren oder zu löschen.</p>
 
 <h2>Artikel 13: Gesetzliche Gewährleistung</h2>
@@ -1112,7 +1112,7 @@ const cgvDe = {
 
 <h2>Artikel 20: Verkauf von Fotoabzügen auf Papier</h2>
 <h3>20.1 Gegenstand</h3>
-<p>Aus dem Album eines enthüllten Events heraus kann jeder Gastgeber oder Gast (der „<strong>Käufer</strong>“) Fotoabzüge auf Papier von den Fotos dieses Events bestellen. Die Abzüge sind ausschließlich für den privaten Gebrauch bestimmt.</p>
+<p>Aus dem Album eines bereits präsentierten Events heraus kann jeder Gastgeber oder Gast (der „<strong>Käufer</strong>“) Fotoabzüge auf Papier von den Fotos dieses Events bestellen. Die Abzüge sind ausschließlich für den privaten Gebrauch bestimmt.</p>
 <h3>20.2 Preise</h3>
 <p>Die Preise verstehen sich in Euro einschließlich aller Steuern: ein Preis pro Abzug je nach Format sowie Versandkosten je nach Bestimmungsland und Anzahl der Abzüge. Geliefert wird in das französische Mutterland und in die bei der Bestellung aufgeführten Länder der Europäischen Union. Die Einzelheiten (Anzahl der Abzüge, Format, Oberfläche, Filmlook, Versand, Gesamtbetrag) werden vor der Zahlung angezeigt und in der Bestätigungs-E-Mail wiederholt.</p>
 <h3>20.3 Bestellung und Zahlung</h3>
@@ -1198,7 +1198,7 @@ const confidentialiteDe = {
   title: 'Datenschutzerklärung',
   description: 'Welche Daten Time to Flash verarbeitet, warum, wie lange, und wie Sie Ihre Rechte ausüben.',
   html: `
-<p class="legal-lead">Time to Flash ist ein Dienst, der die von den Gästen eines Events aufgenommenen Fotos sammelt und nach dem Event enthüllt. Dieses Dokument erklärt, welche Daten verarbeitet werden, warum, wie lange, und welche Rechte Sie haben.</p>
+<p class="legal-lead">Time to Flash ist ein Dienst, der die von den Gästen eines Events aufgenommenen Fotos sammelt und nach dem Event präsentiert. Dieses Dokument erklärt, welche Daten verarbeitet werden, warum, wie lange, und welche Rechte Sie haben.</p>
 
 <h2>1. Wer Ihre Daten verarbeitet</h2>
 <p><strong>BLACK BY C</strong>, SASU mit einem Stammkapital von 300 €, 2 impasse des Ligures, 44840 Les Sorinières, Frankreich, RCS Nantes 898 409 446.</p>
@@ -1232,15 +1232,15 @@ const confidentialiteDe = {
     <tr><th>Daten</th><th>Zweck</th><th>Speicherdauer</th></tr>
   </thead>
   <tbody>
-    <tr><td>Fotos</td><td>Erstellung der Galerie des Events</td><td>6 Monate nach dem Datum der Enthüllung, danach automatische Löschung</td></tr>
+    <tr><td>Fotos</td><td>Erstellung der Galerie des Events</td><td>6 Monate nach dem Präsentationstermin, danach automatische Löschung</td></tr>
     <tr><td>Eingegebener Vorname oder Pseudonym</td><td>Zuordnung der Beiträge innerhalb des Events</td><td>wie oben</td></tr>
-    <tr><td><strong>E-Mail-Adresse</strong> (freiwillig)</td><td>einmalige Zusendung eines persönlichen Zugangslinks, mit dem der Gast seine eigenen Fotos und verbleibenden Aufnahmen auf einem anderen Gerät wiederfindet; Zusendung des Album-Links zum Zeitpunkt der Enthüllung; einmalige Zusendung eines Zufriedenheitsfragebogens ohne Erinnerung (Artikel 3.3)</td><td>wie oben</td></tr>
+    <tr><td><strong>E-Mail-Adresse</strong> (freiwillig)</td><td>einmalige Zusendung eines persönlichen Zugangslinks, mit dem der Gast seine eigenen Fotos und verbleibenden Aufnahmen auf einem anderen Gerät wiederfindet; Zusendung des Album-Links zum Präsentationstermin; einmalige Zusendung eines Zufriedenheitsfragebogens ohne Erinnerung (Artikel 3.3)</td><td>wie oben</td></tr>
     <tr><td>Telefonnummer (freiwillig, wird nicht mehr erhoben)</td><td>Weitergabe des Album-Links durch den Gastgeber</td><td>wie oben</td></tr>
     <tr><td>Zeitstempel, technische Verbindungsdaten</td><td>Betrieb und Sicherheit des Dienstes</td><td>12 Monate</td></tr>
   </tbody>
 </table>
 <p>Um als Gast Inhalte hochzuladen, ist kein Konto erforderlich.</p>
-<p>Die Angabe einer E-Mail-Adresse ist <strong>freiwillig</strong>: Der Gast kann auch ohne sie teilnehmen. Sie dient dazu, ihm den Album-Link zu senden, wenn die Fotos enthüllt werden, sowie gegebenenfalls den in Artikel 3.3 beschriebenen Zufriedenheitsfragebogen. Sie wird <strong>nicht zu Werbezwecken</strong> verwendet, niemals an Dritte weitergegeben und mit dem Event gelöscht.</p>
+<p>Die Angabe einer E-Mail-Adresse ist <strong>freiwillig</strong>: Der Gast kann auch ohne sie teilnehmen. Sie dient dazu, ihm den Album-Link zu senden, wenn die Fotos präsentiert werden, sowie gegebenenfalls den in Artikel 3.3 beschriebenen Zufriedenheitsfragebogen. Sie wird <strong>nicht zu Werbezwecken</strong> verwendet, niemals an Dritte weitergegeben und mit dem Event gelöscht.</p>
 <p>Die Erhebung von Telefonnummern wurde eingestellt. Vor dieser Änderung erfasste Nummern unterliegen denselben Regeln und werden mit dem Event gelöscht, zu dem sie gehören. Diese Erhebung betraf nur Gäste: Ein Gastgeber kann, wenn er möchte, seine eigene Nummer im Zufriedenheitsfragebogen angeben, nach Maßgabe von Artikel 3.3.</p>
 <p>Fotos können sensible Informationen offenbaren: religiöse Praxis bei einer Zeremonie, erkennbarer Gesundheitszustand, vermutete Zugehörigkeit zu einer Gruppe. BLACK BY C nutzt diese Informationen niemals und nimmt keine Analyse der Bildinhalte, keine Gesichtserkennung und kein Profiling vor.</p>
 
@@ -1283,14 +1283,14 @@ const confidentialiteDe = {
   </tbody>
 </table>
 <p>Meta und Google kommen nur auf den öffentlichen Seiten der Website zum Einsatz, niemals innerhalb eines Events: <strong>Die von den Gästen hochgeladenen Fotos werden ihnen zu keinem Zeitpunkt übermittelt</strong>. Einzelheiten zu diesen Trackern und wie Sie sie ablehnen können, finden Sie in Artikel 10.</p>
-<p>Die in ein Event hochgeladenen Inhalte sind für den Gastgeber dieses Events und nach der Enthüllung für die anderen Gäste desselben Events zugänglich.</p>
+<p>Die in ein Event hochgeladenen Inhalte sind für den Gastgeber dieses Events und nach der Präsentation für die anderen Gäste desselben Events zugänglich.</p>
 
 <h2>5. Übermittlungen außerhalb der Europäischen Union</h2>
 <p>Die Daten und Inhalte werden in <strong>Westeuropa</strong> gespeichert.</p>
 <p>Da einige Dienstleister Gesellschaften US-amerikanischen Rechts sind, kann ein Zugriff aus den Vereinigten Staaten zum Zweck der technischen Verwaltung nicht ausgeschlossen werden. Diese Übermittlungen sind durch die von der Europäischen Kommission erlassenen Standardvertragsklauseln und gegebenenfalls durch die Zertifizierung der Dienstleister nach dem <em>Data Privacy Framework</em> abgesichert.</p>
 
 <h2>6. Speicherdauer</h2>
-<p>Die in ein Event hochgeladenen Inhalte werden <strong>sechs Monate nach dem vom Gastgeber gewählten Datum der Enthüllung automatisch gelöscht</strong>. Diese Löschung ist endgültig und unwiderruflich: Es obliegt dem Gastgeber, die Inhalte, die er behalten möchte, vor diesem Zeitpunkt herunterzuladen.</p>
+<p>Die in ein Event hochgeladenen Inhalte werden <strong>sechs Monate nach dem vom Gastgeber gewählten Präsentationstermin automatisch gelöscht</strong>. Diese Löschung ist endgültig und unwiderruflich: Es obliegt dem Gastgeber, die Inhalte, die er behalten möchte, vor diesem Zeitpunkt herunterzuladen.</p>
 <p>Die übrigen Fristen sind in den Tabellen in Artikel 3 aufgeführt.</p>
 
 <h2>7. Ihre Rechte</h2>

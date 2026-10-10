@@ -10,7 +10,7 @@ import { t } from '../../lib/i18n'
 const ALT = {
   fr: "Time to Flash, l'appareil photo jetable de vos événements",
   en: 'Time to Flash, the disposable camera for your events',
-  de: 'Time to Flash, die Einwegkamera für Ihre Events',
+  de: 'Time to Flash, die digitale Einwegkamera für Ihre Events',
 }
 
 export async function generateImageMetadata({ params }) {
@@ -25,12 +25,12 @@ export default async function Image({ params }) {
     titre: t({
       fr: "L'appareil photo jetable de vos événements.",
       en: 'The disposable camera for your events.',
-      de: 'Die Einwegkamera für Ihre Events.',
+      de: 'Die digitale Einwegkamera für Ihre Events.',
     }, lang),
     accroche: t({
       fr: "Un QR code, quelques clichés par participant, et toutes les photos qui se révèlent après la fête.",
       en: 'One QR code, a few shots per guest, and every photo revealed after the party.',
-      de: 'Ein QR-Code, ein paar Fotos pro Gast, und alle Bilder werden nach der Feier enthüllt.',
+      de: 'Ein QR-Code, ein paar Fotos pro Gast, und alle Bilder werden nach der Feier für alle sichtbar.',
     }, lang),
   })
 }

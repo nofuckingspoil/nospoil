@@ -51,7 +51,7 @@ const ETAPES = {
   de: [
     { t: 'Ein Aufsteller oder ein Link', s: 'Sie erstellen das Event in zwei Minuten. Die Gäste scannen den QR-Code auf dem Aufsteller oder öffnen den Link aus der Gruppe: Die Kamera öffnet sich im Browser.' },
     { t: 'Eine feste Anzahl an Fotos', s: 'Jeder hat ein paar Aufnahmen, keine mehr, und sieht sie nicht sofort. Wie bei einer echten Einwegkamera wählt man seinen Moment.' },
-    { t: 'Die Enthüllung', s: 'Zur gewählten Zeit erscheinen alle Fotos auf einmal in einem privaten Album, das jeder öffnen und herunterladen kann.' },
+    { t: 'Die Präsentation', s: 'Zur gewählten Zeit erscheinen alle Fotos auf einmal in einem privaten Album, das jeder öffnen und herunterladen kann.' },
   ],
 }
 

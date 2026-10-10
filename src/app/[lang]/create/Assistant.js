@@ -493,7 +493,7 @@ export function CreateForm({ parcours = 'long' }) {
     setError('')
     if (apres) {
       if (estEcran('revelation') && (isNaN(new Date(revealAt)) || new Date(revealAt) <= new Date(endsAt))) {
-        setError(t({ fr: 'La révélation doit venir après la fin de votre événement.', en: 'The reveal must come after your event ends.', de: 'Die Enthüllung muss nach dem Ende Ihres Events liegen.' })); return
+        setError(t({ fr: 'La révélation doit venir après la fin de votre événement.', en: 'The reveal must come after your event ends.', de: 'Die Präsentation muss nach dem Ende Ihres Events liegen.' })); return
       }
       setLoading(true)
       try { await enregistrerReglage(); suivant() }
@@ -517,9 +517,9 @@ export function CreateForm({ parcours = 'long' }) {
       return suivant()
     }
     if (estEcran('revelation')) {
-      if (!revealAt || isNaN(new Date(revealAt))) { setError(t({ fr: 'Choisissez une date de révélation.', en: 'Choose a reveal date.', de: 'Wählen Sie ein Datum für die Enthüllung.' })); return }
+      if (!revealAt || isNaN(new Date(revealAt))) { setError(t({ fr: 'Choisissez une date de révélation.', en: 'Choose a reveal date.', de: 'Wählen Sie einen Präsentationstermin.' })); return }
       if (new Date(revealAt) <= new Date(endsAt)) {
-        setError(t({ fr: 'La révélation doit venir après la fin de votre événement.', en: 'The reveal must come after your event ends.', de: 'Die Enthüllung muss nach dem Ende Ihres Events liegen.' })); return
+        setError(t({ fr: 'La révélation doit venir après la fin de votre événement.', en: 'The reveal must come after your event ends.', de: 'Die Präsentation muss nach dem Ende Ihres Events liegen.' })); return
       }
       return suivant()
     }
@@ -815,7 +815,7 @@ export function CreateForm({ parcours = 'long' }) {
       {/* Quand l'album s'ouvre pour tout le monde */}
       {estEcran('revelation') && (
         <form className="card wiz-card" onSubmit={nextStep}>
-          <h2 className="wiz-q">{t({ fr: 'Quand souhaitez-vous révéler les photos ?', en: 'When would you like to reveal the photos?', de: 'Wann möchten Sie die Fotos enthüllen?' })}</h2>
+          <h2 className="wiz-q">{t({ fr: 'Quand souhaitez-vous révéler les photos ?', en: 'When would you like to reveal the photos?', de: 'Wann möchten Sie die Fotos präsentieren?' })}</h2>
           {/* Montrer plutôt que décrire : l'album tel qu'il restera jusqu'à la
               date choisie. Posé avant les propositions, il donne son sens à
               tout ce qui suit. */}
@@ -824,7 +824,7 @@ export function CreateForm({ parcours = 'long' }) {
               <span className="wiz-revele-cache"><img src="/accueil/galerie-photos.webp" alt="" /></span>
               <span className="wiz-revele-cache"><img src="/accueil/album-partage.webp" alt="" /></span>
             </div>
-            <span className="wiz-revele-badge">{t({ fr: '🕒 Révélation', en: '🕒 Reveal', de: '🕒 Enthüllung' })} {frCourt(revealAt, lang, locale)}</span>
+            <span className="wiz-revele-badge">{t({ fr: '🕒 Révélation', en: '🕒 Reveal', de: '🕒 Präsentation' })} {frCourt(revealAt, lang, locale)}</span>
           </div>
           <div className="wiz-opts">
             {REVEAL_PRESETS.filter((p) => p.key !== 'custom').map((p) => (
@@ -932,7 +932,7 @@ export function CreateForm({ parcours = 'long' }) {
             {t({
               fr: "Ce que chacun pourra faire de ses propres clichés pendant la fête. Ceux des autres restent cachés jusqu'à la révélation dans les trois cas.",
               en: "What each guest can do with their own shots during the party. Everyone else's stay hidden until the reveal in all three cases.",
-              de: 'Was jeder während der Feier mit seinen eigenen Aufnahmen machen kann. Die der anderen bleiben in allen drei Fällen bis zur Enthüllung verborgen.',
+              de: 'Was jeder während der Feier mit seinen eigenen Aufnahmen machen kann. Die der anderen bleiben in allen drei Fällen bis zur Präsentation verborgen.',
             })}
           </p>
           <div className="wiz-opts">
@@ -987,7 +987,7 @@ export function CreateForm({ parcours = 'long' }) {
                   {t({
                     fr: <>Prenez <strong>{shots} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{frDate(revealAt, locale)}</strong>.</>,
                     en: <>Take <strong>{shots} photos</strong> during the party. They will stay hidden until the reveal on <strong>{frDate(revealAt, locale)}</strong>.</>,
-                    de: <>Machen Sie <strong>{shots} Fotos</strong> während der Feier. Sie bleiben bis zur Enthüllung am <strong>{frDate(revealAt, locale)}</strong> verborgen.</>,
+                    de: <>Machen Sie <strong>{shots} Fotos</strong> während der Feier. Sie bleiben bis zur Präsentation am <strong>{frDate(revealAt, locale)}</strong> verborgen.</>,
                   })}
                 </p>
                 <span className="btn btn-accent">{t({ fr: "Participer à l'album collectif →", en: 'Join the shared album →', de: 'Beim gemeinsamen Album mitmachen →' })}</span>
@@ -1041,7 +1041,7 @@ export function CreateForm({ parcours = 'long' }) {
                 {t({
                   fr: <>Prenez <strong>{shots} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{frDate(revealAt, locale)}</strong>.</>,
                   en: <>Take <strong>{shots} photos</strong> during the party. They will stay hidden until the reveal on <strong>{frDate(revealAt, locale)}</strong>.</>,
-                  de: <>Machen Sie <strong>{shots} Fotos</strong> während der Feier. Sie bleiben bis zur Enthüllung am <strong>{frDate(revealAt, locale)}</strong> verborgen.</>,
+                  de: <>Machen Sie <strong>{shots} Fotos</strong> während der Feier. Sie bleiben bis zur Präsentation am <strong>{frDate(revealAt, locale)}</strong> verborgen.</>,
                 })}
               </p>
               <span className="btn btn-accent">{t({ fr: "Participer à l'album collectif →", en: 'Join the shared album →', de: 'Beim gemeinsamen Album mitmachen →' })}</span>
@@ -1151,7 +1151,7 @@ export function CreateForm({ parcours = 'long' }) {
                   })}</p>
             ) : (<>
             <div className="wiz-recap-row">
-              <span>{t({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' })}</span>
+              <span>{t({ fr: 'Révélation', en: 'Reveal', de: 'Präsentation' })}</span>
               <span>{frDate(revealAt, locale)} {etapes.includes('revelation') && <button type="button" className="linklike" onClick={() => allerA('revelation')}>{t({ fr: 'modifier', en: 'edit', de: 'ändern' })}</button>}</span>
             </div>
             <div className="wiz-recap-row">

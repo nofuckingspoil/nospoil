@@ -1000,7 +1000,7 @@ export const POSTS_OCCASIONS_DE = {
 <p>Eine Box, ein Mikrofon, eine Songtext-App auf dem Fernseher. Oder ein privater Karaoke-Raum für zwei Stunden, bevor es zum Tanzen geht.</p>
 
 <h3>11. Die gemeinsame Einwegkamera</h3>
-<p>Ein QR-Code auf den Tischen: Jeder Gast scannt ihn, und sein Handy wird zur Einwegkamera, mit begrenzten Aufnahmen und ohne sichtbare Fotos bis zur Enthüllung. Am nächsten Tag, zur gewählten Uhrzeit, erscheint das ganze Album auf einmal. Genau das macht <a href="/anniversaire-30-ans">Time to Flash zum 30. Geburtstag</a>: nichts zu installieren, und es kostet 4,99 € für 30 Gäste, als Einmalzahlung. Der Morgen danach sieht gleich besser aus.</p>
+<p>Ein QR-Code auf den Tischen: Jeder Gast scannt ihn, und sein Handy wird zur Einwegkamera, mit begrenzten Aufnahmen und ohne sichtbare Fotos bis zur Präsentation. Am nächsten Tag, zur gewählten Uhrzeit, erscheint das ganze Album auf einmal. Genau das macht <a href="/anniversaire-30-ans">Time to Flash zum 30. Geburtstag</a>: nichts zu installieren, und es kostet 4,99 € für 30 Gäste, als Einmalzahlung. Der Morgen danach sieht gleich besser aus.</p>
 
 <h3>12. Escape Room oder Teamaktivität</h3>
 <p>Als Auftakt vor der Party: Escape Room, Kartfahren, Cocktailkurs, Kochkurs. Eine gemeinsame Aktivität schafft Erinnerungen und Insider-Witze für den ganzen Abend.</p>
@@ -1263,8 +1263,8 @@ export const POSTS_OCCASIONS_DE = {
 
 <h3>Die gemeinsame Einwegkamera</h3>
 <p>Das Prinzip ist ein anderes: Statt alles zu knipsen und hinterher zu sortieren, hat jeder für die ganze Reise eine begrenzte Zahl an Aufnahmen, wie bei einer echten Einwegkamera. Man scannt einen QR-Code, die Kamera öffnet sich im Browser, ohne App und ohne Konto. Die eigenen Fotos sieht man nicht. Nach der Rückkehr, zur gewählten Uhrzeit, erscheint alles auf einmal in einem gemeinsamen Album.</p>
-<p>Für eine Reise über mehrere Tage arbeitet <a href="/week-end-entre-amis">Time to Flash fürs Wochenende mit Freunden</a> mit einem Start-, einem End- und einem Enthüllungsdatum und schickt den Teilnehmern während der Reise Erinnerungen, damit sie an ihre Aufnahmen denken. Für zehn Freunde kostet es 1,99 € als Einmalzahlung, bis fünf Personen ist es kostenlos.</p>
-<p>Der Vorteil: weniger Fotos, aber ausgewählte. Und die Enthüllung wird zum Anlass, sich wiederzusehen.</p>
+<p>Für eine Reise über mehrere Tage arbeitet <a href="/week-end-entre-amis">Time to Flash fürs Wochenende mit Freunden</a> mit einem Start- und einem Enddatum sowie einem Präsentationstermin und schickt den Teilnehmern während der Reise Erinnerungen, damit sie an ihre Aufnahmen denken. Für zehn Freunde kostet es 1,99 € als Einmalzahlung, bis fünf Personen ist es kostenlos.</p>
+<p>Der Vorteil: weniger Fotos, aber ausgewählte. Und die Präsentation wird zum Anlass, sich wiederzusehen.</p>
 
 <h2>So entsteht ein schönes Wochenend- oder Urlaubsalbum</h2>
 <ol>
@@ -1284,8 +1284,8 @@ export const POSTS_OCCASIONS_DE = {
 <li><strong>Legen Sie das Handy den Rest der Zeit weg</strong>: Mit wenigen Aufnahmen pro Person genießt man mehr und fotografiert besser.</li>
 </ul>
 
-<h2>Der Abend der Enthüllung</h2>
-<p>Wenn Sie eine verzögerte Enthüllung wählen, nutzen Sie sie: Legen Sie sie auf einen Zeitpunkt, an dem sich alle treffen können, persönlich oder am Telefon. Ein Treffen eine Woche nach der Rückkehr, ein Videoanruf am Sonntagabend oder einfach der nächste Morgen auf der Heimfahrt. Die Fotos gemeinsam zu entdecken heißt, die Reise ein zweites Mal zu erleben, und oft beginnt so die Planung der nächsten.</p>
+<h2>Der Abend der Präsentation</h2>
+<p>Wenn Sie eine verzögerte Präsentation wählen, nutzen Sie sie: Legen Sie sie auf einen Zeitpunkt, an dem sich alle treffen können, persönlich oder am Telefon. Ein Treffen eine Woche nach der Rückkehr, ein Videoanruf am Sonntagabend oder einfach der nächste Morgen auf der Heimfahrt. Die Fotos gemeinsam zu entdecken heißt, die Reise ein zweites Mal zu erleben, und oft beginnt so die Planung der nächsten.</p>
 
 <h2>Ideen für Gruppenfotos</h2>
 <p>Die besten Gruppenfotos sind oft die geplanten. Ein paar Ideen:</p>
@@ -1305,7 +1305,7 @@ export const POSTS_OCCASIONS_DE = {
     faq: [
       {
         q: 'Wie teilt man Fotos vom Wochenende mit Freunden?',
-        a: 'Meiden Sie die Gruppenunterhaltung, die alles komprimiert und vermischt. Legen Sie vor der Abreise ein gemeinsames Album an (Google Fotos, oder iCloud, wenn alle ein iPhone haben) oder nutzen Sie eine gemeinsame Einwegkamera wie Time to Flash, die die Fotos aller in einem Album sammelt, das nach der Rückkehr enthüllt wird.',
+        a: 'Meiden Sie die Gruppenunterhaltung, die alles komprimiert und vermischt. Legen Sie vor der Abreise ein gemeinsames Album an (Google Fotos, oder iCloud, wenn alle ein iPhone haben) oder nutzen Sie eine gemeinsame Einwegkamera wie Time to Flash, die die Fotos aller in einem Album sammelt, das nach der Rückkehr präsentiert wird.',
       },
       {
         q: 'Wie gestaltet man ein Urlaubsfotoalbum mit Freunden?',
@@ -1324,9 +1324,9 @@ export const POSTS_OCCASIONS_DE = {
   'appareil-photo-jetable-evjf': {
     title: 'Einwegkamera für den JGA: analog oder App?',
     excerpt: 'Einwegkamera für den Junggesellenabschied: die echten Kosten der analogen Kamera, ihre Nachteile, die digitale Alternative und Foto-Challenges.',
-    caption: 'Ein JGA in einer Gasse, eine Freundin richtet eine Einwegkamera auf die Gruppe',
+    caption: 'Ein Junggesellenabschied in einer Gasse, eine Freundin richtet eine Einwegkamera auf die Gruppe',
     body: `
-<p>Die Einwegkamera ist ein JGA-Klassiker geworden. Man steckt jedem eine in die Tasche, stellt ein paar Aufgaben und entdeckt die Fotos später. Bleibt eine praktische Frage: echte analoge Einwegkameras oder eine App auf dem Handy? Hier der ehrliche Vergleich, mit Budget, Nachteilen und Ideen für Foto-Challenges.</p>
+<p>Die Einwegkamera ist ein Klassiker beim Junggesellenabschied (JGA) geworden. Man steckt jedem eine in die Tasche, stellt ein paar Aufgaben und entdeckt die Fotos später. Bleibt eine praktische Frage: echte analoge Einwegkameras oder eine App auf dem Handy? Hier der ehrliche Vergleich, mit Budget, Nachteilen und Ideen für Foto-Challenges.</p>
 
 <h2>Warum eine Einwegkamera beim JGA?</h2>
 <p>Weil sie verändert, wie man fotografiert. Mit begrenzten Aufnahmen wählt man seine Momente. Ohne Display zum Kontrollieren macht man das Foto nicht zehnmal. Und die Überraschung beim Entwickeln verlängert das Fest: Man erlebt das Wochenende noch einmal, während man die Bilder entdeckt. Genau der Geist eines Junggesellinnen- oder Junggesellenabschieds.</p>
@@ -1353,12 +1353,12 @@ export const POSTS_OCCASIONS_DE = {
 <ul>
 <li>jeder scannt einen QR-Code, und die Kamera öffnet sich im Browser, ohne App und ohne Konto;</li>
 <li>jeder hat eine begrenzte Zahl an Aufnahmen (3 bis 15, Sie entscheiden);</li>
-<li>niemand sieht seine Fotos vor der Enthüllung;</li>
+<li>niemand sieht seine Fotos vor der Präsentation;</li>
 <li>alle Fotos landen in einem privaten Album, auf Wunsch mit einem warmen, körnigen Einweg-Look und eingeblendetem Datum;</li>
 <li>über ein Wochenende bekommen die Teilnehmer Erinnerungen, damit sie an ihre Aufnahmen denken.</li>
 </ul>
 <p>Zum Budget: bis fünf Teilnehmer kostenlos, 1,99 € für zehn, 4,99 € für dreißig, als Einmalzahlung. Nichts, was im Taxi liegen bleibt, und kein Labor, das man suchen muss.</p>
-<p>Die Kehrseite: kein Gegenstand zum Anfassen und keine sofortigen Abzüge. Sie können aber Abzüge aus dem Album bestellen, sobald die Fotos enthüllt sind.</p>
+<p>Die Kehrseite: kein Gegenstand zum Anfassen und keine sofortigen Abzüge. Sie können aber Abzüge aus dem Album bestellen, sobald die Fotos für alle sichtbar sind.</p>
 
 <h2>Analog oder App: die Zusammenfassung</h2>
 <table>
@@ -1375,7 +1375,7 @@ export const POSTS_OCCASIONS_DE = {
 
 <h2>Die JGA-Einwegkamera in 4 Schritten</h2>
 <ol>
-<li><strong>Legen Sie das Event ein paar Tage vorher an</strong>: Name des JGA, Zahl der Teilnehmer, Aufnahmen pro Person und Uhrzeit der Enthüllung.</li>
+<li><strong>Legen Sie das Event ein paar Tage vorher an</strong>: Name des JGA, Zahl der Teilnehmer, Aufnahmen pro Person und Uhrzeit der Präsentation.</li>
 <li><strong>Wählen Sie die richtige Zahl an Aufnahmen</strong>: Für einen Tag reichen 8 bis 10 pro Person; für ein Wochenende eher 12 bis 15.</li>
 <li><strong>Teilen Sie den QR-Code</strong>: Schicken Sie ihn vor der Abfahrt in die Gruppe oder drucken Sie ihn auf ein kleines Kärtchen für jedes Goodie-Bag.</li>
 <li><strong>Bewahren Sie das Geheimnis</strong>: Wenn die Braut oder der Bräutigam nichts wissen darf, erwähnen Sie es erst im letzten Moment und starten Sie das Spiel zu Beginn des Wochenendes.</li>
@@ -1394,12 +1394,12 @@ export const POSTS_OCCASIONS_DE = {
 <li>der genaue Moment, in dem die geheime Mission erfüllt wurde;</li>
 <li>die Gruppe beim Aufwachen am nächsten Morgen, unretuschiert.</li>
 </ul>
-<p>Vergeben Sie einen Punkt pro erfüllter Challenge und enthüllen Sie die Rangliste zusammen mit den Fotos.</p>
+<p>Vergeben Sie einen Punkt pro erfüllter Challenge und verkünden Sie die Rangliste zusammen mit den Fotos.</p>
 
-<h2>Wann werden die Fotos enthüllt?</h2>
+<h2>Wann werden die Fotos präsentiert?</h2>
 <p>Zwei Möglichkeiten, beide hervorragend.</p>
 <p><strong>Nach der Rückkehr</strong>: am nächsten Tag oder am Abend der Heimkehr, wenn alle zu Hause sind. Man erlebt das Wochenende gemeinsam noch einmal, aus der Ferne, in der Gruppenunterhaltung. Die einfachste Wahl.</p>
-<p><strong>Am Hochzeitstag</strong>: Sie legen die Enthüllung auf den großen Tag oder den Tag danach. Die JGA-Fotos werden zu einer weiteren Überraschung und einem schönen Geschenk für Braut oder Bräutigam. Achten Sie auf den Zeitraum: Bei Time to Flash wird das Album sechs Monate aufbewahrt, es funktioniert also, wenn die Hochzeit in den folgenden Monaten stattfindet. Und vor der Enthüllung können Sie als Organisator ein etwas zu kompromittierendes Foto ausblenden.</p>
+<p><strong>Am Hochzeitstag</strong>: Sie legen die Präsentation auf den großen Tag oder den Tag danach. Die JGA-Fotos werden zu einer weiteren Überraschung und einem schönen Geschenk für Braut oder Bräutigam. Achten Sie auf den Zeitraum: Bei Time to Flash wird das Album sechs Monate aufbewahrt, es funktioniert also, wenn die Hochzeit in den folgenden Monaten stattfindet. Und vor der Präsentation können Sie als Organisator ein etwas zu kompromittierendes Foto ausblenden.</p>
 <p>Mehr Ideen nach Anlass finden Sie unter <a href="/occasions">alle Anlässe</a>.</p>
 `,
     faq: [
@@ -1413,11 +1413,11 @@ export const POSTS_OCCASIONS_DE = {
       },
       {
         q: 'Welche Einwegkamera-App eignet sich für den JGA?',
-        a: 'Time to Flash funktioniert ohne App-Installation: Jeder scannt einen QR-Code, macht eine begrenzte Zahl an Fotos, ohne sie zu sehen, und alles wird zur gewählten Uhrzeit auf einmal in einem privaten Album enthüllt.',
+        a: 'Time to Flash funktioniert ohne App-Installation: Jeder scannt einen QR-Code, macht eine begrenzte Zahl an Fotos, ohne sie zu sehen, und alles wird zur gewählten Uhrzeit auf einmal in einem privaten Album präsentiert.',
       },
       {
-        q: 'Kann man die JGA-Fotos am Hochzeitstag enthüllen?',
-        a: 'Ja, legen Sie das Enthüllungsdatum einfach auf den Hochzeitstag oder den Tag danach. Da das Album bei Time to Flash sechs Monate aufbewahrt wird, klappt das, wenn die Hochzeit in den Monaten nach dem JGA stattfindet.',
+        q: 'Kann man die JGA-Fotos am Hochzeitstag präsentieren?',
+        a: 'Ja, legen Sie den Präsentationstermin einfach auf den Hochzeitstag oder den Tag danach. Da das Album bei Time to Flash sechs Monate aufbewahrt wird, klappt das, wenn die Hochzeit in den Monaten nach dem JGA stattfindet.',
       },
     ],
   },

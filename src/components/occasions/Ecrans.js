@@ -20,7 +20,7 @@ export function EcranAppareil({ titre, photo, lang }) {
         <span className="ecr-app-bouton">←</span>
         <div className="ecr-app-titres">
           <b>{titre}</b>
-          <span>{t({ fr: 'révélation dans 2 j 20 h', en: 'reveal in 2 d 20 h', de: 'Enthüllung in 2 T 20 Std' }, lang)}</span>
+          <span>{t({ fr: 'révélation dans 2 j 20 h', en: 'reveal in 2 d 20 h', de: 'Präsentation in 2 T 20 Std' }, lang)}</span>
         </div>
         <span className="ecr-app-bouton">▦</span>
       </div>

@@ -120,7 +120,7 @@ function MesPhotosInner() {
                 {' '}
                 {revele
                   ? t({ fr: "L'album est ouvert.", en: 'The album is open.', de: 'Das Album ist geöffnet.' })
-                  : t({ fr: `Révélation le ${frDate(e.revealAt)}.`, en: `Reveal on ${frDate(e.revealAt, locale)}.`, de: `Enthüllung am ${frDate(e.revealAt, locale)}.` })}
+                  : t({ fr: `Révélation le ${frDate(e.revealAt)}.`, en: `Reveal on ${frDate(e.revealAt, locale)}.`, de: `Präsentation am ${frDate(e.revealAt, locale)}.` })}
               </p>
               <div style={{ display: 'flex', gap: 8 }}>
                 <Link href={`/j/${e.eventId}`} className="btn btn-accent" style={{ flex: 1 }}>

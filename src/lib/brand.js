@@ -16,8 +16,8 @@ const TEXTES_MARQUE = {
     pitch: 'One QR code, a limited number of shots per guest, and every photo revealed after the party. No app to install.',
   },
   de: {
-    tagline: 'Die Einwegkamera für Ihre Events.',
-    pitch: 'Ein QR-Code, eine begrenzte Anzahl an Fotos pro Gast, und alle Bilder werden erst nach der Feier enthüllt. Keine App nötig.',
+    tagline: 'Die digitale Einwegkamera für Ihre Events.',
+    pitch: 'Ein QR-Code, eine begrenzte Anzahl an Fotos pro Gast, alle Bilder werden erst nach Ihrer Feier präsentiert. Keine App nötig.',
   },
 }
 

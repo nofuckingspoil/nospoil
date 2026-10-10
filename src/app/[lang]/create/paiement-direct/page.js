@@ -232,7 +232,7 @@ function ExpressForm() {
           {t({
             fr: 'Une seule chose à décider maintenant : le nombre de participants. Le nom, les dates et le moment de la révélation se règlent juste après.',
             en: 'Just one thing to decide now: the number of guests. The name, dates and time of the reveal can be set right afterwards.',
-            de: 'Jetzt ist nur eines zu entscheiden: die Anzahl der Gäste. Name, Termine und Zeitpunkt der Enthüllung legen Sie direkt danach fest.',
+            de: 'Jetzt ist nur eines zu entscheiden: die Anzahl der Gäste. Name, Termine und Präsentationstermin legen Sie direkt danach fest.',
           })}
         </p>
 

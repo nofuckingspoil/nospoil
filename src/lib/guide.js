@@ -416,7 +416,7 @@ const GUIDE_DE = {
   title: 'So gelingen Ihre gemeinsamen Fotos',
   subtitle: 'Der Leitfaden für Gastgeber',
   promise:
-    'Sieben kurze Kapitel, damit Ihre Gäste mitmachen, Ihre Fotos gelingen und die Enthüllung zu einem echten Moment wird, statt zu einem weiteren Ordner auf Ihrem Handy.',
+    'Sieben kurze Kapitel, damit Ihre Gäste mitmachen, Ihre Fotos gelingen und die Präsentation zu einem echten Moment wird, statt zu einem weiteren Ordner auf Ihrem Handy.',
   readingTime: '12 Min. Lesezeit',
   exchange:
     'Hinterlassen Sie Ihre E-Mail-Adresse: Der Leitfaden öffnet sich sofort auf dieser Seite, und Sie erhalten den Link, um ihn später wiederzufinden. Höchstens eine E-Mail pro Monat, Abmeldung mit einem Klick.',
@@ -448,10 +448,10 @@ const CHAPTERS_DE = [
   },
   {
     n: 2,
-    title: 'Den richtigen Zeitpunkt für die Enthüllung wählen',
+    title: 'Den richtigen Präsentationstermin wählen',
     teaser: 'Am nächsten Morgen oder eine Woche später? Beides funktioniert, aber aus unterschiedlichen Gründen.',
     body: `
-<p>Das Datum der Enthüllung ist kein technisches Detail: Es ist das Ende Ihrer Geschichte. Es gibt zwei Schulen, und keine liegt falsch.</p>
+<p>Der Präsentationstermin ist kein technisches Detail: Es ist das Ende Ihrer Geschichte. Es gibt zwei Schulen, und keine liegt falsch.</p>
 <h3>Am nächsten Morgen (11 Uhr)</h3>
 <p>Der „Wir sehen uns beim Frühstück“-Effekt. Alle haben die Feier noch im Kopf, die Handys liegen herum, und die Fotos kommen genau in dem Moment, in dem man anfängt, sich vom Vorabend zu erzählen. Die festlichste Wahl, und die, bei der am meisten geteilt wird.</p>
 <h3>Eine Woche später</h3>
@@ -461,7 +461,7 @@ const CHAPTERS_DE = [
   <li><strong>Noch am selben Abend, während der Feier.</strong> Alle schauen aufs Handy, statt zu tanzen, und Ihnen bleibt keine Zeit mehr, die Fotos durchzusehen.</li>
   <li><strong>Mehr als einen Monat später.</strong> Der Schwung ist weg, und ein Teil der Gäste öffnet den Link nicht mehr.</li>
 </ul>
-<p>Lassen Sie sich in jedem Fall <strong>mindestens ein paar Stunden zwischen dem Ende des Events und der Enthüllung</strong>: Das ist Ihr Zeitfenster, um die Galerie in Ruhe durchzusehen (siehe Kapitel 5).</p>
+<p>Lassen Sie sich in jedem Fall <strong>mindestens ein paar Stunden zwischen dem Ende des Events und der Präsentation</strong>: Das ist Ihr Zeitfenster, um die Galerie in Ruhe durchzusehen (siehe Kapitel 5).</p>
 `,
   },
   {
@@ -481,7 +481,7 @@ const CHAPTERS_DE = [
 <h3>Die Ansage am Mikrofon (vom DJ oder Trauzeugen)</h3>
 <p>Dreißig Sekunden genügen, und der Ton zählt mehr als der Inhalt:</p>
 <p><em>„Heute Abend seid ihr die Fotografen. Scannt den QR-Code auf eurem Tisch: Jeder hat 8 Fotos, kein einziges mehr. Also zielt gut. Morgen früh entdecken wir alles gemeinsam.“</em></p>
-<p>Die drei Punkte, die Sie nicht vergessen sollten: <strong>die Anzahl der Fotos</strong> (das macht das Spiel aus), <strong>der Zeitpunkt der Enthüllung</strong> (das weckt die Vorfreude) und <strong>„keine App nötig“</strong> (das räumt das letzte Zögern aus).</p>
+<p>Die drei Punkte, die Sie nicht vergessen sollten: <strong>die Anzahl der Fotos</strong> (das macht das Spiel aus), <strong>der Präsentationstermin</strong> (das weckt die Vorfreude) und <strong>„keine App nötig“</strong> (das räumt das letzte Zögern aus).</p>
 <h3>Der Trick für die Nachzügler</h3>
 <p>Es gibt immer jemanden, dessen Kamera nicht scannt oder dessen Handy zu alt ist. Die Lösung: <strong>Lassen Sie den Code mit dem Handy einer anderen Person scannen</strong> und schicken Sie ihm den Link per Nachricht. Der Link funktioniert genauso wie der QR-Code. Niemand bleibt außen vor.</p>
 `,
@@ -514,7 +514,7 @@ const CHAPTERS_DE = [
     title: 'Die Galerie durchsehen, bevor alle sie sehen',
     teaser: 'Die wichtigste halbe Stunde: Nur Sie sehen die Fotos, und Sie entscheiden, was veröffentlicht wird.',
     body: `
-<p>Zwischen dem Ende des Events und der Enthüllung <strong>sind Sie der Einzige, der die Fotos sieht</strong>. Ihre Gäste sehen nur ihre eigenen. Das ist Ihr Zeitfenster zum Aussortieren, und Sie sollten es ernst nehmen: Hier entscheidet sich, ob man eine Galerie gern teilt oder sie bereut.</p>
+<p>Zwischen dem Ende des Events und der Präsentation <strong>sind Sie der Einzige, der die Fotos sieht</strong>. Ihre Gäste sehen nur ihre eigenen. Das ist Ihr Zeitfenster zum Aussortieren, und Sie sollten es ernst nehmen: Hier entscheidet sich, ob man eine Galerie gern teilt oder sie bereut.</p>
 <h3>Worauf Sie achten sollten</h3>
 <ul>
   <li>Das Foto von 3 Uhr morgens, an das sich der Fotograf nicht erinnert</li>
@@ -524,14 +524,14 @@ const CHAPTERS_DE = [
 </ul>
 <p>Ein Foto auszublenden geschieht diskret: Niemand wird benachrichtigt, und die Person, die es gemacht hat, erfährt nicht, dass es entfernt wurde.</p>
 <h3>Machen Sie es zu mehreren</h3>
-<p>Sie können <strong>Mit-Gastgeber</strong> einladen: das Brautpaar, einen Trauzeugen, einen vertrauten Freund. Sie sehen die Fotos vor der Enthüllung und können mit Ihnen aussortieren. Das ist besonders bei einer Hochzeit praktisch: Das Brautpaar sieht seine Fotos vorab, und niemand trägt allein die Verantwortung dafür, was veröffentlicht wird.</p>
+<p>Sie können <strong>Mit-Gastgeber</strong> einladen: das Brautpaar, einen Trauzeugen, einen vertrauten Freund. Sie sehen die Fotos vor der Präsentation und können mit Ihnen aussortieren. Das ist besonders bei einer Hochzeit praktisch: Das Brautpaar sieht seine Fotos vorab, und niemand trägt allein die Verantwortung dafür, was veröffentlicht wird.</p>
 <h3>Das richtige Maß</h3>
 <p>Widerstehen Sie der Versuchung, alles zu glätten. Unperfekte Fotos (Bewegungsunschärfe, schiefer Bildausschnitt, geschlossene Augen) sind genau das, was einer gemeinsamen Galerie ihre Seele gibt. Entfernen Sie, was jemanden stört, nicht das, was nicht hübsch ist.</p>
 `,
   },
   {
     n: 6,
-    title: 'Die Enthüllung zu einem Erlebnis machen',
+    title: 'Die Präsentation zu einem Erlebnis machen',
     teaser: 'Eine Galerie, die sich ohne Ankündigung öffnet, ist kein Ereignis. So wird eines daraus.',
     body: `
 <p>Ihre Gäste erhalten eine Benachrichtigung, wenn sich die Galerie öffnet. Aber eine Nachricht von Ihnen im selben Moment verändert die Wirkung vollständig.</p>
@@ -549,10 +549,10 @@ const CHAPTERS_DE = [
     title: 'Nach der Feier: herunterladen und archivieren',
     teaser: 'Was Sie innerhalb von sechs Monaten tun sollten, und was Sie vergessen können.',
     body: `
-<p>Nach der Enthüllung ist nur eine Sache wirklich wichtig: <strong>das komplette Album herunterladen</strong>. Ihre Fotos bleiben sechs Monate nach der Enthüllung online und werden dann automatisch gelöscht (Sie werden vorher mehrmals per E-Mail gewarnt).</p>
+<p>Nach der Präsentation ist nur eine Sache wirklich wichtig: <strong>das komplette Album herunterladen</strong>. Ihre Fotos bleiben sechs Monate nach der Präsentation online und werden dann automatisch gelöscht (Sie werden vorher mehrmals per E-Mail gewarnt).</p>
 <h3>Die Routine in drei Schritten</h3>
 <ul>
-  <li><strong>Am Tag der Enthüllung</strong>: Laden Sie das komplette Album auf einmal herunter und legen Sie es dort ab, wo auch Ihre übrigen Fotos liegen.</li>
+  <li><strong>Am Tag der Präsentation</strong>: Laden Sie das komplette Album auf einmal herunter und legen Sie es dort ab, wo auch Ihre übrigen Fotos liegen.</li>
   <li><strong>In derselben Woche</strong>: Schicken Sie den Link zur Galerie an alle, die nicht dabei sein konnten. Sie bleibt für alle erreichbar, die den Link haben.</li>
   <li><strong>Vor Ablauf der sechs Monate</strong>: Prüfen Sie, ob Ihr Download sicher verwahrt ist (externe Festplatte, Cloud, USB-Stick). Danach können Sie es vergessen.</li>
 </ul>
@@ -567,7 +567,7 @@ const CHECKLIST_DE = [
     when: '30 Tage vorher',
     items: [
       'Event erstellen und Anzahl der Aufnahmen wählen',
-      'Datum der Enthüllung festlegen (siehe Kapitel 2)',
+      'Präsentationstermin festlegen (siehe Kapitel 2)',
       'Nachladen von Fotos aktivieren',
       'Mit-Gastgeber einladen',
     ],
@@ -578,7 +578,7 @@ const CHECKLIST_DE = [
       'QR-Codes drucken (Tische, Toiletten, Bar)',
       'Liste mit Fotovorschlägen vorbereiten',
       'DJ oder Trauzeugen für die Ansage am Mikrofon briefen',
-      'Nachricht zur Enthüllung vorab schreiben',
+      'Nachricht zur Präsentation vorab schreiben',
     ],
   },
   {
@@ -594,7 +594,7 @@ const CHECKLIST_DE = [
     when: 'Danach',
     items: [
       'Galerie durchsehen und Störendes ausblenden',
-      'Nachricht zur Enthüllung mit der Zahl verschicken',
+      'Nachricht zur Präsentation mit der Zahl verschicken',
       'Komplettes Album herunterladen',
       'Einmal erinnern, zwei oder drei Tage später',
     ],

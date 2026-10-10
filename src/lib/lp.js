@@ -152,8 +152,8 @@ const ETAPES_TRAD = {
       s: 'Sie legen fest, wie viele Fotos jeder Gast machen darf. Wie bei einer Einwegkamera: Man knipst nicht wild drauflos, man wählt seinen Moment. Und noch sieht niemand etwas.',
     },
     {
-      alt: 'Die Hochzeitsgalerie, nachdem die Fotos enthüllt wurden',
-      t: 'Die Enthüllung, am Tag danach',
+      alt: 'Die Hochzeitsgalerie nach der Präsentation der Fotos',
+      t: 'Die Präsentation, am Tag danach',
       s: 'Zur von Ihnen gewählten Uhrzeit wird alles auf einmal entwickelt. Hunderte Fotos, die Sie noch nie gesehen haben, aufgenommen von denen, die dabei waren.',
     },
   ],
@@ -233,7 +233,7 @@ const FAQ_COMMUNE_TRAD = {
     },
     {
       q: 'Und wenn ein Foto peinlich ist?',
-      a: 'Vor der Enthüllung sehen nur Sie die Fotos. Sie blenden aus, was niemand sehen soll, und keiner erfährt je davon. Sie können diese Auswahl auch einem Trauzeugen überlassen, indem Sie ihn als Co-Gastgeber hinzufügen.',
+      a: 'Vor der Präsentation sehen nur Sie die Fotos. Sie blenden aus, was niemand sehen soll. Sie können diese Auswahl auch einem Trauzeugen überlassen, indem Sie ihn als Co-Gastgeber hinzufügen.',
     },
     {
       q: 'Wie viele Fotos darf jeder machen?',
@@ -241,7 +241,7 @@ const FAQ_COMMUNE_TRAD = {
     },
     {
       q: 'Wie lange habe ich Zeit, die Fotos zu sichern?',
-      a: 'Sechs Monate nach der Enthüllung, danach werden sie automatisch gelöscht. Wir erinnern Sie rechtzeitig per E-Mail, damit Sie alles in voller Auflösung herunterladen können.',
+      a: 'Sechs Monate nach der Präsentation, danach werden sie automatisch gelöscht. Wir erinnern Sie rechtzeitig per E-Mail, damit Sie alles in voller Auflösung herunterladen können.',
     },
     {
       q: 'Ist das ein Abo?',

@@ -19,7 +19,7 @@ export const POSTS_DE = {
 <ul>
 <li><strong>Ist die Zahl der Fotos begrenzt?</strong> Eine Einwegkamera hat 27 Aufnahmen. Ist die App unbegrenzt, knipsen Ihre Gäste drauflos wie mit ihrer gewohnten Kamera.</li>
 <li><strong>Sind die Fotos verborgen?</strong> Eine Einwegkamera hat hinten kein Display: Man kontrolliert nicht, man wiederholt nicht.</li>
-<li><strong>Gibt es eine Enthüllung?</strong> Der ganze Reiz der Einwegkamera ist das Warten auf die Entwicklung und dann alles auf einmal zu entdecken.</li>
+<li><strong>Gibt es eine gemeinsame Präsentation?</strong> Der ganze Reiz der Einwegkamera ist das Warten auf die Entwicklung und dann alles auf einmal zu entdecken.</li>
 </ul>
 <p>Dreimal ja: Es ist eine echte digitale Einwegkamera, also eine Aktion. Nur einmal: Es ist eine Galerie mit hübschem Namen. Das ist an sich kein Mangel, aber es wird eine andere Feier.</p>
 
@@ -42,24 +42,24 @@ export const POSTS_DE = {
 <p>Wir haben Time to Flash so gebaut, dass eine ganze Hochzeit mitspielt, von den Trauzeugen bis zu den Großeltern. Ihre Gäste scannen den QR-Code, geben ihren Vornamen ein und fotografieren direkt auf der Seite, ohne etwas zu installieren oder ein Konto anzulegen (für alle, die das lieber mögen, gibt es eine iPhone-App).</p>
 <ul>
 <li><strong>Sie wählen die Zahl der Aufnahmen</strong>, 3 bis 15 pro Gast.</li>
-<li><strong>Sie wählen, wie „einweg“ es sein soll</strong>: offenes Album (man sieht seine Fotos wieder und kann ein misslungenes neu machen), nur eine Chance (man sieht jedes Foto einmal, direkt nach dem Auslösen) oder echte Einwegkamera (man sieht nichts vor der Enthüllung).</li>
+<li><strong>Sie wählen, wie „einweg“ es sein soll</strong>: offenes Album (man sieht seine Fotos wieder und kann ein misslungenes neu machen), nur eine Chance (man sieht jedes Foto einmal, direkt nach dem Auslösen) oder echte Einwegkamera (man sieht nichts vor der Präsentation).</li>
 <li><strong>Sie wählen den Film</strong> aus mehreren analogen Filmlooks, darunter ein „Einweg“-Look mit eingeblendetem Datum wie auf alten Abzügen.</li>
-<li><strong>Das Album wird am nächsten Tag enthüllt</strong>, für alle gleichzeitig, und Sie laden alle Fotos auf einmal herunter.</li>
+<li><strong>Das Album wird am nächsten Tag präsentiert</strong>, für alle gleichzeitig, und Sie laden alle Fotos auf einmal herunter.</li>
 <li><strong>Entwickelt in Frankreich</strong>, die Fotos werden in Europa gespeichert.</li>
 </ul>
 <p><strong>Der Preis:</strong> kostenlos bis 5 Gäste, danach eine einmalige Zahlung ohne Abo: 14,99&nbsp;€ bis 50 Gäste, 29,99&nbsp;€ bis 100, 34,99&nbsp;€ bis 150, 59,99&nbsp;€ bis 300.</p>
 
 <h3>Scene</h3>
-<p>Auch Scene bietet eine Einwegkamera per QR-Code, mit Film-Look und einem Album, das bis zur gewählten Enthüllungszeit gesperrt bleibt. Die Website sagt nicht, ob man die Zahl der Fotos pro Gast begrenzen kann; ohne begrenzte Aufnahmen geht aber das Wesentliche des Spiels verloren.</p>
+<p>Auch Scene bietet eine Einwegkamera per QR-Code, mit Film-Look und einem Album, das bis zum gewählten Präsentationstermin gesperrt bleibt. Die Website sagt nicht, ob man die Zahl der Fotos pro Gast begrenzen kann; ohne begrenzte Aufnahmen geht aber das Wesentliche des Spiels verloren.</p>
 
 <h3>POV</h3>
-<p>POV ist eine amerikanische App: Die Gäste treten dem Event per QR-Code bei, und der Gastgeber legt die Zahl der Fotos und den Zeitpunkt der Enthüllung fest. Website und Support sind auf Englisch, die Preise in Dollar.</p>
+<p>POV ist eine amerikanische App: Die Gäste treten dem Event per QR-Code bei, und der Gastgeber legt die Zahl der Fotos und den Präsentationstermin fest. Website und Support sind auf Englisch, die Preise in Dollar.</p>
 
 <h3>Reveal: Einwegkamera, aber zum Installieren</h3>
 <p>Reveal erfüllt die Kriterien einer Einwegkamera, aber <strong>Ihre Gäste müssen die App installieren</strong> (iPhone oder Android) und dann den Link erneut öffnen oder den QR-Code noch einmal scannen, um dem Album beizutreten. Mit mehreren Generationen an den Tischen verliert man bei jeder Installation Gäste.</p>
 
 <h3>Fotify: eine Galerie mit Einweg-Filter</h3>
-<p>Fotify benutzt das Wort „Einweg“, aber die Fotos sind <strong>unbegrenzt</strong>, und die Enthüllung ist nur eine Option: Die Aufnahmen können live in der Galerie erscheinen. Ohne begrenzte Aufnahmen und ohne feste Überraschung kommt der Serienbild-Reflex zurück: Es ist eine Galerie, keine Einwegkamera.</p>
+<p>Fotify benutzt das Wort „Einweg“, aber die Fotos sind <strong>unbegrenzt</strong>, und die Präsentation ist nur eine Option: Die Aufnahmen können live in der Galerie erscheinen. Ohne begrenzte Aufnahmen und ohne feste Überraschung kommt der Serienbild-Reflex zurück: Es ist eine Galerie, keine Einwegkamera.</p>
 
 <h3>Und WedShoots?</h3>
 <p>WedShoots taucht bei der Suche oft auf, ist aber keine Einwegkamera: Es ist eine Galerie mit unbegrenzten, sofort sichtbaren Fotos und einer App zum Installieren. Sehr gut, um Fotos zu sammeln, aber ohne das Einweg-Spiel. Wir vergleichen es mit den anderen Alben in <a href="/journal/application-photo-mariage">unserem Vergleich der Hochzeitsfoto-Apps</a>.</p>
@@ -71,18 +71,18 @@ export const POSTS_DE = {
 <p>Das ist DIE Einstellung, die über den Erfolg einer digitalen Einwegkamera entscheidet. Zu wenige, und die Gäste trauen sich nicht, sie zu nutzen. Zu viele, und man ist wieder beim Dauerknipsen. Für eine Hochzeit sind 8 bis 12 Aufnahmen pro Person ein guter Ausgangspunkt: genug für Trauung, Sektempfang und Party, wenig genug, damit jeder seine Momente auswählt. Die ganze Überlegung steht hier: <a href="/journal/dix-cliches">Warum 10 Aufnahmen besser sind als 300</a>.</p>
 
 <h2>So läuft es am großen Tag</h2>
-<p><strong>1. Vorher:</strong> Sie legen das Event an, stellen die Zahl der Fotos und die Enthüllungszeit ein und drucken den QR-Code aus (unser <a href="/generateur-qr-code-mariage">QR-Code-Plakat-Generator</a> ist kostenlos).<br>
+<p><strong>1. Vorher:</strong> Sie legen das Event an, stellen die Zahl der Fotos und den Präsentationstermin ein und drucken den QR-Code aus (unser <a href="/generateur-qr-code-mariage">QR-Code-Plakat-Generator</a> ist kostenlos).<br>
 <strong>2. Währenddessen:</strong> Die QR-Codes stehen auf den Tischen, an der Bar und am Eingang (siehe <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>). Eine kurze Ansage am Mikrofon reicht, um das Spiel zu starten.<br>
-<strong>3. Danach:</strong> Das Album wird enthüllt, meist am nächsten Morgen. Oft ist das der schönste Moment des Wochenendes (warum, erzählen wir in <a href="/journal/revelation-photos-lendemain-mariage">Die Enthüllung am nächsten Tag</a>).</p>
+<strong>3. Danach:</strong> Das Album wird präsentiert, meist am nächsten Morgen. Oft ist das der schönste Moment des Wochenendes (warum, erzählen wir in <a href="/journal/revelation-photos-lendemain-mariage">Die Präsentation am nächsten Tag</a>).</p>
 
 <h2>Unsere Meinung</h2>
 <p>Wenn Sie eine echte Aktion möchten, streichen Sie zuerst die unbegrenzten Apps: Das sind Galerien, keine Einwegkameras. Streichen Sie dann die, die man installieren muss: Mit Gästen jeden Alters kostet jeder Download Teilnehmer. Übrig bleibt eine App ohne Installation, mit begrenzten Aufnahmen, die Sie an die Stimmung Ihrer Hochzeit anpassen können.</p>
-<p>Genau das haben wir mit <a href="/">Time to Flash</a> gebaut: ein QR-Code, keine App, begrenzte Aufnahmen, drei Spielarten, ein Film-Look, ein Album, das am nächsten Tag enthüllt wird, und dazu alle Fotos zum Herunterladen. Bis 5 Gäste ist es kostenlos: Testen Sie es vor dem großen Tag mit Ihren Trauzeugen.</p>
+<p>Genau das haben wir mit <a href="/">Time to Flash</a> gebaut: ein QR-Code, keine App, begrenzte Aufnahmen, drei Spielarten, ein Film-Look, ein Album, das am nächsten Tag präsentiert wird, und dazu alle Fotos zum Herunterladen. Bis 5 Gäste ist es kostenlos: Testen Sie es vor dem großen Tag mit Ihren Trauzeugen.</p>
 `,
     faq: [
       {
         q: 'Was ist eine Einwegkamera-App für die Hochzeit?',
-        a: 'Eine App, die das Handy jedes Gastes in eine Einwegkamera verwandelt: begrenzte Zahl an Fotos, keine Vorschau der Aufnahmen und ein Album, das nach der Feier auf einmal enthüllt wird, meist am nächsten Tag. Die Gäste kommen per QR-Code hinein.',
+        a: 'Eine App, die das Handy jedes Gastes in eine Einwegkamera verwandelt: begrenzte Zahl an Fotos, keine Vorschau der Aufnahmen und ein Album, das nach der Feier auf einmal für alle sichtbar wird, meist am nächsten Tag. Die Gäste kommen per QR-Code hinein.',
       },
       {
         q: 'Gibt es eine Einwegkamera-App ohne Download?',
@@ -98,17 +98,17 @@ export const POSTS_DE = {
       },
       {
         q: 'Ist WedShoots eine Einwegkamera?',
-        a: 'Nein. WedShoots ist eine kostenlose Fotogalerie: Die Fotos sind unbegrenzt und sofort sichtbar, und jeder Gast muss die App installieren. Es gibt weder begrenzte Aufnahmen noch eine Enthüllung.',
+        a: 'Nein. WedShoots ist eine kostenlose Fotogalerie: Die Fotos sind unbegrenzt und sofort sichtbar, und jeder Gast muss die App installieren. Es gibt weder begrenzte Aufnahmen noch eine Präsentation.',
       },
     ],
   },
 
   'evenement-cree-et-maintenant': {
     title: 'Ihr Event ist angelegt: Und jetzt?',
-    excerpt: 'Wo der QR-Code hingehört, was Sie Ihren Gästen sagen, und was bis zur Enthüllung Stunde für Stunde passiert.',
+    excerpt: 'Wo der QR-Code hingehört, was Sie Ihren Gästen sagen, und was bis zur Präsentation Stunde für Stunde passiert.',
     caption: 'Ein QR-Code auf einem Hochzeitstisch bei Sonnenuntergang',
     body: `
-<p>Sie haben gerade Ihr Event angelegt. Sie haben einen QR-Code, ein Enthüllungsdatum und vermutlich eine Frage: Was passiert jetzt ganz konkret? Hier ist der komplette Ablauf, der Reihe nach.</p>
+<p>Sie haben gerade Ihr Event angelegt. Sie haben einen QR-Code, einen Präsentationstermin und vermutlich eine Frage: Was passiert jetzt ganz konkret? Hier ist der komplette Ablauf, der Reihe nach.</p>
 
 <h2>Vor dem großen Tag: drucken und aufstellen</h2>
 <p>In Ihrem Dashboard finden Sie vier druckfertige Formate. Den <strong>QR-Code allein</strong>, wenn Sie ihn in Ihre Einladungen oder Deko einbauen möchten, das <strong>A4-Plakat</strong> für Eingang und Bar, die <strong>Tischaufsteller</strong> für die Tische und die <strong>kleinen Kärtchen</strong>, die Sie überall verteilen können.</p>
@@ -123,7 +123,7 @@ export const POSTS_DE = {
 <h2>Am großen Tag: die dreißig Sekunden, die alles ändern</h2>
 <p>Lassen Sie jemanden ein paar Worte am Mikrofon sagen, den DJ oder einen Trauzeugen. Das macht den Unterschied zwischen zehn und fünfzig Scans. Dreißig Sekunden reichen:</p>
 <blockquote class="dj-quote">„Heute Abend seid ihr die Fotografen. Scannt den QR-Code auf eurem Tisch: Jeder hat 8 Fotos, kein einziges mehr. Also zielt gut. Morgen früh entdecken wir alles gemeinsam.“</blockquote>
-<p>Drei Dinge dürfen in dieser Ansage nicht fehlen: <strong>die Zahl der Fotos</strong> (das macht das Spiel aus), <strong>der Zeitpunkt der Enthüllung</strong> (das weckt die Vorfreude) und <strong>„keine App zu installieren“</strong> (das räumt das letzte Zögern aus).</p>
+<p>Drei Dinge dürfen in dieser Ansage nicht fehlen: <strong>die Zahl der Fotos</strong> (das macht das Spiel aus), <strong>der Präsentationstermin</strong> (das weckt die Vorfreude) und <strong>„keine App zu installieren“</strong> (das räumt das letzte Zögern aus).</p>
 
 <h3>Der Trick für alle, bei denen es nicht klappt</h3>
 <p>Es gibt immer jemanden, dessen Kamera nicht scannt oder dessen Handy zu alt ist. Die Lösung: <strong>Lassen Sie den Code mit dem Handy eines anderen scannen</strong> und schicken Sie der Person den Link per Nachricht. Der Link funktioniert genau wie der QR-Code. Niemand bleibt außen vor.</p>
@@ -134,19 +134,19 @@ export const POSTS_DE = {
 <p><strong>Sie</strong> sehen in Ihrem Dashboard, wer gescannt hat, wie viele Fotos jeder gemacht hat und welche Aufnahmen zuletzt angekommen sind. Das ist im Laufe des Abends nützlich: Hat nach einer Stunde niemand gescannt, ist es Zeit für eine neue Runde an den Tischen.</p>
 <p>Ein Gast kann ein misslungenes Foto löschen: Der Platz wird frei, und er kann ein neues machen. Über das von Ihnen festgelegte Limit kommt er aber nie hinaus.</p>
 
-<h2>Vor der Enthüllung: Ihre halbe Stunde zum Aussortieren</h2>
-<p>Zwischen dem Ende der Feier und dem Enthüllungsdatum <strong>sind Sie der Einzige, der alle Fotos sieht</strong>. Das ist Ihr Zeitfenster, um das Album in Ruhe durchzusehen und auszublenden, was stört: das Foto von 3 Uhr morgens, an das sich der Fotograf nicht erinnert, das, auf dem sich jemand sichtlich unwohl fühlt, das exakte Duplikat.</p>
+<h2>Vor der Präsentation: Ihre halbe Stunde zum Aussortieren</h2>
+<p>Zwischen dem Ende der Feier und dem Präsentationstermin <strong>sind Sie der Einzige, der alle Fotos sieht</strong>. Das ist Ihr Zeitfenster, um das Album in Ruhe durchzusehen und auszublenden, was stört: das Foto von 3 Uhr morgens, an das sich der Fotograf nicht erinnert, das, auf dem sich jemand sichtlich unwohl fühlt, das exakte Duplikat.</p>
 <p>Ein Foto auszublenden ist diskret: Niemand wird benachrichtigt, und wer es aufgenommen hat, erfährt nicht, dass es entfernt wurde. Sie können auch <strong>Co-Gastgeber</strong> (das Brautpaar, einen Trauzeugen) einladen, um gemeinsam auszusortieren.</p>
 <p>Ein Rat: Widerstehen Sie dem Drang, alles zu glätten. Bewegungsunschärfe, schiefer Bildausschnitt, geschlossene Augen: Genau das gibt einem gemeinsamen Album seine Seele. Entfernen Sie, was jemanden stört, nicht, was nicht hübsch ist.</p>
 
-<h2>Die Enthüllung: der zweite große Moment</h2>
+<h2>Die Präsentation: der zweite große Moment</h2>
 <p>Zur gewählten Uhrzeit öffnet sich das Album auf einen Schlag, für alle. Ihre Gäste bekommen eine Benachrichtigung.</p>
 <p>Eine Nachricht von Ihnen im selben Moment macht das Ganze aber viel größer. Bereiten Sie sie vorher vor, am Tag selbst müssen Sie sie dann nur noch in die Gruppe schicken:</p>
 <blockquote class="dj-quote">„Es ist so weit, der Film ist entwickelt 🎞️ 142 Fotos, gemacht von 47 von euch. Das habt ihr von unserer Feier gesehen: [Link]. Nichts davon hatten wir mitbekommen.“</blockquote>
 <p>Nennen Sie eine Zahl. „142 Fotos von 47 Personen“ wirkt viel stärker als „die Fotos sind online“: Die Zahl erzählt, dass alle mitgemacht haben, und genau das macht Lust, sofort zu klicken.</p>
 
 <h2>Danach: herunterladen und nicht vergessen</h2>
-<p>Nur eines zählt wirklich: <strong>das komplette Album herunterladen</strong>, mit einem Klick in Ihrem Dashboard. Die Fotos bleiben sechs Monate nach der Enthüllung online und werden dann automatisch gelöscht; Sie werden vorher mehrmals per E-Mail daran erinnert.</p>
+<p>Nur eines zählt wirklich: <strong>das komplette Album herunterladen</strong>, mit einem Klick in Ihrem Dashboard. Die Fotos bleiben sechs Monate nach der Präsentation online und werden dann automatisch gelöscht; Sie werden vorher mehrmals per E-Mail daran erinnert.</p>
 <p>Bewahren Sie diesen Download dort auf, wo auch Ihre anderen Fotos liegen, und schicken Sie den Galerie-Link an alle, die nicht dabei sein konnten: Sie bleibt für jeden zugänglich, der den Link hat.</p>
 
 <h2>Kurz zusammengefasst</h2>
@@ -154,10 +154,10 @@ export const POSTS_DE = {
   <li><strong>Vorher</strong>: drucken, den QR-Code an mehreren Stellen aufstellen, die Ansage vorbereiten.</li>
   <li><strong>Währenddessen</strong>: am Mikrofon ankündigen lassen, die Scans im Dashboard verfolgen.</li>
   <li><strong>Nach der Feier</strong>: das Album allein durchsehen, ausblenden, was stört.</li>
-  <li><strong>Zur Enthüllung</strong>: Ihre Nachricht mit der Zahl verschicken.</li>
+  <li><strong>Zur Präsentation</strong>: Ihre Nachricht mit der Zahl verschicken.</li>
   <li><strong>Innerhalb von sechs Monaten</strong>: alles herunterladen und sicher aufbewahren.</li>
 </ul>
-<p>Wenn Sie tiefer einsteigen möchten (wie viele Aufnahmen je nach Art der Feier, welche Enthüllungszeit, wie man schüchterne Gäste gewinnt), steht alles im <a href="/guide">Leitfaden für Gastgeber</a>.</p>
+<p>Wenn Sie tiefer einsteigen möchten (wie viele Aufnahmen je nach Art der Feier, welcher Präsentationstermin, wie man schüchterne Gäste gewinnt), steht alles im <a href="/guide">Leitfaden für Gastgeber</a>.</p>
 <p>Und halten Sie <a href="/aide">die 9 häufigsten Probleme</a> griffbereit: Kamera blockiert, Mini-Browser, langsames Netz. Das ist die Seite, die Sie einem Gast weiterleiten, der am großen Tag nicht weiterkommt.</p>
 `,
   },
@@ -183,7 +183,7 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>Die digitale Version: der Charme, ohne den Aufwand</h2>
-<p>Eine digitale Einwegkamera hat denselben Geist (begrenzte Zahl an Fotos, Film-Ästhetik, verzögerte Enthüllung), aber auf dem Handy, das Ihre Gäste ohnehin in der Hand haben. Keine Kamera zu kaufen oder einzusammeln, kein Labor, kein verlorenes Foto: Alles landet am selben Ort. Sie brauchen nur einen QR-Code auf den Tischen (siehe <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>).</p>
+<p>Eine digitale Einwegkamera hat denselben Geist (begrenzte Zahl an Fotos, Film-Ästhetik, verzögerte Präsentation), aber auf dem Handy, das Ihre Gäste ohnehin in der Hand haben. Keine Kamera zu kaufen oder einzusammeln, kein Labor, kein verlorenes Foto: Alles landet am selben Ort. Sie brauchen nur einen QR-Code auf den Tischen (siehe <a href="/journal/ou-poser-le-qr-code">Wo der QR-Code hingehört</a>).</p>
 
 <h2>Eine personalisierte Einwegkamera zur Hochzeit</h2>
 <p>Personalisierte Einwegkameras aus Pappe gibt es: ein Etikett mit Ihren Namen auf der Verpackung. Das sieht hübsch aus, aber man muss vorab bestellen, mehr bezahlen als für Standardmodelle, und das Entwickeln bleibt dasselbe Ärgernis. Die digitale Version lässt sich von Anfang bis Ende personalisieren:</p>
@@ -236,7 +236,7 @@ export const POSTS_DE = {
 <p>Eine Einwegkamera auf jedem Tisch, und die Gäste nutzen sie den ganzen Abend. Der Charme des Films ist echt. Aber rechnen Sie mit 10 bis 15 € pro Kamera plus Entwicklung, und zurück bekommen Sie nie alle (mehr dazu in <a href="/journal/appareil-photo-jetable-mariage">Einwegkamera zur Hochzeit: Pappe oder App?</a>). <strong>Für wen:</strong> Analog-Fans, bei einer eher kleinen Hochzeit.</p>
 
 <h3>2. Die Einwegkamera-App</h3>
-<p>Derselbe Geist, auf den Handys der Gäste: ein QR-Code, ein paar Aufnahmen pro Person und ein gemeinsames Album, das am nächsten Tag enthüllt wird. Nichts zu installieren, nichts einzusammeln. <strong>Für wen:</strong> Paare, die Fotos vom ganzen Abend wollen, überall im Saal, bei kleinem Budget. Das ist unsere Lieblingslösung, wir stellen sie gleich genauer vor.</p>
+<p>Derselbe Geist, auf den Handys der Gäste: ein QR-Code, ein paar Aufnahmen pro Person und ein gemeinsames Album, das am nächsten Tag präsentiert wird. Nichts zu installieren, nichts einzusammeln. <strong>Für wen:</strong> Paare, die Fotos vom ganzen Abend wollen, überall im Saal, bei kleinem Budget. Das ist unsere Lieblingslösung, wir stellen sie gleich genauer vor.</p>
 
 <h3>3. Die selbst gebaute Fotoecke</h3>
 <p>Ein Hintergrund (ein Stoff, eine Lichterkette, eine Pflanzenwand), ein Stativ, ein Handy mit Selbstauslöser oder kleiner Bluetooth-Fernbedienung und eine Kiste mit Requisiten. Dazu eine Lampe, wenn der Saal dunkel ist. Für ein paar Dutzend Euro haben Sie die Fotobox-Stimmung. <strong>Für wen:</strong> Paare mit Bastelfreude und einem Freund, der ein Auge auf die Technik hat. Denken Sie daran, die Fotos am nächsten Tag vom Stativ-Handy zu holen.</p>
@@ -257,7 +257,7 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>So setzen Sie es um</h2>
-<p>Ein QR-Code auf den Tischen und am Eingang, eine Begrenzung auf ein paar Fotos pro Person, damit es sorgfältig bleibt, und eine Enthüllung am nächsten Tag. Damit alle mitspielen, schreiben Sie einen Satz in die Einladung (wir haben <a href="/journal/brief-invites">einen Text für Ihre Gäste zum Kopieren</a> vorbereitet). Genau das bietet <a href="/">unsere Hochzeitsfoto-App</a>: den Fotobox-Effekt im ganzen Saal, zu einem Bruchteil des Preises.</p>
+<p>Ein QR-Code auf den Tischen und am Eingang, eine Begrenzung auf ein paar Fotos pro Person, damit es sorgfältig bleibt, und eine Präsentation am nächsten Tag. Damit alle mitspielen, schreiben Sie einen Satz in die Einladung (wir haben <a href="/journal/brief-invites">einen Text für Ihre Gäste zum Kopieren</a> vorbereitet). Genau das bietet <a href="/">unsere Hochzeitsfoto-App</a>: den Fotobox-Effekt im ganzen Saal, zu einem Bruchteil des Preises.</p>
 `,
     faq: [
       {
@@ -513,24 +513,24 @@ export const POSTS_DE = {
   },
 
   'revelation-photos-lendemain-mariage': {
-    title: 'Die Enthüllung am nächsten Tag: der eigentliche magische Moment',
+    title: 'Die große Präsentation am nächsten Tag: der eigentliche magische Moment',
     excerpt: 'Wer die Fotos bis zum nächsten Tag verbirgt, weckt wieder die Vorfreude aufs Entwickeln und schenkt sich einen zweiten großen Moment.',
     caption: 'Die Fotos am Tag nach der Hochzeit entdecken',
     body: `
-<p>Früher gab man seinen Film im Labor ab und wartete eine Woche, bis man die Fotos sah. Dieses Warten gehörte zum Vergnügen. Die „verzögerte Enthüllung“ bringt genau das zurück und verändert, wie man die Feier erlebt.</p>
+<p>Früher gab man seinen Film im Labor ab und wartete eine Woche, bis man die Fotos sah. Dieses Warten gehörte zum Vergnügen. Die „verzögerte Präsentation“ bringt genau das zurück und verändert, wie man die Feier erlebt.</p>
 
 <h2>Während der Feier: Niemand klebt am Bildschirm</h2>
 <p>Wenn die Fotos live erscheinen, wird die Feier zum Newsfeed: Man scrollt, statt zu tanzen. Verbergen Sie die Bilder bis zum nächsten Tag, machen Ihre Gäste ihre Fotos… stecken dann das Handy weg und genießen. Sie bekommen eine gelebte Feier, keine, die in Echtzeit kommentiert wird.</p>
 
 <h2>Am nächsten Tag: ein zweiter großer Moment</h2>
-<p>Beim Aufwachen wird alles auf einmal enthüllt. Das wird zum Ritual: Sie entdecken den Tag durch die Augen Ihrer Gäste, die Augenblicke, die nicht einmal Ihr Fotograf sehen konnte (mehr dazu in <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>). Die Gefühle der Hochzeit erleben Sie ein zweites Mal, mit etwas Abstand.</p>
+<p>Beim Aufwachen wird alles auf einmal für alle sichtbar. Das wird zum Ritual: Sie entdecken den Tag durch die Augen Ihrer Gäste, die Augenblicke, die nicht einmal Ihr Fotograf sehen konnte (mehr dazu in <a href="/journal/invites-photographe">Ihre Gäste sehen, was der Fotograf nicht sieht</a>). Die Gefühle der Hochzeit erleben Sie ein zweites Mal, mit etwas Abstand.</p>
 
 <blockquote class="dj-quote">„Der schönste Moment war der Sonntagmorgen, Kaffee in der Hand, wir beide beim Durchblättern der Fotos.“
   <cite>Tom &amp; Inès · 2026</cite>
 </blockquote>
 
 <h2>So stellen Sie sie richtig ein</h2>
-<p>Legen Sie die Enthüllung auf den nächsten Morgen statt mitten in die Nacht: Alle sind ausgeschlafen, und es entsteht ein echtes Ritual. Genau das ermöglicht <a href="/">Time to Flash</a>: Die Fotos bleiben verborgen wie ein Film, der entwickelt wird, und öffnen sich dann zu dem Zeitpunkt, den Sie wählen. Und es ist einer der kleinsten Posten des Tages (den Überblick gibt es in <a href="/journal/budget-photo-mariage">Fotobudget für die Hochzeit</a>).</p>
+<p>Legen Sie die Präsentation auf den nächsten Morgen statt mitten in die Nacht: Alle sind ausgeschlafen, und es entsteht ein echtes Ritual. Genau das ermöglicht <a href="/">Time to Flash</a>: Die Fotos bleiben verborgen wie ein Film, der entwickelt wird, und öffnen sich dann zu dem Zeitpunkt, den Sie wählen. Und es ist einer der kleinsten Posten des Tages (den Überblick gibt es in <a href="/journal/budget-photo-mariage">Fotobudget für die Hochzeit</a>).</p>
 `,
   },
 
@@ -552,7 +552,7 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>Der Mittelweg: begleitet statt verboten</h2>
-<p>Die eigentliche Lösung heißt nicht „Handys verboten“, sondern „Handys gut genutzt“. Eine Trauung ohne Handy, danach ein einfacher Rahmen für die Feier: eine begrenzte Zahl an Fotos pro Gast (gegen das Dauerknipsen, siehe <a href="/journal/dix-cliches">10 Aufnahmen statt 300</a>) und eine verzögerte Enthüllung, damit während des Abends niemand scrollt. So sammeln Sie Erinnerungen, ohne auf Präsenz zu verzichten.</p>
+<p>Die eigentliche Lösung heißt nicht „Handys verboten“, sondern „Handys gut genutzt“. Eine Trauung ohne Handy, danach ein einfacher Rahmen für die Feier: eine begrenzte Zahl an Fotos pro Gast (gegen das Dauerknipsen, siehe <a href="/journal/dix-cliches">10 Aufnahmen statt 300</a>) und eine verzögerte Präsentation, damit während des Abends niemand scrollt. So sammeln Sie Erinnerungen, ohne auf Präsenz zu verzichten.</p>
 
 <p>Genau dieses Gleichgewicht ermöglicht <a href="/">Time to Flash</a>: Ihre Gäste machen ein paar ausgewählte Fotos, stecken dann das Handy weg und entdecken alles am nächsten Tag.</p>
 `,
@@ -573,7 +573,7 @@ export const POSTS_DE = {
 </blockquote>
 
 <h2>2. Verbergen Sie die Fotos bis zum nächsten Tag</h2>
-<p>Erscheinen die Bilder live, wird die Feier zum Newsfeed: Man schaut auf den Bildschirm statt auf die Menschen. Verschieben Sie die Enthüllung auf den nächsten Morgen, bekommen Sie zwei getrennte Momente: die Feier und danach die Freude am gemeinsamen Entdecken.</p>
+<p>Erscheinen die Bilder live, wird die Feier zum Newsfeed: Man schaut auf den Bildschirm statt auf die Menschen. Verschieben Sie die Präsentation auf den nächsten Morgen, bekommen Sie zwei getrennte Momente: die Feier und danach die Freude am gemeinsamen Entdecken.</p>
 
 <h2>3. Null Hürden, sonst spielt niemand mit</h2>
 <p>Eine App, die man installieren muss, schließt die Hälfte Ihrer Gäste aus, und drei Viertel der über Sechzigjährigen. Ein QR-Code auf den Menükarten, eine Seite, die sich im Browser öffnet, ein Vorname zum Eintippen: Mehr Aufwand ist an einem Hochzeitsabend nicht zumutbar.</p>
@@ -672,7 +672,7 @@ export const POSTS_DE = {
 <p><em>„Noch eine letzte Sache: Auf jedem Tisch liegt ein QR-Code. Scannt ihn, jeder von euch hat 10 Fotos. Wir wollen den Abend mit euren Augen sehen, vor allem die Momente, die wir verpassen werden!“</em></p>
 
 <h2>Auf dem Schild am Eingang</h2>
-<p><em>„📸 Sei heute Abend unser Fotograf. Scannen, 10 Fotos machen, morgen werden sie enthüllt.“</em></p>
+<p><em>„📸 Sei heute Abend unser Fotograf. Scannen, 10 Fotos machen, morgen werden sie präsentiert.“</em></p>
 
 <blockquote class="dj-quote">„Wir haben den kleinen Absatz auf unsere Hochzeitswebsite gestellt, und der Trauzeuge hat ihn am Mikrofon wiederholt. Alle haben mitgemacht.“
   <cite>Léa &amp; Marius · Mai 2026</cite>
@@ -700,14 +700,14 @@ export const POSTS_DE = {
   <cite>Tom &amp; Inès · 2026</cite>
 </blockquote>
 
-<h2>Die verzögerte Enthüllung verdoppelt die Gefühle</h2>
+<h2>Die verzögerte Präsentation verdoppelt die Gefühle</h2>
 <p>Wenn die Fotos am nächsten Tag statt live erscheinen, passieren zwei Dinge: Die Gäste genießen wirklich die Feier (und nicht ihren Bildschirm), und das Entdecken des Albums wird zu einem zweiten großen Moment, gemeinsam und mit etwas Abstand. Das ist das Prinzip des Films, den man entwickelt.</p>
 
 <h2>Weniger Fotos, mehr Erinnerungen</h2>
 <p>Hochzeiten, bei denen jeder Gast eine <em>begrenzte</em> Zahl an Aufnahmen hatte, brachten anteilig viel mehr „behaltene“ Fotos hervor. Die Beschränkung zwingt zur Auswahl, und aus Entscheidungen werden Erinnerungen.</p>
 
 <h2>Was das für Sie bedeutet</h2>
-<p>Drei einfache Entscheidungen ergeben sich daraus: <strong>Begrenzen Sie die Zahl der Fotos</strong> pro Gast, <strong>verzichten Sie auf jede App zum Installieren</strong> und <strong>verschieben Sie die Enthüllung</strong> auf den nächsten Tag. Genau das ist die Philosophie <a href="/">unserer Hochzeitsfoto-App</a>, denn diese drei Einstellungen allein machen den Unterschied zwischen 300 vergessenen Fotos und 40 Erinnerungen, die man einrahmt. Und das nicht nur bei Hochzeiten: Geburtstage, Wochenenden mit Freunden, Abschiedsfeiern zum Ruhestand (siehe <a href="/occasions">alle Anlässe</a>).</p>
+<p>Drei einfache Entscheidungen ergeben sich daraus: <strong>Begrenzen Sie die Zahl der Fotos</strong> pro Gast, <strong>verzichten Sie auf jede App zum Installieren</strong> und <strong>verschieben Sie die Präsentation</strong> auf den nächsten Tag. Genau das ist die Philosophie <a href="/">unserer Hochzeitsfoto-App</a>, denn diese drei Einstellungen allein machen den Unterschied zwischen 300 vergessenen Fotos und 40 Erinnerungen, die man einrahmt. Und das nicht nur bei Hochzeiten: Geburtstage, Wochenenden mit Freunden, Abschiedsfeiern zum Ruhestand (siehe <a href="/occasions">alle Anlässe</a>).</p>
 `,
   },
 
@@ -721,7 +721,7 @@ export const POSTS_DE = {
 <h2>Fotogalerie oder Aktion: zwei verschiedene Dinge</h2>
 <p>Bevor Sie Preise vergleichen, sollten Sie wissen, dass es zwei Familien gibt, die nicht dasselbe tun.</p>
 <p><strong>1. Die Fotogalerien.</strong> Das sind fast alle „Hochzeitsfoto-Apps“: WedShoots, Wedbox, Wedibox, Invinee, Album Mariage Facile, Google Fotos… Ein Online-Album, in das jeder die Fotos <em>hochlädt</em>, die er mit der Kamera seines Handys gemacht hat. Ein Sammelordner. Nützlich, aber das passiert nicht während der Feier: Es passiert danach, wenn die Gäste daran denken.</p>
-<p><strong>2. Die Einwegkamera als Aktion.</strong> Das macht Time to Flash. Jeder Gast scannt einen QR-Code, und sein Handy wird zur Einwegkamera: ein paar begrenzte Aufnahmen, ein Film-Look und Fotos, die bis zur Enthüllung am nächsten Tag verborgen bleiben. Kein Ordner zum Hochladen, sondern ein Spiel, bei dem man während des Abends mitmacht. Und am nächsten Tag bekommen Sie trotzdem das ganze Album: die Aktion <em>zusätzlich</em> zur Galerie.</p>
+<p><strong>2. Die Einwegkamera als Aktion.</strong> Das macht Time to Flash. Jeder Gast scannt einen QR-Code, und sein Handy wird zur Einwegkamera: ein paar begrenzte Aufnahmen, ein Film-Look und Fotos, die bis zur Präsentation am nächsten Tag verborgen bleiben. Kein Ordner zum Hochladen, sondern ein Spiel, bei dem man während des Abends mitmacht. Und am nächsten Tag bekommen Sie trotzdem das ganze Album: die Aktion <em>zusätzlich</em> zur Galerie.</p>
 <p><strong>Kurz gesagt:</strong> Wenn Sie nur möglichst viele Dateien sammeln wollen, reicht eine Galerie. Wenn das Fotografieren ein Moment Ihrer Hochzeit werden soll, brauchen Sie eine Aktion.</p>
 
 <h2>Der Vergleich in einer Tabelle</h2>
@@ -745,14 +745,14 @@ export const POSTS_DE = {
 
 <h2>Time to Flash: die Einwegkamera als Aktion</h2>
 <p>Galerien warten darauf, dass Ihre Gäste daran denken, ihre Fotos zu schicken. Time to Flash geht vom Gegenteil aus: <strong>das Fotografieren zu einer Aktion Ihrer Hochzeit zu machen</strong>, wie die Einwegkameras, die man früher auf die Tische stellte, nur ohne deren Schwächen.</p>
-<p><strong>So läuft es ab:</strong> Ein Gast scannt den QR-Code, gibt seinen Vornamen ein, und sein Handy wird zur Einwegkamera, direkt auf der Seite, ohne etwas zu installieren oder ein Konto anzulegen. Er hat eine begrenzte Zahl an Aufnahmen (Sie wählen, von 3 bis 15), einen analogen Film-Look, und er sieht seine Fotos nicht. Während des Abends wartet jeder auf den richtigen Moment für seine letzten Aufnahmen. Am nächsten Morgen wird das Album auf einmal enthüllt, für alle: das Entwickeln des Films, in der gemeinsamen Version.</p>
+<p><strong>So läuft es ab:</strong> Ein Gast scannt den QR-Code, gibt seinen Vornamen ein, und sein Handy wird zur Einwegkamera, direkt auf der Seite, ohne etwas zu installieren oder ein Konto anzulegen. Er hat eine begrenzte Zahl an Aufnahmen (Sie wählen, von 3 bis 15), einen analogen Film-Look, und er sieht seine Fotos nicht. Während des Abends wartet jeder auf den richtigen Moment für seine letzten Aufnahmen. Am nächsten Morgen wird das Album auf einmal für alle sichtbar: das Entwickeln des Films, in der gemeinsamen Version.</p>
 <p><strong>Was sich im Vergleich zu einer Galerie ändert:</strong></p>
 <ul>
 <li><strong>Die Fotos entstehen während der Feier</strong>, nicht „später, versprochen“. Nichts zu schicken, niemandem hinterherzulaufen.</li>
 <li><strong>Alle machen mit</strong>, auch die Großeltern: ein Scan, ein Vorname, los geht’s.</li>
 <li><strong>Ausgewählte Fotos</strong> statt Serienbilder: Mit wenigen Aufnahmen zielt jeder auf das, was zählt.</li>
-<li><strong>Ein zweiter großer Moment</strong>: die Enthüllung am nächsten Tag, die alle gemeinsam erleben.</li>
-<li><strong>Sie bestimmen die Spielregeln</strong>: offenes Album, nur eine Chance oder echte Einwegkamera, bei der niemand vor der Enthüllung etwas sieht.</li>
+<li><strong>Ein zweiter großer Moment</strong>: die Präsentation am nächsten Tag, die alle gemeinsam erleben.</li>
+<li><strong>Sie bestimmen die Spielregeln</strong>: offenes Album, nur eine Chance oder echte Einwegkamera, bei der niemand vor der Präsentation etwas sieht.</li>
 <li><strong>Und dazu das komplette Album</strong>, in einem Stück herunterladbar.</li>
 </ul>
 <p><strong>Der Preis:</strong> kostenlos bis 5 Gäste, danach eine einmalige Zahlung je nach Größe der Hochzeit: 14,99&nbsp;€ bis 50 Gäste, 29,99&nbsp;€ bis 100, 34,99&nbsp;€ bis 150, 59,99&nbsp;€ bis 300. Ohne Abo, entwickelt in Frankreich, gespeichert in Europa.</p>
@@ -790,7 +790,7 @@ export const POSTS_DE = {
 <strong>3. Echte Beteiligung während des Abends.</strong> Eine Galerie hängt vom guten Willen jedes Einzelnen nach der Feier ab. Eine Aktion lässt die Fotos im Moment entstehen: Das ist der Unterschied zwischen ein paar Fotos von drei Cousins und einem Album, das vom ganzen Saal erzählt.<br>
 <strong>4. Ein einziges Album, in einem Stück herunterladbar.</strong> Alle Fotos an einem Ort, auf einmal abrufbar, ohne überraschende Kosten am nächsten Tag.<br>
 <strong>5. Die Zahl der Fotos pro Gast.</strong> Unbegrenzt, und Sie bekommen vor allem verwackelte Serien von der Tanzfläche. Begrenzt, und jeder wählt seine Momente aus, sodass man das Album gern anschaut (siehe <a href="/journal/dix-cliches">Warum 10 Aufnahmen besser sind als 300</a>).<br>
-<strong>6. Der Zeitpunkt der Enthüllung.</strong> Fotos live sichtbar oder bis zum nächsten Tag verborgen? Live ist es eine Diashow. Am nächsten Tag ist es eine Überraschung (siehe <a href="/journal/revelation-photos-lendemain-mariage">Die Enthüllung am nächsten Tag</a>).</p>
+<strong>6. Der Präsentationstermin.</strong> Fotos live sichtbar oder bis zum nächsten Tag verborgen? Live ist es eine Diashow. Am nächsten Tag ist es eine Überraschung (siehe <a href="/journal/revelation-photos-lendemain-mariage">Die Präsentation am nächsten Tag</a>).</p>
 
 <h2>App zum Installieren oder QR-Code ohne App?</h2>
 <p>Das ist die erste Trennlinie. Auf der einen Seite die nativen Apps (WedShoots, Wedbox): Jeder Gast muss den Schritt der Installation gehen. Auf der anderen Seite die QR-Code-Lösungen, die sich im Browser öffnen (Wedibox, Invinee, Album Mariage Facile, Time to Flash): ein Scan, und man ist drin.</p>
@@ -809,12 +809,12 @@ export const POSTS_DE = {
 
 <h2>Unsere Meinung</h2>
 <p>Eine Galerie bleibt ein Ordner: Sie sammelt, was Ihre Gäste hineinschicken wollen, wenn sie daran denken. Wenn das Fotografieren Teil der Feier sein soll, wenn Ihre Gäste vom Bildschirm aufschauen sollen, um den richtigen Moment zu erwischen, und wenn der nächste Tag seinen Moment des Entdeckens haben soll, wählen Sie die Einwegkamera als Aktion.</p>
-<p>Genau das macht <a href="/">Time to Flash</a>: ein QR-Code, keine App, ein paar Aufnahmen pro Person, ein analoger Look, eine Enthüllung am nächsten Tag und dazu das komplette Album. Bis 5 Gäste ist es kostenlos: Testen Sie es vor dem großen Tag mit Ihren Trauzeugen.</p>
+<p>Genau das macht <a href="/">Time to Flash</a>: ein QR-Code, keine App, ein paar Aufnahmen pro Person, ein analoger Look, eine Präsentation am nächsten Tag und dazu das komplette Album. Bis 5 Gäste ist es kostenlos: Testen Sie es vor dem großen Tag mit Ihren Trauzeugen.</p>
 `,
     faq: [
       {
         q: 'Welche ist die beste Foto-App für eine Hochzeit?',
-        a: 'Die meisten Hochzeitsfoto-Apps sind einfache Galerien, bei denen die Gäste daran denken müssen, ihre Fotos hochzuladen. Damit die Fotos wirklich während der Feier entstehen, wählen Sie eine Einwegkamera als Aktion ohne Installation, wie Time to Flash: ein QR-Code, ein paar Aufnahmen pro Gast, eine Enthüllung am nächsten Tag und dazu das komplette Album.',
+        a: 'Die meisten Hochzeitsfoto-Apps sind einfache Galerien, bei denen die Gäste daran denken müssen, ihre Fotos hochzuladen. Damit die Fotos wirklich während der Feier entstehen, wählen Sie eine Einwegkamera als Aktion ohne Installation, wie Time to Flash: ein QR-Code, ein paar Aufnahmen pro Gast, eine Präsentation am nächsten Tag und dazu das komplette Album.',
       },
       {
         q: 'Ist WedShoots kostenlos?',
@@ -925,7 +925,7 @@ export const POSTS_DE = {
 <p><strong>Fazit:</strong> hervorragend zum <em>Archivieren</em>, sobald Sie die Fotos haben. Schlecht zum <em>Sammeln</em>. Die anderen Wege zu einem gemeinsamen Album stehen in <a href="/journal/partager-photos-mariage-invites">Das gemeinsame Hochzeitsalbum</a>.</p>
 
 <h2>Die digitale Einwegkamera</h2>
-<p><strong>Was funktioniert:</strong> ein QR-Code auf den Tischen, eine Seite, die sich im Browser öffnet, ein Vorname zum Eintippen. Nichts zu installieren, kein Konto. Alle machen mit, auch die Großeltern. Alle Fotos landen in einem einzigen Album, und das Spiel (begrenzte Aufnahmen, Enthüllung am nächsten Tag) sorgt dafür, dass man während der Feier daran denkt.</p>
+<p><strong>Was funktioniert:</strong> ein QR-Code auf den Tischen, eine Seite, die sich im Browser öffnet, ein Vorname zum Eintippen. Nichts zu installieren, kein Konto. Alle machen mit, auch die Großeltern. Alle Fotos landen in einem einzigen Album, und das Spiel (begrenzte Aufnahmen, Präsentation am nächsten Tag) sorgt dafür, dass man während der Feier daran denkt.</p>
 <p><strong>Was hakt:</strong> Ab einer Handvoll Gäste kostet es Geld. Und es hängt von einem externen Dienst ab: Sie müssen prüfen, was inbegriffen ist, vor allem der vollständige Download (siehe <a href="/journal/application-photo-mariage-gratuite">Kostenlose Hochzeitsfoto-App</a>).</p>
 <p><strong>Fazit:</strong> Als einzige der drei Lösungen löst sie das Problem des <em>Sammelns</em>, und das ist das eigentliche Problem.</p>
 
@@ -982,7 +982,7 @@ export const POSTS_DE = {
 
 <h2>Und wenn Sie beides wollen?</h2>
 <p>Das geht, und es ist sogar die klügste Kombination: eine gebrauchte Fotobox oder ein Minimalpaket für den Druck und eine digitale Einwegkamera für den Rest. So bleiben Sie deutlich unter dem Preis einer einzigen High-End-Fotobox.</p>
-<p><a href="/">Time to Flash</a> übernimmt den zweiten Teil: ein QR-Code, keine App, begrenzte Aufnahmen pro Gast und ein Album, das am nächsten Tag enthüllt wird.</p>
+<p><a href="/">Time to Flash</a> übernimmt den zweiten Teil: ein QR-Code, keine App, begrenzte Aufnahmen pro Gast und ein Album, das am nächsten Tag präsentiert wird.</p>
 `,
   },
 
@@ -1023,7 +1023,7 @@ export const POSTS_DE = {
 <p><strong>1. Kündigen Sie vorher an</strong>, dass es ein gemeinsames Fotoalbum geben wird und wofür es dient.<br>
 <strong>2. Halten Sie das Album privat</strong>: per Link zugänglich, nicht bei Google indexiert.<br>
 <strong>3. Fragen Sie, bevor Sie veröffentlichen</strong>, sobald ein Foto den Kreis der Gäste verlässt.</p>
-<p>Bei <a href="/">Time to Flash</a> ist das Album nur mit Ihrem Link zugänglich, die Fotos werden in Europa gespeichert, jeder Gast kann seine eigenen Aufnahmen vor der Enthüllung löschen, und nichts wird zu anderen Zwecken genutzt. Ihre Fotos bleiben Ihre (alles Weitere auf unserer Seite <a href="/photos-mariage-invites">Hochzeitsfotos der Gäste</a>).</p>
+<p>Bei <a href="/">Time to Flash</a> ist das Album nur mit Ihrem Link zugänglich, die Fotos werden in Europa gespeichert, jeder Gast kann seine eigenen Aufnahmen vor der Präsentation löschen, und nichts wird zu anderen Zwecken genutzt. Ihre Fotos bleiben Ihre (alles Weitere auf unserer Seite <a href="/photos-mariage-invites">Hochzeitsfotos der Gäste</a>).</p>
 `,
   },
 
@@ -1363,7 +1363,7 @@ export const POSTS_DE = {
 
 <h2>Die Aufteilung, die wir empfehlen</h2>
 <p>Bei einem Fotobudget von 1.800 €: <strong>1.500 €</strong> für einen Fotografen, der lange bleibt, <strong>200 €</strong> für ein hochwertiges gedrucktes Album, <strong>30 €</strong> für die digitale Einwegkamera der Gäste und der Rest für Abzüge zum Verschenken. So haben Sie den offiziellen Tag, die Party und das Geschehen hinter den Kulissen abgedeckt, und es bleibt noch etwas für die Wand.</p>
-<p><a href="/">Time to Flash</a> ist der kleine 30-€-Posten auf dieser Liste: ein QR-Code, keine App und das Album Ihrer Gäste, das am nächsten Tag enthüllt wird.</p>
+<p><a href="/">Time to Flash</a> ist der kleine 30-€-Posten auf dieser Liste: ein QR-Code, keine App und das Album Ihrer Gäste, das am nächsten Tag präsentiert wird.</p>
 `,
   },
 

@@ -197,7 +197,7 @@ function textes(lang) {
       faq: [
         {
           q: 'Ist eine Fotobox im Moment nicht lustiger?',
-          a: 'Die Fotobox bringt die zum Lachen, die davor Schlange stehen. Hier verlagert sich der Spaß: Jeder fotografiert seinen Tisch, seine Freunde, den Bräutigam, der nichts kommen sah. Und die Überraschung am nächsten Tag, wenn alles auf einmal enthüllt wird, schafft keine Fotobox.',
+          a: 'Die Fotobox bringt die zum Lachen, die davor Schlange stehen. Hier verlagert sich der Spaß: Jeder fotografiert seinen Tisch, seine Freunde, den Bräutigam, der nichts kommen sah. Und die Überraschung am nächsten Tag, wenn alles auf einmal sichtbar wird, schafft keine Fotobox.',
         },
         {
           q: 'Und die Requisiten, die Fotoabzüge?',
@@ -207,10 +207,10 @@ function textes(lang) {
       eyebrow: 'Fotobox-Alternative · Hochzeit',
       h1: <>Eine Fotobox kostet<br />500 €. Unsere<br />{p}.</>,
       p1: 'Und sie besetzt keine Ecke im Saal: Jeder Ihrer Gäste wird zur Fotobox, überall und die ganze Nacht.',
-      p2: 'Ein QR-Code auf den Tischen, eine feste Anzahl an Fotos pro Person, und alles wird am nächsten Tag enthüllt, in einem einzigen Album.',
+      p2: 'Ein QR-Code auf den Tischen, eine feste Anzahl an Fotos pro Person, und am nächsten Tag wird alles präsentiert, in einem einzigen Album.',
       ticks: ['Keine Technik zu mieten', 'Keine App nötig', 'Einmalige Zahlung, kein Abo'],
       altAvant: 'Das Handy eines Gastes als Kamera: Sucher, Bildzähler und Auslöser.',
-      altArriere: 'Das Hochzeitsalbum, am nächsten Tag enthüllt: die Fotos aller Gäste an einem Ort.',
+      altArriere: 'Das Hochzeitsalbum, am nächsten Tag präsentiert: die Fotos aller Gäste an einem Ort.',
       borneTitre: 'Das Problem einer Fotobox ist nicht ihr Preis',
       borneSous: 'Sondern dass sie an einem Punkt bündelt, was überall sein sollte.',
       compTitre: 'Punkt für Punkt',

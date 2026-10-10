@@ -155,13 +155,13 @@ export async function GET(request, { params }) {
       uid: 'reveal',
       start: reveal,
       end: reveal + 1 * H,
-      summary: t({ fr: `✨ Révélation des photos : ${title}`, en: `✨ Photo reveal: ${title}`, de: `✨ Enthüllung der Fotos: ${title}` }, langue),
+      summary: t({ fr: `✨ Révélation des photos : ${title}`, en: `✨ Photo reveal: ${title}`, de: `✨ Präsentation der Fotos: ${title}` }, langue),
       description: t({
         fr: `Les photos de « ${title} » se révèlent.\n\n${links}`,
         en: `The photos from “${title}” are being revealed.\n\n${links}`,
-        de: `Die Fotos von „${title}“ werden enthüllt.\n\n${links}`,
+        de: `Die Fotos von „${title}“ werden jetzt für alle sichtbar.\n\n${links}`,
       }, langue),
-      alarm: { trigger: '-PT15M', text: t({ fr: 'Vos photos se révèlent dans 15 minutes', en: 'Your photos will be revealed in 15 minutes', de: 'Ihre Fotos werden in 15 Minuten enthüllt' }, langue) },
+      alarm: { trigger: '-PT15M', text: t({ fr: 'Vos photos se révèlent dans 15 minutes', en: 'Your photos will be revealed in 15 minutes', de: 'Ihre Fotos werden in 15 Minuten präsentiert' }, langue) },
     }),
 
     'END:VCALENDAR',

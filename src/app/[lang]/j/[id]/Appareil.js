@@ -36,15 +36,15 @@ function formatReveal(iso, locale = 'fr-FR') {
 function countdownToReveal(iso, now, lang = 'fr') {
   const diff = new Date(iso).getTime() - now
   if (isNaN(diff)) return ''
-  if (diff <= 0) return tr({ fr: 'révélé ✨', en: 'revealed ✨', de: 'enthüllt ✨' }, lang)
+  if (diff <= 0) return tr({ fr: 'révélé ✨', en: 'revealed ✨', de: 'präsentiert ✨' }, lang)
   const mins = Math.floor(diff / 60000)
   const d = Math.floor(mins / 1440)
   const h = Math.floor((mins % 1440) / 60)
   const m = mins % 60
   const mm = String(m).padStart(2, '0')
-  if (d > 0) return tr({ fr: `révélation dans ${d} j ${h} h`, en: `reveal in ${d} d ${h} h`, de: `Enthüllung in ${d} T ${h} Std.` }, lang)
-  if (h > 0) return tr({ fr: `révélation dans ${h} h ${mm} min`, en: `reveal in ${h} h ${mm} min`, de: `Enthüllung in ${h} Std. ${mm} Min.` }, lang)
-  return tr({ fr: `révélation dans ${m} min`, en: `reveal in ${m} min`, de: `Enthüllung in ${m} Min.` }, lang)
+  if (d > 0) return tr({ fr: `révélation dans ${d} j ${h} h`, en: `reveal in ${d} d ${h} h`, de: `Präsentation in ${d} T ${h} Std.` }, lang)
+  if (h > 0) return tr({ fr: `révélation dans ${h} h ${mm} min`, en: `reveal in ${h} h ${mm} min`, de: `Präsentation in ${h} Std. ${mm} Min.` }, lang)
+  return tr({ fr: `révélation dans ${m} min`, en: `reveal in ${m} min`, de: `Präsentation in ${m} Min.` }, lang)
 }
 
 // Le grand décompte de la soirée terminée : « 2 j 04:12:09 », « 04:12:09 ».
@@ -858,7 +858,7 @@ export default function GuestCamera({ params }) {
     : t({
         fr: 'Pellicule pleine : tes photos t’attendent à la révélation.',
         en: 'Film roll full: your photos are waiting for you at the reveal.',
-        de: 'Film voll: Ihre Fotos warten bei der Enthüllung auf Sie.',
+        de: 'Film voll: Ihre Fotos warten bei der Präsentation auf Sie.',
       }))
 
   // Un cliché de plus, à confirmer ou à envoyer selon le mode. Le compteur ne
@@ -1236,7 +1236,7 @@ export default function GuestCamera({ params }) {
         {t({
           fr: <>Prenez <strong>{meta?.shotsPerGuest} photos</strong> pendant la soirée. Elles resteront cachées jusqu'à la révélation, le <strong>{meta && formatReveal(meta.revealAt, locale)}</strong>.</>,
           en: <>Take <strong>{meta?.shotsPerGuest} photos</strong> during the event. They’ll stay hidden until the reveal on <strong>{meta && formatReveal(meta.revealAt, locale)}</strong>.</>,
-          de: <>Machen Sie <strong>{meta?.shotsPerGuest} Fotos</strong> während der Feier. Sie bleiben verborgen bis zur Enthüllung am <strong>{meta && formatReveal(meta.revealAt, locale)}</strong>.</>,
+          de: <>Machen Sie <strong>{meta?.shotsPerGuest} Fotos</strong> während der Feier. Sie bleiben verborgen bis zur Präsentation am <strong>{meta && formatReveal(meta.revealAt, locale)}</strong>.</>,
         })}
       </p>
       <div className="spacer" />
@@ -1403,7 +1403,7 @@ export default function GuestCamera({ params }) {
           ✉️ {t({
             fr: "Pour les informations liées à votre événement, comme votre lien d'accès ou le lien de l'album quand les photos seront révélées, et nos services autour de vos photos.",
             en: 'For information about your event, such as your access link or the album link once the photos are revealed, and our services around your photos.',
-            de: 'Für Informationen zu Ihrem Event, etwa Ihren Zugangslink oder den Link zum Album, sobald die Fotos enthüllt sind, sowie unsere Angebote rund um Ihre Fotos.',
+            de: 'Für Informationen zu Ihrem Event, etwa Ihren Zugangslink oder den Link zum Album, sobald die Fotos für alle sichtbar sind, sowie unsere Angebote rund um Ihre Fotos.',
           })}
         </p>
         {/* Seulement dans un essai du site : la personne découvre Time to Flash
@@ -1571,7 +1571,7 @@ export default function GuestCamera({ params }) {
                 ? t({
                     fr: `Tes ${guest?.shotsPerGuest} photos sont en cours de développement. Rendez-vous à la révélation 🎉`,
                     en: `Your ${guest?.shotsPerGuest} photos are being developed. See you at the reveal 🎉`,
-                    de: `Ihre ${guest?.shotsPerGuest} Fotos werden gerade entwickelt. Wir sehen uns bei der Enthüllung 🎉`,
+                    de: `Ihre ${guest?.shotsPerGuest} Fotos werden gerade entwickelt. Wir sehen uns bei der Präsentation 🎉`,
                   })
                 : t({
                     fr: `Tes ${guest?.shotsPerGuest} photos sont en cours de développement.`,
@@ -1845,10 +1845,10 @@ export default function GuestCamera({ params }) {
 
               {(() => {
                 const cd = breakdownToReveal(meta?.revealAt, now)
-                if (cd.done) return <div className="album-revele">🎉 {t({ fr: "L'album est révélé", en: 'The album is revealed', de: 'Das Album ist enthüllt' })}</div>
+                if (cd.done) return <div className="album-revele">🎉 {t({ fr: "L'album est révélé", en: 'The album is revealed', de: 'Das Album ist jetzt für alle sichtbar' })}</div>
                 return (
                   <div className="album-cd">
-                    <span className="cd-label">{t({ fr: 'Révélation dans', en: 'Reveal in', de: 'Enthüllung in' })}</span>
+                    <span className="cd-label">{t({ fr: 'Révélation dans', en: 'Reveal in', de: 'Präsentation in' })}</span>
                     <span className="cd-row">
                       <span className="cd-b"><b>{String(cd.d).padStart(2, '0')}</b><i>{t({ fr: 'j', en: 'd', de: 'T' })}</i></span>
                       <span className="cd-b"><b>{String(cd.h).padStart(2, '0')}</b><i>{t({ fr: 'h', en: 'h', de: 'Std' })}</i></span>
@@ -1962,9 +1962,9 @@ export default function GuestCamera({ params }) {
                 <p className="mur-note" style={{ margin: '0 0 12px' }}>
                   {ongletMoi
                     ? flouterMesPhotos
-                      ? t({ fr: 'Tu les découvriras à la révélation.', en: 'You’ll discover them at the reveal.', de: 'Sie entdecken sie bei der Enthüllung.' })
-                      : t({ fr: 'Tes photos, à toi seul, jusqu’à la révélation.', en: 'Your photos, just for you, until the reveal.', de: 'Ihre Fotos, nur für Sie, bis zur Enthüllung.' })
-                    : t({ fr: 'Floutées jusqu’à la révélation.', en: 'Blurred until the reveal.', de: 'Verschwommen bis zur Enthüllung.' })}
+                      ? t({ fr: 'Tu les découvriras à la révélation.', en: 'You’ll discover them at the reveal.', de: 'Sie entdecken sie bei der Präsentation.' })
+                      : t({ fr: 'Tes photos, à toi seul, jusqu’à la révélation.', en: 'Your photos, just for you, until the reveal.', de: 'Ihre Fotos, nur für Sie, bis zur Präsentation.' })
+                    : t({ fr: 'Floutées jusqu’à la révélation.', en: 'Blurred until the reveal.', de: 'Verschwommen bis zur Präsentation.' })}
                 </p>
 
                 {/* Ses propres photos, en clair, quand l'organisateur l'a permis.
@@ -2209,7 +2209,7 @@ export default function GuestCamera({ params }) {
               <button className="btn btn-accent" onClick={garderLeCliche} disabled={busy}>
                 {t({ fr: 'Garder', en: 'Keep', de: 'Behalten' })}
               </button>
-              <span className="confirm-note">{t({ fr: 'visible à la révélation', en: 'visible at the reveal', de: 'sichtbar bei der Enthüllung' })}</span>
+              <span className="confirm-note">{t({ fr: 'visible à la révélation', en: 'visible at the reveal', de: 'sichtbar bei der Präsentation' })}</span>
             </div>
           </div>
         </div>

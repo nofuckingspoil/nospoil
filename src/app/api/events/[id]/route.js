@@ -266,7 +266,7 @@ export async function PATCH(request, { params }) {
   const revelationPassee = new Date(ev.reveal_at || 0).getTime() <= Date.now()
   if (revelationPassee && (body.revealAt !== undefined || body.startsAt !== undefined || body.endsAt !== undefined)) {
     return Response.json(
-      { error: t({ fr: 'La révélation a eu lieu : les dates ne peuvent plus être modifiées.', en: 'The reveal has taken place: the dates can no longer be changed.', de: 'Die Enthüllung hat stattgefunden: Die Termine können nicht mehr geändert werden.' }, langue) },
+      { error: t({ fr: 'La révélation a eu lieu : les dates ne peuvent plus être modifiées.', en: 'The reveal has taken place: the dates can no longer be changed.', de: 'Die Präsentation hat stattgefunden: Die Termine können nicht mehr geändert werden.' }, langue) },
       { status: 409 }
     )
   }
@@ -317,7 +317,7 @@ export async function PATCH(request, { params }) {
       }
       const rev = new Date(patch.reveal_at || ev.reveal_at).getTime()
       if (Number.isFinite(rev) && fin.getTime() > rev) {
-        return Response.json({ error: t({ fr: 'La fin ne peut pas dépasser la révélation des photos.', en: 'The end cannot be later than the photo reveal.', de: 'Das Ende darf nicht nach der Enthüllung der Fotos liegen.' }, langue) }, { status: 400 })
+        return Response.json({ error: t({ fr: 'La fin ne peut pas dépasser la révélation des photos.', en: 'The end cannot be later than the photo reveal.', de: 'Das Ende darf nicht nach der Präsentation der Fotos liegen.' }, langue) }, { status: 400 })
       }
       patch.ends_at = fin.toISOString()
     }
@@ -410,7 +410,7 @@ export async function PATCH(request, { params }) {
 
   if (body.revealAt !== undefined) {
     const reveal = new Date(body.revealAt)
-    if (isNaN(reveal.getTime())) return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiges Enthüllungsdatum.' }, langue) }, { status: 400 })
+    if (isNaN(reveal.getTime())) return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiger Präsentationstermin.' }, langue) }, { status: 400 })
     patch.reveal_at = reveal.toISOString()
     patch.expires_at = purgeDateISO(reveal) // rétention : 6 mois après la révélation (CGV art. 8)
     // La date de suppression change : les alertes déjà envoyées ne valent plus.
@@ -441,7 +441,7 @@ export async function PATCH(request, { params }) {
     const immediate = Number.isFinite(rev) && rev <= Date.now() + 60 * 1000
     if (!immediate && Number.isFinite(debut) && Number.isFinite(rev) && rev <= debut) {
       return Response.json(
-        { error: t({ fr: 'La révélation doit venir après le début de l’événement.', en: 'The reveal must come after the start of the event.', de: 'Die Enthüllung muss nach dem Beginn des Events liegen.' }, langue) },
+        { error: t({ fr: 'La révélation doit venir après le début de l’événement.', en: 'The reveal must come after the start of the event.', de: 'Die Präsentation muss nach dem Beginn des Events liegen.' }, langue) },
         { status: 400 }
       )
     }

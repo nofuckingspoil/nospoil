@@ -447,7 +447,7 @@ export default function Generateur() {
               {t({
                 fr: 'Time to Flash transforme le téléphone de chaque invité en appareil jetable : un nombre de clichés limité, et toutes les photos qui se révèlent après la fête. Vous récupérez alors un lien à mettre dans cette affiche.',
                 en: 'Time to Flash turns every guest’s phone into a disposable camera: a limited number of shots, and all the photos revealed after the party. You then get a link to put on this poster.',
-                de: 'Time to Flash verwandelt das Handy jedes Gastes in eine Einwegkamera: eine begrenzte Anzahl an Aufnahmen, und alle Fotos werden nach der Feier enthüllt. Sie erhalten dann einen Link für dieses Poster.',
+                de: 'Time to Flash verwandelt das Handy jedes Gastes in eine Einwegkamera: eine begrenzte Anzahl an Aufnahmen, und alle Fotos werden erst nach der Feier für alle sichtbar. Sie erhalten dann einen Link für dieses Poster.',
               })}
             </p>
             <Link href={lien('/create?tier=5')} className="btn btn-accent">{t({ fr: 'Créer mon album →', en: 'Create my album →', de: 'Mein Album erstellen →' })}</Link>

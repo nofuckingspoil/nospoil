@@ -208,7 +208,7 @@ export async function POST(request) {
         { error: t({
           fr: 'Cette soirée est terminée : son album est déjà révélé.',
           en: 'This party is over: its album has already been revealed.',
-          de: 'Diese Feier ist vorbei: Ihr Album wurde bereits enthüllt.',
+          de: 'Diese Feier ist vorbei: Ihr Album wurde bereits präsentiert.',
         }, langue) },
         { status: 403 }
       )

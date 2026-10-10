@@ -177,7 +177,7 @@ const AIDE_DE = {
 
 <h2>5. „Ich finde meine Fotos nicht“</h2>
 <p>Sie sind unter <strong>„Mein Album“</strong>, dem Stapel kleiner Vorschaubilder unten links in der Kamera. Ein Tippen darauf öffnet das Album, mit dem Zähler der verbleibenden Aufnahmen und der Möglichkeit, ein misslungenes Foto zu löschen.</p>
-<p>Ein nützlicher Hinweis zum Weitergeben: <strong>Ein Gast sieht nur seine eigenen Fotos.</strong> Die der anderen sieht er erst bei der Enthüllung. Das ist kein Fehler, das ist das Prinzip.</p>
+<p>Ein nützlicher Hinweis zum Weitergeben: <strong>Ein Gast sieht nur seine eigenen Fotos.</strong> Die der anderen sieht er erst bei der Präsentation. Das ist kein Fehler, das ist das Prinzip.</p>
 
 <h2>6. „Ich habe den Link verloren“</h2>
 <p>Einfach <strong>den QR-Code noch einmal scannen</strong>: Das Handy wird erkannt, die bereits aufgenommenen Fotos sind noch da, und der Zähler macht dort weiter, wo er stehen geblieben ist.</p>
@@ -194,11 +194,11 @@ const AIDE_DE = {
 
 <h2>9. „Alles ist weg“: das private Surfen</h2>
 <p>Im privaten Modus vergisst das Handy alles, sobald der Tab geschlossen wird. Der Gast fängt dann bei null an, mit einem zurückgesetzten Zähler, und seine bisherigen Fotos sind ihm nicht mehr zugeordnet.</p>
-<p>Beruhigen Sie ihn: <strong>Bereits gesendete Fotos sind nicht verloren</strong>, sie sind im Album und erscheinen bei der Enthüllung. Nur der Zugang zu „Mein Album“ ist weg. Für den Rest des Abends sollte er den Link im normalen Modus öffnen.</p>
+<p>Beruhigen Sie ihn: <strong>Bereits gesendete Fotos sind nicht verloren</strong>, sie sind im Album und erscheinen bei der Präsentation. Nur der Zugang zu „Mein Album“ ist weg. Für den Rest des Abends sollte er den Link im normalen Modus öffnen.</p>
 
 <h2>Und für Sie als Gastgeber</h2>
 <h3>„Das Album hat sich nicht zur geplanten Zeit geöffnet“</h3>
-<p>Wenn mehr Gäste als vorgesehen gescannt haben, wartet die Enthüllung, bis Sie auf das passende Paket wechseln. Ihr Dashboard zeigt Ihnen das an, mit dem genauen Differenzbetrag: Sie zahlen nie zweimal für das, was schon bezahlt ist. In der Zwischenzeit geht kein Foto verloren.</p>
+<p>Wenn mehr Gäste als vorgesehen gescannt haben, wartet die Präsentation, bis Sie auf das passende Paket wechseln. Ihr Dashboard zeigt Ihnen das an, mit dem genauen Differenzbetrag: Sie zahlen nie zweimal für das, was schon bezahlt ist. In der Zwischenzeit geht kein Foto verloren.</p>
 <h3>„Ich bekomme die E-Mails nicht“</h3>
 <p>Sehen Sie im Spam-Ordner nach und fügen Sie unsere Adresse zu Ihren Kontakten hinzu. Ihr Dashboard bleibt über den Link in der Bestätigungs-E-Mail erreichbar: Bewahren Sie ihn gut auf.</p>
 

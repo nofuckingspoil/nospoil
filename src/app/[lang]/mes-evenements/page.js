@@ -78,8 +78,8 @@ export default function MyEvents() {
             <div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18 }}>{nomAffiche(e.name, lang)}</div>
               <div className="ev-meta">
-                {t({ fr: 'Révélation', en: 'Reveal', de: 'Enthüllung' })} {fmtDate(e.revealAt, locale)} ·{' '}
-                {e.revealed ? t({ fr: 'révélé', en: 'revealed', de: 'enthüllt' }) : t({ fr: 'en cours', en: 'in progress', de: 'läuft' })}
+                {t({ fr: 'Révélation', en: 'Reveal', de: 'Präsentation' })} {fmtDate(e.revealAt, locale)} ·{' '}
+                {e.revealed ? t({ fr: 'révélé', en: 'revealed', de: 'präsentiert' }) : t({ fr: 'en cours', en: 'in progress', de: 'läuft' })}
               </div>
             </div>
             <div className="ev-counts">

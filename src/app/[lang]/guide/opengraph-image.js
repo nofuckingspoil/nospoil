@@ -23,7 +23,7 @@ export default async function Image({ params }) {
     accroche: t({
       fr: "Combien de clichés donner, quand révéler l'album, comment faire scanner tout le monde.",
       en: 'How many shots to give, when to reveal the album, how to get everyone scanning.',
-      de: 'Wie viele Aufnahmen, wann das Album enthüllen, wie alle zum Scannen bringen.',
+      de: 'Wie viele Aufnahmen, wann das Album präsentieren, wie alle zum Scannen bringen.',
     }, lang),
     pied: t({
       fr: `${n} chapitres · ${guide.readingTime}`,

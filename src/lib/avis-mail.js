@@ -276,7 +276,7 @@ export function avisOrgaEmail({ eventName, link, langue }) {
         t({
           fr: `Je suis Clément, le fondateur de Time to Flash. Les photos de « <strong>${eventName}</strong> » viennent d'être révélées, et j'aimerais beaucoup savoir comment ça s'est passé pour vous.`,
           en: `I'm Clément, the founder of Time to Flash. The photos from “<strong>${eventName}</strong>” have just been revealed, and I'd really love to know how it went for you.`,
-          de: `Ich bin Clément, der Gründer von Time to Flash. Die Fotos von „<strong>${eventName}</strong>“ wurden gerade enthüllt, und ich würde sehr gern wissen, wie es für Sie gelaufen ist.`,
+          de: `Ich bin Clément, der Gründer von Time to Flash. Die Fotos von „<strong>${eventName}</strong>“ wurden gerade präsentiert, und ich würde sehr gern wissen, wie es für Sie gelaufen ist.`,
         }, langue),
         t({
           fr: 'Un clic sur une étoile suffit :',

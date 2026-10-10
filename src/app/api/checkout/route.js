@@ -38,7 +38,7 @@ export async function POST(request) {
 
   const reveal = new Date(revealAt)
   if (!revealAt || isNaN(reveal.getTime()) || reveal.getTime() < Date.now() - 60 * 1000) {
-    return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiges Enthüllungsdatum.' }, langue) }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiger Präsentationstermin.' }, langue) }, { status: 400 })
   }
 
   // Date de la fête : à défaut, estimée à la veille au soir de la révélation.

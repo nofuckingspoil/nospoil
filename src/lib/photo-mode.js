@@ -113,7 +113,7 @@ const MODE_OPTIONS_TRAD = {
     },
     jetable: {
       title: 'Echte Einwegkamera',
-      sub: 'Niemand sieht etwas. Jedes Foto landet verschwommen im Film und wird bei der Enthüllung entdeckt, wie ein Film, der entwickelt wird.',
+      sub: 'Niemand sieht etwas. Jedes Foto landet verschwommen im Film und wird bei der Präsentation entdeckt, wie ein Film, der entwickelt wird.',
       court: 'sie sehen nichts, wie bei einer echten Einwegkamera',
     },
   },

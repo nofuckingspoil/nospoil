@@ -53,10 +53,10 @@ export async function POST(request) {
 
   const reveal = new Date(revealAt)
   if (!revealAt || isNaN(reveal.getTime())) {
-    return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiges Enthüllungsdatum.' }, langue) }, { status: 400 })
+    return Response.json({ error: t({ fr: 'Date de révélation invalide.', en: 'Invalid reveal date.', de: 'Ungültiger Präsentationstermin.' }, langue) }, { status: 400 })
   }
   if (reveal.getTime() < Date.now() - 60 * 1000) {
-    return Response.json({ error: t({ fr: 'La date de révélation doit être dans le futur.', en: 'The reveal date must be in the future.', de: 'Das Enthüllungsdatum muss in der Zukunft liegen.' }, langue) }, { status: 400 })
+    return Response.json({ error: t({ fr: 'La date de révélation doit être dans le futur.', en: 'The reveal date must be in the future.', de: 'Der Präsentationstermin muss in der Zukunft liegen.' }, langue) }, { status: 400 })
   }
 
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
