@@ -451,7 +451,7 @@ const CHAPTERS_DE = [
     title: 'Den richtigen Präsentationstermin wählen',
     teaser: 'Am nächsten Morgen oder eine Woche später? Beides funktioniert, aber aus unterschiedlichen Gründen.',
     body: `
-<p>Der Präsentationstermin ist kein technisches Detail: Es ist das Ende Ihrer Geschichte. Es gibt zwei Schulen, und keine liegt falsch.</p>
+<p>Der Präsentationstermin ist kein technisches Detail: Er ist das Ende Ihrer Geschichte. Es gibt zwei Schulen, und keine liegt falsch.</p>
 <h3>Am nächsten Morgen (11 Uhr)</h3>
 <p>Der „Wir sehen uns beim Frühstück“-Effekt. Alle haben die Feier noch im Kopf, die Handys liegen herum, und die Fotos kommen genau in dem Moment, in dem man anfängt, sich vom Vorabend zu erzählen. Die festlichste Wahl, und die, bei der am meisten geteilt wird.</p>
 <h3>Eine Woche später</h3>
