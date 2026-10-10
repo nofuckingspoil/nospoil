@@ -5008,3 +5008,50 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .pp-suggestions { position: absolute; z-index: 20; top: calc(100% - 2px); left: 0; right: 0; list-style: none; background: #fff; border: 2px solid var(--accent); border-top: 0; border-radius: 0 0 16px 16px; overflow: hidden; box-shadow: 0 16px 34px rgba(34,26,18,.13); }
 .pp-suggestions li { padding: 11px 16px; font-size: 15px; font-weight: 600; cursor: pointer; border-top: 1px solid var(--line-soft); }
 .pp-suggestions li:hover, .pp-suggestions li.actif { background: var(--card); color: var(--accent-deep); }
+
+/* Guides partenaires (/pro/guide/*) */
+.pg { padding-bottom: 50px; }
+.pg-tete { padding: 30px 0 20px; max-width: 760px; }
+.pg-tete h1 { font-weight: 800; font-size: clamp(34px, 5.6vw, 50px); line-height: 1; letter-spacing: -.03em; margin: 14px 0 16px; text-wrap: pretty; }
+.pg-tete-actions { display: flex; align-items: center; gap: 18px; flex-wrap: wrap; margin-top: 22px; }
+.pg-etape { padding: 34px 0; border-top: 1px solid var(--line-soft); max-width: 820px; }
+.pg-etape-tete { display: flex; align-items: baseline; gap: 14px; margin-bottom: 12px; }
+.pg-etape-tete h2 { font-size: clamp(22px, 3.4vw, 28px); }
+.pg-texte { font-size: 16px; color: var(--text2); line-height: 1.6; }
+.pg-citation { position: relative; margin: 16px 0; background: var(--dark); color: #fff; border-radius: 20px; padding: 20px 22px 20px; }
+.pg-citation p { font-size: 17px; line-height: 1.55; font-weight: 600; padding-right: 70px; }
+.pg-copier { position: absolute; top: 14px; right: 14px; background: rgba(255,255,255,.1); color: var(--amber); border: 1px solid rgba(244,193,78,.4); border-radius: 999px; padding: 6px 12px; font-family: var(--font-mono); font-size: 11.5px; cursor: pointer; }
+.pg-copier:hover { background: rgba(255,255,255,.18); }
+.pg-reglages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 12px; margin-top: 14px; }
+.pg-reglage { background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; padding: 16px 18px; }
+.pg-reglage h3 { font-size: 16px; margin-bottom: 6px; }
+.pg-reglage p { font-size: 14px; color: var(--text2); line-height: 1.5; }
+.pg-liste { margin: 12px 0 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 15.5px; color: var(--text2); line-height: 1.5; }
+.pg-liste li::marker { color: var(--accent); }
+.pg-aide { margin-top: 14px; font-size: 14.5px; color: var(--text2); line-height: 1.5; background: rgba(236,91,51,.08); border-left: 3px solid var(--accent); border-radius: 0 12px 12px 0; padding: 12px 14px; }
+.pg-checklist { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr)); gap: 12px; }
+.pg-check { background: var(--card); border: 1px solid var(--line-soft); border-radius: 16px; padding: 16px; }
+.pg-check ul { margin-top: 8px; padding-left: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--text2); line-height: 1.4; }
+.pg-check li::before { content: '☐ '; color: var(--accent-deep); }
+.pg-quand { font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; color: var(--accent-deep); font-weight: 700; }
+.pg-liens { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: 16px; padding-top: 34px; border-top: 1px solid var(--line-soft); }
+.pg-imprime-seulement { display: none; }
+
+@media print {
+  @page { margin: 14mm; }
+  html, body, .pp { background: #fff !important; }
+  .pp-pas-imprime, .pp-nav-liens, .vfooter, .pp-bandeau, .ck, .gbn, nextjs-portal { display: none !important; }
+  .pp-nav { padding: 0 0 10px; }
+  .pg-reglage, .pg-check, .pg-citation, .pg-etape-tete { break-inside: avoid; }
+  .pg-etape-tete { break-after: avoid; }
+  .pg-etape { padding: 22px 0; }
+  .pg-citation { background: #fff; color: var(--ink); border: 2px solid var(--ink); }
+  .pg-citation p { padding-right: 0; }
+  .pg-tete { padding-top: 0; }
+  .pg-imprime-seulement { display: block; margin-top: 24px; font-family: var(--font-mono); font-size: 11px; color: var(--text3); }
+}
+
+.pp-guide-encart { display: flex; align-items: center; justify-content: space-between; gap: 22px; flex-wrap: wrap; }
+.pp-guide-encart > div { max-width: 620px; }
+.pp-guide-encart h2 { margin: 8px 0 8px; }
+.pp-guide-encart p { color: var(--text2); font-size: 15px; line-height: 1.5; }

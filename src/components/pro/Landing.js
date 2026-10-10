@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { getPostEnLangue } from '../../lib/journal'
 import { ProNav, ProBandeau, ProPied } from './ProCadre'
 import { LANDINGS, POUR_QUI, METIERS_FICHE, OFFRE, cheminFiche, cheminLanding } from '../../lib/partenaires'
+import { cheminGuide } from '../../lib/guide-partenaires'
 
 // Les articles du blog écrits pour les professionnels (repris de l'ancienne page /pro).
 const ARTICLES = {
@@ -116,6 +117,17 @@ export default function Landing({ cle }) {
                   </Link>
                 ))}
               </div>
+            </section>
+          )}
+
+          {!general && (
+            <section className="pp-section pp-guide-encart">
+              <div>
+                <div className="eyebrow-mute">Le guide partenaire</div>
+                <h2 className="pp-h2-gauche">Comment accompagner vos mariés</h2>
+                <p>Quand en parler, quels réglages choisir, où poser les QR codes, quoi dire au micro. À lire en deux minutes, ou à télécharger en PDF.</p>
+              </div>
+              <Link href={cheminGuide(cle)} className="btn btn-ghost">Lire le guide →</Link>
             </section>
           )}
 

@@ -128,7 +128,7 @@ export function validerFiche(f, cle) {
 const FAQ_COMMUNE = [
   { q: 'Est-ce vraiment gratuit ?', a: `Oui. Le code couvre un événement complet, jusqu’à ${OFFRE.invites} participants, sans carte bancaire. Nous en offrons ${OFFRE.codesParDepartement} par département, aux premières fiches validées. La seule chose demandée est votre fiche de présentation.` },
   { q: 'Les invités doivent-ils installer une application ?', a: 'Non. Ils scannent le QR code et l’appareil photo s’ouvre dans leur navigateur.' },
-  { q: 'Qui voit les photos ?', a: 'Les mariés et leurs invités, par un lien privé. Les photos restent cachées jusqu’à la révélation, sont hébergées dans l’Union européenne et supprimées automatiquement six mois après.' },
+  { q: 'Qui voit les photos ?', a: 'Les mariés et leurs invités, par un lien privé. Avant la révélation, seuls les mariés (et les proches qu’ils ajoutent) voient toutes les photos et peuvent en masquer. Elles sont hébergées dans l’Union européenne et supprimées automatiquement six mois après.' },
 ]
 const QUESTION_PLUS_DE_CODE = { q: `Et si les ${OFFRE.codesParDepartement} codes de mon département sont déjà partis ?`, a: 'Votre fiche peut tout de même être publiée sur notre page partenaires, et nous vous proposons une remise pour vos mariés.' }
 const etape1 = (quoi, photo) => ({ n: '01', t: 'Vous présentez ' + quoi, d: 'Quelques lignes et ' + photo + '. C’est la fiche qui apparaîtra sur notre page partenaires.' })

@@ -70,7 +70,8 @@ export default function sitemap() {
     })
   )
   // Programme partenaires : pages en français seulement (pas de hreflang).
-  const partenaires = ['/pro/wedding-planners', '/pro/lieux-de-reception', '/pro/photographes', '/partenaires']
+  const partenaires = ['/pro/wedding-planners', '/pro/lieux-de-reception', '/pro/photographes', '/partenaires',
+    '/pro/guide/wedding-planners', '/pro/guide/lieux-de-reception', '/pro/guide/photographes']
     .map((chemin) => ({ url: `${BASE}${chemin}`, lastModified: now, changeFrequency: 'monthly', priority: 0.6 }))
 
   return [...vitrines, ...appli, ...articles, ...legal, ...partenaires]

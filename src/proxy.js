@@ -24,7 +24,7 @@ const PAGES_APPLI = /^\/(j|g|event|admin|connexion|mes-evenements|mes-photos|avi
 // Programme partenaires : pages en français seulement (pas de version /en ni
 // /de). Sans cette exception, un visiteur anglophone tournerait en rond entre
 // /pro/photographes et /en/pro/photographes.
-const PAGES_FR_SEULEMENT = /^\/(pro\/(wedding-planners|lieux-de-reception|photographes|fiche)|partenaires)(\/|$)/
+const PAGES_FR_SEULEMENT = /^\/(pro\/(wedding-planners|lieux-de-reception|photographes|fiche|guide)|partenaires)(\/|$)/
 
 function memoriser(reponse, langue) {
   reponse.cookies.set(COOKIE_LANGUE, langue, { path: '/', maxAge: UN_AN, sameSite: 'lax' })
