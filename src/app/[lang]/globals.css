@@ -3258,6 +3258,8 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .dj-guide .dj-btn { background: transparent; color: var(--dj-orange-txt); box-shadow: none;
   border: 1.5px solid var(--dj-orange); text-decoration: none; flex: 0 0 auto; }
 .dj-guide .dj-btn:hover { background: var(--dj-orange); color: #fff; }
+/* Sommaire d'article (liens d'ancre) : le titre visé ne passe pas sous le menu. */
+.dj-prose h2[id] { scroll-margin-top: 90px; }
 /* Bandeau partenaires des articles pour prestataires, juste sous le chapeau. */
 .dj-pro { margin: 0 0 28px; border-color: var(--dj-orange); }
 
