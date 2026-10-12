@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { noterEtape } from '../lib/etapes'
 import {
   FORMATS_TIRAGE, FINITIONS, PROPORTIONS, BORDURE_MM, LARGEUR_MM, EXEMPLAIRES_MAX, devisTirages, euros,
-  formatsTirage, finitions, listePays, prixAppel, PORT, regleLivraison, manquePourOffert, LIVRAISON_OFFERTE_DES, placeDansEnveloppe, estimationLivraison, texteArrivee, texteDepart, HEURE_LIMITE,
+  formatsTirage, finitions, listePays, prixAppel, PORT, regleLivraison, manquePourOffert, rappelOffert, LIVRAISON_OFFERTE_DES, nombrePreferees, estimationLivraison, texteArrivee, texteDepart, HEURE_LIMITE,
 } from '../lib/tirages'
 import { pellicules, cssTeinte, tamponDate } from '../lib/film'
 import IconeCorbeille from './IconeCorbeille'
@@ -154,13 +154,13 @@ export function CommandeTirages({ eventId, photos, suggestions = [], onAjouter, 
   const nombre = photos.reduce((n, p) => n + (exemplaires[p.id] || 0), 0)
   const devis = devisTirages(nombre, format, dest.pays, lang)
 
-  // « Les préférées de la soirée » : tant qu'on est dans la même enveloppe
-  // chez l'imprimeur, on propose de compléter avec les photos les plus aimées
-  // (voir PLAGE_ENVELOPPE). Une remise ne servirait à rien : c'est l'effort de
-  // retourner choisir qui freine, pas le prix d'une photo de plus.
+  // « Les préférées de la soirée » : de 5 à 9 tirages, on propose de compléter
+  // avec les photos les plus aimées (voir PLAGE_PREFEREES). Une remise ne
+  // servirait à rien : c'est l'effort de retourner choisir qui freine, pas le
+  // prix d'une photo de plus.
   // Proposé une fois : après l'ajout, on n'insiste pas.
   const [dejaAjoute, setDejaAjoute] = useState(false)
-  const proposees = onAjouter && !dejaAjoute ? suggestions.filter((p) => !(exemplaires[p.id] > 0)).slice(0, Math.min(5, placeDansEnveloppe(format, nombre))) : []
+  const proposees = onAjouter && !dejaAjoute ? suggestions.filter((p) => !(exemplaires[p.id] > 0)).slice(0, nombrePreferees(nombre)) : []
   const [suggestionVue, setSuggestionVue] = useState(false)
   useEffect(() => {
     if (proposees.length && !suggestionVue) {
@@ -385,14 +385,13 @@ export function CommandeTirages({ eventId, photos, suggestions = [], onAjouter, 
             <span>{euros(devis.photos, lang)}</span>
           </div>
           <div><span>{t({ fr: 'Livraison', en: 'Delivery', de: 'Lieferung' })} ({devis.pays.nom})</span><span>{devis.nombre > 0 && devis.port === 0 ? t({ fr: 'Offerte', en: 'Free', de: 'Kostenlos' }) : euros(devis.port, lang)}</span></div>
-          {/* Le petit coup de pouce, seulement quand on est déjà tout près :
-              à partir de 10 tirages, il en manque 10 au plus. */}
-          {(() => {
+          {/* « Plus que X tirages » : de 10 à 14 seulement (voir PLAGE_RAPPEL_OFFERT).
+              Dès 20, la livraison est offerte. */}
+          {devis.nombre > 0 && devis.port === 0 && manquePourOffert(devis.nombre, dest.pays) === 0 && (
+            <p className="tir-offert on">{t({ fr: '🎁 Livraison offerte', en: '🎁 Free delivery', de: '🎁 Kostenloser Versand' })}</p>
+          )}
+          {rappelOffert(devis.nombre, dest.pays) && proposees.length === 0 && (() => {
             const manque = manquePourOffert(devis.nombre, dest.pays)
-            // Une seule invitation à la fois : l'encart des préférées passe avant.
-            if (manque == null || devis.nombre === 0 || proposees.length > 0) return null
-            if (manque === 0) return <p className="tir-offert on">{t({ fr: '🎁 Livraison offerte', en: '🎁 Free delivery', de: '🎁 Kostenloser Versand' })}</p>
-            if (manque > 10) return null
             return (
               <p className="tir-offert">{t({
                 fr: `Plus que ${manque} tirage${manque > 1 ? 's' : ''} pour la livraison offerte`,

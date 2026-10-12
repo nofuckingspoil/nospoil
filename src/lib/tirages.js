@@ -50,19 +50,22 @@ const PALIERS_PORT = {
   '15x20': [[7, 3.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 3.9, 9.9], [Infinity, 0, 9.9]],
 }
 
-// La plage où un tirage de plus ne change pas l'enveloppe de l'imprimeur
-// (grille Familink du 13/10/2026) : de 5 à 15 tirages 10 × 15, de 1 à 7 en
-// 15 × 20. Là, chaque tirage ajouté ne coûte que son impression et rapporte
-// presque tout son prix : c'est là qu'on propose « les préférées de la
-// soirée ». En dessous de 5 tirages 10 × 15, en ajouter ferait passer à une
-// enveloppe plus chère.
-export const PLAGE_ENVELOPPE = { '10x15': [5, 15], '15x20': [1, 7] }
+// Les deux coups de pouce de l'écran de commande, jamais en même temps
+// (choix de Clément, 13/10/2026) :
+//  - de 5 à 9 tirages : « Les préférées de la soirée », ajouter en un geste
+//    jusqu'à 5 photos parmi les plus aimées. Entre 5 et 15 tirages 10 × 15,
+//    l'enveloppe de l'imprimeur coûte pareil : chaque tirage ajouté rapporte
+//    presque tout son prix.
+//  - de 10 à 14 tirages : « Plus que X tirages pour la livraison offerte ».
+//    Pas au-delà : de 15 à 19 tirages, pousser vers 20 ferait baisser le gain.
+export const PLAGE_PREFEREES = [5, 9]
+export const PLAGE_RAPPEL_OFFERT = [10, 14]
+export const PREFEREES_MAX = 5
+const dans = ([min, max], n) => n >= min && n <= max
 
-// Combien de tirages on peut encore ajouter sans changer d'enveloppe (0 hors
-// de la plage, ou si elle est pleine).
-export function placeDansEnveloppe(formatId, nombre) {
-  const [min, max] = PLAGE_ENVELOPPE[formatId] || PLAGE_ENVELOPPE['10x15']
-  return nombre >= min && nombre < max ? max - nombre : 0
+// Combien de photos préférées proposer pour une commande de `nombre` tirages.
+export function nombrePreferees(nombre) {
+  return dans(PLAGE_PREFEREES, nombre) ? PREFEREES_MAX : 0
 }
 
 const TEXTES_FORMATS = {
@@ -366,4 +369,9 @@ export function manquePourOffert(nombre, paysCode = 'FR') {
   const pays = PAYS.find((p) => p.code === paysCode) || PAYS[0]
   if (pays.zone !== 'fr') return null
   return Math.max(0, LIVRAISON_OFFERTE_DES - nombre)
+}
+
+// Faut-il afficher « Plus que X tirages pour la livraison offerte » ?
+export function rappelOffert(nombre, paysCode = 'FR') {
+  return manquePourOffert(nombre, paysCode) != null && dans(PLAGE_RAPPEL_OFFERT, nombre)
 }
