@@ -718,8 +718,9 @@ export default function GuestCamera({ params }) {
     if (email.trim() && !mailAverti) {
       const verdict = mailCheck || await verifierMail(email)
       if (['suggestion', 'invalide', 'domaine-inconnu'].includes(verdict?.status)) {
+        // La question remplace le bouton (pas de focus sur le champ : le
+        // clavier la cacherait).
         setMailAverti(true)
-        mailRef.current?.focus()
         return
       }
     }
@@ -1438,6 +1439,33 @@ export default function GuestCamera({ params }) {
             <button type="button" className="linklike" style={{ marginTop: 10, fontSize: 13.5 }}
               onClick={() => join(name.trim(), '')} disabled={busy}>
               {busy ? t({ fr: 'Un instant…', en: 'One moment…', de: 'Einen Moment…' }) : t({ fr: 'Continuer sans', en: 'Continue without', de: 'Ohne fortfahren' })}
+            </button>
+          </div>
+        ) : mailAverti && ['suggestion', 'invalide', 'domaine-inconnu'].includes(mailCheck?.status) ? (
+          // L'adresse a l'air fausse : on pose la question franchement, plutôt
+          // que de laisser deviner qu'un second appui fait passer.
+          <div className="mail-stop">
+            <strong>{t({ fr: 'Est-ce bien votre adresse ?', en: 'Is this really your address?', de: 'Ist das wirklich Ihre Adresse?' })}</strong>
+            <span>
+              {t({
+                fr: <>« {email.trim()} » semble incorrecte. Si elle est fausse, vous ne recevrez pas le lien de l&apos;album.</>,
+                en: <>“{email.trim()}” looks wrong. If it is, you won’t receive the album link.</>,
+                de: <>„{email.trim()}“ scheint falsch zu sein. Dann erhalten Sie den Link zum Album nicht.</>,
+              })}
+            </span>
+            {mailCheck?.status === 'suggestion' ? (
+              <button type="button" className="btn btn-dark" style={{ marginTop: 12 }} onClick={accepterSuggestion}>
+                {t({ fr: `Utiliser ${mailCheck.suggestion}`, en: `Use ${mailCheck.suggestion}`, de: `${mailCheck.suggestion} verwenden` })}
+              </button>
+            ) : (
+              <button type="button" className="btn btn-dark" style={{ marginTop: 12 }}
+                onClick={() => { setMailAverti(false); mailRef.current?.focus() }}>
+                {t({ fr: 'Corriger mon adresse', en: 'Fix my address', de: 'Adresse korrigieren' })}
+              </button>
+            )}
+            <button type="button" className="linklike" style={{ marginTop: 10, fontSize: 13.5 }}
+              onClick={() => join(name.trim(), email)} disabled={busy}>
+              {busy ? t({ fr: 'Un instant…', en: 'One moment…', de: 'Einen Moment…' }) : t({ fr: 'Oui, c\'est la bonne adresse', en: 'Yes, this is my address', de: 'Ja, das ist meine Adresse' })}
             </button>
           </div>
         ) : (
