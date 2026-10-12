@@ -2139,6 +2139,8 @@ export default function Gallery({ params }) {
         <CommandeTirages
           eventId={id}
           photos={aTelecharger}
+          suggestions={selecting ? photos.filter((p) => !p.hidden && (p.favs || 0) > 0 && !selected.has(p.id)).sort((a, b) => (b.favs || 0) - (a.favs || 0)) : []}
+          onAjouter={(ids) => setSelected((prev) => new Set([...prev, ...ids]))}
           deviceToken={getDeviceToken()}
           pelli={pelli}
           avecDate={avecDate}

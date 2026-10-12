@@ -76,6 +76,9 @@ export const ETAPES_TIRAGES = [
   { id: 'tirages_invitation', label: 'Voit la fenêtre « Et en vrai, sur papier ? »', chaine: false },
   { id: 'tirages_selection', label: 'Commence à choisir ses tirages', chaine: true },
   { id: 'tirages_ecran', label: "Ouvre l'écran de commande", chaine: true },
+  // L'encart « Les préférées de la soirée » (detail : nombre proposé, puis ajouté).
+  { id: 'tirages_suggestion_vue', label: 'Voit « Les préférées de la soirée »', chaine: false },
+  { id: 'tirages_suggestion', label: 'Ajoute les préférées de la soirée', chaine: false },
   { id: 'tirages_paiement', label: 'Part vers le paiement', chaine: true },
   { id: 'tirages_paye', label: 'A payé', chaine: true },
 ]

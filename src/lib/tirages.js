@@ -39,15 +39,30 @@ export const FINITIONS = [
 // tirages livrés gratuitement, le gain reste au-dessus de celui d'une commande
 // de 10 (la plupart des gens en prennent une petite dizaine).
 // Ailleurs dans l'Union européenne, l'envoi Familink saute à 10,98 € au-delà
-// de 13 tirages 10 × 15 (6 en 15 × 20) : deux prix, et jamais offert. La
+// de 15 tirages 10 × 15 (7 en 15 × 20) : deux prix, et jamais offert. La
 // Suisse, le Royaume-Uni et la Norvège sont écartés (hors UE, la douane
 // compliquerait tout).
 //
 // [jusqu'à N tirages, prix France, prix Union européenne]
 export const LIVRAISON_OFFERTE_DES = 20
 const PALIERS_PORT = {
-  '10x15': [[13, 2.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 2.9, 9.9], [Infinity, 0, 9.9]],
-  '15x20': [[6, 3.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 3.9, 9.9], [Infinity, 0, 9.9]],
+  '10x15': [[15, 2.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 2.9, 9.9], [Infinity, 0, 9.9]],
+  '15x20': [[7, 3.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 3.9, 9.9], [Infinity, 0, 9.9]],
+}
+
+// La plage où un tirage de plus ne change pas l'enveloppe de l'imprimeur
+// (grille Familink du 13/10/2026) : de 5 à 15 tirages 10 × 15, de 1 à 7 en
+// 15 × 20. Là, chaque tirage ajouté ne coûte que son impression et rapporte
+// presque tout son prix : c'est là qu'on propose « les préférées de la
+// soirée ». En dessous de 5 tirages 10 × 15, en ajouter ferait passer à une
+// enveloppe plus chère.
+export const PLAGE_ENVELOPPE = { '10x15': [5, 15], '15x20': [1, 7] }
+
+// Combien de tirages on peut encore ajouter sans changer d'enveloppe (0 hors
+// de la plage, ou si elle est pleine).
+export function placeDansEnveloppe(formatId, nombre) {
+  const [min, max] = PLAGE_ENVELOPPE[formatId] || PLAGE_ENVELOPPE['10x15']
+  return nombre >= min && nombre < max ? max - nombre : 0
 }
 
 const TEXTES_FORMATS = {

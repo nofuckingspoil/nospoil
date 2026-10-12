@@ -26,15 +26,15 @@ export function familinkConfigure() {
 const FORMAT = { '10x15': '10x15cm', '15x20': '15x20cm' }
 const FINI = { brillante: 'glossy', mate: 'matte' }
 
-// Leurs tarifs (grille d'octobre 2026), en centimes : le prix du tirage, et
-// l'envoi selon le nombre de tirages, qui décide de l'enveloppe.
+// Leurs tarifs (grille mise à jour du 13/10/2026), en centimes : le prix du
+// tirage, et l'envoi selon le nombre de tirages, qui décide de l'enveloppe.
 // [jusqu'à N tirages, envoi France, envoi reste du monde]
-// 10 × 15 : enveloppe C6 jusqu'à 6, cartonnée au-delà de 7 ; 15 × 20 :
-// cartonnée dès le premier tirage.
+// 10 × 15 : enveloppe C6 jusqu'à 6, cartonnée au-delà ; 15 × 20 : cartonnée
+// dès le premier tirage.
 const PRIX_TIRAGE = { '10x15': 15, '15x20': 30 }
 const ENVOI = {
-  '10x15': [[4, 218, 242], [13, 404, 555], [55, 565, 1098], [126, 765, 1503]],
-  '15x20': [[6, 404, 555], [27, 565, 1098], [63, 765, 1503]],
+  '10x15': [[4, 218, 242], [15, 404, 555], [58, 565, 1098], [129, 765, 1503]],
+  '15x20': [[7, 404, 555], [29, 565, 1098], [64, 765, 1503]],
 }
 
 // Ce que Familink nous facturera (centimes), ou null si la commande dépasse

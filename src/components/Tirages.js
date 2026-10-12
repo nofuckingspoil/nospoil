@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { noterEtape } from '../lib/etapes'
 import {
   FORMATS_TIRAGE, FINITIONS, PROPORTIONS, BORDURE_MM, LARGEUR_MM, EXEMPLAIRES_MAX, devisTirages, euros,
-  formatsTirage, finitions, listePays, prixAppel, PORT, regleLivraison, manquePourOffert, LIVRAISON_OFFERTE_DES, estimationLivraison, texteArrivee, texteDepart, HEURE_LIMITE,
+  formatsTirage, finitions, listePays, prixAppel, PORT, regleLivraison, manquePourOffert, LIVRAISON_OFFERTE_DES, placeDansEnveloppe, estimationLivraison, texteArrivee, texteDepart, HEURE_LIMITE,
 } from '../lib/tirages'
 import { pellicules, cssTeinte, tamponDate } from '../lib/film'
 import IconeCorbeille from './IconeCorbeille'
@@ -123,7 +123,9 @@ export function InvitationTirages({ photos, nbFavoris, pelli, avecDate, onChoisi
   )
 }
 
-export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate, onRetour, onTermine }) {
+// `suggestions` : les photos les plus aimées de l'album (par cœurs), pas
+// encore dans la commande. `onAjouter(ids)` les coche dans l'album.
+export function CommandeTirages({ eventId, photos, suggestions = [], onAjouter, deviceToken, pelli, avecDate, onRetour, onTermine }) {
   const { t, lang, lien } = useLangue()
   const PELLICULES = pellicules(lang)
   const [format, setFormat] = useState(FORMATS_TIRAGE[0].id)
@@ -151,6 +153,28 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
   })
   const nombre = photos.reduce((n, p) => n + (exemplaires[p.id] || 0), 0)
   const devis = devisTirages(nombre, format, dest.pays, lang)
+
+  // « Les préférées de la soirée » : tant qu'on est dans la même enveloppe
+  // chez l'imprimeur, on propose de compléter avec les photos les plus aimées
+  // (voir PLAGE_ENVELOPPE). Une remise ne servirait à rien : c'est l'effort de
+  // retourner choisir qui freine, pas le prix d'une photo de plus.
+  // Proposé une fois : après l'ajout, on n'insiste pas.
+  const [dejaAjoute, setDejaAjoute] = useState(false)
+  const proposees = onAjouter && !dejaAjoute ? suggestions.filter((p) => !(exemplaires[p.id] > 0)).slice(0, Math.min(5, placeDansEnveloppe(format, nombre))) : []
+  const [suggestionVue, setSuggestionVue] = useState(false)
+  useEffect(() => {
+    if (proposees.length && !suggestionVue) {
+      setSuggestionVue(true)
+      noterEtape('tirages_suggestion_vue', { eventId, detail: `${nombre} + ${proposees.length}` })
+    }
+  }, [proposees.length]) // eslint-disable-line react-hooks/exhaustive-deps
+  function ajouterSuggestions() {
+    const ids = proposees.map((p) => p.id)
+    setExemplaires((ex) => ({ ...ex, ...Object.fromEntries(ids.map((id) => [id, 1])) }))
+    noterEtape('tirages_suggestion', { eventId, detail: `${nombre} + ${ids.length}` })
+    setDejaAjoute(true)
+    onAjouter(ids)
+  }
 
   function changerExemplaires(id, delta) {
     setExemplaires((ex) => ({ ...ex, [id]: Math.max(0, Math.min(EXEMPLAIRES_MAX, (ex[id] || 0) + delta)) }))
@@ -241,6 +265,33 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
             )
           })}
         </div>
+
+        {proposees.length > 0 && (
+          <div className="tir-suggestion">
+            <div className="tir-suggestion-tete">
+              <strong>{t({ fr: 'Les préférées de la soirée', en: 'The party’s favourites', de: 'Die Lieblinge der Feier' })}</strong>
+              <small>{t({
+                fr: 'Les photos les plus aimées de l\'album, que vous n\'avez pas encore choisies.',
+                en: 'The most-loved photos in the album that you haven’t picked yet.',
+                de: 'Die beliebtesten Fotos des Albums, die Sie noch nicht ausgewählt haben.',
+              })}</small>
+            </div>
+            <div className="tir-suggestion-vignettes">
+              {proposees.map((p) => <img key={p.id} src={p.url} alt="" />)}
+            </div>
+            <button type="button" className="tir-suggestion-cta" onClick={ajouterSuggestions}>
+              {(() => {
+                const k = proposees.length
+                const prix = euros(k * Math.round(devis.format.prix * 100), lang)
+                return t({
+                  fr: k > 1 ? `Ajouter ces ${k} photos (+${prix})` : `Ajouter cette photo (+${prix})`,
+                  en: k > 1 ? `Add these ${k} photos (+${prix})` : `Add this photo (+${prix})`,
+                  de: k > 1 ? `Diese ${k} Fotos hinzufügen (+${prix})` : `Dieses Foto hinzufügen (+${prix})`,
+                })
+              })()}
+            </button>
+          </div>
+        )}
 
         {devis.nombre === 0 && (
           <p className="tir-note">
@@ -338,7 +389,8 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
               à partir de 10 tirages, il en manque 10 au plus. */}
           {(() => {
             const manque = manquePourOffert(devis.nombre, dest.pays)
-            if (manque == null || devis.nombre === 0) return null
+            // Une seule invitation à la fois : l'encart des préférées passe avant.
+            if (manque == null || devis.nombre === 0 || proposees.length > 0) return null
             if (manque === 0) return <p className="tir-offert on">{t({ fr: '🎁 Livraison offerte', en: '🎁 Free delivery', de: '🎁 Kostenloser Versand' })}</p>
             if (manque > 10) return null
             return (
