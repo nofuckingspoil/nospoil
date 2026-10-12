@@ -30,6 +30,11 @@ export async function POST(request) {
     total: c.total_cents,
     photoIds: (c.lignes || []).map((l) => l.photoId),
     rendu: c.rendu,
+    // Pour l'écran de remerciement : l'arrivée prévue (comptée depuis le
+    // paiement) et l'adresse où part le mail de confirmation.
+    payeLe: c.paye_le,
+    pays: c.destinataire?.pays || 'FR',
+    email: c.destinataire?.email || '',
     // Ce que l'imprimeur nous facture : affiché en local seulement, pour juger
     // la marge pendant les essais. Jamais montré à un invité en ligne.
     ...(process.env.NODE_ENV !== 'production' && c.cout_imprimeur_cents != null

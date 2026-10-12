@@ -1124,7 +1124,7 @@ function piedCommande(reference, langue) {
   }, langue)
 }
 
-export function tiragesConfirmationEmail({ prenom, eventName, nombre, formatNom, finition, rendu, adresse, total, reference, photos = [], lienAlbum, langue }) {
+export function tiragesConfirmationEmail({ prenom, eventName, nombre, formatNom, finition, rendu, adresse, total, reference, photos = [], lienAlbum, arrivee, depart, langue }) {
   eventName = nomAffiche(eventName, langue) // « Mon événement » traduit
   const tirages = tx({
     fr: `${nombre} tirage${nombre > 1 ? 's' : ''}`,
@@ -1158,8 +1158,16 @@ export function tiragesConfirmationEmail({ prenom, eventName, nombre, formatNom,
           ${ligneRecap(tx({ fr: 'Livraison', en: 'Delivery', de: 'Lieferung' }, langue), adresse)}
           ${ligneRecap(tx({ fr: 'Total payé', en: 'Total paid', de: 'Bezahlt insgesamt' }, langue), total)}
         </table>
+        ${arrivee ? `<div style="background:#FBF3E6;border-radius:12px;padding:14px 16px;margin-bottom:18px;text-align:center;">
+          <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#8a7c69;">${tx({ fr: 'Arrivée prévue', en: 'Expected delivery', de: 'Voraussichtliche Lieferung' }, langue)}</div>
+          <div style="font-size:17px;font-weight:700;color:#221A12;padding-top:4px;">${arrivee.charAt(0).toUpperCase() + arrivee.slice(1)}</div>
+        </div>` : ''}
         <div style="font-size:14px;line-height:1.7;color:#5f5341;">
-          ${tx({
+          ${depart ? tx({
+            fr: `Vos tirages sont imprimés à Rouen et <strong>${depart}</strong> par La Poste, en lettre. Vous recevrez un second mail le jour où ils partent.`,
+            en: `Your prints are printed in Rouen, France, and <strong>${depart}</strong> by La Poste as a letter. You will receive a second email on the day they leave.`,
+            de: `Ihre Abzüge werden in Rouen (Frankreich) gedruckt und als Brief <strong>${depart}</strong>. Sie erhalten eine zweite E-Mail, sobald sie verschickt werden.`,
+          }, langue) : tx({
             fr: `Vos tirages sont imprimés en France puis postés depuis Rouen : comptez <strong>3 à 4 jours ouvrés</strong> après leur départ. Vous recevrez un second mail le jour où ils partent.`,
             en: `Your prints are printed in France and posted from Rouen: allow <strong>3 to 4 working days</strong> after they are sent. You will receive a second email on the day they leave.`,
             de: `Ihre Abzüge werden in Frankreich gedruckt und in Rouen aufgegeben: Rechnen Sie mit <strong>3 bis 4 Werktagen</strong> nach dem Versand. Sie erhalten eine zweite E-Mail, sobald sie verschickt werden.`,

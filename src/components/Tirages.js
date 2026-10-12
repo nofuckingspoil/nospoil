@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react'
 import { noterEtape } from '../lib/etapes'
 import {
   FORMATS_TIRAGE, FINITIONS, PROPORTIONS, BORDURE_MM, LARGEUR_MM, EXEMPLAIRES_MAX, devisTirages, euros,
-  formatsTirage, finitions, listePays, prixAppel,
+  formatsTirage, finitions, listePays, prixAppel, PORT, regleLivraison, manquePourOffert, LIVRAISON_OFFERTE_DES, estimationLivraison, texteArrivee, texteDepart, HEURE_LIMITE,
 } from '../lib/tirages'
 import { pellicules, cssTeinte, tamponDate } from '../lib/film'
 import IconeCorbeille from './IconeCorbeille'
@@ -103,7 +103,11 @@ export function InvitationTirages({ photos, nbFavoris, pelli, avecDate, onChoisi
               und direkt in Ihren Briefkasten geliefert.</>,
           })}
         </p>
-        <p className="tir-prix">{t({ fr: `Dès ${prixAppel(lang)} la photo`, en: `From ${prixAppel(lang)} per photo`, de: `Ab ${prixAppel(lang)} pro Foto` })}</p>
+        <p className="tir-prix">{t({
+          fr: `${prixAppel(lang)} le tirage · livraison ${euros(Math.round(PORT * 100), lang)}, offerte dès ${LIVRAISON_OFFERTE_DES} tirages`,
+          en: `${prixAppel(lang)} per print · delivery from ${euros(Math.round(PORT * 100), lang)}`,
+          de: `${prixAppel(lang)} pro Abzug · Versand ab ${euros(Math.round(PORT * 100), lang)}`,
+        })}</p>
         <button className="tir-cta" onClick={onChoisir}>
           {nbFavoris > 0
             ? t({
@@ -187,7 +191,7 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
   if (etat === 'fait') {
     return (
       <MerciTirages photos={photos.filter((p) => exemplaires[p.id] > 0)} pelli={rendu} date={dateOn}
-        nombre={devis.nombre} formatNom={devis.format.nom} total={devis.total}
+        nombre={devis.nombre} formatNom={devis.format.nom} total={devis.total} pays={dest.pays} email={dest.email}
         simule={simule} cout={coutImprimeur?.total} onFermer={onTermine} />
     )
   }
@@ -299,6 +303,7 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
               <select {...champ('pays')} autoComplete="country">
                 {listePays(lang).map((p) => <option key={p.code} value={p.code}>{p.nom}</option>)}
               </select>
+              <small className="tir-regle">{regleLivraison(format, dest.pays, lang)}</small>
             </label>
             <label htmlFor="tir-nom">{t({ fr: 'Nom et prénom', en: 'Full name', de: 'Vor- und Nachname' })}<input {...champ('nom')} autoComplete="name" /></label>
             <label htmlFor="tir-adresse">{t({ fr: 'Adresse', en: 'Address', de: 'Adresse' })}<input {...champ('adresse')} autoComplete="address-line1" /></label>
@@ -317,6 +322,8 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
           </div>
         </fieldset>
 
+        <ArriveePrevue pays={dest.pays} />
+
         <div className="tir-recap">
           <div>
             <span>{t({
@@ -326,7 +333,22 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
             })}</span>
             <span>{euros(devis.photos, lang)}</span>
           </div>
-          <div><span>{t({ fr: 'Livraison', en: 'Delivery', de: 'Lieferung' })} ({devis.pays.nom})</span><span>{euros(devis.port, lang)}</span></div>
+          <div><span>{t({ fr: 'Livraison', en: 'Delivery', de: 'Lieferung' })} ({devis.pays.nom})</span><span>{devis.nombre > 0 && devis.port === 0 ? t({ fr: 'Offerte', en: 'Free', de: 'Kostenlos' }) : euros(devis.port, lang)}</span></div>
+          {/* Le petit coup de pouce, seulement quand on est déjà tout près :
+              à partir de 10 tirages, il en manque 10 au plus. */}
+          {(() => {
+            const manque = manquePourOffert(devis.nombre, dest.pays)
+            if (manque == null || devis.nombre === 0) return null
+            if (manque === 0) return <p className="tir-offert on">{t({ fr: '🎁 Livraison offerte', en: '🎁 Free delivery', de: '🎁 Kostenloser Versand' })}</p>
+            if (manque > 10) return null
+            return (
+              <p className="tir-offert">{t({
+                fr: `Plus que ${manque} tirage${manque > 1 ? 's' : ''} pour la livraison offerte`,
+                en: `${manque} more print${manque > 1 ? 's' : ''} for free delivery`,
+                de: `Noch ${manque} ${manque > 1 ? 'Abzüge' : 'Abzug'} bis zum kostenlosen Versand`,
+              })}{' '}<button type="button" className="tir-lien" onClick={onRetour}>{t({ fr: 'Ajouter des photos', en: 'Add photos', de: 'Fotos hinzufügen' })}</button></p>
+            )
+          })()}
           <div className="tir-total"><span>{t({ fr: 'Total', en: 'Total', de: 'Gesamt' })}</span><span>{euros(devis.total, lang)}</span></div>
         </div>
       </div>
@@ -357,13 +379,46 @@ export function CommandeTirages({ eventId, photos, deviceToken, pelli, avecDate,
   )
 }
 
+// Avant de payer : le jour où les tirages arrivent. La date bouge avec
+// l'heure (avant ou après 17 h) et le pays choisi.
+function ArriveePrevue({ pays }) {
+  const { t, lang } = useLangue()
+  const [maintenant, setMaintenant] = useState(() => new Date())
+  // L'écran peut rester ouvert longtemps : on recalcule chaque minute, pour
+  // que 17 h passé, la date suive.
+  useEffect(() => {
+    const m = setInterval(() => setMaintenant(new Date()), 60000)
+    return () => clearInterval(m)
+  }, [])
+  const est = estimationLivraison(maintenant, pays)
+  const arrivee = texteArrivee(est, lang)
+  return (
+    <div className="tir-arrivee">
+      <span className="tir-arrivee-ico" aria-hidden="true">📬</span>
+      <div>
+        <strong>{t({ fr: `Chez vous ${arrivee}`, en: `With you ${arrivee}`, de: `Bei Ihnen ${arrivee}` })}</strong>
+        <small>
+          {t({
+            fr: `Imprimés à Rouen, ${texteDepart(est, 'fr')} par La Poste${est.ceSoir ? ` (pour toute commande avant ${HEURE_LIMITE} h)` : ''}.`,
+            en: `Printed in Rouen, France, ${texteDepart(est, 'en')} by La Poste${est.ceSoir ? ` (for orders placed before ${HEURE_LIMITE}:00)` : ''}.`,
+            de: `In Rouen (Frankreich) gedruckt und ${texteDepart(est, 'de')}${est.ceSoir ? ` (bei Bestellung vor ${HEURE_LIMITE} Uhr)` : ''}.`,
+          })}
+          {pays !== 'FR' && t({ fr: ' Délai indicatif hors de France.', en: ' Estimated time outside France.', de: ' Unverbindliche Lieferzeit außerhalb Frankreichs.' })}
+        </small>
+      </div>
+    </div>
+  )
+}
+
 // « Vos tirages sont en route » : après le paiement (retour de Stripe sur
 // l'album) ou, en local sans Stripe, juste après la commande.
 // `statut` : envoyee (tout va bien) · payee / en_preparation (paiement reçu,
 // transmission en cours) · erreur (paiement reçu, transmission à reprendre).
-export function MerciTirages({ photos = [], pelli = null, date = false, nombre, formatNom, total, statut = 'envoyee', simule = false, cout = null, onFermer }) {
+export function MerciTirages({ photos = [], pelli = null, date = false, nombre, formatNom, total, statut = 'envoyee', payeLe = null, pays = 'FR', email = '', simule = false, cout = null, onFermer }) {
   const { t, lang } = useLangue()
   const enCours = statut === 'payee' || statut === 'en_preparation'
+  const est = estimationLivraison(payeLe ? new Date(payeLe) : new Date(), pays)
+  const arrivee = texteArrivee(est, lang)
   const stripe = total != null ? Math.round(total * 0.015) + 25 : 0
   return (
     <div className="tir-ecran" role="dialog" aria-label={t({ fr: 'Commande envoyée', en: 'Order sent', de: 'Bestellung gesendet' })}>
@@ -381,14 +436,39 @@ export function MerciTirages({ photos = [], pelli = null, date = false, nombre, 
               })
             : t({
                 fr: <>
-                  {nombre} tirage{nombre > 1 ? 's' : ''} {formatNom}, imprimé{nombre > 1 ? 's' : ''} sur vrai papier photo.
-                  {enCours ? ' Le paiement est reçu, votre commande part à l\'impression.' : ''} Ils sont postés depuis Rouen
-                  et arrivent en 3 à 4 jours ouvrés dans votre boîte aux lettres.
+                  {nombre} tirage{nombre > 1 ? 's' : ''} {formatNom}, imprimé{nombre > 1 ? 's' : ''} sur vrai papier photo à Rouen
+                  et {texteDepart(est, 'fr', nombre > 1)} par La Poste.
                 </>,
-                en: `${nombre} × ${formatNom} print${nombre !== 1 ? 's' : ''}, printed on real photo paper.${enCours ? ' Payment received, your order is off to print.' : ''} ${nombre !== 1 ? 'They are' : 'It is'} posted from Rouen, France, and ${nombre !== 1 ? 'arrive' : 'arrives'} in your letterbox within 3 to 4 working days.`,
-                de: `${nombre} ${nombre !== 1 ? 'Abzüge' : 'Abzug'} ${formatNom}, gedruckt auf echtem Fotopapier.${enCours ? ' Die Zahlung ist eingegangen, Ihre Bestellung geht in den Druck.' : ''} Der Versand erfolgt aus Rouen (Frankreich), die Lieferung in Ihren Briefkasten dauert 3 bis 4 Werktage.`,
+                en: `${nombre} × ${formatNom} print${nombre !== 1 ? 's' : ''}, printed on real photo paper in Rouen, France, and ${texteDepart(est, 'en')} by La Poste.`,
+                de: `${nombre} ${nombre !== 1 ? 'Abzüge' : 'Abzug'} ${formatNom}, in Rouen (Frankreich) auf echtem Fotopapier gedruckt und ${texteDepart(est, 'de')}.`,
               })}
         </p>
+        {statut !== 'erreur' && (
+          <div className="tir-arrivee tir-arrivee-merci">
+            <span className="tir-arrivee-ico" aria-hidden="true">📬</span>
+            <div>
+              <small>{t({ fr: 'Arrivée prévue', en: 'Expected delivery', de: 'Voraussichtliche Lieferung' })}</small>
+              <strong>{arrivee.charAt(0).toUpperCase() + arrivee.slice(1)}</strong>
+            </div>
+          </div>
+        )}
+        <div className="tir-arrivee tir-arrivee-mail">
+          <span className="tir-arrivee-ico" aria-hidden="true">📩</span>
+          <p>
+            {email
+              ? t({
+                  fr: <>Un mail de confirmation part à <strong>{email}</strong>, avec le récapitulatif de votre commande. Vous en recevrez un second le jour où vos tirages quittent Rouen.</>,
+                  en: <>A confirmation email is on its way to <strong>{email}</strong> with your order summary. You will get a second one on the day your prints leave Rouen.</>,
+                  de: <>Eine Bestätigungs-E-Mail mit der Zusammenfassung Ihrer Bestellung geht an <strong>{email}</strong>. Eine zweite folgt an dem Tag, an dem Ihre Abzüge Rouen verlassen.</>,
+                })
+              : t({
+                  fr: 'Un mail de confirmation part avec le récapitulatif de votre commande. Vous en recevrez un second le jour où vos tirages quittent Rouen.',
+                  en: 'A confirmation email is on its way with your order summary. You will get a second one on the day your prints leave Rouen.',
+                  de: 'Eine Bestätigungs-E-Mail mit der Zusammenfassung Ihrer Bestellung ist unterwegs. Eine zweite folgt an dem Tag, an dem Ihre Abzüge Rouen verlassen.',
+                })}
+            {' '}{t({ fr: 'Pensez à regarder dans les indésirables.', en: 'Remember to check your spam folder.', de: 'Schauen Sie bitte auch im Spam-Ordner nach.' })}
+          </p>
+        </div>
         {simule && cout == null && (
           <p className="tir-simule">
             {t({

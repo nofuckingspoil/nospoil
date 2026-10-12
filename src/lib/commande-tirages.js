@@ -23,7 +23,7 @@ import { prodigiEnv, devisProdigi, commanderProdigi } from './prodigi'
 import { familinkEnv, coutFamilink, commanderFamilink } from './familink'
 import { cuireTirage, mettreEnPage } from './cuisson-serveur'
 import { pelliculeParId, tamponDate } from './pellicules'
-import { formatTirage, paysLivraison, finitions, euros } from './tirages'
+import { formatTirage, paysLivraison, finitions, euros, estimationLivraison, texteArrivee, texteDepart } from './tirages'
 import { sendMail, siteUrl, tiragesConfirmationEmail, tiragesExpeditionEmail, tiragesBloqueeEmail } from './mail'
 import { CONTACT_EMAIL } from './pricing'
 import { t } from './i18n'
@@ -241,6 +241,9 @@ export async function contenuConfirmation(c, photos) {
   const d = c.destinataire || {}
   const effet = pelliculeParId(c.rendu?.pellicule, langue)
   const liste = finitions(langue)
+  // L'arrivée se compte depuis le paiement : c'est lui qui fait partir la
+  // commande chez l'imprimeur.
+  const est = estimationLivraison(c.paye_le ? new Date(c.paye_le) : new Date(), d.pays)
   return {
     langue,
     prenom: prenomDe(d.nom),
@@ -257,6 +260,8 @@ export async function contenuConfirmation(c, photos) {
     reference: reference(c),
     photos: vignettes,
     lienAlbum: `${siteUrl()}/g/${c.event_id}`,
+    arrivee: texteArrivee(est, langue),
+    depart: texteDepart(est, langue),
   }
 }
 

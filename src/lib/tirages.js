@@ -20,10 +20,10 @@ export function tiragesActifs() {
 }
 
 export const FORMATS_TIRAGE = [
-  { id: '10x15', nom: '10 × 15 cm', sous: 'Le classique, comme au labo', prix: 0.49 },
+  { id: '10x15', nom: '10 × 15 cm', sous: 'Le classique, comme au labo', prix: 0.69 },
   // 15 × 20 plutôt que 13 × 18 : il a exactement la forme des photos de
   // l'appareil (3:4), et c'est le grand format de l'imprimeur.
-  { id: '15x20', nom: '15 × 20 cm', sous: 'Le grand format, pour encadrer', prix: 0.89 },
+  { id: '15x20', nom: '15 × 20 cm', sous: 'Le grand format, pour encadrer', prix: 1.29 },
 ]
 
 export const FINITIONS = [
@@ -31,18 +31,23 @@ export const FINITIONS = [
   { id: 'mate', nom: 'Mate', sous: 'Douce, sans reflets ni traces de doigts' },
 ]
 
-// La livraison suit les enveloppes de l'imprimeur (Familink, à Rouen) : une
-// lettre jusqu'à 5 tirages 10 × 15, une plus grande jusqu'à 20, une enveloppe
-// cartonnée au-delà. Chaque palier couvre ce que Familink nous facture pour
-// l'envoi, TVA comprise, avec une petite marge. Deux zones seulement : la
-// France métropolitaine, et le reste de l'Union européenne (la Suisse, le
-// Royaume-Uni et la Norvège sont écartés : hors UE, la douane compliquerait
-// tout).
+// La livraison (grille du 12/10/2026). En France, un prix unique, offert dès
+// 20 tirages : la ligne « livraison » ne doit plus peser autant que les photos
+// (retour d'un client : 4,90 € de port pour 6,86 € de photos, ça freine). Le
+// coût réel de l'enveloppe Familink, qui grimpe avec le nombre de tirages, est
+// couvert par le prix du tirage. Le seuil est à 20 et non plus bas : à 20
+// tirages livrés gratuitement, le gain reste au-dessus de celui d'une commande
+// de 10 (la plupart des gens en prennent une petite dizaine).
+// Ailleurs dans l'Union européenne, l'envoi Familink saute à 10,98 € au-delà
+// de 13 tirages 10 × 15 (6 en 15 × 20) : deux prix, et jamais offert. La
+// Suisse, le Royaume-Uni et la Norvège sont écartés (hors UE, la douane
+// compliquerait tout).
 //
 // [jusqu'à N tirages, prix France, prix Union européenne]
+export const LIVRAISON_OFFERTE_DES = 20
 const PALIERS_PORT = {
-  '10x15': [[5, 3.9, 4.9], [20, 4.9, 6.9], [62, 5.9, 11.9], [Infinity, 7.9, 15.9]],
-  '15x20': [[8, 4.9, 6.9], [31, 5.9, 11.9], [Infinity, 7.9, 15.9]],
+  '10x15': [[13, 2.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 2.9, 9.9], [Infinity, 0, 9.9]],
+  '15x20': [[6, 3.9, 4.9], [LIVRAISON_OFFERTE_DES - 1, 3.9, 9.9], [Infinity, 0, 9.9]],
 }
 
 const TEXTES_FORMATS = {
@@ -186,4 +191,164 @@ export function euros(centimes, langue) {
 export const PRIX_APPEL = euros(Math.round(FORMATS_TIRAGE[0].prix * 100), 'fr')
 export function prixAppel(langue) {
   return euros(Math.round(FORMATS_TIRAGE[0].prix * 100), langue)
+}
+
+// ------------------------------------------------------------
+//  Quand les tirages arrivent.
+//
+//  Familink (Rouen) dépose à La Poste, le soir même, toute commande reçue
+//  avant 17 h un jour ouvré ; après 17 h, ou le week-end, elle part le soir du
+//  jour ouvré suivant (le pire cas : vendredi 17 h passé, départ lundi soir).
+//  La lettre met ensuite 3 à 4 jours ouvrés en France, sans suivi.
+//  Pour le reste de l'Union européenne, Familink ne donne pas de délai : on
+//  annonce large.
+//
+//  Tout se calcule à l'heure de Paris, sans dépendre du fuseau de l'appareil.
+// ------------------------------------------------------------
+export const HEURE_LIMITE = 17
+const DELAIS_POSTE = { fr: [3, 4], ue: [5, 8] }
+
+// L'heure d'été européenne : du dernier dimanche de mars au dernier dimanche
+// d'octobre, à 1 h UTC.
+function dernierDimanche(annee, mois) {
+  const d = new Date(Date.UTC(annee, mois + 1, 0))
+  d.setUTCDate(d.getUTCDate() - d.getUTCDay())
+  return d
+}
+function decalageParis(instant) {
+  const a = instant.getUTCFullYear()
+  const ete = Date.UTC(a, 2, dernierDimanche(a, 2).getUTCDate(), 1)
+  const hiver = Date.UTC(a, 9, dernierDimanche(a, 9).getUTCDate(), 1)
+  const t = instant.getTime()
+  return t >= ete && t < hiver ? 2 : 1
+}
+
+// Pâques (calcul grégorien de Meeus), d'où découlent trois jours fériés.
+function paques(y) {
+  const a = y % 19, b = Math.floor(y / 100), c = y % 100
+  const d = Math.floor(b / 4), e = b % 4, f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3)
+  const h = (19 * a + b - d - g + 15) % 30
+  const i = Math.floor(c / 4), k = c % 4
+  const l = (32 + 2 * e + 2 * i - h - k) % 7
+  const m = Math.floor((a + 11 * h + 22 * l) / 451)
+  const mois = Math.floor((h + l - 7 * m + 114) / 31)
+  const jour = ((h + l - 7 * m + 114) % 31) + 1
+  return Date.UTC(y, mois - 1, jour)
+}
+const JOUR = 86400000
+function ferie(jour) {
+  const d = new Date(jour)
+  const a = d.getUTCFullYear(), m = d.getUTCMonth() + 1, j = d.getUTCDate()
+  const fixes = ['1-1', '5-1', '5-8', '7-14', '8-15', '11-1', '11-11', '12-25']
+  if (fixes.includes(`${m}-${j}`)) return true
+  const p = paques(a)
+  // Lundi de Pâques, Ascension, lundi de Pentecôte.
+  return [p + JOUR, p + 39 * JOUR, p + 50 * JOUR].includes(jour)
+}
+function ouvre(jour) {
+  const s = new Date(jour).getUTCDay()
+  return s !== 0 && s !== 6 && !ferie(jour)
+}
+function jourOuvreSuivant(jour, n = 1) {
+  let d = jour
+  while (n > 0) { d += JOUR; if (ouvre(d)) n-- }
+  return d
+}
+
+/**
+ * Le départ et l'arrivée prévus d'une commande passée à l'instant `quand`.
+ * Les dates rendues sont des jours civils (minuit UTC), à lire avec
+ * dateCourte / texteArrivee.
+ */
+export function estimationLivraison(quand = new Date(), paysCode = 'FR') {
+  const instant = quand instanceof Date ? quand : new Date(quand)
+  const paris = new Date(instant.getTime() + decalageParis(instant) * 3600000)
+  const aujourdhui = Date.UTC(paris.getUTCFullYear(), paris.getUTCMonth(), paris.getUTCDate())
+  const ceSoir = ouvre(aujourdhui) && paris.getUTCHours() < HEURE_LIMITE
+  const depart = ceSoir ? aujourdhui : jourOuvreSuivant(aujourdhui)
+  const pays = PAYS.find((p) => p.code === paysCode) || PAYS[0]
+  const [min, max] = DELAIS_POSTE[pays.zone === 'fr' ? 'fr' : 'ue']
+  return {
+    depart,
+    ceSoir,
+    demain: !ceSoir && depart - aujourdhui === JOUR,
+    du: jourOuvreSuivant(depart, min),
+    au: jourOuvreSuivant(depart, max),
+  }
+}
+
+const NOMS_JOURS = {
+  fr: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'],
+  en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  de: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+}
+const NOMS_MOIS = {
+  fr: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  de: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+}
+function langueDates(langue) {
+  const l = langue || globalThis.__ttfLangue
+  return NOMS_JOURS[l] ? l : 'fr'
+}
+
+// « jeudi 16 octobre », « Thursday 16 October », « Donnerstag, 16. Oktober ».
+// `avecMois` à false : « jeudi 16 » (quand le mois suit déjà).
+export function dateCourte(jour, langue, avecMois = true) {
+  const l = langueDates(langue)
+  const d = new Date(jour)
+  const nom = NOMS_JOURS[l][d.getUTCDay()], n = d.getUTCDate(), mois = NOMS_MOIS[l][d.getUTCMonth()]
+  if (l === 'de') return `${nom}, ${n}.${avecMois ? ` ${mois}` : ''}`
+  return `${nom} ${n}${avecMois ? ` ${mois}` : ''}`
+}
+
+// « entre le jeudi 16 et le vendredi 17 octobre »
+export function texteArrivee(est, langue) {
+  const l = langueDates(langue)
+  const memeMois = new Date(est.du).getUTCMonth() === new Date(est.au).getUTCMonth()
+  const du = dateCourte(est.du, l, !memeMois), au = dateCourte(est.au, l)
+  return tr({ fr: `entre le ${du} et le ${au}`, en: `between ${du} and ${au}`, de: `zwischen ${du} und ${au}` }, l)
+}
+
+// « postés ce soir », « postés demain soir », « postés lundi soir ».
+// En allemand, le verbe va en fin de phrase : « per La Poste » est donc inclus.
+// `pluriel` à false pour un seul tirage : « posté ce soir ».
+export function texteDepart(est, langue, pluriel = true) {
+  const l = langueDates(langue)
+  const p = pluriel ? 'postés' : 'posté'
+  if (est.ceSoir) return tr({ fr: `${p} ce soir`, en: 'posted this evening', de: 'noch heute Abend per La Poste verschickt' }, l)
+  if (est.demain) return tr({ fr: `${p} demain soir`, en: 'posted tomorrow evening', de: 'morgen Abend per La Poste verschickt' }, l)
+  const jour = NOMS_JOURS[l][new Date(est.depart).getUTCDay()]
+  return tr({ fr: `${p} ${jour} soir`, en: `posted on ${jour} evening`, de: `am ${jour}abend per La Poste verschickt` }, l)
+}
+
+// La règle de livraison en une phrase, pour le format et le pays choisis :
+// « Livraison 2,90 €, offerte dès 20 tirages. »
+export function regleLivraison(formatId, paysCode = 'FR', langue) {
+  const l = langueDates(langue)
+  const paliers = PALIERS_PORT[formatId] || PALIERS_PORT['10x15']
+  const pays = PAYS.find((p) => p.code === paysCode) || PAYS[0]
+  const prix = (v) => euros(Math.round(v * 100), l)
+  if (pays.zone === 'fr') {
+    const n = LIVRAISON_OFFERTE_DES
+    return tr({
+      fr: `Livraison ${prix(paliers[0][1])}, offerte dès ${n} tirages.`,
+      en: `Delivery ${prix(paliers[0][1])}, free from ${n} prints.`,
+      de: `Versand ${prix(paliers[0][1])}, ab ${n} Abzügen kostenlos.`,
+    }, l)
+  }
+  const [premier, suivant] = paliers
+  return tr({
+    fr: `Livraison ${prix(premier[2])}, puis ${prix(suivant[2])} au-delà de ${premier[0]} tirages.`,
+    en: `Delivery ${prix(premier[2])}, then ${prix(suivant[2])} for more than ${premier[0]} prints.`,
+    de: `Versand ${prix(premier[2])}, ab ${premier[0] + 1} Abzügen ${prix(suivant[2])}.`,
+  }, l)
+}
+
+// Combien de tirages manquent pour la livraison offerte (France seulement) :
+// 0 si elle l'est déjà, null si elle ne peut pas l'être.
+export function manquePourOffert(nombre, paysCode = 'FR') {
+  const pays = PAYS.find((p) => p.code === paysCode) || PAYS[0]
+  if (pays.zone !== 'fr') return null
+  return Math.max(0, LIVRAISON_OFFERTE_DES - nombre)
 }

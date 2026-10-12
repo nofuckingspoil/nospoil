@@ -48,7 +48,7 @@ function adresseDuSite(request) {
 }
 
 // Adresse de livraison, dans l'un des pays d'Europe que l'on dessert. La
-// France s'entend métropolitaine : le port à 4,90 € ne couvre pas l'outre-mer.
+// France s'entend métropolitaine : le port à 2,90 € ne couvre pas l'outre-mer.
 function lireDestinataire(d, langue) {
   const coupe = (v, max) => String(v || '').trim().slice(0, max)
   const dest = {
@@ -66,10 +66,10 @@ function lireDestinataire(d, langue) {
     return { erreur: t({ fr: 'Code postal invalide (livraison en France métropolitaine uniquement).', en: 'Invalid postcode (delivery to mainland France only).', de: 'Ungültige Postleitzahl (Lieferung nur ins französische Mutterland).' }, langue) }
   }
   if (!dest.codePostal) return { erreur: t({ fr: 'Renseignez le code postal.', en: 'Enter the postcode.', de: 'Geben Sie die Postleitzahl an.' }, langue) }
-  // Le mail est obligatoire : c'est par lui qu'arrivent la confirmation et le
-  // lien de suivi du colis.
+  // Le mail est obligatoire : c'est par lui qu'arrivent la confirmation et
+  // l'avis d'envoi.
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(dest.email)) {
-    return { erreur: t({ fr: 'Indiquez votre adresse mail : la confirmation et le suivi du colis y seront envoyés.', en: 'Enter your email address: the confirmation and parcel tracking will be sent there.', de: 'Geben Sie Ihre E-Mail-Adresse an: Die Bestätigung und die Sendungsverfolgung werden dorthin geschickt.' }, langue) }
+    return { erreur: t({ fr: 'Indiquez votre adresse mail : la confirmation de commande et l\'avis d\'envoi y seront envoyés.', en: 'Enter your email address: the order confirmation and dispatch notice will be sent there.', de: 'Geben Sie Ihre E-Mail-Adresse an: Die Bestellbestätigung und die Versandbenachrichtigung werden dorthin geschickt.' }, langue) }
   }
   return { dest }
 }
@@ -205,18 +205,28 @@ export async function POST(request) {
               product_data: { name: t({ fr: `Tirage photo ${format.nom.replace(/\u00a0/g, ' ')}`, en: `Photo print ${format.nom.replace(/\u00a0/g, ' ')}`, de: `Fotoabzug ${format.nom.replace(/\u00a0/g, ' ')}` }, langue), description: detail },
             },
           },
-          {
+          // Livraison offerte (dès 20 tirages en France) : pas de ligne à 0 €.
+          ...(devis.port > 0 ? [{
             quantity: 1,
             price_data: {
               currency: 'eur',
               unit_amount: devis.port,
               product_data: { name: t({ fr: `Livraison (${devis.pays.nom})`, en: `Delivery (${devis.pays.nom})`, de: `Versand (${devis.pays.nom})` }, langue) },
             },
-          },
+          }] : []),
         ],
         ...(dest.email ? { customer_email: dest.email } : {}),
-        success_url: `${base}/g/${eventId}?tirages=merci&commande={CHECKOUT_SESSION_ID}`,
-        cancel_url: `${base}/g/${eventId}?tirages=annule`,
+        // L'app iPhone (retour « app ») guette elle-même le paiement : Stripe la
+        // ramène sur une page d'attente, pas sur l'album du site.
+        ...(body.retour === 'app'
+          ? {
+              success_url: `${base}/g/${eventId}/paye?l=${langue}`,
+              cancel_url: `${base}/g/${eventId}/paye?annule=1&l=${langue}`,
+            }
+          : {
+              success_url: `${base}/g/${eventId}?tirages=merci&commande={CHECKOUT_SESSION_ID}`,
+              cancel_url: `${base}/g/${eventId}?tirages=annule`,
+            }),
         metadata: { type: 'tirages', commande_id: commande.id },
         payment_intent_data: { metadata: { type: 'tirages', commande_id: commande.id } },
       })

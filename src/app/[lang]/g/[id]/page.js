@@ -2113,6 +2113,9 @@ export default function Gallery({ params }) {
           formatNom={formatTirage(merci.format, lang).nom}
           total={merci.total}
           statut={merci.statut}
+          payeLe={merci.payeLe}
+          pays={merci.pays}
+          email={merci.email}
           cout={merci.imprimeur?.cout?.total ?? null}
           onFermer={() => setMerci(null)}
         />

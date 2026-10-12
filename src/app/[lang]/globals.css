@@ -4405,6 +4405,22 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 }
 .tir-recap > div { display: flex; justify-content: space-between; gap: 12px; }
 .tir-total { font-family: var(--font-display); font-weight: 800; font-size: 18px; margin-top: 2px; }
+.tir-offert { margin: 0; padding: 8px 12px; border-radius: 10px; background: #FBF0DF; font-size: 13.5px; color: var(--text2); }
+.tir-offert.on { color: var(--ink); font-weight: 700; }
+/* Le jour d'arrivée : avant de payer (sous l'adresse), et après (écran merci). */
+.tir-arrivee {
+  display: flex; align-items: flex-start; gap: 12px; text-align: left;
+  padding: 12px 14px; border-radius: 14px; background: var(--card); border: 1.5px solid var(--line);
+}
+.tir-arrivee-ico { flex: none; font-size: 22px; line-height: 1.2; }
+.tir-arrivee strong { display: block; font-size: 15px; color: var(--ink); line-height: 1.35; }
+.tir-arrivee small { display: block; margin-top: 3px; font-size: 12.5px; color: var(--text3); line-height: 1.45; }
+.tir-arrivee p { margin: 0; font-size: 13.5px; color: var(--text2); line-height: 1.5; }
+.tir-arrivee p strong { display: inline; font-size: inherit; overflow-wrap: anywhere; }
+.tir-arrivee-merci { margin-top: 18px; border-color: var(--accent); background: #fff; }
+.tir-arrivee-merci small { margin: 0 0 2px; text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
+.tir-arrivee-merci strong { font-family: var(--font-display); font-size: 17px; }
+.tir-arrivee-mail { margin-top: 10px; border-style: dashed; }
 .tir-pied {
   width: 100%; max-width: 520px; margin: 0 auto;
   padding: 10px 16px calc(14px + env(safe-area-inset-bottom));
@@ -4426,6 +4442,7 @@ a.evrow.warn:hover { background: rgba(178,59,46,.09); }
 .tir-champs { display: flex; flex-direction: column; gap: 10px; }
 .tir-champs label { display: flex; flex-direction: column; gap: 5px; font-size: 13px; font-weight: 600; color: var(--text2); }
 .tir-champs em { font-style: normal; font-weight: 400; color: var(--text3); }
+.tir-regle { font-size: 12.5px; font-weight: 400; color: var(--text3); }
 .tir-champs input {
   width: 100%; padding: 12px 13px; border-radius: 12px; border: 1.5px solid var(--line);
   background: var(--card); color: var(--ink); font-family: var(--font-body); font-size: 16px;
