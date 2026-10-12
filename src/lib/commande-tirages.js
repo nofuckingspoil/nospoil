@@ -190,7 +190,38 @@ export async function confirmerSession(sessionId) {
       }).catch(() => {})
     }
   }
-  return honorerCommande(id)
+  const fin = await honorerCommande(id)
+  // Une vente partie chez l'imprimeur : nous sommes prévenus, une seule fois
+  // (seul le premier passage a réussi le verrou « payee »).
+  if (payee.data?.id && fin?.statut === 'envoyee') {
+    await alerterVente(fin).catch((e) => console.error('tirages: alerte de vente', e))
+  }
+  return fin
+}
+
+const echapper = (v) => String(v ?? '').replace(/[&<>"]/g, (x) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[x])
+
+async function alerterVente(c) {
+  const d = c.destinataire || {}
+  const ev = await selectRows('events', `id=eq.${c.event_id}&select=name,host_names`)
+  const e = Array.isArray(ev.data) ? ev.data[0] : null
+  const cout = c.cout_imprimeur_cents
+  const lignes = [
+    ['Album', e?.host_names || e?.name || c.event_id],
+    ['Client', [d.nom, d.email].filter(Boolean).join(', ')],
+    ['Livraison', [d.ville, paysLivraison(d.pays, 'fr')?.nom].filter(Boolean).join(', ')],
+    ['Tirages', `${c.nombre} × ${formatTirage(c.format, 'fr').nom}`],
+    ['Payé', euros(c.total_cents, 'fr')],
+    ['Coût imprimeur', cout != null ? euros(cout, 'fr') : 'inconnu'],
+    ['Reste', cout != null ? euros(c.total_cents - cout, 'fr') : 'inconnu'],
+    ['Imprimeur', `${c.imprimeur} (n° ${c.imprimeur_commande_id})`],
+  ]
+  await sendMail({
+    to: CONTACT_EMAIL,
+    subject: `🎞️ Nouvelle commande de tirages : ${c.nombre} photo(s), ${euros(c.total_cents, 'fr')}`,
+    html: `<table cellpadding="4">${lignes.map(([k, v]) => `<tr><td><b>${k}</b></td><td>${echapper(v)}</td></tr>`).join('')}</table>
+<p><a href="${siteUrl()}/g/${c.event_id}">Ouvrir l'album</a></p>`,
+  })
 }
 
 /**
