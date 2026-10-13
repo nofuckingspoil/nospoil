@@ -154,7 +154,9 @@ export function CreateForm({ parcours = 'long' }) {
 
   // La formule venue de la page d'accueil n'est qu'un point de départ : elle se
   // choisit sur le premier écran, et se change sans quitter l'assistant.
-  const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier')).maxGuests)
+  // Venu du mail « Et pour le vrai événement ? » sans formule précisée : on
+  // part de la formule 30, celle d'une vraie petite fête, pas de l'essai à 5.
+  const [maxGuests, setMaxGuests] = useState(() => tierByGuests(sp.get('tier') || (sp.get('cadeau') ? 30 : null)).maxGuests)
   // Venu d'une page d'occasion (/anniversaire-30-ans…) : l'exemple de nom
   // parle de sa fête, pas d'un mariage.
   const occasion = sp.get('occasion')
@@ -166,9 +168,29 @@ export function CreateForm({ parcours = 'long' }) {
   const [promo, setPromo] = useState(null)
   const priceCents = promo ? promo.priceCents : tier.priceCents
   const isPaid = priceCents > 0
-  // L'option livre d'or s'ajoute au prix de la formule (payante seulement).
+  // Le livre d'or offert après un essai (lien du mail : /create?cadeau=…).
+  // Gardé le temps de la visite, et revérifié par le serveur à la création.
+  const [cadeau, setCadeau] = useState(null)
+  useEffect(() => {
+    let jeton = sp.get('cadeau')
+    try {
+      if (jeton) sessionStorage.setItem('ttf_cadeau', jeton)
+      else jeton = sessionStorage.getItem('ttf_cadeau')
+    } catch {}
+    if (!jeton) return
+    fetch(`/api/cadeau?c=${encodeURIComponent(jeton)}`)
+      .then((r) => r.json())
+      .then((d) => {
+        if (d.ok) setCadeau({ jeton, fin: d.fin })
+        else { try { sessionStorage.removeItem('ttf_cadeau') } catch {} }
+      })
+      .catch(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  // L'option livre d'or s'ajoute au prix de la formule (payante seulement),
+  // sauf quand elle est offerte.
   const [livreOr, setLivreOr] = useState(false)
-  const totalCents = priceCents + (isPaid && livreOr ? LIVRE_OR_CENTS : 0)
+  const totalCents = priceCents + (isPaid && livreOr && !cadeau ? LIVRE_OR_CENTS : 0)
 
   // Neuf écrans plutôt que cinq, et pourtant l'assistant paraît plus court :
   // ce qui fatigue n'est pas le nombre d'écrans, c'est le nombre de décisions
@@ -583,7 +605,8 @@ export function CreateForm({ parcours = 'long' }) {
       // D'où vient l'organisateur (site, campagne, page d'arrivée).
       provenance: lireProvenance() || {},
       // Preuve du consentement : le serveur pose lui-même l'horodatage.
-      livreOr: isPaid && livreOr,
+      livreOr: isPaid && livreOr && !cadeau,
+      cadeau: (isPaid && cadeau?.jeton) || undefined,
       cgvAccepted: cgvOk,
       withdrawalWaived: waiverOk,
       promo: promo?.code || undefined,
@@ -724,6 +747,13 @@ export function CreateForm({ parcours = 'long' }) {
         </div>
         {!apres && !estEcran('formule') && tierOpen && (
           <TierPicker value={maxGuests} onChange={pickTier} onClose={() => setTierOpen(false)} />
+        )}
+        {!apres && cadeau && step !== 'code' && (
+          <p className="wiz-cadeau">🎁 {t({
+            fr: <><strong>Livre d’or audio offert</strong> avec toute formule payante, jusqu’au {new Date(cadeau.fin).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}</>,
+            en: <><strong>Free audio guestbook</strong> with any paid plan, until {new Date(cadeau.fin).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}</>,
+            de: <><strong>Audio-Gästebuch geschenkt</strong> zu jedem kostenpflichtigen Paket, bis {new Date(cadeau.fin).toLocaleDateString(locale, { weekday: 'long', day: 'numeric', month: 'long' })}</>,
+          })}</p>
         )}
       </div>
 
@@ -1173,7 +1203,11 @@ export function CreateForm({ parcours = 'long' }) {
             {tier.priceCents > 0 && (
               <PromoField maxGuests={tier.maxGuests} applied={promo} onApplied={setPromo} />
             )}
-            {isPaid && PAYMENTS_ENABLED && <OptionLivreOr checked={livreOr} onChange={setLivreOr} />}
+            {/* Le cadeau vaut pour un vrai événement : une formule payante. La
+                formule gratuite reste un essai, et le cadeau attend. */}
+            {isPaid && PAYMENTS_ENABLED && (cadeau
+              ? <OptionLivreOr offert />
+              : <OptionLivreOr checked={livreOr} onChange={setLivreOr} />)}
           </div>
 
           <div className="wiz-legal">

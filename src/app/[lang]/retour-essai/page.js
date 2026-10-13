@@ -38,7 +38,8 @@ function RetourInner() {
   const premier = useRef(false)
 
   const CHOIX = [
-    ['test', t({ fr: 'Je teste avant ma vraie soirée', en: "I'm testing before my real event", de: 'Ich teste vor meinem echten Event' })],
+    ['decouverte', t({ fr: "Je voulais juste découvrir l'interface", en: 'I just wanted to explore the interface', de: 'Ich wollte mir nur die Oberfläche ansehen' })],
+    ['test', t({ fr: 'Je teste avant mon vrai événement', en: "I'm testing before my real event", de: 'Ich teste vor meinem echten Event' })],
     ['temps', t({ fr: "Je n'ai pas encore eu le temps", en: "I haven't had the time yet", de: 'Ich hatte noch keine Zeit' })],
     ['souci', t({ fr: "J'ai eu un souci", en: 'I ran into a problem', de: 'Ich hatte ein Problem' })],
     ['pas_pour_moi', t({ fr: "Ce n'est pas pour moi", en: "It's not for me", de: 'Das ist nichts für mich' })],
@@ -99,10 +100,21 @@ function RetourInner() {
           ))}
         </div>
 
+        {reponse === 'decouverte' && (
+          <>
+            <p>{t({
+              fr: "Merci, c'est noté ! Le jour où vous organisez un vrai événement, il se crée en deux minutes, et vos invités n'ont rien à installer.",
+              en: "Thanks, noted! The day you organise a real event, it takes two minutes to set up, and your guests have nothing to install.",
+              de: 'Danke, notiert! Wenn Sie ein echtes Event planen, ist es in zwei Minuten erstellt, und Ihre Gäste müssen nichts installieren.',
+            })}</p>
+            <a className="btn btn-accent" href={lien('/create')}>{t({ fr: 'Créer un événement →', en: 'Create an event →', de: 'Ein Event erstellen →' })}</a>
+          </>
+        )}
+
         {reponse === 'test' && (
           <>
             <p>{t({
-              fr: "Excellente idée de tester avant ! Pour votre vraie soirée, inutile de tout refaire : changez simplement la date dans votre tableau de bord. Votre lien et votre QR code restent les mêmes.",
+              fr: "Excellente idée de tester avant ! Pour votre vrai événement, inutile de tout refaire : changez simplement la date dans votre tableau de bord. Votre lien et votre QR code restent les mêmes.",
               en: "Great idea to test first! For your real event, no need to start over: just change the date in your dashboard. Your link and QR code stay the same.",
               de: 'Gute Idee, vorher zu testen! Für Ihr echtes Event müssen Sie nicht neu anfangen: Ändern Sie einfach das Datum im Dashboard. Link und QR-Code bleiben gleich.',
             })}</p>

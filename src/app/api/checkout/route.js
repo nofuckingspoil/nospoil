@@ -5,6 +5,7 @@ import { modeValide } from '../../../lib/photo-mode'
 import { siteUrl } from '../../../lib/mail'
 import { LEGAL_UPDATED } from '../../../lib/legal'
 import { quotePromo } from '../../../lib/promo'
+import { cadeauValide } from '../../../lib/cadeau-essai'
 import { t, langueValide } from '../../../lib/i18n'
 import { langueRequete } from '../../../lib/langue-serveur'
 import { lien } from '../../../lib/langue-lien'
@@ -94,8 +95,11 @@ export async function POST(request) {
   const CANCEL_PATHS = { long: '/create', court: '/create/express', express: '/create/paiement-direct', nouveau: '/create' }
   const cancelPath = CANCEL_PATHS[body.flow] || CANCEL_PATHS.long
 
+  // Le livre d'or offert après un essai : revérifié ici, jamais cru sur parole.
+  // Offert, il ne figure pas sur la page de paiement.
+  const cadeau = body.cadeau ? await cadeauValide(body.cadeau) : null
   // L'option livre d'or : un booléen, rien d'autre. Le prix vient d'ici.
-  const avecLivreOr = body.livreOr === true
+  const avecLivreOr = body.livreOr === true && !cadeau
 
   const shots = Math.min(SHOTS_MAX, Math.max(SHOTS_MIN, parseInt(shotsPerGuest, 10) || 5)) // bornes annoncées dans les CGV (art. 4)
   const cleanName = name.trim().slice(0, 80)
@@ -189,6 +193,8 @@ export async function POST(request) {
         prov_page: String(body.provenance?.p || '').slice(0, 200),
         is_test: promo && promo.marksTest ? '1' : '',
         livre_or: avecLivreOr ? '1' : '',
+        // L'essai qui offre le livre d'or (id de l'événement d'essai).
+        cadeau_essai: cadeau ? cadeau.id : '',
         // La langue de l'organisateur, mémorisée sur l'événement au retour.
         langue,
       },

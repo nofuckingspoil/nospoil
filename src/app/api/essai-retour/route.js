@@ -15,9 +15,10 @@ import { langueRequete } from '../../../lib/langue-serveur'
 
 export const runtime = 'nodejs'
 
-const REPONSES = ['test', 'temps', 'souci', 'pas_pour_moi']
+const REPONSES = ['decouverte', 'test', 'temps', 'souci', 'pas_pour_moi']
 const LIBELLES = {
-  test: 'Je teste avant ma vraie soirée',
+  decouverte: "Je voulais juste découvrir l'interface",
+  test: 'Je teste avant mon vrai événement',
   temps: "Je n'ai pas encore eu le temps",
   souci: "J'ai eu un souci",
   pas_pour_moi: "Ce n'est pas pour moi",
@@ -51,7 +52,7 @@ export async function POST(request) {
           to: adminEmail(),
           subject: `Essai « ${ev.name} » : ${LIBELLES[final] || 'réponse'}`,
           html: `<p style="font-family:sans-serif;font-size:15px;line-height:1.6;">
-            Soirée gratuite <strong>${ech(ev.name)}</strong> (aucune photo), organisateur ${ech(ev.owner_email)}.<br>
+            Essai gratuit <strong>${ech(ev.name)}</strong> (aucune photo), organisateur ${ech(ev.owner_email)}.<br>
             Réponse : <strong>${ech(LIBELLES[final] || '-')}</strong>
             ${detail ? `<br><br>« ${ech(detail)} »` : ''}
           </p>`,

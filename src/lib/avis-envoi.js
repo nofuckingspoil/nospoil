@@ -15,7 +15,8 @@
 // ============================================================
 import 'server-only'
 import { selectRows, updateRow } from './supabase'
-import { sendMail } from './mail'
+import { sendMail, siteUrl } from './mail'
+import { lien } from './langue-lien'
 import { CONTACT_EMAIL } from './pricing'
 import { makeToken } from './account'
 import { isRevealed } from './phase'
@@ -23,7 +24,8 @@ import { t } from './i18n'
 import { langueDe } from './langue-serveur'
 import {
   surveyOrgaEmail, surveyInviteEmail, recapAdmin,
-  avisOrgaEmail, essaiEmail, lienRetourEssai, EXPEDITEUR_CLEMENT,
+  avisOrgaEmail, essaiEmail, essaiPhotoEmail, offreEssaiEmail, rappelOffreEmail,
+  lienRetourEssai, lienCadeau, EXPEDITEUR_CLEMENT,
   lienAvisOrga, lienAvisInvite, lienDesinscription,
 } from './avis-mail'
 
@@ -56,6 +58,9 @@ export async function enqueteOrganisateurs(now = new Date()) {
       '&owner_email=not.is.null' +
       '&purged_at=is.null' +
       '&is_demo=is.false' +
+      // Les essais gratuits ont leur propre mail (offreEssais) : le livre
+      // d'or offert pour le vrai événement, à la place des étoiles.
+      '&or=(paid_cents.is.null,paid_cents.gt.0,promo_code.not.is.null,max_guests.gt.5,is_test.is.true)' +
       `&order=reveal_at.desc&limit=${LOT}`
   )
   if (!ok || !Array.isArray(data)) {
@@ -212,15 +217,24 @@ export async function recapDuJour() {
 }
 
 
-// ---------- 4. Les essais : soirée gratuite, aucune photo ----------
-// « Vous avez pu essayer ? » le lendemain matin de la création (le cron
-// passe chaque matin), puis une dernière fois une fois la soirée révélée, si
-// toujours aucune photo ni réponse. Une réponse arrête tout.
+// ---------- 4. Les essais gratuits ----------
+// Un essai : formule gratuite (5 participants), sans code. Les soirées
+// offertes par un code (fondateur, partenaire) sont de vrais événements :
+// elles n'entrent pas dans ce parcours.
+const ESSAI = '&paid_cents=eq.0&promo_code=is.null&max_guests=lte.5&is_demo=is.false&is_test=is.false&purged_at=is.null&owner_email=not.is.null'
+
+const lienAppareil = (ev, langue) => `${siteUrl()}${lien(`/j/${ev.id}`, langue)}`
+const qrAppareil = (ev) => `${siteUrl()}/api/qr/${ev.id}`
+
+// Branche « aucune photo ».
+// Mail 1, le lendemain matin de la création : « Prenez votre première
+// photo ». Si la révélation est déjà passée (essai d'un soir), on saute
+// directement au mail 2. Mail 2, une fois la soirée révélée, si toujours
+// rien : « comment votre test s'est-il passé ? ». Une réponse arrête tout.
 export async function relanceEssais(now = new Date()) {
   const il = (h) => new Date(now.getTime() - h * 3600 * 1000).toISOString()
   const commun = 'select=id,name,owner_email,avis_token,langue,created_at,reveal_at' +
-    '&paid_cents=eq.0&is_demo=is.false&is_test=is.false&purged_at=is.null' +
-    '&owner_email=not.is.null&essai_reponse=is.null'
+    ESSAI + '&essai_reponse=is.null'
   const [premiers, derniers] = await Promise.all([
     // Créées depuis plus de 12 h (donc la veille au plus tard), moins de 7 jours.
     selectRows('events', `${commun}&essai_mailed_at=is.null&created_at=lte.${il(12)}&created_at=gte.${il(24 * 7)}&limit=${LOT}`),
@@ -232,25 +246,171 @@ export async function relanceEssais(now = new Date()) {
   const traiter = async (ev, relance) => {
     const photos = await selectRows('photos', `event_id=eq.${ev.id}&select=id&limit=1`)
     if (!Array.isArray(photos.data) || photos.data.length > 0) {
-      // Des photos : ce n'est plus un essai resté en plan, on ne dit rien.
+      // Des photos : ce n'est plus un essai resté en plan, on ne dit rien ici
+      // (la branche « photos » prend le relais après la révélation).
       if (!relance) await updateRow('events', `id=eq.${ev.id}`, { essai_mailed_at: now.toISOString(), essai_relance_at: now.toISOString() })
       return
     }
     const langue = langueDe(ev)
-    const mail = essaiEmail({
-      langue,
-      relance,
-      eventName: ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue),
-      lien: lienRetourEssai(ev.avis_token),
-    })
+    const eventName = ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue)
+    // Déjà révélé au premier passage : l'appareil est fermé, inviter à
+    // photographier n'aurait plus de sens.
+    const dejaRevele = new Date(ev.reveal_at).getTime() <= now.getTime()
+    const question = relance || dejaRevele
+    const mail = question
+      ? essaiEmail({ langue, eventName, lien: lienRetourEssai(ev.avis_token) })
+      : essaiPhotoEmail({ langue, eventName, lienAppareil: lienAppareil(ev, langue), qrUrl: qrAppareil(ev) })
     const res = await sendMail({
       to: ev.owner_email, subject: mail.subject, html: mail.html,
       expediteur: EXPEDITEUR_CLEMENT, repondreA: CONTACT_EMAIL,
     })
-    await updateRow('events', `id=eq.${ev.id}`, relance ? { essai_relance_at: now.toISOString() } : { essai_mailed_at: now.toISOString() })
+    await updateRow('events', `id=eq.${ev.id}`, relance
+      ? { essai_relance_at: now.toISOString() }
+      : dejaRevele
+        ? { essai_mailed_at: now.toISOString(), essai_relance_at: now.toISOString() }
+        : { essai_mailed_at: now.toISOString() })
     if (res?.ok) envoyes++
   }
   for (const ev of Array.isArray(premiers.data) ? premiers.data : []) await traiter(ev, false)
   for (const ev of Array.isArray(derniers.data) ? derniers.data : []) await traiter(ev, true)
   return envoyes
+}
+
+// L'organisateur de l'essai a-t-il déjà créé un vrai événement depuis ?
+async function aCreeUnVraiEvenement(ev, depuis) {
+  const { data } = await selectRows(
+    'events',
+    `owner_email=eq.${encodeURIComponent(ev.owner_email)}` +
+      `&id=neq.${ev.id}` +
+      `&created_at=gt.${depuis}` +
+      '&is_demo=is.false' +
+      '&or=(paid_cents.gt.0,promo_code.not.is.null,max_guests.gt.5)' +
+      '&select=id&limit=1'
+  )
+  return Array.isArray(data) && data.length > 0
+}
+
+// 23 h 59 à Paris, `jours` jours après `date`.
+function finDeJourParis(date, jours) {
+  const cible = new Date(date.getTime() + jours * 24 * 3600 * 1000)
+  const [a, m, j] = cible.toLocaleDateString('en-CA', { timeZone: 'Europe/Paris' }).split('-').map(Number)
+  const approx = new Date(Date.UTC(a, m - 1, j, 23, 59, 59))
+  const decalage = new Date(approx.toLocaleString('en-US', { timeZone: 'Europe/Paris' })).getTime()
+    - new Date(approx.toLocaleString('en-US', { timeZone: 'UTC' })).getTime()
+  return new Date(approx.getTime() - decalage)
+}
+
+const DUREE_OFFRE_JOURS = 7
+
+// Branche « photos ».
+// Mail 3, le lendemain de la révélation : le livre d'or offert pour le vrai
+// événement, 7 jours. Il remplace pour les essais le mail d'avis aux étoiles
+// (deux mails le même jour, c'est un de trop). Mail 4, la veille de la fin
+// de l'offre, si rien n'a été créé entre-temps.
+export async function offreEssais(now = new Date()) {
+  const il = (h) => new Date(now.getTime() - h * 3600 * 1000).toISOString()
+  let offres = 0
+  let rappels = 0
+
+  // --- Mail 3 ---
+  // Révélé depuis au moins 8 h (le cron passe le matin : une révélation de la
+  // veille au soir est prise), et depuis moins de 10 jours : un déploiement
+  // n'arrose pas tout l'historique.
+  const { data: essais } = await selectRows(
+    'events',
+    'select=id,name,owner_email,avis_token,langue,created_at,reveal_at,reveal_paused,max_guests' +
+      ESSAI +
+      '&survey_mailed_at=is.null' +
+      `&reveal_at=lte.${il(8)}` +
+      `&reveal_at=gte.${il(24 * 10)}` +
+      `&order=reveal_at.desc&limit=${LOT}`
+  )
+  for (const ev of Array.isArray(essais) ? essais : []) {
+    const [invites, photos] = await Promise.all([
+      selectRows('guests', `event_id=eq.${ev.id}&select=id`),
+      selectRows('photos', `event_id=eq.${ev.id}&select=id`),
+    ])
+    // Album encore fermé (pause, formule dépassée) : « vos photos sont
+    // révélées » serait faux. On repassera.
+    const ouvert = isRevealed({
+      revealAt: ev.reveal_at,
+      revealPaused: ev.reveal_paused,
+      maxGuests: ev.max_guests,
+      guestCount: Array.isArray(invites.data) ? invites.data.length : 0,
+    })
+    if (!ouvert) continue
+
+    const photoCount = Array.isArray(photos.data) ? photos.data.length : 0
+    // Aucune photo : c'est la branche « aucune photo » qui s'en occupe.
+    if (!photoCount) {
+      await updateRow('events', `id=eq.${ev.id}`, { survey_mailed_at: now.toISOString() })
+      continue
+    }
+
+    const langue = langueDe(ev)
+    const eventName = ev.name || t({ fr: 'votre événement', en: 'your event', de: 'Ihr Event' }, langue)
+
+    // Déjà passé au vrai événement : pas d'offre, le mail d'avis habituel.
+    if (await aCreeUnVraiEvenement(ev, ev.created_at)) {
+      const dejaDonne = await selectRows('feedback', `event_id=eq.${ev.id}&role=eq.organisateur&select=id&limit=1`)
+      if (!(Array.isArray(dejaDonne.data) && dejaDonne.data.length)) {
+        const mail = avisOrgaEmail({ langue, eventName, link: lienAvisOrga(ev.avis_token) })
+        await sendMail({
+          to: ev.owner_email, subject: mail.subject, html: mail.html,
+          expediteur: EXPEDITEUR_CLEMENT, repondreA: CONTACT_EMAIL,
+        })
+      }
+      await updateRow('events', `id=eq.${ev.id}`, { survey_mailed_at: now.toISOString() })
+      continue
+    }
+
+    const fin = finDeJourParis(now, DUREE_OFFRE_JOURS)
+    const mail = offreEssaiEmail({
+      langue, eventName, photoCount,
+      lienCreer: lienCadeau(ev.avis_token, langue),
+      fin: fin.toISOString(),
+    })
+    const res = await sendMail({
+      to: ev.owner_email, subject: mail.subject, html: mail.html,
+      expediteur: EXPEDITEUR_CLEMENT, repondreA: CONTACT_EMAIL,
+    })
+    // Marqué même en cas d'échec, comme les autres envois de l'enquête.
+    await updateRow('events', `id=eq.${ev.id}`, {
+      survey_mailed_at: now.toISOString(),
+      essai_offre_at: now.toISOString(),
+      essai_offre_fin: fin.toISOString(),
+    })
+    if (res?.ok) offres++
+  }
+
+  // --- Mail 4 ---
+  // L'offre se termine dans moins de 48 h : le cron du matin la prend la
+  // veille du dernier jour.
+  const horizon = new Date(now.getTime() + 48 * 3600 * 1000).toISOString()
+  const { data: aRappeler } = await selectRows(
+    'events',
+    'select=id,owner_email,avis_token,langue,essai_offre_at,essai_offre_fin' +
+      `&essai_offre_fin=gt.${now.toISOString()}` +
+      `&essai_offre_fin=lte.${horizon}` +
+      '&essai_offre_rappel_at=is.null' +
+      '&essai_offre_event_id=is.null' +
+      '&owner_email=not.is.null' +
+      `&limit=${LOT}`
+  )
+  for (const ev of Array.isArray(aRappeler) ? aRappeler : []) {
+    if (await aCreeUnVraiEvenement(ev, ev.essai_offre_at)) {
+      await updateRow('events', `id=eq.${ev.id}`, { essai_offre_rappel_at: now.toISOString() })
+      continue
+    }
+    const langue = langueDe(ev)
+    const mail = rappelOffreEmail({ langue, lienCreer: lienCadeau(ev.avis_token, langue), fin: ev.essai_offre_fin })
+    const res = await sendMail({
+      to: ev.owner_email, subject: mail.subject, html: mail.html,
+      expediteur: EXPEDITEUR_CLEMENT, repondreA: CONTACT_EMAIL,
+    })
+    await updateRow('events', `id=eq.${ev.id}`, { essai_offre_rappel_at: now.toISOString() })
+    if (res?.ok) rappels++
+  }
+
+  return { offres, rappels }
 }

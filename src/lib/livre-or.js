@@ -44,7 +44,7 @@ export const SELFIE_MAX_OCTETS = 4 * 1024 * 1024
  * ou après coup, ou offerte), et que la fête ne soit pas finie depuis plus
  * longtemps que la grâce des photos : un message enregistré hors réseau
  * pendant la soirée doit pouvoir arriver le lendemain matin.
- * `livre_or_option` dit seulement d'où elle vient (creation, achat, offert, test).
+ * `livre_or_option` dit seulement d'où elle vient (creation, achat, offert, test, cadeau : offert après un essai réussi, voir lib/cadeau-essai).
  */
 export function livreOrActif(ev) {
   return !!ev?.livre_or_actif

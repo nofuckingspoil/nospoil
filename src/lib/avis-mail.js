@@ -11,10 +11,11 @@
 // ============================================================
 import 'server-only'
 import { BRAND } from './brand'
-import { CONTACT_EMAIL } from './pricing'
+import { CONTACT_EMAIL, TIERS, LIVRE_OR_CENTS, formatPrice } from './pricing'
 import { sendMail, layout, bigButton, siteUrl, etoilesAvis } from './mail'
 import { accroche, libelle, resumeAppareil, NOTES, notes } from './avis'
-import { t } from './i18n'
+import { t, LOCALES } from './i18n'
+import { lien as lienLangue } from './langue-lien'
 import { nomAffiche } from './event-defaults'
 
 // Votre adresse de réception. Réglable, mais jamais vide : une enquête dont
@@ -299,15 +300,80 @@ export function avisOrgaEmail({ eventName, link, langue }) {
   }
 }
 
-// ---------- Les essais : soirée gratuite, aucune photo ----------
-// Le lendemain matin de la création (`relance: false`), puis une dernière
-// fois si la soirée s'est terminée sans photo ni réponse (`relance: true`).
-// Quatre réponses, chacune un lien : un clic et c'est dit.
-export function essaiEmail({ eventName, lien, langue, relance = false }) {
+// ---------- Les essais gratuits : le parcours ----------
+// Un essai, c'est une soirée en formule gratuite, sans code (voir
+// estEssai dans avis-envoi). Deux branches :
+//  - aucune photo : « Prenez votre première photo » le lendemain matin
+//    (essaiPhotoEmail), puis « comment votre test s'est-il passé ? » après
+//    la révélation (essaiEmail) ;
+//  - des photos : le lendemain de la révélation, le livre d'or offert pour le
+//    vrai événement, 7 jours (offreEssaiEmail), puis un rappel la veille de
+//    la fin (rappelOffreEmail).
+
+const lienDiscret = (url, texte) => `<a href="${url}" style="color:#EC5B33;">${texte}</a>`
+
+// Mail 1 : aucune photo le lendemain matin de la création.
+export function essaiPhotoEmail({ eventName, lienAppareil, qrUrl, langue }) {
+  eventName = nomAffiche(eventName, langue)
+  const p = (txt) => `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#5f5341;">${txt}</p>`
+  return {
+    subject: t({
+      fr: 'Prenez votre première photo sur Time to Flash',
+      en: 'Take your first photo on Time to Flash',
+      de: 'Machen Sie Ihr erstes Foto mit Time to Flash',
+    }, langue),
+    html: mailPersonnel({
+      langue,
+      paragraphes: [
+        t({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue),
+        t({
+          fr: `Je suis Clément, le fondateur de Time to Flash. Vous avez créé « <strong>${eventName}</strong> » hier, mais aucune photo n'a encore été prise.`,
+          en: `I'm Clément, the founder of Time to Flash. You created “<strong>${eventName}</strong>” yesterday, but no photos have been taken yet.`,
+          de: `Ich bin Clément, der Gründer von Time to Flash. Sie haben gestern „<strong>${eventName}</strong>“ erstellt, aber es wurde noch kein Foto aufgenommen.`,
+        }, langue),
+        t({
+          fr: 'Pour poursuivre votre essai, prenez une ou deux photos maintenant, même de votre café. Vous ne les verrez pas tout de suite. Elles se révéleront à la date prévue, comme le jour de votre vrai événement.',
+          en: "To continue your trial, take one or two photos now, even of your coffee. You won't see them straight away. They'll be revealed on the planned date, just like on the day of your real event.",
+          de: 'Um Ihren Test fortzusetzen, machen Sie jetzt ein oder zwei Fotos, gern auch von Ihrem Kaffee. Sie sehen sie nicht sofort. Sie werden zum geplanten Termin präsentiert, genau wie am Tag Ihres echten Events.',
+        }, langue),
+      ],
+      apres: `${bigButton(lienAppareil, t({ fr: 'Prendre ma première photo', en: 'Take my first photo', de: 'Mein erstes Foto machen' }, langue))}
+<div style="height:18px;"></div>
+${p(t({
+        fr: "Pour voir l'effet à plusieurs, faites scanner ce QR code à un ou deux proches (montrez-leur simplement votre écran) : vous découvrirez leurs photos en même temps que les vôtres.",
+        en: "To see how it feels with others, have one or two people close to you scan this QR code (just show them your screen): you'll discover their photos at the same time as yours.",
+        de: 'Um den Effekt zu mehreren zu erleben, lassen Sie ein oder zwei Nahestehende diesen QR-Code scannen (zeigen Sie ihnen einfach Ihren Bildschirm): Sie entdecken deren Fotos zur gleichen Zeit wie Ihre.',
+      }, langue))}
+<div style="text-align:center;margin:0 0 18px;">
+  <img src="${qrUrl}" width="180" height="180" alt="QR code" style="display:inline-block;border:1px solid #eadfcc;border-radius:12px;padding:8px;background:#fff;">
+  <p style="margin:8px 0 0;font-size:13px;line-height:1.6;color:#5f5341;">${t({
+    fr: `Ou envoyez-leur ${lienDiscret(lienAppareil, 'le lien de votre événement')}.`,
+    en: `Or send them ${lienDiscret(lienAppareil, 'your event link')}.`,
+    de: `Oder schicken Sie ihnen ${lienDiscret(lienAppareil, 'den Link zu Ihrem Event')}.`,
+  }, langue)}</p>
+</div>
+${p(t({
+        fr: 'Un souci ou une question ? Répondez simplement à ce mail, je lis tout personnellement.',
+        en: 'A problem or a question? Just reply to this email, I read everything myself.',
+        de: 'Ein Problem oder eine Frage? Antworten Sie einfach auf diese E-Mail, ich lese alles persönlich.',
+      }, langue))}`,
+      footer: t({
+        fr: "Si aucune photo n'est prise, je ne vous écrirai qu'une dernière fois, après la date de révélation.",
+        en: "If no photos are taken, I'll only write to you once more, after the reveal date.",
+        de: 'Wenn kein Foto aufgenommen wird, schreibe ich Ihnen nur noch ein letztes Mal, nach dem Präsentationstermin.',
+      }, langue),
+    }),
+  }
+}
+
+// Mail 2 : la révélation est passée, toujours aucune photo. Cinq réponses,
+// chacune un lien : un clic et c'est dit.
+export function essaiEmail({ eventName, lien, langue }) {
   eventName = nomAffiche(eventName, langue)
   const sep = lien.includes('?') ? '&' : '?'
   const choix = [
-    ['test', t({ fr: 'Je teste avant ma vraie soirée', en: "I'm testing before my real event", de: 'Ich teste vor meinem echten Event' }, langue)],
+    ['decouverte', t({ fr: "Je voulais juste découvrir l'interface", en: 'I just wanted to explore the interface', de: 'Ich wollte mir nur die Oberfläche ansehen' }, langue)],
+    ['test', t({ fr: 'Je teste avant mon vrai événement', en: "I'm testing before my real event", de: 'Ich teste vor meinem echten Event' }, langue)],
     ['temps', t({ fr: "Je n'ai pas encore eu le temps", en: "I haven't had the time yet", de: 'Ich hatte noch keine Zeit' }, langue)],
     ['souci', t({ fr: "J'ai eu un souci", en: 'I ran into a problem', de: 'Ich hatte ein Problem' }, langue)],
     ['pas_pour_moi', t({ fr: "Ce n'est pas pour moi", en: "It's not for me", de: 'Das ist nichts für mich' }, langue)],
@@ -316,24 +382,20 @@ export function essaiEmail({ eventName, lien, langue, relance = false }) {
   <a href="${lien}${sep}r=${cle}" style="display:block;background:#F4EBDA;color:#221A12;text-decoration:none;font-size:15px;font-weight:600;padding:14px 16px;border-radius:12px;border:1px solid #e3d6bf;">${label} →</a>
 </td></tr>`).join('')
   return {
-    subject: relance
-      ? t({ fr: `${eventName} : que s'est-il passé ?`, en: `${eventName}: what happened?`, de: `${eventName}: Was ist passiert?` }, langue)
-      : t({ fr: 'Vous avez pu essayer Time to Flash ?', en: 'Did you get to try Time to Flash?', de: 'Konnten Sie Time to Flash ausprobieren?' }, langue),
+    subject: t({
+      fr: `Time to Flash - « ${eventName} » : comment votre test s'est-il passé ?`,
+      en: `Time to Flash - “${eventName}”: how did your test go?`,
+      de: `Time to Flash - „${eventName}“: Wie ist Ihr Test gelaufen?`,
+    }, langue),
     html: mailPersonnel({
       langue,
       paragraphes: [
         t({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue),
-        relance
-          ? t({
-              fr: `C'est Clément, le fondateur de Time to Flash. Votre soirée « <strong>${eventName}</strong> » est terminée, et aucune photo n'a été prise. Ça arrive, et j'aimerais comprendre pourquoi, pour améliorer le service.`,
-              en: `It's Clément, the founder of Time to Flash. Your event “<strong>${eventName}</strong>” is over, and no photos were taken. It happens, and I'd like to understand why, to improve the service.`,
-              de: `Hier ist Clément, der Gründer von Time to Flash. Ihr Event „<strong>${eventName}</strong>“ ist vorbei, und es wurden keine Fotos aufgenommen. Das kommt vor, und ich möchte verstehen, warum, um den Dienst zu verbessern.`,
-            }, langue)
-          : t({
-              fr: `Je suis Clément, le fondateur de Time to Flash. Vous avez créé « <strong>${eventName}</strong> » hier, et je voulais savoir si vous aviez pu l'essayer.`,
-              en: `I'm Clément, the founder of Time to Flash. You created “<strong>${eventName}</strong>” yesterday, and I wanted to know if you got to try it.`,
-              de: `Ich bin Clément, der Gründer von Time to Flash. Sie haben gestern „<strong>${eventName}</strong>“ erstellt, und ich wollte wissen, ob Sie es ausprobieren konnten.`,
-            }, langue),
+        t({
+          fr: `C'est Clément, le fondateur de Time to Flash. Votre événement « <strong>${eventName}</strong> » est terminé, et aucune photo n'a été prise. Ça arrive, et j'aimerais comprendre pourquoi, pour améliorer le service.`,
+          en: `It's Clément, the founder of Time to Flash. Your event “<strong>${eventName}</strong>” is over, and no photos were taken. It happens, and I'd like to understand why, to improve the service.`,
+          de: `Hier ist Clément, der Gründer von Time to Flash. Ihr Event „<strong>${eventName}</strong>“ ist vorbei, und es wurden keine Fotos aufgenommen. Das kommt vor, und ich möchte verstehen, warum, um den Dienst zu verbessern.`,
+        }, langue),
         t({ fr: 'Où en êtes-vous ? Un clic suffit :', en: 'Where are you at? One click is enough:', de: 'Wie sieht es aus? Ein Klick genügt:' }, langue),
       ],
       apres: `<table role="presentation" width="100%" cellpadding="0" cellspacing="0">${boutons}</table>
@@ -342,11 +404,137 @@ export function essaiEmail({ eventName, lien, langue, relance = false }) {
         en: 'You can also reply directly to this email, I read everything myself.',
         de: 'Sie können auch direkt auf diese E-Mail antworten, ich lese alles persönlich.',
       }, langue)}</p>`,
-      footer: relance
-        ? t({ fr: 'Ce sera mon dernier message à ce sujet.', en: 'This will be my last message about this.', de: 'Das ist meine letzte Nachricht dazu.' }, langue)
-        : t({ fr: "Si vous ne répondez pas, je ne vous écrirai qu'une dernière fois, après la date de votre soirée.", en: "If you don't reply, I'll only write once more, after the date of your event.", de: 'Wenn Sie nicht antworten, schreibe ich Ihnen nur noch einmal, nach dem Datum Ihres Events.' }, langue),
+      footer: t({ fr: 'Ce sera mon dernier message à ce sujet.', en: 'This will be my last message about this.', de: 'Das ist meine letzte Nachricht dazu.' }, langue),
     }),
   }
+}
+
+// « mercredi 21 octobre », à l'heure de Paris, dans la langue de l'organisateur.
+function jourLisible(iso, langue) {
+  try {
+    return new Date(iso).toLocaleDateString(LOCALES[langue] || 'fr-FR', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'Europe/Paris' })
+  } catch { return '' }
+}
+
+const prixLivreOr = (langue) => formatPrice(LIVRE_OR_CENTS, langue)
+
+// Mail 3 : l'essai a donné des photos. Le livre d'or offert pour le vrai
+// événement, 7 jours. Remplace pour les essais le mail d'avis aux étoiles.
+export function offreEssaiEmail({ eventName, photoCount, lienCreer, fin, langue }) {
+  eventName = nomAffiche(eventName, langue)
+  const n = photoCount
+  const p = (txt) => `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#5f5341;">${txt}</p>`
+  const jour = jourLisible(fin, langue)
+  return {
+    subject: n > 1
+      ? t({
+          fr: `Vos ${n} photos sont révélées. Et pour le vrai événement ?`,
+          en: `Your ${n} photos are revealed. What about the real event?`,
+          de: `Ihre ${n} Fotos sind präsentiert. Und das echte Event?`,
+        }, langue)
+      : t({
+          fr: 'Votre photo est révélée. Et pour le vrai événement ?',
+          en: 'Your photo is revealed. What about the real event?',
+          de: 'Ihr Foto ist präsentiert. Und das echte Event?',
+        }, langue),
+    html: mailPersonnel({
+      langue,
+      paragraphes: [
+        t({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue),
+        n > 1
+          ? t({
+              fr: `C'est Clément, le fondateur de Time to Flash. Les ${n} photos de « <strong>${eventName}</strong> » viennent d'être révélées : vous avez vu le principe en vrai.`,
+              en: `It's Clément, the founder of Time to Flash. The ${n} photos from “<strong>${eventName}</strong>” have just been revealed: you've seen the idea for real.`,
+              de: `Hier ist Clément, der Gründer von Time to Flash. Die ${n} Fotos von „<strong>${eventName}</strong>“ wurden gerade präsentiert: Sie haben das Prinzip live erlebt.`,
+            }, langue)
+          : t({
+              fr: `C'est Clément, le fondateur de Time to Flash. La photo de « <strong>${eventName}</strong> » vient d'être révélée : vous avez vu le principe en vrai.`,
+              en: `It's Clément, the founder of Time to Flash. The photo from “<strong>${eventName}</strong>” has just been revealed: you've seen the idea for real.`,
+              de: `Hier ist Clément, der Gründer von Time to Flash. Das Foto von „<strong>${eventName}</strong>“ wurde gerade präsentiert: Sie haben das Prinzip live erlebt.`,
+            }, langue),
+        t({
+          fr: "Imaginez maintenant la même chose avec tous vos invités : le lendemain, vous découvrez l'événement à travers les yeux de chacun.",
+          en: 'Now imagine the same thing with all your guests: the next day, you discover the event through everyone\'s eyes.',
+          de: 'Stellen Sie sich das jetzt mit all Ihren Gästen vor: Am nächsten Tag erleben Sie das Event durch die Augen jedes Einzelnen.',
+        }, langue),
+        t({
+          fr: `Pour votre vrai événement, je vous offre <strong>le livre d'or audio</strong> (${prixLivreOr(langue)} d'habitude) : chaque invité vous laisse un message vocal et un selfie, que vous découvrez après l'événement.`,
+          en: `For your real event, I'm giving you <strong>the audio guestbook</strong> (usually ${prixLivreOr(langue)}): each guest leaves you a voice message and a selfie, which you discover after the event.`,
+          de: `Für Ihr echtes Event schenke ich Ihnen <strong>das Audio-Gästebuch</strong> (sonst ${prixLivreOr(langue)}): Jeder Gast hinterlässt Ihnen eine Sprachnachricht und ein Selfie, die Sie nach dem Event entdecken.`,
+        }, langue),
+      ],
+      apres: `${bigButton(lienCreer, t({ fr: 'Créer mon vrai événement', en: 'Create my real event', de: 'Mein echtes Event erstellen' }, langue))}
+<div style="height:18px;"></div>
+${p(t({
+        fr: `L'offre est valable jusqu'au <strong>${jour}</strong> inclus. Vous ne connaissez pas encore le nombre exact d'invités ? Aucun problème : réservez maintenant, vous pourrez agrandir la formule plus tard depuis votre tableau de bord.`,
+        en: `The offer is valid until <strong>${jour}</strong> inclusive. Don't know the exact number of guests yet? No problem: book now, you can upgrade your plan later from your dashboard.`,
+        de: `Das Angebot gilt bis einschließlich <strong>${jour}</strong>. Sie kennen die genaue Gästezahl noch nicht? Kein Problem: Buchen Sie jetzt, Sie können Ihr Paket später in Ihrem Dashboard vergrößern.`,
+      }, langue))}
+${p(t({
+        fr: 'Et si vous avez un avis sur cet essai, bon ou mauvais, répondez simplement à ce mail : je lis tout personnellement.',
+        en: 'And if you have any thoughts on this trial, good or bad, just reply to this email: I read everything myself.',
+        de: 'Und wenn Sie eine Meinung zu diesem Test haben, ob gut oder schlecht, antworten Sie einfach auf diese E-Mail: Ich lese alles persönlich.',
+      }, langue))}`,
+      footer: t({
+        fr: "Je ne vous écrirai qu'une fois de plus à ce sujet, la veille de la fin de l'offre.",
+        en: "I'll only write to you once more about this, the day before the offer ends.",
+        de: 'Ich schreibe Ihnen dazu nur noch einmal, am Tag vor Ablauf des Angebots.',
+      }, langue),
+    }),
+  }
+}
+
+// Mail 4 : la veille de la fin de l'offre, si rien n'a été créé entre-temps.
+export function rappelOffreEmail({ lienCreer, fin, langue }) {
+  const jour = jourLisible(fin, langue)
+  const cellule = 'padding:8px 14px;border-top:1px solid #f0e7d8;'
+  const lignes = TIERS.filter((x) => x.priceCents > 0).map((x) => `<tr><td style="${cellule}">${t({
+    fr: `${x.maxGuests} invités`, en: `${x.maxGuests} guests`, de: `${x.maxGuests} Gäste`,
+  }, langue)}</td><td style="${cellule}text-align:right;">${formatPrice(x.priceCents, langue)}</td></tr>`).join('')
+  const tableau = `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;border:1px solid #eadfcc;border-radius:12px;border-collapse:separate;font-size:15px;color:#221A12;">
+<tr style="background:#FBF6EE;"><td style="padding:10px 14px;color:#8a7c69;font-weight:600;">${t({ fr: "Jusqu'à", en: 'Up to', de: 'Bis zu' }, langue)}</td><td style="padding:10px 14px;color:#8a7c69;font-weight:600;text-align:right;">${t({ fr: 'Prix (paiement unique)', en: 'Price (one-off payment)', de: 'Preis (einmalige Zahlung)' }, langue)}</td></tr>
+${lignes}
+<tr style="background:#FFF4EF;"><td style="${cellule}font-weight:700;">${t({ fr: "Livre d'or audio", en: 'Audio guestbook', de: 'Audio-Gästebuch' }, langue)}</td><td style="${cellule}text-align:right;"><s style="color:#a0937f;">${prixLivreOr(langue)}</s> <strong style="color:#EC5B33;">${t({ fr: 'offert', en: 'free', de: 'geschenkt' }, langue)}</strong></td></tr>
+</table>`
+  const p = (txt) => `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:#5f5341;">${txt}</p>`
+  return {
+    subject: t({
+      fr: "Votre livre d'or offert s'arrête demain",
+      en: 'Your free audio guestbook ends tomorrow',
+      de: 'Ihr geschenktes Audio-Gästebuch endet morgen',
+    }, langue),
+    html: mailPersonnel({
+      langue,
+      paragraphes: [
+        t({ fr: 'Bonjour,', en: 'Hello,', de: 'Hallo,' }, langue),
+        t({
+          fr: `Un petit rappel : le livre d'or audio que je vous ai offert pour votre événement (<strong>${prixLivreOr(langue)}</strong> d'habitude) est valable jusqu'à demain, <strong>${jour}</strong>.`,
+          en: `A quick reminder: the audio guestbook I gave you for your event (usually <strong>${prixLivreOr(langue)}</strong>) is valid until tomorrow, <strong>${jour}</strong>.`,
+          de: `Eine kurze Erinnerung: Das Audio-Gästebuch, das ich Ihnen für Ihr Event geschenkt habe (sonst <strong>${prixLivreOr(langue)}</strong>), gilt bis morgen, <strong>${jour}</strong>.`,
+        }, langue),
+      ],
+      apres: `${p(t({
+        fr: "Pour vous donner une idée, voici le prix des formules. Le livre d'or offert vaut souvent plus que la formule elle-même :",
+        en: "To give you an idea, here are the plan prices. The free guestbook is often worth more than the plan itself:",
+        de: 'Zur Orientierung hier die Preise der Pakete. Das geschenkte Gästebuch ist oft mehr wert als das Paket selbst:',
+      }, langue))}
+${tableau}
+${bigButton(lienCreer, t({ fr: 'Créer mon vrai événement', en: 'Create my real event', de: 'Mein echtes Event erstellen' }, langue))}
+<div style="height:18px;"></div>
+${p(t({
+        fr: "Pas besoin de connaître le nombre d'invités ni d'avoir tout organisé : vous réservez votre date aujourd'hui, et vous ajustez le reste quand vous voulez.",
+        en: "No need to know the number of guests or to have everything planned: book your date today, and adjust the rest whenever you like.",
+        de: 'Sie müssen weder die Gästezahl kennen noch alles geplant haben: Sie reservieren Ihr Datum heute und passen den Rest an, wann Sie wollen.',
+      }, langue))}`,
+      footer: t({ fr: "C'est mon dernier message à ce sujet.", en: 'This is my last message about this.', de: 'Das ist meine letzte Nachricht dazu.' }, langue),
+    }),
+  }
+}
+
+// Le bouton « Créer mon vrai événement » : la création, avec le cadeau
+// attaché. Le jeton est la clé d'avis de l'essai (rien de plus n'est exposé).
+export function lienCadeau(cleAvis, langue) {
+  return `${siteUrl()}${lienLangue('/create', langue)}?cadeau=${encodeURIComponent(cleAvis)}`
 }
 
 export function lienRetourEssai(cleAvis) {

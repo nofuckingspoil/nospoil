@@ -6,6 +6,7 @@ import { purgeDate } from '../../../../lib/retention'
 import { modeValide } from '../../../../lib/photo-mode'
 import { ensureAccount } from '../../../../lib/account'
 import { consumePromo } from '../../../../lib/promo'
+import { consommerCadeau } from '../../../../lib/cadeau-essai'
 import { t, langueValide } from '../../../../lib/i18n'
 import { resumeAppareil } from '../../../../lib/avis'
 import { langueRequete } from '../../../../lib/langue-serveur'
@@ -101,8 +102,9 @@ export async function POST(request) {
     paid_cents: session.amount_total ?? null, // ce qui a réellement été encaissé, remise déduite
     is_test: m.is_test === '1',
     // Le livre d'or, payé avec la formule, ou offert à une soirée de test.
-    livre_or_actif: m.livre_or === '1' || m.is_test === '1',
-    livre_or_option: m.livre_or === '1' ? 'creation' : m.is_test === '1' ? 'test' : null,
+    // Ou offert après un essai réussi (voir lib/cadeau-essai).
+    livre_or_actif: m.livre_or === '1' || m.is_test === '1' || !!m.cadeau_essai,
+    livre_or_option: m.livre_or === '1' ? 'creation' : m.cadeau_essai ? 'cadeau' : m.is_test === '1' ? 'test' : null,
     // Parcours court : réglages à faire. Le lien du mail y ramène tant qu'ils
     // ne sont pas terminés.
     reglages_etape: m.parcours === 'court' ? 'bravo' : null,
@@ -118,6 +120,9 @@ export async function POST(request) {
     console.error('create paid event error:', data)
     return Response.json({ error: t({ fr: "Erreur lors de la création de l'événement.", en: 'Error while creating the event.', de: 'Fehler beim Erstellen des Events.' }, langue) }, { status: 500 })
   }
+
+  // Le cadeau de l'essai a servi : l'essai garde la trace de cet événement.
+  if (m.cadeau_essai) await consommerCadeau(m.cadeau_essai, data.id)
 
   // Le code promo n'est décompté qu'ici : l'événement existe, l'argent est
   // encaissé. On enregistre au passage ce qu'il a réellement rapporté, base de
